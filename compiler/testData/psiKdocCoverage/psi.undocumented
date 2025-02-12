@@ -3,77 +3,150 @@ ElementTypeUtils.kt:ElementTypeUtils
 ElementTypeUtils.kt:ElementTypeUtils:@JvmStatic getKotlinBlockImbalanceCount(CharSequence)
 ElementTypeUtils.kt:ElementTypeUtils:getOperationSymbol()
 ElementTypeUtils.kt:ElementTypeUtils:isExpression()
+KtNodeType.java:KtLeftBoundNodeType:KtLeftBoundNodeType(String, Class<? extends KtElement>)
 KtNodeType.java:KtNodeType
-KtNodeType.java:null
+KtNodeType.java:KtNodeType:KtNodeType(String, Class<? extends KtElement>)
+KtNodeType.java:KtNodeType:createPsi(ASTNode)
+KtNodeType.java:KtNodeType:static KtLeftBoundNodeType
 KtNodeTypes.java:KtNodeTypes
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-KtNodeTypes.java:KtNodeTypes:null
-LambdaExpressionElementType.java:LambdaExpressionElementType
-LambdaExpressionElementType.java:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumn:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumn:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumn:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumn:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumn:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumnRange:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumnRange:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumnRange:null
-diagnostics/PsiDiagnosticUtils.java:LineAndColumnRange:null
+KtNodeTypes.java:KtNodeTypes:ANNOTATED_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:ANNOTATION
+KtNodeTypes.java:KtNodeTypes:ANNOTATION_ENTRY
+KtNodeTypes.java:KtNodeTypes:ANNOTATION_TARGET
+KtNodeTypes.java:KtNodeTypes:ARRAY_ACCESS_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:BACKING_FIELD
+KtNodeTypes.java:KtNodeTypes:BINARY_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:BINARY_WITH_TYPE
+KtNodeTypes.java:KtNodeTypes:BLOCK
+KtNodeTypes.java:KtNodeTypes:BLOCK_CODE_FRAGMENT
+KtNodeTypes.java:KtNodeTypes:BODY
+KtNodeTypes.java:KtNodeTypes:BOOLEAN_CONSTANT
+KtNodeTypes.java:KtNodeTypes:BREAK
+KtNodeTypes.java:KtNodeTypes:CALLABLE_REFERENCE_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:CALL_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:CATCH
+KtNodeTypes.java:KtNodeTypes:CHARACTER_CONSTANT
+KtNodeTypes.java:KtNodeTypes:CLASS
+KtNodeTypes.java:KtNodeTypes:CLASS_BODY
+KtNodeTypes.java:KtNodeTypes:CLASS_INITIALIZER
+KtNodeTypes.java:KtNodeTypes:CLASS_LITERAL_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:COLLECTION_LITERAL_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:CONDITION
+KtNodeTypes.java:KtNodeTypes:CONSTRUCTOR_CALLEE
+KtNodeTypes.java:KtNodeTypes:CONSTRUCTOR_DELEGATION_CALL
+KtNodeTypes.java:KtNodeTypes:CONSTRUCTOR_DELEGATION_REFERENCE
+KtNodeTypes.java:KtNodeTypes:CONTEXT_RECEIVER
+KtNodeTypes.java:KtNodeTypes:CONTEXT_RECEIVER_LIST
+KtNodeTypes.java:KtNodeTypes:CONTINUE
+KtNodeTypes.java:KtNodeTypes:CONTRACT_EFFECT
+KtNodeTypes.java:KtNodeTypes:CONTRACT_EFFECT_LIST
+KtNodeTypes.java:KtNodeTypes:DELEGATED_SUPER_TYPE_ENTRY
+KtNodeTypes.java:KtNodeTypes:DESTRUCTURING_DECLARATION
+KtNodeTypes.java:KtNodeTypes:DESTRUCTURING_DECLARATION_ENTRY
+KtNodeTypes.java:KtNodeTypes:DOT_QUALIFIED_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:DO_WHILE
+KtNodeTypes.java:KtNodeTypes:DYNAMIC_TYPE
+KtNodeTypes.java:KtNodeTypes:ELSE
+KtNodeTypes.java:KtNodeTypes:ENUM_ENTRY
+KtNodeTypes.java:KtNodeTypes:ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:ESCAPE_STRING_TEMPLATE_ENTRY
+KtNodeTypes.java:KtNodeTypes:EXPRESSION_CODE_FRAGMENT
+KtNodeTypes.java:KtNodeTypes:FILE_ANNOTATION_LIST
+KtNodeTypes.java:KtNodeTypes:FINALLY
+KtNodeTypes.java:KtNodeTypes:FLOAT_CONSTANT
+KtNodeTypes.java:KtNodeTypes:FOR
+KtNodeTypes.java:KtNodeTypes:FUN
+KtNodeTypes.java:KtNodeTypes:FUNCTION_LITERAL
+KtNodeTypes.java:KtNodeTypes:FUNCTION_TYPE
+KtNodeTypes.java:KtNodeTypes:FUNCTION_TYPE_RECEIVER
+KtNodeTypes.java:KtNodeTypes:IF
+KtNodeTypes.java:KtNodeTypes:IMPORT_ALIAS
+KtNodeTypes.java:KtNodeTypes:IMPORT_DIRECTIVE
+KtNodeTypes.java:KtNodeTypes:IMPORT_LIST
+KtNodeTypes.java:KtNodeTypes:INDICES
+KtNodeTypes.java:KtNodeTypes:INITIALIZER_LIST
+KtNodeTypes.java:KtNodeTypes:INTEGER_CONSTANT
+KtNodeTypes.java:KtNodeTypes:INTERSECTION_TYPE
+KtNodeTypes.java:KtNodeTypes:IS_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:KT_FILE
+KtNodeTypes.java:KtNodeTypes:LABEL
+KtNodeTypes.java:KtNodeTypes:LABELED_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:LABEL_QUALIFIER
+KtNodeTypes.java:KtNodeTypes:LAMBDA_ARGUMENT
+KtNodeTypes.java:KtNodeTypes:LAMBDA_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:LITERAL_STRING_TEMPLATE_ENTRY
+KtNodeTypes.java:KtNodeTypes:LONG_STRING_TEMPLATE_ENTRY
+KtNodeTypes.java:KtNodeTypes:LOOP_RANGE
+KtNodeTypes.java:KtNodeTypes:MODIFIER_LIST
+KtNodeTypes.java:KtNodeTypes:NULL
+KtNodeTypes.java:KtNodeTypes:NULLABLE_TYPE
+KtNodeTypes.java:KtNodeTypes:OBJECT_DECLARATION
+KtNodeTypes.java:KtNodeTypes:OBJECT_LITERAL
+KtNodeTypes.java:KtNodeTypes:OPERATION_REFERENCE
+KtNodeTypes.java:KtNodeTypes:PACKAGE_DIRECTIVE
+KtNodeTypes.java:KtNodeTypes:PARENTHESIZED
+KtNodeTypes.java:KtNodeTypes:POSTFIX_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:PREFIX_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:PRIMARY_CONSTRUCTOR
+KtNodeTypes.java:KtNodeTypes:PROPERTY
+KtNodeTypes.java:KtNodeTypes:PROPERTY_ACCESSOR
+KtNodeTypes.java:KtNodeTypes:PROPERTY_DELEGATE
+KtNodeTypes.java:KtNodeTypes:REFERENCE_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:RETURN
+KtNodeTypes.java:KtNodeTypes:SAFE_ACCESS_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:SCRIPT
+KtNodeTypes.java:KtNodeTypes:SCRIPT_INITIALIZER
+KtNodeTypes.java:KtNodeTypes:SECONDARY_CONSTRUCTOR
+KtNodeTypes.java:KtNodeTypes:SHORT_STRING_TEMPLATE_ENTRY
+KtNodeTypes.java:KtNodeTypes:STRING_TEMPLATE
+KtNodeTypes.java:KtNodeTypes:SUPER_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:SUPER_TYPE_CALL_ENTRY
+KtNodeTypes.java:KtNodeTypes:SUPER_TYPE_ENTRY
+KtNodeTypes.java:KtNodeTypes:SUPER_TYPE_LIST
+KtNodeTypes.java:KtNodeTypes:THEN
+KtNodeTypes.java:KtNodeTypes:THIS_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:THROW
+KtNodeTypes.java:KtNodeTypes:TRY
+KtNodeTypes.java:KtNodeTypes:TYPEALIAS
+KtNodeTypes.java:KtNodeTypes:TYPE_ARGUMENT_LIST
+KtNodeTypes.java:KtNodeTypes:TYPE_CODE_FRAGMENT
+KtNodeTypes.java:KtNodeTypes:TYPE_CONSTRAINT
+KtNodeTypes.java:KtNodeTypes:TYPE_CONSTRAINT_LIST
+KtNodeTypes.java:KtNodeTypes:TYPE_PARAMETER
+KtNodeTypes.java:KtNodeTypes:TYPE_PARAMETER_LIST
+KtNodeTypes.java:KtNodeTypes:TYPE_PROJECTION
+KtNodeTypes.java:KtNodeTypes:TYPE_REFERENCE
+KtNodeTypes.java:KtNodeTypes:USER_TYPE
+KtNodeTypes.java:KtNodeTypes:VALUE_ARGUMENT
+KtNodeTypes.java:KtNodeTypes:VALUE_ARGUMENT_LIST
+KtNodeTypes.java:KtNodeTypes:VALUE_ARGUMENT_NAME
+KtNodeTypes.java:KtNodeTypes:VALUE_PARAMETER
+KtNodeTypes.java:KtNodeTypes:VALUE_PARAMETER_LIST
+KtNodeTypes.java:KtNodeTypes:WHEN
+KtNodeTypes.java:KtNodeTypes:WHEN_CONDITION_EXPRESSION
+KtNodeTypes.java:KtNodeTypes:WHEN_CONDITION_IN_RANGE
+KtNodeTypes.java:KtNodeTypes:WHEN_CONDITION_IS_PATTERN
+KtNodeTypes.java:KtNodeTypes:WHEN_ENTRY
+KtNodeTypes.java:KtNodeTypes:WHEN_ENTRY_GUARD
+KtNodeTypes.java:KtNodeTypes:WHILE
+diagnostics/PsiDiagnosticUtils.java:LineAndColumn:@Nullable getLineContent()
+diagnostics/PsiDiagnosticUtils.java:LineAndColumn:LineAndColumn(int, int, String)
+diagnostics/PsiDiagnosticUtils.java:LineAndColumn:getColumn()
+diagnostics/PsiDiagnosticUtils.java:LineAndColumn:getLine()
+diagnostics/PsiDiagnosticUtils.java:LineAndColumn:static final NONE
+diagnostics/PsiDiagnosticUtils.java:LineAndColumnRange:LineAndColumnRange(LineAndColumn, LineAndColumn)
+diagnostics/PsiDiagnosticUtils.java:LineAndColumnRange:getEnd()
+diagnostics/PsiDiagnosticUtils.java:LineAndColumnRange:getStart()
+diagnostics/PsiDiagnosticUtils.java:LineAndColumnRange:static final NONE
 diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils
-diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:final LineAndColumn
-diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:final LineAndColumnRange
-diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:null
-diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:null
-diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:null
-diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:null
-diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:null
-diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:null
+diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:@NotNull static atLocation(PsiFile, TextRange)
+diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:@NotNull static atLocation(PsiFile, TextRange, Document)
+diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:@NotNull static offsetToLineAndColumn(Document, int)
+diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:static atLocation(ASTNode)
+diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:static atLocation(KtExpression)
+diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:static atLocation(PsiElement)
+diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:static final LineAndColumn
+diagnostics/PsiDiagnosticUtils.java:PsiDiagnosticUtils:static final LineAndColumnRange
 kdoc/psi/api/KDoc.kt:KDoc
 kdoc/psi/api/KDoc.kt:KDoc:findSectionByName(String)
 kdoc/psi/api/KDoc.kt:KDoc:findSectionByTag(KDocKnownTag)
@@ -81,9 +154,8 @@ kdoc/psi/api/KDoc.kt:KDoc:findSectionByTag(KDocKnownTag, String)
 kdoc/psi/api/KDoc.kt:KDoc:getAllSections()
 kdoc/psi/api/KDoc.kt:KDoc:getDefaultSection()
 kdoc/psi/api/KDocElement.java:KDocElement
-kdoc/psi/api/KDocElement.java:null
+kdoc/psi/impl/KDocElementImpl.java:KDocElementImpl:KDocElementImpl(ASTNode)
 kdoc/psi/impl/KDocElementImpl.java:abstract KDocElementImpl
-kdoc/psi/impl/KDocElementImpl.java:null
 kdoc/psi/impl/KDocImpl.kt:KDocImpl
 kdoc/psi/impl/KDocLink.kt:KDocLink
 kdoc/psi/impl/KDocLink.kt:KDocLink:getLinkText()
@@ -115,18 +187,28 @@ psi/KotlinReferenceProvidersService.kt:KotlinReferenceProvidersService:open getR
 psi/KotlinReferenceProvidersService.kt:open KotlinReferenceProvidersService
 psi/KotlinStringLiteralTextEscaper.kt:KotlinStringLiteralTextEscaper
 psi/KtAnnotated.java:KtAnnotated
-psi/KtAnnotated.java:null
+psi/KtAnnotated.java:KtAnnotated:@NotNull getAnnotationEntries()
+psi/KtAnnotated.java:KtAnnotated:@NotNull getAnnotations()
 psi/KtAnnotatedExpression.java:KtAnnotatedExpression
-psi/KtAnnotatedExpression.java:null
-psi/KtAnnotation.java:null
+psi/KtAnnotatedExpression.java:KtAnnotatedExpression:@Nullable getBaseExpression()
+psi/KtAnnotatedExpression.java:KtAnnotatedExpression:KtAnnotatedExpression(ASTNode)
+psi/KtAnnotation.java:KtAnnotation:@Nullable getUseSiteTarget()
+psi/KtAnnotation.java:KtAnnotation:KtAnnotation(ASTNode)
+psi/KtAnnotation.java:KtAnnotation:KtAnnotation(KotlinPlaceHolderStub<KtAnnotation>)
+psi/KtAnnotation.java:KtAnnotation:getEntries()
+psi/KtAnnotation.java:KtAnnotation:removeEntry(KtAnnotationEntry)
 psi/KtAnnotationEntry.java:KtAnnotationEntry
-psi/KtAnnotationEntry.java:null
+psi/KtAnnotationEntry.java:KtAnnotationEntry:@Nullable @IfNotParsed getTypeReference()
+psi/KtAnnotationEntry.java:KtAnnotationEntry:@Nullable getAtSymbol()
+psi/KtAnnotationEntry.java:KtAnnotationEntry:@Nullable getShortName()
+psi/KtAnnotationEntry.java:KtAnnotationEntry:@Nullable getUseSiteTarget()
+psi/KtAnnotationEntry.java:KtAnnotationEntry:KtAnnotationEntry(ASTNode)
+psi/KtAnnotationEntry.java:KtAnnotationEntry:KtAnnotationEntry(KotlinAnnotationEntryStub)
 psi/KtAnnotationUseSiteTarget.kt:KtAnnotationUseSiteTarget
 psi/KtAnnotationUseSiteTarget.kt:KtAnnotationUseSiteTarget:KtAnnotationUseSiteTarget(ASTNode)
 psi/KtAnnotationUseSiteTarget.kt:KtAnnotationUseSiteTarget:KtAnnotationUseSiteTarget(KotlinAnnotationUseSiteTargetStub)
 psi/KtAnnotationUseSiteTarget.kt:KtAnnotationUseSiteTarget:getAnnotationUseSiteTarget()
 psi/KtAnnotationsContainer.java:KtAnnotationsContainer
-psi/KtAnnotationsContainer.java:null
 psi/KtAnonymousInitializer.kt:KtAnonymousInitializer
 psi/KtAnonymousInitializer.kt:KtAnonymousInitializer:body
 psi/KtAnonymousInitializer.kt:KtAnonymousInitializer:containingDeclaration
@@ -138,33 +220,72 @@ psi/KtAnonymousInitializer.kt:KtClassInitializer:openBraceNode
 psi/KtAnonymousInitializer.kt:KtScriptInitializer
 psi/KtAnonymousInitializer.kt:KtScriptInitializer:getModificationStamp()
 psi/KtArrayAccessExpression.java:KtArrayAccessExpression
-psi/KtArrayAccessExpression.java:null
+psi/KtArrayAccessExpression.java:KtArrayAccessExpression:@NotNull getBracketRanges()
+psi/KtArrayAccessExpression.java:KtArrayAccessExpression:@NotNull getIndexExpressions()
+psi/KtArrayAccessExpression.java:KtArrayAccessExpression:@NotNull getIndicesNode()
+psi/KtArrayAccessExpression.java:KtArrayAccessExpression:@Nullable @IfNotParsed getArrayExpression()
+psi/KtArrayAccessExpression.java:KtArrayAccessExpression:@Nullable getLeftBracket()
+psi/KtArrayAccessExpression.java:KtArrayAccessExpression:@Nullable getRightBracket()
+psi/KtArrayAccessExpression.java:KtArrayAccessExpression:KtArrayAccessExpression(ASTNode)
+psi/KtArrayAccessExpression.java:KtArrayAccessExpression:getTrailingComma()
 psi/KtBackingField.java:KtBackingField
-psi/KtBackingField.java:null
+psi/KtBackingField.java:KtBackingField:@NotNull getNamePlaceholder()
+psi/KtBackingField.java:KtBackingField:@Nullable getEqualsToken()
+psi/KtBackingField.java:KtBackingField:@Nullable getReturnTypeReference()
+psi/KtBackingField.java:KtBackingField:KtBackingField(ASTNode)
+psi/KtBackingField.java:KtBackingField:KtBackingField(KotlinBackingFieldStub)
+psi/KtBackingField.java:KtBackingField:getFieldKeyword()
 psi/KtBinaryExpression.java:KtBinaryExpression
-psi/KtBinaryExpression.java:null
+psi/KtBinaryExpression.java:KtBinaryExpression:@NotNull getOperationToken()
+psi/KtBinaryExpression.java:KtBinaryExpression:@Nullable @IfNotParsed getLeft()
+psi/KtBinaryExpression.java:KtBinaryExpression:@Nullable @IfNotParsed getRight()
+psi/KtBinaryExpression.java:KtBinaryExpression:KtBinaryExpression(ASTNode)
 psi/KtBinaryExpressionWithTypeRHS.java:KtBinaryExpressionWithTypeRHS
-psi/KtBinaryExpressionWithTypeRHS.java:null
+psi/KtBinaryExpressionWithTypeRHS.java:KtBinaryExpressionWithTypeRHS:@NotNull getLeft()
+psi/KtBinaryExpressionWithTypeRHS.java:KtBinaryExpressionWithTypeRHS:@Nullable @IfNotParsed getRight()
+psi/KtBinaryExpressionWithTypeRHS.java:KtBinaryExpressionWithTypeRHS:KtBinaryExpressionWithTypeRHS(ASTNode)
 psi/KtBlockCodeFragment.kt:KtBlockCodeFragment
 psi/KtBlockCodeFragment.kt:KtBlockCodeFragment:KtBlockCodeFragment(Project, String, CharSequence, String?, PsiElement?)
 psi/KtBlockCodeFragmentType.java:KtBlockCodeFragmentType
-psi/KtBlockCodeFragmentType.java:null
+psi/KtBlockCodeFragmentType.java:KtBlockCodeFragmentType:KtBlockCodeFragmentType()
 psi/KtBlockExpression.java:@SuppressWarnings("deprecation") KtBlockExpression
-psi/KtBlockExpression.java:null
+psi/KtBlockExpression.java:KtBlockExpression:@Nullable getFirstStatement()
+psi/KtBlockExpression.java:KtBlockExpression:@Nullable getLBrace()
+psi/KtBlockExpression.java:KtBlockExpression:@Nullable getLastBracketRange()
+psi/KtBlockExpression.java:KtBlockExpression:@Nullable getRBrace()
+psi/KtBlockExpression.java:KtBlockExpression:@ReadOnly @NotNull getStatements()
+psi/KtBlockExpression.java:KtBlockExpression:@SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins shouldChangeModificationCount(PsiElement)
+psi/KtBlockExpression.java:KtBlockExpression:KtBlockExpression(CharSequence)
 psi/KtBlockStringTemplateEntry.java:KtBlockStringTemplateEntry
-psi/KtBlockStringTemplateEntry.java:null
+psi/KtBlockStringTemplateEntry.java:KtBlockStringTemplateEntry:KtBlockStringTemplateEntry(ASTNode)
+psi/KtBlockStringTemplateEntry.java:KtBlockStringTemplateEntry:KtBlockStringTemplateEntry(KotlinPlaceHolderWithTextStub<KtBlockStringTemplateEntry>)
 psi/KtBreakExpression.java:KtBreakExpression
-psi/KtBreakExpression.java:null
+psi/KtBreakExpression.java:KtBreakExpression:KtBreakExpression(ASTNode)
 psi/KtCallElement.java:KtCallElement
-psi/KtCallElement.java:null
+psi/KtCallElement.java:KtCallElement:@NotNull getLambdaArguments()
+psi/KtCallElement.java:KtCallElement:@NotNull getTypeArguments()
+psi/KtCallElement.java:KtCallElement:@NotNull getValueArguments()
+psi/KtCallElement.java:KtCallElement:@Nullable getCalleeExpression()
+psi/KtCallElement.java:KtCallElement:@Nullable getTypeArgumentList()
+psi/KtCallElement.java:KtCallElement:@Nullable getValueArgumentList()
 psi/KtCallExpression.java:KtCallExpression
-psi/KtCallExpression.java:null
+psi/KtCallExpression.java:KtCallExpression:KtCallExpression(ASTNode)
 psi/KtCallableDeclaration.java:KtCallableDeclaration
-psi/KtCallableDeclaration.java:null
+psi/KtCallableDeclaration.java:KtCallableDeclaration:@NotNull default getContextReceivers()
+psi/KtCallableDeclaration.java:KtCallableDeclaration:@NotNull getValueParameters()
+psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getColon()
+psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getReceiverTypeReference()
+psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getTypeReference()
+psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable getValueParameterList()
+psi/KtCallableDeclaration.java:KtCallableDeclaration:@Nullable setTypeReference(KtTypeReference)
 psi/KtCallableReferenceExpression.java:KtCallableReferenceExpression
-psi/KtCallableReferenceExpression.java:null
+psi/KtCallableReferenceExpression.java:KtCallableReferenceExpression:@NotNull getCallableReference()
+psi/KtCallableReferenceExpression.java:KtCallableReferenceExpression:KtCallableReferenceExpression(ASTNode)
 psi/KtCatchClause.java:KtCatchClause
-psi/KtCatchClause.java:null
+psi/KtCatchClause.java:KtCatchClause:@Nullable @IfNotParsed getCatchBody()
+psi/KtCatchClause.java:KtCatchClause:@Nullable @IfNotParsed getCatchParameter()
+psi/KtCatchClause.java:KtCatchClause:@Nullable @IfNotParsed getParameterList()
+psi/KtCatchClause.java:KtCatchClause:KtCatchClause(ASTNode)
 psi/KtClass.kt:KtClass:KtClass(ASTNode)
 psi/KtClass.kt:KtClass:KtClass(KotlinClassStub)
 psi/KtClass.kt:KtClass:KtClass(KotlinClassStub, IStubElementType<*, *>)
@@ -193,7 +314,8 @@ psi/KtClassBody.kt:KtClassBody:properties
 psi/KtClassBody.kt:KtClassBody:rBrace
 psi/KtClassLikeDeclaration.kt:KtClassLikeDeclaration
 psi/KtClassLiteralExpression.java:KtClassLiteralExpression
-psi/KtClassLiteralExpression.java:null
+psi/KtClassLiteralExpression.java:KtClassLiteralExpression:KtClassLiteralExpression(ASTNode)
+psi/KtClassLiteralExpression.java:KtClassLiteralExpression:KtClassLiteralExpression(KotlinClassLiteralExpressionStub)
 psi/KtClassOrObject.kt:KtClassOrObject:KtClassOrObject(ASTNode)
 psi/KtClassOrObject.kt:KtClassOrObject:KtClassOrObject(KotlinClassOrObjectStub<out KtClassOrObject>, IStubElementType<*, *>)
 psi/KtClassOrObject.kt:KtClassOrObject:addSuperTypeListEntry(KtSuperTypeListEntry)
@@ -228,7 +350,12 @@ psi/KtCodeFragment.kt:abstract KtCodeFragment
 psi/KtCodeFragment.kt:fun KotlinCodeFragmentImportModificationListener
 psi/KtCodeFragmentBase.kt:KtCodeFragmentBase
 psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression
-psi/KtCollectionLiteralExpression.java:null
+psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:@Nullable getLeftBracket()
+psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:@Nullable getRightBracket()
+psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:@Nullable getTrailingComma()
+psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:KtCollectionLiteralExpression(ASTNode)
+psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:KtCollectionLiteralExpression(KotlinCollectionLiteralExpressionStub)
+psi/KtCollectionLiteralExpression.java:KtCollectionLiteralExpression:getInnerExpressions()
 psi/KtCommonFile.kt:KtCommonFile:@Deprecated("Use 'isScript()' instead", ReplaceWith("isScript()")) isScriptByTree
 psi/KtCommonFile.kt:KtCommonFile:@Deprecated("Use 'packageFqName' property instead", ReplaceWith("packageFqName")) packageFqNameByTree
 psi/KtCommonFile.kt:KtCommonFile:@Suppress("unused") shouldChangeModificationCount(PsiElement)
@@ -248,7 +375,8 @@ psi/KtCommonFile.kt:KtCommonFile:packageFqName
 psi/KtCommonFile.kt:KtCommonFile:script
 psi/KtCommonFile.kt:KtCommonFile:virtualFilePath
 psi/KtConstantExpression.java:KtConstantExpression
-psi/KtConstantExpression.java:null
+psi/KtConstantExpression.java:KtConstantExpression:KtConstantExpression(ASTNode)
+psi/KtConstantExpression.java:KtConstantExpression:KtConstantExpression(KotlinConstantExpressionStub)
 psi/KtConstructor.kt:KtConstructor:abstract getContainingClassOrObject()
 psi/KtConstructor.kt:KtConstructor:hasConstructorKeyword()
 psi/KtConstructor.kt:KtConstructor:isDelegatedCallToThis()
@@ -256,13 +384,18 @@ psi/KtConstructor.kt:KtConstructor:isExplicitDelegationCall()
 psi/KtConstructor.kt:KtConstructor:open getConstructorKeyword()
 psi/KtConstructor.kt:abstract KtConstructor
 psi/KtConstructorCalleeExpression.java:KtConstructorCalleeExpression
-psi/KtConstructorCalleeExpression.java:null
+psi/KtConstructorCalleeExpression.java:KtConstructorCalleeExpression:@Nullable @IfNotParsed getConstructorReferenceExpression()
+psi/KtConstructorCalleeExpression.java:KtConstructorCalleeExpression:@Nullable @IfNotParsed getTypeReference()
+psi/KtConstructorCalleeExpression.java:KtConstructorCalleeExpression:KtConstructorCalleeExpression(ASTNode)
+psi/KtConstructorCalleeExpression.java:KtConstructorCalleeExpression:KtConstructorCalleeExpression(KotlinPlaceHolderStub<KtConstructorCalleeExpression>)
 psi/KtConstructorDelegationCall.java:KtConstructorDelegationCall
-psi/KtConstructorDelegationCall.java:null
+psi/KtConstructorDelegationCall.java:KtConstructorDelegationCall:KtConstructorDelegationCall(ASTNode)
+psi/KtConstructorDelegationCall.java:KtConstructorDelegationCall:isCallToThis()
 psi/KtConstructorDelegationReferenceExpression.java:KtConstructorDelegationReferenceExpression
-psi/KtConstructorDelegationReferenceExpression.java:null
+psi/KtConstructorDelegationReferenceExpression.java:KtConstructorDelegationReferenceExpression:KtConstructorDelegationReferenceExpression(ASTNode)
+psi/KtConstructorDelegationReferenceExpression.java:KtConstructorDelegationReferenceExpression:isThis()
 psi/KtContainerNode.java:KtContainerNode
-psi/KtContainerNode.java:null
+psi/KtContainerNode.java:KtContainerNode:KtContainerNode(ASTNode)
 psi/KtContainerNodeForControlStructureBody.kt:KtContainerNodeForControlStructureBody
 psi/KtContainerNodeForControlStructureBody.kt:KtContainerNodeForControlStructureBody:expression
 psi/KtContextReceiver.kt:KtContextReceiver:KtContextReceiver(ASTNode)
@@ -279,7 +412,7 @@ psi/KtContextReceiverList.kt:KtContextReceiverList:contextParameters()
 psi/KtContextReceiverList.kt:KtContextReceiverList:contextReceivers()
 psi/KtContextReceiverList.kt:KtContextReceiverList:typeReferences()
 psi/KtContinueExpression.java:KtContinueExpression
-psi/KtContinueExpression.java:null
+psi/KtContinueExpression.java:KtContinueExpression:KtContinueExpression(ASTNode)
 psi/KtContractEffect.kt:KtContractEffect
 psi/KtContractEffect.kt:KtContractEffect:KtContractEffect(ASTNode)
 psi/KtContractEffect.kt:KtContractEffect:KtContractEffect(KotlinContractEffectStub)
@@ -289,26 +422,50 @@ psi/KtContractEffectList.kt:KtContractEffectList:KtContractEffectList(ASTNode)
 psi/KtContractEffectList.kt:KtContractEffectList:KtContractEffectList(KotlinPlaceHolderStub<KtContractEffectList>)
 psi/KtContractEffectList.kt:getContractEffects()
 psi/KtDeclaration.java:KtDeclaration
-psi/KtDeclaration.java:null
+psi/KtDeclaration.java:KtDeclaration:@Nullable getDocComment()
+psi/KtDeclaration.java:KtDeclaration:ARRAY_FACTORY
+psi/KtDeclaration.java:KtDeclaration:EMPTY_ARRAY
 psi/KtDeclarationContainer.java:KtDeclarationContainer
+psi/KtDeclarationContainer.java:KtDeclarationContainer:@NotNull @ReadOnly getDeclarations()
+psi/KtDeclarationImpl.java:KtDeclarationImpl:KtDeclarationImpl(ASTNode)
 psi/KtDeclarationImpl.java:abstract KtDeclarationImpl
-psi/KtDeclarationImpl.java:null
 psi/KtDeclarationModifierList.java:KtDeclarationModifierList
-psi/KtDeclarationModifierList.java:null
+psi/KtDeclarationModifierList.java:KtDeclarationModifierList:KtDeclarationModifierList(ASTNode)
+psi/KtDeclarationModifierList.java:KtDeclarationModifierList:KtDeclarationModifierList(KotlinModifierListStub)
+psi/KtDeclarationStub.java:KtDeclarationStub:KtDeclarationStub(ASTNode)
+psi/KtDeclarationStub.java:KtDeclarationStub:KtDeclarationStub(T, IStubElementType)
+psi/KtDeclarationStub.java:KtDeclarationStub:getModificationStamp()
 psi/KtDeclarationStub.java:abstract KtDeclarationStub
-psi/KtDeclarationStub.java:null
 psi/KtDeclarationWithBody.java:KtDeclarationWithBody
-psi/KtDeclarationWithBody.java:null
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:@NotNull getValueParameters()
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:@Nullable default getBodyBlockExpression()
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:@Nullable default getContractDescription()
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:@Nullable getBodyExpression()
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:@Nullable getEqualsToken()
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:default hasContractEffectList()
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:hasBlockBody()
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:hasBody()
+psi/KtDeclarationWithBody.java:KtDeclarationWithBody:hasDeclaredReturnType()
 psi/KtDeclarationWithInitializer.java:KtDeclarationWithInitializer
-psi/KtDeclarationWithInitializer.java:null
+psi/KtDeclarationWithInitializer.java:KtDeclarationWithInitializer:@Nullable getInitializer()
+psi/KtDeclarationWithInitializer.java:KtDeclarationWithInitializer:hasInitializer()
 psi/KtDelegatedSuperTypeEntry.java:KtDelegatedSuperTypeEntry
-psi/KtDelegatedSuperTypeEntry.java:null
+psi/KtDelegatedSuperTypeEntry.java:KtDelegatedSuperTypeEntry:@Nullable @IfNotParsed getDelegateExpression()
+psi/KtDelegatedSuperTypeEntry.java:KtDelegatedSuperTypeEntry:KtDelegatedSuperTypeEntry(ASTNode)
+psi/KtDelegatedSuperTypeEntry.java:KtDelegatedSuperTypeEntry:KtDelegatedSuperTypeEntry(KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>)
+psi/KtDelegatedSuperTypeEntry.java:KtDelegatedSuperTypeEntry:getByKeywordNode()
 psi/KtDestructuringDeclaration.java:KtDestructuringDeclaration
-psi/KtDestructuringDeclaration.java:null
+psi/KtDestructuringDeclaration.java:KtDestructuringDeclaration:@NotNull getEntries()
+psi/KtDestructuringDeclaration.java:KtDestructuringDeclaration:@Nullable getLPar()
+psi/KtDestructuringDeclaration.java:KtDestructuringDeclaration:@Nullable getRPar()
+psi/KtDestructuringDeclaration.java:KtDestructuringDeclaration:@Nullable getTrailingComma()
+psi/KtDestructuringDeclaration.java:KtDestructuringDeclaration:KtDestructuringDeclaration(ASTNode)
+psi/KtDestructuringDeclaration.java:KtDestructuringDeclaration:isVar()
 psi/KtDestructuringDeclarationEntry.java:@SuppressWarnings("deprecation") KtDestructuringDeclarationEntry
-psi/KtDestructuringDeclarationEntry.java:null
+psi/KtDestructuringDeclarationEntry.java:KtDestructuringDeclarationEntry:KtDestructuringDeclarationEntry(ASTNode)
 psi/KtDoWhileExpression.java:KtDoWhileExpression
-psi/KtDoWhileExpression.java:null
+psi/KtDoWhileExpression.java:KtDoWhileExpression:@Nullable @IfNotParsed getWhileKeyword()
+psi/KtDoWhileExpression.java:KtDoWhileExpression:KtDoWhileExpression(ASTNode)
 psi/KtDotQualifiedExpression.kt:KtDotQualifiedExpression
 psi/KtDotQualifiedExpression.kt:KtDotQualifiedExpression:KtDotQualifiedExpression(ASTNode)
 psi/KtDotQualifiedExpression.kt:KtDotQualifiedExpression:KtDotQualifiedExpression(KotlinPlaceHolderStub<KtDotQualifiedExpression>)
@@ -321,31 +478,41 @@ psi/KtDoubleColonExpression.kt:KtDoubleColonExpression:lhs
 psi/KtDoubleColonExpression.kt:KtDoubleColonExpression:receiverExpression
 psi/KtDoubleColonExpression.kt:KtDoubleColonExpression:setReceiverExpression(KtExpression)
 psi/KtDynamicType.java:KtDynamicType
-psi/KtDynamicType.java:null
+psi/KtDynamicType.java:KtDynamicType:KtDynamicType(ASTNode)
+psi/KtDynamicType.java:KtDynamicType:KtDynamicType(KotlinPlaceHolderStub<KtDynamicType>)
 psi/KtElement.kt:KtElement
 psi/KtElement.kt:KtElement:accept(KtVisitor<R, D>, D)
 psi/KtElement.kt:KtElement:acceptChildren(KtVisitor<Void, D>, D)
 psi/KtElement.kt:getModificationStamp()
 psi/KtElementImpl.java:KtElementImpl
-psi/KtElementImpl.java:null
+psi/KtElementImpl.java:KtElementImpl:KtElementImpl(ASTNode)
 psi/KtElementImplStub.java:KtElementImplStub
-psi/KtElementImplStub.java:null
+psi/KtElementImplStub.java:KtElementImplStub:KtElementImplStub(ASTNode)
+psi/KtElementImplStub.java:KtElementImplStub:KtElementImplStub(T, IStubElementType)
 psi/KtEnumEntry.java:KtEnumEntry
-psi/KtEnumEntry.java:null
+psi/KtEnumEntry.java:KtEnumEntry:@Nullable getInitializerList()
+psi/KtEnumEntry.java:KtEnumEntry:KtEnumEntry(ASTNode)
+psi/KtEnumEntry.java:KtEnumEntry:KtEnumEntry(KotlinClassStub)
+psi/KtEnumEntry.java:KtEnumEntry:hasInitializer()
 psi/KtEnumEntrySuperclassReferenceExpression.kt:KtEnumEntrySuperclassReferenceExpression
 psi/KtEnumEntrySuperclassReferenceExpression.kt:KtEnumEntrySuperclassReferenceExpression:KtEnumEntrySuperclassReferenceExpression(ASTNode)
 psi/KtEnumEntrySuperclassReferenceExpression.kt:KtEnumEntrySuperclassReferenceExpression:KtEnumEntrySuperclassReferenceExpression(KotlinEnumEntrySuperclassReferenceExpressionStub)
 psi/KtEscapeStringTemplateEntry.java:KtEscapeStringTemplateEntry
-psi/KtEscapeStringTemplateEntry.java:null
+psi/KtEscapeStringTemplateEntry.java:KtEscapeStringTemplateEntry:KtEscapeStringTemplateEntry(ASTNode)
+psi/KtEscapeStringTemplateEntry.java:KtEscapeStringTemplateEntry:KtEscapeStringTemplateEntry(KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>)
+psi/KtEscapeStringTemplateEntry.java:KtEscapeStringTemplateEntry:getUnescapedValue()
 psi/KtExpression.java:KtExpression
-psi/KtExpression.java:null
+psi/KtExpression.java:KtExpression:ARRAY_FACTORY
+psi/KtExpression.java:KtExpression:EMPTY_ARRAY
 psi/KtExpressionCodeFragment.kt:KtExpressionCodeFragment
 psi/KtExpressionCodeFragmentType.java:KtExpressionCodeFragmentType
-psi/KtExpressionCodeFragmentType.java:null
+psi/KtExpressionCodeFragmentType.java:KtExpressionCodeFragmentType:KtExpressionCodeFragmentType()
 psi/KtExpressionImpl.kt:Companion:replaceExpression(KtExpression, PsiElement, Boolean, (PsiElement) -> PsiElement)
 psi/KtExpressionImpl.kt:abstract KtExpressionImpl
+psi/KtExpressionImplStub.java:KtExpressionImplStub:@NotNull rawReplace(PsiElement)
+psi/KtExpressionImplStub.java:KtExpressionImplStub:KtExpressionImplStub(ASTNode)
+psi/KtExpressionImplStub.java:KtExpressionImplStub:KtExpressionImplStub(T, IStubElementType)
 psi/KtExpressionImplStub.java:abstract KtExpressionImplStub
-psi/KtExpressionImplStub.java:null
 psi/KtExpressionWithLabel.kt:KtExpressionWithLabel:getLabelName()
 psi/KtExpressionWithLabel.kt:KtExpressionWithLabel:getLabelNameAsName()
 psi/KtExpressionWithLabel.kt:KtExpressionWithLabel:getTargetLabel()
@@ -354,31 +521,67 @@ psi/KtExpressionWithLabel.kt:open KtExpressionWithLabel
 psi/KtFile.kt:Companion:FILE_DECLARATION_TYPES
 psi/KtFile.kt:open KtFile
 psi/KtFileAnnotationList.java:KtFileAnnotationList
-psi/KtFileAnnotationList.java:null
+psi/KtFileAnnotationList.java:KtFileAnnotationList:@NotNull getAnnotationEntries()
+psi/KtFileAnnotationList.java:KtFileAnnotationList:@NotNull getAnnotations()
+psi/KtFileAnnotationList.java:KtFileAnnotationList:KtFileAnnotationList(ASTNode)
+psi/KtFileAnnotationList.java:KtFileAnnotationList:KtFileAnnotationList(KotlinPlaceHolderStub<KtFileAnnotationList>)
 psi/KtFileClassProvider.kt:KtFileClassProvider
 psi/KtFileClassProvider.kt:KtFileClassProvider:getFileClasses(KtFile)
 psi/KtFinallySection.java:KtFinallySection
-psi/KtFinallySection.java:null
+psi/KtFinallySection.java:KtFinallySection:KtFinallySection(ASTNode)
+psi/KtFinallySection.java:KtFinallySection:getFinalExpression()
 psi/KtForExpression.java:KtForExpression
-psi/KtForExpression.java:null
+psi/KtForExpression.java:KtForExpression:@NotNull getForKeyword()
+psi/KtForExpression.java:KtForExpression:@Nullable @IfNotParsed getInKeyword()
+psi/KtForExpression.java:KtForExpression:@Nullable @IfNotParsed getLoopParameter()
+psi/KtForExpression.java:KtForExpression:@Nullable @IfNotParsed getLoopRange()
+psi/KtForExpression.java:KtForExpression:@Nullable getDestructuringDeclaration()
+psi/KtForExpression.java:KtForExpression:KtForExpression(ASTNode)
 psi/KtFunction.java:KtFunction
-psi/KtFunction.java:null
+psi/KtFunction.java:KtFunction:isLocal()
 psi/KtFunctionLiteral.java:KtFunctionLiteral
-psi/KtFunctionLiteral.java:null
+psi/KtFunctionLiteral.java:KtFunctionLiteral:@NotNull getLBrace()
+psi/KtFunctionLiteral.java:KtFunctionLiteral:@Nullable @IfNotParsed getRBrace()
+psi/KtFunctionLiteral.java:KtFunctionLiteral:@Nullable getArrow()
+psi/KtFunctionLiteral.java:KtFunctionLiteral:KtFunctionLiteral(ASTNode)
+psi/KtFunctionLiteral.java:KtFunctionLiteral:hasParameterSpecification()
 psi/KtFunctionNotStubbed.java:@SuppressWarnings("deprecation") abstract KtFunctionNotStubbed
-psi/KtFunctionNotStubbed.java:null
+psi/KtFunctionNotStubbed.java:KtFunctionNotStubbed:KtFunctionNotStubbed(ASTNode)
 psi/KtFunctionType.java:KtFunctionType
-psi/KtFunctionType.java:null
+psi/KtFunctionType.java:KtFunctionType:@NotNull getParameters()
+psi/KtFunctionType.java:KtFunctionType:@Nullable getContextReceiverList()
+psi/KtFunctionType.java:KtFunctionType:@Nullable getParameterList()
+psi/KtFunctionType.java:KtFunctionType:@Nullable getReceiver()
+psi/KtFunctionType.java:KtFunctionType:@Nullable getReceiverTypeReference()
+psi/KtFunctionType.java:KtFunctionType:@Nullable getReturnTypeReference()
+psi/KtFunctionType.java:KtFunctionType:KtFunctionType(ASTNode)
+psi/KtFunctionType.java:KtFunctionType:KtFunctionType(KotlinFunctionTypeStub)
+psi/KtFunctionType.java:KtFunctionType:getContextReceiversTypeReferences()
+psi/KtFunctionType.java:KtFunctionType:static final RETURN_TYPE_SEPARATOR
 psi/KtFunctionTypeReceiver.java:KtFunctionTypeReceiver
-psi/KtFunctionTypeReceiver.java:null
+psi/KtFunctionTypeReceiver.java:KtFunctionTypeReceiver:@NotNull getTypeReference()
+psi/KtFunctionTypeReceiver.java:KtFunctionTypeReceiver:KtFunctionTypeReceiver(ASTNode)
+psi/KtFunctionTypeReceiver.java:KtFunctionTypeReceiver:KtFunctionTypeReceiver(KotlinPlaceHolderStub<KtFunctionTypeReceiver>)
 psi/KtIfExpression.java:KtIfExpression
-psi/KtIfExpression.java:null
+psi/KtIfExpression.java:KtIfExpression:@NotNull getIfKeyword()
+psi/KtIfExpression.java:KtIfExpression:@Nullable @IfNotParsed getCondition()
+psi/KtIfExpression.java:KtIfExpression:@Nullable @IfNotParsed getLeftParenthesis()
+psi/KtIfExpression.java:KtIfExpression:@Nullable @IfNotParsed getRightParenthesis()
+psi/KtIfExpression.java:KtIfExpression:@Nullable getElse()
+psi/KtIfExpression.java:KtIfExpression:@Nullable getElseKeyword()
+psi/KtIfExpression.java:KtIfExpression:@Nullable getThen()
+psi/KtIfExpression.java:KtIfExpression:KtIfExpression(ASTNode)
 psi/KtImportAlias.kt:KtImportAlias
 psi/KtImportAlias.kt:KtImportAlias:@Suppress("unused") KtImportAlias(ASTNode)
 psi/KtImportAlias.kt:KtImportAlias:@Suppress("unused") KtImportAlias(KotlinImportAliasStub)
 psi/KtImportAlias.kt:KtImportAlias:importDirective
 psi/KtImportDirective.java:KtImportDirective
-psi/KtImportDirective.java:null
+psi/KtImportDirective.java:KtImportDirective:@Nullable @IfNotParsed getImportPath()
+psi/KtImportDirective.java:KtImportDirective:@Nullable @IfNotParsed getImportedReference()
+psi/KtImportDirective.java:KtImportDirective:@Nullable getAlias()
+psi/KtImportDirective.java:KtImportDirective:KtImportDirective(ASTNode)
+psi/KtImportDirective.java:KtImportDirective:KtImportDirective(KotlinImportDirectiveStub)
+psi/KtImportDirective.java:KtImportDirective:isValidImport()
 psi/KtImportInfo.kt:ImportContent:ExpressionBased
 psi/KtImportInfo.kt:ImportContent:FqNameBased
 psi/KtImportInfo.kt:KtImportInfo
@@ -389,22 +592,29 @@ psi/KtImportInfo.kt:KtImportInfo:importedName
 psi/KtImportInfo.kt:KtImportInfo:isAllUnder
 psi/KtImportInfo.kt:KtImportInfo:sealed ImportContent
 psi/KtImportList.java:KtImportList
-psi/KtImportList.java:null
-psi/KtImportsFactory.java:KtImportsFactory:null
-psi/KtImportsFactory.java:KtImportsFactory:null
-psi/KtImportsFactory.java:KtImportsFactory:null
-psi/KtImportsFactory.java:KtImportsFactory:null
+psi/KtImportList.java:KtImportList:@NotNull getImports()
+psi/KtImportList.java:KtImportList:KtImportList(ASTNode)
+psi/KtImportList.java:KtImportList:KtImportList(KotlinPlaceHolderStub<KtImportList>)
+psi/KtImportsFactory.java:KtImportsFactory:@NotNull createImportDirectives(Collection<ImportPath>)
+psi/KtImportsFactory.java:KtImportsFactory:@NotNull createImportDirectivesNotCached(Collection<ImportPath>)
+psi/KtImportsFactory.java:KtImportsFactory:KtImportsFactory(Project)
 psi/KtInitializerList.java:KtInitializerList
-psi/KtInitializerList.java:null
+psi/KtInitializerList.java:KtInitializerList:@NotNull getInitializers()
+psi/KtInitializerList.java:KtInitializerList:KtInitializerList(ASTNode)
+psi/KtInitializerList.java:KtInitializerList:KtInitializerList(KotlinPlaceHolderStub<KtInitializerList>)
+psi/KtInstanceExpressionWithLabel.java:KtInstanceExpressionWithLabel:@NotNull getInstanceReference()
+psi/KtInstanceExpressionWithLabel.java:KtInstanceExpressionWithLabel:KtInstanceExpressionWithLabel(ASTNode)
 psi/KtInstanceExpressionWithLabel.java:abstract KtInstanceExpressionWithLabel
-psi/KtInstanceExpressionWithLabel.java:null
 psi/KtIntersectionType.kt:KtIntersectionType
 psi/KtIntersectionType.kt:KtIntersectionType:KtIntersectionType(ASTNode)
 psi/KtIntersectionType.kt:KtIntersectionType:KtIntersectionType(KotlinPlaceHolderStub<KtIntersectionType>)
 psi/KtIntersectionType.kt:KtIntersectionType:getLeftTypeRef()
 psi/KtIntersectionType.kt:KtIntersectionType:getRightTypeRef()
 psi/KtIsExpression.java:KtIsExpression
-psi/KtIsExpression.java:null
+psi/KtIsExpression.java:KtIsExpression:@NotNull getLeftHandSide()
+psi/KtIsExpression.java:KtIsExpression:@Nullable @IfNotParsed getTypeReference()
+psi/KtIsExpression.java:KtIsExpression:KtIsExpression(ASTNode)
+psi/KtIsExpression.java:KtIsExpression:isNegated()
 psi/KtLabelReferenceExpression.kt:KtLabelReferenceExpression
 psi/KtLabeledExpression.kt:KtLabeledExpression
 psi/KtLabeledExpression.kt:KtLabeledExpression:@get:IfNotParsed baseExpression
@@ -412,37 +622,70 @@ psi/KtLambdaArgument.kt:KtLambdaArgument
 psi/KtLambdaArgument.kt:KtLambdaArgument:KtLambdaArgument(ASTNode)
 psi/KtLambdaArgument.kt:KtLambdaArgument:KtLambdaArgument(KotlinValueArgumentStub<KtLambdaArgument>)
 psi/KtLambdaExpression.java:KtLambdaExpression
-psi/KtLambdaExpression.java:null
+psi/KtLambdaExpression.java:KtLambdaExpression:@NotNull asElement()
+psi/KtLambdaExpression.java:KtLambdaExpression:@NotNull getFunctionLiteral()
+psi/KtLambdaExpression.java:KtLambdaExpression:@NotNull getLeftCurlyBrace()
+psi/KtLambdaExpression.java:KtLambdaExpression:@NotNull getValueParameters()
+psi/KtLambdaExpression.java:KtLambdaExpression:@Nullable getBodyExpression()
+psi/KtLambdaExpression.java:KtLambdaExpression:@Nullable getRightCurlyBrace()
+psi/KtLambdaExpression.java:KtLambdaExpression:@SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins shouldChangeModificationCount(PsiElement)
+psi/KtLambdaExpression.java:KtLambdaExpression:KtLambdaExpression(CharSequence)
+psi/KtLambdaExpression.java:KtLambdaExpression:hasDeclaredReturnType()
 psi/KtLiteralStringTemplateEntry.java:KtLiteralStringTemplateEntry
-psi/KtLiteralStringTemplateEntry.java:null
+psi/KtLiteralStringTemplateEntry.java:KtLiteralStringTemplateEntry:KtLiteralStringTemplateEntry(ASTNode)
+psi/KtLiteralStringTemplateEntry.java:KtLiteralStringTemplateEntry:KtLiteralStringTemplateEntry(KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>)
+psi/KtLoopExpression.java:KtLoopExpression:@Nullable @IfNotParsed getLeftParenthesis()
+psi/KtLoopExpression.java:KtLoopExpression:@Nullable @IfNotParsed getRightParenthesis()
+psi/KtLoopExpression.java:KtLoopExpression:@Nullable getBody()
+psi/KtLoopExpression.java:KtLoopExpression:KtLoopExpression(ASTNode)
 psi/KtLoopExpression.java:abstract KtLoopExpression
-psi/KtLoopExpression.java:null
+psi/KtModifierList.java:KtModifierList:@NotNull getAnnotationEntries()
+psi/KtModifierList.java:KtModifierList:@NotNull getAnnotations()
+psi/KtModifierList.java:KtModifierList:@Nullable getModifier(KtModifierKeywordToken)
+psi/KtModifierList.java:KtModifierList:@Nullable getModifier(TokenSet)
+psi/KtModifierList.java:KtModifierList:KtModifierList(ASTNode)
+psi/KtModifierList.java:KtModifierList:KtModifierList(KotlinModifierListStub, IStubElementType)
+psi/KtModifierList.java:KtModifierList:getOwner()
+psi/KtModifierList.java:KtModifierList:hasModifier(KtModifierKeywordToken)
 psi/KtModifierList.java:abstract KtModifierList
-psi/KtModifierList.java:null
 psi/KtModifierListOwner.java:KtModifierListOwner
-psi/KtModifierListOwner.java:null
+psi/KtModifierListOwner.java:KtModifierListOwner:@NotNull addAnnotationEntry(KtAnnotationEntry)
+psi/KtModifierListOwner.java:KtModifierListOwner:@Nullable getModifierList()
+psi/KtModifierListOwner.java:KtModifierListOwner:addModifier(KtModifierKeywordToken)
+psi/KtModifierListOwner.java:KtModifierListOwner:hasModifier(KtModifierKeywordToken)
+psi/KtModifierListOwner.java:KtModifierListOwner:removeModifier(KtModifierKeywordToken)
 psi/KtModifierListOwnerStub.java:KtModifierListOwnerStub
-psi/KtModifierListOwnerStub.java:null
+psi/KtModifierListOwnerStub.java:KtModifierListOwnerStub:KtModifierListOwnerStub(ASTNode)
+psi/KtModifierListOwnerStub.java:KtModifierListOwnerStub:KtModifierListOwnerStub(T, IStubElementType)
 psi/KtNameReferenceExpression.kt:KtNameReferenceExpression
 psi/KtNameReferenceExpression.kt:KtNameReferenceExpression:KtNameReferenceExpression(ASTNode)
 psi/KtNameReferenceExpression.kt:KtNameReferenceExpression:KtNameReferenceExpression(KotlinNameReferenceExpressionStub)
 psi/KtNameReferenceExpression.kt:KtNameReferenceExpression:isPlaceholder
 psi/KtNamed.java:KtNamed
+psi/KtNamed.java:KtNamed:@Nullable getNameAsName()
 psi/KtNamedDeclaration.java:KtNamedDeclaration
-psi/KtNamedDeclaration.java:null
-psi/KtNamedDeclarationNotStubbed.java:@Deprecated abstract KtNamedDeclarationNotStubbed
-psi/KtNamedDeclarationNotStubbed.java:null
-psi/KtNamedDeclarationStub.java:abstract KtNamedDeclarationStub
-psi/KtNamedDeclarationStub.java:null
-psi/KtNamedDeclarationUtil.java:KtNamedDeclarationUtil:null
-psi/KtNamedDeclarationUtil.java:KtNamedDeclarationUtil:null
-psi/KtNamedDeclarationUtil.java:KtNamedDeclarationUtil:null
-psi/KtNamedDeclarationUtil.java:KtNamedDeclarationUtil:null
+psi/KtNamedDeclaration.java:KtNamedDeclaration:@NotNull getNameAsSafeName()
+psi/KtNamedDeclaration.java:KtNamedDeclaration:@Nullable getFqName()
+psi/KtNamedDeclarationUtil.java:KtNamedDeclarationUtil:@Nullable static getParentFqName(KtNamedDeclaration)
+psi/KtNamedDeclarationUtil.java:KtNamedDeclarationUtil:@Nullable static getUnsafeFQName(KtNamedDeclaration)
 psi/KtNamedDeclarationUtil.java:final KtNamedDeclarationUtil
 psi/KtNamedFunction.java:KtNamedFunction
-psi/KtNamedFunction.java:null
+psi/KtNamedFunction.java:KtNamedFunction:@Nullable @IfNotParsed // "function" with no "fun" keyword is created by parser for "{...}" on top-level or in class body getFunKeyword()
+psi/KtNamedFunction.java:KtNamedFunction:@SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins shouldChangeModificationCount(PsiElement)
+psi/KtNamedFunction.java:KtNamedFunction:KtNamedFunction(ASTNode)
+psi/KtNamedFunction.java:KtNamedFunction:KtNamedFunction(KotlinFunctionStub)
+psi/KtNamedFunction.java:KtNamedFunction:hasTypeParameterListBeforeFunctionName()
+psi/KtNamedFunction.java:KtNamedFunction:isAnonymous()
+psi/KtNamedFunction.java:KtNamedFunction:isTopLevel()
+psi/KtNamedFunction.java:KtNamedFunction:mayHaveContract()
+psi/KtNamedFunction.java:KtNamedFunction:mayHaveContract(boolean)
 psi/KtNullableType.java:KtNullableType
-psi/KtNullableType.java:null
+psi/KtNullableType.java:KtNullableType:@NotNull getAnnotationEntries()
+psi/KtNullableType.java:KtNullableType:@NotNull getQuestionMarkNode()
+psi/KtNullableType.java:KtNullableType:@Nullable @IfNotParsed getInnerType()
+psi/KtNullableType.java:KtNullableType:@Nullable getModifierList()
+psi/KtNullableType.java:KtNullableType:KtNullableType(ASTNode)
+psi/KtNullableType.java:KtNullableType:KtNullableType(KotlinPlaceHolderStub<KtNullableType>)
 psi/KtObjectDeclaration.kt:KtObjectDeclaration
 psi/KtObjectDeclaration.kt:KtObjectDeclaration:KtObjectDeclaration(ASTNode)
 psi/KtObjectDeclaration.kt:KtObjectDeclaration:KtObjectDeclaration(KotlinObjectStub)
@@ -450,41 +693,108 @@ psi/KtObjectDeclaration.kt:KtObjectDeclaration:getObjectKeyword()
 psi/KtObjectDeclaration.kt:KtObjectDeclaration:isCompanion()
 psi/KtObjectDeclaration.kt:KtObjectDeclaration:isObjectLiteral()
 psi/KtObjectLiteralExpression.java:KtObjectLiteralExpression
-psi/KtObjectLiteralExpression.java:null
+psi/KtObjectLiteralExpression.java:KtObjectLiteralExpression:@NotNull getObjectDeclaration()
+psi/KtObjectLiteralExpression.java:KtObjectLiteralExpression:KtObjectLiteralExpression(ASTNode)
 psi/KtOperationExpression.java:KtOperationExpression
-psi/KtOperationExpression.java:null
+psi/KtOperationExpression.java:KtOperationExpression:@NotNull getOperationReference()
 psi/KtOperationReferenceExpression.kt:KtOperationReferenceExpression
 psi/KtOperationReferenceExpression.kt:KtOperationReferenceExpression:isConventionOperator()
 psi/KtOperationReferenceExpression.kt:KtOperationReferenceExpression:operationSignTokenType
 psi/KtPackageDirective.java:KtPackageDirective
-psi/KtPackageDirective.java:null
+psi/KtPackageDirective.java:KtPackageDirective:@NotNull getFqName()
+psi/KtPackageDirective.java:KtPackageDirective:@NotNull getFqName(KtSimpleNameExpression)
+psi/KtPackageDirective.java:KtPackageDirective:@NotNull getNameAsName()
+psi/KtPackageDirective.java:KtPackageDirective:@NotNull getPackageNames()
+psi/KtPackageDirective.java:KtPackageDirective:@NotNull getQualifiedName()
+psi/KtPackageDirective.java:KtPackageDirective:@Nullable getLastReferenceExpression()
+psi/KtPackageDirective.java:KtPackageDirective:@Nullable getNameIdentifier()
+psi/KtPackageDirective.java:KtPackageDirective:@Nullable getPackageKeyword()
+psi/KtPackageDirective.java:KtPackageDirective:@Nullable getPackageNameExpression()
+psi/KtPackageDirective.java:KtPackageDirective:KtPackageDirective(ASTNode)
+psi/KtPackageDirective.java:KtPackageDirective:KtPackageDirective(KotlinPlaceHolderStub<KtPackageDirective>)
+psi/KtPackageDirective.java:KtPackageDirective:isRoot()
+psi/KtPackageDirective.java:KtPackageDirective:setFqName(FqName)
 psi/KtParameter.java:KtParameter
-psi/KtParameter.java:null
+psi/KtParameter.java:KtParameter:@Nullable getDefaultValue()
+psi/KtParameter.java:KtParameter:@Nullable getDestructuringDeclaration()
+psi/KtParameter.java:KtParameter:@Nullable getEqualsToken()
+psi/KtParameter.java:KtParameter:@Nullable getOwnerFunction()
+psi/KtParameter.java:KtParameter:KtParameter(ASTNode)
+psi/KtParameter.java:KtParameter:KtParameter(KotlinParameterStub)
+psi/KtParameter.java:KtParameter:hasDefaultValue()
+psi/KtParameter.java:KtParameter:hasValOrVar()
+psi/KtParameter.java:KtParameter:isCatchParameter()
+psi/KtParameter.java:KtParameter:isLoopParameter()
+psi/KtParameter.java:KtParameter:isMutable()
+psi/KtParameter.java:KtParameter:isVarArg()
+psi/KtParameter.java:KtParameter:static final VAL_VAR_TOKEN_SET
 psi/KtParameterList.java:KtParameterList
-psi/KtParameterList.java:null
+psi/KtParameterList.java:KtParameterList:@NotNull addParameter(KtParameter)
+psi/KtParameterList.java:KtParameterList:@NotNull addParameterAfter(KtParameter, KtParameter)
+psi/KtParameterList.java:KtParameterList:@NotNull addParameterBefore(KtParameter, KtParameter)
+psi/KtParameterList.java:KtParameterList:@NotNull getParameters()
+psi/KtParameterList.java:KtParameterList:@Nullable getFirstComma()
+psi/KtParameterList.java:KtParameterList:@Nullable getLeftParenthesis()
+psi/KtParameterList.java:KtParameterList:@Nullable getRightParenthesis()
+psi/KtParameterList.java:KtParameterList:@Nullable getTrailingComma()
+psi/KtParameterList.java:KtParameterList:KtParameterList(ASTNode)
+psi/KtParameterList.java:KtParameterList:KtParameterList(KotlinPlaceHolderStub<KtParameterList>)
+psi/KtParameterList.java:KtParameterList:getOwnerFunction()
+psi/KtParameterList.java:KtParameterList:removeParameter(KtParameter)
+psi/KtParameterList.java:KtParameterList:removeParameter(int)
 psi/KtParenthesizedExpression.java:KtParenthesizedExpression
-psi/KtParenthesizedExpression.java:null
+psi/KtParenthesizedExpression.java:KtParenthesizedExpression:@Nullable @IfNotParsed getExpression()
+psi/KtParenthesizedExpression.java:KtParenthesizedExpression:KtParenthesizedExpression(ASTNode)
 psi/KtPostfixExpression.java:KtPostfixExpression
-psi/KtPostfixExpression.java:null
+psi/KtPostfixExpression.java:KtPostfixExpression:KtPostfixExpression(ASTNode)
 psi/KtPrefixExpression.java:KtPrefixExpression
-psi/KtPrefixExpression.java:null
+psi/KtPrefixExpression.java:KtPrefixExpression:KtPrefixExpression(ASTNode)
 psi/KtPrimaryConstructor.kt:KtPrimaryConstructor
 psi/KtPrimaryConstructor.kt:KtPrimaryConstructor:KtPrimaryConstructor(ASTNode)
 psi/KtPrimaryConstructor.kt:KtPrimaryConstructor:KtPrimaryConstructor(KotlinConstructorStub<KtPrimaryConstructor>)
 psi/KtPrimaryConstructor.kt:KtPrimaryConstructor:removeRedundantConstructorKeywordAndSpace()
+psi/KtProjectionKind.java:KtProjectionKind
+psi/KtProjectionKind.java:KtProjectionKind:@Nullable getToken()
 psi/KtProjectionKind.java:KtProjectionKind:IN
 psi/KtProjectionKind.java:KtProjectionKind:NONE
 psi/KtProjectionKind.java:KtProjectionKind:OUT
 psi/KtProjectionKind.java:KtProjectionKind:STAR
-psi/KtProjectionKind.java:KtProjectionKind:null
-psi/KtProjectionKind.java:KtProjectionKind:null
-psi/KtProjectionKind.java:enum KtProjectionKind
+psi/KtProjectionKind.java:KtProjectionKind:valueOf
+psi/KtProjectionKind.java:KtProjectionKind:values
 psi/KtProperty.java:KtProperty
-psi/KtProperty.java:null
+psi/KtProperty.java:KtProperty:@NotNull getAccessors()
+psi/KtProperty.java:KtProperty:@Nullable getDelegate()
+psi/KtProperty.java:KtProperty:@Nullable getDelegateExpression()
+psi/KtProperty.java:KtProperty:@Nullable getDelegateExpressionOrInitializer()
+psi/KtProperty.java:KtProperty:@Nullable getEqualsToken()
+psi/KtProperty.java:KtProperty:@Nullable getFieldDeclaration()
+psi/KtProperty.java:KtProperty:@Nullable getGetter()
+psi/KtProperty.java:KtProperty:@Nullable getSetter()
+psi/KtProperty.java:KtProperty:@Nullable setInitializer(KtExpression)
+psi/KtProperty.java:KtProperty:@SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins shouldChangeModificationCount(PsiElement)
+psi/KtProperty.java:KtProperty:KtProperty(ASTNode)
+psi/KtProperty.java:KtProperty:KtProperty(KotlinPropertyStub)
+psi/KtProperty.java:KtProperty:hasBody()
+psi/KtProperty.java:KtProperty:hasDelegate()
+psi/KtProperty.java:KtProperty:hasDelegateExpression()
+psi/KtProperty.java:KtProperty:hasDelegateExpressionOrInitializer()
+psi/KtProperty.java:KtProperty:isLocal()
+psi/KtProperty.java:KtProperty:isMember()
+psi/KtProperty.java:KtProperty:isTopLevel()
 psi/KtPropertyAccessor.java:KtPropertyAccessor
-psi/KtPropertyAccessor.java:null
+psi/KtPropertyAccessor.java:KtPropertyAccessor:@NotNull getNamePlaceholder()
+psi/KtPropertyAccessor.java:KtPropertyAccessor:@NotNull getProperty()
+psi/KtPropertyAccessor.java:KtPropertyAccessor:@Nullable getParameter()
+psi/KtPropertyAccessor.java:KtPropertyAccessor:@Nullable getParameterList()
+psi/KtPropertyAccessor.java:KtPropertyAccessor:@Nullable getReturnTypeReference()
+psi/KtPropertyAccessor.java:KtPropertyAccessor:KtPropertyAccessor(ASTNode)
+psi/KtPropertyAccessor.java:KtPropertyAccessor:KtPropertyAccessor(KotlinPropertyAccessorStub)
+psi/KtPropertyAccessor.java:KtPropertyAccessor:isGetter()
+psi/KtPropertyAccessor.java:KtPropertyAccessor:isSetter()
 psi/KtPropertyDelegate.java:KtPropertyDelegate
-psi/KtPropertyDelegate.java:null
+psi/KtPropertyDelegate.java:KtPropertyDelegate:@NotNull getByKeywordNode()
+psi/KtPropertyDelegate.java:KtPropertyDelegate:@Nullable getExpression()
+psi/KtPropertyDelegate.java:KtPropertyDelegate:KtPropertyDelegate(ASTNode)
 psi/KtPsiFactory.kt:@JvmOverloads @JvmName("KtPsiFactory") @Suppress("unused") @Deprecated(
     "Use 'KtPsiFactory' constructor instead",
     level = DeprecationLevel.WARNING,
@@ -649,94 +959,102 @@ psi/KtPsiFactory.kt:Target:FUNCTION
 psi/KtPsiFactory.kt:Target:READ_ONLY_PROPERTY
 psi/KtPsiFactory.kt:analysisContext
 psi/KtPsiFactory.kt:doNotAnalyze
+psi/KtPsiUtil.java:KtExpressionWrapper:getBaseExpression()
 psi/KtPsiUtil.java:KtPsiUtil
+psi/KtPsiUtil.java:KtPsiUtil:@NotNull static findRootExpressions(Collection<KtElement>)
+psi/KtPsiUtil.java:KtPsiUtil:@NotNull static getText(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:@NotNull static safeDeparenthesize(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:@NotNull static safeDeparenthesize(KtExpression, boolean)
+psi/KtPsiUtil.java:KtPsiUtil:@NotNull static safeName(String)
+psi/KtPsiUtil.java:KtPsiUtil:@NotNull static unquoteIdentifier(String)
+psi/KtPsiUtil.java:KtPsiUtil:@NotNull static unquoteIdentifierOrFieldReference(String)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable @Contract("_, !null -> !null") static replaceModifierList(KtModifierListOwner, KtModifierList)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable @SafeVarargs @Contract("null, _ -> null") static getTopmostParentOfTypes(PsiElement, Class<? extends PsiElement>...)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static deparenthesize(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static deparenthesize(KtExpression, boolean)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static deparenthesizeOnce(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static deparenthesizeOnce(KtExpression, boolean)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static findChildByType(PsiElement, IElementType)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getClassIfParameterIsProperty(KtParameter)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getDirectParentOfTypeForBlock(KtBlockExpression, Class<T>)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getEnclosingElementForLocalDeclaration(KtDeclaration)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getEnclosingElementForLocalDeclaration(KtDeclaration, boolean)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getExpressionOrLastStatementInBlock(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getLastElementDeparenthesized(KtExpression, StatementFilter)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getLastReference(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getLastStatementInABlock(KtBlockExpression)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getNullableText(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getOperationToken(KtOperationExpression)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getOutermostClassOrObject(KtClassOrObject)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getOutermostDescendantElement(PsiElement, boolean, Predicate<KtElement>)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getOutermostParent(PsiElement, PsiElement, boolean)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getPackageName(KtElement)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getParentCallIfPresent(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getPreviousWord(PsiElement, String)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static getScript(KtDeclaration)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static prevLeafIgnoringWhitespaceAndComments(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static skipSiblingsBackwardByPredicate(PsiElement, Predicate<PsiElement>)
+psi/KtPsiUtil.java:KtPsiUtil:@Nullable static skipTrailingWhitespacesAndComments(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:@SafeVarargs @SuppressWarnings("unchecked") static getLastChildByType(PsiElement, Class<? extends T>...)
+psi/KtPsiUtil.java:KtPsiUtil:@SuppressWarnings("unused") // used in intellij repo static areParenthesesUseless(KtParenthesizedExpression)
 psi/KtPsiUtil.java:KtPsiUtil:KtExpressionWrapper
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPsiUtil.java:KtPsiUtil:null
-psi/KtPureClassOrObject.java:null
+psi/KtPsiUtil.java:KtPsiUtil:static areParenthesesNecessary(KtExpression, KtExpression, KtElement)
+psi/KtPsiUtil.java:KtPsiUtil:static ascendIfPropertyAccessor(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:static checkVariableDeclarationInBlock(KtBlockExpression, String)
+psi/KtPsiUtil.java:KtPsiUtil:static checkWhenExpressionHasSingleElse(KtWhenExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isAbstract(KtDeclarationWithBody)
+psi/KtPsiUtil.java:KtPsiUtil:static isAssignment(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:static isBooleanConstant(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isCast(KtBinaryExpressionWithTypeRHS)
+psi/KtPsiUtil.java:KtPsiUtil:static isDeprecated(KtModifierListOwner)
+psi/KtPsiUtil.java:KtPsiUtil:static isFalseConstant(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isInOrNotInOperation(KtBinaryExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isLHSOfDot(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isLabelIdentifierExpression(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:static isLabeledFunctionLiteral(KtFunctionLiteral)
+psi/KtPsiUtil.java:KtPsiUtil:static isLocal(KtDeclaration)
+psi/KtPsiUtil.java:KtPsiUtil:static isNotInOperation(KtBinaryExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isNullConstant(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isOrdinaryAssignment(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:static isRemovableVariableDeclaration(KtDeclaration)
+psi/KtPsiUtil.java:KtPsiUtil:static isSafeCast(KtBinaryExpressionWithTypeRHS)
+psi/KtPsiUtil.java:KtPsiUtil:static isScriptDeclaration(KtDeclaration)
+psi/KtPsiUtil.java:KtPsiUtil:static isSelectorInQualified(KtSimpleNameExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isStatement(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:static isStatementContainer(PsiElement)
+psi/KtPsiUtil.java:KtPsiUtil:static isTrait(KtClassOrObject)
+psi/KtPsiUtil.java:KtPsiUtil:static isTrueConstant(KtExpression)
+psi/KtPsiUtil.java:KtPsiUtil:static isUnsafeCast(KtBinaryExpressionWithTypeRHS)
+psi/KtPsiUtil.java:KtPsiUtil:static visitChildren(KtElement, KtVisitor<Void, D>, D)
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@NotNull @ReadOnly getCompanionObjects()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@NotNull @ReadOnly getContextReceivers()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@NotNull @ReadOnly getPrimaryConstructorParameters()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@NotNull @ReadOnly getSecondaryConstructors()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@NotNull @ReadOnly getSuperTypeListEntries()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@Nullable getBody()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@Nullable getName()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@Nullable getPrimaryConstructor()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:@Nullable getPrimaryConstructorModifierList()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:hasExplicitPrimaryConstructor()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:hasPrimaryConstructor()
+psi/KtPureClassOrObject.java:KtPureClassOrObject:isLocal()
+psi/KtPureElement.java:KtPureElement:@NotNull getContainingKtFile()
 psi/KtQualifiedExpression.kt:KtQualifiedExpression
 psi/KtQualifiedExpression.kt:KtQualifiedExpression:operationSign
 psi/KtQualifiedExpression.kt:KtQualifiedExpression:operationTokenNode
 psi/KtQualifiedExpression.kt:KtQualifiedExpression:receiverExpression
 psi/KtQualifiedExpression.kt:KtQualifiedExpression:selectorExpression
 psi/KtReferenceExpression.java:KtReferenceExpression
-psi/KtReferenceExpression.java:null
 psi/KtReturnExpression.java:KtReturnExpression
-psi/KtReturnExpression.java:null
+psi/KtReturnExpression.java:KtReturnExpression:@NotNull getReturnKeyword()
+psi/KtReturnExpression.java:KtReturnExpression:@Nullable getLabeledExpression()
+psi/KtReturnExpression.java:KtReturnExpression:@Nullable getReturnedExpression()
+psi/KtReturnExpression.java:KtReturnExpression:KtReturnExpression(ASTNode)
 psi/KtSafeQualifiedExpression.kt:KtSafeQualifiedExpression
 psi/KtScript.java:KtScript
-psi/KtScript.java:null
+psi/KtScript.java:KtScript:@NotNull getBlockExpression()
+psi/KtScript.java:KtScript:KtScript(ASTNode)
+psi/KtScript.java:KtScript:KtScript(KotlinScriptStub)
 psi/KtSecondaryConstructor.kt:KtSecondaryConstructor
 psi/KtSecondaryConstructor.kt:KtSecondaryConstructor:KtSecondaryConstructor(ASTNode)
 psi/KtSecondaryConstructor.kt:KtSecondaryConstructor:KtSecondaryConstructor(KotlinConstructorStub<KtSecondaryConstructor>)
@@ -745,7 +1063,7 @@ psi/KtSecondaryConstructor.kt:KtSecondaryConstructor:getDelegationCallOrNull()
 psi/KtSecondaryConstructor.kt:KtSecondaryConstructor:hasImplicitDelegationCall()
 psi/KtSecondaryConstructor.kt:KtSecondaryConstructor:replaceImplicitDelegationCallWithExplicit(Boolean)
 psi/KtSelfType.java:KtSelfType
-psi/KtSelfType.java:null
+psi/KtSelfType.java:KtSelfType:KtSelfType(ASTNode)
 psi/KtSimpleNameExpression.kt:Companion:getReferencedNameAsNameImpl(KtSimpleNameExpression)
 psi/KtSimpleNameExpression.kt:Companion:getReferencedNameElementTypeImpl(KtSimpleNameExpression)
 psi/KtSimpleNameExpression.kt:Companion:getReferencedNameImpl(KtSimpleNameExpression)
@@ -757,39 +1075,61 @@ psi/KtSimpleNameExpression.kt:KtSimpleNameExpression:getReferencedNameElement()
 psi/KtSimpleNameExpression.kt:KtSimpleNameExpression:getReferencedNameElementType()
 psi/KtSimpleNameExpression.kt:abstract KtSimpleNameExpressionImpl
 psi/KtSimpleNameStringTemplateEntry.java:KtSimpleNameStringTemplateEntry
-psi/KtSimpleNameStringTemplateEntry.java:null
+psi/KtSimpleNameStringTemplateEntry.java:KtSimpleNameStringTemplateEntry:KtSimpleNameStringTemplateEntry(ASTNode)
+psi/KtSimpleNameStringTemplateEntry.java:KtSimpleNameStringTemplateEntry:KtSimpleNameStringTemplateEntry(KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry>)
+psi/KtStringTemplateEntry.java:KtStringTemplateEntry:@Nullable getExpression()
+psi/KtStringTemplateEntry.java:KtStringTemplateEntry:KtStringTemplateEntry(ASTNode)
+psi/KtStringTemplateEntry.java:KtStringTemplateEntry:KtStringTemplateEntry(KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry>, IStubElementType)
+psi/KtStringTemplateEntry.java:KtStringTemplateEntry:static final EMPTY_ARRAY
 psi/KtStringTemplateEntry.java:abstract KtStringTemplateEntry
-psi/KtStringTemplateEntry.java:null
+psi/KtStringTemplateEntryWithExpression.java:KtStringTemplateEntryWithExpression:KtStringTemplateEntryWithExpression(ASTNode)
+psi/KtStringTemplateEntryWithExpression.java:KtStringTemplateEntryWithExpression:KtStringTemplateEntryWithExpression(KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntryWithExpression>, IStubElementType)
 psi/KtStringTemplateEntryWithExpression.java:abstract KtStringTemplateEntryWithExpression
-psi/KtStringTemplateEntryWithExpression.java:null
 psi/KtStringTemplateExpression.java:KtStringTemplateExpression
-psi/KtStringTemplateExpression.java:null
-psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:null
-psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:null
-psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:null
-psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:null
-psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:null
+psi/KtStringTemplateExpression.java:KtStringTemplateExpression:@NotNull getEntries()
+psi/KtStringTemplateExpression.java:KtStringTemplateExpression:@Nullable getInterpolationPrefix()
+psi/KtStringTemplateExpression.java:KtStringTemplateExpression:KtStringTemplateExpression(ASTNode)
+psi/KtStringTemplateExpression.java:KtStringTemplateExpression:KtStringTemplateExpression(KotlinPlaceHolderStub<KtStringTemplateExpression>)
+psi/KtStringTemplateExpression.java:KtStringTemplateExpression:hasInterpolation()
+psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:@Nullable @SuppressWarnings("unchecked") static getPsiOrStubParent(PsiElement, Class<T>, boolean)
+psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:@Nullable static getContainingDeclaration(PsiElement)
+psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:@Nullable static getContainingDeclaration(PsiElement, Class<T>)
+psi/KtStubbedPsiUtil.java:KtStubbedPsiUtil:@Nullable static getStubOrPsiChild(KtElementImplStub<?>, TokenSet, ArrayFactory<T>)
 psi/KtStubbedPsiUtil.java:final KtStubbedPsiUtil
 psi/KtSuperExpression.java:KtSuperExpression
-psi/KtSuperExpression.java:null
+psi/KtSuperExpression.java:KtSuperExpression:KtSuperExpression(ASTNode)
 psi/KtSuperTypeCallEntry.java:KtSuperTypeCallEntry
-psi/KtSuperTypeCallEntry.java:null
+psi/KtSuperTypeCallEntry.java:KtSuperTypeCallEntry:KtSuperTypeCallEntry(ASTNode)
+psi/KtSuperTypeCallEntry.java:KtSuperTypeCallEntry:KtSuperTypeCallEntry(KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>)
 psi/KtSuperTypeEntry.java:KtSuperTypeEntry
-psi/KtSuperTypeEntry.java:null
+psi/KtSuperTypeEntry.java:KtSuperTypeEntry:KtSuperTypeEntry(ASTNode)
+psi/KtSuperTypeEntry.java:KtSuperTypeEntry:KtSuperTypeEntry(KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>)
 psi/KtSuperTypeList.java:KtSuperTypeList
-psi/KtSuperTypeList.java:null
+psi/KtSuperTypeList.java:KtSuperTypeList:@NotNull addEntry(KtSuperTypeListEntry)
+psi/KtSuperTypeList.java:KtSuperTypeList:KtSuperTypeList(ASTNode)
+psi/KtSuperTypeList.java:KtSuperTypeList:KtSuperTypeList(KotlinPlaceHolderStub<KtSuperTypeList>)
+psi/KtSuperTypeList.java:KtSuperTypeList:getEntries()
+psi/KtSuperTypeList.java:KtSuperTypeList:getModificationStamp()
+psi/KtSuperTypeList.java:KtSuperTypeList:removeEntry(KtSuperTypeListEntry)
 psi/KtSuperTypeListEntry.java:KtSuperTypeListEntry
-psi/KtSuperTypeListEntry.java:null
+psi/KtSuperTypeListEntry.java:KtSuperTypeListEntry:@Nullable getTypeAsUserType()
+psi/KtSuperTypeListEntry.java:KtSuperTypeListEntry:@Nullable getTypeReference()
+psi/KtSuperTypeListEntry.java:KtSuperTypeListEntry:KtSuperTypeListEntry(ASTNode)
+psi/KtSuperTypeListEntry.java:KtSuperTypeListEntry:KtSuperTypeListEntry(KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>, IStubElementType)
+psi/KtSuperTypeListEntry.java:KtSuperTypeListEntry:static ARRAY_FACTORY
 psi/KtThisExpression.java:KtThisExpression
-psi/KtThisExpression.java:null
+psi/KtThisExpression.java:KtThisExpression:KtThisExpression(ASTNode)
 psi/KtThrowExpression.java:KtThrowExpression
-psi/KtThrowExpression.java:null
+psi/KtThrowExpression.java:KtThrowExpression:@Nullable @IfNotParsed getThrownExpression()
+psi/KtThrowExpression.java:KtThrowExpression:KtThrowExpression(ASTNode)
 psi/KtTreeVisitor.java:KtTreeVisitor
-psi/KtTreeVisitor.java:null
 psi/KtTreeVisitorVoid.java:KtTreeVisitorVoid
-psi/KtTreeVisitorVoid.java:null
 psi/KtTryExpression.java:KtTryExpression
-psi/KtTryExpression.java:null
+psi/KtTryExpression.java:KtTryExpression:@NotNull getCatchClauses()
+psi/KtTryExpression.java:KtTryExpression:@NotNull getTryBlock()
+psi/KtTryExpression.java:KtTryExpression:@Nullable getFinallyBlock()
+psi/KtTryExpression.java:KtTryExpression:@Nullable getTryKeyword()
+psi/KtTryExpression.java:KtTryExpression:KtTryExpression(ASTNode)
 psi/KtTypeAlias.kt:KtTypeAlias
 psi/KtTypeAlias.kt:KtTypeAlias:@IfNotParsed getTypeAliasKeyword()
 psi/KtTypeAlias.kt:KtTypeAlias:@IfNotParsed getTypeReference()
@@ -797,72 +1137,457 @@ psi/KtTypeAlias.kt:KtTypeAlias:KtTypeAlias(ASTNode)
 psi/KtTypeAlias.kt:KtTypeAlias:KtTypeAlias(KotlinTypeAliasStub)
 psi/KtTypeAlias.kt:KtTypeAlias:isTopLevel()
 psi/KtTypeArgumentList.java:KtTypeArgumentList
-psi/KtTypeArgumentList.java:null
+psi/KtTypeArgumentList.java:KtTypeArgumentList:@NotNull addArgument(KtTypeProjection)
+psi/KtTypeArgumentList.java:KtTypeArgumentList:@NotNull getArguments()
+psi/KtTypeArgumentList.java:KtTypeArgumentList:@Nullable getTrailingComma()
+psi/KtTypeArgumentList.java:KtTypeArgumentList:KtTypeArgumentList(ASTNode)
+psi/KtTypeArgumentList.java:KtTypeArgumentList:KtTypeArgumentList(KotlinPlaceHolderStub<KtTypeArgumentList>)
 psi/KtTypeCodeFragment.kt:KtTypeCodeFragment
 psi/KtTypeCodeFragmentType.java:KtTypeCodeFragmentType
-psi/KtTypeCodeFragmentType.java:null
+psi/KtTypeCodeFragmentType.java:KtTypeCodeFragmentType:KtTypeCodeFragmentType()
 psi/KtTypeConstraint.java:KtTypeConstraint
-psi/KtTypeConstraint.java:null
+psi/KtTypeConstraint.java:KtTypeConstraint:@Nullable @IfNotParsed getBoundTypeReference()
+psi/KtTypeConstraint.java:KtTypeConstraint:@Nullable @IfNotParsed getSubjectTypeParameterName()
+psi/KtTypeConstraint.java:KtTypeConstraint:KtTypeConstraint(ASTNode)
+psi/KtTypeConstraint.java:KtTypeConstraint:KtTypeConstraint(KotlinPlaceHolderStub<KtTypeConstraint>)
 psi/KtTypeConstraintList.java:KtTypeConstraintList
-psi/KtTypeConstraintList.java:null
+psi/KtTypeConstraintList.java:KtTypeConstraintList:@NotNull getConstraints()
+psi/KtTypeConstraintList.java:KtTypeConstraintList:KtTypeConstraintList(ASTNode)
+psi/KtTypeConstraintList.java:KtTypeConstraintList:KtTypeConstraintList(KotlinPlaceHolderStub<KtTypeConstraintList>)
 psi/KtTypeElement.java:KtTypeElement
-psi/KtTypeElement.java:null
+psi/KtTypeElement.java:KtTypeElement:@NotNull getTypeArgumentsAsTypes()
+psi/KtTypeElement.java:KtTypeElement:ARRAY_FACTORY
+psi/KtTypeElement.java:KtTypeElement:EMPTY_ARRAY
 psi/KtTypeParameter.java:KtTypeParameter
-psi/KtTypeParameter.java:null
+psi/KtTypeParameter.java:KtTypeParameter:@NotNull getVariance()
+psi/KtTypeParameter.java:KtTypeParameter:@Nullable getExtendsBound()
+psi/KtTypeParameter.java:KtTypeParameter:@Nullable setExtendsBound(KtTypeReference)
+psi/KtTypeParameter.java:KtTypeParameter:KtTypeParameter(ASTNode)
+psi/KtTypeParameter.java:KtTypeParameter:KtTypeParameter(KotlinTypeParameterStub)
 psi/KtTypeParameterList.java:KtTypeParameterList
-psi/KtTypeParameterList.java:null
+psi/KtTypeParameterList.java:KtTypeParameterList:@NotNull addParameter(KtTypeParameter)
+psi/KtTypeParameterList.java:KtTypeParameterList:@NotNull getParameters()
+psi/KtTypeParameterList.java:KtTypeParameterList:@Nullable getTrailingComma()
+psi/KtTypeParameterList.java:KtTypeParameterList:KtTypeParameterList(ASTNode)
+psi/KtTypeParameterList.java:KtTypeParameterList:KtTypeParameterList(KotlinPlaceHolderStub<KtTypeParameterList>)
 psi/KtTypeParameterListOwner.java:KtTypeParameterListOwner
-psi/KtTypeParameterListOwner.java:null
-psi/KtTypeParameterListOwnerNotStubbed.java:@Deprecated abstract KtTypeParameterListOwnerNotStubbed
-psi/KtTypeParameterListOwnerNotStubbed.java:null
+psi/KtTypeParameterListOwner.java:KtTypeParameterListOwner:@NotNull getTypeConstraints()
+psi/KtTypeParameterListOwner.java:KtTypeParameterListOwner:@NotNull getTypeParameters()
+psi/KtTypeParameterListOwner.java:KtTypeParameterListOwner:@Nullable getTypeConstraintList()
+psi/KtTypeParameterListOwner.java:KtTypeParameterListOwner:@Nullable getTypeParameterList()
+psi/KtTypeParameterListOwnerStub.java:KtTypeParameterListOwnerStub:@Nullable getContextReceiverList()
+psi/KtTypeParameterListOwnerStub.java:KtTypeParameterListOwnerStub:KtTypeParameterListOwnerStub(ASTNode)
+psi/KtTypeParameterListOwnerStub.java:KtTypeParameterListOwnerStub:KtTypeParameterListOwnerStub(T, IStubElementType)
 psi/KtTypeParameterListOwnerStub.java:abstract KtTypeParameterListOwnerStub
-psi/KtTypeParameterListOwnerStub.java:null
 psi/KtTypeProjection.java:KtTypeProjection
-psi/KtTypeProjection.java:null
+psi/KtTypeProjection.java:KtTypeProjection:@NotNull getProjectionKind()
+psi/KtTypeProjection.java:KtTypeProjection:@Nullable getProjectionToken()
+psi/KtTypeProjection.java:KtTypeProjection:@Nullable getTypeReference()
+psi/KtTypeProjection.java:KtTypeProjection:KtTypeProjection(ASTNode)
+psi/KtTypeProjection.java:KtTypeProjection:KtTypeProjection(KotlinTypeProjectionStub)
 psi/KtTypeReference.kt:KtTypeReference:KtTypeReference(ASTNode)
 psi/KtTypeReference.kt:KtTypeReference:KtTypeReference(KotlinPlaceHolderStub<KtTypeReference>)
 psi/KtTypeReference.kt:KtTypeReference:hasParentheses()
 psi/KtTypeReference.kt:KtTypeReference:isPlaceholder
 psi/KtTypeReference.kt:KtTypeReference:nameForReceiverLabel()
 psi/KtTypeReference.kt:KtTypeReference:typeElement
+psi/KtUnaryExpression.java:KtUnaryExpression:@Nullable @IfNotParsed abstract getBaseExpression()
+psi/KtUnaryExpression.java:KtUnaryExpression:KtUnaryExpression(ASTNode)
+psi/KtUnaryExpression.java:KtUnaryExpression:getOperationToken()
 psi/KtUnaryExpression.java:abstract KtUnaryExpression
-psi/KtUnaryExpression.java:null
 psi/KtUserType.java:KtUserType
-psi/KtUserType.java:null
+psi/KtUserType.java:KtUserType:@NotNull getTypeArguments()
+psi/KtUserType.java:KtUserType:@Nullable @IfNotParsed getReferenceExpression()
+psi/KtUserType.java:KtUserType:@Nullable getQualifier()
+psi/KtUserType.java:KtUserType:@Nullable getReferencedName()
+psi/KtUserType.java:KtUserType:@Nullable getTypeArgumentList()
+psi/KtUserType.java:KtUserType:KtUserType(ASTNode)
+psi/KtUserType.java:KtUserType:KtUserType(KotlinUserTypeStub)
+psi/KtUserType.java:KtUserType:deleteQualifier()
 psi/KtValVarKeywordOwner.java:KtValVarKeywordOwner
-psi/KtValVarKeywordOwner.java:null
+psi/KtValVarKeywordOwner.java:KtValVarKeywordOwner:@Nullable getValOrVarKeyword()
 psi/KtValueArgument.java:KtValueArgument
-psi/KtValueArgument.java:null
+psi/KtValueArgument.java:KtValueArgument:@Nullable getEqualsToken()
+psi/KtValueArgument.java:KtValueArgument:@Nullable getStringTemplateExpression()
+psi/KtValueArgument.java:KtValueArgument:KtValueArgument(ASTNode)
+psi/KtValueArgument.java:KtValueArgument:KtValueArgument(KotlinValueArgumentStub<KtValueArgument>)
+psi/KtValueArgument.java:KtValueArgument:isSpread()
 psi/KtValueArgumentList.java:KtValueArgumentList
-psi/KtValueArgumentList.java:null
+psi/KtValueArgumentList.java:KtValueArgumentList:@NotNull addArgument(KtValueArgument)
+psi/KtValueArgumentList.java:KtValueArgumentList:@NotNull addArgumentAfter(KtValueArgument, KtValueArgument)
+psi/KtValueArgumentList.java:KtValueArgumentList:@NotNull addArgumentBefore(KtValueArgument, KtValueArgument)
+psi/KtValueArgumentList.java:KtValueArgumentList:@NotNull getArguments()
+psi/KtValueArgumentList.java:KtValueArgumentList:@Nullable getLeftParenthesis()
+psi/KtValueArgumentList.java:KtValueArgumentList:@Nullable getRightParenthesis()
+psi/KtValueArgumentList.java:KtValueArgumentList:KtValueArgumentList(ASTNode)
+psi/KtValueArgumentList.java:KtValueArgumentList:KtValueArgumentList(KotlinPlaceHolderStub<KtValueArgumentList>)
+psi/KtValueArgumentList.java:KtValueArgumentList:getTrailingComma()
+psi/KtValueArgumentList.java:KtValueArgumentList:removeArgument(KtValueArgument)
+psi/KtValueArgumentList.java:KtValueArgumentList:removeArgument(int)
 psi/KtValueArgumentName.java:KtValueArgumentName
-psi/KtValueArgumentName.java:null
+psi/KtValueArgumentName.java:KtValueArgumentName:KtValueArgumentName(ASTNode)
+psi/KtValueArgumentName.java:KtValueArgumentName:KtValueArgumentName(KotlinPlaceHolderStub<KtValueArgumentName>)
 psi/KtVariableDeclaration.java:KtVariableDeclaration
-psi/KtVariableDeclaration.java:null
+psi/KtVariableDeclaration.java:KtVariableDeclaration:isVar()
 psi/KtVisitor.java:KtVisitor
-psi/KtVisitor.java:null
+psi/KtVisitor.java:KtVisitor:visitAnnotatedExpression(KtAnnotatedExpression, D)
+psi/KtVisitor.java:KtVisitor:visitAnnotation(KtAnnotation, D)
+psi/KtVisitor.java:KtVisitor:visitAnnotationEntry(KtAnnotationEntry, D)
+psi/KtVisitor.java:KtVisitor:visitAnnotationUseSiteTarget(KtAnnotationUseSiteTarget, D)
+psi/KtVisitor.java:KtVisitor:visitAnonymousInitializer(KtAnonymousInitializer, D)
+psi/KtVisitor.java:KtVisitor:visitArgument(KtValueArgument, D)
+psi/KtVisitor.java:KtVisitor:visitArrayAccessExpression(KtArrayAccessExpression, D)
+psi/KtVisitor.java:KtVisitor:visitBackingField(KtBackingField, D)
+psi/KtVisitor.java:KtVisitor:visitBinaryWithTypeRHSExpression(KtBinaryExpressionWithTypeRHS, D)
+psi/KtVisitor.java:KtVisitor:visitBlockExpression(KtBlockExpression, D)
+psi/KtVisitor.java:KtVisitor:visitBlockStringTemplateEntry(KtBlockStringTemplateEntry, D)
+psi/KtVisitor.java:KtVisitor:visitBreakExpression(KtBreakExpression, D)
+psi/KtVisitor.java:KtVisitor:visitCallExpression(KtCallExpression, D)
+psi/KtVisitor.java:KtVisitor:visitCallableReferenceExpression(KtCallableReferenceExpression, D)
+psi/KtVisitor.java:KtVisitor:visitCatchSection(KtCatchClause, D)
+psi/KtVisitor.java:KtVisitor:visitClass(KtClass, D)
+psi/KtVisitor.java:KtVisitor:visitClassBody(KtClassBody, D)
+psi/KtVisitor.java:KtVisitor:visitClassInitializer(KtClassInitializer, D)
+psi/KtVisitor.java:KtVisitor:visitClassLiteralExpression(KtClassLiteralExpression, D)
+psi/KtVisitor.java:KtVisitor:visitClassOrObject(KtClassOrObject, D)
+psi/KtVisitor.java:KtVisitor:visitCollectionLiteralExpression(KtCollectionLiteralExpression, D)
+psi/KtVisitor.java:KtVisitor:visitConstantExpression(KtConstantExpression, D)
+psi/KtVisitor.java:KtVisitor:visitConstructorCalleeExpression(KtConstructorCalleeExpression, D)
+psi/KtVisitor.java:KtVisitor:visitConstructorDelegationCall(KtConstructorDelegationCall, D)
+psi/KtVisitor.java:KtVisitor:visitContextReceiverList(KtContextReceiverList, D)
+psi/KtVisitor.java:KtVisitor:visitContinueExpression(KtContinueExpression, D)
+psi/KtVisitor.java:KtVisitor:visitDeclaration(KtDeclaration, D)
+psi/KtVisitor.java:KtVisitor:visitDelegatedSuperTypeEntry(KtDelegatedSuperTypeEntry, D)
+psi/KtVisitor.java:KtVisitor:visitDestructuringDeclaration(KtDestructuringDeclaration, D)
+psi/KtVisitor.java:KtVisitor:visitDestructuringDeclarationEntry(KtDestructuringDeclarationEntry, D)
+psi/KtVisitor.java:KtVisitor:visitDoWhileExpression(KtDoWhileExpression, D)
+psi/KtVisitor.java:KtVisitor:visitDotQualifiedExpression(KtDotQualifiedExpression, D)
+psi/KtVisitor.java:KtVisitor:visitDoubleColonExpression(KtDoubleColonExpression, D)
+psi/KtVisitor.java:KtVisitor:visitDynamicType(KtDynamicType, D)
+psi/KtVisitor.java:KtVisitor:visitEnumEntry(KtEnumEntry, D)
+psi/KtVisitor.java:KtVisitor:visitEscapeStringTemplateEntry(KtEscapeStringTemplateEntry, D)
+psi/KtVisitor.java:KtVisitor:visitExpression(KtExpression, D)
+psi/KtVisitor.java:KtVisitor:visitExpressionWithLabel(KtExpressionWithLabel, D)
+psi/KtVisitor.java:KtVisitor:visitFileAnnotationList(KtFileAnnotationList, D)
+psi/KtVisitor.java:KtVisitor:visitFinallySection(KtFinallySection, D)
+psi/KtVisitor.java:KtVisitor:visitForExpression(KtForExpression, D)
+psi/KtVisitor.java:KtVisitor:visitFunctionType(KtFunctionType, D)
+psi/KtVisitor.java:KtVisitor:visitIfExpression(KtIfExpression, D)
+psi/KtVisitor.java:KtVisitor:visitImportAlias(KtImportAlias, D)
+psi/KtVisitor.java:KtVisitor:visitImportDirective(KtImportDirective, D)
+psi/KtVisitor.java:KtVisitor:visitImportList(KtImportList, D)
+psi/KtVisitor.java:KtVisitor:visitInitializerList(KtInitializerList, D)
+psi/KtVisitor.java:KtVisitor:visitIntersectionType(KtIntersectionType, D)
+psi/KtVisitor.java:KtVisitor:visitIsExpression(KtIsExpression, D)
+psi/KtVisitor.java:KtVisitor:visitKtElement(KtElement, D)
+psi/KtVisitor.java:KtVisitor:visitKtFile(KtFile, D)
+psi/KtVisitor.java:KtVisitor:visitLabeledExpression(KtLabeledExpression, D)
+psi/KtVisitor.java:KtVisitor:visitLambdaExpression(KtLambdaExpression, D)
+psi/KtVisitor.java:KtVisitor:visitLiteralStringTemplateEntry(KtLiteralStringTemplateEntry, D)
+psi/KtVisitor.java:KtVisitor:visitLoopExpression(KtLoopExpression, D)
+psi/KtVisitor.java:KtVisitor:visitModifierList(KtModifierList, D)
+psi/KtVisitor.java:KtVisitor:visitNamedDeclaration(KtNamedDeclaration, D)
+psi/KtVisitor.java:KtVisitor:visitNamedFunction(KtNamedFunction, D)
+psi/KtVisitor.java:KtVisitor:visitNullableType(KtNullableType, D)
+psi/KtVisitor.java:KtVisitor:visitObjectDeclaration(KtObjectDeclaration, D)
+psi/KtVisitor.java:KtVisitor:visitObjectLiteralExpression(KtObjectLiteralExpression, D)
+psi/KtVisitor.java:KtVisitor:visitPackageDirective(KtPackageDirective, D)
+psi/KtVisitor.java:KtVisitor:visitParameter(KtParameter, D)
+psi/KtVisitor.java:KtVisitor:visitParameterList(KtParameterList, D)
+psi/KtVisitor.java:KtVisitor:visitParenthesizedExpression(KtParenthesizedExpression, D)
+psi/KtVisitor.java:KtVisitor:visitPostfixExpression(KtPostfixExpression, D)
+psi/KtVisitor.java:KtVisitor:visitPrefixExpression(KtPrefixExpression, D)
+psi/KtVisitor.java:KtVisitor:visitPrimaryConstructor(KtPrimaryConstructor, D)
+psi/KtVisitor.java:KtVisitor:visitProperty(KtProperty, D)
+psi/KtVisitor.java:KtVisitor:visitPropertyAccessor(KtPropertyAccessor, D)
+psi/KtVisitor.java:KtVisitor:visitPropertyDelegate(KtPropertyDelegate, D)
+psi/KtVisitor.java:KtVisitor:visitQualifiedExpression(KtQualifiedExpression, D)
+psi/KtVisitor.java:KtVisitor:visitReferenceExpression(KtReferenceExpression, D)
+psi/KtVisitor.java:KtVisitor:visitReturnExpression(KtReturnExpression, D)
+psi/KtVisitor.java:KtVisitor:visitSafeQualifiedExpression(KtSafeQualifiedExpression, D)
+psi/KtVisitor.java:KtVisitor:visitScript(KtScript, D)
+psi/KtVisitor.java:KtVisitor:visitScriptInitializer(KtScriptInitializer, D)
+psi/KtVisitor.java:KtVisitor:visitSecondaryConstructor(KtSecondaryConstructor, D)
+psi/KtVisitor.java:KtVisitor:visitSelfType(KtSelfType, D)
+psi/KtVisitor.java:KtVisitor:visitSimpleNameExpression(KtSimpleNameExpression, D)
+psi/KtVisitor.java:KtVisitor:visitSimpleNameStringTemplateEntry(KtSimpleNameStringTemplateEntry, D)
+psi/KtVisitor.java:KtVisitor:visitStringTemplateEntry(KtStringTemplateEntry, D)
+psi/KtVisitor.java:KtVisitor:visitStringTemplateEntryWithExpression(KtStringTemplateEntryWithExpression, D)
+psi/KtVisitor.java:KtVisitor:visitStringTemplateExpression(KtStringTemplateExpression, D)
+psi/KtVisitor.java:KtVisitor:visitSuperExpression(KtSuperExpression, D)
+psi/KtVisitor.java:KtVisitor:visitSuperTypeCallEntry(KtSuperTypeCallEntry, D)
+psi/KtVisitor.java:KtVisitor:visitSuperTypeEntry(KtSuperTypeEntry, D)
+psi/KtVisitor.java:KtVisitor:visitSuperTypeList(KtSuperTypeList, D)
+psi/KtVisitor.java:KtVisitor:visitSuperTypeListEntry(KtSuperTypeListEntry, D)
+psi/KtVisitor.java:KtVisitor:visitThisExpression(KtThisExpression, D)
+psi/KtVisitor.java:KtVisitor:visitThrowExpression(KtThrowExpression, D)
+psi/KtVisitor.java:KtVisitor:visitTryExpression(KtTryExpression, D)
+psi/KtVisitor.java:KtVisitor:visitTypeAlias(KtTypeAlias, D)
+psi/KtVisitor.java:KtVisitor:visitTypeArgumentList(KtTypeArgumentList, D)
+psi/KtVisitor.java:KtVisitor:visitTypeConstraint(KtTypeConstraint, D)
+psi/KtVisitor.java:KtVisitor:visitTypeConstraintList(KtTypeConstraintList, D)
+psi/KtVisitor.java:KtVisitor:visitTypeParameter(KtTypeParameter, D)
+psi/KtVisitor.java:KtVisitor:visitTypeParameterList(KtTypeParameterList, D)
+psi/KtVisitor.java:KtVisitor:visitTypeProjection(KtTypeProjection, D)
+psi/KtVisitor.java:KtVisitor:visitTypeReference(KtTypeReference, D)
+psi/KtVisitor.java:KtVisitor:visitUnaryExpression(KtUnaryExpression, D)
+psi/KtVisitor.java:KtVisitor:visitUserType(KtUserType, D)
+psi/KtVisitor.java:KtVisitor:visitValueArgumentList(KtValueArgumentList, D)
+psi/KtVisitor.java:KtVisitor:visitWhenConditionInRange(KtWhenConditionInRange, D)
+psi/KtVisitor.java:KtVisitor:visitWhenConditionIsPattern(KtWhenConditionIsPattern, D)
+psi/KtVisitor.java:KtVisitor:visitWhenConditionWithExpression(KtWhenConditionWithExpression, D)
+psi/KtVisitor.java:KtVisitor:visitWhenEntry(KtWhenEntry, D)
+psi/KtVisitor.java:KtVisitor:visitWhenExpression(KtWhenExpression, D)
+psi/KtVisitor.java:KtVisitor:visitWhileExpression(KtWhileExpression, D)
 psi/KtVisitorVoid.java:KtVisitorVoid
-psi/KtVisitorVoid.java:null
+psi/KtVisitorVoid.java:KtVisitorVoid:visitAnnotatedExpression(KtAnnotatedExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitAnnotation(KtAnnotation)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitAnnotationEntry(KtAnnotationEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitAnonymousInitializer(KtAnonymousInitializer)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitArgument(KtValueArgument)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitArrayAccessExpression(KtArrayAccessExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitBinaryExpression(KtBinaryExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitBinaryWithTypeRHSExpression(KtBinaryExpressionWithTypeRHS)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitBlockExpression(KtBlockExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitBlockStringTemplateEntry(KtBlockStringTemplateEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitBreakExpression(KtBreakExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitCallExpression(KtCallExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitCallableReferenceExpression(KtCallableReferenceExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitCatchSection(KtCatchClause)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitClass(KtClass)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitClassBody(KtClassBody)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitClassInitializer(KtClassInitializer)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitClassLiteralExpression(KtClassLiteralExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitClassOrObject(KtClassOrObject)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitCollectionLiteralExpression(KtCollectionLiteralExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitConstantExpression(KtConstantExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitConstructorCalleeExpression(KtConstructorCalleeExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitConstructorDelegationCall(KtConstructorDelegationCall)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitContextReceiverList(KtContextReceiverList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitContinueExpression(KtContinueExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitDeclaration(KtDeclaration)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitDelegatedSuperTypeEntry(KtDelegatedSuperTypeEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitDestructuringDeclaration(KtDestructuringDeclaration)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitDestructuringDeclarationEntry(KtDestructuringDeclarationEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitDoWhileExpression(KtDoWhileExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitDotQualifiedExpression(KtDotQualifiedExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitDoubleColonExpression(KtDoubleColonExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitDynamicType(KtDynamicType)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitEnumEntry(KtEnumEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitEscapeStringTemplateEntry(KtEscapeStringTemplateEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitExpression(KtExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitExpressionWithLabel(KtExpressionWithLabel)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitFinallySection(KtFinallySection)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitForExpression(KtForExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitFunctionType(KtFunctionType)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitIfExpression(KtIfExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitImportAlias(KtImportAlias)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitImportDirective(KtImportDirective)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitImportList(KtImportList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitInitializerList(KtInitializerList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitIntersectionType(KtIntersectionType)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitIsExpression(KtIsExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitKtElement(KtElement)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitKtFile(KtFile)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitLabeledExpression(KtLabeledExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitLambdaExpression(KtLambdaExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitLiteralStringTemplateEntry(KtLiteralStringTemplateEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitLoopExpression(KtLoopExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitModifierList(KtModifierList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitNamedDeclaration(KtNamedDeclaration)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitNamedFunction(KtNamedFunction)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitNullableType(KtNullableType)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitObjectDeclaration(KtObjectDeclaration)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitObjectLiteralExpression(KtObjectLiteralExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitPackageDirective(KtPackageDirective)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitParameter(KtParameter)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitParameterList(KtParameterList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitParenthesizedExpression(KtParenthesizedExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitPostfixExpression(KtPostfixExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitPrefixExpression(KtPrefixExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitPrimaryConstructor(KtPrimaryConstructor)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitProperty(KtProperty)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitPropertyAccessor(KtPropertyAccessor)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitPropertyDelegate(KtPropertyDelegate)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitQualifiedExpression(KtQualifiedExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitReferenceExpression(KtReferenceExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitReturnExpression(KtReturnExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSafeQualifiedExpression(KtSafeQualifiedExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitScript(KtScript)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitScriptInitializer(KtScriptInitializer)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSecondaryConstructor(KtSecondaryConstructor)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSelfType(KtSelfType)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSimpleNameExpression(KtSimpleNameExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSimpleNameStringTemplateEntry(KtSimpleNameStringTemplateEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitStringTemplateEntry(KtStringTemplateEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitStringTemplateEntryWithExpression(KtStringTemplateEntryWithExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitStringTemplateExpression(KtStringTemplateExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSuperExpression(KtSuperExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSuperTypeCallEntry(KtSuperTypeCallEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSuperTypeEntry(KtSuperTypeEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSuperTypeList(KtSuperTypeList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitSuperTypeListEntry(KtSuperTypeListEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitThisExpression(KtThisExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitThrowExpression(KtThrowExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTryExpression(KtTryExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTypeAlias(KtTypeAlias)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTypeArgumentList(KtTypeArgumentList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTypeConstraint(KtTypeConstraint)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTypeConstraintList(KtTypeConstraintList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTypeParameter(KtTypeParameter)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTypeParameterList(KtTypeParameterList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTypeProjection(KtTypeProjection)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitTypeReference(KtTypeReference)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitUnaryExpression(KtUnaryExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitUserType(KtUserType)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitValueArgumentList(KtValueArgumentList)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitWhenConditionInRange(KtWhenConditionInRange)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitWhenConditionIsPattern(KtWhenConditionIsPattern)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitWhenConditionWithExpression(KtWhenConditionWithExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitWhenEntry(KtWhenEntry)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitWhenExpression(KtWhenExpression)
+psi/KtVisitorVoid.java:KtVisitorVoid:visitWhileExpression(KtWhileExpression)
 psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter
-psi/KtVisitorVoidWithParameter.java:null
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitAnnotatedExpressionVoid(KtAnnotatedExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitAnnotationEntryVoid(KtAnnotationEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitAnnotationVoid(KtAnnotation, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitAnonymousInitializerVoid(KtAnonymousInitializer, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitArgumentVoid(KtValueArgument, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitArrayAccessExpressionVoid(KtArrayAccessExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitBinaryExpressionVoid(KtBinaryExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitBinaryWithTypeRHSExpressionVoid(KtBinaryExpressionWithTypeRHS, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitBlockExpressionVoid(KtBlockExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitBlockStringTemplateEntryVoid(KtBlockStringTemplateEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitBreakExpressionVoid(KtBreakExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitCallExpressionVoid(KtCallExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitCallableReferenceExpressionVoid(KtCallableReferenceExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitCatchSectionVoid(KtCatchClause, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitClassBodyVoid(KtClassBody, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitClassLiteralExpressionVoid(KtClassLiteralExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitClassVoid(KtClass, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitCollectionLiteralExpressionVoid(KtCollectionLiteralExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitConstantExpressionVoid(KtConstantExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitConstructorCalleeExpressionVoid(KtConstructorCalleeExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitConstructorDelegationCallVoid(KtConstructorDelegationCall, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitContinueExpressionVoid(KtContinueExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitDeclarationVoid(KtDeclaration, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitDelegatedSuperTypeEntryVoid(KtDelegatedSuperTypeEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitDestructuringDeclarationEntryVoid(KtDestructuringDeclarationEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitDestructuringDeclarationVoid(KtDestructuringDeclaration, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitDoWhileExpressionVoid(KtDoWhileExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitDotQualifiedExpressionVoid(KtDotQualifiedExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitDoubleColonExpressionVoid(KtDoubleColonExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitDynamicTypeVoid(KtDynamicType, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitEnumEntryVoid(KtEnumEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitEscapeStringTemplateEntryVoid(KtEscapeStringTemplateEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitExpressionVoid(KtExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitExpressionWithLabelVoid(KtExpressionWithLabel, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitFinallySectionVoid(KtFinallySection, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitForExpressionVoid(KtForExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitFunctionTypeVoid(KtFunctionType, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitIfExpressionVoid(KtIfExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitImportAliasVoid(KtImportAlias, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitImportDirectiveVoid(KtImportDirective, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitImportListVoid(KtImportList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitInitializerListVoid(KtInitializerList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitIsExpressionVoid(KtIsExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitKtElementVoid(KtElement, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitKtFileVoid(KtFile, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitLabeledExpressionVoid(KtLabeledExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitLambdaExpressionVoid(KtLambdaExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitLiteralStringTemplateEntryVoid(KtLiteralStringTemplateEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitLoopExpressionVoid(KtLoopExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitModifierListVoid(KtModifierList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitNamedDeclarationVoid(KtNamedDeclaration, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitNamedFunctionVoid(KtNamedFunction, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitNullableTypeVoid(KtNullableType, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitObjectDeclarationVoid(KtObjectDeclaration, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitObjectLiteralExpressionVoid(KtObjectLiteralExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitParameterListVoid(KtParameterList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitParameterVoid(KtParameter, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitParenthesizedExpressionVoid(KtParenthesizedExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitPostfixExpressionVoid(KtPostfixExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitPrefixExpressionVoid(KtPrefixExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitPrimaryConstructorVoid(KtPrimaryConstructor, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitPropertyAccessorVoid(KtPropertyAccessor, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitPropertyDelegateVoid(KtPropertyDelegate, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitPropertyVoid(KtProperty, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitQualifiedExpressionVoid(KtQualifiedExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitReferenceExpressionVoid(KtReferenceExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitReturnExpressionVoid(KtReturnExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSafeQualifiedExpressionVoid(KtSafeQualifiedExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitScriptVoid(KtScript, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSecondaryConstructorVoid(KtSecondaryConstructor, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSelfTypeVoid(KtSelfType, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSimpleNameExpressionVoid(KtSimpleNameExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSimpleNameStringTemplateEntryVoid(KtSimpleNameStringTemplateEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitStringTemplateEntryVoid(KtStringTemplateEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitStringTemplateEntryWithExpressionVoid(KtStringTemplateEntryWithExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitStringTemplateExpressionVoid(KtStringTemplateExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSuperExpressionVoid(KtSuperExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSuperTypeCallEntryVoid(KtSuperTypeCallEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSuperTypeEntryVoid(KtSuperTypeEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSuperTypeListEntryVoid(KtSuperTypeListEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitSuperTypeListVoid(KtSuperTypeList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitThisExpressionVoid(KtThisExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitThrowExpressionVoid(KtThrowExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitTryExpressionVoid(KtTryExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitTypeArgumentListVoid(KtTypeArgumentList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitTypeConstraintListVoid(KtTypeConstraintList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitTypeConstraintVoid(KtTypeConstraint, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitTypeParameterListVoid(KtTypeParameterList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitTypeParameterVoid(KtTypeParameter, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitTypeProjectionVoid(KtTypeProjection, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitTypeReferenceVoid(KtTypeReference, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitUnaryExpressionVoid(KtUnaryExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitUserTypeVoid(KtUserType, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitValueArgumentListVoid(KtValueArgumentList, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitWhenConditionInRangeVoid(KtWhenConditionInRange, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitWhenConditionIsPatternVoid(KtWhenConditionIsPattern, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitWhenConditionWithExpressionVoid(KtWhenConditionWithExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitWhenEntryVoid(KtWhenEntry, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitWhenExpressionVoid(KtWhenExpression, P)
+psi/KtVisitorVoidWithParameter.java:KtVisitorVoidWithParameter:visitWhileExpressionVoid(KtWhileExpression, P)
+psi/KtWhenCondition.java:KtWhenCondition:KtWhenCondition(ASTNode)
 psi/KtWhenCondition.java:abstract KtWhenCondition
-psi/KtWhenCondition.java:null
 psi/KtWhenConditionInRange.java:KtWhenConditionInRange
-psi/KtWhenConditionInRange.java:null
+psi/KtWhenConditionInRange.java:KtWhenConditionInRange:@NotNull getOperationReference()
+psi/KtWhenConditionInRange.java:KtWhenConditionInRange:@Nullable @IfNotParsed getRangeExpression()
+psi/KtWhenConditionInRange.java:KtWhenConditionInRange:KtWhenConditionInRange(ASTNode)
+psi/KtWhenConditionInRange.java:KtWhenConditionInRange:isNegated()
 psi/KtWhenConditionIsPattern.java:KtWhenConditionIsPattern
-psi/KtWhenConditionIsPattern.java:null
+psi/KtWhenConditionIsPattern.java:KtWhenConditionIsPattern:@Nullable @IfNotParsed getTypeReference()
+psi/KtWhenConditionIsPattern.java:KtWhenConditionIsPattern:KtWhenConditionIsPattern(ASTNode)
+psi/KtWhenConditionIsPattern.java:KtWhenConditionIsPattern:isNegated()
 psi/KtWhenConditionWithExpression.java:KtWhenConditionWithExpression
-psi/KtWhenConditionWithExpression.java:null
+psi/KtWhenConditionWithExpression.java:KtWhenConditionWithExpression:@Nullable @IfNotParsed getExpression()
+psi/KtWhenConditionWithExpression.java:KtWhenConditionWithExpression:KtWhenConditionWithExpression(ASTNode)
 psi/KtWhenEntry.java:KtWhenEntry
-psi/KtWhenEntry.java:null
+psi/KtWhenEntry.java:KtWhenEntry:@NotNull getConditions()
+psi/KtWhenEntry.java:KtWhenEntry:@Nullable getArrow()
+psi/KtWhenEntry.java:KtWhenEntry:@Nullable getElseKeyword()
+psi/KtWhenEntry.java:KtWhenEntry:@Nullable getExpression()
+psi/KtWhenEntry.java:KtWhenEntry:@Nullable getGuard()
+psi/KtWhenEntry.java:KtWhenEntry:KtWhenEntry(ASTNode)
+psi/KtWhenEntry.java:KtWhenEntry:getTrailingComma()
 psi/KtWhenEntryGuard.kt:KtWhenEntryGuard
 psi/KtWhenEntryGuard.kt:KtWhenEntryGuard:getExpression()
 psi/KtWhenExpression.java:KtWhenExpression
-psi/KtWhenExpression.java:null
+psi/KtWhenExpression.java:KtWhenExpression:@NotNull getEntries()
+psi/KtWhenExpression.java:KtWhenExpression:@NotNull getWhenKeyword()
+psi/KtWhenExpression.java:KtWhenExpression:@Nullable getCloseBrace()
+psi/KtWhenExpression.java:KtWhenExpression:@Nullable getElseExpression()
+psi/KtWhenExpression.java:KtWhenExpression:@Nullable getLeftParenthesis()
+psi/KtWhenExpression.java:KtWhenExpression:@Nullable getOpenBrace()
+psi/KtWhenExpression.java:KtWhenExpression:@Nullable getRightParenthesis()
+psi/KtWhenExpression.java:KtWhenExpression:@Nullable getSubjectExpression()
+psi/KtWhenExpression.java:KtWhenExpression:@Nullable getSubjectVariable()
+psi/KtWhenExpression.java:KtWhenExpression:KtWhenExpression(ASTNode)
 psi/KtWhileExpression.java:KtWhileExpression
-psi/KtWhileExpression.java:null
+psi/KtWhileExpression.java:KtWhileExpression:KtWhileExpression(ASTNode)
+psi/KtWhileExpressionBase.java:KtWhileExpressionBase:@Nullable @IfNotParsed getCondition()
+psi/KtWhileExpressionBase.java:KtWhileExpressionBase:KtWhileExpressionBase(ASTNode)
 psi/KtWhileExpressionBase.java:abstract KtWhileExpressionBase
-psi/KtWhileExpressionBase.java:null
 psi/TypeRefHelpers.kt:getTypeReference(KtCallableDeclaration)
 psi/TypeRefHelpers.kt:setReceiverTypeReference(KtTypeReference?)
 psi/TypeRefHelpers.kt:setReceiverTypeReference(KtTypeReference?)
@@ -1259,12 +1984,13 @@ psi/stubs/StubUtils.kt:StubUtils:@JvmStatic serializeClassId(StubOutputStream, C
 psi/stubs/elements/KotlinValueClassRepresentation.kt:KotlinValueClassRepresentation:INLINE_CLASS
 psi/stubs/elements/KotlinValueClassRepresentation.kt:KotlinValueClassRepresentation:MULTI_FIELD_VALUE_CLASS
 psi/stubs/elements/KtAnnotationEntryElementType.java:KtAnnotationEntryElementType
-psi/stubs/elements/KtAnnotationEntryElementType.java:null
+psi/stubs/elements/KtAnnotationEntryElementType.java:KtAnnotationEntryElementType:KtAnnotationEntryElementType(String)
 psi/stubs/elements/KtAnnotationUseSiteTargetElementType.kt:KtAnnotationUseSiteTargetElementType
 psi/stubs/elements/KtBackingFieldElementType.java:KtBackingFieldElementType
-psi/stubs/elements/KtBackingFieldElementType.java:null
+psi/stubs/elements/KtBackingFieldElementType.java:KtBackingFieldElementType:KtBackingFieldElementType(String)
 psi/stubs/elements/KtClassElementType.java:KtClassElementType
-psi/stubs/elements/KtClassElementType.java:null
+psi/stubs/elements/KtClassElementType.java:KtClassElementType:KtClassElementType(String)
+psi/stubs/elements/KtClassElementType.java:KtClassElementType:static getStubType(boolean)
 psi/stubs/elements/KtClassLiteralExpressionElementType.kt:KtClassLiteralExpressionElementType
 psi/stubs/elements/KtCollectionLiteralExpressionElementType.kt:KtCollectionLiteralExpressionElementType
 psi/stubs/elements/KtConstantExpressionElementType.kt:Companion:kindToConstantElementType(ConstantValueKind)
@@ -1274,83 +2000,126 @@ psi/stubs/elements/KtContextReceiverElementType.kt:KtContextReceiverElementType
 psi/stubs/elements/KtContractEffectElementType.kt:KtContractEffectElementType
 psi/stubs/elements/KtContractEffectListElementType.kt:KtContractEffectListElementType
 psi/stubs/elements/KtDotQualifiedExpressionElementType.java:KtDotQualifiedExpressionElementType
-psi/stubs/elements/KtDotQualifiedExpressionElementType.java:null
+psi/stubs/elements/KtDotQualifiedExpressionElementType.java:KtDotQualifiedExpressionElementType:KtDotQualifiedExpressionElementType(String)
 psi/stubs/elements/KtEnumEntrySuperClassReferenceExpressionElementType.kt:KtEnumEntrySuperClassReferenceExpressionElementType
 psi/stubs/elements/KtFileElementType.java:KtFileElementType
-psi/stubs/elements/KtFileElementType.java:null
+psi/stubs/elements/KtFileElementType.java:KtFileElementType:static final INSTANCE
 psi/stubs/elements/KtFileStubBuilder.java:KtFileStubBuilder
-psi/stubs/elements/KtFileStubBuilder.java:null
 psi/stubs/elements/KtFunctionElementType.java:KtFunctionElementType
-psi/stubs/elements/KtFunctionElementType.java:null
+psi/stubs/elements/KtFunctionElementType.java:KtFunctionElementType:KtFunctionElementType(String)
 psi/stubs/elements/KtFunctionTypeElementType.kt:KtFunctionTypeElementType
 psi/stubs/elements/KtImportAliasElementType.kt:KtImportAliasElementType
 psi/stubs/elements/KtImportDirectiveElementType.java:KtImportDirectiveElementType
-psi/stubs/elements/KtImportDirectiveElementType.java:null
+psi/stubs/elements/KtImportDirectiveElementType.java:KtImportDirectiveElementType:KtImportDirectiveElementType(String)
 psi/stubs/elements/KtModifierListElementType.java:KtModifierListElementType
-psi/stubs/elements/KtModifierListElementType.java:null
+psi/stubs/elements/KtModifierListElementType.java:KtModifierListElementType:KtModifierListElementType(String, Class<T>)
 psi/stubs/elements/KtNameReferenceExpressionElementType.java:KtNameReferenceExpressionElementType
-psi/stubs/elements/KtNameReferenceExpressionElementType.java:null
+psi/stubs/elements/KtNameReferenceExpressionElementType.java:KtNameReferenceExpressionElementType:KtNameReferenceExpressionElementType(String)
 psi/stubs/elements/KtObjectElementType.java:KtObjectElementType
-psi/stubs/elements/KtObjectElementType.java:null
+psi/stubs/elements/KtObjectElementType.java:KtObjectElementType:KtObjectElementType(String)
 psi/stubs/elements/KtParameterElementType.java:KtParameterElementType
-psi/stubs/elements/KtParameterElementType.java:null
+psi/stubs/elements/KtParameterElementType.java:KtParameterElementType:KtParameterElementType(String)
 psi/stubs/elements/KtPlaceHolderStubElementType.java:KtPlaceHolderStubElementType
-psi/stubs/elements/KtPlaceHolderStubElementType.java:null
+psi/stubs/elements/KtPlaceHolderStubElementType.java:KtPlaceHolderStubElementType:KtPlaceHolderStubElementType(String, Class<T>)
 psi/stubs/elements/KtPlaceHolderWithTextStubElementType.kt:KtPlaceHolderWithTextStubElementType
 psi/stubs/elements/KtPrimaryConstructorElementType.kt:KtPrimaryConstructorElementType
 psi/stubs/elements/KtPropertyAccessorElementType.java:KtPropertyAccessorElementType
-psi/stubs/elements/KtPropertyAccessorElementType.java:null
+psi/stubs/elements/KtPropertyAccessorElementType.java:KtPropertyAccessorElementType:KtPropertyAccessorElementType(String)
 psi/stubs/elements/KtPropertyElementType.java:KtPropertyElementType
-psi/stubs/elements/KtPropertyElementType.java:null
+psi/stubs/elements/KtPropertyElementType.java:KtPropertyElementType:KtPropertyElementType(String)
 psi/stubs/elements/KtScriptElementType.kt:KtScriptElementType
 psi/stubs/elements/KtSecondaryConstructorElementType.kt:KtSecondaryConstructorElementType
 psi/stubs/elements/KtStringTemplateExpressionElementType.kt:KtStringTemplateExpressionElementType
+psi/stubs/elements/KtStubElementType.java:KtStubElementType:@NotNull createPsiFromAst(ASTNode)
+psi/stubs/elements/KtStubElementType.java:KtStubElementType:@NotNull getArrayFactory()
+psi/stubs/elements/KtStubElementType.java:KtStubElementType:@SuppressWarnings("unchecked") KtStubElementType(String, Class<PsiT>, Class<?>)
 psi/stubs/elements/KtStubElementType.java:abstract KtStubElementType
-psi/stubs/elements/KtStubElementType.java:null
 psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
-psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:null
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:ANNOTATION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:ANNOTATION_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:ANNOTATION_TARGET
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:BACKING_FIELD
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:BLOCK_CODE_FRAGMENT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:BOOLEAN_CONSTANT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CHARACTER_CONSTANT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CLASS
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CLASS_BODY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CLASS_INITIALIZER
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CLASS_LITERAL_EXPRESSION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:COLLECTION_LITERAL_EXPRESSION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONSTANT_EXPRESSIONS_TYPES
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONSTRUCTOR_CALLEE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONTEXT_RECEIVER
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONTEXT_RECEIVER_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONTRACT_EFFECT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:CONTRACT_EFFECT_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:DELEGATED_SUPER_TYPE_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:DOT_QUALIFIED_EXPRESSION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:DYNAMIC_TYPE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:ENUM_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:ESCAPE_STRING_TEMPLATE_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:EXPRESSION_CODE_FRAGMENT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:FILE_ANNOTATION_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:FLOAT_CONSTANT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:FUNCTION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:FUNCTION_TYPE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:FUNCTION_TYPE_RECEIVER
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:IMPORT_ALIAS
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:IMPORT_DIRECTIVE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:IMPORT_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:INITIALIZER_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:INTEGER_CONSTANT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:INTERSECTION_TYPE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:LAMBDA_ARGUMENT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:LITERAL_STRING_TEMPLATE_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:LONG_STRING_TEMPLATE_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:MODIFIER_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:NULL
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:NULLABLE_TYPE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:OBJECT_DECLARATION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:PACKAGE_DIRECTIVE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:PRIMARY_CONSTRUCTOR
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:PROPERTY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:PROPERTY_ACCESSOR
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:REFERENCE_EXPRESSION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:SCRIPT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:SECONDARY_CONSTRUCTOR
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:SHORT_STRING_TEMPLATE_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:STRING_TEMPLATE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:SUPER_TYPE_CALL_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:SUPER_TYPE_ENTRY
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:SUPER_TYPE_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPEALIAS
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPE_ARGUMENT_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPE_CODE_FRAGMENT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPE_CONSTRAINT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPE_CONSTRAINT_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPE_PARAMETER
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPE_PARAMETER_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPE_PROJECTION
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:TYPE_REFERENCE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:USER_TYPE
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:VALUE_ARGUMENT
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:VALUE_ARGUMENT_LIST
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:VALUE_ARGUMENT_NAME
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:VALUE_PARAMETER
+psi/stubs/elements/KtStubElementTypes.java:KtStubElementTypes:VALUE_PARAMETER_LIST
 psi/stubs/elements/KtTokenSets.java:KtTokenSets
+psi/stubs/elements/KtTokenSets.java:KtTokenSets:DECLARATION_TYPES
+psi/stubs/elements/KtTokenSets.java:KtTokenSets:INSIDE_DIRECTIVE_EXPRESSIONS
+psi/stubs/elements/KtTokenSets.java:KtTokenSets:SUPER_TYPE_LIST_ENTRIES
+psi/stubs/elements/KtTokenSets.java:KtTokenSets:TYPE_ELEMENT_TYPES
 psi/stubs/elements/KtTypeAliasElementType.kt:KtTypeAliasElementType
 psi/stubs/elements/KtTypeParameterElementType.java:KtTypeParameterElementType
-psi/stubs/elements/KtTypeParameterElementType.java:null
+psi/stubs/elements/KtTypeParameterElementType.java:KtTypeParameterElementType:KtTypeParameterElementType(String)
 psi/stubs/elements/KtTypeProjectionElementType.java:KtTypeProjectionElementType
-psi/stubs/elements/KtTypeProjectionElementType.java:null
+psi/stubs/elements/KtTypeProjectionElementType.java:KtTypeProjectionElementType:KtTypeProjectionElementType(String)
 psi/stubs/elements/KtUserTypeElementType.java:KtUserTypeElementType
-psi/stubs/elements/KtUserTypeElementType.java:null
+psi/stubs/elements/KtUserTypeElementType.java:KtUserTypeElementType:KtUserTypeElementType(String)
 psi/stubs/elements/KtValueArgumentElementType.kt:KtValueArgumentElementType
 psi/stubs/elements/KtValueArgumentListElementType.java:KtValueArgumentListElementType
-psi/stubs/elements/KtValueArgumentListElementType.java:null
+psi/stubs/elements/KtValueArgumentListElementType.java:KtValueArgumentListElementType:KtValueArgumentListElementType(String)
 psi/stubs/elements/StubIndexService.kt:Companion:@JvmStatic getInstance()
 psi/stubs/elements/StubIndexService.kt:StubIndexService:@Throws(IOException::class) open deserializeFileStub(StubInputStream)
 psi/stubs/elements/StubIndexService.kt:StubIndexService:@Throws(IOException::class) open serializeFileStub(KotlinFileStub, StubOutputStream)
@@ -1368,7 +2137,7 @@ psi/stubs/elements/StubIndexService.kt:open StubIndexService
 psi/stubs/impl/KotlinAnnotationEntryStubImpl.kt:KotlinAnnotationEntryStubImpl
 psi/stubs/impl/KotlinAnnotationUseSiteStubImpl.kt:KotlinAnnotationUseSiteTargetStubImpl
 psi/stubs/impl/KotlinBackingFieldStubImpl.java:KotlinBackingFieldStubImpl
-psi/stubs/impl/KotlinBackingFieldStubImpl.java:null
+psi/stubs/impl/KotlinBackingFieldStubImpl.java:KotlinBackingFieldStubImpl:KotlinBackingFieldStubImpl(StubElement<?>, boolean)
 psi/stubs/impl/KotlinClassLiteralExpressionStubImpl.kt:KotlinClassLiteralExpressionStubImpl
 psi/stubs/impl/KotlinClassStubImpl.kt:KotlinClassStubImpl
 psi/stubs/impl/KotlinCollectionLiteralExpressionStubImpl.kt:KotlinCollectionLiteralExpressionStubImpl
@@ -1438,16 +2207,19 @@ psi/stubs/impl/KotlinFunctionStubImpl.kt:KotlinFunctionStubImpl:null
 psi/stubs/impl/KotlinImportAliasStubImpl.kt:KotlinImportAliasStubImpl
 psi/stubs/impl/KotlinImportDirectiveStubImpl.kt:KotlinImportDirectiveStubImpl
 psi/stubs/impl/KotlinModifierListStubImpl.java:KotlinModifierListStubImpl
-psi/stubs/impl/KotlinModifierListStubImpl.java:null
+psi/stubs/impl/KotlinModifierListStubImpl.java:KotlinModifierListStubImpl:KotlinModifierListStubImpl(StubElement, long, KtModifierListElementType<?>)
+psi/stubs/impl/KotlinModifierListStubImpl.java:KotlinModifierListStubImpl:getMask()
 psi/stubs/impl/KotlinNameReferenceExpressionStubImpl.java:KotlinNameReferenceExpressionStubImpl
-psi/stubs/impl/KotlinNameReferenceExpressionStubImpl.java:null
+psi/stubs/impl/KotlinNameReferenceExpressionStubImpl.java:KotlinNameReferenceExpressionStubImpl:KotlinNameReferenceExpressionStubImpl(StubElement, StringRef)
+psi/stubs/impl/KotlinNameReferenceExpressionStubImpl.java:KotlinNameReferenceExpressionStubImpl:KotlinNameReferenceExpressionStubImpl(StubElement<?>, StringRef, boolean)
+psi/stubs/impl/KotlinNameReferenceExpressionStubImpl.java:KotlinNameReferenceExpressionStubImpl:isClassRef()
 psi/stubs/impl/KotlinObjectStubImpl.kt:KotlinObjectStubImpl
 psi/stubs/impl/KotlinParameterStubImpl.kt:KotlinParameterStubImpl
 psi/stubs/impl/KotlinPlaceHolderStubImpl.java:KotlinPlaceHolderStubImpl
-psi/stubs/impl/KotlinPlaceHolderStubImpl.java:null
+psi/stubs/impl/KotlinPlaceHolderStubImpl.java:KotlinPlaceHolderStubImpl:KotlinPlaceHolderStubImpl(StubElement, IStubElementType)
 psi/stubs/impl/KotlinPlaceHolderWithTextStubImpl.kt:KotlinPlaceHolderWithTextStubImpl
 psi/stubs/impl/KotlinPropertyAccessorStubImpl.java:KotlinPropertyAccessorStubImpl
-psi/stubs/impl/KotlinPropertyAccessorStubImpl.java:null
+psi/stubs/impl/KotlinPropertyAccessorStubImpl.java:KotlinPropertyAccessorStubImpl:KotlinPropertyAccessorStubImpl(StubElement, boolean, boolean, boolean)
 psi/stubs/impl/KotlinPropertyStubImpl.kt:KotlinPropertyStubImpl
 psi/stubs/impl/KotlinPropertyStubImpl.kt:KotlinPropertyStubImpl:null
 psi/stubs/impl/KotlinScriptStubImpl.kt:KotlinScriptStubImpl
@@ -1461,7 +2233,7 @@ psi/stubs/impl/KotlinStubOrigin.kt:sealed KotlinStubOrigin
 psi/stubs/impl/KotlinTypeAliasStubImpl.kt:KotlinTypeAliasStubImpl
 psi/stubs/impl/KotlinTypeParameterStubImpl.kt:KotlinTypeParameterStubImpl
 psi/stubs/impl/KotlinTypeProjectionStubImpl.java:KotlinTypeProjectionStubImpl
-psi/stubs/impl/KotlinTypeProjectionStubImpl.java:null
+psi/stubs/impl/KotlinTypeProjectionStubImpl.java:KotlinTypeProjectionStubImpl:KotlinTypeProjectionStubImpl(StubElement, int)
 psi/stubs/impl/KotlinUserTypeStubImpl.kt:KotlinTypeBean:nullable
 psi/stubs/impl/KotlinUserTypeStubImpl.kt:data KotlinFlexibleTypeBean
 psi/stubs/impl/KotlinUserTypeStubImpl.kt:data KotlinTypeArgumentBean
@@ -1521,8 +2293,28 @@ resolve/source/PsiSourceElement.kt:PsiSourceElement:psi
 resolve/source/PsiSourceElement.kt:PsiSourceFile
 resolve/source/PsiSourceElement.kt:getPsi()
 types/expressions/OperatorConventions.java:OperatorConventions
-types/expressions/OperatorConventions.java:OperatorConventions:null
-types/expressions/OperatorConventions.java:OperatorConventions:null
-types/expressions/OperatorConventions.java:OperatorConventions:null
-types/expressions/OperatorConventions.java:OperatorConventions:null
-types/expressions/OperatorConventions.java:OperatorConventions:null
+types/expressions/OperatorConventions.java:OperatorConventions:@Nullable static getNameForOperationSymbol(KtToken)
+types/expressions/OperatorConventions.java:OperatorConventions:@Nullable static getNameForOperationSymbol(KtToken, boolean, boolean)
+types/expressions/OperatorConventions.java:OperatorConventions:@Nullable static getOperationSymbolForName(Name)
+types/expressions/OperatorConventions.java:OperatorConventions:static final ASSIGNMENT_OPERATIONS
+types/expressions/OperatorConventions.java:OperatorConventions:static final ASSIGNMENT_OPERATION_COUNTERPARTS
+types/expressions/OperatorConventions.java:OperatorConventions:static final ASSIGN_METHOD
+types/expressions/OperatorConventions.java:OperatorConventions:static final BINARY_OPERATION_NAMES
+types/expressions/OperatorConventions.java:OperatorConventions:static final BOOLEAN_OPERATIONS
+types/expressions/OperatorConventions.java:OperatorConventions:static final BYTE
+types/expressions/OperatorConventions.java:OperatorConventions:static final CHAR
+types/expressions/OperatorConventions.java:OperatorConventions:static final COMPARISON_OPERATIONS
+types/expressions/OperatorConventions.java:OperatorConventions:static final CONVENTION_NAMES
+types/expressions/OperatorConventions.java:OperatorConventions:static final DOUBLE
+types/expressions/OperatorConventions.java:OperatorConventions:static final EQUALS_OPERATIONS
+types/expressions/OperatorConventions.java:OperatorConventions:static final FLOAT
+types/expressions/OperatorConventions.java:OperatorConventions:static final IDENTITY_EQUALS_OPERATIONS
+types/expressions/OperatorConventions.java:OperatorConventions:static final INCREMENT_OPERATIONS
+types/expressions/OperatorConventions.java:OperatorConventions:static final INT
+types/expressions/OperatorConventions.java:OperatorConventions:static final IN_OPERATIONS
+types/expressions/OperatorConventions.java:OperatorConventions:static final LONG
+types/expressions/OperatorConventions.java:OperatorConventions:static final NOT_OVERLOADABLE
+types/expressions/OperatorConventions.java:OperatorConventions:static final NUMBER_CONVERSIONS
+types/expressions/OperatorConventions.java:OperatorConventions:static final SHORT
+types/expressions/OperatorConventions.java:OperatorConventions:static final UNARY_OPERATION_NAMES
+types/expressions/OperatorConventions.java:OperatorConventions:static isConventionName(Name)
