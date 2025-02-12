@@ -39,7 +39,6 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
 
     @DisplayName("Checks xcodebuild for ios-app with a single framework")
     @GradleTest
-    @BrokenOnMacosTest
     fun testXcodeUseFrameworksSingle(gradleVersion: GradleVersion) = doTestXcode(
         cocoapodsSingleKtPod,
         gradleVersion,
@@ -50,7 +49,6 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
 
     @DisplayName("Checks xcodebuild for ios-app with a single framework with manual pod install")
     @GradleTest
-    @BrokenOnMacosTest
     fun testXcodeUseFrameworksSingleWithManualPodInstall(gradleVersion: GradleVersion) {
         nativeProject(cocoapodsSingleKtPod, gradleVersion, environmentVariables = environmentVariables) {
             doTestXcode(
