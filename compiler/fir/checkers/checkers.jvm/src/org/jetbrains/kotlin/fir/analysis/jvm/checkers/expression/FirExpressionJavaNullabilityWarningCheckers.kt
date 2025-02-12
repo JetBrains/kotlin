@@ -125,6 +125,17 @@ object FirWhenConditionJavaNullabilityWarningChecker : FirWhenExpressionChecker(
     }
 }
 
+object FirReturnJavaNullabilityWarningChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
+    override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        expression.result.checkExpressionForEnhancedTypeMismatch(
+            expectedType = expression.target.labeledElement.returnTypeRef.coneType,
+            reporter,
+            context,
+            FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+        )
+    }
+}
+
 private fun FirExpression.checkConditionForEnhancedTypeMismatch(context: CheckerContext, reporter: DiagnosticReporter) {
     checkExpressionForEnhancedTypeMismatch(
         context.session.builtinTypes.booleanType.coneType,

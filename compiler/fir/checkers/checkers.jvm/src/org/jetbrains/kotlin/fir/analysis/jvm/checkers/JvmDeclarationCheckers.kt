@@ -59,7 +59,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirSynchronizedAnnotationChecker,
             FirOverloadsChecker,
-            FirFunctionJavaNullabilityWarningChecker,
             FirJvmThrowsChecker,
         )
 

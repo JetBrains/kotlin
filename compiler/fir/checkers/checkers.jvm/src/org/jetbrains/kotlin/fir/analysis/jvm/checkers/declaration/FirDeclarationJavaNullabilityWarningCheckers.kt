@@ -34,20 +34,6 @@ object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(MppCheckerK
     }
 }
 
-object FirFunctionJavaNullabilityWarningChecker : FirFunctionChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val body = declaration.body
-        if (body is FirSingleExpressionBlock && declaration.symbol.hasExplicitReturnType) {
-            (body.statement as? FirReturnExpression)?.result?.checkExpressionForEnhancedTypeMismatch(
-                declaration.returnTypeRef.coneType,
-                reporter,
-                context,
-                FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
-            )
-        }
-    }
-}
-
 object FirValueParameterJavaNullabilityWarningChecker : FirValueParameterChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirValueParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.defaultValue?.checkExpressionForEnhancedTypeMismatch(
