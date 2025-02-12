@@ -108,7 +108,6 @@ internal fun createModuleWithScopeProviderFromBinary(
             val stdlib = addModule(
                 buildKtLibraryModule {
                     addBinaryRoot(Path(stdLibPath))
-                    //addBinaryRoot(Path(input.config.distribution.stdlib))
                     platform = NativePlatforms.unspecifiedNativePlatform
                     libraryName = "stdlib"
                 }
