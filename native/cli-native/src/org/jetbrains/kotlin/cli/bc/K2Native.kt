@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
-import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.psi.KtFile
@@ -99,15 +98,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         configuration.phaseConfig = createPhaseConfig(arguments)
 
-        /* Set default version of metadata version */
-        val metadataVersionString = arguments.metadataVersion
-        if (metadataVersionString != null) {
-            val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
-            when {
-                versionArray == null -> configuration.report(ERROR, "Invalid metadata version: $metadataVersionString")
-                else -> configuration.put(CommonConfigurationKeys.METADATA_VERSION, MetadataVersion(*versionArray))
-            }
-        }
+        configuration.setupMetadataVersion(arguments, ::MetadataVersion)
 
         arguments.relativePathBases?.let {
             configuration.put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
