@@ -14,8 +14,7 @@ import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
-import kotlin.io.path.Path
-import kotlin.io.path.createFile
+import kotlin.io.path.absolute
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.system.exitProcess
@@ -34,15 +33,19 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
     fun testJsRunContinuousBuild(
         gradleVersion: GradleVersion,
     ) {
+
         project("js-run-continuous", gradleVersion) {
+
+            // Use this file to trigger a kill switch to force-kill the Gradle build upon test completion,
+            // because `--no-daemon` is disabled by `--continuous`.
+            val endTestKillSwitchFile = projectPath.resolve("end-test-kill-switch").absolute().toFile()
+
             val compiledJs = projectPath.resolve("build/compileSync/js/main/developmentExecutable/kotlin/js-run-continuous.js")
 
             buildScriptInjection {
                 thread(name = "testJsRunContinuousBuild kill switch", isDaemon = true) {
-                    // add a kill-switch to force-kill the Gradle build on test completion,
-                    // because `--continuous` mode disables `--no-daemon`
                     val timeoutMark = TimeSource.Monotonic.markNow() + 5.minutes
-                    while (timeoutMark.hasPassedNow() || !Path("end-test-kill-switch").exists()) {
+                    while (timeoutMark.hasPassedNow() || !endTestKillSwitchFile.exists()) {
                         Thread.sleep(1000)
                     }
                     exitProcess(123123)
@@ -82,7 +85,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                 inputStream = daemonStdin,
             ) {
                 // trigger the Gradle build kill-switch
-                projectPath.resolve("end-test-kill-switch").createFile()
+                endTestKillSwitchFile.createNewFile()
 
                 checker.join()
 
@@ -100,28 +103,31 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                 assertEquals(
                     // language=text
                     """
-                    |[ExecHandle Resolving NPM dependencies using yarn] Changing state to: Starting
+                    |[ExecHandle Resolving NPM dependencies using yarn] Changing state from Starting to Started
                     |[ExecHandle Resolving NPM dependencies using yarn] Started. Waiting until streams are handled...
-                    |[ExecHandle Resolving NPM dependencies using yarn] Changing state to: Initial
+                    |[ExecHandle Resolving NPM dependencies using yarn] Starting process 'Resolving NPM dependencies using yarn'.
+                    |[ExecHandle Resolving NPM dependencies using yarn] Changing state from Initial to Starting
                     |[ExecHandle Resolving NPM dependencies using yarn] Waiting until process started
                     |[ExecHandle Resolving NPM dependencies using yarn] Successfully started process
-                    |[ExecHandle Resolving NPM dependencies using yarn] Changing state to: Started
+                    |[ExecHandle Resolving NPM dependencies using yarn] Changing state from Started to Succeeded
                     |[ExecHandle Resolving NPM dependencies using yarn] finished with exit value 0 (state: Succeeded)
                     """.trimMargin(),
                     output.filterLinesStartingWith("[ExecHandle Resolving NPM dependencies using yarn]"),
                 )
 
-                // verify webpack starts and stops successfully
+                // Verify webpack starts and is aborted.
+                // (Webpack is launched using DeploymentHandle and runs continuously, so Gradle will always abort it.)
                 assertEquals(
                     // language=text
                     """
-                    |[ExecHandle webpack webpack/bin/webpack.js jsmain] Changing state to: Starting
+                    |[ExecHandle webpack webpack/bin/webpack.js jsmain] Changing state from Starting to Started
                     |[ExecHandle webpack webpack/bin/webpack.js jsmain] Started. Waiting until streams are handled...
-                    |[ExecHandle webpack webpack/bin/webpack.js jsmain] Changing state to: Initial
+                    |[ExecHandle webpack webpack/bin/webpack.js jsmain] Starting process 'webpack webpack/bin/webpack.js jsmain'.
+                    |[ExecHandle webpack webpack/bin/webpack.js jsmain] Changing state from Initial to Starting
                     |[ExecHandle webpack webpack/bin/webpack.js jsmain] Waiting until process started
                     |[ExecHandle webpack webpack/bin/webpack.js jsmain] Successfully started process
                     |[ExecHandle webpack webpack/bin/webpack.js jsmain] Abort requested. Destroying process.
-                    |[ExecHandle webpack webpack/bin/webpack.js jsmain] Changing state to: Started
+                    |[ExecHandle webpack webpack/bin/webpack.js jsmain] Changing state from Started to Aborted
                     |[ExecHandle webpack webpack/bin/webpack.js jsmain] finished with exit value ? (state: Aborted)
                     """.trimMargin(),
                     output
@@ -132,7 +138,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                         .replace(Regex("finished with exit value -?\\d+ "), "finished with exit value ? "),
                 )
 
-                // verify the DeploymentHandle starts and stops successfully
+                // verify the DeploymentHandle that manages webpack starts and stops successfully
                 assertEquals(
                     // language=text
                     """

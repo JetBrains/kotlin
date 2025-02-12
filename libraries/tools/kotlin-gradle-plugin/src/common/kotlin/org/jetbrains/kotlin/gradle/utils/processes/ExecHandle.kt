@@ -89,7 +89,8 @@ internal class ExecHandle(
      * Start the process, blocking until the process has started.
      */
     fun start(): ExecHandle {
-        logger.info("$logTag Starting process '$displayName'. Working directory: $directory Command: $command ${arguments.joinToString(" ")}")
+        logger.info("$logTag Starting process '$displayName'.")
+        logger.debug("$logTag Working directory: $directory Command: $command ${arguments.joinToString(" ")}")
         lock.withLock {
             check(stateIn(ExecHandleState.Initial)) { "Cannot start process '$displayName' because it has already been started" }
             state = ExecHandleState.Starting
