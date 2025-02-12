@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
-import org.junit.Assert
-import org.junit.Test
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -20,12 +17,13 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.util.LinkedSnippet
+import kotlin.test.*
 
 class ReplReceiver1 {
     val ok = "OK"
 }
 
-class CustomK2ReplTest : TestCase() {
+class CustomK2ReplTest {
 
     @Test
     fun testSimple() {
@@ -94,16 +92,16 @@ private fun checkEvaluatedSnippets(
 ) {
     val expectedIter = expectedResultVals.iterator()
     val successResults = evaluationResults.valueOr {
-        Assert.fail("Evaluation failed:\n  ${it.reports.joinToString("\n  ") { it.message }}")
+        fail("Evaluation failed:\n  ${it.reports.joinToString("\n  ") { it.message }}")
         return
     }
     for (res in successResults) {
         val expectedVal = expectedIter.next()
         when (val resVal = res.get().result) {
-            is ResultValue.Unit -> Assert.assertTrue("Unexpected evaluation result: Unit", expectedVal == null)
-            is ResultValue.Error -> Assert.fail("Unexpected evaluation result: runtime error: ${resVal.error.message}")
-            is ResultValue.Value -> Assert.assertTrue("Unexpected evaluation result: ${resVal.value}", expectedVal == resVal.value)
-            is ResultValue.NotEvaluated -> Assert.fail("Unexpected evaluation result: NotEvaluated")
+            is ResultValue.Unit -> assertTrue(expectedVal == null, "Unexpected evaluation result: Unit")
+            is ResultValue.Error -> fail("Unexpected evaluation result: runtime error: ${resVal.error.message}")
+            is ResultValue.Value -> assertTrue(expectedVal == resVal.value, "Unexpected evaluation result: ${resVal.value}")
+            is ResultValue.NotEvaluated -> fail("Unexpected evaluation result: NotEvaluated")
         }
     }
 }

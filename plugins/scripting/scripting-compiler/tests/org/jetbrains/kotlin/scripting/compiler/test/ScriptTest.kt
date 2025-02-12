@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.util.Disposer
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -27,53 +26,56 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
-import org.junit.Assert
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.net.URLClassLoader
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.test.*
 
-class ScriptTest : TestCase() {
+class ScriptTest {
+    @Test
     fun testStandardScriptWithParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
-        Assert.assertNotNull(aClass)
+        assertNotNull(aClass)
         val out = captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4", "comment"))
-            Assert.assertNotNull(anObj)
+            val anObj = tryConstructClassFromStringArgs(aClass, listOf("4", "comment"))
+            assertNotNull(anObj)
         }
         assertEqualsTrimmed("$NUM_4_LINE (comment)$FIB_SCRIPT_OUTPUT_TAIL", out)
     }
 
+    @Test
     fun testStandardScriptWithoutParams() {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
-        Assert.assertNotNull(aClass)
+        assertNotNull(aClass)
         val out = captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass!!, emptyList())
-            Assert.assertNotNull(anObj)
+            val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
+            assertNotNull(anObj)
         }
         assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out)
     }
 
-    fun testStandardScriptWithSaving() {
-        val tmpdir = File(KotlinTestUtils.tmpDirForTest(this), "withSaving")
-        tmpdir.mkdirs()
+    @Test
+    fun testStandardScriptWithSaving(@TempDir tmpdir: File) {
         val aClass = compileScript("fib_std.kts", StandardScriptDefinition, saveClassesDir = tmpdir)
-        Assert.assertNotNull(aClass)
+        assertNotNull(aClass)
         val out1 = captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass!!, emptyList())
-            Assert.assertNotNull(anObj)
+            val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
+            assertNotNull(anObj)
         }
         assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out1)
         val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), aClass!!.classLoader)
         val aClassSaved = savedClassLoader.loadClass(aClass.name)
-        Assert.assertNotNull(aClassSaved)
+        assertNotNull(aClassSaved)
         val out2 = captureOut {
-            val anObjSaved = tryConstructClassFromStringArgs(aClassSaved!!, emptyList())
-            Assert.assertNotNull(anObjSaved)
+            val anObjSaved = tryConstructClassFromStringArgs(aClassSaved, emptyList())
+            assertNotNull(anObjSaved)
         }
         assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out2)
     }
 
+    @Test
     fun testUseCompilerInternals() {
         val scriptClass = compileScript("use_compiler_internals.kts", StandardScriptDefinition)!!
         assertEquals("OK", captureOut {
@@ -81,16 +83,18 @@ class ScriptTest : TestCase() {
         })
     }
 
+    @Test
     fun testKt42530() {
         val aClass = compileScript("kt42530.kts", StandardScriptDefinition)
-        Assert.assertNotNull(aClass)
+        assertNotNull(aClass)
         val out = captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass!!, emptyList())
-            Assert.assertNotNull(anObj)
+            val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
+            assertNotNull(anObj)
         }
         assertEqualsTrimmed("[(1, a)]", out)
     }
 
+    @Test
     fun testMetadataFlag() {
         // Test that we're writing the flag to [Metadata.extraInt] that distinguishes scripts from other classes.
 
@@ -101,10 +105,10 @@ class ScriptTest : TestCase() {
         }
 
         val scriptClass = compileScript("metadata_flag.kts", StandardScriptDefinition) ?: throw AssertionError("compilation failed")
-        assertTrue("Script class SHOULD have the metadata flag set", scriptClass.isFlagSet())
+        assertTrue(scriptClass.isFlagSet(), "Script class SHOULD have the metadata flag set")
         assertFalse(
-            "Non-script class in a script should NOT have the metadata flag set",
-            scriptClass.classLoader.loadClass("Metadata_flag\$RandomClass").isFlagSet()
+            scriptClass.classLoader.loadClass("Metadata_flag\$RandomClass").isFlagSet(),
+            "Non-script class in a script should NOT have the metadata flag set"
         )
     }
 

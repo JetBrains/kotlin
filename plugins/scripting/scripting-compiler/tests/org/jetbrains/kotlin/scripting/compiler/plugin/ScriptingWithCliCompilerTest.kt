@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
-import org.junit.Assert
-import org.junit.Test
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Files
+import kotlin.test.Test
+import kotlin.test.*
 
 class ScriptingWithCliCompilerTest {
 
@@ -190,7 +190,7 @@ class ScriptingWithCliCompilerTest {
             )
         }
         val filteredErr = err.linesSplitTrim().filterNot { it.startsWith("WARN: ") }
-        Assert.assertEquals(
+        assertContentEquals(
             """
                 java.lang.Exception: Top
 	                    at ExceptionWithCause.<init>(exceptionWithCause.kts:8)
@@ -234,8 +234,8 @@ class ScriptingWithCliCompilerTest {
             "simpleScriptInstance.kt:3:13: error: unresolved reference: SimpleScript_main"
 
         compileVariant(CommonCompilerArguments::languageVersion.cliArgument, "1.7").let { (errLines, exitCode) ->
-            Assert.assertTrue(errLines.any { it.startsWith(scriptInSourceRootWarning) })
-            Assert.assertEquals(ExitCode.OK, exitCode)
+            assertTrue(errLines.any { it.startsWith(scriptInSourceRootWarning) })
+            assertEquals(ExitCode.OK, exitCode)
         }
 
         compileVariant(
@@ -243,15 +243,15 @@ class ScriptingWithCliCompilerTest {
             "1.7",
             K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument
         ).let { (errLines, exitCode) ->
-            Assert.assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
-            Assert.assertEquals(ExitCode.OK, exitCode)
+            assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
+            assertEquals(ExitCode.OK, exitCode)
         }
 
         compileVariant(CommonCompilerArguments::languageVersion.cliArgument, "1.9").let { (errLines, exitCode) ->
             if (errLines.none { it.endsWith(unresolvedScriptError) }) {
-                Assert.fail("Expecting unresolved reference: SimpleScript_main error, got:\n${errLines.joinToString("\n")}")
+                fail("Expecting unresolved reference: SimpleScript_main error, got:\n${errLines.joinToString("\n")}")
             }
-            Assert.assertEquals(ExitCode.COMPILATION_ERROR, exitCode)
+            assertEquals(ExitCode.COMPILATION_ERROR, exitCode)
         }
 
         compileVariant(
@@ -259,8 +259,8 @@ class ScriptingWithCliCompilerTest {
             "1.9",
             withScriptInstance = false
         ).let { (errLines, exitCode) ->
-            Assert.assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
-            Assert.assertEquals(ExitCode.OK, exitCode)
+            assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
+            assertEquals(ExitCode.OK, exitCode)
         }
 
         compileVariant(
@@ -268,10 +268,10 @@ class ScriptingWithCliCompilerTest {
             "1.9",
             K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument
         ).let { (errLines, exitCode) ->
-            Assert.assertTrue(errLines.none {
+            assertTrue(errLines.none {
                 it.endsWith(unresolvedScriptError) || it.startsWith(scriptInSourceRootWarning)
             })
-            Assert.assertEquals(ExitCode.OK, exitCode)
+            assertEquals(ExitCode.OK, exitCode)
         }
     }
 
@@ -292,14 +292,14 @@ class ScriptingWithCliCompilerTest {
                         scriptPath,
                     )
                 )
-            Assert.assertEquals(ExitCode.OK.code, ret.code)
+            assertEquals(ExitCode.OK.code, ret.code)
             val (out, _, _) = captureOutErrRet {
                 val cl = URLClassLoader((getMainKtsClassPath() + tmpdir).map { it.toURI().toURL() }.toTypedArray())
                 val klass = cl.loadClass("ScriptAccessingNonScript_main")
                 val ctor = klass.constructors.single()
                 ctor.newInstance(arrayOf<String>(), File(scriptPath))
             }
-            Assert.assertEquals("OK", out.trim())
+            assertEquals("OK", out.trim())
         }
     }
 
@@ -320,9 +320,9 @@ class ScriptingWithCliCompilerTest {
                     )
                 )
             }
-            Assert.assertTrue("Expecting an error about unresolved 'SimpleScript_main', got:\n$err", err.contains("error: unresolved reference 'SimpleScript_main'"))
-            Assert.assertTrue("Expecting an error about unresolved 'ok', got:\n$err", err.contains("error: unresolved reference 'ok'"))
-            Assert.assertEquals(ExitCode.COMPILATION_ERROR.code, ret.code)
+            assertTrue(err.contains("error: unresolved reference 'SimpleScript_main'"), "Expecting an error about unresolved 'SimpleScript_main', got:\n$err")
+            assertTrue(err.contains("error: unresolved reference 'ok'"), "Expecting an error about unresolved 'ok', got:\n$err")
+            assertEquals(ExitCode.COMPILATION_ERROR.code, ret.code)
         }
     }
 
@@ -348,17 +348,17 @@ class ScriptingWithCliCompilerTest {
                         )
                     )
                 }
-                Assert.assertEquals(ExitCode.OK.code, ret.code)
+                assertEquals(ExitCode.OK.code, ret.code)
                 return err.linesSplitTrim()
             }
 
             val loadMainKtsMessage = "logging: configure scripting: loading script definition class org.jetbrains.kotlin.mainKts.MainKtsScript using classpath"
 
             val res1 = compileSuccessfullyGetStdErr("$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt")
-            Assert.assertTrue(res1.none { it.startsWith(loadMainKtsMessage) })
+            assertTrue(res1.none { it.startsWith(loadMainKtsMessage) })
 
             val res2 = compileSuccessfullyGetStdErr(SIMPLE_TEST_SCRIPT)
-            Assert.assertTrue(res2.any { it.startsWith(loadMainKtsMessage) })
+            assertTrue(res2.any { it.startsWith(loadMainKtsMessage) })
         }
     }
 
@@ -394,7 +394,7 @@ class ScriptingWithCliCompilerTest {
     private fun getMainKtsClassPath(): List<File> {
         return listOf(
             File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-                Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
+                assertTrue(it.exists(), "kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}")
             }
         )
     }

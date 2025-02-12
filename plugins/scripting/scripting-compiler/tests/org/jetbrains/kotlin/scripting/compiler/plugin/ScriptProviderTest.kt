@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefin
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
-import org.junit.Assert
-import org.junit.Test
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
+import kotlin.test.Test
+import kotlin.test.*
 
 class ScriptProviderTest {
 
@@ -46,33 +46,33 @@ class ScriptProviderTest {
             )
         }
 
-        Assert.assertEquals(0, genDefCounter.get())
+        assertEquals(0, genDefCounter.get())
 
         provider.isScript(File("a.kt").toScriptSource()).let {
-            Assert.assertFalse(it)
-            Assert.assertEquals(0, genDefCounter.get())
+            assertFalse(it)
+            assertEquals(0, genDefCounter.get())
         }
 
         provider.isScript(File("a.y.kts").toScriptSource()).let {
-            Assert.assertTrue(it)
-            Assert.assertEquals(1, genDefCounter.get())
+            assertTrue(it)
+            assertEquals(1, genDefCounter.get())
         }
 
         provider.isScript(File("a.x.kts").toScriptSource()).let {
-            Assert.assertTrue(it)
-            Assert.assertEquals(1, genDefCounter.get())
-            Assert.assertEquals(1, shadedDef.matchCounter.get())
+            assertTrue(it)
+            assertEquals(1, genDefCounter.get())
+            assertEquals(1, shadedDef.matchCounter.get())
         }
 
         provider.isScript(File("a.z.kts").toScriptSource()).let {
-            Assert.assertTrue(it)
-            Assert.assertEquals(2, genDefCounter.get())
-            Assert.assertEquals(1, standardDef.matchCounter.get())
+            assertTrue(it)
+            assertEquals(2, genDefCounter.get())
+            assertEquals(1, standardDef.matchCounter.get())
         }
 
         provider.isScript(File("a.ktx").toScriptSource()).let {
-            Assert.assertFalse(it)
-            Assert.assertEquals(2, genDefCounter.get())
+            assertFalse(it)
+            assertEquals(2, genDefCounter.get())
         }
     }
 }
