@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
@@ -15,40 +16,53 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedToUpperCamelCase
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 
 internal object SwiftExportModuleNameChecker : KotlinGradleProjectChecker {
-
-    private val moduleNameRegex by lazy { Regex("^[A-Za-z0-9_]+$") }
+    private const val MODULE_NAME_PATTERN = "^[A-Za-z0-9_]+$"
+    private val moduleNameRegex = Regex(MODULE_NAME_PATTERN)
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         if (!kotlinPropertiesProvider.swiftExportEnabled) return
+
+        // Phase 1: Check DSL configuration
         AfterFinaliseDsl.await()
+        checkDslConfiguration(collector)
 
-        val swiftExportExtension = multiplatformExtension?.getExtension<SwiftExportExtension>(
+        // Phase 2: Check task inputs
+        ReadyForExecution.await()
+        checkTaskInputs(collector)
+    }
+
+    private fun KotlinGradleProjectCheckerContext.checkDslConfiguration(collector: KotlinToolingDiagnosticsCollector) {
+        val extension = multiplatformExtension?.getExtension<SwiftExportExtension>(
             SwiftExportDSLConstants.SWIFT_EXPORT_EXTENSION_NAME
-        )
+        ) ?: return
 
-        // Check root module name
-        swiftExportExtension?.moduleName?.orNull?.let { moduleName ->
-            project.checkModuleName(moduleName, collector)
+        extension.moduleName.orNull?.let {
+            project.checkModuleName(it, collector)
         }
 
-        // Check exported module names
-        swiftExportExtension?.exportedModules?.orNull?.forEach { module ->
-            module.moduleName.orNull?.let { moduleName ->
-                project.checkModuleName(moduleName, collector)
+        extension.exportedModules.orNull?.forEach { module ->
+            module.moduleName.orNull?.let {
+                project.checkModuleName(it, collector)
             }
+        }
+    }
 
-            // Check module version names
-            val moduleVersionName = dashSeparatedToUpperCamelCase(module.moduleVersion.name)
-            project.checkModuleName(moduleVersionName, collector)
+    private fun KotlinGradleProjectCheckerContext.checkTaskInputs(collector: KotlinToolingDiagnosticsCollector) {
+        project.tasks.withType(SwiftExportTask::class.java).configureEach { task ->
+            project.checkModuleName(task.mainModuleInput.moduleName.get(), collector)
+
+            task.parameters.swiftModules.get().forEach { module ->
+                project.checkModuleName(module.moduleName, collector)
+            }
         }
     }
 
     private fun Project.checkModuleName(moduleName: String, collector: KotlinToolingDiagnosticsCollector) {
         if (!moduleNameRegex.matches(moduleName)) {
-            collector.report(project, KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
+            collector.report(this, KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
         }
     }
 }
