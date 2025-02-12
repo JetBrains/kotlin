@@ -61,7 +61,7 @@ class KlibMetadataIncrementalSerializer(
         bindingContext = bindingContext,
         moduleDescriptor = moduleDescriptor,
         languageVersionSettings = configuration.languageVersionSettings,
-        metadataVersion = configuration.metadataVersionOrDefault,
+        metadataVersion = configuration.metadataVersionOrDefault(),
         project = project,
         exportKDoc = false,
         allowErrorTypes = allowErrorTypes,

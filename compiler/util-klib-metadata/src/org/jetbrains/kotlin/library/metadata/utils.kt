@@ -47,7 +47,6 @@ fun ModuleDescriptor.isFromInteropLibrary(): Boolean {
     } else false
 }
 
-val CompilerConfiguration.metadataVersionOrDefault: MetadataVersion
-    get() {
-        return this.metadataVersion as? MetadataVersion ?: KLIB_LEGACY_METADATA_VERSION
-    }
+fun CompilerConfiguration.metadataVersionOrDefault(): MetadataVersion {
+    return this.metadataVersion as? MetadataVersion ?: KLIB_LEGACY_METADATA_VERSION
+}

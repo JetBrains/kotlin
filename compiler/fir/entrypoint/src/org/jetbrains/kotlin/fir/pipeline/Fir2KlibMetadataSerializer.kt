@@ -51,7 +51,7 @@ class Fir2KlibMetadataSerializer(
 
     private val languageVersionSettings = compilerConfiguration.languageVersionSettings
 
-    private val metadataVersion = compilerConfiguration.metadataVersionOrDefault
+    private val metadataVersion = compilerConfiguration.metadataVersionOrDefault()
 
     /**
      * The list of source files whose metadata is to be serialized.
