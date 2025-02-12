@@ -196,10 +196,10 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         transformCrement(call, intrinsics.jsMinus)
 
     private fun transformCrement(call: IrFunctionAccessExpression, correspondingBinaryOp: IrSimpleFunctionSymbol): IrExpression {
-        val operation = irCall(call, correspondingBinaryOp, receiversAsArguments = true).apply {
+        val operation = IrCallImpl(call.startOffset, call.endOffset, call.type, correspondingBinaryOp, origin = call.origin).apply {
+            arguments[0] = call.arguments[0]
             arguments[1] = buildInt(1)
         }
-
         return convertResultToPrimitiveType(operation, call.type)
     }
 
