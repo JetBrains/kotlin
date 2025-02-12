@@ -1253,20 +1253,16 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    class DeprecatedWarningGradleProperties(details: String?) : DeprecatedGradleProperties(
-        ToolingDiagnostic.Severity.WARNING,
-        details,
-    )
-    class DeprecatedErrorGradleProperties(details: String?) : DeprecatedGradleProperties(
-        ToolingDiagnostic.Severity.ERROR,
-        details,
-    )
+    object DeprecatedWarningGradleProperties : DeprecatedGradleProperties(ToolingDiagnostic.Severity.WARNING)
+    object DeprecatedErrorGradleProperties : DeprecatedGradleProperties(ToolingDiagnostic.Severity.ERROR)
 
     open class DeprecatedGradleProperties(
         severity: ToolingDiagnostic.Severity,
-        private val details: String?,
     ) : ToolingDiagnosticFactory(severity, DiagnosticGroups.KGP.Deprecation) {
-        operator fun invoke(usedDeprecatedProperty: String) = buildDiagnostic(
+        operator fun invoke(
+            usedDeprecatedProperty: String,
+            details: String?,
+        ) = buildDiagnostic(
             title = "Deprecated Gradle Property '$usedDeprecatedProperty' Used",
             description = "The `$usedDeprecatedProperty` deprecated property is used in your build.",
             solutions = listOfNotNull(
