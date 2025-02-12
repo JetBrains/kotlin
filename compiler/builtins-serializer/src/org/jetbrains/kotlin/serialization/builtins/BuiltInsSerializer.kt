@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 
@@ -39,7 +40,7 @@ object BuiltInsSerializer {
     ) {
         val rootDisposable = Disposer.newDisposable("Disposable for ${K1BuiltInsSerializer::class.simpleName}.analyzeAndSerialize")
         val messageCollector = createMessageCollector()
-        val performanceManager = object : PerformanceManager(presentableName = "test") {}
+        val performanceManager = object : PerformanceManager(JvmPlatforms.defaultJvmPlatform,"test") {}
         try {
             val configuration = CompilerConfiguration().apply {
                 this.messageCollector = messageCollector

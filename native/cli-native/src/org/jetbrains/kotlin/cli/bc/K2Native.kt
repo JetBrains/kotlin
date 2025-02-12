@@ -26,21 +26,20 @@ import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
+    override val platform: TargetPlatform = NativePlatforms.unspecifiedNativePlatform
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KlibMetadataVersion(*versionArray)
-
-    override val defaultPerformanceManager: PerformanceManager by lazy {
-        K2NativeCompilerPerformanceManager()
-    }
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
                            @NotNull configuration: CompilerConfiguration,
@@ -142,7 +141,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             if (mainPerfManager?.isMeasuring == true) {
                 mainPerfManager.notifyPhaseFinished(PhaseMeasurementType.Initialization)
             }
-            K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)
+            PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)
         } else {
             null
         }
