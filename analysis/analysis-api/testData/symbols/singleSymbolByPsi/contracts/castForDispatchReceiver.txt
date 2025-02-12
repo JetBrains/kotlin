@@ -7,8 +7,52 @@ KaNamedFunctionSymbol:
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
-  contractEffects: Could not render due to org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: class org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol should contain a receiver
-
+  contractEffects: [
+    KaContractConditionalContractEffectDeclaration:
+      effect:
+        KaContractReturnsSuccessfullyEffectDeclaration:
+      condition:
+        KaContractIsInstancePredicateExpression:
+          argument:
+            KaContractOwnerParameterValue:
+              symbol:
+                KaNamedClassSymbol:
+                  annotations: []
+                  classId: Result
+                  classKind: CLASS
+                  companionObject: null
+                  compilerVisibility: Public
+                  contextReceivers: []
+                  isActual: false
+                  isData: false
+                  isExpect: false
+                  isExternal: false
+                  isFun: false
+                  isInline: false
+                  isInner: false
+                  location: TOP_LEVEL
+                  modality: SEALED
+                  name: Result
+                  origin: SOURCE
+                  superTypes: [
+                    KaUsualClassType:
+                      annotations: []
+                      typeArguments: []
+                      type: kotlin/Any
+                  ]
+                  typeParameters: []
+                  visibility: PUBLIC
+                  getContainingFileSymbol: KaFileSymbol(castForDispatchReceiver.kt)
+                  getContainingModule: KaSourceModule "Sources of main"
+                  annotationApplicableTargets: null
+                  deprecationStatus: null
+          type:
+            KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: Result.Failure
+          isNegated: false
+  ]
   hasStableParameterNames: true
   isActual: false
   isBuiltinFunctionInvoke: false

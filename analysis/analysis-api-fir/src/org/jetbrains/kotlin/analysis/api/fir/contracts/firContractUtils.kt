@@ -10,20 +10,19 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstan
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractCallsInPlaceContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConditionalContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConstantValue
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractExplicitParameterValue
+import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.*
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsNotNullEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSpecificValueEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSuccessfullyEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal fun KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>.coneEffectDeclarationToAnalysisApi(
     builder: KaSymbolByFirBuilder,
@@ -127,8 +126,17 @@ private class ConeContractDescriptionElementToAnalysisApi(
     private fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference): KaContractParameterValue {
         return if (valueParameterReference.parameterIndex == -1) {
             firFunctionSymbol.receiverParameter?.let(::KaBaseContractExplicitParameterValue)
-                ?: errorWithAttachment("${firFunctionSymbol::class} should contain a receiver") {
-                    withFirEntry("fir", firFunctionSymbol.firSymbol.fir)
+                ?: with(firFunctionSymbol.analysisSession) {
+                    val containingClass = firFunctionSymbol.containingDeclaration
+                    requireWithAttachment(containingClass is KaClassSymbol, { "Unexpected containing class" }) {
+                        if (containingClass != null) {
+                            withSymbolAttachment("containingDeclaration", this@with, containingClass)
+                        }
+
+                        withSymbolAttachment("functionSymbol", this@with, firFunctionSymbol)
+                    }
+
+                    KaBaseContractOwnerParameterValue(containingClass)
                 }
         } else {
             val parameterSymbol = firFunctionSymbol.valueParameters[valueParameterReference.parameterIndex]
