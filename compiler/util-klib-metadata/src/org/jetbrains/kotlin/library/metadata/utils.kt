@@ -51,22 +51,9 @@ fun ModuleDescriptor.isFromInteropLibrary(): Boolean {
 }
 
 private val LANGUAGE_TO_KLIB_METADATA_VERSION = EnumMap<LanguageVersion, MetadataVersion>(LanguageVersion::class.java).apply {
-    val oldMetadataVersion = KLIB_LEGACY_METADATA_VERSION
-    this[LanguageVersion.KOTLIN_1_0] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_1] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_2] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_3] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_4] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_5] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_6] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_7] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_8] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_9] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_2_0] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_2_1] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_2_2] = oldMetadataVersion
+    LanguageVersion.entries.forEach { this[it] = KLIB_LEGACY_METADATA_VERSION }
     // TODO KT-74417 Uncomment in version 2.3 to bump metadata version
-    this[LanguageVersion.KOTLIN_2_3] = oldMetadataVersion // MetadataVersion(2, 3, 0)
+    this[LanguageVersion.KOTLIN_2_3] = KLIB_LEGACY_METADATA_VERSION // MetadataVersion(2, 3, 0)
 
     check(size == LanguageVersion.entries.size) {
         "Please add mappings from the missing LanguageVersion instances to the corresponding MetadataVersion " +
