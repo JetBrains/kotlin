@@ -287,7 +287,7 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
 
                 newReference.let {
                     it.copyTypeArgumentsFrom(expression)
-                    it.copyValueArgumentsFrom(expression, it.symbol.owner, receiversAsArguments = true)
+                    it.copyValueArgumentsFrom(expression, it.symbol.owner)
                 }
 
                 return newReference
