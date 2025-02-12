@@ -27,7 +27,9 @@ package kotlin.collections
  * While it is not enforced explicitly, [Collection] implementations are expected to override [Any.toString],
  * [Any.equals] and [Any.hashCode]:
  * - [Collection.toString] implementations are expected to return a string representation of all contained elements.
- * - [Collection.equals] and [Collection.hashCode] should follow the contract of [Any.equals] and [Any.hashCode] correspondingly.
+ * - [Collection.equals] and [Collection.hashCode] should have the same properties as [Any.equals] and [Any.hashCode] correspondingly:
+ *   both have to be consistent; equality of two collections must imply equality of their hash codes; [Collection.equals] has also be
+ *   reflective, symmetric, and transitive.
  *   Other than that, [Collection] does not impose additional restrictions on these functions, however more specialized interfaces
  *   extending [Collection] (like [List], [Set] and [Map]) may impose stricter requirements.
  *

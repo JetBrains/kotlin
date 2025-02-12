@@ -23,10 +23,12 @@ package kotlin.collections
  * it is recommended to explicitly document ordering guarantees for the [Set] implementation.
  *
  * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but it is expected from [Set] implementations to override these functions and provide implementations such that:
+ * but [Set] implementations should override these functions and provide implementations such that:
  * - [Set.toString] should return a string containing string representation of contained elements in iteration order.
  * - [Set.equals] should consider two sets equal if and only if they contain the same number of elements and each element
- *   from one set is contained in another set.
+ *   from one set is contained in another set. Unlike some other `equals` implementations, [Set.equals]
+ *   should consider two sets equal even if they are instances of different classes; the only requirement here is that both sets have
+ *   to implement [Set] interface.
  * - [Set.hashCode] should be computed as a sum of elements' hash codes using the following algorithm:
  *   ```kotlin
  *   var hashCode: Int = 0

@@ -61,7 +61,9 @@ public actual interface MutableIterable<out T> : Iterable<T> {
  * While it is not enforced explicitly, [Collection] implementations are expected to override [Any.toString],
  * [Any.equals] and [Any.hashCode]:
  * - [Collection.toString] implementations are expected to return a string representation of all contained elements.
- * - [Collection.equals] and [Collection.hashCode] should follow the contract of [Any.equals] and [Any.hashCode] correspondingly.
+ * - [Collection.equals] and [Collection.hashCode] should have the same properties as [Any.equals] and [Any.hashCode] correspondingly:
+ *   both have to be consistent; equality of two collections must imply equality of their hash codes; [Collection.equals] has also be
+ *   reflective, symmetric, and transitive.
  *   Other than that, [Collection] does not impose additional restrictions on these functions, however more specialized interfaces
  *   extending [Collection] (like [List], [Set] and [Map]) may impose stricter requirements.
  *
@@ -207,11 +209,13 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
  * Unlike [Set], lists can contain duplicate elements.
  *
  * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but it is expected from [List] implementations to override these functions and provide implementations such that:
+ * but [List] implementations should override these functions and provide implementations such that:
  * - [List.toString] should return a string containing string representation of contained elements in exact same order
  *   these elements are stored within the list.
  * - [List.equals] should consider two lists equal if and only if they contain the same number of elements and each element
- *   in one list is equal to an element in another list at the same index.
+ *   in one list is equal to an element in another list at the same index. Unlike some other `equals` implementations, [List.equals]
+ *   should consider two lists equal even if they are instances of different classes; the only requirement here is that both lists have
+ *   to implement [List] interface.
  * - [List.hashCode] should be computed as a combination of elements' hash codes using the following algorithm:
  *   ```kotlin
  *   var hashCode: Int = 1
@@ -453,10 +457,12 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
  * it is recommended to explicitly document ordering guarantees for the [Set] implementation.
  *
  * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but it is expected from [Set] implementations to override these functions and provide implementations such that:
+ * but [Set] implementations should override these functions and provide implementations such that:
  * - [Set.toString] should return a string containing string representation of contained elements in iteration order.
  * - [Set.equals] should consider two sets equal if and only if they contain the same number of elements and each element
- *   from one set is contained in another set.
+ *   from one set is contained in another set. Unlike some other `equals` implementations, [Set.equals]
+ *   should consider two sets equal even if they are instances of different classes; the only requirement here is that both sets have
+ *   to implement [Set] interface.
  * - [Set.hashCode] should be computed as a sum of elements' hash codes using the following algorithm:
  *   ```kotlin
  *   var hashCode: Int = 0
@@ -558,10 +564,11 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
  * other may not. It is recommended to explicitly define key/value nullability policy when implementing [Map].
  *
  * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but it is expected from [Map] implementations to override these functions and provide implementations such that:
+ * but [Map] implementations should override these functions and provide implementations such that:
  * - [Map.toString] should return a string containing string representation of contained key-value pairs in iteration order.
  * - [Map.equals] should consider two maps equal if and only if they contain the same keys and values associated with these keys
- *   are equal.
+ *   are equal. Unlike some other `equals` implementations, [Map.equals] should consider two maps equal even
+ *   if they are instances of different classes; the only requirement here is that both maps have to implement [Map] interface.
  * - [Map.hashCode] should be computed as a sum of [Entry] hash codes, and entry's hash code should be computed as exclusive or (XOR) of
  *   hash codes corresponding to a key and a value:
  *   ```kotlin
