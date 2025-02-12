@@ -8,20 +8,19 @@ package org.jetbrains.kotlin.cli.metadata
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.library.KLIB_METADATA_INSTANCE_VERSION
+import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import java.io.File
 
 fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedMetadata: SerializedMetadata, destDir: File) {
     val versions = KotlinLibraryVersioning(
         abiVersion = KotlinAbiVersion.CURRENT,
         compilerVersion = KotlinCompilerVersion.getVersion(),
-        metadataVersion = KLIB_METADATA_INSTANCE_VERSION.toString(),
+        metadataVersion = KLIB_LEGACY_METADATA_VERSION.toString(),
     )
 
     buildKotlinLibrary(

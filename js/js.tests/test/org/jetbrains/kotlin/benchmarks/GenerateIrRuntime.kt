@@ -101,7 +101,7 @@ class GenerateIrRuntime {
     }
 
     private val CompilerConfiguration.metadataVersion
-        get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KLIB_METADATA_INSTANCE_VERSION
+        get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KLIB_LEGACY_METADATA_VERSION
 
     private val environment =
         KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
@@ -252,7 +252,7 @@ class GenerateIrRuntime {
     fun runMonolithicDiskWriting() {
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
-        val metadataVersion = KLIB_METADATA_INSTANCE_VERSION.toString()
+        val metadataVersion = KLIB_LEGACY_METADATA_VERSION.toString()
 
         val versions = KotlinLibraryVersioning(compilerVersion, abiVersion, metadataVersion)
         val file = createTempFile(directory = workingDir.toPath()).toFile()
@@ -272,7 +272,7 @@ class GenerateIrRuntime {
     fun runPerFileDiskWriting() {
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
-        val metadataVersion = KLIB_METADATA_INSTANCE_VERSION.toString()
+        val metadataVersion = KLIB_LEGACY_METADATA_VERSION.toString()
 
         val versions = KotlinLibraryVersioning(compilerVersion, abiVersion, metadataVersion)
         val file = createTempFile(directory = workingDir.toPath()).toFile()

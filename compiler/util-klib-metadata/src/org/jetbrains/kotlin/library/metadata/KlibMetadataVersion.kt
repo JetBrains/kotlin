@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.library.KLIB_METADATA_INSTANCE_VERSION
+import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
  */
 class KlibMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
-    override fun isCompatibleWithCurrentCompilerVersion(): Boolean = isCompatibleTo(KLIB_METADATA_INSTANCE_VERSION)
+    override fun isCompatibleWithCurrentCompilerVersion(): Boolean = isCompatibleTo(KLIB_LEGACY_METADATA_VERSION)
 
     companion object {
         @JvmField

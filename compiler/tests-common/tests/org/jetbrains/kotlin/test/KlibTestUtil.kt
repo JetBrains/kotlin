@@ -126,7 +126,7 @@ object KlibTestUtil {
 
         val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-            metadataVersion = KLIB_METADATA_INSTANCE_VERSION,
+            metadataVersion = KLIB_LEGACY_METADATA_VERSION,
             exportKDoc = false,
             skipExpects = false,
             project = null,
@@ -143,7 +143,7 @@ object KlibTestUtil {
             versions = KotlinLibraryVersioning(
                 compilerVersion = null,
                 abiVersion = null,
-                metadataVersion = KLIB_METADATA_INSTANCE_VERSION.toString(),
+                metadataVersion = KLIB_LEGACY_METADATA_VERSION.toString(),
             ),
             builtInsPlatform = BuiltInsPlatform.COMMON,
             nativeTargets = emptyList(),

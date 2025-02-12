@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
-val KLIB_METADATA_INSTANCE_VERSION = MetadataVersion(1, 4, 1)
+val KLIB_LEGACY_METADATA_VERSION = MetadataVersion(1, 4, 1)
 
 /**
  * [org.jetbrains.kotlin.library.KotlinAbiVersion]

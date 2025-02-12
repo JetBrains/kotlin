@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.library.KLIB_METADATA_INSTANCE_VERSION
+import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
@@ -15,7 +15,7 @@ class KotlinNativeMetadataDecompiler : Fe10KlibMetadataDecompiler<KlibMetadataVe
     KlibMetaFileType,
     { KlibMetadataSerializerProtocol },
     DynamicTypeDeserializer,
-    { KLIB_METADATA_INSTANCE_VERSION },
+    { KLIB_LEGACY_METADATA_VERSION },
     { KlibMetadataVersion.INVALID_VERSION },
     KotlinStubVersions.KOTLIN_NATIVE_STUB_VERSION,
 ) {

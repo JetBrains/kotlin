@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.library.KLIB_METADATA_INSTANCE_VERSION
+import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -114,7 +114,7 @@ abstract class KlibMetadataPackageFragment(
             this,
             proto.getPackage(),
             nameResolver,
-            KLIB_METADATA_INSTANCE_VERSION,
+            KLIB_LEGACY_METADATA_VERSION,
             /* containerSource = */ containerSource,
             components,
             "scope for $this"

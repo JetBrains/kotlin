@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.library.KLIB_METADATA_INSTANCE_VERSION
+import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
@@ -32,6 +32,6 @@ class KlibMetadataClassDataFinder(
         val foundClass = fragment.getClass_(index) ?: error("Could not find data for serialized class $classId")
 
         /* TODO: binary version supposed to be read from protobuf. */
-        return ClassData(nameResolver, foundClass, KLIB_METADATA_INSTANCE_VERSION, containerSource ?: SourceElement.NO_SOURCE)
+        return ClassData(nameResolver, foundClass, KLIB_LEGACY_METADATA_VERSION, containerSource ?: SourceElement.NO_SOURCE)
     }
 }

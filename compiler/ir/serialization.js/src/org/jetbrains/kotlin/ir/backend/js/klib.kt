@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -646,7 +645,7 @@ fun serializeModuleIntoKlib(
     val versions = KotlinLibraryVersioning(
         abiVersion = customAbiVersion ?: abiVersion,
         compilerVersion = KotlinCompilerVersion.VERSION,
-        metadataVersion = KLIB_METADATA_INSTANCE_VERSION.toString(),
+        metadataVersion = KLIB_LEGACY_METADATA_VERSION.toString(),
     )
 
     val properties = Properties().also { p ->

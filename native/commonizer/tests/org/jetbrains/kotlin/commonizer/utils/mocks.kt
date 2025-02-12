@@ -17,10 +17,9 @@ import org.jetbrains.kotlin.commonizer.konan.NativeSensitiveManifestData
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.library.KLIB_METADATA_INSTANCE_VERSION
+import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
@@ -124,7 +123,7 @@ internal class MockModulesProvider private constructor(
 
         val SERIALIZER = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-            metadataVersion = KLIB_METADATA_INSTANCE_VERSION,
+            metadataVersion = KLIB_LEGACY_METADATA_VERSION,
             exportKDoc = false,
             skipExpects = false,
             project = null,
