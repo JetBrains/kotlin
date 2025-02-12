@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75174
 
 // FILE: Base.kt
@@ -18,7 +18,7 @@ class FooImpl<E> : Foo<E> {
         get() = ""
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl2<!><E> : Foo<E> {
-    <!NOTHING_TO_OVERRIDE!>override<!> val E?.prop1: String
+class FooImpl2<E> : Foo<E> {
+    override val E?.prop1: String
         get() = ""
 }
