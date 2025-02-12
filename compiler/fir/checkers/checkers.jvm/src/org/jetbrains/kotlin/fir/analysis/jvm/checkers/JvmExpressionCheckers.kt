@@ -98,4 +98,9 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirJvmModuleAccessibilityResolvedQualifierChecker,
         )
+
+    override val returnExpressionCheckers: Set<FirReturnExpressionChecker>
+        get() = setOf(
+            FirReturnJavaNullabilityWarningChecker,
+        )
 }
