@@ -67,6 +67,15 @@ benchmark {
             include("InferenceFromArgumentCallsBenchmark")
             include("InferenceFromReturnTypeCallsBenchmark")
         }
+
+        register("classname") {
+            warmups = 10
+            iterations = 10
+            iterationTime = 1
+            iterationTimeUnit = "sec"
+            outputTimeUnit = "ns"
+            include("ClassNameBenchmark")
+        }
     }
     targets {
         register("main")
