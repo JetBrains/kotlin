@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.copyValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -287,7 +286,7 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
 
                 newReference.let {
                     it.copyTypeArgumentsFrom(expression)
-                    it.copyValueArgumentsFrom(expression, it.symbol.owner)
+                    it.arguments.assignFrom(expression.arguments)
                 }
 
                 return newReference
