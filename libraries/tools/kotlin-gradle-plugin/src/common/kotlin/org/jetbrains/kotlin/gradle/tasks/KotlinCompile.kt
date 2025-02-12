@@ -348,7 +348,6 @@ abstract class KotlinCompile @Inject constructor(
                 workingDir = taskBuildCacheableOutputDirectory.get().asFile,
                 rootProjectDir = projectRootDir,
                 buildDir = projectLayout.buildDirectory.getFile(),
-                usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings,
                 icFeatures = makeIncrementalCompilationFeatures(),
@@ -498,6 +497,7 @@ abstract class KotlinCompile @Inject constructor(
     // jvm-specific incremental compilation features
     override fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return super.makeIncrementalCompilationFeatures().copy(
+            usePreciseJavaTracking = usePreciseJavaTracking,
             /* Disabled on JVM in favor of classpath snapshot machinery */
             withAbiSnapshot = false,
         )

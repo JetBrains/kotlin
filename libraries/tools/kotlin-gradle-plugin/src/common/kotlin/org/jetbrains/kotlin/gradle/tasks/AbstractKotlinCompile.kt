@@ -286,6 +286,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
      */
     protected open fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
+            usePreciseJavaTracking = false, // not generally applicable
             preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
             keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
             enableUnsafeIncrementalCompilationForMultiplatform = enableUnsafeIncrementalCompilationForMultiplatform.get(),

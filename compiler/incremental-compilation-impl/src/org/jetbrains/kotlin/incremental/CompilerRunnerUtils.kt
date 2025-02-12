@@ -33,7 +33,7 @@ var K2JVMCompilerArguments.classpathAsList: List<File>
     }
 
 val K2JVMCompilerArguments.isK1ForcedByKapt: Boolean
-    // coordinated with org.jetbrains.kotlin.cli.common.ArgumentsKt.switchToFallbackModeIfNecessary
+    // coordinated with org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.shouldRunK2
     get() {
         val isK2 = languageVersion?.startsWith('2') != false
         val isKaptUsed = pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
@@ -71,6 +71,7 @@ fun makeJvmIncrementally(
     withIncrementalCompilation(args) {
         val languageVersion = LanguageVersion.fromVersionString(args.languageVersion) ?: LanguageVersion.LATEST_STABLE
         val useK2 = languageVersion.usesK2
+        val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
 
         val compiler =
             if (useK2 && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
@@ -81,20 +82,23 @@ fun makeJvmIncrementally(
                     outputDirs = null,
                     EmptyModulesApiHistory,
                     kotlinExtensions,
-                    ClasspathChanges.ClasspathSnapshotDisabled
+                    ClasspathChanges.ClasspathSnapshotDisabled,
+                    icFeatures = IncrementalCompilationFeatures(
+                        usePreciseJavaTracking = verifiedPreciseJavaTracking
+                    ),
                 )
             } else {
-                val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
                 IncrementalJvmCompilerRunner(
                     cachesDir,
                     buildReporter,
-                    // Use precise setting in case of non-Gradle build
-                    usePreciseJavaTracking = verifiedPreciseJavaTracking,
                     buildHistoryFile = buildHistoryFile,
                     outputDirs = null,
                     modulesApiHistory = EmptyModulesApiHistory,
                     kotlinSourceFilesExtensions = kotlinExtensions,
-                    classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled
+                    classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled,
+                    icFeatures = IncrementalCompilationFeatures(
+                        usePreciseJavaTracking = verifiedPreciseJavaTracking
+                    ),
                 )
             }
         //TODO by @Ilya.Chernikov set properly

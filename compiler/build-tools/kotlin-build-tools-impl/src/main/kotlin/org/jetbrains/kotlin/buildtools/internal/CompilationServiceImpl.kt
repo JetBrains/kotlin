@@ -163,11 +163,12 @@ internal object CompilationServiceImpl : CompilationService {
                     buildReporter,
                     buildHistoryFile = null,
                     modulesApiHistory = EmptyModulesApiHistory,
-                    usePreciseJavaTracking = verifiedPreciseJavaTracking,
                     outputDirs = options.outputDirs,
                     kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                     classpathChanges = classpathChanges,
-                    icFeatures = options.extractIncrementalCompilationFeatures(),
+                    icFeatures = options.extractIncrementalCompilationFeatures().copy(
+                        usePreciseJavaTracking = verifiedPreciseJavaTracking
+                    ),
                 )
                 val rootProjectDir = options.rootProjectDir
                 val buildDir = options.buildDir
