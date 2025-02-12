@@ -1,30 +1,11 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.util.Disposer
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-import org.jetbrains.kotlin.build.GeneratedFile
-import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
@@ -36,9 +17,6 @@ import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
@@ -50,18 +28,11 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer.c
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
 import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnapshot
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.dirtyFiles.getClasspathChanges
-import org.jetbrains.kotlin.incremental.javaInterop.JavaInteropCoordinator
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
 import org.jetbrains.kotlin.incremental.util.Either
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
 
 open class IncrementalJvmCompilerRunner(
@@ -70,36 +41,19 @@ open class IncrementalJvmCompilerRunner(
     buildHistoryFile: File?,
     outputDirs: Collection<File>?,
     private val modulesApiHistory: ModulesApiHistory,
-    override val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+    kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     private val classpathChanges: ClasspathChanges,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
-) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
-    workingDir,
-    "caches-jvm",
-    reporter,
+) : IncrementalJvmCompilerRunnerBase(
+    workingDir = workingDir,
+    reporter = reporter,
     buildHistoryFile = buildHistoryFile,
     outputDirs = outputDirs,
+    kotlinSourceFilesExtensions = kotlinSourceFilesExtensions,
     icFeatures = icFeatures,
 ) {
     override val shouldTrackChangesInLookupCache
         get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
-
-    override val shouldStoreFullFqNamesInLookupCache
-        get() = icFeatures.withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
-
-    override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
-        IncrementalJvmCachesManager(icContext, args.destination?.let { File(it) }, cacheDirectory)
-
-    override fun destinationDir(args: K2JVMCompilerArguments): File =
-        args.destinationAsFile
-
-    private val messageCollector = MessageCollectorImpl()
-    private val javaInteropCoordinator = JavaInteropCoordinator(
-        icFeatures.usePreciseJavaTracking,
-        messageCollector,
-        reporter
-    )
-
 
     override fun calculateSourcesToCompile(
         caches: IncrementalJvmCachesManager,
@@ -262,113 +216,6 @@ open class IncrementalJvmCompilerRunner(
         }
 
         return result
-    }
-
-    override fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: K2JVMCompilerArguments) {
-        super.performWorkBeforeCompilation(compilationMode, args)
-
-        if (compilationMode is CompilationMode.Incremental) {
-            args.classpathAsList = listOf(args.destinationAsFile) + args.classpathAsList
-        }
-    }
-
-    override fun updateCaches(
-        services: Services,
-        caches: IncrementalJvmCachesManager,
-        generatedFiles: List<GeneratedFile>,
-        changesCollector: ChangesCollector
-    ) {
-        updateIncrementalCache(
-            generatedFiles, caches.platformCache, changesCollector,
-            services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl
-        )
-    }
-
-    override fun runWithNoDirtyKotlinSources(caches: IncrementalJvmCachesManager): Boolean =
-        caches.platformCache.getObsoleteJavaClasses().isNotEmpty() || javaInteropCoordinator.hasChangedUntrackedJavaClasses()
-
-    override fun additionalDirtyFiles(
-        caches: IncrementalJvmCachesManager,
-        generatedFiles: List<GeneratedFile>,
-        services: Services
-    ): Iterable<File> {
-        val cache = caches.platformCache
-        val result = HashSet<File>()
-
-        fun partsByFacadeName(facadeInternalName: String): List<File> {
-            val parts = cache.getStableMultifileFacadeParts(facadeInternalName) ?: emptyList()
-            return parts.flatMap { cache.sourcesByInternalName(it) }
-        }
-
-        for (generatedFile in generatedFiles) {
-            if (generatedFile !is GeneratedJvmClass) continue
-
-            val outputClass = generatedFile.outputClass
-
-            when (outputClass.classHeader.kind) {
-                KotlinClassHeader.Kind.CLASS -> {
-                    val fqName = outputClass.className.fqNameForClassNameWithoutDollars
-                    val cachedSourceFile = cache.getSourceFileIfClass(fqName)
-
-                    if (cachedSourceFile != null) {
-                        // todo: seems useless, remove?
-                        result.add(cachedSourceFile)
-                    }
-                }
-                // todo: more optimal is to check if public API or parts list changed
-                KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
-                    result.addAll(partsByFacadeName(outputClass.className.internalName))
-                }
-                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                    result.addAll(partsByFacadeName(outputClass.classHeader.multifileClassName!!))
-                }
-                KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.SYNTHETIC_CLASS, KotlinClassHeader.Kind.UNKNOWN -> {
-                }
-            }
-        }
-
-        return result
-    }
-
-    override fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
-        javaInteropCoordinator.getAdditionalDirtyLookupSymbols()
-
-    override fun makeServices(
-        args: K2JVMCompilerArguments,
-        lookupTracker: LookupTracker,
-        expectActualTracker: ExpectActualTracker,
-        caches: IncrementalJvmCachesManager,
-        dirtySources: Set<File>,
-        isIncremental: Boolean
-    ): Services.Builder =
-        super.makeServices(args, lookupTracker, expectActualTracker, caches, dirtySources, isIncremental).apply {
-            val moduleName = requireNotNull(args.moduleName) { "'moduleName' is null!" }
-            val targetId = TargetId(moduleName, "java-production")
-            val targetToCache = mapOf(targetId to caches.platformCache)
-            val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
-            register(IncrementalCompilationComponents::class.java, incrementalComponents)
-            javaInteropCoordinator.makeJavaClassesTracker(caches.platformCache)?.let {
-                register(JavaClassesTracker::class.java, it)
-            }
-        }
-
-    override fun runCompiler(
-        sourcesToCompile: List<File>,
-        args: K2JVMCompilerArguments,
-        caches: IncrementalJvmCachesManager,
-        services: Services,
-        messageCollector: MessageCollector,
-        allSources: List<File>,
-        isIncremental: Boolean
-    ): Pair<ExitCode, Collection<File>> {
-        val compiler = K2JVMCompiler()
-        val freeArgsBackup = args.freeArgs.toList()
-        args.freeArgs += sourcesToCompile.map { it.absolutePath }
-        args.allowNoSourceFiles = true
-        val exitCode = compiler.exec(messageCollector, services, args)
-        args.freeArgs = freeArgsBackup
-        reportPerformanceData(compiler.defaultPerformanceManager)
-        return exitCode to sourcesToCompile
     }
 
     override fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: IncrementalJvmCachesManager) {
