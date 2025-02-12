@@ -17764,6 +17764,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/fir/contextSensitiveResolution")
+      @TestDataPath("$PROJECT_ROOT")
+      @ClassicPipeline()
+      @UseExtTestCaseGroupProvider()
+      public class ContextSensitiveResolution {
+        @Test
+        public void testAllFilesPresentInContextSensitiveResolution() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/contextSensitiveResolution"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("eitherInTypePosition.kt")
+        public void testEitherInTypePosition() {
+          runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/eitherInTypePosition.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
       @TestDataPath("$PROJECT_ROOT")
       @ClassicPipeline()

@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -28,13 +30,40 @@ abstract class FirTypeResolver : FirSessionComponent {
     ): FirTypeResolutionResult
 }
 
-class TypeResolutionConfiguration(
+class TypeResolutionConfiguration private constructor(
     val scopes: Iterable<FirScope>,
     val containingClassDeclarations: List<FirClass>,
     // Note: sometimes we don't have useSiteFile in IDE context
     val useSiteFile: FirFile?,
     val topContainer: FirDeclaration? = null,
-)
+    // For `x: MySealed` and `x is MySubClass` instead of `x is MySealed.MySubClass`
+    // the class symbol would point to MySealed.
+    // It's guaranteed to be sealed.
+    val sealedClassForContextSensitiveResolution: FirRegularClassSymbol? = null,
+) {
+    constructor(
+        scopes: Iterable<FirScope>,
+        containingClassDeclarations: List<FirClass>,
+        useSiteFile: FirFile?,
+        topContainer: FirDeclaration? = null,
+    ) : this(scopes, containingClassDeclarations, useSiteFile, topContainer, sealedClassForContextSensitiveResolution = null)
+
+    companion object {
+        fun createForContextSensitiveResolution(
+            containingClassDeclarations: List<FirClass>,
+            useSiteFile: FirFile,
+            topContainer: FirDeclaration?,
+            sealedClassForContextSensitiveResolution: FirRegularClassSymbol,
+        ): TypeResolutionConfiguration {
+            require(sealedClassForContextSensitiveResolution.isSealed)
+            return TypeResolutionConfiguration(
+                scopes = emptyList(),
+                containingClassDeclarations, useSiteFile, topContainer,
+                sealedClassForContextSensitiveResolution,
+            )
+        }
+    }
+}
 
 data class FirTypeResolutionResult(
     val type: ConeKotlinType,

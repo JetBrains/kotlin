@@ -71,7 +71,29 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             resolveDeprecations
         )
 
+        if (configuration.sealedClassForContextSensitiveResolution != null) {
+            val resolvedSymbol = resolveSymbol(configuration.sealedClassForContextSensitiveResolution, qualifier, qualifierResolver)
 
+            if (resolvedSymbol is FirRegularClassSymbol
+                && resolvedSymbol.fir.typeParameters.firstOrNull() !is FirOuterClassTypeParameterRef
+                // Only sealed subclasses are allowed
+                && resolvedSymbol.fir.isSubclassOf(
+                    configuration.sealedClassForContextSensitiveResolution.toLookupTag(), session, isStrict = true
+                )
+            ) {
+                collector.processCandidate(
+                    resolvedSymbol,
+                    // We don't allow inner classes capturing outer type parameters
+                    ConeSubstitutor.Empty,
+                )
+            }
+
+            // We need/expect no scopes for context-sensitive resolution
+            // See TypeResolutionConfiguration.Companion.createForContextSensitiveResolution
+            check(!configuration.scopes.iterator().hasNext())
+
+            return collector.getResult()
+        }
 
         for (scope in configuration.scopes) {
             if (collector.applicability == CandidateApplicability.RESOLVED) break
