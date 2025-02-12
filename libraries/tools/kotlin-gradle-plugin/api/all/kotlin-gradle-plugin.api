@@ -2553,29 +2553,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/MetricContainer
 	public final fun put (Lorg/jetbrains/kotlin/statistics/metrics/StringMetrics;Ljava/lang/String;)Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer : java/io/Serializable, org/jetbrains/kotlin/statistics/metrics/StatisticsValuesConsumer {
-	public fun <init> ()V
-	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/BooleanMetrics;ZLjava/lang/String;Ljava/lang/Long;)Z
-	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/NumericalMetrics;JLjava/lang/String;Ljava/lang/Long;)Z
-	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/StringMetrics;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;)Z
-	public final fun sendToConsumer (Lorg/jetbrains/kotlin/statistics/metrics/StatisticsValuesConsumer;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer$MetricDescriptor : java/lang/Comparable {
-	public fun <init> (Ljava/lang/Comparable;Ljava/lang/String;)V
-	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public fun compareTo (Lorg/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer$MetricDescriptor;)I
-	public final fun component1 ()Ljava/lang/Comparable;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/Comparable;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer$MetricDescriptor;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer$MetricDescriptor;Ljava/lang/Comparable;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer$MetricDescriptor;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getName ()Ljava/lang/Comparable;
-	public final fun getSubprojectName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins : java/lang/Enum {
 	public static final field ATOMICFU_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public static final field BINARY_COMPATIBILITY_VALIDATOR_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
