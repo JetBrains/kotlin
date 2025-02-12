@@ -96,16 +96,15 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         val resolvedTypeRef = if (typeRef is FirResolvedTypeRef) {
             typeRef
         } else {
-            typeResolverTransformer.withFile(context.file) {
-                transformTypeRef(
-                    typeRef,
-                    TypeResolutionConfiguration(
-                        components.createCurrentScopeList(),
-                        context.containingClassDeclarations,
-                        context.containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction }
-                    )
+            typeResolverTransformer.transformTypeRef(
+                typeRef,
+                TypeResolutionConfiguration(
+                    components.createCurrentScopeList(),
+                    context.containingClassDeclarations,
+                    context.file,
+                    context.containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction },
                 )
-            }
+            )
         }
 
         resolvedTypeRef.coneType.forEachType {

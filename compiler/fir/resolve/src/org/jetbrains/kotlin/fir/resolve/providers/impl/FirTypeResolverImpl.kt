@@ -54,19 +54,18 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     private fun resolveUserTypeToSymbol(
         typeRef: FirUserTypeRef,
         configuration: TypeResolutionConfiguration,
-        useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier,
         resolveDeprecations: Boolean
     ): TypeResolutionResult {
         session.lookupTracker?.recordUserTypeRefLookup(
-            typeRef, configuration.scopes.flatMap { it.scopeOwnerLookupNames }, useSiteFile?.source
+            typeRef, configuration.scopes.flatMap { it.scopeOwnerLookupNames }, configuration.useSiteFile?.source
         )
 
         val qualifier = typeRef.qualifier
         val qualifierResolver = session.qualifierResolver
         val collector = FirTypeCandidateCollector(
             session,
-            useSiteFile,
+            configuration.useSiteFile,
             configuration.containingClassDeclarations,
             supertypeSupplier,
             resolveDeprecations
@@ -353,14 +352,13 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
         resolveDeprecations: Boolean,
-        useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier,
         expandTypeAliases: Boolean,
     ): FirTypeResolutionResult {
         return when (typeRef) {
             is FirResolvedTypeRef -> error("Do not resolve, resolved type-refs")
             is FirUserTypeRef -> {
-                val result = resolveUserTypeToSymbol(typeRef, configuration, useSiteFile, supertypeSupplier, resolveDeprecations)
+                val result = resolveUserTypeToSymbol(typeRef, configuration, supertypeSupplier, resolveDeprecations)
                 val resolvedType = resolveUserType(
                     typeRef,
                     result,
@@ -403,7 +401,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
             else -> error(typeRef.render())
         }.also {
-            session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, useSiteFile?.source)
+            session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, configuration.useSiteFile?.source)
         }
     }
 }
