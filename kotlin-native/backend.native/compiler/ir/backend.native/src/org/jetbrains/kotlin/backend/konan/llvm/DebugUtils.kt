@@ -261,7 +261,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
 
     private val IrFunction.types: List<IrType>
         get() {
-            val parameters = valueParameters.map { it.type }
+            val parameters = parameters.map { it.type }
             return listOf(returnType, *parameters.toTypedArray())
         }
 }

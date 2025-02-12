@@ -70,8 +70,8 @@ internal class CStructVarCompanionGenerator(
                             startOffset, endOffset, context.irBuiltIns.unitType,
                             symbols.structVarPrimaryConstructor
                     ).also {
-                        it.putValueArgument(0, irLong(size))
-                        it.putValueArgument(1, irInt(align))
+                        it.arguments[0] = irLong(size)
+                        it.arguments[1] = irInt(align)
                     }
                     +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor))
                 }
