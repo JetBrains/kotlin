@@ -1267,7 +1267,7 @@ object KotlinToolingDiagnostics {
             title = "Deprecated Gradle Property '$usedDeprecatedProperty' Used",
             description = "The `$usedDeprecatedProperty` deprecated property is used in your build.",
             solutions = listOfNotNull(
-                "Please, stop using it as it is unsupported.",
+                "It is unsupported, please stop using it.",
                 details,
             )
         )
