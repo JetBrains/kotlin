@@ -50,9 +50,8 @@ class JpsCompilationResult : CompilationResults,
                         CompilationPerformanceMetrics.CODE_ANALYSIS -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.CODE_ANALYSIS, it.value)
                         CompilationPerformanceMetrics.COMPILER_INITIALIZATION -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.COMPILER_INITIALIZATION, it.value)
 
-                        CompilationPerformanceMetrics.ANALYZED_LINES_NUMBER -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.ANALYZED_LINES_NUMBER, it.value)
+                        CompilationPerformanceMetrics.SOURCE_LINES_NUMBER -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.SOURCE_LINES_NUMBER, it.value)
                         CompilationPerformanceMetrics.ANALYSIS_LPS -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.ANALYSIS_LPS, it.value)
-                        CompilationPerformanceMetrics.CODE_GENERATED_LINES_NUMBER -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.CODE_GENERATED_LINES_NUMBER, it.value)
                         CompilationPerformanceMetrics.CODE_GENERATION_LPS -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.CODE_GENERATION_LPS, it.value)
                     }
                 }
