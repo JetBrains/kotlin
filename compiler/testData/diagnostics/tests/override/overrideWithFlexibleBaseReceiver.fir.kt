@@ -17,26 +17,26 @@ public interface Foo<T> extends Base<T> {
 }
 
 // FILE: main.kt
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl<!><E> : Foo<E> {
+class FooImpl<E> : Foo<E> {
 
-    <!NOTHING_TO_OVERRIDE!>override<!> val (E & Any).prop1: String
+    override val (E & Any).prop1: String
         get() = ""
 
-    <!NOTHING_TO_OVERRIDE!>override<!> val (E & Any).prop2: String
+    override val (E & Any).prop2: String
         get() = ""
 }
 
-class FooImpl2<E> : Foo<E> {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl2<!><E> : Foo<E> {
 
     override val E.prop1: String
         get() = ""
 
-    override val E.prop2: String
+    <!NOTHING_TO_OVERRIDE!>override<!> val E.prop2: String
         get() = ""
 }
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl3<!><E> : Foo<E> {
-    <!NOTHING_TO_OVERRIDE!>override<!> val E?.prop1: String
+    override val E?.prop1: String
         get() = ""
 
     <!NOTHING_TO_OVERRIDE!>override<!> val E?.prop2: String

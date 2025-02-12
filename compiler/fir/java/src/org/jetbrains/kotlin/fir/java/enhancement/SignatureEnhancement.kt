@@ -936,8 +936,13 @@ class FirSignatureEnhancement(
 
         class ValueParameter(val index: Int) : TypeInSignature() {
             override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
-                // When we enhance a setter override, the overridden property's return type corresponds to the setter's value parameter.
                 if (member is FirProperty) {
+                    val receiverParameter = member.receiverParameter
+                    if (index == 0 && receiverParameter != null) {
+                        // Receiver (if any) goes as the value parameter number 0
+                        return receiverParameter.typeRef
+                    }
+                    // When we enhance a setter override, the overridden property's return type corresponds to the setter's value parameter
                     return member.returnTypeRef
                 }
 

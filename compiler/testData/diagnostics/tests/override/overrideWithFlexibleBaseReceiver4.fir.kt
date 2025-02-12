@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75174
 
 // FILE: Base.kt
@@ -13,8 +13,8 @@ public interface Foo<T> extends Base<T> {
 
 // FILE: main.kt
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl<!><E> : Foo<E> {
-    <!NOTHING_TO_OVERRIDE!>override<!> val E.prop1: String?
+class FooImpl<E> : Foo<E> {
+    override val E.prop1: String?
         get() = ""
 }
 
