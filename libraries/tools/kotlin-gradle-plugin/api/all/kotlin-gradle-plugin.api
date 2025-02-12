@@ -2608,12 +2608,13 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/MetricContainer
 	public final fun put (Lorg/jetbrains/kotlin/statistics/metrics/StringMetrics;Ljava/lang/String;)Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer : java/io/Serializable, org/jetbrains/kotlin/statistics/metrics/StatisticsValuesConsumer {
+public class org/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer : java/io/Serializable, org/jetbrains/kotlin/statistics/metrics/StatisticsValuesConsumer {
 	public fun <init> ()V
+	public fun readFromMetricConsumer (Lorg/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer;)V
 	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/BooleanMetrics;ZLjava/lang/String;Ljava/lang/Long;)Z
 	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/NumericalMetrics;JLjava/lang/String;Ljava/lang/Long;)Z
 	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/StringMetrics;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;)Z
-	public final fun sendToConsumer (Lorg/jetbrains/kotlin/statistics/metrics/StatisticsValuesConsumer;)V
+	public fun sendToConsumer (Lorg/jetbrains/kotlin/statistics/metrics/StatisticsValuesConsumer;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer$MetricDescriptor : java/lang/Comparable {
@@ -2629,6 +2630,15 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronized
 	public final fun getSubprojectName ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/SynchronizedMetricsContainer : org/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer, java/io/Serializable {
+	public fun <init> ()V
+	public fun readFromMetricConsumer (Lorg/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronizedMetricsContainer;)V
+	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/BooleanMetrics;ZLjava/lang/String;Ljava/lang/Long;)Z
+	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/NumericalMetrics;JLjava/lang/String;Ljava/lang/Long;)Z
+	public fun report (Lorg/jetbrains/kotlin/statistics/metrics/StringMetrics;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;)Z
+	public fun sendToConsumer (Lorg/jetbrains/kotlin/statistics/metrics/StatisticsValuesConsumer;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins : java/lang/Enum {
