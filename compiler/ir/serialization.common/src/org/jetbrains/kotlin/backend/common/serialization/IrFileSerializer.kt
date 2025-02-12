@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpress
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference as ProtoRawFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
@@ -626,6 +627,13 @@ open class IrFileSerializer(
         return proto.build()
     }
 
+    private fun serializeRawFunctionReference(callable: IrRawFunctionReference): ProtoRawFunctionReference {
+        val proto = ProtoRawFunctionReference.newBuilder()
+            .setSymbol(serializeIrSymbol(callable.symbol))
+
+        return proto.build()
+    }
+
     private fun serializeRichFunctionReference(callable: IrRichFunctionReference): ProtoRichFunctionReference {
         requireAbiAtLeast(ABI_LEVEL_2_2) { callable }
 
@@ -1059,6 +1067,7 @@ open class IrFileSerializer(
             is IrFunctionReference -> operationProto.functionReference = serializeFunctionReference(expression)
             is IrRichFunctionReference -> operationProto.richFunctionReference = serializeRichFunctionReference(expression)
             is IrRichPropertyReference -> operationProto.richPropertyReference = serializeRichPropertyReference(expression)
+            is IrRawFunctionReference -> operationProto.rawFunctionReference = serializeRawFunctionReference(expression)
             is IrGetClass -> operationProto.getClass = serializeGetClass(expression)
             is IrGetField -> operationProto.getField = serializeGetField(expression)
             is IrGetValue -> operationProto.getValue = serializeGetValue(expression)

@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference as ProtoRichFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference as ProtoRichPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference as ProtoRawFunctionReference
 
 class IrBodyDeserializer(
     private val builtIns: IrBuiltIns,
@@ -392,6 +393,17 @@ class IrBodyDeserializer(
             start, end, type,
             declarationDeserializer.deserializeIrFunction(functionExpression.function),
             deserializeIrStatementOrigin(functionExpression.originName)
+        )
+
+    private fun deserializeRawFunctionReference(
+        rawFunctionReference: ProtoRawFunctionReference,
+        start: Int,
+        end: Int,
+        type: IrType
+    ) =
+        IrRawFunctionReferenceImpl(
+            start, end, type,
+            deserializeTypedSymbol<IrFunctionSymbol>(rawFunctionReference.symbol, FUNCTION_SYMBOL),
         )
 
     private fun deserializeRichFunctionReference(
@@ -917,6 +929,7 @@ class IrBodyDeserializer(
             FUNCTION_EXPRESSION -> deserializeFunctionExpression(proto.functionExpression, start, end, type)
             RICH_FUNCTION_REFERENCE -> deserializeRichFunctionReference(proto.richFunctionReference, start, end, type)
             RICH_PROPERTY_REFERENCE -> deserializeRichPropertyReference(proto.richPropertyReference, start, end, type)
+            RAW_FUNCTION_REFERENCE -> deserializeRawFunctionReference(proto.rawFunctionReference, start, end, type)
             ERROR_EXPRESSION -> deserializeErrorExpression(proto.errorExpression, start, end, type)
             ERROR_CALL_EXPRESSION -> deserializeErrorCallExpression(proto.errorCallExpression, start, end, type)
             OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")

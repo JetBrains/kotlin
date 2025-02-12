@@ -566,6 +566,19 @@ public final class IrOperation extends
             operationCase_ = 39;
             break;
           }
+          case 322: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.Builder subBuilder = null;
+            if (operationCase_ == 40) {
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_).toBuilder();
+            }
+            operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
+              operation_ = subBuilder.buildPartial();
+            }
+            operationCase_ = 40;
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -644,6 +657,7 @@ public final class IrOperation extends
     INLINED_FUNCTION_BLOCK(37),
     RICH_FUNCTION_REFERENCE(38),
     RICH_PROPERTY_REFERENCE(39),
+    RAW_FUNCTION_REFERENCE(40),
     OPERATION_NOT_SET(0);
     private int value = 0;
     private OperationCase(int value) {
@@ -690,6 +704,7 @@ public final class IrOperation extends
         case 37: return INLINED_FUNCTION_BLOCK;
         case 38: return RICH_FUNCTION_REFERENCE;
         case 39: return RICH_PROPERTY_REFERENCE;
+        case 40: return RAW_FUNCTION_REFERENCE;
         case 0: return OPERATION_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -1385,6 +1400,23 @@ public final class IrOperation extends
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference.getDefaultInstance();
   }
 
+  public static final int RAW_FUNCTION_REFERENCE_FIELD_NUMBER = 40;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+   */
+  public boolean hasRawFunctionReference() {
+    return operationCase_ == 40;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference getRawFunctionReference() {
+    if (operationCase_ == 40) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance();
+  }
+
   private void initFields() {
   }
   private byte memoizedIsInitialized = -1;
@@ -1621,6 +1653,12 @@ public final class IrOperation extends
         return false;
       }
     }
+    if (hasRawFunctionReference()) {
+      if (!getRawFunctionReference().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -1744,6 +1782,9 @@ public final class IrOperation extends
     }
     if (operationCase_ == 39) {
       output.writeMessage(39, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference) operation_);
+    }
+    if (operationCase_ == 40) {
+      output.writeMessage(40, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -1909,6 +1950,10 @@ public final class IrOperation extends
     if (operationCase_ == 39) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(39, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference) operation_);
+    }
+    if (operationCase_ == 40) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(40, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -2153,6 +2198,9 @@ public final class IrOperation extends
       if (operationCase_ == 39) {
         result.operation_ = operation_;
       }
+      if (operationCase_ == 40) {
+        result.operation_ = operation_;
+      }
       result.bitField0_ = to_bitField0_;
       result.bitField1_ = to_bitField1_;
       result.operationCase_ = operationCase_;
@@ -2316,6 +2364,10 @@ public final class IrOperation extends
         }
         case RICH_PROPERTY_REFERENCE: {
           mergeRichPropertyReference(other.getRichPropertyReference());
+          break;
+        }
+        case RAW_FUNCTION_REFERENCE: {
+          mergeRawFunctionReference(other.getRawFunctionReference());
           break;
         }
         case OPERATION_NOT_SET: {
@@ -2552,6 +2604,12 @@ public final class IrOperation extends
       }
       if (hasRichPropertyReference()) {
         if (!getRichPropertyReference().isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasRawFunctionReference()) {
+        if (!getRawFunctionReference().isInitialized()) {
           
           return false;
         }
@@ -5130,6 +5188,70 @@ public final class IrOperation extends
      */
     public Builder clearRichPropertyReference() {
       if (operationCase_ == 39) {
+        operationCase_ = 0;
+        operation_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+     */
+    public boolean hasRawFunctionReference() {
+      return operationCase_ == 40;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference getRawFunctionReference() {
+      if (operationCase_ == 40) {
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+     */
+    public Builder setRawFunctionReference(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      operation_ = value;
+
+      operationCase_ = 40;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+     */
+    public Builder setRawFunctionReference(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.Builder builderForValue) {
+      operation_ = builderForValue.build();
+
+      operationCase_ = 40;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+     */
+    public Builder mergeRawFunctionReference(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference value) {
+      if (operationCase_ == 40 &&
+          operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance()) {
+        operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_)
+            .mergeFrom(value).buildPartial();
+      } else {
+        operation_ = value;
+      }
+
+      operationCase_ = 40;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 40;</code>
+     */
+    public Builder clearRawFunctionReference() {
+      if (operationCase_ == 40) {
         operationCase_ = 0;
         operation_ = null;
         
