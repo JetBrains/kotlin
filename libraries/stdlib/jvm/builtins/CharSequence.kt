@@ -12,9 +12,10 @@ public actual interface CharSequence {
     /**
      * Returns the length of this character sequence.
      *
-     * The length is measured in the number of characters constituting the sequence.
-     * As [Char]s are UTF-16 encoded, some Unicode characters could be represented as a surrogate pair,
-     * meaning that the length of the char sequence may not correspond to the number of printed characters.
+     * The length is measured in the number of [Char]s constituting the sequence.
+     * It implies that the length may not correspond to the number of printed graphemes:
+     * some [Char]s could represent control, non-printable, or diaeresis symbols, others could form UTF-16 surrogate pairs,
+     * required to encode Unicode code points not representable by a single [Char].
      *
      * @sample samples.text.CharSequences.charSequenceLength
      */
