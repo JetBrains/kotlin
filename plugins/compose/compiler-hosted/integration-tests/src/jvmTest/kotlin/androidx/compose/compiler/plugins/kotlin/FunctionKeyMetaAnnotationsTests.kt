@@ -124,7 +124,7 @@ class FunctionKeyMetaAnnotationsTests(useFir: Boolean) : AbstractCodegenTest(use
                     annotationNode.desc == "Landroidx/compose/runtime/internal/FunctionKeyMeta;"
                 }
                 appendLine(
-                    "    ${method.name} ${
+                    "    ${method.name} ${method.desc} ${
                         annotation?.values?.chunked(2)?.joinToString(", ", prefix = "[", postfix = "]") { (k, v) -> "$k=$v" }
                     }"
                 )
