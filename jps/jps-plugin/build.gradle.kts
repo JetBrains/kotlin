@@ -141,8 +141,11 @@ projectTest(parallel = true) {
 testsJar {}
 
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    @Suppress("DEPRECATION")
     compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
+    @Suppress("DEPRECATION")
     compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
+    compilerOptions.freeCompilerArgs.add("-Xsuppress-version-warnings")
 }
 
 /**

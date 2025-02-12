@@ -17,6 +17,8 @@ sourceSets {
 }
 
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    @Suppress("DEPRECATION")
     compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
+    @Suppress("DEPRECATION")
     compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
 }
