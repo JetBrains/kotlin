@@ -74,6 +74,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             gradleProperties.appendText(
                 """
                 |kotlin.incremental.jvm.fir=true
+                |kotlin.internal.suppressGradlePluginErrors=DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic
                 """.trimMargin()
             )
         }
