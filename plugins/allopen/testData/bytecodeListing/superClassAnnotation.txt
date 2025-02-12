@@ -31,7 +31,7 @@ public abstract class Base_ShouldBeOpen {
 @kotlin.Metadata
 public final class Intf$DefaultImpls {
     // source: 'superClassAnnotation.kt'
-    public static method intfMethod(@org.jetbrains.annotations.NotNull p0: Intf): void
+    public deprecated static @java.lang.Deprecated method intfMethod(@org.jetbrains.annotations.NotNull p0: Intf): void
     public final inner class Intf$DefaultImpls
 }
 
@@ -39,7 +39,8 @@ public final class Intf$DefaultImpls {
 @kotlin.Metadata
 public interface Intf {
     // source: 'superClassAnnotation.kt'
-    public abstract method intfMethod(): void
+    public synthetic static method access$intfMethod$jd(p0: Intf): void
+    public method intfMethod(): void
     public final inner class Intf$DefaultImpls
 }
 
@@ -49,7 +50,6 @@ public class IntfImpl {
     public method <init>(): void
     public method intfImplMethod_ShouldBeOpen(): void
     public method intfMethod(): void
-    public final inner class Intf$DefaultImpls
 }
 
 @kotlin.Metadata

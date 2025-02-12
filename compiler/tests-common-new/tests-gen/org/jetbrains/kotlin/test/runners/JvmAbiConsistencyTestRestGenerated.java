@@ -8988,6 +8988,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("inheritedInterfaceFunctionJvmDefaultDisable.kt")
+      public void testInheritedInterfaceFunctionJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/bytecodeText/defaultArguments/inheritedInterfaceFunctionJvmDefaultDisable.kt");
+      }
+
+      @Test
       @TestMetadata("kt11962.kt")
       public void testKt11962() {
         runTest("compiler/testData/codegen/bytecodeText/defaultArguments/kt11962.kt");
@@ -11144,6 +11150,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("firstInheritedMethodIsAbstractJvmDefaultDisable.kt")
+      public void testFirstInheritedMethodIsAbstractJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/bytecodeText/interfaces/firstInheritedMethodIsAbstractJvmDefaultDisable.kt");
+      }
+
+      @Test
       @TestMetadata("noAnyMethodsOnInterfaceInheritance.kt")
       public void testNoAnyMethodsOnInterfaceInheritance() {
         runTest("compiler/testData/codegen/bytecodeText/interfaces/noAnyMethodsOnInterfaceInheritance.kt");
@@ -11153,6 +11165,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("noNullCheckOnThisInDefaultMethod.kt")
       public void testNoNullCheckOnThisInDefaultMethod() {
         runTest("compiler/testData/codegen/bytecodeText/interfaces/noNullCheckOnThisInDefaultMethod.kt");
+      }
+
+      @Test
+      @TestMetadata("noNullCheckOnThisInDefaultMethodJvmDefaultDisable.kt")
+      public void testNoNullCheckOnThisInDefaultMethodJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/bytecodeText/interfaces/noNullCheckOnThisInDefaultMethodJvmDefaultDisable.kt");
       }
 
       @Test
