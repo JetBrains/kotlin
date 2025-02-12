@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
+import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
@@ -48,6 +50,8 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.*
 
 internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktModule: KaModule): KtLightClass? = when {
@@ -472,4 +476,18 @@ internal fun KaSession.hasTypeForValueClassInSignature(
 internal fun KaSession.typeForValueClass(type: KaType): Boolean {
     val symbol = type.expandedSymbol as? KaNamedClassSymbol ?: return false
     return symbol.isInline
+}
+
+internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPointer(
+    module: KaModule,
+): KaSymbolPointer<T> = analyzeForLightClasses(module) {
+    val symbol = symbol
+    requireWithAttachment(symbol is T, { "Unexpected symbol type" }) {
+        withPsiEntry("declaration", this@createSymbolPointer)
+        withEntry("symbol", symbol) { it.toString() }
+        withEntry("expectedSymbolType", T::class.simpleName ?: "<null>")
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    symbol.createPointer() as KaSymbolPointer<T>
 }

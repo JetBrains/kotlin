@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
@@ -43,7 +42,9 @@ internal class SymbolLightFieldForEnumEntry(
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
-                    annotatedSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType<KaEnumEntrySymbol>(enumEntry),
+                    annotatedSymbolPointer = analyzeForLightClasses(ktModule) {
+                        enumEntry.symbol.createPointer()
+                    },
                 )
             ),
         )

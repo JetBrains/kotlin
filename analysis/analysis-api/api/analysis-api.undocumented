@@ -586,7 +586,6 @@ symbols/KaClassLikeSymbol.kt:KaClassifierSymbol:abstract name
 symbols/KaDeclarationSymbol.kt:@KaExperimentalApi typeParameters
 symbols/KaDeclarationSymbol.kt:KaDeclarationSymbol:@KaExperimentalApi compilerVisibility
 symbols/markers/markers.kt:KaTypeParameterOwnerSymbol:typeParameters
-symbols/pointers/KaPsiSymbolPointerCreator.kt:@KaImplementationDetail KaPsiSymbolPointerCreator
 symbols/pointers/KaSymbolPointer.kt:inline symbolPointer((KaSession) -> S?)
 symbols/pointers/KaSymbolPointer.kt:inline symbolPointerDelegator(KaSymbolPointer<T>, KaSession.(T) -> R?)
 types/KaClassTypeQualifier.kt:KaClassTypeQualifier:name

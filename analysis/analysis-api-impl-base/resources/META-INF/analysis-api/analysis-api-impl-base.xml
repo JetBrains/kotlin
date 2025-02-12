@@ -51,12 +51,6 @@
 
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
 
-    <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointerCreator"
-    />
-
-
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
 
     <registryKey
