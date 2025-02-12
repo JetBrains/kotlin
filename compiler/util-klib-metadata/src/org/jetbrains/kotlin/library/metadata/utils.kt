@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.metadataVersion
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import java.util.*
 
 /**
  * Genuine C-interop library always has two properties in manifest: `interop=true` and the `ir_provider` that
@@ -47,6 +50,34 @@ fun ModuleDescriptor.isFromInteropLibrary(): Boolean {
     } else false
 }
 
-fun CompilerConfiguration.metadataVersionOrDefault(): MetadataVersion {
-    return this.metadataVersion as? MetadataVersion ?: KLIB_LEGACY_METADATA_VERSION
+private val LANGUAGE_TO_KLIB_METADATA_VERSION = EnumMap<LanguageVersion, MetadataVersion>(LanguageVersion::class.java).apply {
+    val oldMetadataVersion = KLIB_LEGACY_METADATA_VERSION
+    this[LanguageVersion.KOTLIN_1_0] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_1] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_2] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_3] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_4] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_5] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_6] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_7] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_8] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_1_9] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_2_0] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_2_1] = oldMetadataVersion
+    this[LanguageVersion.KOTLIN_2_2] = oldMetadataVersion
+    // TODO KT-74417 Uncomment in version 2.3 to bump metadata version
+    this[LanguageVersion.KOTLIN_2_3] = oldMetadataVersion // MetadataVersion(2, 3, 0)
+
+    check(size == LanguageVersion.entries.size) {
+        "Please add mappings from the missing LanguageVersion instances to the corresponding MetadataVersion " +
+                "in `LANGUAGE_TO_KLIB_METADATA_VERSION`"
+    }
+}
+
+private fun LanguageVersion.toMetadataVersion(): MetadataVersion = LANGUAGE_TO_KLIB_METADATA_VERSION.getValue(this)
+
+fun CompilerConfiguration.metadataVersionOrDefault(
+    languageVersion: LanguageVersion = languageVersionSettings.languageVersion
+): MetadataVersion {
+    return this.metadataVersion as? MetadataVersion ?: languageVersion.toMetadataVersion()
 }
