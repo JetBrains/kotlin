@@ -86,8 +86,12 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
 abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
+        defaultDirectives {
+            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+        }
 
         facadeStep(::Fir2IrResultsConverter)
+        facadeStep(::JsIrInliningFacade)
         facadeStep(::FirJsKlibSerializerFacade)
 
         // TODO: Currently do not run lowerings, because they don't report anything;

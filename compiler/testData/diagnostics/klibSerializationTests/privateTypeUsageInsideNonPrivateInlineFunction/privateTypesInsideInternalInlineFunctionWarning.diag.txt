@@ -10,6 +10,9 @@
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:36:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
 
+/privateTypesInsideInternalInlineFunctionWarning.kt:38:5: warning: Public-API inline function accesses a non Public-API declaration A. This could happen as a result of cascaded inlining of the following functions:
+FUN name:privateInline visibility:private modality:FINAL <> () returnType:kotlin.Any [inline]. This will become an error in a future release.
+
 /privateTypesInsideInternalInlineFunctionWarning.kt:39:19: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:40:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
@@ -35,6 +38,9 @@
 /privateTypesInsideInternalInlineFunctionWarning.kt:53:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:55:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarning.kt:56:13: warning: Public-API inline function accesses a non Public-API declaration A. This could happen as a result of cascaded inlining of the following functions:
+FUN name:privateInline visibility:private modality:FINAL <> () returnType:kotlin.Any [inline]. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:57:27: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
 
