@@ -13,15 +13,18 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 
+internal interface ExternalDeclarationFileNameProvider {
+    fun getExternalDeclarationFileName(declaration: IrDeclaration): String
+}
 
-internal class ExternalDeclarationFileNameProvider(
+internal class ExternalDeclarationFileNameProviderImpl(
         private val moduleDeserializerProvider: ModuleDeserializerProvider
-) {
+) : ExternalDeclarationFileNameProvider {
     /**
      * @return a name of the file that contains the [declaration].
      * The key difference from [IrFile.path] is that it supports external package fragments.
      */
-    fun getExternalDeclarationFileName(declaration: IrDeclaration): String = when (val packageFragment = declaration.getPackageFragment()) {
+    override fun getExternalDeclarationFileName(declaration: IrDeclaration): String = when (val packageFragment = declaration.getPackageFragment()) {
         is IrFile -> packageFragment.path
 
         is IrExternalPackageFragment -> {

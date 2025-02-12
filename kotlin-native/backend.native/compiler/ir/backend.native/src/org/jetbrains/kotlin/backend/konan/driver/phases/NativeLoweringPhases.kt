@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
@@ -32,7 +35,21 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
+import org.jetbrains.kotlin.backend.konan.serialization.ExternalDeclarationFileNameProvider
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.inline.konan.nativeLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.konan.target.ClangArgs
+import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 
 internal typealias LoweringList = List<NamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
 internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>
@@ -367,9 +384,108 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
 
 private val interopPhase = createFileLoweringPhase(
         lowering = { generationState: NativeGenerationState ->
-            InteropLowering(generationState.context, generationState.cStubsManager, generationState.dependenciesTracker)
+            InteropLowering(generationState.context, InteropLoweringArguments(generationState))
         },
         name = "Interop",
+)
+
+private val interopPhaseOfTheFirstStage = makeIrModulePhase(
+        lowering = { context: NativePreSerializationLoweringContext ->
+            val configuration = context.configuration
+            val distribution = run {
+                val overridenProperties = mutableMapOf<String, String>().apply {
+                    configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
+                    configuration.get(KonanConfigKeys.LLVM_VARIANT)?.getKonanPropertiesEntry()?.let { (key, value) ->
+                        put(key, value)
+                    }
+                }
+
+                Distribution(
+                        configuration.get(KonanConfigKeys.KONAN_HOME) ?: KotlinNativePaths.homePath.absolutePath,
+                        false,
+                        configuration.get(KonanConfigKeys.RUNTIME_FILE),
+                        overridenProperties,
+                        configuration.get(KonanConfigKeys.KONAN_DATA_DIR)
+                )
+            }
+
+            val platformManager = PlatformManager(distribution)
+            val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
+            val target = targetManager.target
+            val manifestProperties = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
+                File(it).loadProperties()
+            }
+            val fileLowerStateHolder = FileLowerStateHolder()
+            val fileLowerState = FileLowerState()
+            fileLowerStateHolder.state = fileLowerState
+            val cStubsManager = object : CStubsManager {
+                override val fileLowerStateHolder: FileLowerStateHolder
+                    get() = fileLowerStateHolder
+
+                override fun getUniqueName(prefix: String): String {
+                    return fileLowerState.getCStubUniqueName(prefix)
+                }
+
+                override fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>, language: String) {
+                    error("Should not be called")
+                }
+
+                override fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<File> {
+                    error("Should not be called")
+                }
+            }
+            val dependenciesTracker = object : DependenciesTracker {
+                override fun add(irFile: IrFile, onlyBitcode: Boolean) {
+
+                }
+
+                override fun add(declaration: IrDeclaration, onlyBitcode: Boolean) {
+
+                }
+
+                override fun add(functionOrigin: FunctionOrigin, onlyBitcode: Boolean) {
+
+                }
+
+                override fun addNativeRuntime(onlyBitcode: Boolean) {
+
+                }
+
+                override val immediateBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>
+                    get() = emptyList()
+                override val allCachedBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>
+                    get() = emptyList()
+                override val allBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>
+                    get() = emptyList()
+                override val nativeDependenciesToLink: List<KonanLibrary>
+                    get() = emptyList()
+                override val allNativeDependencies: List<KonanLibrary>
+                    get() = emptyList()
+                override val bitcodeToLink: List<KonanLibrary>
+                    get() = emptyList()
+
+                override fun collectResult(): DependenciesTrackingResult {
+                    return DependenciesTrackingResult(emptyList(), emptyList() ,emptyList())
+                }
+            }
+            val externalDeclarationFileNameProvider = object : ExternalDeclarationFileNameProvider {
+                override fun getExternalDeclarationFileName(declaration: IrDeclaration): String {
+                    val packageFragment = declaration.getPackageFragment()
+                    return (packageFragment as? IrFile)?.path ?: error("Unexpected package fragment: ${packageFragment::class.java}")
+                }
+
+            }
+            InteropLowering(context, InteropLoweringArguments(
+                    context.ir.symbols as KonanSymbols,
+                    IrTypeSystemContextImpl(context.irBuiltIns),
+                    target,
+                    cStubsManager,
+                    dependenciesTracker,
+                    externalDeclarationFileNameProvider,
+                    manifestProperties?.getProperty("interop") == "true"
+            ))
+        },
+        name = "InteropAtFirstStage",
 )
 
 private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
@@ -549,6 +665,11 @@ internal val constEvaluationPhase = createFileLoweringPhase(
         name = "ConstEvaluationLowering",
         prerequisite = setOf(inlineAllFunctionsPhase)
 )
+
+fun getNativeLoweringsOfTheFirstPhase():
+        List<NamedCompilerPhase<NativePreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOf(
+        interopPhaseOfTheFirstStage,
+) + nativeLoweringsOfTheFirstPhase
 
 internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
         interopPhase,

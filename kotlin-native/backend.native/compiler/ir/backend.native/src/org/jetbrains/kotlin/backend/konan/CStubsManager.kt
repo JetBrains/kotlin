@@ -8,18 +8,28 @@ import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
+internal interface CStubsManager {
+    val fileLowerStateHolder: FileLowerStateHolder
+
+    fun getUniqueName(prefix: String): String
+
+    fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>, language: String)
+
+    fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<File>
+}
+
 private const val dumpBridges = false
 
-internal class CStubsManager(private val target: KonanTarget, val fileLowerStateHolder: FileLowerStateHolder) {
+internal class CStubsManagerImpl(private val target: KonanTarget, override val fileLowerStateHolder: FileLowerStateHolder) : CStubsManager {
 
-    fun getUniqueName(prefix: String) = fileLowerStateHolder.state.getCStubUniqueName(prefix)
+    override fun getUniqueName(prefix: String) = fileLowerStateHolder.state.getCStubUniqueName(prefix)
 
-    fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>, language: String) {
+    override fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>, language: String) {
         val stubs = languageToStubs.getOrPut(language) { mutableListOf() }
         stubs += Stub(kotlinLocation, lines)
     }
 
-    fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<File> {
+    override fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<File> {
         if (languageToStubs.isEmpty()) return emptyList()
 
         val bitcodes = languageToStubs.entries.map { (language, stubs) ->

@@ -100,7 +100,8 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2Ir
     val preSerializationLowered = newEngine(loweringContext) { engine ->
         engine.runPreSerializationLoweringPhases(
                 fir2IrOutput.fir2irActualizedResult,
-                nativeLoweringsOfTheFirstPhase,
+                //nativeLoweringsOfTheFirstPhase,
+                getNativeLoweringsOfTheFirstPhase(),
         )
     }
     // TODO: After KT-73624, generate native diagnostic tests for `compiler/testData/diagnostics/irInliner/syntheticAccessors`
