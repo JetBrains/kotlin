@@ -63,12 +63,18 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
         val buildId: Property<String>
     }
 
-    private val fusMetricsConsumer = NonSynchronizedMetricsContainer()
+    private val fusMetricsConsumer = SynchronizedMetricsContainer()
 
     internal fun getFusMetricsConsumer(): StatisticsValuesConsumer = fusMetricsConsumer
 
+    /**
+     * Collects metrics using the provided function into a temporary, non-thread-safe instance
+     * of [StatisticsValuesConsumer], and then synchronizes the results into the primary [fusMetricsConsumer].
+     */
     internal fun reportFusMetrics(reportAction: (StatisticsValuesConsumer) -> Unit) {
-        reportAction(fusMetricsConsumer)
+        val metricConsumer = NonSynchronizedMetricsContainer()
+        reportAction(metricConsumer)
+        fusMetricsConsumer.readFromMetricConsumer(metricConsumer)
     }
 
     private val projectEvaluatedTime: Long = System.currentTimeMillis()
@@ -161,9 +167,16 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             }
 
             val taskExecutionResult = TaskExecutionResults[event.descriptor.taskPath]
-            taskExecutionResult?.also { KotlinTaskExecutionMetrics.collectMetrics(it, event, fusMetricsConsumer) }
+
+            taskExecutionResult?.also { executionResult ->
+                reportFusMetrics {
+                    KotlinTaskExecutionMetrics.collectMetrics(executionResult, event, it)
+                }
+            }
         }
-        ExecutedTaskMetrics.collectMetrics(event, fusMetricsConsumer)
+        reportFusMetrics {
+            ExecutedTaskMetrics.collectMetrics(event, it)
+        }
     }
 
     override fun close() {
