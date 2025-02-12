@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.io.StringWriter
 
 /**
@@ -499,43 +500,7 @@ fun irCall(
 
 fun IrMemberAccessExpression<IrFunctionSymbol>.copyTypeAndValueArgumentsFrom(src: IrMemberAccessExpression<IrFunctionSymbol>) {
     copyTypeArgumentsFrom(src)
-    copyValueArgumentsFrom(src, symbol.owner)
-}
-
-fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
-    src: IrMemberAccessExpression<IrFunctionSymbol>,
-    destFunction: IrFunction,
-    receiversAsArguments: Boolean = false,
-    argumentsAsReceivers: Boolean = false
-) {
-    val srcFunction = src.symbol.owner
-
-    var srcArgumentIndex = 0
-    var dstArgumentIndex = 0
-    while (srcArgumentIndex < src.arguments.size && dstArgumentIndex < arguments.size) {
-        val srcParam = srcFunction.parameters.getOrNull(srcArgumentIndex)?.kind ?: break
-        val dstParam = destFunction.parameters.getOrNull(dstArgumentIndex)?.kind ?: break
-
-        if (srcParam != dstParam) {
-            val srcIsReceiver = srcParam == IrParameterKind.DispatchReceiver || srcParam == IrParameterKind.ExtensionReceiver
-            val dstIsReceiver = dstParam == IrParameterKind.DispatchReceiver || dstParam == IrParameterKind.ExtensionReceiver
-
-            if (srcIsReceiver && !dstIsReceiver && !receiversAsArguments) {
-                srcArgumentIndex++
-                continue
-            }
-            if (!srcIsReceiver && dstIsReceiver && !argumentsAsReceivers) {
-                dstArgumentIndex++
-                continue
-            }
-        }
-
-        // todo: Can be dropped after https://youtrack.jetbrains.com/issue/KT-70803
-        if (dstArgumentIndex >= arguments.size) break
-        if (srcArgumentIndex >= src.arguments.size) break
-
-        arguments[dstArgumentIndex++] = src.arguments[srcArgumentIndex++]
-    }
+    arguments.assignFrom(src.arguments)
 }
 
 val IrDeclaration.fileOrNull: IrFile?
@@ -1602,3 +1567,13 @@ val IrFunction.allParametersCount: Int
         is IrConstructor -> parameters.size + 1
         is IrSimpleFunction -> parameters.size
     }
+
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_2_0, replaceWith = "arguments.assignFrom(src.arguments)")
+fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
+    src: IrMemberAccessExpression<IrFunctionSymbol>,
+    destFunction: IrFunction,
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false,
+) {
+    arguments.assignFrom(src.arguments)
+}

@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
@@ -160,7 +161,7 @@ fun createDelegatingCallWithPlaceholderTypeArguments(
 fun IrMemberAccessExpression<IrFunctionSymbol>.copyFromWithPlaceholderTypeArguments(
     existingCall: IrMemberAccessExpression<IrFunctionSymbol>, irBuiltIns: IrBuiltIns
 ) {
-    copyValueArgumentsFrom(existingCall, this.symbol.owner)
+    arguments.assignFrom(existingCall.arguments)
     var offset = 0
     existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
         typeArguments[offset++] = createPlaceholderAnyNType(irBuiltIns)
