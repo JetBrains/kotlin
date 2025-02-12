@@ -90,8 +90,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
 
     val NO_NEW_JAVA_ANNOTATION_TARGETS by key<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
 
-    val OLD_INNER_CLASSES_LOGIC by key<Boolean>("Use old logic for generation of InnerClasses attributes")
-
     val ENABLE_IR_INLINER by key<Boolean>("Enable inlining on IR, instead of inlining on bytecode")
 
     val USE_INLINE_SCOPES_NUMBERS by key<Boolean>("Use inline scopes numbers for inline marker variables")

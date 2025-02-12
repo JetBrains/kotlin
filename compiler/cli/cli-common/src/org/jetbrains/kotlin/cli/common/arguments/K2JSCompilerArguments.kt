@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 
 // TODO remove inheritance from K2WasmCompilerArguments after or within extracting Wasm parts from JS CLI (KT-56850) 
 class K2JSCompilerArguments : K2WasmCompilerArguments() {
@@ -559,17 +561,6 @@ It is deprecated and will be removed in a future release."""
 
         return super.configureAnalysisFlags(collector, languageVersion).also {
             it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag
-        }
-    }
-
-    override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        if (languageVersionSettings.languageVersion < LanguageVersion.KOTLIN_1_4
-            || languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_4
-        ) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "JS backend cannot be used with language or API version below 1.4"
-            )
         }
     }
 

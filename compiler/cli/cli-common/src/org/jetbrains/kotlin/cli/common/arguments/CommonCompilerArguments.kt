@@ -1016,9 +1016,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         checkOutdatedVersions(languageVersion, apiVersion, collector)
         checkProgressiveMode(languageVersion, collector)
 
-        checkIrSupport(languageVersionSettings, collector)
-
-        checkPlatformSpecificSettings(languageVersionSettings, collector)
         checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector)
 
         return languageVersionSettings
@@ -1096,16 +1093,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         }
     }
 
-    protected open fun defaultLanguageVersion(collector: MessageCollector): LanguageVersion =
-        LanguageVersion.LATEST_STABLE
-
-    protected open fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-    }
-
-    protected open fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        // backend-specific
-    }
-
     private fun checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector: MessageCollector) {
         if (explicitApi == ExplicitApiMode.DISABLED.state || explicitReturnTypes == ExplicitApiMode.DISABLED.state) return
         if (explicitApi != explicitReturnTypes) {
@@ -1136,7 +1123,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         }
 
         // If only "-api-version" is specified, language version is assumed to be the latest stable
-        return parseVersion(collector, languageVersion, "language") ?: defaultLanguageVersion(collector)
+        return parseVersion(collector, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
     }
 
     private fun parseVersion(collector: MessageCollector, value: String?, versionOf: String): LanguageVersion? =

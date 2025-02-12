@@ -31,9 +31,6 @@ object JvmAnalysisFlags {
     val enableJvmPreview by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val useIR by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val outputBuiltinsMetadata by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

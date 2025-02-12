@@ -165,13 +165,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
-    @Argument(value = "-Xuse-old-backend", description = "Use the old JVM backend.")
-    var useOldBackend = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xallow-unstable-dependencies",
         description = "Do not report errors on classes in dependencies that were compiled by an unstable version of the Kotlin compiler."
@@ -772,17 +765,6 @@ If API Level >= 2.2 -- no-op."""
         }
 
     @Argument(
-        value = "-Xuse-old-innerclasses-logic",
-        description = """Use the old logic for the generation of 'InnerClasses' attributes.
-This option is deprecated and will be deleted in future versions."""
-    )
-    var oldInnerClassesLogic = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xvalue-classes",
         description = "Enable experimental value classes."
     )
@@ -854,7 +836,6 @@ This option is deprecated and will be deleted in future versions."""
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
         result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies
-        result[JvmAnalysisFlags.useIR] = !useOldBackend
         result[JvmAnalysisFlags.outputBuiltinsMetadata] = outputBuiltinsMetadata
         if (expectBuiltinsAsPartOfStdlib && !stdlibCompilation) {
             collector.report(
@@ -907,34 +888,6 @@ This option is deprecated and will be deleted in future versions."""
             result[LanguageFeature.ValueClasses] = LanguageFeature.State.ENABLED
         }
         return result
-    }
-
-    override fun defaultLanguageVersion(collector: MessageCollector): LanguageVersion =
-        if (useOldBackend) {
-            if (!suppressVersionWarnings) {
-                collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Language version is automatically inferred to ${LanguageVersion.KOTLIN_1_5.versionString} when using " +
-                            "the old JVM backend. Consider specifying -language-version explicitly, or remove -Xuse-old-backend"
-                )
-            }
-            LanguageVersion.KOTLIN_1_5
-        } else super.defaultLanguageVersion(collector)
-
-    override fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        if (useOldBackend && languageVersionSettings.languageVersion >= LanguageVersion.KOTLIN_1_6) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "Old JVM backend does not support language version 1.6 or above. " +
-                        "Please use language version 1.5 or below, or remove -Xuse-old-backend"
-            )
-        }
-        if (oldInnerClassesLogic) {
-            collector.report(
-                CompilerMessageSeverity.WARNING,
-                "The -Xuse-old-innerclasses-logic option is deprecated and will be deleted in future versions."
-            )
-        }
     }
 
     override fun copyOf(): Freezable = copyK2JVMCompilerArguments(this, K2JVMCompilerArguments())
