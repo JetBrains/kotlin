@@ -14,8 +14,8 @@ KaNamedFunctionSymbol:
       condition:
         KaContractIsInstancePredicateExpression:
           argument:
-            KaContractParameterValue:
-              parameterSymbol:
+            KaContractExplicitParameterValue:
+              symbol:
                 KaReceiverParameterSymbol:
                   annotations: []
                   callableId: null

@@ -45,8 +45,8 @@ KaNamedFunctionSymbol:
       condition:
         KaContractIsNullPredicateExpression:
           argument:
-            KaContractParameterValue:
-              parameterSymbol:
+            KaContractExplicitParameterValue:
+              symbol:
                 KaContextParameterSymbol:
                   annotations: []
                   callableId: null
