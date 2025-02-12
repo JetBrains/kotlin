@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.js.translate.utils.name
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -30,16 +29,11 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
             ?.outputs[TranslationMode.FULL_DEV]
             ?.jsProgram
             ?: return
-        processJsProgram(jsProgram, ktFiles, testServices.defaultsProvider.targetBackend!!, testServices.defaultsProvider.frontendKind)
+        processJsProgram(jsProgram, ktFiles, testServices.defaultsProvider.targetBackend!!)
     }
 
-    private fun processJsProgram(
-        program: JsProgram,
-        psiFiles: Map<File, String>,
-        targetBackend: TargetBackend,
-        frontendKind: FrontendKind<*>,
-    ) {
-        psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it.key, it.value, targetBackend, frontendKind) }
+    private fun processJsProgram(program: JsProgram, psiFiles: Map<File, String>, targetBackend: TargetBackend) {
+        psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it.key, it.value, targetBackend) }
         program.verifyAst()
     }
 
