@@ -15,12 +15,8 @@ import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.shortName
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
@@ -321,7 +317,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     fun transformAnnotationCall(annotationCall: FirAnnotationCall, typeRef: FirUserTypeRef) {
         val transformedAnnotationType = typeResolverTransformer.transformUserTypeRef(
             userTypeRef = createDeepCopyOfTypeRef(typeRef),
-            data = ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack),
+            data = TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack),
         ) as? FirResolvedTypeRef ?: return
 
         resolveAnnotationsOnAnnotationIfNeeded(transformedAnnotationType)
