@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
@@ -76,6 +78,7 @@ private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePacka
     return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.packageFqName.takeIf { shouldIncludePackage }
 }
 
+@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_2_0, replaceWith = "arguments")
 val IrFunctionAccessExpression.valueArguments: List<IrExpression?>
     get() = List(valueArgumentsCount) { getValueArgument(it) }
 
