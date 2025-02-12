@@ -465,6 +465,7 @@ tasks.withType<Test>().configureEach {
     dependsOn(":examples:annotation-processor-example:install")
     dependsOn(":kotlin-dom-api-compat:install")
     dependsOn(cleanUserHomeKonanDir)
+    dependsOn(applePrivacyManifestPluginClasses)
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
