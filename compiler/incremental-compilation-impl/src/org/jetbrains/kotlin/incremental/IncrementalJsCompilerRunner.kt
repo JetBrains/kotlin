@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
+import org.jetbrains.kotlin.incremental.dirtyFiles.getClasspathChanges
 import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory

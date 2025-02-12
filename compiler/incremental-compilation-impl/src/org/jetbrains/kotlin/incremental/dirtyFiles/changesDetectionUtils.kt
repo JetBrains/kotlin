@@ -1,13 +1,21 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.incremental
+package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.incremental.AbiSnapshot
+import org.jetbrains.kotlin.incremental.AbiSnapshotDiffService
+import org.jetbrains.kotlin.incremental.BuildDiffsStorage
+import org.jetbrains.kotlin.incremental.BuildInfo
+import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
+import org.jetbrains.kotlin.incremental.ChangesEither
+import org.jetbrains.kotlin.incremental.IncrementalCacheCommon
+import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.name.FqName
@@ -15,7 +23,7 @@ import java.io.File
 
 internal fun getClasspathChanges(
     classpath: List<File>,
-    changedFiles: ChangedFiles.DeterminableFiles.Known,
+    changedFiles: DeterminableFiles.Known,
     lastBuildInfo: BuildInfo,
     modulesApiHistory: ModulesApiHistory,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
