@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
@@ -47,7 +46,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType(classOrObject),
+        classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
         ktModule = ktModule,
         manager = classOrObject.manager,
     ) {

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
@@ -60,7 +59,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType(classOrObject),
+        classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
         ktModule = ktModule,
         manager = classOrObject.manager,
     ) {
