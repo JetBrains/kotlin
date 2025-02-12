@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -326,7 +327,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     cacheDeserializationStrategy,
                     dependenciesTracker,
                     llvmModuleSpecification,
-                    K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseMeasurementType.Initialization) },
+                    PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseMeasurementType.Initialization) },
             )
         }
     } else {
@@ -342,7 +343,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
                         llvmModuleSpecification,
-                        K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseMeasurementType.Initialization) },
+                        PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseMeasurementType.Initialization) },
                 )
         )
     }

@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseMeasurementType
@@ -48,8 +50,8 @@ import java.io.File
  * Please see `/docs/fir/k2_kmp.md` for more info on the K2/FIR implementation.
  */
 class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
-
-    override val defaultPerformanceManager: PerformanceManager = K2MetadataCompilerPerformanceManager()
+    override val platform: TargetPlatform
+        get() = CommonPlatforms.defaultCommonPlatform
 
     override fun createArguments() = K2MetadataCompilerArguments()
 
@@ -162,13 +164,14 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             doMain(KotlinMetadataCompiler(), args)
         }
     }
-
-    protected class K2MetadataCompilerPerformanceManager : PerformanceManager("Kotlin to Metadata compiler")
 }
 
 @Deprecated("Use KotlinMetadataCompiler instead", level = DeprecationLevel.HIDDEN)
 class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     private val delegate = KotlinMetadataCompiler()
+
+    override val platform: TargetPlatform
+        get() = delegate.platform
 
     override val defaultPerformanceManager: PerformanceManager
         get() = delegate.defaultPerformanceManager
