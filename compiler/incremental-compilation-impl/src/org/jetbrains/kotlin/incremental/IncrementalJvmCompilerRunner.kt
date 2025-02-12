@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailableForJSCompiler
-import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer.computeClasspathChanges
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
@@ -62,6 +61,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
+import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -174,12 +174,7 @@ open class IncrementalJvmCompilerRunner(
         return abiSnapshots
     }
 
-    // There are 2 steps where we need to load the current classpath snapshot and shrink it:
-    //   - Before classpath diffing when `classpathChanges` is ToBeComputedByIncrementalCompiler (see `calculateSourcesToCompileImpl`)
-    //   - After compilation (see `performWorkAfterSuccessfulCompilation`)
-    // To avoid duplicated work, we store the snapshots after the first step for reuse (if the first step is executed).
-    private var currentClasspathSnapshot: List<AccessibleClassSnapshot>? = null
-    private var shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>? = null
+    private val lazyClasspathSnapshot = LazyClasspathSnapshot(classpathChanges, ClasspathSnapshotBuildReporter(reporter))
 
     private fun calculateSourcesToCompileImpl(
         caches: IncrementalJvmCachesManager,
@@ -198,16 +193,9 @@ open class IncrementalJvmCompilerRunner(
             is NoChanges -> ChangesEither.Known(emptySet(), emptySet())
             is ToBeComputedByIncrementalCompiler -> reporter.measure(GradleBuildTime.COMPUTE_CLASSPATH_CHANGES) {
                 reporter.addMetric(GradleBuildPerformanceMetric.COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT, 1)
-                val storeCurrentClasspathSnapshotForReuse =
-                    { currentClasspathSnapshotArg: List<AccessibleClassSnapshot>,
-                      shrunkCurrentClasspathAgainstPreviousLookupsArg: List<AccessibleClassSnapshot> ->
-                        currentClasspathSnapshot = currentClasspathSnapshotArg
-                        shrunkCurrentClasspathAgainstPreviousLookups = shrunkCurrentClasspathAgainstPreviousLookupsArg
-                    }
                 val classpathChanges = computeClasspathChanges(
-                    classpathChanges.classpathSnapshotFiles,
                     caches.lookupCache,
-                    storeCurrentClasspathSnapshotForReuse,
+                    lazyClasspathSnapshot,
                     ClasspathSnapshotBuildReporter(reporter)
                 )
                 // `classpathChanges` contains changed and impacted symbols on the classpath.
@@ -477,7 +465,7 @@ open class IncrementalJvmCompilerRunner(
             reporter.measure(GradleBuildTime.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
                 shrinkAndSaveClasspathSnapshot(
                     compilationWasIncremental = compilationMode is CompilationMode.Incremental, classpathChanges, caches.lookupCache,
-                    currentClasspathSnapshot, shrunkCurrentClasspathAgainstPreviousLookups, ClasspathSnapshotBuildReporter(reporter)
+                    lazyClasspathSnapshot, ClasspathSnapshotBuildReporter(reporter)
                 )
             }
         }
