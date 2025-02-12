@@ -147,8 +147,8 @@ fun FirExpression.unwrapExpression(): FirExpression =
         else -> this
     }
 
-val FirVariable.isExplicitWhenSubjectVariable: Boolean
-    get() = origin != FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
+val FirVariable.isImplicitWhenSubjectVariable: Boolean
+    get() = origin == FirDeclarationOrigin.Synthetic.ImplicitWhenSubject
 
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
     when (this) {
