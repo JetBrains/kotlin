@@ -663,7 +663,7 @@ abstract class CompileServiceImplBase(
         }
 
         val verifiedPreciseJavaTracking = k2jvmArgs.disablePreciseJavaTrackingIfK2(
-            usePreciseJavaTrackingByDefault = incrementalCompilationOptions.usePreciseJavaTracking
+            usePreciseJavaTrackingByDefault = incrementalCompilationOptions.icFeatures.usePreciseJavaTracking
         )
 
         val compiler = if (incrementalCompilationOptions.useJvmFirRunner) {
@@ -675,7 +675,9 @@ abstract class CompileServiceImplBase(
                 kotlinSourceFilesExtensions = allKotlinExtensions,
                 outputDirs = incrementalCompilationOptions.outputFiles,
                 classpathChanges = incrementalCompilationOptions.classpathChanges,
-                icFeatures = incrementalCompilationOptions.icFeatures,
+                icFeatures = incrementalCompilationOptions.icFeatures.copy(
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking
+                ),
             )
         } else {
             IncrementalJvmCompilerRunner(
@@ -683,11 +685,12 @@ abstract class CompileServiceImplBase(
                 reporter,
                 buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
                 outputDirs = incrementalCompilationOptions.outputFiles,
-                usePreciseJavaTracking = verifiedPreciseJavaTracking,
                 modulesApiHistory = modulesApiHistory,
                 kotlinSourceFilesExtensions = allKotlinExtensions,
                 classpathChanges = incrementalCompilationOptions.classpathChanges,
-                icFeatures = incrementalCompilationOptions.icFeatures,
+                icFeatures = incrementalCompilationOptions.icFeatures.copy(
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking
+                ),
             )
         }
         return try {

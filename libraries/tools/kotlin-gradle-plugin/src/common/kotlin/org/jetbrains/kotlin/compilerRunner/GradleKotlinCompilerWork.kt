@@ -310,7 +310,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             requestedCompilationResults = requestedCompilationResults.map { it.code }.toTypedArray(),
             compilerMode = CompilerMode.INCREMENTAL_COMPILER,
             targetPlatform = targetPlatform,
-            usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
             outputFiles = config.outputFiles,
             multiModuleICSettings = icEnv.multiModuleICSettings,
             modulesInfo = config.incrementalModuleInfo,

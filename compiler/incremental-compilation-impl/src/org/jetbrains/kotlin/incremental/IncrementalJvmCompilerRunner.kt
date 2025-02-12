@@ -16,6 +16,12 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -61,7 +67,6 @@ import java.io.File
 open class IncrementalJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
-    usePreciseJavaTracking: Boolean,
     buildHistoryFile: File?,
     outputDirs: Collection<File>?,
     private val modulesApiHistory: ModulesApiHistory,
@@ -90,7 +95,7 @@ open class IncrementalJvmCompilerRunner(
 
     private val messageCollector = MessageCollectorImpl()
     private val javaInteropCoordinator = JavaInteropCoordinator(
-        usePreciseJavaTracking,
+        icFeatures.usePreciseJavaTracking,
         messageCollector,
         reporter
     )

@@ -44,7 +44,6 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                     reportCategories = reportCategories,
                     reportSeverity = reportSeverity,
                     requestedCompilationResults = requestedCompilationResults,
-                    usePreciseJavaTracking = options.preciseJavaTrackingEnabled,
                     outputFiles = options.outputDirs,
                     multiModuleICSettings = null, // required only for the build history approach
                     modulesInfo = null, // required only for the build history approach

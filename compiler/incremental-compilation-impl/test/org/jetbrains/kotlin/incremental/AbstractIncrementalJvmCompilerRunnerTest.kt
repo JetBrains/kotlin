@@ -93,13 +93,15 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                     IncrementalJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
-                        // Use precise setting in case of non-Gradle build
-                        usePreciseJavaTracking = verifiedPreciseJavaTracking,
                         buildHistoryFile = buildHistoryFile,
                         outputDirs = null,
                         modulesApiHistory = EmptyModulesApiHistory,
                         kotlinSourceFilesExtensions = kotlinExtensions,
                         classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled,
+                        icFeatures = IncrementalCompilationFeatures(
+                            withAbiSnapshot = false,
+                            usePreciseJavaTracking = verifiedPreciseJavaTracking
+                        ),
                         testLookupTracker = testLookupTracker
                     )
                 }

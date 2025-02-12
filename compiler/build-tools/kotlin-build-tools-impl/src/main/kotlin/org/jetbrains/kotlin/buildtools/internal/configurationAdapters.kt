@@ -18,6 +18,7 @@ private typealias ICConfiguration = IncrementalJvmCompilationConfiguration<*>
 
 internal fun ICConfiguration.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
     return IncrementalCompilationFeatures(
+        usePreciseJavaTracking = preciseJavaTrackingEnabled,
         withAbiSnapshot = false,
         preciseCompilationResultsBackup = preciseCompilationResultsBackupEnabled,
         keepIncrementalCompilationCachesInMemory = incrementalCompilationCachesKeptInMemory,

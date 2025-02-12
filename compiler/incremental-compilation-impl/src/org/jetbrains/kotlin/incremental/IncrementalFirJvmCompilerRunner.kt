@@ -66,7 +66,6 @@ open class IncrementalFirJvmCompilerRunner(
 ) : IncrementalJvmCompilerRunner(
     workingDir,
     reporter,
-    false,
     buildHistoryFile,
     outputDirs,
     modulesApiHistory,
