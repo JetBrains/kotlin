@@ -48,14 +48,15 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
             ).also { function ->
                 function.parent = baseFunction.parent
                 function.parameters += function.createDispatchReceiverParameterWithClassParent()
-                function.valueParameters = baseFunction.valueParameters.map { it.copyTo(function) }
+                for (param in baseFunction.parameters.drop(1)) {
+                    function.parameters += param.copyTo(function)
+                }
                 // Copy annotations.
                 val setWithoutBEAnnotations = (delegatingToFunction ?: baseFunction).annotations.map { annotation ->
                     annotation.deepCopyWithSymbols().also { copy ->
                         if (copy.isAnnotationWithEqualFqName(KonanFqNames.gcUnsafeCall)) {
                             val value = "${annotation.getAnnotationStringValue("callee")}_without_BoundCheck"
-                            copy.putValueArgument(0,
-                                    IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, value))
+                            copy.arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, value)
                         }
                     }
                 }

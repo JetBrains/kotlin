@@ -61,8 +61,11 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
         +IrTryImpl(startOffset, endOffset, context.irBuiltIns.nothingType).apply {
             tryResult = irBlock {
                 +irCall(actualMain).apply {
-                    if (actualMain.valueParameters.size != 0)
-                        putValueArgument(0, irGet(entryPoint.valueParameters[0]))
+                    when (actualMain.parameters.size) {
+                        0 -> Unit
+                        1 -> arguments[0] = irGet(entryPoint.parameters[0])
+                        else -> error("Too many parameters")
+                    }
                 }
                 +irReturn(irInt(0))
             }
@@ -76,13 +79,14 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
                     catchParameter,
                     result = irBlock {
                         +irCall(context.ir.symbols.processUnhandledException).apply {
-                            putValueArgument(0, irGet(catchParameter))
+                            arguments[0] = irGet(catchParameter)
                         }
                         +irCall(context.ir.symbols.terminateWithUnhandledException).apply {
-                            putValueArgument(0, irGet(catchParameter))
+                            arguments[0] = irGet(catchParameter)
                         }
                     }
             )
+            Unit
         }
     }
 
