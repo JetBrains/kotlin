@@ -3,7 +3,7 @@
 // ISSUE: KT-70672, KT-70673
 fun testNullableBoolean(arg: Boolean?) = when (arg) {
     null -> 1
-    <!USELESS_IS_CHECK!>is Boolean<!> -> 2
+    is Boolean -> 2
 }
 
 fun testNullableBoolean2(arg: Boolean?) = when (arg) {
@@ -12,7 +12,7 @@ fun testNullableBoolean2(arg: Boolean?) = when (arg) {
 
 fun testNullableBooleanAgainstAny(arg: Boolean?) = when (arg) {
     null -> 1
-    <!USELESS_IS_CHECK!>is Any<!> -> 2
+    is Any -> 2
 }
 
 sealed class Sealed {
@@ -22,7 +22,7 @@ sealed class Sealed {
 
 fun testNullableSealed(arg: Sealed?) = when (arg) {
     null -> 1
-    <!USELESS_IS_CHECK!>is Sealed<!> -> 2
+    is Sealed -> 2
 }
 
 fun testNullableSealed2(arg: Sealed?) = when (arg) {
@@ -44,7 +44,7 @@ fun testNullableEnum2(arg: MyEnum?) = when (arg) {
 
 fun testNullableAny(arg: Any?) = when (arg) {
     null -> 1
-    <!USELESS_IS_CHECK!>is Any<!> -> 2
+    is Any -> 2
 }
 
 fun testNullableAny2(arg: Any?) = when (arg) {
@@ -53,5 +53,5 @@ fun testNullableAny2(arg: Any?) = when (arg) {
 
 fun <T> testNullableTypeParameter(arg: T?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is T<!> -> false
+    is T -> false
 }

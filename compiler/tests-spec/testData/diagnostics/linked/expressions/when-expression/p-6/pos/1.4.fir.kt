@@ -13,7 +13,7 @@
 // TESTCASE NUMBER: 1
 fun case_1(value_1: SealedClass): String = when (value_1) {
     is SealedChild1, !is SealedChild3 -> ""
-    <!USELESS_IS_CHECK!>is SealedChild3<!> -> ""
+    is SealedChild3 -> ""
 }
 
 // TESTCASE NUMBER: 2

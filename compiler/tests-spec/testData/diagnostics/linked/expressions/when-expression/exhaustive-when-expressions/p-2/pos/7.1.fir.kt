@@ -81,5 +81,5 @@ fun case_8(value: SealedClass?): String = when (value) {
  */
 fun case_9(value: SealedClass?): String = when (value) {
     is SealedChild1, !is SealedChild3 -> ""
-    <!USELESS_IS_CHECK!>is SealedChild3?<!> -> ""
+    is SealedChild3? -> ""
 }

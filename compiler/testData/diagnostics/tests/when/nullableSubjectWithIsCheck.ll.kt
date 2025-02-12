@@ -27,7 +27,7 @@ public class JClass {
 
 fun Int?.isNull() = when (this) {
     null -> true
-    <!USELESS_IS_CHECK!>is Int<!> -> false
+    is Int -> false
 }
 
 fun <T> List<T>.isNull() = when (this) {
@@ -45,12 +45,12 @@ fun <T: Int?> isNull(arg: T) = when(arg) {
 
 fun testNullableInt(arg: Int?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is Int<!> -> false
+    is Int -> false
 }
 
 fun testNullable(arg: Any?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is Any<!> -> false
+    is Any -> false
 }
 
 fun testNullable(arg: Nothing?) = when (arg) {
@@ -59,42 +59,42 @@ fun testNullable(arg: Nothing?) = when (arg) {
 
 fun testNullable(arg: Unit?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is Unit<!> -> false
+    is Unit -> false
 }
 
 fun testNullable(arg: IntArray?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is IntArray<!> -> false
+    is IntArray -> false
 }
 
 fun testNullable(arg: UInt?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is UInt<!> -> false
+    is UInt -> false
 }
 
 typealias NullableInt = Int?
 
 fun testTypeAliasToNullable(arg: NullableInt) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is NullableInt<!> -> false
+    is NullableInt -> false
 }
 
 fun NullableInt.isNotNull() = when (this) {
     null -> false
-    <!USELESS_IS_CHECK!>is NullableInt<!> -> true
+    is NullableInt -> true
 }
 
 class KClassWithGetter {
     var prop: Int? = 0
         get() = when (prop) {
             null -> null
-            <!USELESS_IS_CHECK!>is Int<!> -> prop
+            is Int -> prop
         }
 }
 
 fun testSubclass(arg: String?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is CharSequence<!> -> false
+    is CharSequence -> false
 }
 
 fun testSmartCast(x: Any?) {
@@ -108,12 +108,12 @@ fun testSmartCast(x: Any?) {
 
 val testLambda = {arg: String? -> when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is CharSequence<!> -> false
+    is CharSequence -> false
 }}
 
 fun testLambda(arg: (() -> Unit)?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is ()->Unit<!> -> false
+    is ()->Unit -> false
 }
 
 sealed class SealedClass {
@@ -131,7 +131,7 @@ fun testSealedClass(arg: SealedClass?) {
 fun testJavaNullableProps() {
     var a = when (JClass.intProp) {
         <!SENSELESS_NULL_IN_WHEN!>null<!> -> true
-        <!USELESS_IS_CHECK!>is Int<!> -> false
+        is Int -> false
     }
 
     a = when (JClass.intProp) {
@@ -140,17 +140,17 @@ fun testJavaNullableProps() {
 
     a = when (JClass.integerProp) {
         null -> true
-        <!USELESS_IS_CHECK!>is Int<!> -> false
+        is Int -> false
     }
 
     a = when (JClass.stringProp) {
         null -> true
-        <!USELESS_IS_CHECK!>is String<!> -> false
+        is String -> false
     }
 
     a = when (JClass.objectProp) {
         null -> true
-        <!USELESS_IS_CHECK!>is Any<!> -> false
+        is Any -> false
     }
 }
 
