@@ -40,10 +40,9 @@ data class BuildMetricsValue(
 enum class CompilationPerformanceMetrics {
     COMPILER_INITIALIZATION,
     CODE_ANALYSIS,
-    ANALYZED_LINES_NUMBER,
+    SOURCE_LINES_NUMBER,
     ANALYSIS_LPS,
     CODE_GENERATION,
-    CODE_GENERATED_LINES_NUMBER,
     CODE_GENERATION_LPS,
 }
 
