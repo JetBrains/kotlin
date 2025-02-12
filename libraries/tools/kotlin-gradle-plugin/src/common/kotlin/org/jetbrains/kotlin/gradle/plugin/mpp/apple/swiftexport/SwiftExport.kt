@@ -10,24 +10,20 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportClasspathResolvableConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.swiftExportedModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.getOrCreate
-import org.jetbrains.kotlin.gradle.utils.konanDistribution
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
@@ -71,6 +67,7 @@ internal fun Project.registerSwiftExportTask(
         buildType = buildType,
         target = target,
         mainCompilation = mainCompilation,
+        freeCompilerArgs = swiftExportExtension.advancedConfiguration.freeCompilerArgs,
         swiftExportTask = swiftExportTask
     )
 
@@ -173,6 +170,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
     buildType: NativeBuildType,
     target: KotlinNativeTarget,
     mainCompilation: KotlinNativeCompilation,
+    freeCompilerArgs: Provider<List<String>>,
     swiftExportTask: TaskProvider<SwiftExportTask>,
 ): AbstractNativeLibrary {
     target.compilations.getOrCreate(
@@ -193,6 +191,10 @@ private fun registerSwiftExportCompilationAndGetBinary(
                 staticLib.compilation = swiftExportCompilation
                 staticLib.binaryOption("swiftExport", "true")
                 staticLib.binaryOption("cInterfaceMode", "none")
+
+                staticLib.linkTaskProvider.configure {
+                    it.toolOptions.freeCompilerArgs.addAll(freeCompilerArgs)
+                }
             }
         }
     )

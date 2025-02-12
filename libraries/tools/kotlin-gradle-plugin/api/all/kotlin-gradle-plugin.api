@@ -2301,6 +2301,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTa
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportAdvancedConfiguration {
+	public abstract fun getFreeCompilerArgs ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getSettings ()Lorg/gradle/api/provider/MapProperty;
 }
 
