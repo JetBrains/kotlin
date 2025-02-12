@@ -23,8 +23,6 @@ abstract class FirTypeResolver : FirSessionComponent {
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
         resolveDeprecations: Boolean,
-        // Note: sometimes we don't have useSiteFile in IDE context
-        useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier,
         expandTypeAliases: Boolean = true,
     ): FirTypeResolutionResult
@@ -33,6 +31,8 @@ abstract class FirTypeResolver : FirSessionComponent {
 class TypeResolutionConfiguration(
     val scopes: Iterable<FirScope>,
     val containingClassDeclarations: List<FirClass>,
+    // Note: sometimes we don't have useSiteFile in IDE context
+    val useSiteFile: FirFile?,
     val topContainer: FirDeclaration? = null,
 )
 

@@ -388,13 +388,12 @@ open class FirSupertypeResolverVisitor(
             if (classLikeDeclaration.isLocalClassOrAnonymousObject()) @OptIn(PrivateForInline::class) useSiteFile
             else session.firProvider.getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)
 
-        val resolvedTypesRefs = transformer.withFile(newUseSiteFile) {
-            @OptIn(PrivateForInline::class)
+        @OptIn(PrivateForInline::class)
+        val resolvedTypesRefs =
             resolveSuperTypeRefs(
                 transformer,
-                TypeResolutionConfiguration(scopes, classDeclarationsStack),
+                TypeResolutionConfiguration(scopes, classDeclarationsStack, newUseSiteFile),
             )
-        }
 
         supertypeComputationSession.storeSupertypes(classLikeDeclaration, resolvedTypesRefs)
         return resolvedTypesRefs
@@ -466,7 +465,7 @@ open class FirSupertypeResolverVisitor(
                  * `resolveRecursively` is set to `true` in the compiler and to `false` in the AA
                  */
                 @OptIn(PrivateForInline::class)
-                if (resolveRecursively && transformer.currentFile != null && classLikeDeclaration is FirRegularClass) {
+                if (resolveRecursively && configuration.useSiteFile != null && classLikeDeclaration is FirRegularClass) {
                     addSupertypesToGeneratedNestedClasses(classLikeDeclaration, transformer, configuration)
                 }
             }

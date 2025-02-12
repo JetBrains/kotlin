@@ -339,12 +339,10 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
-        return typeResolverTransformer.withFile(currentFile) {
-            typeRef.transform(
-                typeResolverTransformer,
-                TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack)
-            )
-        }
+        return typeRef.transform(
+            typeResolverTransformer,
+            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+        )
     }
 
     override fun transformValueParameter(

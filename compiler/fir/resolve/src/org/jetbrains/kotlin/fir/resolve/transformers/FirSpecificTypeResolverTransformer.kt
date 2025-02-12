@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -69,21 +68,6 @@ class FirSpecificTypeResolverTransformer(
         }
     }
 
-    @PrivateForInline
-    @JvmField
-    var currentFile: FirFile? = null
-
-    @OptIn(PrivateForInline::class)
-    inline fun <R> withFile(file: FirFile?, block: FirSpecificTypeResolverTransformer.() -> R): R {
-        val oldValue = currentFile
-        currentFile = file
-        return try {
-            block()
-        } finally {
-            currentFile = oldValue
-        }
-    }
-
     @OptIn(PrivateForInline::class)
     override fun transformTypeRef(typeRef: FirTypeRef, data: TypeResolutionConfiguration): FirResolvedTypeRef {
         withBareTypes(allowed = false) {
@@ -134,7 +118,6 @@ class FirSpecificTypeResolverTransformer(
             areBareTypesAllowed,
             isOperandOfIsOperator,
             resolveDeprecations,
-            currentFile,
             supertypeSupplier,
             expandTypeAliases,
         )

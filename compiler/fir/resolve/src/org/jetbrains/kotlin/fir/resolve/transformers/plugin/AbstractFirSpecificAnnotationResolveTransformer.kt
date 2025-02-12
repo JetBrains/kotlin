@@ -317,7 +317,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     fun transformAnnotationCall(annotationCall: FirAnnotationCall, typeRef: FirUserTypeRef) {
         val transformedAnnotationType = typeResolverTransformer.transformUserTypeRef(
             userTypeRef = createDeepCopyOfTypeRef(typeRef),
-            data = TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack),
+            data = TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile),
         ) as? FirResolvedTypeRef ?: return
 
         resolveAnnotationsOnAnnotationIfNeeded(transformedAnnotationType)
@@ -460,13 +460,21 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
     }
 
+    @PrivateForInline
+    @JvmField
+    var currentFile: FirFile? = null
+
     inline fun <T> withFile(file: FirFile, f: () -> T): T {
-        typeResolverTransformer.withFile(file) {
+        val oldValue = currentFile
+        currentFile = file
+        return try {
             argumentsTransformer.context.withFile(file, argumentsTransformer.components) {
                 return withFileAnalysisExceptionWrapping(file) {
                     f()
                 }
             }
+        } finally {
+            currentFile = oldValue
         }
     }
 
