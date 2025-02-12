@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -109,12 +109,11 @@ abstract class KlibMetadataPackageFragment(
     override fun getSource(): SourceElement = containerSource ?: super.source
 
     private val _memberScope by lazy {
-        /* TODO: we fake proto binary versioning for now. */
         DeserializedPackageMemberScope(
             this,
             proto.getPackage(),
             nameResolver,
-            KLIB_LEGACY_METADATA_VERSION,
+            containerSource?.klib?.metadataVersion ?: MetadataVersion.INVALID_VERSION,
             /* containerSource = */ containerSource,
             components,
             "scope for $this"

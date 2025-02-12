@@ -73,7 +73,7 @@ abstract class AbstractNativeKlibSerializerFacade(
             versions = KotlinLibraryVersioning(
                 abiVersion = KotlinAbiVersion.CURRENT,
                 compilerVersion = KotlinCompilerVersion.getVersion(),
-                metadataVersion = KLIB_LEGACY_METADATA_VERSION,
+                metadataVersion = MetadataVersion.INSTANCE,
             ),
             target = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
             output = outputArtifact.outputFile.path,
@@ -146,7 +146,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
         val serializedMetadata = KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,
             metadataVersion = configuration[CommonConfigurationKeys.METADATA_VERSION] as? MetadataVersion
-                ?: KLIB_LEGACY_METADATA_VERSION,
+                ?: MetadataVersion.INSTANCE,
             frontendOutput.project,
             exportKDoc = false,
             skipExpects = true,

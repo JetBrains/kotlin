@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 import java.io.IOException
@@ -126,7 +127,7 @@ object KlibTestUtil {
 
         val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-            metadataVersion = KLIB_LEGACY_METADATA_VERSION,
+            metadataVersion = MetadataVersion.INSTANCE,
             exportKDoc = false,
             skipExpects = false,
             project = null,
@@ -143,7 +144,7 @@ object KlibTestUtil {
             versions = KotlinLibraryVersioning(
                 compilerVersion = null,
                 abiVersion = null,
-                metadataVersion = KLIB_LEGACY_METADATA_VERSION,
+                metadataVersion = MetadataVersion.INSTANCE,
             ),
             builtInsPlatform = BuiltInsPlatform.COMMON,
             nativeTargets = emptyList(),
