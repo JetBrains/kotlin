@@ -58,7 +58,7 @@ interface KotlinJsTargetDsl :
 
     @Deprecated(
         "Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.WARNING // raise after fixing deprecation warnings in coroutines
+        level = DeprecationLevel.WARNING // TODO: KT-75144 raise after fixing deprecation warnings in coroutines
     )
     var moduleName: String?
 

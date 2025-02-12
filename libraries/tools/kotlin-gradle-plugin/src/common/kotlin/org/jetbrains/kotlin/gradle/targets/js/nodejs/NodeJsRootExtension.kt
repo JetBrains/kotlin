@@ -67,7 +67,7 @@ open class NodeJsRootExtension(
     @Deprecated(
         "Use downloadBaseUrl from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
                 "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.WARNING, // raise after fixing deprecation warnings in coroutines
+        level = DeprecationLevel.WARNING, // TODO: KT-75144 raise after fixing deprecation warnings in coroutines
     )
     var nodeDownloadBaseUrl by ::downloadBaseUrl
 

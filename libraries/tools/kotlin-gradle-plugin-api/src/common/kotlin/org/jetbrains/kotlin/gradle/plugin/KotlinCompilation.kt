@@ -207,7 +207,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     @Deprecated(
         message = "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("compileTaskProvider"),
-        level = DeprecationLevel.WARNING, // raise after fixing deprecation warnings in serialization
+        level = DeprecationLevel.WARNING, // TODO: KT-75144 raise after fixing deprecation warnings in serialization
     )
     val compileKotlinTask: KotlinCompileDeprecated<T>
 
@@ -386,7 +386,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
  */
 @Deprecated(
     "Scheduled for removal with Kotlin 2.3.",
-    level = DeprecationLevel.WARNING, // raise after fixing deprecation warnings in atomicfu
+    level = DeprecationLevel.WARNING, // TODO: KT-75144 raise after fixing deprecation warnings in atomicfu
 )
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     override val runtimeDependencyConfigurationName: String
