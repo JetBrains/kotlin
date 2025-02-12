@@ -134,4 +134,10 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   public void testSpecialTypes() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/specialTypes/");
   }
+
+  @Test
+  @TestMetadata("typeParameters")
+  public void testTypeParameters() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/typeParameters/");
+  }
 }

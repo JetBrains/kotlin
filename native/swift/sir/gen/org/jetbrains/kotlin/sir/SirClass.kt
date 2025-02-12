@@ -22,4 +22,5 @@ abstract class SirClass : SirDeclarationContainer(), SirNamedDeclaration {
     abstract val superClass: SirType?
     abstract val protocols: List<SirProtocol>
     abstract val modality: SirModality
+    abstract val typeParameters: List<SirParameter>
 }

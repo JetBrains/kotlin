@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.utils
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -19,6 +21,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     override fun kotlinFqName(type: SirType): String = when (type) {
         is SirNominalType -> kotlinFqName(type)
         is SirExistentialType -> kotlinFqName(type)
+        is SirGenericType -> type.name
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> error("Type $type can not be named")
     }
 
@@ -59,7 +62,11 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
 
-            else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
+            else -> {
+                val symbol = declaration.kaSymbolOrNull<KaClassLikeSymbol>() ?: error("$type doesn't have defined KtSymbol")
+                val fqName = symbol.classId?.asFqNameString() ?: error("$symbol doesn't have defined ClassId")
+                fqName
+            }
         }
     }
 }

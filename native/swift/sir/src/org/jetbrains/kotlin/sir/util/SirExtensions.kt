@@ -62,6 +62,7 @@ val SirType.swiftName
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
         is SirFunctionalType -> "(${parameterTypes.joinToString { it.swiftName }}) -> ${returnType.swiftName}"
+        is SirGenericType -> name
     }
 
 private val SirDeclaration.swiftParentNamePrefix: String?

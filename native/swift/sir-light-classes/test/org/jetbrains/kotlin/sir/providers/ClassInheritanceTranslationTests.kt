@@ -85,4 +85,17 @@ class ClassInheritanceTranslationTests : SirTranslationTest() {
                 }
         }
     }
+
+    @Test
+    fun zzz(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
+        val file = inlineSourceCodeAnalysis.createKtFile(
+            """
+                class Foo<T>()
+            """.trimIndent()
+        )
+        translate(file) { declarations ->
+            declarations.classNamed("Foo")
+            //createBridgeGenerator()
+        }
+    }
 }

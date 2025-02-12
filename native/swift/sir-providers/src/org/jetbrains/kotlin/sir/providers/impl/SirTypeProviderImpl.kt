@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
@@ -133,9 +134,10 @@ public class SirTypeProviderImpl(
                         )
                     }
                 }
-                is KaTypeParameterType
-                    -> SirUnsupportedType
-                is KaErrorType
+                is KaTypeParameterType -> {
+                    SirGenericType()
+                }
+                is KaErrorType,
                     -> SirErrorType(kaType.errorMessage)
                 else
                     -> SirErrorType("Unexpected type $kaType")

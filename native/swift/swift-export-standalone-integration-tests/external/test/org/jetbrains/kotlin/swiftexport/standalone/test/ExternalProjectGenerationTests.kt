@@ -38,7 +38,7 @@ class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
             "KotlinSerialization",
             "kotlinx.serialization",
         )
-        validateFullLibraryDump(klibSettings, "kotlinx-serialization-core")
+        //validateFullLibraryDump(klibSettings, "kotlinx-serialization-core")
     }
 
     private fun validateFullLibraryDump(

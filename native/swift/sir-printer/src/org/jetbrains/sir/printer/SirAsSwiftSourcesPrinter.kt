@@ -105,8 +105,15 @@ public class SirAsSwiftSourcesPrinter private constructor(
         printModifiers()
         print("class ")
         printName()
+        printTypeParameters()
         printInheritanceClause()
         printBody()
+    }
+
+    private fun SirClass.printTypeParameters() {
+        /**
+         * Not implemented yet, see KT-75546
+         */
     }
 
     private fun SirEnum.printDeclaration() {
@@ -489,6 +496,7 @@ private val SirType.swiftRender: String
         is SirOptionalType -> wrappedType.swiftRender.let { if (it.any { it.isWhitespace() }) "($it)" else it } + "?"
         is SirArrayType -> "[${elementType.swiftRender}]"
         is SirDictionaryType -> "[${keyType.swiftRender}: ${valueType.swiftRender}]"
+        is SirGenericType -> SirGenericType.TYPE
         else -> swiftName
     }
 

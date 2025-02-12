@@ -25,6 +25,7 @@ class SirClassBuilder {
     var superClass: SirType? = null
     val protocols: MutableList<SirProtocol> = mutableListOf()
     var modality: SirModality = SirModality.UNSPECIFIED
+    val typeParameters: MutableList<SirParameter> = mutableListOf()
 
     fun build(): SirClass {
         return SirClassImpl(
@@ -37,6 +38,7 @@ class SirClassBuilder {
             superClass,
             protocols,
             modality,
+            typeParameters,
         )
     }
 
@@ -65,5 +67,6 @@ inline fun buildClassCopy(original: SirClass, init: SirClassBuilder.() -> Unit):
     copyBuilder.superClass = original.superClass
     copyBuilder.protocols.addAll(original.protocols)
     copyBuilder.modality = original.modality
+    copyBuilder.typeParameters.addAll(original.typeParameters)
     return copyBuilder.apply(init).build()
 }

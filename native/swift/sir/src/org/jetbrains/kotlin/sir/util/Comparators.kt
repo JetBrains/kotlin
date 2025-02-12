@@ -40,9 +40,10 @@ object Comparators {
         get(): String = when (this) {
             is SirExistentialType -> error("Existential types are not supported yet")
             is SirNominalType -> typeDeclaration.name
-            is SirErrorType -> "SirErrorType"
-            is SirUnsupportedType -> "SirUnsupportedType"
-            is SirFunctionalType -> "SirFunctionalType"
+            is SirErrorType -> SirErrorType::class.java.simpleName
+            is SirUnsupportedType -> SirUnsupportedType::class.java.simpleName
+            is SirFunctionalType -> SirFunctionalType::class.java.simpleName
+            is SirGenericType -> SirGenericType::class.java.simpleName
         }
 
     private inline fun <T, reified R> Comparator<T>.thenComparing(comparator: Comparator<R>): Comparator<T> {

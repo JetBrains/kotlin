@@ -100,6 +100,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
         parent(declarationContainer)
+        +listField("typeParameters", parameterType)
     }
 
     val protocol: Element by element {
@@ -119,6 +120,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("superClass", typeType, nullable = true)
         +listField("protocols", protocol)
         +field("modality", modalityKind)
+        +listField("typeParameters", parameterType)
     }
 
     val `typealias`: Element by element {

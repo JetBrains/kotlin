@@ -108,10 +108,6 @@ public class SirVisibilityCheckerImpl(
                     .report(this@isConsumableBySirBuilder, "inheritance from non-classes is not supported yet.")
                 return@with false
             }
-            if (typeParameters.isNotEmpty() || superTypes.any { (it as? KaClassType)?.typeArguments?.isEmpty() == false }) {
-                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "generics are not supported yet.")
-                return@with false
-            }
             if (classId == DefaultTypeClassIds.ANY) {
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "${classId} is not supported yet.")
                 return@with false

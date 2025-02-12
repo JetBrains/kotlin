@@ -65,14 +65,14 @@ class SirOptionalType(type: SirType) : SirNominalType(
     val wrappedType: SirType get() = super.typeArguments.single()
 }
 
-class SirArrayType(type: SirType): SirNominalType(
+class SirArrayType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.array,
     typeArguments = listOf(type)
 ) {
     val elementType: SirType get() = super.typeArguments.single()
 }
 
-class SirDictionaryType(keyType: SirType, valueType: SirType): SirNominalType(
+class SirDictionaryType(keyType: SirType, valueType: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.dictionary,
     typeArguments = listOf(keyType, valueType)
 ) {
@@ -84,7 +84,7 @@ class SirExistentialType(
     protocols: List<SirProtocol>,
 ) : SirType {
     override val attributes: List<SirAttribute> = emptyList()
-    
+
     val protocols: List<SirProtocol> = protocols.sortedBy { it.swiftFqName }
 
     constructor(vararg protocols: SirProtocol) : this(protocols.toList())
@@ -97,6 +97,19 @@ class SirExistentialType(
 
     override fun hashCode(): Int {
         return this::class.hashCode()
+    }
+}
+
+class SirGenericType : SirType {
+    /**
+     * Until generic types are fully supported we use `Any`
+     * See KT-75546
+     */
+    val name: String = TYPE
+    override val attributes: List<SirAttribute> = emptyList()
+
+    companion object {
+        const val TYPE = "Any"
     }
 }
 

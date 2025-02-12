@@ -115,6 +115,7 @@ private val SirType.isSupported: Boolean
         }
         is SirFunctionalType -> returnType.isSupported && parameterTypes.all { it.isSupported }
         is SirExistentialType -> true
+        is SirGenericType -> true
         else -> false
     }
 

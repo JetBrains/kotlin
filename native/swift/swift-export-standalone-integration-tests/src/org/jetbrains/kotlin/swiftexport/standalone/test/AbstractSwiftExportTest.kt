@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.swiftexport.standalone.*
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataSupport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -33,9 +35,6 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.div
-import org.jetbrains.kotlin.swiftexport.standalone.UnsupportedDeclarationReporterKind
-import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
-import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 
 @ExtendWith(SwiftExportTestSupport::class, UpdateTestDataSupport::class)
 abstract class AbstractSwiftExportTest {
@@ -62,9 +61,10 @@ abstract class AbstractSwiftExportTest {
         val testPathFull = getAbsoluteFile(testDir)
 
         val testCaseId = TestCaseId.TestDataFile((testPathFull.toPath() / "${testPathFull.name}.kt").toFile())
-        val originalTestCase = testRunProvider.testCaseGroupProvider
-            .getTestCaseGroup(testCaseId.testCaseGroupId, testRunSettings)
-            ?.getByName(testCaseId)!!
+        val testCaseGroup = testRunProvider.testCaseGroupProvider.getTestCaseGroup(testCaseId.testCaseGroupId, testRunSettings)
+            ?: error("testCaseGroup is null\n  - testCaseId: $testCaseId\n - testCaseGroupId: ${testCaseId.testCaseGroupId}")
+        val originalTestCase = testCaseGroup.getByName(testCaseId)
+            ?: error("originalTestCase is null\n  - testCaseGroup: $testCaseGroup\n  - testCaseId: $testCaseId. Verify test directory name and kt file name equality")
 
         val rootModules = originalTestCase.rootModules
         val modulesMarkedForExport = originalTestCase.modules.filterToSetOrEmpty { it.shouldBeExportedToSwift() }
