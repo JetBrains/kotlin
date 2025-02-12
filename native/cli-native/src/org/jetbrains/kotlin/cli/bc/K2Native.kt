@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCustomKotlinAbiVersion
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -100,8 +101,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         /* Set default version of metadata version */
         val metadataVersionString = arguments.metadataVersion
-        if (metadataVersionString == null) {
-            configuration.put(CommonConfigurationKeys.METADATA_VERSION, KLIB_LEGACY_METADATA_VERSION)
+        if (metadataVersionString != null) {
+            val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
+            when {
+                versionArray == null -> configuration.report(ERROR, "Invalid metadata version: $metadataVersionString")
+                else -> configuration.put(CommonConfigurationKeys.METADATA_VERSION, MetadataVersion(*versionArray))
+            }
         }
 
         arguments.relativePathBases?.let {
