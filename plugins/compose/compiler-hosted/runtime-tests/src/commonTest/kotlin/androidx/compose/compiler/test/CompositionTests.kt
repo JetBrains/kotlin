@@ -318,7 +318,36 @@ class CompositionTests {
         assertEquals(2, innerCounter)
         assertEquals(2, counter)
     }
+
+    // regression test for KT-74102
+    @Test
+    fun conditionInInlineFun() = compositionTest {
+        var condition by mutableStateOf<Int?>(null)
+        compose {
+            // unused, but triggers the bug
+            val str1 = condition?.let { stringResource() }.orEmpty()
+            val str2 = condition?.let { stringResource() }.orEmpty()
+
+            val text = remember { "str1" }
+            Text(text)
+
+            val text1 = remember { "str2" }
+            Text(text1)
+        }
+
+        validate {
+            Text("str1")
+            Text("str2")
+        }
+
+        condition = 1
+        advance()
+        revalidate()
+    }
 }
+
+@Composable
+fun stringResource() = "string"
 
 @Composable
 fun getCondition() = remember { false }
