@@ -172,7 +172,7 @@ interface AbiValidationKlibKindExtension {
      *
      * However, this does not provide a complete guarantee, so it should be used with caution.
      *
-     * If the flag is set to `false` and the compiler does not support some of the Kotlin targets used in the current project, the dump generation fails with an error.
+     * If the option is set to `false` and the compiler does not support some of the Kotlin targets used in the current project, the dump generation fails with an error.
      *
      * Default value: `true`
      */
