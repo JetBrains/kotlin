@@ -392,7 +392,7 @@ open class FirSupertypeResolverVisitor(
             @OptIn(PrivateForInline::class)
             resolveSuperTypeRefs(
                 transformer,
-                ScopeClassDeclaration(scopes, classDeclarationsStack, containerDeclaration = classLikeDeclaration),
+                ScopeClassDeclaration(scopes, classDeclarationsStack),
             )
         }
 

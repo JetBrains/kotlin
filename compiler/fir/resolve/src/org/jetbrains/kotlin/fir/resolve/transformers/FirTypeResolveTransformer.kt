@@ -341,7 +341,7 @@ open class FirTypeResolveTransformer(
         return typeResolverTransformer.withFile(currentFile) {
             typeRef.transform(
                 typeResolverTransformer,
-                ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack, containerDeclaration = currentDeclaration)
+                ScopeClassDeclaration(scopes.asReversed(), classDeclarationsStack)
             )
         }
     }
