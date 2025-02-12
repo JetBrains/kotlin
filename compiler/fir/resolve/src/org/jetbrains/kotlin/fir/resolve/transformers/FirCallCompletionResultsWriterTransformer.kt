@@ -889,7 +889,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     /**
-     * @see org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
+     * @see ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
      * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
      */
     private fun ConeKotlinType.storeNonFlexibleCounterpartInAttributeIfNecessary(

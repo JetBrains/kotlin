@@ -39,10 +39,10 @@ fun geneticFunTest() {
 
     takeString(JavaWithGenericFun.foo3(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo3<String>(JavaBox("")).a)
-    takeString(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>JavaWithGenericFun.foo3<String?>(JavaBox("")).a<!>)
+    takeString(JavaWithGenericFun.foo3<String?>(JavaBox("")).a)
     takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo3(JavaBox(null)).a<!>)
     takeString(JavaWithGenericFun.foo3<String>(JavaBox(null)).a)
-    takeString(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>JavaWithGenericFun.foo3<String?>(JavaBox(null)).a<!>)
+    takeString(JavaWithGenericFun.foo3<String?>(JavaBox(null)).a)
 
     takeString(JavaWithGenericFun.foo4(JavaBox(JavaBox(""))).a.a)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(""))).a.a)

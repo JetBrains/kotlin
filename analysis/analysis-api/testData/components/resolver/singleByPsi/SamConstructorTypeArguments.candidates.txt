@@ -5,7 +5,7 @@ KtNameReferenceExpression(18,28): 'Comparator'
         { x, y -> 1 } -> (KaVariableSignature:
           name = function
           receiverType = null
-          returnType = kotlin.Function2<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!, ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!, kotlin.Int>
+          returnType = kotlin.Function2<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin.Int!, ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin.Int!, kotlin.Int>
           symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
           contextParameters = []
           callableId = null)
@@ -17,13 +17,13 @@ KtNameReferenceExpression(18,28): 'Comparator'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = java.util.Comparator<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!>
+          returnType = java.util.Comparator<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin.Int!>
           symbol = java/util/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>
           valueParameters = [
             KaVariableSignature:
               name = function
               receiverType = null
-              returnType = kotlin.Function2<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!, ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!, kotlin.Int>
+              returnType = kotlin.Function2<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin.Int!, ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin.Int!, kotlin.Int>
               symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
               contextParameters = []
               callableId = null
@@ -31,6 +31,6 @@ KtNameReferenceExpression(18,28): 'Comparator'
           contextParameters = []
           callableId = java/util/Comparator
       typeArgumentsMapping = {
-        T -> (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!)
+        T -> (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin.Int!)
       }
     isInBestCandidates = true

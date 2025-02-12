@@ -33,7 +33,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         if (symbol.dispatchReceiverType != null &&
             expression.dispatchReceiver?.resolvedType?.willBeMarkedNullableInFuture() == true
         ) {
-            expression.dispatchReceiver?.takeIf { it !is FirCheckedSafeCallSubject }?.checkExpressionForEnhancedTypeMismatch(
+            expression.dispatchReceiver?.checkExpressionForEnhancedTypeMismatch(
                 expectedType = symbol.dispatchReceiverType,
                 reporter,
                 context,
@@ -42,7 +42,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         }
 
         val receiverType = symbol.receiverParameter?.typeRef?.coneType
-        expression.extensionReceiver?.takeIf { it !is FirCheckedSafeCallSubject }?.checkExpressionForEnhancedTypeMismatch(
+        expression.extensionReceiver?.checkExpressionForEnhancedTypeMismatch(
             expectedType = receiverType?.let(substitutor::substituteOrSelf),
             reporter,
             context,

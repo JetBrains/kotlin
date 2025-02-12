@@ -24391,6 +24391,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("cachedGetValue.kt")
+      public void testCachedGetValue() {
+        runTest("compiler/testData/diagnostics/tests/j+k/cachedGetValue.kt");
+      }
+
+      @Test
       @TestMetadata("callableReferencesStaticMemberClash.kt")
       public void testCallableReferencesStaticMemberClash() {
         runTest("compiler/testData/diagnostics/tests/j+k/callableReferencesStaticMemberClash.kt");
