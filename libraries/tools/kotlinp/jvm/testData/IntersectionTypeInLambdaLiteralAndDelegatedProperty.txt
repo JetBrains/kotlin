@@ -3,12 +3,20 @@
 public abstract interface A : kotlin/Any {
 
   // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
 }
 // B.class
 // ------------------------------------------
 public abstract interface B : kotlin/Any {
 
   // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
 }
 // Delegate.class
 // ------------------------------------------

@@ -25,6 +25,10 @@ package modifiers;
  * internal abstract interface modifiers/InternalInterface : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -144,6 +148,10 @@ package modifiers;
  * private abstract interface modifiers/PrivateInterface : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -220,6 +228,10 @@ public class PublicClassProtectedConstructor {
      * private abstract interface modifiers/PublicClassProtectedConstructor.PrivateInterface : kotlin/Any {
      *
      *   // module name: main
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
      * }
      */
     @kotlin.Metadata()
@@ -230,6 +242,10 @@ public class PublicClassProtectedConstructor {
      * protected abstract interface modifiers/PublicClassProtectedConstructor.ProtectedInterface : kotlin/Any {
      *
      *   // module name: main
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
      * }
      */
     @kotlin.Metadata()
@@ -245,6 +261,10 @@ package modifiers;
  * public abstract interface modifiers/PublicInterface : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

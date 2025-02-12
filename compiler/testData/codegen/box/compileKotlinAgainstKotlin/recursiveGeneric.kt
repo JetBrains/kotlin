@@ -22,7 +22,9 @@ import a.*
 fun box(): String {
     val declaredMethod = Super::class.java.getDeclaredMethod("foo", Rec::class.java)
     val genericString = declaredMethod.toGenericString()
-    if (genericString != "public abstract a.Rec<?, ?> a.Super.foo(a.Rec<?, ?>)") return "Fail: $genericString"
+        .substringAfter("public default ") // In K2, `Super.foo` is default because of LanguageFeature.JvmDefaultEnableByDefault.
+        .substringAfter("public abstract ") // In K1, `Super.foo` is abstract.
+    if (genericString != "a.Rec<?, ?> a.Super.foo(a.Rec<?, ?>)") return "Fail: $genericString"
     return "OK"
 }
 

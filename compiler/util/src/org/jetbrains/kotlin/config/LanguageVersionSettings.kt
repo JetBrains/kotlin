@@ -382,6 +382,7 @@ enum class LanguageFeature(
     ForbidEnumEntryNamedEntries(KOTLIN_2_2, kind = BUG_FIX), // KT-72829, KT-58920
     WhenGuards(KOTLIN_2_2, kind = OTHER), // KT-13626
     MultiDollarInterpolation(KOTLIN_2_2, kind = OTHER), // KT-2425
+    JvmDefaultEnableByDefault(KOTLIN_2_2, kind = OTHER), // KT-71768
 
     // 2.3
 

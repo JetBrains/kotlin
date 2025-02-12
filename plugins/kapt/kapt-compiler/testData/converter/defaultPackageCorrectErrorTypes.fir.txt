@@ -70,6 +70,10 @@ import java.lang.Number;
  *   public abstract fun someMethod(): RootClass
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

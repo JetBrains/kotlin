@@ -763,5 +763,7 @@ public abstract interface X : java/lang/Object {
           RETURN
     }
 
-    public abstract void def()
+    public static void access$def$jd(X $this)
+
+    public void def()
 }

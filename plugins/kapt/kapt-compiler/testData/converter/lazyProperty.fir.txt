@@ -66,6 +66,10 @@ public final class Foo {
  * public abstract interface GenericIntf<T#0 (* T *)> : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -79,6 +83,10 @@ public abstract interface GenericIntf<T extends java.lang.Object> {
  * public abstract interface Intf : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

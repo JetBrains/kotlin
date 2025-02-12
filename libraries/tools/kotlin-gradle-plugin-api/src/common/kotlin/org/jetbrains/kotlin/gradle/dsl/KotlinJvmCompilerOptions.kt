@@ -19,11 +19,12 @@ interface KotlinJvmCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommo
     val javaParameters: org.gradle.api.provider.Property<kotlin.Boolean>
 
     /**
-     * Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
-     * * `-jvm-default=disable`             Default behavior. Do not generate JVM default methods.
-     * * `-jvm-default=enable`              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes
-     *                                  with static methods for compatibility with code compiled in the 'disable' mode.
+     * Emit JVM default methods for interface declarations with bodies. The default is 'enable'.
+     * * `-jvm-default=enable`              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes with
+     *                                  static methods for compatibility with code compiled in the 'disable' mode.
+     *                                  This is the default behavior since language version 2.2.
      * * `-jvm-default=no-compatibility`    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes.
+     * * `-jvm-default=disable`             Do not generate JVM default methods. This is the default behavior up to language version 2.1.
      *
      * Possible values: "disable", "enable", "no-compatibility"
      *

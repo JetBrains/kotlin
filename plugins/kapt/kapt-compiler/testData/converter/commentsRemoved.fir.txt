@@ -253,6 +253,10 @@ public final class Test4 {
  * public abstract interface TestComponent : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

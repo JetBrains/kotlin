@@ -400,6 +400,10 @@ package test;
  *   // nested class: IBar
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -413,6 +417,10 @@ public abstract interface IFoo {
      *   // nested class: IZoo
      *
      *   // module name: main
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
      * }
      */
     @kotlin.Metadata()
@@ -444,6 +452,10 @@ public abstract interface IFoo {
          * public abstract interface test/IFoo.IBar.IZoo : kotlin/Any {
          *
          *   // module name: main
+         *
+         *   // has method bodies in interface
+         *
+         *   // is compiled in compatibility mode
          * }
          */
         @kotlin.Metadata()

@@ -1,3 +1,5 @@
+// BINARY_STUB_ONLY_TEST
+
 package a
 
 class InheritingClasses {

@@ -169,7 +169,7 @@ class LanguageVersionSettingsBuilder {
     }
 
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "HIDDEN")
-    private fun <T : Any> analysisFlag(flag: AnalysisFlag<T>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T>, T>? =
+    private fun <T : Any> analysisFlag(flag: AnalysisFlag<T?>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T?>, T>? =
         value?.let(flag::to)
 
     private fun trueOrNull(condition: Boolean): Boolean? = runIf(condition) { true }

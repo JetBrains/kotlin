@@ -14,11 +14,12 @@ where possible options include:
   -jvm-target <version>      The target version of the generated JVM bytecode (1.8 and 9–23), with 1.8 as the default.
   -java-parameters           Generate metadata for Java 1.8 reflection on method parameters.
   -jvm-default {enable|no-compatibility|disable}
-                             Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
-                             -jvm-default=disable             Default behavior. Do not generate JVM default methods.
-                             -jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes
-                                                              with static methods for compatibility with code compiled in the 'disable' mode.
+                             Emit JVM default methods for interface declarations with bodies. The default is 'enable'.
+                             -jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes with
+                                                              static methods for compatibility with code compiled in the 'disable' mode.
+                                                              This is the default behavior since language version 2.2.
                              -jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes.
+                             -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.
   -language-version <version> Provide source compatibility with the specified version of Kotlin.
   -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
   -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.

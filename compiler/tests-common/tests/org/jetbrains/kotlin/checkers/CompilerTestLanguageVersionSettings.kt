@@ -110,7 +110,7 @@ fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, envir
 }
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "HIDDEN")
-private fun <T : Any> analysisFlag(flag: AnalysisFlag<T>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T>, T>? =
+private fun <T : Any> analysisFlag(flag: AnalysisFlag<T?>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T?>, T>? =
     value?.let(flag::to)
 
 private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, LanguageFeature.State> {

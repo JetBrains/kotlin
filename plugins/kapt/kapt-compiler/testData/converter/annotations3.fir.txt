@@ -86,6 +86,10 @@ public final class CParceler implements Parceler<C> {
  * public abstract interface Parceler<T#0 (* T *)> : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
