@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.config.FirContextParametersLanguageVersionSettingsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextParametersDeclarationChecker.checkSubTypes
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -52,7 +53,8 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
                     context
                 )
             }
-            reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, context)
+            val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
+            reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message, context)
         } else if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
             reporter.reportOn(
                 source,

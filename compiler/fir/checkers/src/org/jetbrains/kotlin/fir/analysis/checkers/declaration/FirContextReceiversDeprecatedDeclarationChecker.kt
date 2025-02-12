@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.config.FirContextParametersLanguageVersionSettingsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -30,12 +31,12 @@ object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChec
             declaration !is FirAnonymousFunction &&
             declaration.contextParameters.onlyLegacyContextReceivers()
         ) {
-            val factory = if (declaration is FirConstructor && declaration !is FirPrimaryConstructor) {
-                FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
+            if (declaration is FirConstructor && declaration !is FirPrimaryConstructor) {
+                reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR, context)
             } else {
-                FirErrors.CONTEXT_RECEIVERS_DEPRECATED
+                val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
+                reporter.reportOn(declaration.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message, context)
             }
-            reporter.reportOn(declaration.source, factory, context)
         }
         if (declaration is FirRegularClass && declaration.contextParameters.onlyLegacyContextReceivers()) {
             reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR, context)

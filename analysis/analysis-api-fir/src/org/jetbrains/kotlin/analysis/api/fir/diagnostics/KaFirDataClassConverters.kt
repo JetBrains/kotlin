@@ -2394,6 +2394,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.CONTEXT_RECEIVERS_DEPRECATED) { firDiagnostic ->
         ContextReceiversDeprecatedImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
