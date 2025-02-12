@@ -223,6 +223,12 @@ public interface KaLibrarySourceModule : KaModule {
 
 /**
  * A module which contains Kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for a specific platform.
+ *
+ * [KaBuiltinsModule] is a *fallback module* which, as a dependency, provides builtins for modules that don't have an associated Kotlin
+ * stdlib. Usually, a stdlib [KaLibraryModule] will have a higher precedence in dependencies and builtins will be resolved from there.
+ *
+ * Modules normally don't depend explicitly on [KaBuiltinsModule]. Rather, this dependency is materialized internally by the Analysis API's
+ * resolution engine.
  */
 @KaPlatformInterface
 public interface KaBuiltinsModule : KaModule {
