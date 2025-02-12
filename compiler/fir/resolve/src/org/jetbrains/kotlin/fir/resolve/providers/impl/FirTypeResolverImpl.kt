@@ -68,7 +68,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val collector = FirTypeCandidateCollector(
             session,
             useSiteFile,
-            scopeClassDeclaration.containingDeclarations,
+            scopeClassDeclaration.containingClassDeclarations,
             supertypeSupplier,
             resolveDeprecations
         )
@@ -366,7 +366,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     typeRef,
                     result,
                     areBareTypesAllowed,
-                    scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
+                    scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingClassDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
                 val resolvedTypeSymbol = result.resolvedCandidateOrNull()?.symbol
