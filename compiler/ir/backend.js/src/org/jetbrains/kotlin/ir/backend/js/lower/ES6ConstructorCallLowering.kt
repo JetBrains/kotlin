@@ -50,17 +50,23 @@ class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLowering
                     factoryFunction.symbol,
                     origin = if (isDelegatingCall) ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT else JsStatementOrigins.SYNTHESIZED_STATEMENT
                 ).apply {
-                    copyValueArgumentsFrom(expression, factoryFunction)
+                    var i = 0
+                    if (expression.isSyntheticDelegatingReplacement) {
+                        if (superQualifierSymbol == null) {
+                            arguments[i++] = JsIrBuilder.buildGetValue(factoryFunction.dispatchReceiverParameter!!.symbol)
+                        }
+                    } else {
+                        arguments[i++] = irClass.jsConstructorReference(context)
+                    }
+
+                    for (orgArg in expression.arguments) {
+                        arguments[i++] = orgArg
+                    }
 
                     if (expression.isSyntheticDelegatingReplacement) {
                         currentFunction?.boxParameter?.let {
                             arguments[arguments.lastIndex] = JsIrBuilder.buildGetValue(it.symbol)
                         }
-                        if (superQualifierSymbol == null) {
-                            dispatchReceiver = JsIrBuilder.buildGetValue(factoryFunction.dispatchReceiverParameter!!.symbol)
-                        }
-                    } else {
-                        dispatchReceiver = irClass.jsConstructorReference(context)
                     }
                 }
 
