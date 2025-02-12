@@ -71,6 +71,8 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         get() = File(irDir, IR_FILES_FILE_NAME)
     val irDebugInfo
         get() = File(irDir, IR_DEBUG_INFO_FILE_NAME)
+
+    // Please check `hasFileEntriesTable` before getter invocation, otherwise it may crash in override getter
     val irFileEntries
         get() = File(irDir, IR_FILE_ENTRIES_FILE_NAME)
 

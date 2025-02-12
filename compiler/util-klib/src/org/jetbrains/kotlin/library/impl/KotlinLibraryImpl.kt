@@ -158,9 +158,11 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
     }
 
     private val fileEntries: IrMultiArrayFileReader? by lazy {
-        IrMultiArrayFileReader(access.realFiles {
-            it.irFileEntries
-        })
+        if (hasFileEntriesTable)
+            access.realFiles {
+                it.irFileEntries.let { feFile -> if (feFile.exists) IrMultiArrayFileReader(feFile) else null }
+            }
+        else null
     }
 
     private val files: IrArrayFileReader by lazy {

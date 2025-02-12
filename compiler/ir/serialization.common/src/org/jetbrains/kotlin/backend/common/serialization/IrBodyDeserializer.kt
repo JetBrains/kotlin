@@ -163,9 +163,9 @@ class IrBodyDeserializer(
     }
 
     private fun IrLibraryFile.fileEntry(proto: ProtoInlinedFunctionBlock): FileEntry =
-        if (proto.hasInlinedFunctionFileEntryId())
-            fileEntry(proto.inlinedFunctionFileEntryId)
-        else {
+        if (proto.hasInlinedFunctionFileEntryId()) {
+            fileEntry(proto.inlinedFunctionFileEntryId) ?: error("Invalid KLib: cannot read file entry by its index")
+        } else {
             require(proto.hasInlinedFunctionFileEntry()) {
                 "Invalid KLib: either fileEntry or fileEntryId must be present in serialized IrInlinedFunctionBlock"
             }

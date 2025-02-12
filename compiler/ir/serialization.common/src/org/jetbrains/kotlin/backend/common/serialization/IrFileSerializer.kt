@@ -1397,8 +1397,8 @@ open class IrFileSerializer(
 
 // ---------- Top level ------------------------------------------------------
 
-    // `FileEntryDeduplicationKey` is needed solely to have generated `equals()` and `hashCode()` for ProtoFileEntry, to compare objects by value.
-    // For correct deduplication, `FileEntryDeduplicationKey` must have the same fields as `FileEntry` in `KotlinIr.proto`
+    // This class is needed solely to have generated `equals()` and `hashCode()` for `FileEntry`, to compare objects by value.
+    // For correct deduplication, it must have the same fields as `FileEntry` in `KotlinIr.proto`.
     // TODO: KT-74258: bump Protobuf version to >3.x to have generated `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`
     data class ProtoFileEntryDeduplicationKey(
         val name: String,

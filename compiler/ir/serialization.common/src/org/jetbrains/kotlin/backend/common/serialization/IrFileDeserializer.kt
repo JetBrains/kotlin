@@ -192,7 +192,7 @@ abstract class IrLibraryFile {
     abstract fun expressionBody(index: Int): ProtoExpression
     abstract fun statementBody(index: Int): ProtoStatement
     abstract fun debugInfo(index: Int): String?
-    abstract fun fileEntry(index: Int): ProtoFileEntry
+    abstract fun fileEntry(index: Int): ProtoFileEntry?
 }
 
 abstract class IrLibraryBytesSource {
@@ -224,7 +224,9 @@ class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : Ir
         ProtoStatement.parseFrom(bytesSource.body(index).codedInputStream, extensionRegistryLite)
 
     override fun debugInfo(index: Int): String? = bytesSource.debugInfo(index)?.let { WobblyTF8.decode(it) }
-    override fun fileEntry(index: Int): ProtoFileEntry = ProtoFileEntry.parseFrom(bytesSource.fileEntry(index), extensionRegistryLite)
+    override fun fileEntry(index: Int): ProtoFileEntry? = bytesSource.fileEntry(index)?.let {
+        ProtoFileEntry.parseFrom(it, extensionRegistryLite)
+    }
 
     companion object {
         val extensionRegistryLite: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
@@ -238,7 +240,7 @@ class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int)
     override fun string(index: Int): ByteArray = klib.string(index, fileIndex)
     override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
     override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
-    override fun fileEntry(index: Int): ByteArray? = klib.takeIf { klib.hasFileEntriesTable }?.fileEntry(index, fileIndex)
+    override fun fileEntry(index: Int): ByteArray? = klib.fileEntry(index, fileIndex)
 }
 
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
@@ -259,16 +261,17 @@ internal fun deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry {
 
 fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
     if (protoFile.hasFileEntryId())
-        fileEntry(protoFile.fileEntryId)
+        fileEntry(protoFile.fileEntryId) ?: error("Invalid KLib: cannot read file entry by its index")
     else {
         require(protoFile.hasFileEntry()) { "Invalid KLib: either fileEntry or fileEntryId must be present" }
         protoFile.fileEntry
     }
 
 fun IrLibrary.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
-    if (protoFile.hasFileEntryId() && hasFileEntriesTable)
-        ProtoFileEntry.parseFrom(fileEntry(protoFile.fileEntryId, fileIndex))
-    else {
+    if (protoFile.hasFileEntryId() && hasFileEntriesTable) {
+        val fileEntry = fileEntry(protoFile.fileEntryId, fileIndex) ?: error("Invalid KLib: cannot read file entry by its index")
+        ProtoFileEntry.parseFrom(fileEntry)
+    } else {
         require(protoFile.hasFileEntry()) {
             "Invalid KLib: either fileEntry or valid fileEntryId must be present. Valid fileEntryId is a valid index in existing file entries table"
         }
