@@ -5,6 +5,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -266,7 +267,7 @@ fun Project.nativeTest(
                 buildString {
                     appendLine("$path parallel test execution parameters:")
                     append("  Available CPU cores = $availableCpuCores")
-                    systemProperties.filterKeys { it.startsWith("junit.jupiter") }.toSortedMap().forEach { (key, value) ->
+                    systemProperties.get().filterKeys { it.startsWith("junit.jupiter") }.toSortedMap().forEach { (key, value) ->
                         append("\n  $key = $value")
                     }
                 }

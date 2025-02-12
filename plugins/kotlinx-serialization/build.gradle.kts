@@ -80,7 +80,7 @@ sourceSets {
 optInToExperimentalCompilerApi()
 
 publish {
-    artifactId = artifactId.replace("kotlinx-", "kotlin-")
+    artifactId = artifactId.get().replace("kotlinx-", "kotlin-")
 }
 
 val archiveName = "kotlin-serialization-compiler-plugin"

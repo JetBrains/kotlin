@@ -21,8 +21,6 @@ import java.util.concurrent.Callable
 
 inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.registering(T::class, configuration)
 
-inline fun <reified T : Task> Project.eagerTask(noinline configuration: T.() -> Unit) = tasks.creating(T::class, configuration)
-
 fun Project.callGroovy(name: String, vararg args: Any?): Any? {
     return (property(name) as Closure<*>).call(*args)
 }
@@ -79,7 +77,7 @@ fun Project.javaPluginExtension(): JavaPluginExtension = extensions.getByType()
 
 fun Project.findJavaPluginExtension(): JavaPluginExtension? = extensions.findByType()
 
-fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
+fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir.asFile.get()).invariantSeparatorsPath
 
 fun Task.singleOutputFile(layout: ProjectLayout): File = when (this) {
     is AbstractArchiveTask -> archiveFile.get().asFile

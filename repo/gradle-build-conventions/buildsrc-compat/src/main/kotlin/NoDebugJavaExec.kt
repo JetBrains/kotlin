@@ -13,7 +13,8 @@ open class NoDebugJavaExec : JavaExec() {
     private fun String.isDebuggerArgument(): Boolean =
         startsWith("-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=")
 
-    override fun setJvmArgs(arguments: MutableList<String>?) {
-        super.setJvmArgs(arguments?.filterNot { it.isDebuggerArgument() })
-    }
+    // TODO: Make this work again
+//    override fun setJvmArgs(arguments: MutableList<String>?) {
+//        super.setJvmArgs(arguments?.filterNot { it.isDebuggerArgument() })
+//    }
 }
