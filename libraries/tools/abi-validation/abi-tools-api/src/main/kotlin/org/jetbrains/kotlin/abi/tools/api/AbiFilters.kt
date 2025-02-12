@@ -80,7 +80,7 @@ public class AbiFilters(
      * Excludes a declaration by annotations placed on it.
      *
      * It means that a class, a class member (function or property), a top-level function or a top-level property
-     * marked by one of specified annotation will be excluded from dump.
+     * marked by a specific annotation will be excluded from the dump.
      *
      * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
      * - `**` - zero or any number of characters
