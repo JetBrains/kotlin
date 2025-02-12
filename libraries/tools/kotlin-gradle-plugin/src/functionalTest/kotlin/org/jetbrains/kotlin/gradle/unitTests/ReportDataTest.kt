@@ -12,6 +12,7 @@ import org.gradle.tooling.events.task.TaskOperationDescriptor
 import org.gradle.tooling.events.task.TaskOperationResult
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.report.TaskRecord
 import org.jetbrains.kotlin.gradle.report.prepareData
 import org.junit.Ignore
@@ -57,7 +58,7 @@ class ReportDataTest {
         didWork = true,
         skipMessage = null,
         icLogLines = emptyList(),
-        kotlinLanguageVersion = KotlinVersion.KOTLIN_1_8,
+        kotlinLanguageVersion = LanguageVersion.LATEST_STABLE.asKotlinVersion(),
         changedFiles = null,
         compilerArguments = emptyArray(),
         statTags = emptySet()
