@@ -58,7 +58,7 @@ fun f11(a : A?) {
     is B -> a.bar()
     is A -> a.foo()
     is Any -> a.foo()
-    <!USELESS_IS_CHECK!>is Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
+    is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> a<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
   }
 }
@@ -68,8 +68,8 @@ fun f12(a : A?) {
     is B -> a.bar()
     is A -> a.foo()
     is Any -> a.foo();
-    <!USELESS_IS_CHECK!>is Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
-    <!USELESS_IS_CHECK!>is C<!> -> a.bar()
+    is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
+    is C -> a.bar()
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> a<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
   }
 

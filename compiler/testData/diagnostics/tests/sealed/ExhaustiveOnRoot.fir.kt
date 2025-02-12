@@ -10,7 +10,7 @@ sealed class Expr : Stmt() {
 fun test(x: Stmt): String =
         when (x) {
             is Expr -> "expr"
-            <!USELESS_IS_CHECK!>is Stmt<!> -> "stmt"
+            is Stmt -> "stmt"
         }
 
 fun test2(x: Stmt): String =
@@ -20,5 +20,5 @@ fun test2(x: Stmt): String =
 
 fun test3(x: Expr): String =
         when (x) {
-            <!USELESS_IS_CHECK!>is Stmt<!> -> "stmt"
+            is Stmt -> "stmt"
         }

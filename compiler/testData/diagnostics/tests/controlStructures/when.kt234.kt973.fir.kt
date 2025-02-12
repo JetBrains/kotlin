@@ -27,7 +27,7 @@ fun t1(x: Int) = when(x) {
 }
 
 fun t5(x: Int) = when (x) {
-    <!USELESS_IS_CHECK!>is Int<!> -> 1
+    is Int -> 1
     2 -> 2
 }
 

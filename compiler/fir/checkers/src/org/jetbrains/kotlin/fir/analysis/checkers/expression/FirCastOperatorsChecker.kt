@@ -41,7 +41,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
         // No need to check original types separately from smartcast types, because we only report warnings
         checkApplicability(l.smartCastTypeInfo, r, expression, context).ifInapplicable {
-            return reporter.reportInapplicabilityDiagnostic(expression, it, l.originalTypeInfo, r.type, l.userType, rUserType, context)
+            return reporter.reportInapplicabilityDiagnostic(expression, it, l, r.type, rUserType, context)
         }
     }
 
@@ -110,14 +110,13 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     private fun DiagnosticReporter.reportInapplicabilityDiagnostic(
         expression: FirTypeOperatorCall,
         applicability: Applicability,
-        l: TypeInfo,
+        l: ArgumentInfo,
         r: ConeKotlinType,
-        lUserType: ConeKotlinType,
         rUserType: ConeKotlinType,
         context: CheckerContext,
     ) {
         when (applicability) {
-            Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l, r, context)?.let {
+            Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l.originalTypeInfo, r, context)?.let {
                 reportOn(expression.source, it, context)
             }
             Applicability.USELESS_CAST -> getUselessCastDiagnostic(context)?.let {
@@ -126,12 +125,14 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             Applicability.IMPOSSIBLE_IS_CHECK -> reportOn(
                 expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS, context,
             )
-            Applicability.USELESS_IS_CHECK -> reportOn(
-                expression.source, FirErrors.USELESS_IS_CHECK, expression.operation == FirOperation.IS, context,
-            )
+            Applicability.USELESS_IS_CHECK -> when {
+                l.argument.unwrapSmartcastExpression() !is FirWhenSubjectExpression -> reportOn(
+                    expression.source, FirErrors.USELESS_IS_CHECK, expression.operation == FirOperation.IS, context,
+                )
+            }
             Applicability.CAST_ERASED -> when {
                 expression.operation == FirOperation.AS || expression.operation == FirOperation.SAFE_AS -> {
-                    reportOn(expression.source, FirErrors.UNCHECKED_CAST, lUserType, rUserType, context)
+                    reportOn(expression.source, FirErrors.UNCHECKED_CAST, l.userType, rUserType, context)
                 }
                 else -> reportOn(expression.conversionTypeRef.source, FirErrors.CANNOT_CHECK_FOR_ERASED, rUserType, context)
             }
