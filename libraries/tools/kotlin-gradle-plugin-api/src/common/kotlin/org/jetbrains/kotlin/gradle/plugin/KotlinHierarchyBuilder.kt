@@ -231,7 +231,11 @@ interface KotlinHierarchyBuilder {
     /**
      * @suppress
      */
-    @Deprecated("Renamed to 'withWasmJs''", replaceWith = ReplaceWith("withWasmJs()"), level = DeprecationLevel.ERROR)
+    @Deprecated(
+        "Renamed to 'withWasmJs'. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("withWasmJs()"),
+        level = DeprecationLevel.ERROR
+    )
     fun withWasm()
 
     /**
