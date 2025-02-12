@@ -100,7 +100,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         session.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS),
         configuration.metadataVersion(session.languageVersionSettings.languageVersion),
-        session.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode),
+        session.languageVersionSettings.jvmDefaultMode,
         stringTable,
         constValueProvider = null,
         additionalMetadataProvider = null
