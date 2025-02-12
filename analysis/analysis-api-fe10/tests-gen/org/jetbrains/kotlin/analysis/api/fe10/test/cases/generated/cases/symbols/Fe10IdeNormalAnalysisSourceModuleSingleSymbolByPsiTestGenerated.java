@@ -534,6 +534,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("castForDispatchReceiver.kt")
+    public void testCastForDispatchReceiver() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/castForDispatchReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("invalidContractParameterPassedToReturns.kt")
     public void testInvalidContractParameterPassedToReturns() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/invalidContractParameterPassedToReturns.kt");
