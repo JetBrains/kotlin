@@ -542,7 +542,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (allocationMode != defaultAllocationMode)
             append("-allocator${allocationMode.name}")
         if (gc != defaultGC)
-            append("-gc${gc.name}")
+            append("-gc${gc.shortcut}")
         if (gcSchedulerType != defaultGCSchedulerType)
             append("-gc_scheduler${gcSchedulerType.name}")
         if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)

@@ -232,18 +232,16 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         "stms" -> GC.STOP_THE_WORLD_MARK_AND_SWEEP
         "cms" -> GC.PARALLEL_MARK_CONCURRENT_SWEEP
         else -> {
-            val validValues = enumValues<GC>().map {
+            val validValues = enumValues<GC>().joinToString("|") {
                 val fullName = "$it".lowercase()
-                it.shortcut?.let { short ->
-                    "$fullName (or: $short)"
-                } ?: fullName
-            }.joinToString("|")
-            report(ERROR, "Unsupported argument -Xgc=${arguments.gc}. Use -Xbinary=gc= with values ${validValues}")
+                "$fullName (or: ${it.shortcut})"
+            }
+            report(ERROR, "Unsupported argument -Xgc=${arguments.gc}. Use -Xbinary=gc= with values $validValues")
             null
         }
     }
     if (gcFromArgument != null) {
-        val newValue = gcFromArgument.shortcut ?: "$gcFromArgument".lowercase()
+        val newValue = gcFromArgument.shortcut
         report(WARNING, "-Xgc=${arguments.gc} compiler argument is deprecated. Use -Xbinary=gc=${newValue} instead")
     }
     // TODO: revise priority and/or report conflicting values.
