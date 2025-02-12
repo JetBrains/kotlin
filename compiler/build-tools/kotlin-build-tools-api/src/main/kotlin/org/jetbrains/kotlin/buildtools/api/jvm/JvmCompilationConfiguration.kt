@@ -198,9 +198,19 @@ public interface ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration :
     public val assuredNoClasspathSnapshotsChanges: Boolean
 
     /**
+     * An indicator whether *experimental* incremental runner based on Kotlin compiler FIR is used.
+     *
+     * Managed by [useFirRunner].
+     * This runner is only working with Kotlin Language Version 2.0+ and disabled by default.
+     */
+    public val isUsingFirRunner: Boolean
+
+    /**
      * @see [assuredNoClasspathSnapshotsChanges]
      */
     public fun assureNoClasspathSnapshotsChanges(value: Boolean = true): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+
+    public fun useFirRunner(value: Boolean = false): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 
     override fun setRootProjectDir(rootProjectDir: File): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 

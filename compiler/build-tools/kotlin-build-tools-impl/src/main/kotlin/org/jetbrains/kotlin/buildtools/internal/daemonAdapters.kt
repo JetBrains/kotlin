@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.daemon.common.*
@@ -51,7 +50,7 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                     buildDir = options.buildDir,
                     kotlinScriptExtensions = ktsExtensionsAsArray,
                     icFeatures = options.extractIncrementalCompilationFeatures(),
-                    useJvmFirRunner = false,
+                    useJvmFirRunner = options.isUsingFirRunner,
                 )
             }
             else -> CompilationOptions(
