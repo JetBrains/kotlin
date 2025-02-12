@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.swiftexport.standalone.utils.rootPackageToFqn
 public data class SwiftModuleConfig(
     val bridgeModuleName: String = DEFAULT_BRIDGE_MODULE_NAME,
     val rootPackage: String? = null,
-    val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent
+    val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
+    val experimentalFeatures: Map<String, String> = emptyMap(),
 ) {
 
     val targetPackageFqName: FqName? = rootPackage?.rootPackageToFqn()
