@@ -1092,7 +1092,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 
 public class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedGradleProperties : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;)V
-	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
