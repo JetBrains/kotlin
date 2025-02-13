@@ -32,8 +32,6 @@ public abstract class StackValue {
     private static final String NULLABLE_SHORT_TYPE_NAME = "java/lang/Short";
     private static final String NULLABLE_LONG_TYPE_NAME = "java/lang/Long";
 
-    public static final StackValue.Local LOCAL_0 = new Local(0, OBJECT_TYPE, null);
-
     @NotNull
     public final Type type;
     @Nullable

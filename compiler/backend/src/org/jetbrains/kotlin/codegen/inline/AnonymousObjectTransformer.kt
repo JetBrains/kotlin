@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
@@ -544,7 +545,10 @@ class AnonymousObjectTransformer(
                         recapturedParamInfo.functionalArgument = NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
                     }
                     capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue =
-                        StackValue.Field(desc.type, oldObjectType, recapturedParamInfo.newFieldName, StackValue.LOCAL_0)
+                        StackValue.Field(
+                            desc.type, oldObjectType, recapturedParamInfo.newFieldName,
+                            StackValue.Local(0, AsmTypes.OBJECT_TYPE, null),
+                        )
                     allRecapturedParameters.add(desc)
                 }
             }
@@ -558,7 +562,8 @@ class AnonymousObjectTransformer(
             val desc = CapturedParamDesc(ownerType, AsmUtil.THIS, ownerType)
             val recapturedParamInfo =
                 constructorParamBuilder.addCapturedParam(desc, AsmUtil.CAPTURED_THIS_FIELD/*outer lambda/object*/, false)
-            capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue = StackValue.LOCAL_0
+            capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue =
+                StackValue.Local(0, AsmTypes.OBJECT_TYPE, null)
             allRecapturedParameters.add(desc)
         }
 
