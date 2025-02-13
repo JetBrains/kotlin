@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -150,24 +146,5 @@ abstract class IncrementalJvmCompilerRunnerBase(
         if (compilationMode is CompilationMode.Incremental) {
             args.classpathAsList = listOf(args.destinationAsFile) + args.classpathAsList
         }
-    }
-
-    override fun runCompiler(
-        sourcesToCompile: List<File>,
-        args: K2JVMCompilerArguments,
-        caches: IncrementalJvmCachesManager,
-        services: Services,
-        messageCollector: MessageCollector,
-        allSources: List<File>,
-        isIncremental: Boolean
-    ): Pair<ExitCode, Collection<File>> {
-        val compiler = K2JVMCompiler()
-        val freeArgsBackup = args.freeArgs.toList()
-        args.freeArgs += sourcesToCompile.map { it.absolutePath }
-        args.allowNoSourceFiles = true
-        val exitCode = compiler.exec(messageCollector, services, args)
-        args.freeArgs = freeArgsBackup
-        reportPerformanceData(compiler.defaultPerformanceManager)
-        return exitCode to sourcesToCompile
     }
 }

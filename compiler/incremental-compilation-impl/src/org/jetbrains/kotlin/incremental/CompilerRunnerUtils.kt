@@ -88,13 +88,12 @@ fun makeJvmIncrementally(
                     ),
                 )
             } else {
-                IncrementalJvmCompilerRunner(
+                BuildHistoryJvmICRunner(
                     cachesDir,
                     buildReporter,
                     buildHistoryFile = buildHistoryFile,
                     outputDirs = null,
                     modulesApiHistory = EmptyModulesApiHistory,
-                    classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled,
                     kotlinSourceFilesExtensions = kotlinExtensions,
                     icFeatures = IncrementalCompilationFeatures(
                         usePreciseJavaTracking = verifiedPreciseJavaTracking

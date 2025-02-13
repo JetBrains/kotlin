@@ -161,8 +161,6 @@ internal object CompilationServiceImpl : CompilationService {
                 val incrementalCompiler = IncrementalJvmCompilerRunner(
                     aggregatedIcConfiguration.workingDir,
                     buildReporter,
-                    buildHistoryFile = null,
-                    modulesApiHistory = EmptyModulesApiHistory,
                     outputDirs = options.outputDirs,
                     kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                     classpathChanges = classpathChanges,
