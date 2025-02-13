@@ -380,8 +380,7 @@ class FirRenderer(
         }
 
         override fun visitErrorFunction(errorFunction: FirErrorFunction) {
-            print("<ERROR FUNCTION: ${errorFunction.diagnostic.reason}>")
-            printer.newLine()
+            visitFunction(errorFunction)
         }
 
         override fun visitBackingField(backingField: FirBackingField) {
@@ -406,11 +405,7 @@ class FirRenderer(
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
-            visitCallableDeclaration(simpleFunction)
-            bodyRenderer?.render(simpleFunction)
-            if (simpleFunction.body == null) {
-                printer.newLine()
-            }
+            visitFunction(simpleFunction)
         }
 
         override fun visitConstructor(constructor: FirConstructor) {
@@ -481,9 +476,11 @@ class FirRenderer(
         }
 
         override fun visitFunction(function: FirFunction) {
-            callableSignatureRenderer?.renderParameters(function.valueParameters)
-            declarationRenderer?.render(function)
+            visitCallableDeclaration(function)
             bodyRenderer?.render(function)
+            if (function.body == null) {
+                printer.newLine()
+            }
         }
 
         override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
