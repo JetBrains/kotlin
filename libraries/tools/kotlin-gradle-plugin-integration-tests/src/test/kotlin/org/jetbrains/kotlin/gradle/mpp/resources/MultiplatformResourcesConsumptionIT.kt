@@ -3,18 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmDsl::class)
+
 package org.jetbrains.kotlin.gradle.mpp.resources
 
+import org.gradle.api.tasks.Copy
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
-import java.nio.file.Path
-import kotlin.io.path.name
-import kotlin.io.path.pathString
 
 @MppGradlePluginTests
 @DisplayName("Test resources consumption APIs")
@@ -29,50 +31,49 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         androidVersion: String,
         providedJdk: JdkVersions.ProvidedJdk,
     ) {
-        test(gradleVersion, androidVersion, providedJdk, KotlinTargetResourcesResolutionStrategy.VariantReselection)
-    }
-
-    @DisplayName("Resolve resources with consumption API using resources configuration")
-    @GradleAndroidTest
-    fun testWithConfiguration(
-        gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
-    ) {
-        test(gradleVersion, androidVersion, providedJdk, KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration)
-    }
-
-    private fun test(
-        gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
-        resolutionStrategy: KotlinTargetResourcesResolutionStrategy,
-    ) {
         project(
             "multiplatformResources/consumption",
             gradleVersion,
             buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
         ) {
-            val sharedRepo = projectPath.resolve("build/repo")
-            prepareProjectDependencies(gradleVersion, providedJdk, sharedRepo).forEach {
-                settingsGradleKts.append(
-                    """
-                        include(":${it.name}")
-                        project(":${it.name}").projectDir = File("${it.escapedPathString}")
-                    """.trimIndent()
-                )
-            }
-            preparePublishedDependencies(gradleVersion, providedJdk, androidVersion, sharedRepo)
+            addKgpToBuildScriptCompilationClasspath()
+            addAgpToBuildScriptCompilationClasspath(androidVersion)
 
-            buildGradleKts.setDependencies(
-                """
-                implementation("test:publishedA:+")
-                implementation(project(":projectA"))
-                """.trimIndent()
-            )
-            // Gradle 7.4.2 doesn't pick up sharedRepo from build.gradle.kts and Gradle 8.5 doesn't pick it up from settings.gradle.kts
-            buildGradleKts.setUpRepositoriesInBuildGradleKts(sharedRepo)
-            settingsGradleKts.setUpRepositoriesInSettingGradleKts(sharedRepo)
+            prepareProjectDependencies(gradleVersion, providedJdk, androidVersion).forEach {
+                include(it.second, it.first)
+            }
+            preparePublishedDependencies(gradleVersion, providedJdk, androidVersion).forEach {
+                addPublishedProjectToRepositories(it)
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    val publication = project.extraProperties.get(
+                        KotlinTargetResourcesPublication.EXTENSION_NAME
+                    ) as KotlinTargetResourcesPublication
+                    listOf(
+                        linuxArm64(),
+                        linuxX64(),
+                        iosArm64(),
+                        iosSimulatorArm64(),
+                        wasmJs(),
+                        wasmWasi(),
+                        js(),
+                    ).forEach { target ->
+                        val assemblyTask = publication.resolveResources(target)
+                        project.tasks.register("${target.disambiguationClassifier}ResolveResources", Copy::class.java) {
+                            it.from(assemblyTask)
+                            it.into(project.layout.buildDirectory.dir("${target.disambiguationClassifier}ResolvedResources"))
+                        }
+                    }
+
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation("test:publishedA:+")
+                        implementation(project(":projectA"))
+                    }
+                }
+            }
 
             val resolvableTargets = listOf(
                 "linuxX64",
@@ -82,11 +83,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             ) + if (HostManager.hostIsMac) listOf("iosArm64") else emptyList()
 
             resolvableTargets.forEach { target ->
-                buildWithAGPVersion(
-                    ":${target}ResolveResources", "-Pkotlin.mpp.resourcesResolutionStrategy=${resolutionStrategy.propertyName}",
-                    androidVersion = androidVersion,
-                    defaultBuildOptions = defaultBuildOptions,
-                ) {
+                build(":${target}ResolveResources") {
                     assertEqualDirectoriesIgnoringDotFiles(
                         projectPath.resolve("reference/${target}").toFile(),
                         projectPath.resolve("build/${target}ResolvedResources").toFile(),
@@ -95,126 +92,119 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 }
             }
 
-            // This platform is not provided in dependency variants
-            buildAndFailWithAGPVersion(
-                ":linuxArm64",
-                androidVersion = androidVersion,
-                defaultBuildOptions = defaultBuildOptions,
+            val linuxArm64ResourcesDirectory = providerBuildScriptReturn {
+                val publication = project.extraProperties.get(
+                    KotlinTargetResourcesPublication.EXTENSION_NAME
+                ) as KotlinTargetResourcesPublication
+                publication.resolveResources(kotlinMultiplatform.linuxArm64())
+            }.buildAndReturn("linuxArm64ResolveResources")
+            assert(
+                linuxArm64ResourcesDirectory.list().isEmpty(),
+                { "linuxArm64 resources resolution is expected to produce an empty directory or a resolution failure because dependencies of test project don't contain linuxArm64 resources" }
             )
         }
     }
 
-    data class Project(
+    data class ResourcesProject(
         val name: String,
-        val dependsOn: String?,
+        val resourcesDependency: String?,
         val hasResources: Boolean,
-    )
+    ) : java.io.Serializable
 
-    private val dependencies: List<Project> = listOf(
-        Project("A", dependsOn = "B", hasResources = false),
-        Project("B", dependsOn = "C", hasResources = true),
-        Project("C", dependsOn = "D", hasResources = false),
-        Project("D", dependsOn = null, hasResources = true),
+    // Keep this list in reversed topsorted order by resourcesDependency
+    private val dependencies: List<ResourcesProject> = listOf(
+        ResourcesProject("A", resourcesDependency = "B", hasResources = false),
+        ResourcesProject("B", resourcesDependency = "C", hasResources = true),
+        ResourcesProject("C", resourcesDependency = "D", hasResources = false),
+        ResourcesProject("D", resourcesDependency = null, hasResources = true),
     )
 
     private fun prepareProjectDependencies(
         gradleVersion: GradleVersion,
         providedJdk: JdkVersions.ProvidedJdk,
-        publicationRepository: Path,
-    ): List<Path> {
-        val projectPaths = mutableListOf<Path>()
-        dependencies.forEach { dependencyProject ->
-            projectPaths.add(
-                project(
-                    "multiplatformResources/consumption/dependency",
-                    gradleVersion,
-                    buildJdk = providedJdk.location,
-                    projectPathAdditionalSuffix = "project${dependencyProject.name}",
-                ) {
-                    buildGradleKts.setDependencies(
-                        dependencyProject.dependsOn?.let { "implementation(project(\":project${it}\"))" } ?: ""
-                    )
-                    buildGradleKts.enableResourcesPublication(dependencyProject.hasResources)
-                    buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
-                }.projectPath
-            )
+        androidVersion: String,
+    ) = dependencies.map { dependencyProject ->
+        "project${dependencyProject.name}" to resourceProducer(
+            gradleVersion,
+            providedJdk,
+            androidVersion,
+            dependencyProject,
+        ) {
+            buildScriptInjection {
+                dependencyProject.resourcesDependency?.let { dependencyName ->
+                    kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":project${dependencyName}"))
+                    }
+                }
+            }
         }
-        return projectPaths
     }
 
     private fun preparePublishedDependencies(
         gradleVersion: GradleVersion,
         providedJdk: JdkVersions.ProvidedJdk,
         androidVersion: String,
-        publicationRepository: Path,
-    ) {
-        val projectToPublish = mutableListOf<TestProject>()
-        dependencies.forEach { dependencyProject ->
-            projectToPublish.add(
-                project(
-                    "multiplatformResources/consumption/dependency",
-                    gradleVersion,
-                    buildJdk = providedJdk.location,
-                    projectPathAdditionalSuffix = "published${dependencyProject.name}",
-                    localRepoDir = publicationRepository,
-                ) {
-                    buildGradleKts.setDependencies(
-                        dependencyProject.dependsOn?.let { "implementation(\"test:published${it}:+\")" } ?: ""
-                    )
-                    buildGradleKts.enableResourcesPublication(dependencyProject.hasResources)
-                    buildGradleKts.setUpPublishing(publicationRepository)
-                    buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
+    ): List<PublishedProject> {
+        val publishedProjects = mutableMapOf<String, PublishedProject>()
+        dependencies.reversed().forEach { dependencyProject ->
+            val published = resourceProducer(
+                gradleVersion,
+                providedJdk,
+                androidVersion,
+                dependencyProject,
+            ) {
+                val dependency: PublishedProject? = dependencyProject.resourcesDependency?.let { publishedProjects[it]!! }
+                publishedProjects.values.forEach {
+                    addPublishedProjectToRepositories(it)
                 }
-            )
-        }
-        projectToPublish.reversed().forEach {
-            it.buildWithAGPVersion(
-                ":publishAllPublicationsToMavenRepository",
-                androidVersion = androidVersion,
-                defaultBuildOptions = defaultBuildOptions,
-            )
-        }
-    }
-
-    private fun Path.setDependencies(dependencies: String) = replaceText("<dependencies>", dependencies)
-    private fun Path.enableResourcesPublication(publish: Boolean) = replaceText("<enablePublication>", if (publish) "true" else "false")
-
-    private fun Path.setUpRepositoriesInBuildGradleKts(publicationRepository: Path) = append(repositories(publicationRepository))
-    private fun Path.setUpRepositoriesInSettingGradleKts(publicationRepository: Path) = append(
-        """
-            dependencyResolutionManagement {
-                ${repositories(publicationRepository)}
-            }
-        """.trimIndent()
-    )
-
-    private fun repositories(publicationRepository: Path): String {
-        return """
-            repositories {
-                google()
-                mavenCentral()
-                mavenLocal()
-                maven {
-                    url = uri("${publicationRepository.escapedPathString}")
+                settingsBuildScriptInjection {
+                    settings.rootProject.name = "published${dependencyProject.name}"
                 }
-            }
-        """.trimIndent()
-    }
-
-    private fun Path.setUpPublishing(publicationRepository: Path) {
-        append(
-            """
-                publishing {
-                    repositories {
-                        maven {
-                            url = uri("${publicationRepository.escapedPathString}")
+                buildScriptInjection {
+                    dependency?.let { dep ->
+                        kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                            implementation(dep.rootCoordinate)
                         }
                     }
                 }
-            """.trimIndent()
-        )
+            }.publish(
+                publisherConfiguration = PublisherConfiguration(group = "test"),
+                deriveBuildOptions = {
+                    buildOptions.copy(androidVersion = androidVersion)
+                }
+            )
+            publishedProjects[dependencyProject.name] = published
+        }
+        return publishedProjects.values.toList()
     }
 
-    private val Path.escapedPathString: String get() = pathString.replace("\\", "\\\\")
+    private fun resourceProducer(
+        gradleVersion: GradleVersion,
+        providedJdk: JdkVersions.ProvidedJdk,
+        androidVersion: String,
+        dependencyProject: ResourcesProject,
+        configuration: TestProject.() -> Unit,
+    ): TestProject {
+        return project(
+            "multiplatformResources/consumption/dependency",
+            gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addAgpToBuildScriptCompilationClasspath(androidVersion)
+            buildScriptInjection {
+                project.applyMultiplatform {}
+                project.plugins.apply("com.android.library")
+
+                configureStandardResourcesProducerTargets(withAndroid = true)
+
+                if (dependencyProject.hasResources) {
+                    kotlinMultiplatform.configureStandardResourcesAndAssetsPublication()
+                }
+            }
+            configuration()
+        }
+    }
 
 }

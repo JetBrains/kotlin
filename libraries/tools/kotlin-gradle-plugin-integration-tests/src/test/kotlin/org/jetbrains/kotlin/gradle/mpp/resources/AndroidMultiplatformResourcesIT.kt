@@ -7,8 +7,13 @@ package org.jetbrains.kotlin.gradle.mpp.resources
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
+import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import java.nio.file.Path
 
 @MppGradlePluginTests
@@ -22,33 +27,62 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
         androidVersion: String,
         providedJdk: JdkVersions.ProvidedJdk,
     ) {
-        publishDependencyProject(
+        val publishedResourcesProducer = resourcesProducerProject(
             gradleVersion,
             providedJdk,
             androidVersion
-        ) { repositoryRoot ->
-            project(
-                "multiplatformResources/android",
-                gradleVersion,
-                buildJdk = providedJdk.location,
-                localRepoDir = repositoryRoot,
-            ) {
-                settingsGradleKts.append(
-                    """
-                        include(":consumer")
-                        include(":projectDependency")
-                    """.trimIndent()
-                )
+        ).publish(PublisherConfiguration())
 
-                buildWithAGPVersion(
-                    ":consumer:zipApksForDebug",
-                    androidVersion = androidVersion,
-                    defaultBuildOptions = defaultBuildOptions,
+        val projectDependency = project(
+            "multiplatformResources/android/projectDependency",
+            gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+        ) {
+            configureStandardResourcesProducer(
+                MultiplatformResourcesITAndroidConfiguration(
+                    androidVersion,
+                    "com.android.library",
                 )
-                val apkPath = projectPath.resolve("consumer/build/outputs/apk/debug/consumer-debug.apk")
-                assertAssetsMatchReference(apkPath)
-                assertEmbeddedResourcesMatchReference(apkPath)
+            )
+        }
+
+        val subprojectDependencyName = "subproject"
+        project(
+            "multiplatformResources/android",
+            gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+        ) {
+            include(projectDependency, subprojectDependencyName)
+            addPublishedProjectToRepositories(publishedResourcesProducer)
+
+            addKgpToBuildScriptCompilationClasspath()
+            addAgpToBuildScriptCompilationClasspath(androidVersion)
+
+            configureStandardResourcesProducer(
+                MultiplatformResourcesITAndroidConfiguration(
+                    androidVersion,
+                    "com.android.application",
+                ),
+                relativeResourcePlacement = {
+                    provider {
+                        File("embed/self")
+                    }
+                }
+            )
+            buildScriptInjection {
+                kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                    implementation(project(":${subprojectDependencyName}"))
+                    implementation(publishedResourcesProducer.rootCoordinate)
+                }
             }
+
+            build(":zipApksForDebug")
+
+            val apkPath = projectPath.resolve("build/outputs/apk/debug/android-debug.apk")
+            assertAssetsMatchReference(apkPath)
+            assertEmbeddedResourcesMatchReference(apkPath)
         }
     }
 
@@ -84,26 +118,6 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
             actual = resourcesPath.toFile(),
             forgiveOtherExtraFiles = false,
         )
-    }
-
-    private fun publishDependencyProject(
-        gradleVersion: GradleVersion,
-        providedJdk: JdkVersions.ProvidedJdk,
-        androidVersion: String,
-        withRepositoryRoot: (Path) -> (Unit),
-    ) {
-        project(
-            "multiplatformResources/publication",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-        ) {
-            buildWithAGPVersion(
-                ":publishAllPublicationsToMavenRepository",
-                androidVersion = androidVersion,
-                defaultBuildOptions = defaultBuildOptions,
-            )
-            withRepositoryRoot(projectPath.resolve("build/repo"))
-        }
     }
 
 }

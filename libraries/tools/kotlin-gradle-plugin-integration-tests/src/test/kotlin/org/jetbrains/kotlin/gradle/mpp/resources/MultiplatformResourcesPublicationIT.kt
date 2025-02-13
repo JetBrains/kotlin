@@ -36,133 +36,109 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
     )
 
     @DisplayName("Multiplatform resources publication for jvm target")
-    @GradleAndroidTest
+    @GradleTest
     fun testJvmResourcesPublication(
         gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         testEmbeddedResources(
             gradleVersion,
-            androidVersion,
-            providedJdk,
+            androidVersion = null,
+            providedJdk = null,
             publicationTask = ":publishJvmPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-jvm/1.0/publication-jvm-1.0.jar",
+            publishedArchive = "repo/test/publication-jvm/1.0/publication-jvm-1.0.jar",
             referenceName = "jvm",
         )
     }
 
     @DisplayName("Multiplatform resources publication for Native target")
-    @GradleAndroidTest
+    @GradleTest
     fun testNativeTargetResourcesPublication(
         gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         testEmbeddedResources(
             gradleVersion,
-            androidVersion,
-            providedJdk,
+            androidVersion = null,
+            providedJdk = null,
             publicationTask = ":publishLinuxX64PublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip",
+            publishedArchive = "repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "linuxX64",
         )
     }
 
     @DisplayName("Multiplatform resources publication for wasm js target")
-    @GradleAndroidTest
+    @GradleTest
     fun testWasmJsTargetResourcesPublication(
         gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         testEmbeddedResources(
             gradleVersion,
-            androidVersion,
-            providedJdk,
+            androidVersion = null,
+            providedJdk = null,
             publicationTask = ":publishWasmJsPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-wasm-js/1.0/publication-wasm-js-1.0-kotlin_resources.kotlin_resources.zip",
+            publishedArchive = "repo/test/publication-wasm-js/1.0/publication-wasm-js-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "wasmJs",
         )
     }
 
     @DisplayName("Multiplatform resources publication for wasm wasi target")
-    @GradleAndroidTest
+    @GradleTest
     fun testWasmWasiTargetResourcesPublication(
         gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         testEmbeddedResources(
             gradleVersion,
-            androidVersion,
-            providedJdk,
+            androidVersion = null,
+            providedJdk = null,
             publicationTask = ":publishWasmWasiPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-wasm-wasi/1.0/publication-wasm-wasi-1.0-kotlin_resources.kotlin_resources.zip",
+            publishedArchive = "repo/test/publication-wasm-wasi/1.0/publication-wasm-wasi-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "wasmWasi",
         )
     }
 
     @DisplayName("Multiplatform resources publication for js target")
-    @GradleAndroidTest
+    @GradleTest
     fun testJsTargetResourcesPublication(
         gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
     ) {
         testEmbeddedResources(
             gradleVersion,
-            androidVersion,
-            providedJdk,
+            androidVersion = null,
+            providedJdk = null,
             publicationTask = ":publishJsPublicationToMavenRepository",
-            publishedArchive = "build/repo/test/publication-js/1.0/publication-js-1.0-kotlin_resources.kotlin_resources.zip",
+            publishedArchive = "repo/test/publication-js/1.0/publication-js-1.0-kotlin_resources.kotlin_resources.zip",
             referenceName = "js",
         )
     }
 
     @DisplayName("Multiplatform resources publication when a previously non-existent source set with resource is added")
-    @GradleAndroidTest
+    @GradleTest
     fun testNativeTargetResourcesPublicationWithNewSourceSet(
         gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
     ) {
-        project(
-            "multiplatformResources/publication",
-            gradleVersion,
-            buildJdk = providedJdk.location,
-        ) {
-            val publishedArchive = projectPath.resolve(
-                "build/repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip"
-            )
+        val project = resourcesProducerProject(gradleVersion)
 
-            buildWithAGPVersion(
-                ":publishLinuxX64PublicationToMavenRepository",
-                androidVersion = androidVersion,
-                defaultBuildOptions = defaultBuildOptions,
-            )
-            compareEmbeddedResources(
-                publishedArchive,
-                reference("linuxX64")
-            )
+        val publishedArchive = project.projectPath.resolve(
+            "repo/test/publication-linuxx64/1.0/publication-linuxx64-1.0-kotlin_resources.kotlin_resources.zip"
+        )
 
-            // Add a file to a source set that didn't exist previously
-            val linuxMainSourceSet = projectPath.resolve("src/linuxMain")
-            assertDirectoryDoesNotExist(linuxMainSourceSet)
-            val newResource = linuxMainSourceSet.resolve("multiplatformResources/newSourceSetResource")
-            assert(newResource.parent.toFile().mkdirs())
-            newResource.writeText(newResource.name)
+        project.build(":publishLinuxX64PublicationToMavenRepository")
+        project.compareEmbeddedResources(
+            publishedArchive,
+            project.reference("linuxX64")
+        )
 
-            buildWithAGPVersion(
-                ":publishLinuxX64PublicationToMavenRepository",
-                androidVersion = androidVersion,
-                defaultBuildOptions = defaultBuildOptions,
-            )
-            compareEmbeddedResources(
-                publishedArchive,
-                reference("linuxX64WithNewSourceSet")
-            )
-        }
+        // Add a file to a source set that didn't exist previously
+        val linuxMainSourceSet = project.projectPath.resolve("src/linuxMain")
+        assertDirectoryDoesNotExist(linuxMainSourceSet)
+        val newResource = linuxMainSourceSet.resolve("multiplatformResources/newSourceSetResource")
+        assert(newResource.parent.toFile().mkdirs())
+        newResource.writeText(newResource.name)
+
+        project.build(":publishLinuxX64PublicationToMavenRepository")
+        project.compareEmbeddedResources(
+            publishedArchive,
+            project.reference("linuxX64WithNewSourceSet")
+        )
     }
 
     private fun testAndroidReleaseResourcesPublication(
@@ -172,60 +148,51 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
         assertEmbeddedResources: TestProject.(classesJar: Path) -> (Unit),
         assertAssets: TestProject.(assetsInAar: Path) -> (Unit),
     ) {
-        project(
-            "multiplatformResources/publication",
+        val project = resourcesProducerProject(
             gradleVersion,
-            buildJdk = providedJdk.location,
-        ) {
-            buildWithAGPVersion(
-                ":publishAndroidReleasePublicationToMavenRepository",
-                androidVersion = androidVersion,
-                defaultBuildOptions = defaultBuildOptions,
-            )
-            val publishedAarPath = "build/repo/test/publication-android/1.0/publication-android-1.0.aar"
-            val classesInAar = projectPath.resolve("classesInAar")
-            val classesJar = "classes.jar"
-            unzip(
-                projectPath.resolve(publishedAarPath),
-                classesInAar,
-                filesStartingWith = classesJar
-            )
-            assertEmbeddedResources(classesInAar.resolve(classesJar))
+            androidVersion = androidVersion,
+            providedJdk = providedJdk,
+        )
 
-            val assetsInAar = projectPath.resolve("assetsInAar")
-            unzip(
-                projectPath.resolve(publishedAarPath),
-                assetsInAar,
-                filesStartingWith = "assets"
-            )
-            assertAssets(assetsInAar)
-        }
+        project.build(":publishAndroidReleasePublicationToMavenRepository")
+        val publishedAarPath = "repo/test/publication-android/1.0/publication-android-1.0.aar"
+        val classesInAar = project.projectPath.resolve("classesInAar")
+        val classesJar = "classes.jar"
+        unzip(
+            project.projectPath.resolve(publishedAarPath),
+            classesInAar,
+            filesStartingWith = classesJar
+        )
+        project.assertEmbeddedResources(classesInAar.resolve(classesJar))
+
+        val assetsInAar = project.projectPath.resolve("assetsInAar")
+        unzip(
+            project.projectPath.resolve(publishedAarPath),
+            assetsInAar,
+            filesStartingWith = "assets"
+        )
+        project.assertAssets(assetsInAar)
     }
 
 
     private fun testEmbeddedResources(
         gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
+        androidVersion: String?,
+        providedJdk: JdkVersions.ProvidedJdk?,
         publicationTask: String,
         publishedArchive: String,
         referenceName: String,
     ) {
-        project(
-            "multiplatformResources/publication",
+        val project = resourcesProducerProject(
             gradleVersion,
-            buildJdk = providedJdk.location,
-        ) {
-            buildWithAGPVersion(
-                publicationTask,
-                androidVersion = androidVersion,
-                defaultBuildOptions = defaultBuildOptions,
-            )
-            compareEmbeddedResources(
-                projectPath.resolve(publishedArchive),
-                reference(referenceName)
-            )
-        }
+            providedJdk,
+            androidVersion,
+        )
+        project.build(publicationTask)
+        project.compareEmbeddedResources(
+            project.projectPath.resolve(publishedArchive),
+            project.reference(referenceName)
+        )
     }
 
     private fun TestProject.reference(

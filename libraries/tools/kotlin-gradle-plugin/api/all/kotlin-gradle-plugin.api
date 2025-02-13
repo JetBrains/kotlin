@@ -1841,7 +1841,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/compilati
 	public abstract fun getHostSpecificMetadataConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getImplementationConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getPluginConfiguration ()Lorg/gradle/api/artifacts/Configuration;
-	public abstract fun getResourcesConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getRuntimeDependencyConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getRuntimeOnlyConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 }

@@ -5,42 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.mpp.resources
 
-import org.gradle.testkit.runner.BuildResult
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions
-import org.jetbrains.kotlin.gradle.testbase.TestProject
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.zip.ZipFile
-
-fun TestProject.buildWithAGPVersion(
-    vararg buildArguments: String,
-    androidVersion: String,
-    defaultBuildOptions: BuildOptions,
-    assertions: BuildResult.() -> Unit = {},
-) {
-    build(
-        *buildArguments,
-        buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-        assertions = assertions,
-    )
-}
-
-fun TestProject.buildAndFailWithAGPVersion(
-    vararg buildArguments: String,
-    androidVersion: String,
-    defaultBuildOptions: BuildOptions,
-    assertions: BuildResult.() -> Unit = {},
-) {
-    buildAndFail(
-        *buildArguments,
-        buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-        assertions = assertions,
-    )
-}
 
 fun unzip(
     inputZip: Path,

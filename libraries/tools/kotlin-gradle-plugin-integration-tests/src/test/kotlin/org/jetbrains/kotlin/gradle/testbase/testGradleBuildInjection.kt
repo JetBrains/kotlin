@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.flow.*
@@ -260,6 +261,7 @@ class GradleProjectBuildScriptInjectionContext(
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
     val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
+    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*,*,*,*>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val dependencies get() = project.dependencies
 }
@@ -513,6 +515,15 @@ fun TestProject.addKgpToBuildScriptCompilationClasspath() {
     buildScriptBuildscriptBlockInjection {
         buildscript.configurations.getByName("classpath").dependencies.add(
             buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        )
+    }
+}
+
+fun TestProject.addAgpToBuildScriptCompilationClasspath(androidVersion: String) {
+    transferPluginRepositoriesIntoBuildScript()
+    buildScriptBuildscriptBlockInjection {
+        buildscript.configurations.getByName("classpath").dependencies.add(
+            buildscript.dependencies.create("com.android.tools.build:gradle:${androidVersion}")
         )
     }
 }
