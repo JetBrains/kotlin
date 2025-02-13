@@ -20,6 +20,24 @@ open class MyCustomError3 : Throwable("Fail: the original message was taken") {
     override var message = "MyCustomError3: ${super.message}"
 }
 
+open class MyCustomError4() : Throwable("super message") {
+    override val message: String?
+        get() = "The overridden message"
+
+    constructor(f: (String) -> Unit): this() {
+        f("MyCustomError4: ${super.message}")
+    }
+}
+
+open class MyCustomError5 : Throwable {
+    override val message: String?
+        get() = "The overridden message"
+
+    constructor(f: (String) -> Unit) : super("super message") {
+        f("MyCustomError5: ${super.message}")
+    }
+}
+
 open class SandwichError1 : MyCustomError3() {
     override var message = "Initial: ${super.message}"
         get() = "Sandwich1: ${super.message}"
@@ -50,6 +68,20 @@ fun box(): String {
     val thirdError = MyCustomError3()
     if (thirdError.message != "MyCustomError3: Fail: the original message was taken") return thirdError.message
     if (thirdError.message != thirdError.asDynamic().message) return thirdError.asDynamic().message
+
+    var capturedMessage1 = "Fail: the message was not captured"
+    val forthError = MyCustomError4 { capturedMessage1 = it }
+
+    if (forthError.message != "The overridden message") return forthError.message.toString()
+    if (forthError.message != forthError.asDynamic().message) return forthError.asDynamic().message
+    if (capturedMessage1 != "MyCustomError4: super message") return "Fail: $capturedMessage1"
+
+    var capturedMessage2 = "Fail: the message was not captured"
+    val fifthError = MyCustomError5 { capturedMessage2 = it }
+
+    if (fifthError.message != "The overridden message") return fifthError.message.toString()
+    if (fifthError.message != fifthError.asDynamic().message) return fifthError.asDynamic().message
+    if (capturedMessage2 != "MyCustomError5: super message") return "Fail: $capturedMessage2"
 
     val notExported1 = NotExported1()
     if (notExported1.message != "NotExported1: Fail: the original message was taken") return notExported1.message

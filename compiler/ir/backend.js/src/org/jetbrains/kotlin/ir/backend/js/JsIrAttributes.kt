@@ -56,6 +56,8 @@ var IrClass.objectGetInstanceFunction: IrSimpleFunction? by irAttribute(followAt
 internal var IrClass.objectInstanceField: IrField? by irAttribute(followAttributeOwner = false)
 
 /**
- * Replaced in ES6 mode delegating constructor to reconstruct it in the optimized bundle
+ * The external constructor, whose delegation call was replaced in ES6 mode.
+ * The attribute is used inside the [ES6PrimaryConstructorOptimizationLowering] to re-construct the original delegation call
+ * in constructors that could be translated into simple ES6 class constructors.
  */
 internal var IrCall.originalConstructor: IrConstructor? by irAttribute(followAttributeOwner = false)
