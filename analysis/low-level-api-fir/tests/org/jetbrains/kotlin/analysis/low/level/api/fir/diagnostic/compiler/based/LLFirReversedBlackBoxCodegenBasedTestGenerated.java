@@ -3019,18 +3019,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("bridgeInInterface.kt")
-    public void testBridgeInInterface() {
-      runTest("compiler/testData/codegen/box/bridges/bridgeInInterface.kt");
-    }
-
-    @Test
-    @TestMetadata("bridgeInInterfaceWithProperties.kt")
-    public void testBridgeInInterfaceWithProperties() {
-      runTest("compiler/testData/codegen/box/bridges/bridgeInInterfaceWithProperties.kt");
-    }
-
-    @Test
     @TestMetadata("complexMultiInheritance.kt")
     public void testComplexMultiInheritance() {
       runTest("compiler/testData/codegen/box/bridges/complexMultiInheritance.kt");

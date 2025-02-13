@@ -1896,6 +1896,28 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/bytecodeListing/jvm8/defaults/disable")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Disable {
+        @Test
+        public void testAllFilesPresentInDisable() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/disable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("bridgeInInterface.kt")
+        public void testBridgeInInterface() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/disable/bridgeInInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("bridgeInInterfaceWithProperties.kt")
+        public void testBridgeInInterfaceWithProperties() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/disable/bridgeInInterfaceWithProperties.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/bytecodeListing/jvm8/defaults/enable")
       @TestDataPath("$PROJECT_ROOT")
       public class Enable {
