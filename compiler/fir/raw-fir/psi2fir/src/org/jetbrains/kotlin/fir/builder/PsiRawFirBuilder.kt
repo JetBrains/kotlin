@@ -52,8 +52,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNullTo
-import org.jetbrains.kotlin.utils.filterIsInstanceMapTo
 
 open class PsiRawFirBuilder(
     session: FirSession,

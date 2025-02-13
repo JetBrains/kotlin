@@ -1251,7 +1251,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         name = Name.special("<destructuring>")
         diagnostic = ConeDestructuringDeclarationsOnTopLevel
         symbol = FirErrorPropertySymbol(diagnostic)
-        this.initializer = initializer
+        this.initializer = initializer ?: buildErrorExpression {
+            diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
+        }
     }
 
     protected fun createNoTypeForParameterTypeRef(parameterSource: KtSourceElement): FirErrorTypeRef {
