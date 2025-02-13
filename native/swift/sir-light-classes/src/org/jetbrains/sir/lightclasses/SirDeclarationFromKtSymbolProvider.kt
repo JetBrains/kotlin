@@ -12,16 +12,19 @@ import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
+import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.sir.lightclasses.nodes.*
 
 public class SirDeclarationFromKtSymbolProvider(
     private val ktModule: KaModule,
     private val sirSession: SirSession,
+    private val kaClassReferenceHandler: SirKaClassReferenceHandler? = null,
 ) : SirDeclarationProvider {
     public override fun KaDeclarationSymbol.toSir(): SirTranslationResult =
         when (val ktSymbol = this@toSir) {
             is KaNamedClassSymbol -> {
+                kaClassReferenceHandler?.onClassReference(ktSymbol)
                 if (ktSymbol.classKind == KaClassKind.INTERFACE) {
                     val protocol = SirProtocolFromKtSymbol(
                         ktSymbol = ktSymbol,
@@ -74,7 +77,6 @@ public class SirDeclarationFromKtSymbolProvider(
             }
             else -> TODO("encountered unknown symbol type - $ktSymbol. Error system should be reworked KT-65980")
         }
-
     private fun KaPropertyAccessorSymbol.toSirFunction(ktPropertySymbol: KaPropertySymbol): SirFunction = SirFunctionFromKtPropertySymbol(
         ktPropertySymbol = ktPropertySymbol,
         ktSymbol = this,
