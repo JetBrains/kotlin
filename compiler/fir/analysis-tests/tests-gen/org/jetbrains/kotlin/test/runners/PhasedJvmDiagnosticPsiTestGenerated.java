@@ -18640,6 +18640,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("inferredToNothingDueToBoundsWithSelect.kt")
+        public void testInferredToNothingDueToBoundsWithSelect() {
+          runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/inferredToNothingDueToBoundsWithSelect.kt");
+        }
+
+        @Test
         @TestMetadata("kt45461.kt")
         public void testKt45461() {
           runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461.kt");
