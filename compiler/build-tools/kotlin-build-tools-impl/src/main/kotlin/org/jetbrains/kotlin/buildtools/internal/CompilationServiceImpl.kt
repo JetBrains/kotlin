@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
-import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
@@ -161,8 +160,6 @@ internal object CompilationServiceImpl : CompilationService {
                 val incrementalCompiler = IncrementalJvmCompilerRunner(
                     aggregatedIcConfiguration.workingDir,
                     buildReporter,
-                    buildHistoryFile = null,
-                    modulesApiHistory = EmptyModulesApiHistory,
                     outputDirs = options.outputDirs,
                     kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                     classpathChanges = classpathChanges,
