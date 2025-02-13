@@ -122,7 +122,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     }
 
     private fun ConeSimpleKotlinType.substituteArguments(): ConeKotlinType? {
-        val newArguments by lazy { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
+        val newArguments by lazy(LazyThreadSafetyMode.NONE) { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
         var initialized = false
 
         for ((index, typeArgument) in this.typeArguments.withIndex()) {
