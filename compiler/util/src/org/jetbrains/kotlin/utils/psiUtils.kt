@@ -10,7 +10,16 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 
-fun getElementTextWithContext(psiElement: PsiElement): String {
+/**
+ * Retrieves the text of the [PsiElement] within its context.
+ *
+ * If the element is invalid, it returns a message indicating its invalidity.
+ * In case of any exception during the process, a message with the stack trace is returned.
+ *
+ * @param psiElement The PSI element whose text within the broader context is to be retrieved.
+ * @return A string representing the text of the PSI element within its context, or an error message in case of failure.
+ */
+fun getElementTextWithContext(psiElement: PsiElement): String = runCatching {
     if (!psiElement.isValid) return "<invalid element $psiElement>"
 
     @Suppress("LocalVariableName") val ELEMENT_TAG = "ELEMENT"
@@ -38,6 +47,8 @@ fun getElementTextWithContext(psiElement: PsiElement): String {
         appendLine("<File name: ${containingFile.name}, Physical: ${containingFile.isPhysical}>")
         append(elementTextInContext)
     }
+}.getOrElse { throwable ->
+    "EXCEPTION: Could not get element text in context due to an exception:\n$throwable\n${throwable.stackTraceToString()}>"
 }
 
 private fun PsiElement.parentOfType(vararg psiClassNames: String): PsiElement? {
