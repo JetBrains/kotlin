@@ -2601,16 +2601,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @TestMetadata("bridgeInInterface.kt")
-    public void testBridgeInInterface() {
-      runTest("compiler/testData/codegen/box/bridges/bridgeInInterface.kt");
-    }
-
-    @TestMetadata("bridgeInInterfaceWithProperties.kt")
-    public void testBridgeInInterfaceWithProperties() {
-      runTest("compiler/testData/codegen/box/bridges/bridgeInInterfaceWithProperties.kt");
-    }
-
     @TestMetadata("complexMultiInheritance.kt")
     public void testComplexMultiInheritance() {
       runTest("compiler/testData/codegen/box/bridges/complexMultiInheritance.kt");
