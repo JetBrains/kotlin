@@ -78,7 +78,17 @@ class JvmClassFileBasedSymbolProvider(
         val (kotlinClass, byteContent) =
             kotlinClassFinder.findKotlinClassOrContent(classId, ownMetadataVersion) as? KotlinClassFinder.Result.KotlinClass ?: return null
 
-        val facadeName = kotlinClass.classHeader.multifileClassName?.takeIf { it.isNotEmpty() }
+        val header = kotlinClass.classHeader
+        when (header.kind) {
+            KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {}
+            // All other classes don't have package metadata, so trying to parse their protobuf will throw.
+            // This shouldn't happen if PackagePartProvider is implemented exactly, but it could return redundant entries.
+            else -> return null
+        }
+        val data = header.data ?: header.incompatibleData ?: return null
+        val strings = header.strings ?: return null
+
+        val facadeName = header.multifileClassName?.takeIf { it.isNotEmpty() }
         val facadeFqName = facadeName?.let { JvmClassName.byInternalName(it).fqNameForTopLevelClassMaybeWithDollars }
         val facadeBinaryClass = facadeFqName?.let {
             kotlinClassFinder.findKotlinClass(ClassId.topLevel(it), ownMetadataVersion)
@@ -86,9 +96,6 @@ class JvmClassFileBasedSymbolProvider(
 
         val moduleData = moduleDataProvider.getModuleData(kotlinClass.containingLibrary.toPath()) ?: return null
 
-        val header = kotlinClass.classHeader
-        val data = header.data ?: header.incompatibleData ?: return null
-        val strings = header.strings ?: return null
         val (nameResolver, packageProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         } ?: return null
@@ -127,7 +134,7 @@ class JvmClassFileBasedSymbolProvider(
         ): ConeKotlinType = FirTypeDeserializer.FlexibleTypeFactory.Default.createDynamicType(proto, lowerBound, upperBound)
     }
 
-    override fun computePackageSetWithNonClassDeclarations(): Set<String> = packagePartProvider.computePackageSetWithNonClassDeclarations()
+    override fun computePackageSetWithNonClassDeclarations(): Set<String>? = packagePartProvider.computePackageSetWithNonClassDeclarations()
 
     override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
 

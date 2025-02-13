@@ -67,7 +67,7 @@ class MetadataSymbolProvider(
         }
     }
 
-    override fun computePackageSetWithNonClassDeclarations(): Set<String> {
+    override fun computePackageSetWithNonClassDeclarations(): Set<String>? {
         return packageAndMetadataPartProvider.computePackageSetWithNonClassDeclarations()
     }
 
