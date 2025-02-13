@@ -133,8 +133,7 @@ settings:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-  - #kotlin.kotlin-scripting-jvm-host-unshaded.main
-  - ./../scripting-jvm
+    - ./../scripting-jvm
   - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../common
 

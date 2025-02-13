@@ -79,8 +79,7 @@ test-dependencies:
   - javax.inject:javax.inject:1
   - io.vavr:vavr-match:0.10.4
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-  - #org.jetbrains.kotlin.kotlin.kotlin-noarg-compiler-plugin.backend.main
-  - ./../../../compiler/ir/backend.common
+    - ./../../../compiler/ir/backend.common
   - ./../../../compiler/frontend.java
   - ./../../../core/descriptors
   - ./../../../compiler/backend-common

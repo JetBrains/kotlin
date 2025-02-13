@@ -220,8 +220,7 @@ test-dependencies:
   - ./../compiler/config
   - ./../native/utils
   - ./../core/util.runtime
-  - #org.jetbrains.kotlin.kotlin.kotlin-build-common.main
-  - ./../compiler/ir/backend.jvm/entrypoint
+    - ./../compiler/ir/backend.jvm/entrypoint
   - ./../compiler/psi
   - ./../compiler/ir/backend.wasm
   - ./../compiler/ir/backend.js

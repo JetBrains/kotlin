@@ -77,8 +77,7 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlinx-serialization-compiler-plugin.k1.main
-  - ./../kotlinx-serialization.common
+    - ./../kotlinx-serialization.common
 
 test-settings:
   kotlin:

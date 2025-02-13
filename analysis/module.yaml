@@ -19,7 +19,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.analysis.main
 
 test-settings:
   kotlin:

@@ -75,8 +75,7 @@ test-dependencies:
   - org.jline:jline:3.24.1
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
-  - #org.jetbrains.kotlin.kotlin.kotlin-scripting-jsr223-unshaded.main
-  - ./../jvm-host
+    - ./../jvm-host
   - ./../../../plugins/scripting/scripting-compiler
   - ./../scripting-jvm
   - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663

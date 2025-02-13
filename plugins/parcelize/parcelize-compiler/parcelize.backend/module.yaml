@@ -85,8 +85,7 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.plugins.parcelize.parcelize-compiler.parcelize.backend.main
-  - ./../parcelize.common
+    - ./../parcelize.common
   - ./../parcelize.k1
 
 test-settings:

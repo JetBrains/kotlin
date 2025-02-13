@@ -190,8 +190,7 @@ test-dependencies:
   - ./../../../core/deserialization.common
   - ./../backend.wasm
   - ./../backend.js
-  - #org.jetbrains.kotlin.kotlin.compiler.ir.backend.common.main
-  - ./../serialization.js
+    - ./../serialization.js
   - ./../../../wasm/wasm.config
   - ./../../../js/js.sourcemap
   - ./../backend.jvm

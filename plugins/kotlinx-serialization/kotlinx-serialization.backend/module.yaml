@@ -100,8 +100,7 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlinx-serialization-compiler-plugin.backend.main
-  - ./../kotlinx-serialization.common
+    - ./../kotlinx-serialization.common
   - ./../kotlinx-serialization.k1
 
 test-settings:

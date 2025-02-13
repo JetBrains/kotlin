@@ -27,8 +27,7 @@ test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.apache.ant:ant-launcher:1.10.15
   - org.jetbrains:annotations:13.0
-  - #org.jetbrains.kotlin.kotlin.kotlin-ant.main
-  - ./../compiler/preloader
+    - ./../compiler/preloader
 
 test-settings:
   kotlin:

@@ -283,8 +283,7 @@ test-dependencies:
   - ./../../compiler/tests-mutes/mutes-junit5
   - ./../analysis-api-standalone/analysis-api-fir-standalone-base
   - ./../symbol-light-classes
-  - #kotlin.analysis.low-level-api-fir.main
-  - ./../light-classes-base
+    - ./../light-classes-base
   - ./../../compiler/ir/ir.tree
   - ./../../core/deserialization.common.jvm
   - ./../../core/deserialization

@@ -99,8 +99,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:util-rt-java8:233.13135.128
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
-  - #org.jetbrains.kotlin.kotlin.plugins.js-plain-objects.compiler-plugin.main
-  - ./../../../core/descriptors.runtime
+    - ./../../../core/descriptors.runtime
   - ./../../../js/js.tests
   - ./../../../compiler/tests-common-new
   - ./../../../compiler/test-infrastructure

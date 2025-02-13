@@ -23,8 +23,7 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlin-gradle-compiler-types.main
-
+  
 test-settings:
   kotlin:
     freeCompilerArgs: [-Xsam-conversions=class, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xsuppress-version-warnings, -Xwhen-guards]

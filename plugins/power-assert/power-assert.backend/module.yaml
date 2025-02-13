@@ -125,7 +125,6 @@ settings:
 
 
 test-dependencies:
-  - #kotlin.kotlin-power-assert-compiler-plugin.backend.main
 
 test-settings:
   kotlin:

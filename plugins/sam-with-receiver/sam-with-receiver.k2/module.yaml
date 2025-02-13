@@ -104,8 +104,7 @@ settings:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-  - #kotlin.kotlin-sam-with-receiver-compiler-plugin.k2.main
-
+  
 test-settings:
   kotlin:
     freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

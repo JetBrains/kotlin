@@ -101,8 +101,7 @@ test-dependencies:
   - javax.inject:javax.inject:1
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-  - #org.jetbrains.kotlin.kotlin.compiler.fir.fir2ir.jvm-backend.main
-  - ./../../../ir/serialization.common
+    - ./../../../ir/serialization.common
   - ./../../../ir/ir.tree
   - ./../../../serialization
   - ./../../../util-klib-metadata

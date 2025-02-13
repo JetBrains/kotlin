@@ -108,8 +108,7 @@ test-dependencies:
   - io.opentelemetry:opentelemetry-api:1.41.0
   - org.apache.commons:commons-lang3:3.12.0
   - io.opentelemetry:opentelemetry-context:1.41.0
-  - #org.jetbrains.kotlin.kotlin.generators.analysis-api-generator.main
-  - ./../../compiler/tests-spec
+    - ./../../compiler/tests-spec
   - ./../../analysis/analysis-api-fir
   - ./../../analysis/low-level-api-fir
   - ./../../compiler/tests-common

@@ -21,7 +21,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.tools.kotlinp.main
 
 test-settings:
   kotlin:

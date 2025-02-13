@@ -15,4 +15,4 @@ module:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.plugins.jvm-abi-gen-embeddable.main
+  

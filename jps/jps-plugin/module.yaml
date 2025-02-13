@@ -260,8 +260,7 @@ test-dependencies:
   - org.apache.maven:maven-artifact:3.8.8
   - org.apache.maven:maven-builder-support:3.8.8
   - org.eclipse.sisu:org.eclipse.sisu.inject:0.3.5
-  - #org.jetbrains.kotlin.kotlin.jps.jps-plugin.main
-  - ./../../compiler/incremental-compilation-impl
+    - ./../../compiler/incremental-compilation-impl
   - ./../../build-common
   - ./../../compiler/daemon/daemon-common
   - ./../../compiler/cli/cli-js

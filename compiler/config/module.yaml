@@ -43,8 +43,7 @@ test-dependencies:
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-  - #org.jetbrains.kotlin.kotlin.compiler.config.main
-  - ./../../core/metadata
+    - ./../../core/metadata
   - ./../../core/compiler.common
   - ./../util
   - ./../../core/util.runtime

@@ -25,8 +25,7 @@ settings:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-  - #org.jetbrains.kotlin.kotlin.core.compiler.common.jvm.main
-  - ./../compiler.common
+    - ./../compiler.common
   - ./../util.runtime
   - ./../../libraries/tools/kotlin-annotations-jvm
 

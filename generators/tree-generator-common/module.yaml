@@ -127,8 +127,7 @@ test-dependencies:
   - net.java.dev.jna:jna:5.13.0
   - org.codehaus.woodstox:stax2-api:4.2
   - org.jetbrains.intellij.deps:trove4j:1.0.20221201
-  - #org.jetbrains.kotlin.kotlin.generators.tree-generator-common.main
-  - ./../../core/compiler.common
+    - ./../../core/compiler.common
   - ./..
   - ./../../compiler/util
   - ./../../core/util.runtime

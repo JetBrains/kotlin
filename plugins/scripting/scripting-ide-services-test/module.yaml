@@ -96,8 +96,7 @@ test-dependencies:
   - org.apache.httpcomponents:httpcore:4.4.16
   - commons-codec:commons-codec:1.11
   - org.codehaus.plexus:plexus-cipher:2.0
-  - #org.jetbrains.kotlin.kotlin.kotlin-scripting-ide-services-test.main
-  - ./../scripting-ide-common
+    - ./../scripting-ide-common
   - ./../scripting-ide-services
   - ./../scripting-compiler
   - ./../../../libraries/scripting/dependencies-maven

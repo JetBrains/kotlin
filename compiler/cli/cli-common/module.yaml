@@ -78,8 +78,7 @@ test-dependencies:
   - javax.inject:javax.inject:1
   - io.vavr:vavr-match:0.10.4
   - org.jetbrains:annotations:13.0
-  - #org.jetbrains.kotlin.kotlin.compiler.cli-common.main
-  - ./../../config.jvm
+    - ./../../config.jvm
   - ./../../../js/js.config
   - ./../../../wasm/wasm.config
   - ./../../plugin-api

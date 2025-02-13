@@ -51,7 +51,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.compiler.ir.inline.main
 
 test-settings:
   kotlin:

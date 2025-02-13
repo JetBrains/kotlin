@@ -126,8 +126,7 @@ test-dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.8.0
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
-  - #org.jetbrains.kotlin.kotlin.js.js.tests.main
-  - ./../../compiler/incremental-compilation-impl
+    - ./../../compiler/incremental-compilation-impl
   - ./../../build-common
   - ./../../compiler/tests-common
   - ./../../compiler/fir/analysis-tests

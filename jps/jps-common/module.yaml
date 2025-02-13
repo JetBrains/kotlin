@@ -153,8 +153,7 @@ test-dependencies:
   - io.opentelemetry:opentelemetry-extension-incubator:1.31.0-alpha
   - io.opentelemetry:opentelemetry-api-events:1.31.0-alpha
   - io.opentelemetry:opentelemetry-context:1.31.0
-  - #org.jetbrains.kotlin.kotlin.jps.jps-common.main
-  - ./../../compiler/daemon/daemon-common
+    - ./../../compiler/daemon/daemon-common
   - ./../../compiler/frontend.java
   - ./../../core/descriptors.jvm
   - ./../../compiler/backend.common.jvm

@@ -83,8 +83,7 @@ test-dependencies:
   - org.apache.commons:commons-lang3:3.12.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
-  - #org.jetbrains.kotlin.kotlin.plugins.parcelize.parcelize-compiler.main
-  - ./../../../compiler/tests-common-new
+    - ./../../../compiler/tests-common-new
   - ./../../../compiler/test-infrastructure
   - ./../../../compiler/cli
   - ./../../../compiler/fir/fir-serialization

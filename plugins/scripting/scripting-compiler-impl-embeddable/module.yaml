@@ -24,7 +24,6 @@ module:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-  - #org.jetbrains.kotlin.kotlin.kotlin-scripting-compiler-impl-embeddable.main
-  - ./../../../libraries/scripting/scripting-jvm
+    - ./../../../libraries/scripting/scripting-jvm
   - ./../../../libraries/scripting/common
   - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663

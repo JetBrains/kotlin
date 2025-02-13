@@ -250,8 +250,7 @@ test-dependencies:
   - net.java.dev.jna:jna:5.13.0
   - org.apache.commons:commons-lang3:3.12.0
   - com.google.code.gson:gson:2.11.0
-  - #kotlin.analysis.analysis-api-standalone.main
-  - ./../analysis-api-fir
+    - ./../analysis-api-fir
   - ./../analysis-test-framework
   - ./analysis-api-standalone-base
   - ./../analysis-api-impl-base

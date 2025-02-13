@@ -138,8 +138,7 @@ test-dependencies:
   - ./../../../cli/cli-js
   - ./../../../cli
   - ./../../fir-entrypoint
-  - #org.jetbrains.kotlin.fir.kotlin.compiler.fir.raw-fir.light-tree2fir.main
-  - ./../../checkers/checkers.jvm
+    - ./../../checkers/checkers.jvm
   - ./../../checkers/checkers.js
   - ./../../checkers/checkers.native
   - ./../../checkers/checkers.wasm

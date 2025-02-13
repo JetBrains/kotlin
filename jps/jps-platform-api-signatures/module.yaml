@@ -27,7 +27,6 @@ settings:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-  - #org.jetbrains.kotlin.kotlin.jps.jps-platform-api-signatures.main
 
 test-settings:
   kotlin:

@@ -220,8 +220,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:util-rt-java8:233.13135.128
   - jaxen:jaxen:1.2.0
   - net.java.dev.jna:jna:5.13.0
-  - #kotlin.native.analysis-api-klib-reader.main
-  - ./../../analysis/analysis-api-standalone
+    - ./../../analysis/analysis-api-standalone
   - ./../../analysis/analysis-api
   - ./../../compiler/tests-common
   - ./../../core/compiler.common

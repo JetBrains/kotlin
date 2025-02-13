@@ -77,8 +77,7 @@ test-dependencies:
   - org.jetbrains:annotations:13.0
   - io.vavr:vavr:0.10.4
   - io.vavr:vavr-match:0.10.4
-  - #org.jetbrains.kotlin.kotlin.compiler.fir.java.main
-  - ./../../config.jvm
+    - ./../../config.jvm
   - ./../../resolution.common.jvm
   - ./../../../core/compiler.common.jvm
   - ./../../frontend.common.jvm

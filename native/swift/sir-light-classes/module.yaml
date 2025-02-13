@@ -115,8 +115,7 @@ test-dependencies:
   - javax.annotation:jsr250-api:1.0
   - io.vavr:vavr:0.10.4
   - io.vavr:vavr-match:0.10.4
-  - #org.jetbrains.kotlin.kotlin.native.swift.sir-light-classes.main
-  - ./../sir
+    - ./../sir
   - ./../sir-providers
   - ./../../../compiler/psi
   - ./../../../analysis/analysis-api

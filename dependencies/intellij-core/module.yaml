@@ -43,4 +43,3 @@ test-dependencies:
   - com.jetbrains.intellij.java:java-psi:233.13135.128
   - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
   - com.jetbrains.intellij.platform:diagnostic:233.13135.128
-  - #org.jetbrains.kotlin.kotlin.dependencies.intellij-core.main

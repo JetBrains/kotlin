@@ -52,8 +52,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:diagnostic:233.13135.128
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains:annotations:23.0.0
-  - #org.jetbrains.kotlin.kotlin.compiler.test-infrastructure-utils.main
-  - ./../../core/descriptors.runtime
+    - ./../../core/descriptors.runtime
   - ./../cli
   - ./../fir/fir-entrypoint
   - ./../../dependencies/intellij-core

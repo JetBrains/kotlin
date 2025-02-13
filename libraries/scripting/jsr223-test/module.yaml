@@ -42,8 +42,7 @@ test-dependencies:
   - org.jetbrains:annotations:23.0.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
-  - #org.jetbrains.kotlin.kotlin.kotlin-scripting-jsr223-test.main
-  - ./../jsr223
+    - ./../jsr223
   - ./../jvm-host
   - ./../../../compiler/cli
   - ./../../../core/util.runtime

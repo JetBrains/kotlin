@@ -104,8 +104,7 @@ settings:
 
 
 test-dependencies:
-  - #kotlin.kotlinx-serialization-compiler-plugin.k2.main
-  - ./../kotlinx-serialization.common
+    - ./../kotlinx-serialization.common
 
 test-settings:
   kotlin:

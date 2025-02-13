@@ -47,8 +47,7 @@ test-dependencies:
   - org.jetbrains:annotations:13.0
   - javax.inject:javax.inject:1
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-  - #org.jetbrains.kotlin.kotlin.compiler.fir.providers.main
-  - ./../../resolution.common
+    - ./../../resolution.common
   - ./../tree
   - ./../cones
   - ./../../../core/compiler.common

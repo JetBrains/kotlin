@@ -102,7 +102,6 @@ test-dependencies:
   - io.opentelemetry:opentelemetry-extension-incubator:1.31.0-alpha
   - io.opentelemetry:opentelemetry-api-events:1.31.0-alpha
   - io.opentelemetry:opentelemetry-context:1.31.0
-  - #org.jetbrains.kotlin.kotlin.generators.ide-iml-to-gradle-generator.main
 
 test-settings:
   kotlin:

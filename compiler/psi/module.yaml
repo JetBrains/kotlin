@@ -60,8 +60,7 @@ test-dependencies:
   - javax.inject:javax.inject:1
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-  - #org.jetbrains.kotlin.kotlin.compiler.psi.main
-  - ./../frontend.common
+    - ./../frontend.common
   - ./../../core/compiler.common
   - ./../util
   - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663

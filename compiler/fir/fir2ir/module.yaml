@@ -201,8 +201,7 @@ test-dependencies:
   - ./../../ir/serialization.common
   - ./../../../core/deserialization.common
   - ./../../../core/metadata
-  - #org.jetbrains.kotlin.kotlin.compiler.fir.fir2ir.main
-  - ./../../cli/cli-base
+    - ./../../cli/cli-base
   - ./../../backend-common
   - ./../../plugin-api
   - ./../java

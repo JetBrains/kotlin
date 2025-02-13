@@ -25,7 +25,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlin-allopen-compiler-plugin.common.main
 
 test-settings:
   kotlin:

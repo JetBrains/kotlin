@@ -117,8 +117,7 @@ settings:
 
 
 test-dependencies:
-  - #kotlin.plugins.parcelize.parcelize-compiler.parcelize.cli.main
-  - ./../parcelize.common
+    - ./../parcelize.common
   - ./../parcelize.k1
   - ./../parcelize.k2
   - ./../parcelize.backend

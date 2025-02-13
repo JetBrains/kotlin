@@ -112,8 +112,7 @@ test-dependencies:
   - jaxen:jaxen:1.2.0
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
-  - #org.jetbrains.kotlin.kotlin.analysis.low-level-api-fir.tests-jdk11.main~2
-  - ./../../analysis-test-framework
+    - ./../../analysis-test-framework
   - ./../../../compiler/tests-mutes/mutes-junit5
   - ./../../analysis-api
   - ./..

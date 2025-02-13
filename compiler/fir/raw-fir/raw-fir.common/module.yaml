@@ -75,8 +75,7 @@ test-dependencies:
   - javax.inject:javax.inject:1
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
   - com.jetbrains.intellij.platform:diagnostic:233.13135.128
-  - #org.jetbrains.kotlin.kotlin.compiler.fir.raw-fir.raw-fir.common.main
-  - ./../../tree
+    - ./../../tree
   - ./../../../frontend.common-psi
   - ./../../../psi
   - ./../../../../dependencies/intellij-core

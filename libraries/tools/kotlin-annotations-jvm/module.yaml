@@ -16,7 +16,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlin-annotations-jvm.main
 
 test-settings:
   kotlin:

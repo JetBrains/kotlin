@@ -125,8 +125,7 @@ test-dependencies:
   - com.google.j2objc:j2objc-annotations:3.0.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains:annotations:23.0.0
-  - #org.jetbrains.kotlin.kotlin.compiler.cli-base.main
-  - ./../cli-common
+    - ./../cli-common
   - ./../../light-classes
   - ./../../javac-wrapper
   - ./../../ir/backend.jvm

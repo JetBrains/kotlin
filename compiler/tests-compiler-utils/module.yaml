@@ -60,8 +60,7 @@ test-dependencies:
   - org.jetbrains:annotations:24.0.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
-  - #org.jetbrains.kotlin.kotlin.compiler.tests-compiler-utils.main
-  - ./../../dependencies/intellij-core
+    - ./../../dependencies/intellij-core
   - ./../../plugins/scripting/scripting-compiler
   - ./../cli/cli-js
   - ./../cli

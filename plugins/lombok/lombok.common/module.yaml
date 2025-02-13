@@ -24,7 +24,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlin-lombok-compiler-plugin.common.main
 
 test-settings:
   kotlin:

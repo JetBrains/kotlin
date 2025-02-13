@@ -23,7 +23,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlin-build-tools-enum-compat.main
 
 test-settings:
   kotlin:

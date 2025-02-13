@@ -90,8 +90,7 @@ test-dependencies:
   - org.jetbrains:annotations:24.0.0
   - jaxen:jaxen:1.2.0
   - net.java.dev.jna:jna:5.13.0
-  - #org.jetbrains.kotlin.kotlin.compiler.fir.modularized-tests.main
-  - ./../../../core/descriptors.runtime
+    - ./../../../core/descriptors.runtime
   - ./../plugin-utils
   - ./../../../dependencies/intellij-core
   - ./../analysis-tests/legacy-fir-tests

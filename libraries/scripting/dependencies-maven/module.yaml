@@ -113,8 +113,7 @@ test-dependencies:
   - org.codehaus.plexus:plexus-cipher:2.0
   - org.slf4j:slf4j-nop:1.7.36
   - org.slf4j:jcl-over-slf4j:1.7.36
-  - #org.jetbrains.kotlin.kotlin.kotlin-scripting-dependencies-maven.main
-  - ./../dependencies
+    - ./../dependencies
   - ./../common
 
 test-settings:

@@ -19,7 +19,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.plugins.js-plain-objects.compiler-plugin-embeddable.main
 
 test-settings:
   kotlin:

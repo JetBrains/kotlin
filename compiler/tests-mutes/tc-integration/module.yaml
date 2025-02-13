@@ -75,8 +75,7 @@ test-dependencies:
   - io.ktor:ktor-io-jvm:2.3.13
   - org.jetbrains.kotlin:kotlin-reflect:1.8.22
   - org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.1
-  - #org.jetbrains.kotlin.kotlin.compiler.tests-mutes.tc-integration.main
-  - ./..
+    - ./..
 
 test-settings:
   kotlin:

@@ -121,8 +121,7 @@ test-dependencies:
   - net.java.dev.jna:jna:5.13.0
   - org.codehaus.woodstox:stax2-api:4.2
   - org.jetbrains.intellij.deps:trove4j:1.0.20221201
-  - #org.jetbrains.kotlin.kotlin.compiler.fir.checkers.checkers-component-generator.main
-  - ./../../../../generators/tree-generator-common
+    - ./../../../../generators/tree-generator-common
   - ./../../../../generators
   - ./../../tree
   - ./../../tree/tree-generator-fir

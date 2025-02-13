@@ -104,8 +104,7 @@ settings:
 
 
 test-dependencies:
-  - #kotlin.plugins.parcelize.parcelize-compiler.parcelize.k2.main
-  - ./../parcelize.common
+    - ./../parcelize.common
 
 test-settings:
   kotlin:

@@ -166,8 +166,7 @@ test-dependencies:
   - org.jetbrains:annotations:23.0.0
   - org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
-  - #kotlin.compiler.fir.dump.main
-  - ./../../cli
+    - ./../../cli
   - ./../../../core/deserialization
   - ./../../../core/descriptors
   - ./../java

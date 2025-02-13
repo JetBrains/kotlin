@@ -200,8 +200,7 @@ test-dependencies:
   - ./../../compiler/test-infrastructure-utils
   - ./../symbol-light-classes
   - ./../analysis-api-standalone/analysis-api-fir-standalone-base
-  - #org.jetbrains.kotlin.kotlin.analysis.analysis-api-impl-base.main
-  - ./../../compiler/cli/cli-base
+    - ./../../compiler/cli/cli-base
   - ./../../js/js.tests
   - ./../../compiler/fir/analysis-tests
   - ./../../compiler/fir/checkers/checkers.jvm

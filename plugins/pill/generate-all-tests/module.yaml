@@ -103,13 +103,7 @@ test-dependencies:
   - com.google.code.gson:gson:2.11.0
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
-  - #org.jetbrains.kotlin.kotlin.pill.generate-all-tests.main
-  - #org.jetbrains.kotlin.kotlin.generators.builtins
-  - #org.jetbrains.kotlin.kotlin.generators.evaluate
-  - #org.jetbrains.kotlin.kotlin.generators.interpreter
-  - #org.jetbrains.kotlin.kotlin.generators.protobuf
-  - #kotlin.generators.protobufCompare
-  - ./../../../core/descriptors.runtime
+              - ./../../../core/descriptors.runtime
   - ./../../../compiler
   - ./../../../js/js.tests
   - ./../../../compiler/tests-java8

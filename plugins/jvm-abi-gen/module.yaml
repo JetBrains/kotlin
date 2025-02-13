@@ -199,8 +199,7 @@ test-dependencies:
   - org.jetbrains:annotations-java5:24.0.0
   - com.jetbrains.intellij.platform:util-rt-java8:233.13135.128
   - net.java.dev.jna:jna:5.13.0
-  - #kotlin.plugins.jvm-abi-gen.main
-  - ./../../libraries/kotlinx-metadata/metadata-jvm
+    - ./../../libraries/kotlinx-metadata/metadata-jvm
   - ./../../compiler/incremental-compilation-impl
   - ./../../compiler/tests-common
   - ./../../build-common

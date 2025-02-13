@@ -19,7 +19,6 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlin-sam-with-receiver-compiler-plugin.embeddable.main
 
 test-settings:
   kotlin:

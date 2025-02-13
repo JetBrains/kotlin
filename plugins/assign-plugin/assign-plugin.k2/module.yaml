@@ -105,8 +105,7 @@ settings:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-  - #kotlin.kotlin-assignment-compiler-plugin.k2.main
-  - ./../assign-plugin.common
+    - ./../assign-plugin.common
 
 test-settings:
   kotlin:

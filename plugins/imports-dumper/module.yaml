@@ -146,8 +146,7 @@ test-dependencies:
   - jaxen:jaxen:1.2.0
   - net.java.dev.jna:jna:5.13.0
   - org.apache.commons:commons-lang3:3.12.0
-  - #org.jetbrains.kotlin.kotlin.kotlin-imports-dumper-compiler-plugin.main
-  - ./../../compiler/tests-integration
+    - ./../../compiler/tests-integration
   - ./../../compiler/frontend.java
   - ./../../compiler/plugin-api
   - ./../../dependencies/intellij-core

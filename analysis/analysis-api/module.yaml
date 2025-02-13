@@ -119,8 +119,7 @@ test-dependencies:
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - com.jetbrains.intellij.platform:diagnostic:233.13135.128
   - org.junit.platform:junit-platform-engine:1.10.1
-  - #org.jetbrains.kotlin.kotlin.analysis.analysis-api.main
-  - ./../../dependencies/intellij-core
+    - ./../../dependencies/intellij-core
   - ./../../compiler/backend
   - ./../analysis-internal-utils
   - ./../kt-references

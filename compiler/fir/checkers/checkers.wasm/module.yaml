@@ -73,8 +73,7 @@ test-dependencies:
   - io.vavr:vavr-match:0.10.4
   - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-  - #org.jetbrains.kotlin.kotlin.compiler.fir.checkers.checkers.wasm.main
-  - ./../checkers.web.common
+    - ./../checkers.web.common
   - ./..
   - ./../../../../core/compiler.common.wasm
   - ./../../../../core/compiler.common.web

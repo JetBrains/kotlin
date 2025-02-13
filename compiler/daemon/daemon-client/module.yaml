@@ -68,8 +68,7 @@ test-dependencies:
   - io.vavr:vavr-match:0.10.4
   - org.junit.jupiter:junit-jupiter-engine:5.10.1
   - org.junit.platform:junit-platform-engine:1.10.1
-  - #org.jetbrains.kotlin.kotlin.kotlin-daemon-client.main
-  - ./../daemon-common
+    - ./../daemon-common
   - ./../../tests-mutes/mutes-junit5
   - ./../../cli/cli-common
   - ./../../../build-common

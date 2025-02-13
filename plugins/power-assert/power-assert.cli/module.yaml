@@ -113,8 +113,7 @@ settings:
 
 
 test-dependencies:
-  - #kotlin.kotlin-power-assert-compiler-plugin.cli.main
-  - ./../power-assert.backend
+    - ./../power-assert.backend
 
 test-settings:
   kotlin:

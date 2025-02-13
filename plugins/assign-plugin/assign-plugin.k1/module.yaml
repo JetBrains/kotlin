@@ -65,8 +65,7 @@ settings:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.kotlin-assignment-compiler-plugin.k1.main
-  - ./../assign-plugin.common
+    - ./../assign-plugin.common
 
 test-settings:
   kotlin:

@@ -163,8 +163,7 @@ test-dependencies:
   - org.jetbrains:annotations-java5:24.0.0
   - com.jetbrains.intellij.platform:util-rt-java8:233.13135.128
   - net.java.dev.jna:jna:5.13.0
-  - #org.jetbrains.kotlin.kotlin.native.swift.sir-printer.main~2
-  - ./../sir
+    - ./../sir
   - ./../sir-providers
   - ./../../../compiler/tests-common
   - ./../../../compiler/tests-common-new

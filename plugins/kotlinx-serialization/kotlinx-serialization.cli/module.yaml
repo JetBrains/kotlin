@@ -129,8 +129,7 @@ settings:
 
 
 test-dependencies:
-  - #kotlin.kotlinx-serialization-compiler-plugin.cli.main
-  - ./../kotlinx-serialization.common
+    - ./../kotlinx-serialization.common
   - ./../kotlinx-serialization.k1
   - ./../kotlinx-serialization.k2
   - ./../kotlinx-serialization.backend

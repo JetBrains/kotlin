@@ -15,4 +15,3 @@ module:
 
 
 test-dependencies:
-  - #kotlin.kotlin-annotation-processing-embeddable.main

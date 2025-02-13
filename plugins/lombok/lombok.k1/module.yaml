@@ -126,8 +126,7 @@ settings:
 
 
 test-dependencies:
-  - #kotlin.kotlin-lombok-compiler-plugin.k1.main
-  - ./../lombok.common
+    - ./../lombok.common
 
 test-settings:
   kotlin:

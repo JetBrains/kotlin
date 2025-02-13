@@ -31,8 +31,7 @@ test-dependencies:
   - org.jetbrains.intellij.deps:trove4j:1.0.20200330
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
-  - #org.jetbrains.kotlin.kotlin.kotlin-scripting-jvm-host.main
-  - ./../scripting-jvm
+    - ./../scripting-jvm
   - ./../../../prepare/compiler-embeddable
   - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../common

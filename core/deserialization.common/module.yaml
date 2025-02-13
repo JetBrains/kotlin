@@ -28,8 +28,7 @@ test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
   - org.jetbrains:annotations:13.0
-  - #org.jetbrains.kotlin.kotlin.core.deserialization.common.main
-  - ./../compiler.common
+    - ./../compiler.common
   - ./../metadata
   - ./../util.runtime
   - ./../../libraries/tools/kotlin-annotations-jvm

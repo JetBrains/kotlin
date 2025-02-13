@@ -15,4 +15,3 @@ module:
 
 
 test-dependencies:
-  - #org.jetbrains.kotlin.kotlin.prepare.kotlin-compiler-internal-test-framework.main

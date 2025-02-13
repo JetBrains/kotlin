@@ -153,8 +153,7 @@ test-dependencies:
   - jaxen:jaxen:1.2.0
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
-  - #org.jetbrains.kotlin.kotlin.analysis.decompiled.decompiler-js.main
-  - ./../decompiler-to-file-stubs
+    - ./../decompiler-to-file-stubs
   - ./../../../compiler/tests-common
   - ./../../../compiler/tests-common-new
   - ./../../../js/js.serializer
