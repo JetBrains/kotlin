@@ -69,39 +69,19 @@ fun makeJvmIncrementally(
     val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 
     withIncrementalCompilation(args) {
-        val languageVersion = LanguageVersion.fromVersionString(args.languageVersion) ?: LanguageVersion.LATEST_STABLE
-        val useK2 = languageVersion.usesK2
         val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
 
-        val compiler =
-            if (useK2 && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
-                IncrementalFirJvmCompilerRunner(
-                    cachesDir,
-                    buildReporter,
-                    buildHistoryFile,
-                    outputDirs = null,
-                    EmptyModulesApiHistory,
-                    ClasspathChanges.ClasspathSnapshotDisabled,
-                    kotlinSourceFilesExtensions = kotlinExtensions,
-                    icFeatures = IncrementalCompilationFeatures(
-                        usePreciseJavaTracking = verifiedPreciseJavaTracking
-                    ),
-                )
-            } else {
-                IncrementalJvmCompilerRunner(
-                    cachesDir,
-                    buildReporter,
-                    buildHistoryFile = buildHistoryFile,
-                    outputDirs = null,
-                    modulesApiHistory = EmptyModulesApiHistory,
-                    classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled,
-                    kotlinSourceFilesExtensions = kotlinExtensions,
-                    icFeatures = IncrementalCompilationFeatures(
-                        usePreciseJavaTracking = verifiedPreciseJavaTracking
-                    ),
-                )
-            }
-        //TODO by @Ilya.Chernikov set properly
+        val compiler = BuildHistoryJvmICRunner(
+            cachesDir,
+            buildReporter,
+            buildHistoryFile = buildHistoryFile,
+            outputDirs = null,
+            modulesApiHistory = EmptyModulesApiHistory,
+            kotlinSourceFilesExtensions = kotlinExtensions,
+            icFeatures = IncrementalCompilationFeatures(
+                usePreciseJavaTracking = verifiedPreciseJavaTracking
+            ),
+        )
         compiler.compile(sourceFiles, args, messageCollector, changedFiles = ChangedFiles.DeterminableFiles.ToBeComputed)
     }
 }

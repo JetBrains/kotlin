@@ -78,13 +78,13 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
 
             val compiler =
                 if (k2Mode && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
+                    val snapshotsDir = File(workingDir, "classpath-snapshots").apply { mkdirs() }
+
                     IncrementalFirJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
-                        buildHistoryFile,
                         outputDirs = null,
-                        EmptyModulesApiHistory,
-                        ClasspathChanges.ClasspathSnapshotDisabled,
+                        makeEmptyClasspathChangesForSingleModuleTests(snapshotsDir),
                         kotlinExtensions,
                         testLookupTracker = testLookupTracker
                     )
@@ -97,7 +97,6 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         outputDirs = null,
                         modulesApiHistory = EmptyModulesApiHistory,
                         kotlinSourceFilesExtensions = kotlinExtensions,
-                        classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled,
                         icFeatures = IncrementalCompilationFeatures(
                             withAbiSnapshot = false,
                             usePreciseJavaTracking = verifiedPreciseJavaTracking

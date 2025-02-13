@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
-import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
@@ -162,30 +161,26 @@ internal object CompilationServiceImpl : CompilationService {
                     buildMetricsReporter = DoNothingBuildMetricsReporter
                 )
                 val verifiedPreciseJavaTracking = parsedArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = options.preciseJavaTrackingEnabled)
-
+                val icFeatures = options.extractIncrementalCompilationFeatures().copy(
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking
+                )
                 val incrementalCompiler = if (options.isUsingFirRunner && checkJvmFirRequirements(arguments)) {
                     IncrementalFirJvmCompilerRunner(
                         aggregatedIcConfiguration.workingDir,
                         buildReporter,
-                        buildHistoryFile = null,
-                        modulesApiHistory = EmptyModulesApiHistory,
-                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                         outputDirs = options.outputDirs,
                         classpathChanges = classpathChanges,
-                        icFeatures = options.extractIncrementalCompilationFeatures(),
+                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
+                        icFeatures = icFeatures
                     )
                 } else {
                     IncrementalJvmCompilerRunner(
                         aggregatedIcConfiguration.workingDir,
                         buildReporter,
-                        buildHistoryFile = null,
-                        modulesApiHistory = EmptyModulesApiHistory,
                         outputDirs = options.outputDirs,
-                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                         classpathChanges = classpathChanges,
-                        icFeatures = options.extractIncrementalCompilationFeatures().copy(
-                            usePreciseJavaTracking = verifiedPreciseJavaTracking
-                        ),
+                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
+                        icFeatures = icFeatures
                     )
                 }
 

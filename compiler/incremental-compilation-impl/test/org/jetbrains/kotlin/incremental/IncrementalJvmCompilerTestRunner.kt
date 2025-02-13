@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.utils.TestBuildReporter
@@ -20,16 +19,14 @@ class IncrementalJvmCompilerTestRunner(
     outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
     kotlinSourceFilesExtensions: Set<String>,
-    classpathChanges: ClasspathChanges,
     icFeatures: IncrementalCompilationFeatures,
     val testLookupTracker: TestLookupTracker
-) : IncrementalJvmCompilerRunner(
+) : BuildHistoryJvmICRunner(
     workingDir,
     testReporter,
     buildHistoryFile,
     outputDirs,
     modulesApiHistory,
-    classpathChanges,
     kotlinSourceFilesExtensions,
     icFeatures,
 ) {
