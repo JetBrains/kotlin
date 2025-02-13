@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KotlinStandaloneProjectStructureProvider
@@ -26,6 +27,7 @@ public class KtModuleProviderBuilder(
 
     public lateinit var platform: TargetPlatform
 
+    @OptIn(KaNonPublicApi::class)
     public fun build(): KotlinStaticProjectStructureProvider {
         return KotlinStandaloneProjectStructureProvider(
             platform,
