@@ -159,11 +159,9 @@ private class BackendChecker(
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
         val action = "@${objCActionClassId.asFqNameString()}"
 
-        function.parameters.filter { it.kind == IrParameterKind.ExtensionReceiver }.forEach {
-            reportError(it, "$action method must not have extension receiver")
+        function.parameters.filter { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context }.forEach {
+            reportError(it, "$action method must not have ${it.kind} parameters")
         }
-
-        // TODO probably forbid context parameters as well?
 
         function.parameters.filter { it.kind == IrParameterKind.Regular }.forEach {
             val kotlinType = it.type
@@ -188,11 +186,9 @@ private class BackendChecker(
         if (!property.isVar)
             reportError(property, "$outlet property must be var")
 
-        property.getter?.parameters?.filter { it.kind == IrParameterKind.ExtensionReceiver }?.forEach {
-            reportError(it, "$outlet must not have extension receiver")
+        property.getter?.parameters?.filter { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context }?.forEach {
+            reportError(it, "$outlet must not have ${it.kind} parameters")
         }
-
-        // TODO context parameters?
 
         val type = property.descriptor.type
         if (!type.isObjCObjectType())

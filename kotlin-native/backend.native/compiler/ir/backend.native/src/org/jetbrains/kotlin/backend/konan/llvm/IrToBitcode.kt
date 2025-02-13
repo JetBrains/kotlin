@@ -781,7 +781,7 @@ internal class CodeGeneratorVisitor(
         if (declaration.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER) {
             require(scopeState.globalInitFunction == null) { "There can only be at most one global file initializer" }
             require(declaration.body == null) { "The body of file initializer should be null" }
-            require(declaration.parameters.isEmpty()) { "File initializer must be parameterless" }
+            require(declaration.hasShape()) { "File initializer must be parameterless" }
             require(declaration.returnsUnit()) { "File initializer must return Unit" }
             scopeState.globalInitFunction = declaration
             scopeState.globalInitState = getGlobalInitStateFor(declaration.parent as IrDeclarationContainer)
@@ -790,7 +790,7 @@ internal class CodeGeneratorVisitor(
                 || declaration.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER) {
             require(scopeState.threadLocalInitFunction == null) { "There can only be at most one thread local file initializer" }
             require(declaration.body == null) { "The body of file initializer should be null" }
-            require(declaration.parameters.isEmpty()) { "File initializer must be parameterless" }
+            require(declaration.hasShape()) { "File initializer must be parameterless" }
             require(declaration.returnsUnit()) { "File initializer must return Unit" }
             scopeState.threadLocalInitFunction = declaration
             scopeState.threadLocalInitState = getThreadLocalInitStateFor(declaration.parent as IrDeclarationContainer)
