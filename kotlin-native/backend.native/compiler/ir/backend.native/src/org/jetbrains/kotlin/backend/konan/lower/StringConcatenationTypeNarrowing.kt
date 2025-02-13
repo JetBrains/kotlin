@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -41,17 +42,19 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
 
     private val appendNullableStringFunction = stringBuilder.functions.single {  // StringBuilder.append(String?)
         it.name == nameAppend &&
-                it.valueParameters.singleOrNull()?.type?.isNullableString() == true
+                it.parameters.size == 2 &&
+                it.parameters[1].type.isNullableString()
     }
     private val appendAnyFunction = stringBuilder.functions.single {  // StringBuilder.append(Any?)
         it.name == nameAppend &&
-                it.valueParameters.singleOrNull()?.type?.isNullableAny() == true
+                it.parameters.size == 2 &&
+                it.parameters[1].type.isNullableAny()
     }
 
     private val plusImplFunction = string.functions.single { // external fun String.plusImpl(String)
         it.name == namePlusImpl &&
-                it.valueParameters.size == 1 &&
-                it.valueParameters.single().type.isString()
+                it.parameters.size == 2 &&
+                it.parameters[1].type.isString()
     }
 
     override fun lower(irFile: IrFile) {
@@ -64,13 +67,13 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
             builder.at(this)
             when (symbol) {
                 appendAnyFunction.symbol -> // StringBuilder.append(Any?)
-                    buildConcatenationCall(appendNullableStringFunction, dispatchReceiver!!, buildArgForAppend(getValueArgument(0)!!))
+                    buildConcatenationCall(appendNullableStringFunction, arguments[0]!!, buildArgForAppend(arguments[1]!!))
 
                 context.irBuiltIns.memberStringPlus ->
-                    buildConcatenationCall(plusImplFunction, dispatchReceiver!!, buildNullableArgToString(getValueArgument(0)!!))
+                    buildConcatenationCall(plusImplFunction, arguments[0]!!, buildNullableArgToString(arguments[1]!!))
 
                 context.irBuiltIns.extensionStringPlus ->
-                    buildConcatenationCall(plusImplFunction, buildNullableArgToString(extensionReceiver!!), buildNullableArgToString(getValueArgument(0)!!))
+                    buildConcatenationCall(plusImplFunction, buildNullableArgToString(arguments[0]!!), buildNullableArgToString(arguments[1]!!))
 
                 else -> expression
             }
@@ -80,8 +83,8 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
     private fun buildConcatenationCall(function: IrSimpleFunction, receiver: IrExpression, argument: IrExpression): IrExpression =
             builder.irCall(function.symbol, function.returnType, typeArgumentsCount = 0)
                     .apply {
-                        putValueArgument(0, argument)
-                        dispatchReceiver = receiver
+                        arguments[0] = receiver
+                        arguments[1] = argument
                     }
 
     /** Builds snippet of type String
@@ -138,12 +141,12 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
             argument
         else {
             val calleeOrNull = argument.type.classOrNull?.owner?.functions?.singleOrNull {
-                it.name == OperatorNameConventions.TO_STRING && it.valueParameters.isEmpty()
+                it.name == OperatorNameConventions.TO_STRING && it.nonDispatchParameters.isEmpty()
             }?.symbol
             val callee = calleeOrNull ?: context.ir.symbols.memberToString  // defaults to `Any.toString()`
             builder
                     .irCall(callee, callee.owner.returnType, typeArgumentsCount = 0)
-                    .apply { dispatchReceiver = argument }
+                    .apply { arguments[0] = argument }
         }
     }
 
