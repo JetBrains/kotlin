@@ -62,7 +62,7 @@ internal class StaticCallableReferenceOptimization(val context: Context) : FileL
                 val constructor = expression.symbol.owner
                 val constructedClass = constructor.constructedClass
 
-                return if ((isLoweredFunctionReference(constructedClass) && constructor.valueParameters.isEmpty()) || expression.symbol in allPropertyReferenceSymbols) {
+                return if ((isLoweredFunctionReference(constructedClass) && constructor.parameters.isEmpty()) || expression.symbol in allPropertyReferenceSymbols) {
                     context.createIrBuilder(
                             currentScope!!.scope.scopeOwnerSymbol,
                             expression.startOffset,

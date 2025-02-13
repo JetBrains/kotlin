@@ -136,7 +136,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, Mu
             context.createIrBuilder(function.symbol).apply {
                 function.body = irBlockBody {
                     +irReturn(irGetField(
-                            irGet(function.valueParameters[0]),
+                            irGet(function.parameters[0]),
                             this@ExportCachesAbiVisitor.context.innerClassesSupport.getOuterThisField(declaration))
                     )
                 }
@@ -157,7 +157,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, Mu
         val function = cachesAbiSupport.getLateinitPropertyAccessor(declaration)
         context.createIrBuilder(function.symbol).apply {
             function.body = irBlockBody {
-                +irReturn(irGetField(ownerClass?.let { irGet(function.valueParameters[0]) }, backingField))
+                +irReturn(irGetField(ownerClass?.let { irGet(function.parameters[0]) }, backingField))
             }
         }
         data.add(function)
@@ -210,7 +210,7 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
                 dependenciesTracker.add(irClass)
                 createIrBuilder().run {
                     irCall(accessor).apply {
-                        putValueArgument(0, expression.receiver)
+                        arguments[0] = expression.receiver
                     }
                 }
             }
@@ -221,7 +221,7 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
                 createIrBuilder().run {
                     irCall(accessor).apply {
                         if (irClass != null)
-                            putValueArgument(0, expression.receiver)
+                            arguments[0] = expression.receiver
                     }
                 }
             }

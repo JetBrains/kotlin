@@ -60,7 +60,7 @@ internal class NativeRuntimeReflectionIrBuilder(
             typeArguments: List<IrType>
     ): IrExpression {
         val constructor = clazz.primaryConstructor!!.symbol.owner
-        val arguments = constructor.valueParameters.also {
+        val arguments = constructor.parameters.also {
             require(it.size == elements.size) {
                 "Wrong number of values provided for ${clazz.name} construction: ${elements.size} instead of ${it.size}"
             }
@@ -68,8 +68,8 @@ internal class NativeRuntimeReflectionIrBuilder(
             elements[it.name.asString()] ?: error("No value for field named ${it.name} provided")
         }
         return irCallConstructor(constructor.symbol, typeArguments).apply {
-            for ((index, i) in arguments.withIndex()) {
-                putValueArgument(index, i)
+            for ((index, arg) in arguments.withIndex()) {
+                this.arguments[index] = arg
             }
         }
     }
