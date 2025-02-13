@@ -84,17 +84,25 @@ class GarbageCollectionMeasurement(val garbageCollectionKind: String, val millis
     override fun render(lines: Int): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }
 
-sealed class CounterMeasurement(val count: Int, val time: Time) : PerformanceMeasurement {
+enum class PhaseSideMeasurementType {
+    FindJavaClass,
+    BinaryClassFromKotlinFile,
+}
+
+sealed class PhaseSidePerformanceMeasurement(val count: Int, val time: Time) : PerformanceMeasurement {
+    abstract val type: PhaseSideMeasurementType
     abstract val description: String
     override fun render(lines: Int): String =
         "$description performed $count times, total time ${time.milliseconds} ms"
 }
 
-class FindJavaClassMeasurement(count: Int, time: Time) : CounterMeasurement(count, time) {
+class FindJavaClassMeasurement(count: Int, time: Time) : PhaseSidePerformanceMeasurement(count, time) {
+    override val type = PhaseSideMeasurementType.FindJavaClass
     override val description: String = "Find Java class"
 }
 
-class BinaryClassFromKotlinFileMeasurement(count: Int, time: Time) : CounterMeasurement(count, time) {
+class BinaryClassFromKotlinFileMeasurement(count: Int, time: Time) : PhaseSidePerformanceMeasurement(count, time) {
+    override val type = PhaseSideMeasurementType.BinaryClassFromKotlinFile
     override val description: String = "Binary class from Kotlin file"
 }
 
