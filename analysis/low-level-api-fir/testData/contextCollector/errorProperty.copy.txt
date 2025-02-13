@@ -30,7 +30,12 @@ FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/transformation<CS errors: /transformation>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<L> = [ResolvedTo(BODY_RESOLVE)] transformation@fun <anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter T> <inline=NoInline>  {
+            [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|kotlin/Int| = Int(1)
+            ^ R|/MyPair.MyPair|(R|<local>/localProperty|, String(str))
+        }
+        )
+
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> transformation([ResolvedTo(RAW_FIR)] body: ( () -> T )): T { LAZY_BLOCK }

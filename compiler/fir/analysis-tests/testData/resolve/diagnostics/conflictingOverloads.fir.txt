@@ -64,8 +64,10 @@ FILE: conflictingOverloads.kt
         public get(): R|kotlin/Int|
     public final val u: R|kotlin/Int| = Int(20)
         public get(): R|kotlin/Int|
-    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
-    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(30).<Unresolved name: to>#(Int(40))
+
+    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(50).<Unresolved name: to>#(Int(60))
+
     public final typealias TA = R|A|
     public final typealias TA = R|B|
     public final typealias BA = R|A|
@@ -133,8 +135,10 @@ FILE: conflictingOverloads.kt
             super<R|kotlin/Any|>()
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+
 
     }

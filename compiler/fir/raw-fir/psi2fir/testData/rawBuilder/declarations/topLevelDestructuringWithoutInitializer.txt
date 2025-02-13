@@ -1,2 +1,2 @@
 FILE: topLevelDestructuringWithoutInitializer.kt
-    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
