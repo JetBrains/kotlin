@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.isNotTopLevelClass
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
@@ -52,7 +53,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private var perfManager: PerformanceManager? = null
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
-    private lateinit var packagePartProviders: List<JvmPackagePartProvider>
+    private lateinit var packagePartProviders: List<PackagePartProvider>
 
     /**
      * Caches the [VirtualFile]s found in [index] for the key [FqName].
@@ -71,7 +72,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     fun initialize(
         index: JvmDependenciesIndex,
-        packagePartProviders: List<JvmPackagePartProvider>,
+        packagePartProviders: List<PackagePartProvider>,
         singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
         usePsiClassFilesReading: Boolean,
         perfManager: PerformanceManager?,
