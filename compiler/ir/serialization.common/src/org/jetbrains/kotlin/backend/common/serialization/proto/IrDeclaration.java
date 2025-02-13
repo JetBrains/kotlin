@@ -833,9 +833,6 @@ public final class IrDeclaration extends
       if (declaratorCase_ == 12) {
         result.declarator_ = declarator_;
       }
-      if (declaratorCase_ == 13) {
-        result.declarator_ = declarator_;
-      }
       result.bitField0_ = to_bitField0_;
       result.declaratorCase_ = declaratorCase_;
       return result;
