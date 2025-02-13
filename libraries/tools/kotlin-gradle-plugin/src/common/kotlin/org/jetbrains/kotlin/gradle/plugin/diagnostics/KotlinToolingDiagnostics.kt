@@ -31,9 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
 import java.net.URI
 
-
-@InternalKotlinGradlePluginApi // used in integration tests
-object KotlinToolingDiagnostics {
+internal object KotlinToolingDiagnostics {
     /**
      * This diagnostic is suppressed in kotlin-test and kotlin-stdlib.
      * We should migrate the stdlib and kotlin-test from deprecated flags and then completely remove the support.

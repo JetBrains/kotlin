@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.cocoapods
 
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroups
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import java.net.URI
 
-@InternalKotlinGradlePluginApi // used in integration tests
-object CocoapodsPluginDiagnostics {
+internal object CocoapodsPluginDiagnostics {
 
     object DeprecatedPropertiesUsed : ToolingDiagnosticFactory(WARNING, DiagnosticGroups.KGP.Deprecation) {
         operator fun invoke(usedDeprecatedProperties: List<String>) = build {

@@ -20,7 +20,7 @@ import java.util.*
  *
  * @since 2.2.0
  */
-interface DiagnosticGroup {
+internal interface DiagnosticGroup {
     val groupId: String
     val displayName: String
     val groupPath: String

@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import java.net.URI
 
-@InternalKotlinGradlePluginApi // used in integration tests
-abstract class ToolingDiagnosticFactory(
+internal abstract class ToolingDiagnosticFactory(
     private val predefinedSeverity: ToolingDiagnostic.Severity,
     private val predefinedGroup: DiagnosticGroup,
 ) {
@@ -51,7 +49,7 @@ abstract class ToolingDiagnosticFactory(
      * @param group The diagnostic group to which the diagnostic belongs. Defaults to `predefinedGroup` if not specified.
      * @param throwable An optional throwable providing further context or information about the diagnostic issue.
      */
-    protected fun buildDiagnostic(
+    private fun buildDiagnostic(
         title: String,
         description: String,
         solutions: List<String>,
@@ -109,21 +107,17 @@ abstract class ToolingDiagnosticFactory(
  * This builder provides methods to set various attributes of a tooling diagnostic,
  * including its name, message, solutions, and documentation.
  */
-@InternalKotlinGradlePluginApi
-object ToolingDiagnostics {
-    @InternalKotlinGradlePluginApi
+internal object ToolingDiagnostics {
     interface TitleStep {
         fun title(value: String): DescriptionStep
         fun title(value: () -> String): DescriptionStep
     }
 
-    @InternalKotlinGradlePluginApi
     interface DescriptionStep {
         fun description(value: String): SolutionStep
         fun description(value: () -> String): SolutionStep
     }
 
-    @InternalKotlinGradlePluginApi
     interface SolutionStep {
         fun solution(value: String): OptionalStep
         fun solutions(vararg values: String): OptionalStep
@@ -131,7 +125,6 @@ object ToolingDiagnostics {
         fun solutions(values: () -> List<String>): OptionalStep
     }
 
-    @InternalKotlinGradlePluginApi
     interface OptionalStep {
         fun documentationLink(
             url: URI,
