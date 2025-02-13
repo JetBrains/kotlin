@@ -21,10 +21,6 @@ open class KotlinLibraryLayoutImpl(val klib: File, override val component: Strin
             else
                 libFile.path
 
-    open val extractingToTemp: KotlinLibraryLayout by lazy {
-        ExtractingBaseLibraryImpl(this)
-    }
-
     open fun directlyFromZip(zipFileSystem: FileSystem): KotlinLibraryLayout =
         FromZipBaseLibraryImpl(this, zipFileSystem)
 
@@ -32,19 +28,11 @@ open class KotlinLibraryLayoutImpl(val klib: File, override val component: Strin
 
 class MetadataLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutImpl(klib, component), MetadataKotlinLibraryLayout {
 
-    override val extractingToTemp: MetadataKotlinLibraryLayout by lazy {
-        ExtractingMetadataLibraryImpl(this)
-    }
-
     override fun directlyFromZip(zipFileSystem: FileSystem): MetadataKotlinLibraryLayout =
         FromZipMetadataLibraryImpl(this, zipFileSystem)
 }
 
 class IrLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutImpl(klib, component), IrKotlinLibraryLayout {
-
-    override val extractingToTemp: IrKotlinLibraryLayout by lazy {
-        ExtractingIrLibraryImpl(this)
-    }
 
     override fun directlyFromZip(zipFileSystem: FileSystem): IrKotlinLibraryLayout =
         FromZipIrLibraryImpl(this, zipFileSystem)
@@ -55,12 +43,6 @@ open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component:
     open val layout = KotlinLibraryLayoutImpl(klib, component)
 
     private val klibZipAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
-
-    fun <T> realFiles(action: (L) -> T): T =
-        if (layout.isZipped)
-            action(layout.extractingToTemp as L)
-        else
-            action(layout as L)
 
     fun <T> inPlace(action: (L) -> T): T =
         if (layout.isZipped)
@@ -122,46 +104,6 @@ private fun extractDir(zipFile: File, directory: File): File {
     temporary.deleteOnExitRecursively()
     zipFile.unzipTo(temporary, fromSubdirectory = directory)
     return temporary
-}
-
-open class ExtractingKotlinLibraryLayout(zipped: KotlinLibraryLayoutImpl) : KotlinLibraryLayout {
-    override val libFile: File get() = error("Extracting layout doesn't extract its own root")
-    override val libraryName = zipped.libraryName
-    override val component = zipped.component
-}
-
-class ExtractingBaseLibraryImpl(zipped: KotlinLibraryLayoutImpl) :
-    ExtractingKotlinLibraryLayout(zipped) {
-    override val manifestFile: File by lazy { zipped.extract(zipped.manifestFile) }
-    override val resourcesDir: File by lazy { zipped.extractDir(zipped.resourcesDir) }
-}
-
-class ExtractingMetadataLibraryImpl(val zipped: MetadataLibraryLayoutImpl) :
-    ExtractingKotlinLibraryLayout(zipped),
-    MetadataKotlinLibraryLayout {
-
-    override val metadataDir by lazy { zipped.extractDir(zipped.metadataDir) }
-}
-
-class ExtractingIrLibraryImpl(val zipped: IrLibraryLayoutImpl) :
-    ExtractingKotlinLibraryLayout(zipped),
-    IrKotlinLibraryLayout {
-
-    override val irDeclarations: File by lazy { zipped.extract(zipped.irDeclarations) }
-
-    override val irTypes: File by lazy { zipped.extract(zipped.irTypes) }
-
-    override val irSignatures: File by lazy { zipped.extract(zipped.irSignatures) }
-
-    override val irStrings: File by lazy { zipped.extract(zipped.irStrings) }
-
-    override val irBodies: File by lazy { zipped.extract(zipped.irBodies) }
-
-    override val irFiles: File by lazy { zipped.extract(zipped.irFiles) }
-
-    override val irDebugInfo: File by lazy { zipped.extract(zipped.irDebugInfo) }
-
-    override val irFileEntries: File by lazy { zipped.extract(zipped.irFileEntries) }
 }
 
 internal fun zippedKotlinLibraryChecks(klibFile: File) {
