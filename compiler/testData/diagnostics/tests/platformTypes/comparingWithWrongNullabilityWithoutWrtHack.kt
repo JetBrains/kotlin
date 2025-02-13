@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ForbidTypePreservingFlexibilityWriteInferenceHack
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.Comparator;
 

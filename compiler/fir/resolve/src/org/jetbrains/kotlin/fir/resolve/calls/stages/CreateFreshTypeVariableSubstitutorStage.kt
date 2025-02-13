@@ -161,7 +161,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     type.upperBound.withNullability(nullable = true, session.typeContext)
                 )
             }.run {
-                if (session.languageVersionSettings.supportsFeature(LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack)) {
+                if (session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
                     return@run this
                 }
                 if (!type.isMarkedNullable) {
@@ -170,7 +170,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 withAttributes(
                     attributes.add(
                         ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
-                            type, LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack
+                            type, LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
                         )
                     )
                 )
@@ -182,7 +182,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
     private fun FirTypeParameterRef.shouldBeFlexible(context: ConeTypeContext): Boolean {
         val languageVersionSettings = context.session.languageVersionSettings
-        if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack) ||
+        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible) ||
             languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)
         ) {
             return false

@@ -1,6 +1,6 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        R|/J|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin/String!|>(<L> = J@fun <anonymous>(x: R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?, relevantFeature=ForbidTypePreservingFlexibilityWriteInferenceHack) kotlin/String!|): R|kotlin/Unit| <inline=NoInline>  {
+        R|/J|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin/String!|>(<L> = J@fun <anonymous>(x: R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?, relevantFeature=DontMakeExplicitJavaTypeArgumentsFlexible) kotlin/String!|): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/x|.R|kotlin/String.length|
         }
         )

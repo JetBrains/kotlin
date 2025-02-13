@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // JVM_TARGET: 1.8
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ForbidTypePreservingFlexibilityWriteInferenceHack
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.function.IntPredicate
 import java.util.stream.Stream

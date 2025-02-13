@@ -49,7 +49,7 @@ val ConeKotlinType.isEnhancedTypeForWarningDeprecation: Boolean
  */
 class EnhancedForWarningConeSubstitutor(
     typeContext: ConeTypeContext,
-    // TODO: drop me after disabling of ForbidTypePreservingFlexibilityWriteInferenceHack will be no longer supported
+    // TODO: drop me after disabling of DontMakeExplicitJavaTypeArgumentsFlexible will be no longer supported
     private val useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature: LanguageFeature? = null,
 ) : AbstractConeSubstitutor(typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {

@@ -73,7 +73,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
     private fun ConeKotlinType.willBeMarkedNullableInFuture(): Boolean {
         return enhancedTypeForWarning?.isMarkedNullable == true ||
                 attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.let {
-                    it.coneType.isMarkedNullable && it.relevantFeature == LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack
+                    it.coneType.isMarkedNullable && it.relevantFeature == LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
                 } == true
     }
 }
@@ -170,7 +170,7 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
                 }
                 actualType.isMadeFlexibleSynthetically() || expectedType.isMadeFlexibleSynthetically() -> {
                     val versionString =
-                        LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack.sinceVersion?.versionString
+                        LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible.sinceVersion?.versionString
                     "This will become an error in Kotlin $versionString. See https://youtrack.jetbrains.com/issue/KT-71718"
                 }
                 else -> {
@@ -194,7 +194,7 @@ private fun getEnhancedTypesForComparison(
 
     val substitutor = EnhancedForWarningConeSubstitutor(
         context.session.typeContext,
-        useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature = LanguageFeature.ForbidTypePreservingFlexibilityWriteInferenceHack
+        useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature = LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
     )
 
     val enhancedActualType = substitutor.substituteOrNull(actualType)
