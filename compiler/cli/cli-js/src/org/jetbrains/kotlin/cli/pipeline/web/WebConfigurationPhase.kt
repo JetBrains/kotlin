@@ -76,6 +76,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.granularity = arguments.granularity
         configuration.tsCompilationStrategy = arguments.dtsStrategy
         arguments.main?.let { configuration.callMainMode = it }
+        configuration.dce = arguments.irDce
 
         val zipAccessor = DisposableZipFileSystemAccessor(64)
         Disposer.register(rootDisposable, zipAccessor)
@@ -226,6 +227,8 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.printReachabilityInfo = arguments.irDcePrintReachabilityInfo
         configuration.fakeOverrideValidator = arguments.fakeOverrideValidator
         configuration.dumpReachabilityInfoToFile = arguments.irDceDumpReachabilityInfoToFile
+
+        arguments.irDceRuntimeDiagnostic?.let { configuration.dceRuntimeDiagnostic = it }
 
         configuration.setupPartialLinkageConfig(
             mode = arguments.partialLinkageMode,
