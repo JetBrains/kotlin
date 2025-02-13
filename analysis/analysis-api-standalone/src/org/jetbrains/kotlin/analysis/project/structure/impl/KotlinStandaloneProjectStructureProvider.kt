@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.asDebugString
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -25,7 +26,8 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-internal class KotlinStandaloneProjectStructureProvider(
+@KaNonPublicApi
+public class KotlinStandaloneProjectStructureProvider(
     private val platform: TargetPlatform,
     private val project: Project,
     override val allModules: List<KaModule>,
