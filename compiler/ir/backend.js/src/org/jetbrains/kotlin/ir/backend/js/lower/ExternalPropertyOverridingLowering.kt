@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
@@ -36,7 +36,7 @@ val EXTERNAL_SUPER_ACCESSORS_ORIGIN by IrDeclarationOriginImpl
  * We intentionally (until reporting an issue with some popular case) refuse to process such cases.
  * The reason is that in the JS world using of custom getters/setters is a bad practice (and optimizers like Terser or Google Closure Compiler don't work with such a code)
  *
- * For the incremental compilation, the following code:
+ * The following code:
  * ```kotlin
  *  external open class Foo {
  *      val value: String
@@ -46,7 +46,7 @@ val EXTERNAL_SUPER_ACCESSORS_ORIGIN by IrDeclarationOriginImpl
  *  class ValueOverrider : Foo() { override val value = "Foo: ${super.value}" }
  * ```
  *
- * Will be lowered to this
+ * Will be lowered to the following JavaScript
  *
  * ```javascript
  * class GetterOverrider extends Foo {
@@ -73,7 +73,6 @@ val EXTERNAL_SUPER_ACCESSORS_ORIGIN by IrDeclarationOriginImpl
  *
  * It helps all the following classes to be recompiled without knowledge if they are in a hierarchy with an external class or not,
  * so we can re-compile only a single class instead of the whole hierarchy.
- * ```
  */
 class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -84,10 +83,8 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
                 it.correspondingPropertySymbol != null && !it.isFakeOverride
             }
             .flatMapTo(hashSetOf()) { overriddenAccessor ->
-                overriddenAccessor.overriddenSymbols.mapNotNull { overriddenSymbol ->
-                    overriddenSymbol.takeIf {
-                        it.owner.realOverrideTarget.isEffectivelyExternal()
-                    }
+                overriddenAccessor.overriddenSymbols.filter {
+                    it.owner.realOverrideTarget.isEffectivelyExternal()
                 }
             }
 
@@ -96,28 +93,38 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
         val externalPropertyAccessorsTransformer =
             ExternalPropertySuperAccessTransformer(context, declaration, overriddenExternalPropertyAccessors)
 
-        declaration.transformChildrenVoid(externalPropertyAccessorsTransformer)
+        declaration.transformChildren(externalPropertyAccessorsTransformer, null)
 
-        val positionInConstructorForAccessors = externalPropertyAccessorsTransformer.initializerBlock
+        val positionInConstructorForAccessors = externalPropertyAccessorsTransformer.primaryConstructorBody
             .statements.indexOfFirst { it is IrDelegatingConstructorCall } + 1
 
         val declaredSuperVariableAndFields = externalPropertyAccessorsTransformer
             .superAccessMap
             .values
 
-        declaredSuperVariableAndFields.reversed().forEach { (variable) ->
-            externalPropertyAccessorsTransformer.initializerBlock.statements.add(positionInConstructorForAccessors, variable)
-        }
+        externalPropertyAccessorsTransformer
+            .primaryConstructorBody
+            .statements
+            .addAll(positionInConstructorForAccessors, declaredSuperVariableAndFields.reversed().map { it.value })
 
         declaredSuperVariableAndFields.forEach { (variable, field) ->
             if (field == null) return@forEach
-            externalPropertyAccessorsTransformer.initializerBlock.statements.add(
+            externalPropertyAccessorsTransformer.primaryConstructorBody.statements.add(
                 JsIrBuilder.buildSetField(
                     field.symbol,
                     JsIrBuilder.buildGetValue(externalPropertyAccessorsTransformer.parentClassDispatchReceiver.symbol),
                     JsIrBuilder.buildGetValue(variable.symbol),
                     context.irBuiltIns.unitType
                 )
+            )
+        }
+
+        overriddenExternalPropertyAccessors.forEach {
+            if (!it.owner.isGetter) return@forEach
+
+            val accessExpression = with(externalPropertyAccessorsTransformer) { it.createExternalSuperFieldAccess() } ?: return@forEach
+            externalPropertyAccessorsTransformer.primaryConstructorBody.statements.add(
+                JsIrBuilder.buildCall(context.intrinsics.jsDelete).apply { arguments[0] = accessExpression }
             )
         }
 
@@ -128,32 +135,26 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
         private val context: JsIrBackendContext,
         private val irClass: IrClass,
         private val overriddenExternalPropertiesAccessor: Set<IrSimpleFunctionSymbol>,
-    ) : IrElementTransformerVoidWithContext() {
+    ) : IrTransformer<IrFunction?>() {
         val superAccessMap = mutableMapOf<IrProperty, ExternalPropertySuperAccess>()
 
         val parentClassPrimaryConstructor = irClass.primaryConstructor
             ?: context.mapping.classToSyntheticPrimaryConstructor[irClass]
             ?: compilationException("Unexpected primary constructor for processing irClass", irClass)
 
-        val initializerBlock = parentClassPrimaryConstructor.body as? IrBlockBody
+        val primaryConstructorBody = parentClassPrimaryConstructor.body as? IrBlockBody
             ?: compilationException("Unexpected body of primary constructor for processing irClass", parentClassPrimaryConstructor)
 
         val parentClassDispatchReceiver = irClass.thisReceiver ?: compilationException("Unexpected thisReceiver of class", irClass)
 
-        init {
-            overriddenExternalPropertiesAccessor.forEach {
-                if (!it.owner.isGetter) return@forEach
-
-                val accessExpression = it.createExternalSuperFieldAccess() ?: return@forEach
-                initializerBlock.statements.add(
-                    JsIrBuilder.buildCall(context.intrinsics.jsDelete).apply { arguments[0] = accessExpression }
-                )
-            }
+        override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
+            declaration.body?.transformChildren(this, declaration)
+            return declaration
         }
 
-        override fun visitCall(expression: IrCall): IrExpression {
-            expression.transformChildrenVoid(this)
-            if (expression.superQualifierSymbol == null) return expression
+        override fun visitCall(expression: IrCall, data: IrFunction?): IrExpression {
+            expression.transformChildren(this, data)
+            if (expression.superQualifierSymbol == null || data == null) return expression
 
             val callee = expression.symbol.owner
             val correspondingProperty = callee.correspondingPropertySymbol?.owner
@@ -161,9 +162,8 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
                 ?: return expression
 
             val propertyAccessor = expression.getExternalPropertySuperAccess(correspondingProperty)
-            val currentFunction = currentFunction?.irElement as? IrFunction ?: return expression
 
-            return if (currentFunction is IrConstructor) {
+            return if (data is IrConstructor && data.isPrimary) {
                 when (callee) {
                     correspondingProperty.getter -> JsIrBuilder.buildGetValue(propertyAccessor.value.symbol)
                     correspondingProperty.setter -> JsIrBuilder.buildSetValue(propertyAccessor.value.symbol, expression.setterValue)
@@ -201,7 +201,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
                 initializer = symbol.createExternalSuperFieldAccess()
             )
 
-        private fun IrSimpleFunctionSymbol.createExternalSuperFieldAccess(): IrExpression? {
+        fun IrSimpleFunctionSymbol.createExternalSuperFieldAccess(): IrExpression? {
             val property = owner.realOverrideTarget.correspondingPropertySymbol?.owner ?: return null
             return IrDynamicMemberExpressionImpl(
                 UNDEFINED_OFFSET,

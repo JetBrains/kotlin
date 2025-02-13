@@ -31,7 +31,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val newThrowableFunction = context.newThrowableSymbol
     private val extendThrowableFunction = context.extendThrowableSymbol
     private val setupCauseParameter = context.setupCauseParameterSymbol
-    private val setupPropertiesToThrowableInstanceFunction = context.setupPropertiesToThrowableInstanceSymbol
+    private val setPropertiesToThrowableInstanceSymbol = context.setPropertiesToThrowableInstanceSymbol
 
     private fun undefinedValue(): IrExpression = context.getVoid()
 
@@ -89,6 +89,23 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
             val (messageArg, causeArg) = expression.extractThrowableArguments()
             val thisReceiver = IrGetValueImpl(expression.startOffset, expression.endOffset, klass.thisReceiver!!.symbol)
 
+            /**
+             * In case of ES6 mode there are a few things done to be aligned with the Kotlin Throwable semantic:
+             *
+             * 1. If there is a `cause` parameter provided,
+             *    it should be put into Error constructor as a field of the second object parameter:
+             *    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/Error
+             *    It's done by the [setupCauseParameter] function
+             *
+             * 2. If the `message` parameter is `null`,
+             *    we should either use `cause.toString` as a message, or setup message to `undefined`,
+             *    because the Error constructor will set it up as an empty string.
+             *    It's done by the [setPropertiesToThrowableInstanceSymbol] function
+             *
+             * 3. Because we should provide the same arguments to the [Error] constructor and to the [setPropertiesToThrowableInstanceSymbol] function
+             *    we create temporary variables to hold the values in case of the complex expression
+             *    to not evaluate it twice
+             */
             if (context.es6mode) {
                 var delegatingCall = expression
                 val currentConstructor = currentFunction?.irElement as IrConstructor
@@ -141,7 +158,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
                         messageTmp,
                         causeTmp,
                         delegatingCall,
-                        JsIrBuilder.buildCall(setupPropertiesToThrowableInstanceFunction).apply {
+                        JsIrBuilder.buildCall(setPropertiesToThrowableInstanceSymbol).apply {
                             arguments[0] = thisReceiver
                             arguments[1] = when {
                                 thereIsAnOverrideOfThrowableMessage -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "")

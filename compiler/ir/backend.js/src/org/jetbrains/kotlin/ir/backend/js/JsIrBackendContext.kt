@@ -207,7 +207,7 @@ class JsIrBackendContext(
     val newThrowableSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
     val extendThrowableSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("extendThrowable"))
     val setupCauseParameterSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("setupCauseParameter"))
-    val setupPropertiesToThrowableInstanceSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("setPropertiesToThrowableInstance"))
+    val setPropertiesToThrowableInstanceSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("setPropertiesToThrowableInstance"))
 
     val throwableConstructors by lazy(LazyThreadSafetyMode.NONE) {
         throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }

@@ -162,7 +162,10 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     return throwable.unsafeCast<Throwable>()
 }
 
+@Suppress("UNUSED") // calls to this function are emitted by the compiler
 internal fun setupCauseParameter(cause: Throwable?) = js("{ cause: cause }")
+
+@Suppress("UNUSED") // calls to this function are emitted by the compiler
 internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, cause: Throwable?) {
     this_.name = JsObject.getPrototypeOf(this_).constructor.name
     if (message == null) {
@@ -174,6 +177,7 @@ private fun defineFieldOnInstance(this_: dynamic, name: String, value: dynamic) 
     js("Object.defineProperty(this_, name, { configurable: true, writable: true, value: value })")
 }
 
+@Suppress("UNUSED") // calls to this function are emitted by the compiler
 internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
     defineFieldOnInstance(this_, "message", defineMessage(message, cause))
     defineFieldOnInstance(this_, "cause", cause)
