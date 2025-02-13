@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.analysis.api.platform
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.MessageBus
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
 
 /**
  * [KotlinMessageBusProvider] allows Analysis API implementations to provide a custom [MessageBus]. When subscribing to or publishing to
- * Analysis API topics ([KotlinModificationTopics]), the message bus provided by [getMessageBus] should be used, not the [Project]'s message bus.
+ * Analysis API topics, the message bus provided by [getMessageBus] should be used, not the [Project]'s message bus.
  */
 public interface KotlinMessageBusProvider : KotlinPlatformComponent {
     public fun getMessageBus(): MessageBus
@@ -23,7 +22,7 @@ public interface KotlinMessageBusProvider : KotlinPlatformComponent {
 }
 
 /**
- * The [MessageBus] used to subscribe to and publish to Analysis API topics ([KotlinModificationTopics]).
+ * The [MessageBus] used to subscribe to and publish to Analysis API topics.
  */
 public val Project.analysisMessageBus: MessageBus
     get() = KotlinMessageBusProvider.getInstance(this).getMessageBus()

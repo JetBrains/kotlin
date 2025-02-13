@@ -10,9 +10,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
-import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
+import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -93,7 +92,7 @@ internal class KtElementTestSymbolTargetResolver(private val project: Project) :
         }
 
         // Destroy all evidence of analysis. The test symbol target resolver should not prime the global resolution state.
-        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION).onModification()
+        project.publishGlobalModuleStateModificationEvent()
 
         return callables.ifEmpty { error("Cannot find a callable `$callableId`.") }
     }

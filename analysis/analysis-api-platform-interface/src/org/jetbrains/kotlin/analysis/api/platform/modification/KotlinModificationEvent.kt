@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,20 +9,21 @@ import com.intellij.util.messages.Topic
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 
 /**
- * [Topic]s for Analysis API modification event subscription and publication. These topics should be subscribed to and published to via the
- * Analysis API message bus: [analysisMessageBus].
+ * In the Analysis API, [KotlinModificationEvent]s signal changes in source code, module and project settings, or project structure. These
+ * events should be subscribed to and published via the [TOPIC] on the [Analysis API message bus][analysisMessageBus]. They must be
+ * published in a **write action**.
  *
- * See the individual listener interfaces for documentation about the events described by these topics:
+ * The specifics of the modification are determined by the type of [KotlinModificationEvent]:
  *
- *  - [KotlinModuleStateModificationListener]
- *  - [KotlinModuleOutOfBlockModificationListener]
- *  - [KotlinGlobalModuleStateModificationListener]
- *  - [KotlinGlobalSourceModuleStateModificationListener]
- *  - [KotlinGlobalScriptModuleStateModificationListener]
- *  - [KotlinGlobalSourceOutOfBlockModificationListener]
- *  - [KotlinCodeFragmentContextModificationListener]
+ * - [KotlinModuleStateModificationEvent]: Module settings or module structure changes for a specific module (e.g. module update/removal).
+ * - [KotlinModuleOutOfBlockModificationEvent]: Out-of-block modification in the source code of a specific module.
+ * - [KotlinGlobalModuleStateModificationEvent]: Global changes in project settings or project structure.
+ * - [KotlinGlobalSourceModuleStateModificationEvent]: Global changes in source module settings or structure.
+ * - [KotlinGlobalScriptModuleStateModificationEvent]: Global changes in script module settings or structure.
+ * - [KotlinGlobalSourceOutOfBlockModificationEvent]: Global out-of-block modification potentially affecting all source modules.
+ * - [KotlinCodeFragmentContextModificationEvent]: Changes to the context of code fragments depending on a specific module.
  *
- * Care needs to be taken with the lack of interplay between different types of topics: Publishing a global modification event, for example,
+ * Care needs to be taken with the lack of interplay between different types of events: Publishing a global modification event, for example,
  * does not imply the corresponding module-level event. Similarly, publishing a module state modification event does not imply out-of-block
  * modification.
  *
@@ -40,8 +41,8 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * published before or after a change, or even both. Modification events published before the modification should however be published close
  * to the modification.
  *
- * Only [module state modification events][KotlinModuleStateModificationListener] guarantee that the event is published before the module is
- * affected. This allows subscribers to access the module's properties and dependencies to invalidate or update caches.
+ * Only [KotlinModuleStateModificationEvent] guarantees that the event is published before the module is affected. This allows subscribers
+ * to access the module's properties and dependencies to invalidate or update caches.
  *
  * ### Out-of-block modification (OOBM)
  *
@@ -78,41 +79,45 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  *
  * ### Implementation Notes
  *
- * Analysis API platforms need to take care of publishing modification topics via the [analysisMessageBus]. In general, if your platform
- * works with static code and static module structure, you do not need to publish any events. However, keep in mind the contracts of the
- * various modification events. For example, if your platform can guarantee a static module structure but source code can still change,
+ * Analysis API platforms need to take care of publishing modification events via the [analysisMessageBus]. In general, if a platform works
+ * with static code and static module structure, it does not need to publish any events. However, the contracts of the various modification
+ * events need to be kept in mind. For example, if a platform can guarantee a static module structure but source code can still change,
  * module state modification events do not need to be published, but out-of-block modification events do.
  *
  * Source code modification should always be handled with [KaSourceModificationService]. It publishes out-of-block modification events if
  * it detects an out-of-block change, which makes modification handling much easier. But it also invalidates local caches on local changes,
  * which currently cannot be accomplished by modification events with the same level of granularity.
  */
-public object KotlinModificationTopics {
-    public val MODULE_STATE_MODIFICATION: Topic<KotlinModuleStateModificationListener> =
-        Topic(KotlinModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
-
-    public val MODULE_OUT_OF_BLOCK_MODIFICATION: Topic<KotlinModuleOutOfBlockModificationListener> =
-        Topic(KotlinModuleOutOfBlockModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
-
-    public val GLOBAL_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalModuleStateModificationListener> =
-        Topic(KotlinGlobalModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
-
-    public val GLOBAL_SOURCE_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalSourceModuleStateModificationListener> =
-        Topic(KotlinGlobalSourceModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
-
-    public val GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalScriptModuleStateModificationListener> =
-        Topic(KotlinGlobalScriptModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
-
-    public val GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION: Topic<KotlinGlobalSourceOutOfBlockModificationListener> =
-        Topic(KotlinGlobalSourceOutOfBlockModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
-
-    public val CODE_FRAGMENT_CONTEXT_MODIFICATION: Topic<KotlinCodeFragmentContextModificationListener> =
-        Topic(KotlinCodeFragmentContextModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
+public sealed interface KotlinModificationEvent {
+    public companion object {
+        /**
+         * @see KotlinModificationEvent
+         * @see KotlinModificationEventListener
+         */
+        public val TOPIC: Topic<KotlinModificationEventListener> = Topic(
+            KotlinModificationEventListener::class.java,
+            Topic.BroadcastDirection.TO_CHILDREN,
+            true,
+        )
+    }
 }
 
 /**
- * [KotlinModificationEventKind] represents the kinds of modification events in [KotlinModificationTopics]. While it is not required to
- * publish or subscribe to modification events, it can be useful when abstracting over modification events in general, for example in tests.
+ * A listener for [KotlinModificationEvent]s. It should be registered on the [analysisMessageBus] with [KotlinModificationEvent.TOPIC].
+ */
+public fun interface KotlinModificationEventListener {
+    /**
+     * [onModification] is invoked before or after the modification and usually in a write action. However, the specific timing depends on
+     * the type of [event].
+     *
+     * See also the KDoc of [KotlinModificationEvent] for an in-depth explanation of timing guarantees.
+     */
+    public fun onModification(event: KotlinModificationEvent)
+}
+
+/**
+ * [KotlinModificationEventKind] represents the kinds of [KotlinModificationEvent]s. While it is not required to publish or subscribe to
+ * modification events, it can be useful when abstracting over modification events in general, for example in tests.
  */
 public enum class KotlinModificationEventKind {
     MODULE_STATE_MODIFICATION,

@@ -35,36 +35,21 @@ public abstract class KotlinCachingPackageProviderFactory(project: Project) : Ko
     init {
         // It's generally best practice to register listeners in plugin XMLs. However, we don't know whether the platform intends to
         // implement a caching package provider factory or not, and thus can't register these listeners in the XML.
-        val connection = project.analysisMessageBus.connect(this)
+        project.analysisMessageBus.connect(this).subscribe(
+            KotlinModificationEvent.TOPIC,
+            KotlinModificationEventListener { event ->
+                when (event) {
+                    is KotlinModuleStateModificationEvent,
+                    is KotlinModuleOutOfBlockModificationEvent,
+                    KotlinGlobalModuleStateModificationEvent,
+                    KotlinGlobalSourceModuleStateModificationEvent,
+                    KotlinGlobalScriptModuleStateModificationEvent,
+                    KotlinGlobalSourceOutOfBlockModificationEvent,
+                        -> invalidateAll()
 
-        connection.subscribe(
-            KotlinModificationTopics.MODULE_STATE_MODIFICATION,
-            KotlinModuleStateModificationListener { _, _ -> invalidateAll() },
-        )
-
-        connection.subscribe(
-            KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION,
-            KotlinModuleOutOfBlockModificationListener { _ -> invalidateAll() },
-        )
-
-        connection.subscribe(
-            KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION,
-            KotlinGlobalModuleStateModificationListener { invalidateAll() },
-        )
-
-        connection.subscribe(
-            KotlinModificationTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
-            KotlinGlobalSourceModuleStateModificationListener { invalidateAll() },
-        )
-
-        connection.subscribe(
-            KotlinModificationTopics.GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION,
-            KotlinGlobalScriptModuleStateModificationListener { invalidateAll() },
-        )
-
-        connection.subscribe(
-            KotlinModificationTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION,
-            KotlinGlobalSourceOutOfBlockModificationListener { invalidateAll() },
+                    is KotlinCodeFragmentContextModificationEvent -> {}
+                }
+            }
         )
     }
 

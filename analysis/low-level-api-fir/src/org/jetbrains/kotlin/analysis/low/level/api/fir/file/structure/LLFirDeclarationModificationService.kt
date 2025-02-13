@@ -17,7 +17,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
+import org.jetbrains.kotlin.analysis.api.platform.modification.publishModuleOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -47,13 +47,11 @@ import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
  * For local changes (in-block modification), this service will do all required work
  * and publish [LLFirDeclarationModificationTopics.IN_BLOCK_MODIFICATION].
  *
- * In case of non-local changes (out-of-block modification), this service will publish event to
- * [KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION].
+ * In case of non-local changes (out-of-block modification), this service will publish a [KotlinModuleOutOfBlockModificationEvent][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationEvent].
  *
  * @see getNonLocalReanalyzableContainingDeclaration
- * @see KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
+ * @see org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationEvent
  * @see LLFirDeclarationModificationTopics.IN_BLOCK_MODIFICATION
- * @see org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
  * @see org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService
  */
 @LLFirInternals
@@ -249,11 +247,11 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 
     private fun outOfBlockModification(element: PsiElement) {
-        val ktModule = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
+        val module = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
 
         // We should check outdated modifications before to avoid cache dropping (e.g., KaModule cache)
-        dropOutdatedModifications(ktModule)
-        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION).onModification(ktModule)
+        dropOutdatedModifications(module)
+        module.publishModuleOutOfBlockModificationEvent()
     }
 
     /**

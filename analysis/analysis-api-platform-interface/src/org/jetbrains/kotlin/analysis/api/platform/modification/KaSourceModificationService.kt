@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
  * [KaSourceModificationService] is an **engine service** which handles cache invalidation after source code changes:
  *
  * - For local changes (in-block modification), the service invalidates local caches for e.g. classes. This level of granularity cannot be
- *   reached by any module-level event (see [KotlinModificationTopics]), because the specific entity to invalidate needs to be discovered
+ *   reached by any module-level event (see [KotlinModificationEvent]), because the specific entity to invalidate needs to be discovered
  *   via the changed [PsiElement].
  * - For non-local changes (out-of-block modification), the service publishes a
- *   module out-of-block [modification event][KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION].
+ *   module out-of-block [modification event][KotlinModuleOutOfBlockModificationEvent].
  *
  * The service performs change locality detection to classify whether a change to a given [PsiElement] is an in-block or out-of-block
  * modification (or no modification in case of a whitespace/comment change).
