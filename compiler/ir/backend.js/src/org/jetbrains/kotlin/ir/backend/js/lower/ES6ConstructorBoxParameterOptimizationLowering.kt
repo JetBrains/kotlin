@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.constructorFactory
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
@@ -24,12 +22,14 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.utils.compactIfPossible
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 
 private var IrSimpleFunction.replacementWithoutBoxParameter: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
@@ -77,7 +77,9 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
         irFile.transformChildren(
             object : IrElementTransformerVoid() {
                 override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-                    return super.visitSimpleFunction(declaration.getOrCreateReplacementWithoutBoxParameter() ?: declaration)
+                    val replacement = declaration.getOrCreateReplacementWithoutBoxParameter()
+                    replacement?.patchDeclarationParents()
+                    return super.visitSimpleFunction(replacement ?: declaration)
                 }
 
                 override fun visitCall(expression: IrCall): IrExpression {
@@ -92,7 +94,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
         replacementWithoutBoxParameter?.let { return it }
         if (!isEs6ConstructorReplacement) return null
         val constructedClass = parentAsClass
-        if (constructedClass.needsBoxParameter || valueParameters.none { it.isBoxParameter }) return null
+        if (constructedClass.needsBoxParameter || parameters.none { it.isBoxParameter }) return null
 
         val original = this
         val newReplacement = factory.buildFun {
@@ -104,9 +106,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
             copyAttributes(original)
             annotations = original.annotations
             typeParameters = original.typeParameters
-            dispatchReceiverParameter = original.dispatchReceiverParameter
-            extensionReceiverParameter = original.extensionReceiverParameter
-            valueParameters = original.valueParameters.dropLastWhile { it.isBoxParameter }.compactIfPossible()
+            parameters = original.parameters.memoryOptimizedFilterNot { it.isBoxParameter }
             body = original.body
         }
 
@@ -130,7 +130,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
 
                 override fun visitCall(expression: IrCall): IrExpression {
                     if (expression.isSuperCallWithBoxParameter) {
-                        expression.putValueArgument(expression.valueArgumentsCount - 1, context.getVoid())
+                        expression.arguments[expression.arguments.lastIndex] = context.getVoid()
                     }
                     return super.visitCall(expression)
                 }
@@ -168,12 +168,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
         ).apply {
             copyAttributes(original)
             copyTypeArgumentsFrom(original)
-            dispatchReceiver = original.dispatchReceiver
-            extensionReceiver = original.extensionReceiver
-            // Don't copy the `box` argument
-            for (i in 0..<original.valueArgumentsCount - 1) {
-                putValueArgument(i, original.getValueArgument(i))
-            }
+            arguments.assignFrom(original.arguments)
         }
     }
 }
