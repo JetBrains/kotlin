@@ -278,6 +278,10 @@ internal class ConstInt8(llvm: CodegenLlvmHelpers, val value: Byte) : ConstValue
     override val llvm = LLVMConstInt(llvm.int8Type, value.toLong(), 1)!!
 }
 
+internal class ConstUInt8(llvm: CodegenLlvmHelpers, val value: UByte) : ConstValue {
+    override val llvm = LLVMConstInt(llvm.int8Type, value.toLong(), 1)!!
+}
+
 internal class ConstInt16(llvm: CodegenLlvmHelpers, val value: Short) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int16Type, value.toLong(), 1)!!
 }
@@ -545,6 +549,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     fun constInt1(value: Boolean) = ConstInt1(this, value)
     fun constInt8(value: Byte) = ConstInt8(this, value)
+    fun constUInt8(value: UByte) = ConstUInt8(this, value)
     fun constInt16(value: Short) = ConstInt16(this, value)
     fun constChar16(value: Char) = ConstChar16(this, value)
     fun constInt32(value: Int) = ConstInt32(this, value)

@@ -7,7 +7,6 @@
 #define RUNTIME_COMPILER_CONSTANTS_H
 
 #include <cstdint>
-#include <string_view>
 
 #include "Common.h"
 
@@ -99,6 +98,7 @@ bool enableSafepointSignposts() noexcept;
 bool globalDataLazyInit() noexcept;
 bool swiftExport() noexcept;
 bool latin1Strings() noexcept;
+uint8_t mmapTag() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

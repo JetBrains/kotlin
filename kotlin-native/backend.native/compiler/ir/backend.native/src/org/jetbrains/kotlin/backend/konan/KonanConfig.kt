@@ -102,6 +102,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
     }
+    val mmapTag: UByte by lazy {
+        configuration.get(BinaryOptions.mmapTag)?.let {
+            if (it > 255U) {
+                configuration.report(CompilerMessageSeverity.ERROR, "mmap tag must be between 1 and 255")
+            }
+            it.toUByte()
+        } ?: 246U // doesn't seem to be used in the wild.
+    }
     val packFields: Boolean by lazy {
         configuration.get(BinaryOptions.packFields) ?: true
     }

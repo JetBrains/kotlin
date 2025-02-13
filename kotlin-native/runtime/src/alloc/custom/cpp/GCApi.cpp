@@ -15,6 +15,15 @@
 #include <sys/mman.h>
 #endif
 
+// Remove after bootstrap brings KONAN_APPLE
+#ifndef KONAN_APPLE
+#define KONAN_APPLE (KONAN_OSX | KONAN_IOS | KONAN_TVOS | KONAN_WATCHOS)
+#endif
+
+#if KONAN_APPLE
+#include <mach/vm_statistics.h>
+#endif
+
 #include "CompilerConstants.hpp"
 #include "CustomAllocator.hpp"
 #include "CustomLogging.hpp"
@@ -112,6 +121,10 @@ void* kotlin::alloc::SafeAlloc(uint64_t size) noexcept {
         RuntimeFail("mmap is not available on mingw");
 #elif KONAN_LINUX
         memory = mmap(nullptr, size, PROT_WRITE | PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE | MAP_POPULATE, -1, 0);
+        error = memory == MAP_FAILED;
+#elif KONAN_APPLE
+        auto tag = compiler::mmapTag();
+        memory = mmap(nullptr, size, PROT_WRITE | PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, tag ? VM_MAKE_TAG(tag) : -1, 0);
         error = memory == MAP_FAILED;
 #else
         memory = mmap(nullptr, size, PROT_WRITE | PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE, -1, 0);
