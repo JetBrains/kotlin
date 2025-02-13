@@ -63,7 +63,7 @@ open class IncrementalJvmCompilerRunner(
         classpathAbiSnapshots: Map<String, AbiSnapshot>
     ): CompilationMode {
         return try {
-            calculateSourcesToCompileImpl(caches, changedFiles, args, messageCollector, classpathAbiSnapshots, icFeatures.withAbiSnapshot)
+            calculateSourcesToCompileImpl(caches, changedFiles, args, messageCollector, classpathAbiSnapshots)
         } finally {
             this.messageCollector.forward(messageCollector)
             this.messageCollector.clear()
@@ -97,19 +97,8 @@ open class IncrementalJvmCompilerRunner(
 
     private val lazyClasspathSnapshot = LazyClasspathSnapshot(classpathChanges, ClasspathSnapshotBuildReporter(reporter))
 
-    private fun calculateSourcesToCompileImpl(
-        caches: IncrementalJvmCachesManager,
-        changedFiles: DeterminableFiles.Known,
-        args: K2JVMCompilerArguments,
-        messageCollector: MessageCollector,
-        abiSnapshots: Map<String, AbiSnapshot>,
-        withAbiSnapshot: Boolean
-    ): CompilationMode {
-        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
-        initDirtyFiles(dirtyFiles, changedFiles)
-
-        reporter.debug { "Classpath changes info passed from Gradle task: ${classpathChanges::class.simpleName}" }
-        val changedAndImpactedSymbols = when (classpathChanges) {
+    private fun changedAndImpactedSymbolsBasedOnClasspathSnapshot(caches: IncrementalJvmCachesManager): ChangesEither {
+        return when (classpathChanges) {
             // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
             is NoChanges -> ChangesEither.Known(emptySet(), emptySet())
             is ToBeComputedByIncrementalCompiler -> reporter.measure(GradleBuildTime.COMPUTE_CLASSPATH_CHANGES) {
@@ -125,44 +114,103 @@ open class IncrementalJvmCompilerRunner(
             }
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
+            is ClasspathSnapshotDisabled -> error("Unexpected ClasspathSnapshotDisabled in this path")
+            is NotAvailableForJSCompiler -> error("Unexpected type for this code path: ${classpathChanges.javaClass.name}.")
+        }
+    }
+
+    private fun verifyBuildHistoryFilesState(): BuildAttribute? {
+        if (buildHistoryFile == null) {
+            error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
+        }
+        if (!icFeatures.withAbiSnapshot && buildHistoryFile.isFile != true) {
+            // If the previous build was a Gradle cache hit, the build history file must have been deleted as it is marked as
+            // @LocalState in the Gradle task. Therefore, this compilation will need to run non-incrementally.
+            // (Note that buildHistoryFile is outside workingDir. We don't need to perform the same check for files inside
+            // workingDir as workingDir is an @OutputDirectory, so the files must be present in an incremental build.)
+            return BuildAttribute.NO_BUILD_HISTORY
+        }
+        if (!lastBuildInfoFile.exists()) {
+            return BuildAttribute.NO_LAST_BUILD_INFO
+        }
+        return null // no rebuild necessary so far, compilation might proceed
+    }
+
+    private fun changedAndImpactedSymbolsBasedOnHistoryFiles(
+        caches: IncrementalJvmCachesManager,
+        args: K2JVMCompilerArguments,
+        changedFiles: DeterminableFiles.Known,
+        abiSnapshots: Map<String, AbiSnapshot>,
+        lastBuildInfo: BuildInfo
+    ): ChangesEither {
+        reporter.debug { "Last Kotlin Build info -- $lastBuildInfo" }
+        val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
+
+        // The old IC currently doesn't compute impacted symbols? KT-75180
+        return getClasspathChanges(
+            args.classpathAsList,
+            changedFiles,
+            lastBuildInfo,
+            modulesApiHistory,
+            reporter,
+            abiSnapshots,
+            icFeatures.withAbiSnapshot,
+            caches.platformCache,
+            scopes
+        )
+    }
+
+    private fun calculateSourcesToCompileImpl(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: DeterminableFiles.Known,
+        args: K2JVMCompilerArguments,
+        messageCollector: MessageCollector,
+        abiSnapshots: Map<String, AbiSnapshot>,
+    ): CompilationMode {
+        reporter.debug { "Classpath changes info passed from Gradle task: ${classpathChanges::class.simpleName}" }
+        val changedAndImpactedSymbols = when (classpathChanges) {
             is ClasspathSnapshotDisabled -> reporter.measure(GradleBuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
-                if (buildHistoryFile == null) {
-                    error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
-                }
-                if (!withAbiSnapshot && buildHistoryFile.isFile != true) {
-                    // If the previous build was a Gradle cache hit, the build history file must have been deleted as it is marked as
-                    // @LocalState in the Gradle task. Therefore, this compilation will need to run non-incrementally.
-                    // (Note that buildHistoryFile is outside workingDir. We don't need to perform the same check for files inside
-                    // workingDir as workingDir is an @OutputDirectory, so the files must be present in an incremental build.)
-                    return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
-                }
-                if (!lastBuildInfoFile.exists()) {
-                    return CompilationMode.Rebuild(BuildAttribute.NO_LAST_BUILD_INFO)
+                verifyBuildHistoryFilesState()?.let { rebuildReason ->
+                    return CompilationMode.Rebuild(rebuildReason)
                 }
                 val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector)
                     ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
-                reporter.debug { "Last Kotlin Build info -- $lastBuildInfo" }
-                val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
-
-                // FIXME The old IC currently doesn't compute impacted symbols
-                getClasspathChanges(
-                    args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter, abiSnapshots, withAbiSnapshot,
-                    caches.platformCache, scopes
+                changedAndImpactedSymbolsBasedOnHistoryFiles(
+                    caches,
+                    args,
+                    changedFiles,
+                    abiSnapshots,
+                    lastBuildInfo
                 )
             }
-            is NotAvailableForJSCompiler -> error("Unexpected type for this code path: ${classpathChanges.javaClass.name}.")
+            else -> changedAndImpactedSymbolsBasedOnClasspathSnapshot(caches)
         }
 
-        when (changedAndImpactedSymbols) {
+        return when (changedAndImpactedSymbols) {
             is ChangesEither.Unknown -> {
                 reporter.info { "Could not get classpath changes: ${changedAndImpactedSymbols.reason}" }
-                return CompilationMode.Rebuild(changedAndImpactedSymbols.reason)
+                CompilationMode.Rebuild(changedAndImpactedSymbols.reason)
             }
             is ChangesEither.Known -> {
-                dirtyFiles.addByDirtySymbols(changedAndImpactedSymbols.lookupSymbols)
-                dirtyFiles.addByDirtyClasses(changedAndImpactedSymbols.fqNames)
+                calculateSourcesToCompileWithKnownChanges(
+                    caches,
+                    changedFiles,
+                    changedAndImpactedSymbols
+                )
             }
         }
+    }
+
+    private fun calculateSourcesToCompileWithKnownChanges(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: DeterminableFiles.Known,
+        changedAndImpactedSymbols: ChangesEither.Known,
+    ): CompilationMode {
+        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
+        initDirtyFiles(dirtyFiles, changedFiles)
+
+        dirtyFiles.addByDirtySymbols(changedAndImpactedSymbols.lookupSymbols)
+        dirtyFiles.addByDirtyClasses(changedAndImpactedSymbols.fqNames)
 
         reporter.measure(GradleBuildTime.IC_ANALYZE_CHANGES_IN_JAVA_SOURCES) {
             val javaRebuildReason = javaInteropCoordinator.analyzeChangesInJavaSources(caches, changedFiles, dirtyFiles)
