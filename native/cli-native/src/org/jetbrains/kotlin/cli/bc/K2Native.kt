@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
@@ -139,7 +140,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         val mainPerfManager = configuration.perfManager
         val childPerfManager = if (spawning) {
             if (mainPerfManager?.isMeasuring == true) {
-                mainPerfManager.notifyCompilerInitialized()
+                mainPerfManager.notifyPhaseFinished(PhaseMeasurementType.Initialization)
             }
             K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)
         } else {

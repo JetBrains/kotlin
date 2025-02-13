@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
@@ -65,7 +66,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val perfManager = configuration.perfManager
 
         if (!checkNotSupportedPlugins(configuration, messageCollector)) {
-            perfManager?.notifyCompilerInitialized()
+            perfManager?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
             return null
         }
 
@@ -77,7 +78,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             targetDescription,
             diagnosticsCollector
         ) ?: run {
-            perfManager?.notifyCompilerInitialized()
+            perfManager?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
             return null
         }
 
@@ -97,7 +98,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val sources = sourcesProvider()
         val allSources = sources.allFiles
 
-        perfManager?.notifyCompilerInitialized()
+        perfManager?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
 
         if (
             allSources.isEmpty() &&
@@ -110,7 +111,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
-        perfManager?.notifyAnalysisStarted()
+        perfManager?.notifyPhaseStarted(PhaseMeasurementType.Analysis)
         val sourceScope: AbstractProjectFileSearchScope
         when (configuration.useLightTree) {
             true -> {

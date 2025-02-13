@@ -146,42 +146,6 @@ abstract class PerformanceManager(private val presentableName: String) {
         this.lines = this.lines + lines
     }
 
-    open fun notifyCompilerInitialized() {
-        notifyPhaseFinished(PhaseMeasurementType.Initialization)
-    }
-
-    open fun notifyAnalysisStarted() {
-        notifyPhaseStarted(PhaseMeasurementType.Analysis)
-    }
-
-    open fun notifyAnalysisFinished() {
-        notifyPhaseFinished(PhaseMeasurementType.Analysis)
-    }
-
-    open fun notifyIRGenerationStarted() {
-        notifyPhaseStarted(PhaseMeasurementType.IrGeneration)
-    }
-
-    open fun notifyIRGenerationFinished() {
-        notifyPhaseFinished(PhaseMeasurementType.IrGeneration)
-    }
-
-    open fun notifyIRLoweringStarted() {
-        notifyPhaseStarted(PhaseMeasurementType.IrLowering)
-    }
-
-    open fun notifyIRLoweringFinished() {
-        notifyPhaseFinished(PhaseMeasurementType.IrLowering)
-    }
-
-    open fun notifyBackendGenerationStarted() {
-        notifyPhaseStarted(PhaseMeasurementType.BackendGeneration)
-    }
-
-    open fun notifyBackendGenerationFinished() {
-        notifyPhaseFinished(PhaseMeasurementType.BackendGeneration)
-    }
-
     fun notifyPhaseStarted(newPhaseType: PhaseMeasurementType) {
         // Here should be the following check: `if (!isEnabled) return`.
         // However, currently it's dropped to keep compatibility with build systems that don't call `enableCollectingPerformanceStatistics`,

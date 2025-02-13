@@ -22,21 +22,3 @@ class K2NativeCompilerPerformanceManager : PerformanceManager("Kotlin to Native 
         }
     }
 }
-
-internal inline fun <T> PerformanceManager?.trackAnalysis(fn: () -> T): T {
-    this?.notifyAnalysisStarted()
-    try {
-        return fn()
-    } finally {
-        this?.notifyAnalysisFinished()
-    }
-}
-
-internal inline fun <T> PerformanceManager?.trackIRGeneration(fn: () -> T): T {
-    this?.notifyIRGenerationStarted()
-    try {
-        return fn()
-    } finally {
-        this?.notifyIRGenerationFinished()
-    }
-}

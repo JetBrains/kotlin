@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
 
 data class CommonAnalysisResult(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext)
@@ -36,15 +37,16 @@ internal fun runCommonAnalysisForSerialization(
     @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
     performanceManager.notifyCurrentPhaseFinishedIfNeeded()
 
-    var analysisResultWithHasErrors: AnalysisResultWithHasErrors
+    lateinit var analysisResultWithHasErrors: AnalysisResultWithHasErrors
     do {
-        performanceManager.notifyAnalysisStarted()
-        analysisResultWithHasErrors = runCommonAnalysisIteration(environment, dependOnBuiltins, dependencyContainerFactory())
-        val result = analysisResultWithHasErrors.result
-        if (result is AnalysisResult.RetryWithAdditionalRoots) {
-            environment.addKotlinSourceRoots(result.additionalKotlinRoots)
+        val result = performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+            analysisResultWithHasErrors = runCommonAnalysisIteration(environment, dependOnBuiltins, dependencyContainerFactory())
+            analysisResultWithHasErrors.result.also {
+                if (it is AnalysisResult.RetryWithAdditionalRoots) {
+                    environment.addKotlinSourceRoots(it.additionalKotlinRoots)
+                }
+            }
         }
-        performanceManager.notifyAnalysisFinished()
     } while (result is AnalysisResult.RetryWithAdditionalRoots)
 
     val analysisResult = analysisResultWithHasErrors.result
