@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesCachedHistory
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
+import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
@@ -81,6 +81,11 @@ abstract class IncrementalCompilerRunner<
     private val outputDirs: Collection<File>?,
 
     /**
+     * Kotlin source files extensions. Set can be extended, usually for scripting purposes
+     */
+    protected val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+
+    /**
      * Various options. Boolean flags, both stable and experimental, should be added there.
      * Non-trivial configuration should NOT be added there.
      */
@@ -90,9 +95,7 @@ abstract class IncrementalCompilerRunner<
     protected val cacheDirectory = File(workingDir, cacheDirName)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
     private val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
-    private val dirtyFilesCachedHistory = DirtyFilesCachedHistory(workingDir)
-
-    protected open val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+    internal val dirtyFilesProvider: DirtyFilesProvider = DirtyFilesProvider(workingDir, kotlinSourceFilesExtensions, reporter)
 
     /**
      * Creates an instance of [IncrementalCompilationContext] that holds common incremental compilation context mostly required for [CacheManager]
@@ -373,12 +376,6 @@ abstract class IncrementalCompilerRunner<
         reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     ): Map<String, AbiSnapshot> = emptyMap()
 
-    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: DeterminableFiles.Known) {
-        dirtyFiles.add(changedFiles.modified, "was modified since last time")
-        dirtyFiles.add(changedFiles.removed, "was removed since last time")
-        dirtyFiles.add(dirtyFilesCachedHistory.read(), "was not compiled last time")
-    }
-
     sealed class CompilationMode {
         class Incremental(val dirtyFiles: DirtyFilesContainer) : CompilationMode()
         class Rebuild(val reason: BuildAttribute) : CompilationMode()
@@ -527,7 +524,7 @@ abstract class IncrementalCompilerRunner<
 
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
-            dirtyFilesCachedHistory.store(transaction, allDirtySources)
+            dirtyFilesProvider.cachedHistory.store(transaction, allDirtySources)
 
             val generatedFiles = outputItemsCollector.outputs.map {
                 it.toGeneratedFile(metadataVersionFromLanguageVersion)
@@ -548,7 +545,7 @@ abstract class IncrementalCompilerRunner<
 
             if (exitCode != ExitCode.OK) break
 
-            dirtyFilesCachedHistory.clear(withTransaction = transaction)
+            dirtyFilesProvider.cachedHistory.clear(withTransaction = transaction)
 
             val changesCollector = ChangesCollector()
             reporter.measure(GradleBuildTime.IC_UPDATE_CACHES) {
@@ -628,30 +625,6 @@ abstract class IncrementalCompilerRunner<
     }
 
     open fun getLookupTrackerDelegate(): LookupTracker = LookupTracker.DO_NOTHING
-
-    protected fun getRemovedClassesChanges(
-        caches: IncrementalCachesManager<*>,
-        changedFiles: DeterminableFiles.Known,
-    ): DirtyData {
-        val removedClasses = HashSet<String>()
-        val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
-        val removedFiles = changedFiles.removed.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
-
-        val existingClasses = classesFqNames(dirtyFiles)
-        val previousClasses = caches.platformCache
-            .classesFqNamesBySources(dirtyFiles + removedFiles)
-            .map { it.asString() }
-
-        for (fqName in previousClasses) {
-            if (fqName !in existingClasses) {
-                removedClasses.add(fqName)
-            }
-        }
-
-        val changesCollector = ChangesCollector()
-        removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
-        return changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
-    }
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 

@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.dirtyFiles.getClasspathChanges
+import org.jetbrains.kotlin.incremental.dirtyFiles.getRemovedClassesChanges
 import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
@@ -115,8 +115,7 @@ class IncrementalJsCompilerRunner(
         }
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
 
-        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
-        initDirtyFiles(dirtyFiles, changedFiles)
+        val dirtyFiles = dirtyFilesProvider.getInitializedDirtyFiles(caches, changedFiles)
 
         val libs = (args.libraries ?: "").split(File.pathSeparator).map { File(it) }
         //TODO(valtman) check for JS
@@ -137,7 +136,7 @@ class IncrementalJsCompilerRunner(
             }
         }
 
-        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
+        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles, kotlinSourceFilesExtensions, reporter)
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)

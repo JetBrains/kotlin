@@ -1,11 +1,14 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.incremental.dirtyFiles
 
+import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.CompilationTransaction
+import org.jetbrains.kotlin.incremental.IncrementalCachesManager
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.Companion.DIRTY_SOURCES_FILE_NAME
 import org.jetbrains.kotlin.incremental.writeText
 import java.io.File
@@ -33,5 +36,24 @@ internal class DirtyFilesCachedHistory(workingDir: File) {
 
     fun clear(withTransaction: CompilationTransaction) {
         withTransaction.deleteFile(dirtySourcesSinceLastTimeFile.toPath())
+    }
+}
+
+internal class DirtyFilesProvider(
+    workingDir: File,
+    private val kotlinSourceFileExtensions: Set<String>,
+    private val reporter: ICReporter,
+) {
+    val cachedHistory = DirtyFilesCachedHistory(workingDir)
+
+    fun getInitializedDirtyFiles(
+        caches: IncrementalCachesManager<*>,
+        changedFiles: DeterminableFiles.Known
+    ): DirtyFilesContainer {
+        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFileExtensions)
+        dirtyFiles.add(changedFiles.modified, "was modified since last time")
+        dirtyFiles.add(changedFiles.removed, "was removed since last time")
+        dirtyFiles.add(cachedHistory.read(), "was not compiled last time")
+        return dirtyFiles
     }
 }

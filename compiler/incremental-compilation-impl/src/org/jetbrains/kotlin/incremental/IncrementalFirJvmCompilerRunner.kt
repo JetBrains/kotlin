@@ -60,8 +60,8 @@ open class IncrementalFirJvmCompilerRunner(
     buildHistoryFile: File?,
     outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
-    kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     classpathChanges: ClasspathChanges,
+    kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
 ) : IncrementalJvmCompilerRunner(
     workingDir,
@@ -69,8 +69,8 @@ open class IncrementalFirJvmCompilerRunner(
     buildHistoryFile,
     outputDirs,
     modulesApiHistory,
-    kotlinSourceFilesExtensions,
     classpathChanges,
+    kotlinSourceFilesExtensions,
     icFeatures,
 ) {
 
