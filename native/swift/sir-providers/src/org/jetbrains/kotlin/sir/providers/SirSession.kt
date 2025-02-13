@@ -81,8 +81,8 @@ public interface SirSession :
     override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
 
-    override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
-        with(childrenProvider) { this@extractDeclarations.extractDeclarations(ktAnalysisSession) }
+    override fun Sequence<KaDeclarationSymbol>.extractDeclarations(kaSession: KaSession): Sequence<SirDeclaration> =
+        with(childrenProvider) { this@extractDeclarations.extractDeclarations(kaSession) }
 }
 
 /**
@@ -190,8 +190,14 @@ public interface SirModuleProvider {
     public fun KaModule.sirModule(): SirModule
 }
 
+// TODO: SirChildrenProvider probably does not make much sense as a provider,
+//  as it acts as a combination of several other provider (declaration, trampoline, visibility)
 public interface SirChildrenProvider {
-    public fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration>
+
+    public fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
+        declarations.extractDeclarations(ktAnalysisSession)
+
+    public fun Sequence<KaDeclarationSymbol>.extractDeclarations(kaSession: KaSession): Sequence<SirDeclaration>
 }
 
 public interface SirTypeProvider {
