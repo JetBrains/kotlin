@@ -26,8 +26,29 @@ kotlin {
     }
 }
 
+fun KotlinToolingVersionCopy(kotlinVersionString: String): KotlinToolingVersion {
+    val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
+    val classifier = kotlinVersionString.split("-", limit = 2).getOrNull(1)
+
+    val baseVersionSplit = baseVersion.split(".")
+
+    val majorVersion = baseVersionSplit[0].toIntOrNull()
+    val minorVersion = baseVersionSplit.getOrNull(1)?.toIntOrNull()
+
+    if (majorVersion == null || minorVersion == null) {
+        throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString (Failed parsing major/minor version)")
+    }
+
+    return KotlinToolingVersion(
+        major = majorVersion,
+        minor = minorVersion,
+        patch = baseVersionSplit.getOrNull(2)?.toIntOrNull() ?: 0,
+        classifier = classifier
+    )
+}
+
 val compatibilityTestsVersions = listOf(
-    BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
+    BuildToolsVersion(KotlinToolingVersionCopy(project.version.toString()), isCurrent = true),
     BuildToolsVersion(KotlinToolingVersion(1, 9, 20, null)),
 )
 
