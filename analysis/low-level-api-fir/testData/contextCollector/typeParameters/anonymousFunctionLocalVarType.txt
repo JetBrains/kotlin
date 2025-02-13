@@ -16,16 +16,20 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
     Element 8
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 9
         Scope: FirLocalScope
             Properties:
-                FirValueParameterSymbol x: <ERROR TYPE REF: Symbol not found for T>
-    Element 9
+                FirValueParameterSymbol x: R|T|
+    Element 10
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionLocalVarType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval anon: R|(ERROR CLASS: Symbol not found for T) -> ERROR CLASS: Symbol not found for T| = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] x: <ERROR TYPE REF: Symbol not found for T>): <ERROR TYPE REF: Symbol not found for T> <inline=Unknown>  {
-            [ResolvedTo(BODY_RESOLVE)] lval y: <ERROR TYPE REF: Symbol not found for T> = R|<local>/x|
+        [ResolvedTo(BODY_RESOLVE)] lval anon: R|(T) -> T| = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|T| <inline=Unknown>  {
+            [ResolvedTo(BODY_RESOLVE)] lval y: R|T| = R|<local>/x|
             ^ R|<local>/y|
         }
 
