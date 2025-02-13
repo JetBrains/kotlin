@@ -803,7 +803,7 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousFunction)
 
         onActiveBody {
-            context.withAnonymousFunction(anonymousFunction, bodyHolder) {
+            context.withAnonymousFunctionIncludingTypeParameters(anonymousFunction, bodyHolder) {
                 processList(anonymousFunction.contextParameters)
                 processList(anonymousFunction.valueParameters)
 
