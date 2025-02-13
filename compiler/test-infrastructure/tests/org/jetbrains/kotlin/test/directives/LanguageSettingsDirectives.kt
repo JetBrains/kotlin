@@ -66,7 +66,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     )
 
     val RETURN_VALUE_CHECKER_MODE by enumDirective(
-        "Configures explicit API mode (AnalysisFlags.explicitReturnTypes)",
+        "Configures return value checker mode (AnalysisFlags.returnValueCheckerMode)",
         additionalParser = ReturnValueCheckerMode.Companion::fromString
     )
 

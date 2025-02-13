@@ -55,11 +55,13 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.isUnitOrNullableUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirUnusedReturnValueChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -96,7 +98,7 @@ object FirUnusedReturnValueChecker : FirBasicExpressionChecker(MppCheckerKind.Co
         if (resolvedSymbol?.isExcluded(context.session) == true) return
 
         // Ignore Unit or Nothing
-        if (expression.resolvedType.run { isNothingOrNullableNothing || isUnit }) return
+        if (expression.resolvedType.isIgnorable()) return
 
         // If not the outermost call, then it is used as an argument
         if (context.callsOrAssignments.lastOrNull { it != expression } != null) return
@@ -110,6 +112,8 @@ object FirUnusedReturnValueChecker : FirBasicExpressionChecker(MppCheckerKind.Co
             context
         )
     }
+
+    private fun ConeKotlinType.isIgnorable() = isNothingOrNullableNothing || isUnit // TODO: add java.lang.Void and platform types
 
     private fun hasUsages(context: CheckerContext, thisExpression: FirExpression): Boolean {
         val stack = context.containingElements.asReversed()
@@ -261,8 +265,8 @@ object FirUnusedReturnValueChecker : FirBasicExpressionChecker(MppCheckerKind.Co
     }
 
     private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
-        toAnnotationClassId(session)?.let { it.relativeClassName.toString() == "MustUseReturnValue" && it.packageFqName.asString() == "kotlin" } == true
+        toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
 
     private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
-        toAnnotationClassId(session)?.let { it.relativeClassName.toString() == "IgnorableReturnValue" && it.packageFqName.asString() == "kotlin" } == true
+        toAnnotationClassId(session) == StandardClassIds.Annotations.IgnorableReturnValue
 }
