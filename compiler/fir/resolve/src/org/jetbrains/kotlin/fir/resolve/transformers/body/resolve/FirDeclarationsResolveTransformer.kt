@@ -1110,9 +1110,19 @@ open class FirDeclarationsResolveTransformer(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, anonymousFunctionExpression) {
-        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
-        anonymousFunction.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+        @OptIn(PrivateForInline::class)
+        return context.withTypeParametersOf(anonymousFunctionExpression.anonymousFunction) {
+            doTransformAnonymousFunctionExpression(anonymousFunctionExpression, data)
+        }
+    }
 
+    private fun doTransformAnonymousFunctionExpression(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        data: ResolutionMode,
+    ): FirStatement {
+        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
+
+        anonymousFunction.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
         anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
         anonymousFunction.contextParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }

@@ -12,6 +12,11 @@ FILE: anonymousFunction.kt
         lval anon4: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         }
 
+        lval anon5: R|(T) -> T| = fun <anonymous>(x: R|T|): R|T| <inline=Unknown>  {
+            lval y: R|T| = R|<local>/x|
+            ^ R|<local>/y|
+        }
+
     }
     public abstract interface I : R|kotlin/Any| {
     }
