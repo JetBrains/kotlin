@@ -376,8 +376,7 @@ class FirRenderer(
         }
 
         override fun visitErrorProperty(errorProperty: FirErrorProperty) {
-            print("<ERROR PROPERTY: ${errorProperty.diagnostic.reason}>")
-            printer.newLine()
+            visitProperty(errorProperty)
         }
 
         override fun visitErrorFunction(errorFunction: FirErrorFunction) {

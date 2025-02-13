@@ -4,6 +4,7 @@ FILE: invalidDestructing.kt
             super<R|kotlin/Any|>()
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).to#(IntegerLiteral(2))
+
 
     }

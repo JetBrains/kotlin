@@ -15,4 +15,4 @@ FILE: [ResolvedTo(IMPORTS)] destructuring.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val pair: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(R|/a|, R|/b|)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Pair<kotlin/Int, kotlin/Int>|
-    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/pair|

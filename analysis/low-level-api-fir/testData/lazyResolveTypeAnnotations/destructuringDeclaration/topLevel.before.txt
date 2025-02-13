@@ -28,4 +28,5 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+    public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+

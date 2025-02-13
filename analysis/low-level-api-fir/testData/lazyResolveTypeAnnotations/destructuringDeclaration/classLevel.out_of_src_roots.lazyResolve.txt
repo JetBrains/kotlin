@@ -633,7 +633,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(Int(0), Int(1))
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: Pair>#(Int(0), Int(1))
 
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {

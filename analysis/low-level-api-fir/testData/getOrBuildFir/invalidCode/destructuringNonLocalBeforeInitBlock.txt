@@ -14,6 +14,10 @@ FILE: [ResolvedTo(IMPORTS)] destructuringNonLocalBeforeInitBlock.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: init>#(<L> = [ResolvedTo(BODY_RESOLVE)] init@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@init Unit
+        }
+        )
+
 
     }

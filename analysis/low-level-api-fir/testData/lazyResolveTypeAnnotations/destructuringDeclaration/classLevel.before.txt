@@ -32,7 +32,8 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         }
 
-        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+        public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
 
         public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
