@@ -42,8 +42,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for dokka")
     @GradleTest
     @GradleTestVersions(
-//        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
-        minVersion = TestVersions.Gradle.G_8_11
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testDokka(gradleVersion: GradleVersion) {
         project(
@@ -210,7 +209,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("Ensure that the metric are not collected if plugins were not applied to simple project")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_2],
     )
     fun testAppliedPluginsMetricsAreNotCollectedInSimpleProject(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {

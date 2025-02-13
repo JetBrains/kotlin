@@ -131,7 +131,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
             // so there is a change that no VariantImplementationFactory will be found
-            return if (GradleVersion.current().baseVersion >= GradleVersion.version("8.9")) {
+            val fusService = if (GradleVersion.current().baseVersion >= GradleVersion.version("8.9")) {
                 FlowActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider)
             } else if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
                 ConfigurationMetricParameterFlowActionBuildFusService.registerIfAbsentImpl(
@@ -141,19 +141,20 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                 )
             } else {
                 CloseActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider)
-            }.also { buildService ->
-                //DO NOT call buildService.get() before all parameters.configurationMetrics are set.
-                // buildService.get() call will cause parameters calculation and configuration cache storage.
-
-                //Gradle throws an exception when Gradle version less than 7.4 with configuration cache enabled and buildSrc,
-                @Suppress("DEPRECATION")
-                if (GradleVersion.current().baseVersion >= GradleVersion.version("7.4")
-                    || !project.isConfigurationCacheEnabled
-                    || project.currentBuildId().name != "buildSrc"
-                ) {
-                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildService)
-                }
             }
+            //DO NOT call buildService.get() before all parameters.configurationMetrics are set.
+            // buildService.get() call will cause parameters calculation and configuration cache storage.
+
+            //Gradle throws an exception when Gradle version less than 7.4 with configuration cache enabled and buildSrc,
+            @Suppress("DEPRECATION")
+            if (GradleVersion.current().baseVersion >= GradleVersion.version("7.4")
+                || !project.isConfigurationCacheEnabled
+                || project.currentBuildId().name != "buildSrc"
+            ) {
+                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(fusService)
+            }
+
+            return fusService
         }
     }
 
