@@ -651,6 +651,10 @@ private class ContextCollectorVisitor(
         }
     }
 
+    override fun visitErrorProperty(errorProperty: FirErrorProperty) {
+        visitProperty(errorProperty)
+    }
+
     override fun visitProperty(property: FirProperty) = withProcessor(property) {
         dumpContext(property, ContextKind.SELF)
 

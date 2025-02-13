@@ -15,8 +15,16 @@ Tower Data Context:
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval localProperty: R|kotlin/Int|
 
-FILE: [ResolvedTo(RAW_FIR)] errorProperty.kt
+FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
     public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>

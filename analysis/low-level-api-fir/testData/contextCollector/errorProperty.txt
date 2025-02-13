@@ -15,6 +15,14 @@ Tower Data Context:
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval localProperty: R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
@@ -25,17 +33,17 @@ FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> transformation([ResolvedTo(RAW_FIR)] body: ( () -> T )): T { LAZY_BLOCK }
-    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] l: Int, [ResolvedTo(RAW_FIR)] r: String): R|MyPair| {
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> transformation([ResolvedTo(CONTRACTS)] body: R|() -> T|): R|T| { LAZY_BLOCK }
+    public final data [ResolvedTo(STATUS)] class MyPair : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] l: R|kotlin/Int|, [ResolvedTo(STATUS)] r: R|kotlin/String|): R|MyPair| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val l: Int = R|<local>/l|
-            public? [ResolvedTo(RAW_FIR)] get(): Int
+        public final [ResolvedTo(STATUS)] val l: R|kotlin/Int| = R|<local>/l|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
 
-        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] l: Int = this@R|/MyPair|.R|/MyPair.l|): R|MyPair|
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] l: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.l|): R|MyPair|
 
     }
