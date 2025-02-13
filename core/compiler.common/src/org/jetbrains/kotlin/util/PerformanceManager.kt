@@ -12,18 +12,13 @@ import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.util.SortedMap
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.KClass
+import kotlin.collections.set
 
 /**
- * Generally, the class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
+ * The class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
  * to get reliable performance measurements.
- * However, [measureTime] written to be thread-safe because there is no absolute guarantee
- * that external measurements are collected in a single thread.
  */
 abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presentableName: String) {
-    // The lock object is located not in a companion object because every module has its own instance of the performance manager
-    private val counterMeasurementsLock = Any()
-
     private val thread: Thread = Thread.currentThread()
 
     private fun currentTime(): Long = System.nanoTime()
@@ -32,16 +27,9 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var phaseStartNanos: Long? = currentTime()
 
     private val phaseMeasurementsMs: SortedMap<PhaseMeasurementType, Long> = sortedMapOf()
-
-    // Initialize the counter measurements in strict order to get rid of difference in the same report
-    private val counterMeasurements: MutableMap<KClass<*>, CounterMeasurement> = mutableMapOf(
-        FindJavaClassMeasurement::class to FindJavaClassMeasurement(0, 0),
-        BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, 0),
-    )
-
+    private val phaseSideMeasurements: SortedMap<PhaseMeasurementType, SortedMap<PhaseSideMeasurementType, PhaseSidePerformanceMeasurement>> = sortedMapOf()
     private var gcMeasurements: SortedMap<String, GarbageCollectionMeasurement> = sortedMapOf()
     private var jitMeasurement: JitCompilationMeasurement? = null
-
     private val extraMeasurements: MutableList<PerformanceMeasurement> = mutableListOf()
 
     var isEnabled: Boolean = false
@@ -69,19 +57,32 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     val measurements: List<PerformanceMeasurement> by lazy {
         isFinalized = true
         buildList {
-            for ((phaseType, measurement) in phaseMeasurementsMs) {
+            for ((phaseType, millis) in phaseMeasurementsMs) {
+                var refinedMillis = millis
+
+                phaseSideMeasurements[phaseType]?.values?.forEach {
+                    refinedMillis -= it.milliseconds
+                }
+
                 add(
                     when (phaseType) {
-                        PhaseMeasurementType.Initialization -> CompilerInitializationMeasurement(measurement)
-                        PhaseMeasurementType.Analysis -> CodeAnalysisMeasurement(measurement)
-                        PhaseMeasurementType.IrGeneration -> IrGenerationMeasurement(measurement)
-                        PhaseMeasurementType.IrLowering -> IrLoweringMeasurement(measurement)
-                        PhaseMeasurementType.BackendGeneration -> BackendGenerationMeasurement(measurement)
+                        PhaseMeasurementType.Initialization -> CompilerInitializationMeasurement(refinedMillis)
+                        PhaseMeasurementType.Analysis -> CodeAnalysisMeasurement(refinedMillis)
+                        PhaseMeasurementType.IrGeneration -> IrGenerationMeasurement(refinedMillis)
+                        PhaseMeasurementType.IrLowering -> IrLoweringMeasurement(refinedMillis)
+                        PhaseMeasurementType.BackendGeneration -> BackendGenerationMeasurement(refinedMillis)
                     }
                 )
             }
-            add(counterMeasurements.getValue(FindJavaClassMeasurement::class))
-            add(counterMeasurements.getValue(BinaryClassFromKotlinFileMeasurement::class))
+
+            val aggregatePhaseMeasurements = sortedMapOf<PhaseSideMeasurementType, PhaseSidePerformanceMeasurement>()
+            for (sideMeasurements in phaseSideMeasurements.values) {
+                for ((sideMeasurementType, sideMeasurement) in sideMeasurements) {
+                    aggregatePhaseMeasurements.addSideMeasurement(sideMeasurementType, sideMeasurement)
+                }
+            }
+
+            addAll(aggregatePhaseMeasurements.map { it.value })
             gcMeasurements.values.forEach { add(it) }
             addIfNotNull(jitMeasurement)
             addAll(extraMeasurements)
@@ -100,17 +101,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             phaseMeasurementsMs[phase] = (phaseMeasurementsMs[phase] ?: 0) + otherPhaseMeasurementMs
         }
 
-        for ((counterMeasurementClass, otherCounterMeasurement) in otherPerformanceManager.counterMeasurements) {
-            val existingMeasurement = counterMeasurements[counterMeasurementClass]
-            val newCount = (existingMeasurement?.count ?: 0) + otherCounterMeasurement.count
-            val newMillis = (existingMeasurement?.count ?: 0) + otherCounterMeasurement.milliseconds
-            counterMeasurements[counterMeasurementClass] = when (otherCounterMeasurement) {
-                is FindJavaClassMeasurement -> {
-                    FindJavaClassMeasurement(newCount, newMillis)
-                }
-                is BinaryClassFromKotlinFileMeasurement -> {
-                    BinaryClassFromKotlinFileMeasurement(newCount, newMillis)
-                }
+        for ((phaseType, otherSideMeasurements) in otherPerformanceManager.phaseSideMeasurements) {
+            val sideMeasurements = phaseSideMeasurements.getOrPut(phaseType) { sortedMapOf() }
+            for ((sideMeasurementType, otherSideMeasurement) in otherSideMeasurements) {
+                sideMeasurements.addSideMeasurement(sideMeasurementType, otherSideMeasurement)
             }
         }
 
@@ -129,6 +123,18 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
 
         extraMeasurements.addAll(otherPerformanceManager.extraMeasurements)
+    }
+
+    private fun SortedMap<PhaseSideMeasurementType, PhaseSidePerformanceMeasurement>.addSideMeasurement(
+        sideMeasurementType: PhaseSideMeasurementType,
+        otherSideMeasurement: PhaseSidePerformanceMeasurement,
+    ) {
+        val existingSideMeasurement = this[sideMeasurementType]
+        this[sideMeasurementType] =
+            sideMeasurementType.createSideMeasurement(
+                (existingSideMeasurement?.count ?: 0) + otherSideMeasurement.count,
+                (existingSideMeasurement?.milliseconds ?: 0) + otherSideMeasurement.milliseconds
+            )
     }
 
     fun enableCollectingPerformanceStatistics(isK2: Boolean) {
@@ -238,7 +244,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         PerformanceCounter.report { s -> extraMeasurements += PerformanceCounterMeasurement(s) }
     }
 
-    internal fun <T> measureTime(measurementClass: KClass<*>, block: () -> T): T {
+    internal fun <T> measureTime(phaseSideMeasurementType: PhaseSideMeasurementType, block: () -> T): T {
         if (!isEnabled) block()
 
         ensureNotFinalizedAndSameThread()
@@ -248,20 +254,19 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             return block()
         } finally {
             val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(currentTime() - startTime)
-            synchronized(counterMeasurementsLock) {
-                val currentMeasurement = counterMeasurements[measurementClass]
-                    ?: error("No counter measurement initialized for $measurementClass")
-                val newCount = currentMeasurement.count + 1
-                val newElapsed = currentMeasurement.milliseconds + elapsedMillis
-                val newMeasurement = when (measurementClass) {
-                    FindJavaClassMeasurement::class -> FindJavaClassMeasurement(newCount, newElapsed)
-                    BinaryClassFromKotlinFileMeasurement::class -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)
-                    else -> error("The measurement for $measurementClass is not supported")
-                }
-                counterMeasurements[measurementClass] = newMeasurement
-            }
+
+            assert(phaseStartNanos != null) { "No phase started for side measurement" }
+
+            val sideMeasurements = phaseSideMeasurements.getOrPut(currentPhaseType) { sortedMapOf() }
+            sideMeasurements.addSideMeasurement(phaseSideMeasurementType, phaseSideMeasurementType.createSideMeasurement(1, elapsedMillis))
         }
     }
+
+    private fun PhaseSideMeasurementType.createSideMeasurement(newCount: Int, newElapsed: Long): PhaseSidePerformanceMeasurement =
+        when (this) {
+            PhaseSideMeasurementType.FindJavaClass -> FindJavaClassMeasurement(newCount, newElapsed)
+            PhaseSideMeasurementType.BinaryClassFromKotlinFile -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)
+        }
 
     fun dumpPerformanceReport(destination: File) {
         destination.writeBytes(createPerformanceReport().toByteArray())
@@ -301,8 +306,8 @@ class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: St
     }
 }
 
-fun <T> PerformanceManager?.tryMeasureTime(measurementClass: KClass<*>, block: () -> T): T {
-    return if (this == null) return block() else measureTime(measurementClass, block)
+fun <T> PerformanceManager?.tryMeasureSideTime(phaseSideMeasurementType: PhaseSideMeasurementType, block: () -> T): T {
+    return if (this == null) return block() else measureTime(phaseSideMeasurementType, block)
 }
 
 inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseMeasurementType, block: () -> T): T {
