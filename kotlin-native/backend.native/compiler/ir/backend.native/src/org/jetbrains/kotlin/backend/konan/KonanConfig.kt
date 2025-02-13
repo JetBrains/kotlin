@@ -83,7 +83,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         return@takeIf true
     }
 
-    private val defaultGC get() = GC.PARALLEL_MARK_CONCURRENT_SWEEP
+    private val defaultGC get() = if (swiftExport) GC.CONCURRENT_MARK_AND_SWEEP else GC.PARALLEL_MARK_CONCURRENT_SWEEP
     val gc: GC get() = configuration.get(BinaryOptions.gc) ?: defaultGC
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
@@ -537,6 +537,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         append(target.toString())
         if (debug) append("-g")
         append("STATIC")
+        append("-gc${gc.shortcut ?: gc.name.lowercase()}")
 
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
             append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
@@ -549,8 +550,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-runtime_debug")
         if (allocationMode != defaultAllocationMode)
             append("-allocator${allocationMode.name}")
-        if (gc != defaultGC)
-            append("-gc${gc.name}")
         if (gcSchedulerType != defaultGCSchedulerType)
             append("-gc_scheduler${gcSchedulerType.name}")
         if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)
