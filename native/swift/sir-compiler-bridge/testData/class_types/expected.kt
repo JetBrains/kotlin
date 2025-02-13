@@ -2,6 +2,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("foo__TypesOfArguments__MyClass_MyClass__")
 public fun foo__TypesOfArguments__MyClass_MyClass__(p0: kotlin.native.internal.NativePtr, p1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

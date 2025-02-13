@@ -3,6 +3,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("CLASS_ACROSS_MODULES_value_get")
 public fun CLASS_ACROSS_MODULES_value_get(self: kotlin.native.internal.NativePtr): Int {

@@ -2,6 +2,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("org_main_second_deps_instance_2_get")
 public fun org_main_second_deps_instance_2_get(): kotlin.native.internal.NativePtr {

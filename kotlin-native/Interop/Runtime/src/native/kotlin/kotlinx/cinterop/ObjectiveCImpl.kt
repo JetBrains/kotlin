@@ -202,9 +202,8 @@ public external fun CreateNSStringFromKString(str: String?): NativePtr
 @GCUnsafeCall("Kotlin_Interop_CreateKStringFromNSString")
 public external fun CreateKStringFromNSString(ptr: NativePtr): String?
 
-@PublishedApi
 @GCUnsafeCall("Kotlin_Interop_CreateObjCObjectHolder")
-internal external fun createObjCObjectHolder(ptr: NativePtr): Any?
+public external fun createObjCObjectHolder(ptr: NativePtr): Any?
 
 // Objective-C runtime:
 

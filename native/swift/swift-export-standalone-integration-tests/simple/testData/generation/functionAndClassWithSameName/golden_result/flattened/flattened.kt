@@ -3,6 +3,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("flattenedPackage_FlattenedPackageClass__TypesOfArguments__Swift_Int32__")
 public fun flattenedPackage_FlattenedPackageClass__TypesOfArguments__Swift_Int32__(i: Int): kotlin.native.internal.NativePtr {

@@ -9,6 +9,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("ClassWithFactoryWithoutParameters_value_get")
 public fun ClassWithFactoryWithoutParameters_value_get(self: kotlin.native.internal.NativePtr): Int {

@@ -7,6 +7,7 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.sir.SirArgument
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirFunctionalType
 import org.jetbrains.kotlin.sir.SirParameter
@@ -39,7 +40,7 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
                         return@let SirFunctionalType(
                             parameterTypes = it.parameterTypes,
                             returnType = it.returnType,
-                            attributes = it.attributes + listOf(SirAttribute.Escaping)
+                            attributes = it.attributes + listOf(SirAttribute.Escaping, SirAttribute.Convention.Block)
                         )
                     } else {
                         it

@@ -2,6 +2,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("a__TypesOfArguments__Int8_Int16_Int32_Int64__")
 public fun a__TypesOfArguments__Int8_Int16_Int32_Int64__(p0: Byte, p1: Short, p2: Int, p3: Long): Int {

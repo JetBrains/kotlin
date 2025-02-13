@@ -5,6 +5,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("INHERITANCE_SINGLE_CLASS_value_get")
 public fun INHERITANCE_SINGLE_CLASS_value_get(self: kotlin.native.internal.NativePtr): Int {

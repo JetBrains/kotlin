@@ -4,6 +4,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("Cousin_finalOverrideFunc")
 public fun Cousin_finalOverrideFunc(self: kotlin.native.internal.NativePtr): Unit {
