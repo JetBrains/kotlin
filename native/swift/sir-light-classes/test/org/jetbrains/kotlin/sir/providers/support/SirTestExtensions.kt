@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers.support
 
 import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirDeclaration
+import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirVariable
 
@@ -23,4 +24,9 @@ fun List<SirDeclaration>.variableNamed(variableName: String): SirVariable {
     return filterIsInstance<SirVariable>()
         .firstOrNull { it.name == variableName }
         ?: error("Variable $variableName not found")
+}
+
+fun List<SirDeclaration>.functionsNamed(functionName: String): List<SirFunction> {
+    return filterIsInstance<SirFunction>()
+        .filter { it.name == functionName }
 }
