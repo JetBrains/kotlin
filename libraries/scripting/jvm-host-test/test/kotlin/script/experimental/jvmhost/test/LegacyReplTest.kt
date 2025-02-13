@@ -45,7 +45,7 @@ class LegacyReplTest {
             repl.compileAndEval(repl.nextCodeLine("val x = 10"))
 
             val res = repl.compileAndEval(repl.nextCodeLine("java.util.fish"))
-            assertTrue("Expected compile error") { res.first is ReplCompileResult.Error }
+            assertTrue(res.first is ReplCompileResult.Error, "Expected compile error")
 
             val result = repl.compileAndEval(repl.nextCodeLine("x"))
             assertEquals(10, (result.second as ReplEvalResult.ValueResult).value, res.second.toString())
@@ -56,7 +56,7 @@ class LegacyReplTest {
     fun testReplSyntaxErrorsChecked() {
         LegacyTestRepl().use { repl ->
             val res = repl.compileAndEval(repl.nextCodeLine("data class Q(val x: Int, val: String)"))
-            assertTrue("Expected compile error") { res.first is ReplCompileResult.Error }
+            assertTrue(res.first is ReplCompileResult.Error, "Expected compile error")
         }
     }
 

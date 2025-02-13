@@ -319,9 +319,10 @@ class ReplTest {
                 replEvaluator.eval(it, evaluationConfiguration)
             }
         }
-        assertTrue("Expecting 1 got $res0") {
-            res0 is ResultWithDiagnostics.Success && (res0.value.get().result as ResultValue.Value).value == 1
-        }
+        assertTrue(
+            res0 is ResultWithDiagnostics.Success && (res0.value.get().result as ResultValue.Value).value == 1,
+            "Expecting 1 got $res0"
+        )
 
         var handlerInvoked = false
 
@@ -343,11 +344,12 @@ class ReplTest {
                 replEvaluator.eval(it, evaluationConfiguration)
             }
         }
-        assertTrue("Expecting 2 got $res1") {
-            res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2
-        }
+        assertTrue(
+            res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2,
+            "Expecting 2 got $res1"
+        )
 
-        assertTrue("Refinement handler on annotation is not invoked") { handlerInvoked }
+        assertTrue(handlerInvoked, "Refinement handler on annotation is not invoked")
     }
 
     @Test
@@ -470,14 +472,16 @@ class ReplTest {
                 when {
                     res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
 
-                        assertTrue("#$index: Expected $expectedRes, got $res. Messages are different") {
-                            resReports.map { it.message } == expectedRes.reports.map { it.message }
-                        }
-                        assertTrue("#$index: Expected $expectedRes, got $res. Locations are different") {
+                        assertTrue(
+                            resReports.map { it.message } == expectedRes.reports.map { it.message },
+                            "#$index: Expected $expectedRes, got $res. Messages are different"
+                        )
+                        assertTrue(
                             resReports.map { it.location }.zip(expectedRes.reports.map { it.location }).all {
                                 it.second == null || locationsEqual(it.first, it.second)
-                            }
-                        }
+                            },
+                            "#$index: Expected $expectedRes, got $res. Locations are different"
+                        )
                     }
                     res is ResultWithDiagnostics.Success && expectedRes is ResultWithDiagnostics.Success -> {
                         val expectedVal = expectedRes.value
@@ -489,12 +493,13 @@ class ReplTest {
                                 "#$index: Expected $expectedVal, got $actualVal"
                             )
                             is ResultValue.Unit -> assertNull(expectedVal, "#$index: Expected $expectedVal, got Unit")
-                            is ResultValue.Error -> assertTrue("#$index: Expected $expectedVal, got Error: ${actualVal.error}") {
-                                        ((expectedVal as? Throwable) ?: (expectedVal as? ResultValue.Error)?.error).let {
-                                            it != null && it.message == actualVal.error.message
-                                                    && it.cause?.message == actualVal.error.cause?.message
-                                        }
-                            }
+                            is ResultValue.Error -> assertTrue(
+                                ((expectedVal as? Throwable) ?: (expectedVal as? ResultValue.Error)?.error).let {
+                                    it != null && it.message == actualVal.error.message
+                                            && it.cause?.message == actualVal.error.cause?.message
+                                },
+                                "#$index: Expected $expectedVal, got Error: ${actualVal.error}"
+                            )
                             is ResultValue.NotEvaluated -> assertEquals(
                                 expectedVal, actualVal,
                                 "#$index: Expected $expectedVal, got NotEvaluated"

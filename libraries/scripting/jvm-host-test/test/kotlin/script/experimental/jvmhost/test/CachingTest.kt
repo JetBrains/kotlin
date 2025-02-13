@@ -230,9 +230,10 @@ class CachingTest {
             if (isK2) "2.0" else "1.9",
             inKt.path
         )
-        assertTrue("Compilation Failed:\n$outStream") {
-            outStream.size() == 0 && compileExitCode == ExitCode.OK && outJar.exists()
-        }
+        assertTrue(
+            outStream.size() == 0 && compileExitCode == ExitCode.OK && outJar.exists(),
+            "Compilation Failed:\n$outStream"
+        )
         return outJar
     }
 

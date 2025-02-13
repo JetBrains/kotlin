@@ -18,9 +18,10 @@ class ExternalDeclarationsResolveOrderTest {
             constructorArgs("OK", 42)
         }
 
-        assertTrue("test failed:\n  ${res.render()}") {
-            res is ResultWithDiagnostics.Success
-        }
+        assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.render()}"
+        )
 
         assertEquals(
             "OK42",
@@ -34,9 +35,10 @@ class ExternalDeclarationsResolveOrderTest {
             constructorArgs("OK", 42)
         }
 
-        assertTrue("test failed:\n  ${res.render()}") {
-            res is ResultWithDiagnostics.Success
-        }
+        assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.render()}"
+        )
 
         assertEquals(
             "OK42",
