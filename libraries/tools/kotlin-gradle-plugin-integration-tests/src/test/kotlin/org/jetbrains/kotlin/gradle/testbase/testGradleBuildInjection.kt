@@ -313,10 +313,11 @@ class ReturnFromBuildScriptAfterExecution<T>(
                 *buildArguments,
                 "-P${injectionLoadProperty}=true",
             ),
-            executingProject.deriveBuildOptions().copy(
-                configurationCache = configurationCache,
-                configurationCacheProblems = configurationCacheProblems,
-            )
+            executingProject.deriveBuildOptions()
+//                .copy(
+//                configurationCache = configurationCache,
+//                configurationCacheProblems = configurationCacheProblems,
+//            )
         )
         ObjectInputStream(serializedReturnPath.inputStream()).use {
             @Suppress("UNCHECKED_CAST")

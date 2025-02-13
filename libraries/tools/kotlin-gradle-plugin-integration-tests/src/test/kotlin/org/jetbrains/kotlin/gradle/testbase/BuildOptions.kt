@@ -176,12 +176,14 @@ data class BuildOptions(
             WarningMode.None -> arguments.add("--warning-mode=none")
         }
 
-        val configurationCacheFlag = configurationCache.toBooleanFlag(gradleVersion)
-        if (configurationCacheFlag != null) {
-            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheFlag")
-            arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
+//        val configurationCacheFlag = configurationCache.toBooleanFlag(gradleVersion)
+//        if (configurationCacheFlag != null) {
+            arguments.add("-Dorg.gradle.unsafe.configuration-cache=true")
+            arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=fail")
+//            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheFlag")
+//            arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
             arguments.add("-Dorg.gradle.configuration-cache.parallel=true")
-        }
+//        }
 
         if (gradleVersion >= GradleVersion.version("7.1")) {
             val isolatedProjectsFlag = isolatedProjects.toBooleanFlag(gradleVersion)
