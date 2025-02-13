@@ -81,8 +81,8 @@ fun makeJvmIncrementally(
                     buildHistoryFile,
                     outputDirs = null,
                     EmptyModulesApiHistory,
-                    kotlinExtensions,
                     ClasspathChanges.ClasspathSnapshotDisabled,
+                    kotlinSourceFilesExtensions = kotlinExtensions,
                     icFeatures = IncrementalCompilationFeatures(
                         usePreciseJavaTracking = verifiedPreciseJavaTracking
                     ),
@@ -94,8 +94,8 @@ fun makeJvmIncrementally(
                     buildHistoryFile = buildHistoryFile,
                     outputDirs = null,
                     modulesApiHistory = EmptyModulesApiHistory,
-                    kotlinSourceFilesExtensions = kotlinExtensions,
                     classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled,
+                    kotlinSourceFilesExtensions = kotlinExtensions,
                     icFeatures = IncrementalCompilationFeatures(
                         usePreciseJavaTracking = verifiedPreciseJavaTracking
                     ),

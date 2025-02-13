@@ -6,17 +6,16 @@
 package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.incremental.AbiSnapshot
-import org.jetbrains.kotlin.incremental.AbiSnapshotDiffService
-import org.jetbrains.kotlin.incremental.BuildDiffsStorage
-import org.jetbrains.kotlin.incremental.BuildInfo
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
-import org.jetbrains.kotlin.incremental.ChangesEither
-import org.jetbrains.kotlin.incremental.IncrementalCacheCommon
-import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
+import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -126,4 +125,30 @@ internal fun getClasspathChanges(
             analyzeHistoryFiles()
         }
     }
+}
+
+internal fun getRemovedClassesChanges(
+    caches: IncrementalCachesManager<*>,
+    changedFiles: DeterminableFiles.Known,
+    kotlinSourceFilesExtensions: Set<String>,
+    reporter: ICReporter,
+): DirtyData {
+    val removedClasses = HashSet<String>()
+    val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
+    val removedFiles = changedFiles.removed.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
+
+    val existingClasses = classesFqNames(dirtyFiles)
+    val previousClasses = caches.platformCache
+        .classesFqNamesBySources(dirtyFiles + removedFiles)
+        .map { it.asString() }
+
+    for (fqName in previousClasses) {
+        if (fqName !in existingClasses) {
+            removedClasses.add(fqName)
+        }
+    }
+
+    val changesCollector = ChangesCollector()
+    removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
+    return changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
 }

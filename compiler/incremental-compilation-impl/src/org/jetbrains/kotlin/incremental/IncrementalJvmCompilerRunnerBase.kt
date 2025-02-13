@@ -38,14 +38,15 @@ abstract class IncrementalJvmCompilerRunnerBase(
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     buildHistoryFile: File?, // part of build history implementation is in abstract runner, so this stays
     outputDirs: Collection<File>?,
-    override val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
-    icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    kotlinSourceFilesExtensions: Set<String>,
+    icFeatures: IncrementalCompilationFeatures,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
     reporter,
     buildHistoryFile = buildHistoryFile,
     outputDirs = outputDirs,
+    kotlinSourceFilesExtensions = kotlinSourceFilesExtensions,
     icFeatures = icFeatures,
 ) {
     override val shouldStoreFullFqNamesInLookupCache = true

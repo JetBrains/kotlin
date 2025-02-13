@@ -84,9 +84,9 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         buildHistoryFile,
                         outputDirs = null,
                         EmptyModulesApiHistory,
-                        kotlinExtensions,
                         ClasspathChanges.ClasspathSnapshotDisabled,
-                        testLookupTracker
+                        kotlinExtensions,
+                        testLookupTracker = testLookupTracker
                     )
                 } else {
                     val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
