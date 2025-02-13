@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.utils
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiInvalidElementAccessException
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 
 /**
@@ -20,7 +21,10 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
  * @return A string representing the text of the PSI element within its context, or an error message in case of failure.
  */
 fun getElementTextWithContext(psiElement: PsiElement): String = runCatching {
-    if (!psiElement.isValid) return "<invalid element $psiElement>"
+    if (!psiElement.isValid) {
+        return "<invalid element $psiElement, " +
+                "invalidation reason: ${PsiInvalidElementAccessException.findOutInvalidationReason(psiElement)}>"
+    }
 
     @Suppress("LocalVariableName") val ELEMENT_TAG = "ELEMENT"
     val containingFile = psiElement.containingFile
