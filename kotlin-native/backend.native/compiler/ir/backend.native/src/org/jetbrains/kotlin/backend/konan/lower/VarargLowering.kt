@@ -73,21 +73,19 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 val callee = expression.symbol.owner
                 log { "call of: ${callee.fqNameForIrSerialization}" }
                 context.createIrBuilder(owner, expression.startOffset, expression.endOffset).apply {
-                    callee.valueParameters.forEach {
-                        log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it.indexInOldValueParameters))}" }
+                    callee.parameters.forEach {
+                        log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.arguments[it.indexInParameters])}" }
                     }
-                    callee.valueParameters
-                        .filter { it.varargElementType != null && expression.getValueArgument(it.indexInOldValueParameters) == null }
+                    callee.parameters
+                        .filter { it.varargElementType != null && expression.arguments[it.indexInParameters] == null }
                         .forEach {
-                            expression.putValueArgument(
-                                it.indexInOldValueParameters,
+                            expression.arguments[it.indexInParameters] =
                                 IrVarargImpl(
                                     startOffset = startOffset,
                                     endOffset = endOffset,
                                     type = it.type,
                                     varargElementType = it.varargElementType!!
                                 )
-                            )
                         }
                 }
                 expression.transformChildrenVoid(this)
@@ -112,7 +110,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                     return irBuilder.irCall(
                             arrayHandle.copyOfSymbol,
                     ).apply {
-                        extensionReceiver = arrayHandle.createStatic(irBuilder, type, expression.elements.map {
+                        arguments[0] = arrayHandle.createStatic(irBuilder, type, expression.elements.map {
                             when (it) {
                                 is IrConst -> irBuilder.irConstantPrimitive(it)
                                 is IrConstantValue -> it
@@ -143,20 +141,20 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                         val dst = vars[element]!!
                         if (element !is IrSpreadElement) {
                             +irCall(arrayHandle.setMethodSymbol).apply {
-                                dispatchReceiver = irGet(arrayTmpVariable)
-                                putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable) else irConstInt(i))
-                                putValueArgument(1, irGet(dst))
+                                arguments[0] = irGet(arrayTmpVariable)
+                                arguments[1] =  if (hasSpreadElement) irGet(indexTmpVariable) else irConstInt(i)
+                                arguments[2] =  irGet(dst)
                             }
                             if (hasSpreadElement)
                                 +incrementVariable(indexTmpVariable, kIntOne)
                         } else {
                             val arraySizeVariable = irTemporary(irArraySize(arrayHandle, irGet(dst)), "length".synthesizedString)
                             +irCall(arrayHandle.copyIntoSymbol.owner).apply {
-                                extensionReceiver = irGet(dst)
-                                putValueArgument(0, irGet(arrayTmpVariable))  /* destination */
-                                putValueArgument(1, irGet(indexTmpVariable))  /* destinationOffset */
-                                putValueArgument(2, kIntZero)                 /* startIndex */
-                                putValueArgument(3, irGet(arraySizeVariable)) /* endIndex */
+                                arguments[0] = irGet(dst)
+                                arguments[1] = irGet(arrayTmpVariable)  /* destination */
+                                arguments[2] = irGet(indexTmpVariable)  /* destinationOffset */
+                                arguments[3] = kIntZero                 /* startIndex */
+                                arguments[4] = irGet(arraySizeVariable) /* endIndex */
                             }
                             +incrementVariable(indexTmpVariable, irGet(arraySizeVariable))
                             log { "element:$i:spread element> ${ir2string(element.expression)}" }
@@ -181,15 +179,15 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     private fun IrBuilderWithScope.intPlus() = irCall(intPlusInt)
     private fun IrBuilderWithScope.increment(expression: IrExpression, value: IrExpression): IrExpression {
         return intPlus().apply {
-            dispatchReceiver = expression
-            putValueArgument(0, value)
+            arguments[0] = expression
+            arguments[1] = value
         }
     }
 
     private fun IrBuilderWithScope.incrementVariable(variable: IrVariable, value: IrExpression): IrExpression {
         return irSet(variable.symbol, intPlus().apply {
-            dispatchReceiver = irGet(variable)
-            putValueArgument(0, value)
+            arguments[0] = irGet(variable)
+            arguments[1] = value
         })
     }
 
@@ -229,7 +227,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
         val copyIntoSymbol = symbols.copyInto[arraySymbol]!!
         val copyOfSymbol = symbols.copyOf[arraySymbol]!!
         protected val singleParameterConstructor =
-                arraySymbol.owner.constructors.find { it.valueParameters.size == 1 }!!
+                arraySymbol.owner.constructors.find { it.parameters.size == 1 }!!
 
         abstract fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression
         abstract fun createStatic(
@@ -242,7 +240,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
         override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
             return builder.irCall(singleParameterConstructor).apply {
                 typeArguments[0] = elementType
-                putValueArgument(0, size)
+                arguments[0] = size
             }
         }
 
@@ -262,7 +260,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
 
         override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
             return builder.irCall(singleParameterConstructor).apply {
-                putValueArgument(0, size)
+                arguments[0] = size
             }
         }
 
@@ -282,7 +280,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
         override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
             val wrappedArray = wrappedArrayHandle.createArray(builder, elementType, size)
             return builder.irCall(singleParameterConstructor).apply {
-                putValueArgument(0, wrappedArray)
+                arguments[0] = wrappedArray
             }
         }
 
