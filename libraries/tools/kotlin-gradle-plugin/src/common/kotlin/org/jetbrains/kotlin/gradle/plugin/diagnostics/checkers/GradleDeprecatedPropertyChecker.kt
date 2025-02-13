@@ -52,6 +52,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                     it.propertyName,
                     it.details,
                 ),
+                key = it.propertyName,
             )
         }
 
@@ -64,6 +65,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                     it.propertyName,
                     it.details,
                 ),
+                key = it.propertyName,
             )
         }
     }
