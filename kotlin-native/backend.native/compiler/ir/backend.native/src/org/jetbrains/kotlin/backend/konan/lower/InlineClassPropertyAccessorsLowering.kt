@@ -47,7 +47,7 @@ private class InlineClassAccessorsTransformer(private val context: Context) : Ir
                     return builder.at(expression)
                             .irCall(symbols.reinterpret, expression.type, listOf(receiver.type, expression.type))
                             .apply {
-                                extensionReceiver = receiver
+                                arguments[0] = receiver
                             }
                 }
             }
