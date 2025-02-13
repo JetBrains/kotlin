@@ -1,0 +1,1 @@
+fun returnsByteArray(): ByteArray = byteArrayOf(1, 2, 3)
