@@ -19,7 +19,7 @@ import java.io.File
 interface InlineSourceBuilder {
     annotation class ModuleBuilderDsl
 
-    data class SourceFile(val name: String, @Language("kotlin") val content: String)
+    data class SourceFile(val name: String, @param:Language("kotlin") val content: String)
 
     data class Module(
         val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>
