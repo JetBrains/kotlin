@@ -284,9 +284,9 @@ class ComposerParamTransformer(
     }
 
     private fun IrSimpleFunction.lambdaInvokeWithComposerParam(): IrSimpleFunction {
-        val argCount = valueParameters.size
+        val argCount = parameters.size
         val extraParams = composeSyntheticParamCount(argCount)
-        val newFnClass = context.function(argCount + extraParams).owner
+        val newFnClass = context.function(argCount + extraParams - /* dispatch receiver */ 1).owner
         val newInvoke = newFnClass.functions.first {
             it.name == OperatorNameConventions.INVOKE
         }
