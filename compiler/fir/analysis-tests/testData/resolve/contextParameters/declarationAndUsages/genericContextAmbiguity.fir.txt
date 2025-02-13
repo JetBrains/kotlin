@@ -1,0 +1,24 @@
+FILE: genericContextAmbiguity.kt
+    public abstract interface Describer<in T> : R|kotlin/Any| {
+        public abstract fun describe(t: R|T|): R|kotlin/String|
+
+    }
+    context(<unused var>: R|Describer<T>|)
+    public final fun <T> log(message: R|T|): R|kotlin/Unit| {
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(<unused var>: R|Describer<A>|, <unused var>: R|Describer<B>|)
+    public final fun bar(): R|kotlin/Unit| {
+        R|/log<Inapplicable(INAPPLICABLE): /log>#|<R|A|>(R|/A.A|())
+    }
