@@ -12930,12 +12930,6 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
-    @TestMetadata("kt49645.kt")
-    public void testKt49645() {
-      runTest("compiler/testData/codegen/box/coroutines/kt49645.kt");
-    }
-
-    @Test
     @TestMetadata("kt50277.kt")
     public void testKt50277() {
       runTest("compiler/testData/codegen/box/coroutines/kt50277.kt");
@@ -14064,6 +14058,24 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       @TestMetadata("genericParameterResult.kt")
       public void testGenericParameterResult() {
         runTest("compiler/testData/codegen/box/coroutines/inlineClasses/genericParameterResult.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaceFakeOverride.kt")
+      public void testInterfaceFakeOverride() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaceFakeOverrideJvmDefaultDisable.kt")
+      public void testInterfaceFakeOverrideJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverrideJvmDefaultDisable.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaceFakeOverrideJvmDefaultNoCompatibility.kt")
+      public void testInterfaceFakeOverrideJvmDefaultNoCompatibility() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverrideJvmDefaultNoCompatibility.kt");
       }
 
       @Test

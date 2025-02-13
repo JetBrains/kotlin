@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // TARGET_BACKEND: JVM
+// JVM_DEFAULT_MODE: no-compatibility
 
 import helpers.*
 import kotlin.coroutines.*

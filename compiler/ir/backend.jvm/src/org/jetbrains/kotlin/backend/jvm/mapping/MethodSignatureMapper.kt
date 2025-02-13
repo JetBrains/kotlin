@@ -199,7 +199,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun forceBoxedReturnTypeOnDefaultImplFun(function: IrFunction): Boolean {
         if (function !is IrSimpleFunction) return false
-        val originalFun = context.cachedDeclarations.getOriginalFunctionForDefaultImpl(function) ?: return false
+        val originalFun = function.originalFunctionForDefaultImpl ?: return false
         return forceFoxedReturnTypeOnOverride(originalFun)
     }
 

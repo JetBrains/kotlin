@@ -10320,11 +10320,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/coroutines/kt49317.kt");
     }
 
-    @TestMetadata("kt49645.kt")
-    public void testKt49645() {
-      runTest("compiler/testData/codegen/box/coroutines/kt49645.kt");
-    }
-
     @TestMetadata("kt50277.kt")
     public void testKt50277() {
       runTest("compiler/testData/codegen/box/coroutines/kt50277.kt");
@@ -11326,6 +11321,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       @TestMetadata("genericParameterResult.kt")
       public void testGenericParameterResult() {
         runTest("compiler/testData/codegen/box/coroutines/inlineClasses/genericParameterResult.kt");
+      }
+
+      @TestMetadata("interfaceFakeOverride.kt")
+      public void testInterfaceFakeOverride() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverride.kt");
+      }
+
+      @TestMetadata("interfaceFakeOverrideJvmDefaultDisable.kt")
+      public void testInterfaceFakeOverrideJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverrideJvmDefaultDisable.kt");
+      }
+
+      @TestMetadata("interfaceFakeOverrideJvmDefaultNoCompatibility.kt")
+      public void testInterfaceFakeOverrideJvmDefaultNoCompatibility() {
+        runTest("compiler/testData/codegen/box/coroutines/inlineClasses/interfaceFakeOverrideJvmDefaultNoCompatibility.kt");
       }
 
       @TestMetadata("kt47129.kt")

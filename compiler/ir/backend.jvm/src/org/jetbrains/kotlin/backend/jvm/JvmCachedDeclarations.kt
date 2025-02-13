@@ -36,7 +36,7 @@ private var IrSimpleFunction.staticCompanionDeclarations: Pair<IrSimpleFunction,
 private var IrSimpleFunction.defaultImplsMethod: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 private var IrClass.defaultImplsClass: IrClass? by irAttribute(followAttributeOwner = false)
 private var IrSimpleFunction.classFakeOverrideReplacement: ClassFakeOverrideReplacement? by irAttribute(followAttributeOwner = false)
-private var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
 private var IrClass.repeatedAnnotationSyntheticContainer: IrClass? by irAttribute(followAttributeOwner = false)
 
@@ -239,9 +239,6 @@ class JvmCachedDeclarations(
             }
         }
     }
-
-    fun getOriginalFunctionForDefaultImpl(defaultImplFun: IrSimpleFunction): IrSimpleFunction? =
-        defaultImplFun.originalFunctionForDefaultImpl
 
     fun getDefaultImplsClass(interfaceClass: IrClass): IrClass =
         interfaceClass::defaultImplsClass.getOrSetIfNull {
