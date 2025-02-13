@@ -49,7 +49,7 @@ internal class NativeDefaultParameterInjector(context: KonanBackendContext) : De
 
         return with(createIrBuilder()) {
             irCallWithSubstitutedType(symbols.reinterpret, listOf(nullConstOfEquivalentType.type, type)).apply {
-                extensionReceiver = nullConstOfEquivalentType
+                arguments[0] = nullConstOfEquivalentType
             }
         }
     }
