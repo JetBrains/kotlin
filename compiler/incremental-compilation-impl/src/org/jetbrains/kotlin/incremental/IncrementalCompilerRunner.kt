@@ -379,7 +379,7 @@ abstract class IncrementalCompilerRunner<
         dirtyFiles.add(dirtyFilesCachedHistory.read(), "was not compiled last time")
     }
 
-    protected sealed class CompilationMode {
+    sealed class CompilationMode {
         class Incremental(val dirtyFiles: DirtyFilesContainer) : CompilationMode()
         class Rebuild(val reason: BuildAttribute) : CompilationMode()
     }
