@@ -2,6 +2,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___testListAny__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___")
 public fun __root___testListAny__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

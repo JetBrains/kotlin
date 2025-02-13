@@ -8,6 +8,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("AbstractBase_abstractFun1")
 public fun AbstractBase_abstractFun1(self: kotlin.native.internal.NativePtr): Unit {

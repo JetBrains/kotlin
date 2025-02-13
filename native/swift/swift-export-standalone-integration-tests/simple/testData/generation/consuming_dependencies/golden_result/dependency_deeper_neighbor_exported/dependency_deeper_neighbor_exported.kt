@@ -3,6 +3,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("dependency_four_AnotherBar_init_allocate")
 public fun dependency_four_AnotherBar_init_allocate(): kotlin.native.internal.NativePtr {

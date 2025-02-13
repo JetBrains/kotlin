@@ -4,6 +4,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("weird_A_bar_get")
 public fun weird_A_bar_get(self: kotlin.native.internal.NativePtr): Int {

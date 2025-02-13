@@ -2,6 +2,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("U30_0times_get")
 public fun U30_0times_get(): kotlin.native.internal.NativePtr {

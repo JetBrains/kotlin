@@ -274,16 +274,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.internal {
         }
         public init(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-            readIfAbsent: @escaping (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool
+            readIfAbsent: @escaping @convention(block) (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool
         ) {
             let __kt = kotlinx_serialization_internal_ElementMarker_init_allocate()
             super.init(__externalRCRef: __kt)
             kotlinx_serialization_internal_ElementMarker_init_initialize__TypesOfArguments__Swift_UInt_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U20Swift_Int32U29202D_U20Swift_Bool__(__kt, descriptor.__externalRCRef(), {
                 let originalBlock = readIfAbsent
-                return {
-                    originalBlock()
-                    return 0
-                }
+                return { arg0, arg1 in return originalBlock(KotlinRuntime.KotlinBase(__externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, arg1) }
             }())
         }
         package override init(
@@ -322,7 +319,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public protocol SerializersModuleCollector: KotlinRuntime.KotlinBase {
         func contextual(
             kClass: Swift.Never,
-            provider: @escaping (Swift.Array<Swift.Never>) -> Swift.Never
+            provider: @escaping @convention(block) (Swift.Array<Swift.Never>) -> Swift.Never
         ) -> Swift.Void
         func contextual(
             kClass: Swift.Never,
@@ -336,15 +333,15 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         @available(*, deprecated, message: "Deprecated in favor of function with more precise name: polymorphicDefaultDeserializer. Replacement: polymorphicDefaultDeserializer(baseClass, defaultDeserializerProvider)")
         func polymorphicDefault(
             baseClass: Swift.Never,
-            defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Never
+            defaultDeserializerProvider: @escaping @convention(block) (Swift.Optional<Swift.String>) -> Swift.Never
         ) -> Swift.Void
         func polymorphicDefaultDeserializer(
             baseClass: Swift.Never,
-            defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Never
+            defaultDeserializerProvider: @escaping @convention(block) (Swift.Optional<Swift.String>) -> Swift.Never
         ) -> Swift.Void
         func polymorphicDefaultSerializer(
             baseClass: Swift.Never,
-            defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
+            defaultSerializerProvider: @escaping @convention(block) (Swift.Never) -> Swift.Never
         ) -> Swift.Void
     }
     open class SerializersModule: KotlinRuntime.KotlinBase {
@@ -383,7 +380,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public final class SerializersModuleBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector {
         public func contextual(
             kClass: Swift.Never,
-            provider: @escaping (Swift.Array<Swift.Never>) -> Swift.Never
+            provider: @escaping @convention(block) (Swift.Array<Swift.Never>) -> Swift.Never
         ) -> Swift.Void {
             fatalError()
         }
@@ -407,13 +404,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         }
         public func polymorphicDefaultDeserializer(
             baseClass: Swift.Never,
-            defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Never
+            defaultDeserializerProvider: @escaping @convention(block) (Swift.Optional<Swift.String>) -> Swift.Never
         ) -> Swift.Void {
             fatalError()
         }
         public func polymorphicDefaultSerializer(
             baseClass: Swift.Never,
-            defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
+            defaultSerializerProvider: @escaping @convention(block) (Swift.Never) -> Swift.Never
         ) -> Swift.Void {
             fatalError()
         }
@@ -854,28 +851,22 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     public static func buildClassSerialDescriptor(
         serialName: Swift.String,
         typeParameters: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-        builderAction: @escaping () -> Swift.Void
+        builderAction: @escaping @convention(block) () -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase(__externalRCRef: kotlinx_serialization_descriptors_buildClassSerialDescriptor__TypesOfArguments__Swift_String_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U2829202D_U20Swift_Void__(serialName, typeParameters.__externalRCRef(), {
             let originalBlock = builderAction
-            return {
-                originalBlock()
-                return 0
-            }
+            return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
     public static func buildSerialDescriptor(
         serialName: Swift.String,
         kind: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind,
         typeParameters: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-        builder: @escaping () -> Swift.Void
+        builder: @escaping @convention(block) () -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase(__externalRCRef: kotlinx_serialization_descriptors_buildSerialDescriptor__TypesOfArguments__Swift_String_ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialKind_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U2829202D_U20Swift_Void__(serialName, kind.__externalRCRef(), typeParameters.__externalRCRef(), {
             let originalBlock = builder
-            return {
-                originalBlock()
-                return 0
-            }
+            return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
     public static func listSerialDescriptor(
@@ -1077,7 +1068,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.builtins {
 public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     public protocol ChunkedDecoder: KotlinRuntime.KotlinBase {
         func decodeStringChunked(
-            consumeChunk: @escaping (Swift.String) -> Swift.Void
+            consumeChunk: @escaping @convention(block) (Swift.String) -> Swift.Void
         ) -> Swift.Void
     }
     public protocol CompositeDecoder: KotlinRuntime.KotlinBase {

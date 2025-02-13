@@ -3,6 +3,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___MyObject_get")
 public fun __root___MyObject_get(): kotlin.native.internal.NativePtr {

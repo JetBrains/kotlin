@@ -23,8 +23,8 @@ class SirFunctionalType(
     val returnType: SirType,
     override val attributes: List<SirAttribute> = emptyList(),
 ) : SirType {
-    fun copyAppendingAttribute(attribute: SirAttribute): SirFunctionalType =
-        SirFunctionalType(parameterTypes, returnType, attributes + attribute)
+    fun copyAppendingAttributes(vararg attributes: SirAttribute): SirFunctionalType =
+        SirFunctionalType(parameterTypes, returnType, this.attributes + attributes)
 }
 
 open class SirNominalType(
@@ -54,8 +54,8 @@ open class SirNominalType(
         return result
     }
 
-    fun copyAppendingAttribute(attribute: SirAttribute): SirNominalType =
-        SirNominalType(typeDeclaration, typeArguments, parent, attributes + attribute)
+    fun copyAppendingAttributes(vararg attributes: SirAttribute): SirNominalType =
+        SirNominalType(typeDeclaration, typeArguments, parent, this.attributes + attributes)
 }
 
 class SirOptionalType(type: SirType) : SirNominalType(

@@ -7,6 +7,7 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.sir.SirArgument
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirFunctionalType
 import org.jetbrains.kotlin.sir.SirNominalType
@@ -38,9 +39,9 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
             val sirType = createParameterType(ktSymbol, parameter)
                 .let {
                     when (it) {
-                        is SirFunctionalType -> it.copyAppendingAttribute(SirAttribute.Escaping)
+                        is SirFunctionalType -> it.copyAppendingAttributes(SirAttribute.Escaping, SirAttribute.Convention.Block)
                         is SirNominalType -> if (it.isTypealiasOntoFunctionalType) {
-                            it.copyAppendingAttribute(SirAttribute.Escaping)
+                            it.copyAppendingAttributes(SirAttribute.Escaping, SirAttribute.Convention.Block)
                         } else {
                             it
                         }

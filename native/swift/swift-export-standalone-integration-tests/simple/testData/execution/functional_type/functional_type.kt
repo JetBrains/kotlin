@@ -32,3 +32,42 @@ fun call_saved_closure() = closure_property()
 typealias callback = () -> Unit
 var callback_property: callback = {}
 fun call_saved_callback() = callback_property()
+
+// MODULE: ref_types(data)
+// EXPORT_TO_SWIFT
+// FILE: ref_types.kt
+
+private lateinit var ref_block: (Bar) -> Bar
+
+fun saveRefBlock(block: (Bar) -> Bar) {
+    ref_block = block
+}
+fun callRefBlock(with: Bar): Bar = ref_block(with)
+
+// MODULE: primitive_types
+// EXPORT_TO_SWIFT
+// FILE: primitive_types.kt
+
+private lateinit var prim_block: (Byte) -> Byte
+
+fun savePrimBlock(block: (Byte) -> Byte) {
+    prim_block = block
+}
+fun callPrimBlock(with: Byte): Byte = prim_block(with)
+
+// MODULE: collection_types
+// EXPORT_TO_SWIFT
+// FILE: collection_types.kt
+
+private lateinit var list_block: (List<Int>) -> List<Int>
+
+fun saveListBlock(block: (List<Int>) -> List<Int>) {
+    list_block = block
+}
+fun callListBlock(with: List<Int>): List<Int> = list_block(with)
+
+// MODULE: data
+// EXPORT_TO_SWIFT
+// FILE: data.kt
+
+class Bar(var i: Int)

@@ -264,34 +264,25 @@ public var block: main.closure {
     set {
         return __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__({
             let originalBlock = newValue
-            return {
-                originalBlock()
-                return 0
-            }
+            return { return originalBlock() }
         }())
     }
 }
 public func consume_closure(
-    block: @escaping main.closure
+    block: @escaping @convention(block) main.closure
 ) -> Swift.Void {
     return __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock = block
-        return {
-            originalBlock()
-            return 0
-        }
+        return { return originalBlock() }
     }())
 }
 public func deeper_closure_typealiase(
-    block: @escaping main.deeper_closure_typealias
+    block: @escaping @convention(block) main.deeper_closure_typealias
 ) -> main.deeper_closure_typealias {
     return {
         let nativeBlock = __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock = block
-        return {
-            originalBlock()
-            return 0
-        }
+        return { return originalBlock() }
     }())
         return { nativeBlock!() }
     }()
