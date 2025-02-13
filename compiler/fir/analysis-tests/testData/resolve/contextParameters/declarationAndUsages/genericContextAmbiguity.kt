@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-75150
 
@@ -14,5 +14,5 @@ class B
 
 context(_: Describer<A>, _: Describer<B>)
 fun bar() {
-    <!AMBIGUOUS_CONTEXT_ARGUMENT!>log<!>(A())
+    log(A())
 }
