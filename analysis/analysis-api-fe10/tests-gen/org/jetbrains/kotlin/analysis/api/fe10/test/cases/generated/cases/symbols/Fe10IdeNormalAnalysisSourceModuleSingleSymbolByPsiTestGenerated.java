@@ -498,6 +498,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("booleanContextParameter.kt")
+    public void testBooleanContextParameter() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanContextParameter.kt");
+    }
+
+    @Test
     @TestMetadata("booleanExprContract.kt")
     public void testBooleanExprContract() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts/booleanExprContract.kt");

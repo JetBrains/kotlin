@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
@@ -49,18 +50,21 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         val logicSystem = object : LogicSystem(context.session.typeContext) {
             override val variableStorage = VariableStorage(context.session)
         }
-        val argumentVariables = Array(function.valueParameters.size + 1) { i ->
-            if (i > 0) {
-                RealVariable.local(function.valueParameters[i - 1].symbol)
-            } else {
-                val receiverParameter =
-                    if (function.symbol is FirPropertyAccessorSymbol) {
-                        context.containingProperty?.receiverParameter ?: function.receiverParameter
-                    } else {
-                        function.receiverParameter
-                    }
-                val type = receiverParameter?.typeRef?.coneType ?: return@Array null
-                RealVariable.implicit(receiverParameter.symbol, type)
+        val size = function.valueParameters.size + function.contextParametersForFunctionOrContainingProperty().size + 1
+        val argumentVariables = Array(size) { i ->
+            when (val realIndex = i - 1) {
+                -1 -> {
+                    val receiverParameter =
+                        if (function.symbol is FirPropertyAccessorSymbol) {
+                            context.containingProperty?.receiverParameter ?: function.receiverParameter
+                        } else {
+                            function.receiverParameter
+                        }
+                    val type = receiverParameter?.typeRef?.coneType ?: return@Array null
+                    RealVariable.implicit(receiverParameter.symbol, type)
+                }
+                in function.valueParameters.indices -> RealVariable.local(function.valueParameters[realIndex].symbol)
+                else -> RealVariable.local(function.contextParametersForFunctionOrContainingProperty()[realIndex - function.valueParameters.size].symbol)
             }
         }
 

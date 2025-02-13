@@ -133,11 +133,18 @@ private class ConeContractDescriptionElementToAnalysisApi(
         valueParameterReference: ConeValueParameterReference,
         constructor: (KaParameterSymbol) -> T
     ): T = constructor(
-        if (valueParameterReference.parameterIndex == -1) firFunctionSymbol.receiverParameter
-            ?: errorWithAttachment("${firFunctionSymbol::class} should contain a receiver") {
-                withFirEntry("fir", firFunctionSymbol.firSymbol.fir)
-            }
-        else firFunctionSymbol.valueParameters[valueParameterReference.parameterIndex]
+        when (val index = valueParameterReference.parameterIndex) {
+            -1 -> firFunctionSymbol.receiverParameter
+                ?: errorWithAttachment("${firFunctionSymbol::class} should contain a receiver") {
+                    withFirEntry("fir", firFunctionSymbol.firSymbol.fir)
+                }
+            in firFunctionSymbol.valueParameters.indices -> firFunctionSymbol.valueParameters[index]
+            // property accessors don't seem to be supported here despite being supported in FIR
+            else -> firFunctionSymbol.contextParameters.elementAtOrNull(index - firFunctionSymbol.valueParameters.size)
+                ?: errorWithAttachment("${firFunctionSymbol::class} doesn't contain parameter or context parameter with index $index") {
+                    withFirEntry("fir", firFunctionSymbol.firSymbol.fir)
+                }
+        }
     )
 
     // Util function to avoid hard coding names of the classes. Type inference will do a better job figuring out the best type to cast to.

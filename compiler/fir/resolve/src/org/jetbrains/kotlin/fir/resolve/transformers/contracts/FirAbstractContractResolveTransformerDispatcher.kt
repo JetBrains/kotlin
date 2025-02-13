@@ -156,8 +156,12 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             contractDescription: FirLegacyRawContractDescription,
             hasBodyContract: Boolean
         ): T {
-            val valueParameters = owner.valueParameters
-            for (valueParameter in valueParameters) {
+            val valueAndContextParameters = when (owner) {
+                is FirPropertyAccessor -> owner.valueParameters + owner.propertySymbol.resolvedContextParameters
+                is FirFunction -> owner.valueParameters + owner.contextParameters
+            }
+
+            for (valueParameter in valueAndContextParameters) {
                 context.storeVariable(valueParameter, session)
             }
 
@@ -191,7 +195,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 ?: return transformOwnerOfErrorContract(owner, contractDescription, hasBodyContract)
 
             val resolvedContractDescription = buildResolvedContractDescription {
-                val effectExtractor = ConeEffectExtractor(session, owner, valueParameters)
+                val effectExtractor = ConeEffectExtractor(session, owner, valueAndContextParameters)
                 for (statement in lambdaBody.statements) {
                     if (statement.source?.kind is KtFakeSourceElementKind.ImplicitReturn) continue
                     when (val effect = statement.accept(effectExtractor, null)) {

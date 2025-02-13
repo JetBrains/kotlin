@@ -7102,6 +7102,12 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("contractOnContextParameter.kt")
+    public void testContractOnContextParameter() {
+      runTest("compiler/testData/codegen/box/contracts/contractOnContextParameter.kt");
+    }
+
+    @Test
     @TestMetadata("destructuredVariable.kt")
     public void testDestructuredVariable() {
       runTest("compiler/testData/codegen/box/contracts/destructuredVariable.kt");

@@ -1,20 +1,16 @@
-// RUN_PIPELINE_TILL: BACKEND
-// ISSUE: KT-74572
 // LANGUAGE: +ContextParameters
+// IGNORE_FIR_METADATA_LOADING_K1
+// IGNORE_BACKEND_K1: ANY
+// IGNORE K1
+package test
+
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 context(a: String?)
-@ExperimentalContracts
+@OptIn(ExperimentalContracts::class)
 fun validate() {
     contract {
         returns() implies (a!= null)
     }
-}
-
-context(a: String?)
-@ExperimentalContracts
-fun process() {
-    validate()
-    a.length
 }

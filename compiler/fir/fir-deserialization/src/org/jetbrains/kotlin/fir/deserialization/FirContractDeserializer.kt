@@ -41,13 +41,22 @@ class FirContractDeserializer(private val c: FirDeserializationContext) :
     ): KtValueParameterReference<ConeKotlinType, ConeDiagnostic>? {
         val name: String
         val ownerFunction = owner as FirSimpleFunction
-        val typeRef = if (valueParameterIndex < 0) {
-            name = "this"
-            ownerFunction.receiverParameter?.typeRef
-        } else {
-            val parameter = ownerFunction.valueParameters.getOrNull(valueParameterIndex) ?: return null
-            name = parameter.name.asString()
-            parameter.returnTypeRef
+        val typeRef = when (valueParameterIndex) {
+            -1 -> {
+                name = "this"
+                ownerFunction.receiverParameter?.typeRef
+            }
+            in ownerFunction.valueParameters.indices -> {
+                val parameter = ownerFunction.valueParameters.getOrNull(valueParameterIndex) ?: return null
+                name = parameter.name.asString()
+                parameter.returnTypeRef
+            }
+            else -> {
+                val parameter =
+                    ownerFunction.contextParameters.getOrNull(valueParameterIndex - ownerFunction.valueParameters.size) ?: return null
+                name = parameter.name.asString()
+                parameter.returnTypeRef
+            }
         } ?: return null
 
         @OptIn(UnexpandedTypeCheck::class)

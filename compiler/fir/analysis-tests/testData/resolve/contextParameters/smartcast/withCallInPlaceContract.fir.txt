@@ -6,6 +6,7 @@ FILE: withCallInPlaceContract.kt
     @R|kotlin/contracts/ExperimentalContracts|() public final fun <R> myRun(): R|R|
         [R|Contract description]
          <
+            CallsInPlace(block, EXACTLY_ONCE)
         >
      {
          {

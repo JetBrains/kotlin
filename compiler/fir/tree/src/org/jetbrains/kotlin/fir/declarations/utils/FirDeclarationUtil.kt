@@ -101,3 +101,9 @@ fun FirVariable.getDestructuredParameter(): FirValueParameterSymbol? {
     val calleeReference = receiver.calleeReference as? FirResolvedNamedReference ?: return null
     return calleeReference.resolvedSymbol as? FirValueParameterSymbol
 }
+
+fun FirCallableDeclaration.contextParametersForFunctionOrContainingProperty(): List<FirValueParameter> =
+    if (this is FirPropertyAccessor)
+        this.propertySymbol.fir.contextParameters
+    else
+        this.contextParameters

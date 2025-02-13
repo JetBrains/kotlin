@@ -32,9 +32,15 @@ class KtErroneousConstantReference<Type, Diagnostic>(val diagnostic: Diagnostic)
         contractDescriptionVisitor.visitErroneousConstantReference(this, data)
 }
 
-/*
- * Index of value parameter of function
- * -1 means that it is reference to extension receiver
+/**
+ * Index of extension receiver, value parameter or context parameter of function.
+ *
+ * `-1` means it's a reference to the extension receiver.
+ *
+ * `[0..valueParameters.size)` means it's a reference to the value parameter with the given index.
+ *
+ * `[valueParameters.size..valueParameters.size + contextParameters.size)`
+ * means it's a reference to the context parameter with the given `index - valueParameters.size`.
  */
 open class KtValueParameterReference<Type, Diagnostic>(val parameterIndex: Int, val name: String) :
     KtContractDescriptionValue<Type, Diagnostic> {
