@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
-import org.jetbrains.kotlin.library.BaseKotlinLibrary
-import org.jetbrains.kotlin.library.commonizerTarget
-import org.jetbrains.kotlin.library.interopFlag
-import org.jetbrains.kotlin.library.irProviderName
+import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 /**
  * Genuine C-interop library always has two properties in manifest: `interop=true` and the `ir_provider` that
@@ -45,4 +44,16 @@ fun ModuleDescriptor.isFromInteropLibrary(): Boolean {
         // cinterop libraries are deserialized by Fir2Ir as ModuleDescriptorImpl, not FirModuleDescriptor
         klibModuleOrigin.isCInteropLibrary()
     } else false
+}
+
+fun KotlinLibrary.getIncompatibility(ownMetadataVersion: MetadataVersion): IncompatibleVersionErrorData<MetadataVersion>? {
+    val libraryMetadataVersion = this.metadataVersion ?: MetadataVersion.INVALID_VERSION
+    if (libraryMetadataVersion.isCompatible(ownMetadataVersion)) return null
+    return IncompatibleVersionErrorData(
+        actualVersion = libraryMetadataVersion,
+        compilerVersion = MetadataVersion.INSTANCE,
+        languageVersion = ownMetadataVersion,
+        expectedVersion = ownMetadataVersion.lastSupportedVersionWithThisLanguageVersion(libraryMetadataVersion.isStrictSemantics),
+        filePath = this.libraryFile.absolutePath,
+    )
 }
