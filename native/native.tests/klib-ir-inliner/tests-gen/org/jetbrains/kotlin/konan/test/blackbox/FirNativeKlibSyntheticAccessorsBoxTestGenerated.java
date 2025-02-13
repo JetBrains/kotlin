@@ -574,6 +574,12 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
       public void testUsePrivateConstValFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateConstValFromInternalInline.kt");
       }
+
+      @Test
+      @TestMetadata("usePrivateVarFromLocalClassInsideInternalInlineFun.kt")
+      public void testUsePrivateVarFromLocalClassInsideInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateVarFromLocalClassInsideInternalInlineFun.kt");
+      }
     }
 
     @Nested

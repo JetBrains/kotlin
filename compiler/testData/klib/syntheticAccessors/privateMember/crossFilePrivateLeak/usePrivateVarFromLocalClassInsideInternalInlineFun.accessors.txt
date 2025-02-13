@@ -1,0 +1,39 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    private var privateVar: Int
+        /* TARGET declaration */ private fun <get-privateVar>(): Int
+        /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+    internal inline fun internalGetValue(): Int
+        /* LOCAL declaration @0 */ local class LocalGet
+            /* LOCAL declaration @1 */ public fun localGet(): Int
+                /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+        /* LOCAL use-site @1 */ LocalGet().localGet()
+    internal inline fun internalSetValue(value: Int)
+        /* LOCAL declaration @2 */ local class LocalSet
+            /* LOCAL declaration @3 */ public fun localSet(n: Int)
+                /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = n)
+        /* LOCAL use-site @3 */ LocalSet().localSet(n = value)
+    /* ACCESSOR declaration */ public /* static */ fun access$<get-privateVar>($this: A): Int
+        /* TARGET use-site */ $this.<get-privateVar>()
+    /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
+        /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* LOCAL declaration @0 */ local class LocalGet
+        /* LOCAL declaration @1 */ public fun localGet(): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+    /* LOCAL use-site @1 */ LocalGet().localGet()
+    /* LOCAL declaration @2 */ local class LocalSet
+        /* LOCAL declaration @3 */ public fun localSet(n: Int)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = n)
+    /* LOCAL use-site @3 */ LocalSet().localSet(n = value)
+    /* LOCAL declaration @4 */ local class LocalGet
+        /* LOCAL declaration @5 */ public fun localGet(): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+    /* LOCAL use-site @5 */ LocalGet().localGet()
