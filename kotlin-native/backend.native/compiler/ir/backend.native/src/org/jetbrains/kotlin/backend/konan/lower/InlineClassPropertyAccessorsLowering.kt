@@ -43,11 +43,11 @@ private class InlineClassAccessorsTransformer(private val context: Context) : Ir
 
         property.parent.let {
             if (it is IrClass && it.isSingleFieldValueClass && property.backingField != null) {
-                expression.dispatchReceiver?.let { receiver ->
+                expression.arguments[0]?.let { receiver ->
                     return builder.at(expression)
                             .irCall(symbols.reinterpret, expression.type, listOf(receiver.type, expression.type))
                             .apply {
-                                extensionReceiver = receiver
+                                arguments[0] = receiver
                             }
                 }
             }
