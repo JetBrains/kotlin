@@ -85,6 +85,7 @@ open class IncrementalFirJvmCompilerRunner(
     ): Pair<ExitCode, Collection<File>> {
 //        val isIncremental = true // TODO
         val collector = GroupingMessageCollector(messageCollector, args.allWarningsAsErrors, args.reportAllWarnings)
+        val allSourcesWithJava = allSources + args.javaSources()
         // from K2JVMCompiler (~)
         val moduleName = args.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         val targetId = TargetId(moduleName, "java-production") // TODO: get rid of magic constant
@@ -156,7 +157,7 @@ open class IncrementalFirJvmCompilerRunner(
                 addAll(JVMConfigurationKeys.MODULES, listOf(ModuleBuilder(targetId.name, destination.path, targetId.type)))
 
                 configureBaseRoots(args)
-                configureSourceRootsFromSources(allSources, commonSources, args.javaPackagePrefix)
+                configureSourceRootsFromSources(allSourcesWithJava, commonSources, args.javaPackagePrefix)
             }
             // - /configuration
 
@@ -347,3 +348,5 @@ fun CompilerConfiguration.configureSourceRootsFromSources(
         }
     }
 }
+
+private fun K2JVMCompilerArguments.javaSources(): List<File> = freeArgs.filter { it.endsWith(".java") }.map { File(it) }
