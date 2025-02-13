@@ -1,0 +1,41 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: Foo
+
+FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> transformation([ResolvedTo(RAW_FIR)] body: ( () -> T )): T { LAZY_BLOCK }
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] l: Int, [ResolvedTo(RAW_FIR)] r: String): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val l: Int = R|<local>/l|
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] l: Int = this@R|/MyPair|.R|/MyPair.l|): R|MyPair|
+
+    }
