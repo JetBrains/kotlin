@@ -4,6 +4,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("Foo_accept__TypesOfArguments__main_Bar_opt___")
 public fun Foo_accept__TypesOfArguments__main_Bar_opt___(self: kotlin.native.internal.NativePtr, b: kotlin.native.internal.NativePtr): Unit {

@@ -3,6 +3,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import org.kotlin.foo.x as org_kotlin_foo_x
 import org.kotlin.foo.y as org_kotlin_foo_y
 

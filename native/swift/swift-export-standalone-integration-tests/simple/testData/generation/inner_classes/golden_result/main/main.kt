@@ -5,6 +5,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("Outer_Inner_InnerInner_init_allocate")
 public fun Outer_Inner_InnerInner_init_allocate(): kotlin.native.internal.NativePtr {

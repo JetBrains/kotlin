@@ -1,4 +1,4 @@
-@_implementationOnly import KotlinBridges_main
+@_implementationOnly import KotlinBridges_simple
 import KotlinRuntimeSupport
 
 public var closure_property: () -> Swift.Void {
@@ -11,10 +11,7 @@ public var closure_property: () -> Swift.Void {
     set {
         return __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__({
             let originalBlock = newValue
-            return {
-                originalBlock()
-                return 0
-            }
+            return { return originalBlock() }
         }())
     }
 }
@@ -31,14 +28,11 @@ public func foo_2() -> () -> Swift.Void {
     }()
 }
 public func foo_consume_simple(
-    block: @escaping () -> Swift.Void
+    block: @escaping @convention(block) () -> Swift.Void
 ) -> Swift.Void {
     return __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock = block
-        return {
-            originalBlock()
-            return 0
-        }
+        return { return originalBlock() }
     }())
 }
 public func foo_sus() -> Swift.Never {

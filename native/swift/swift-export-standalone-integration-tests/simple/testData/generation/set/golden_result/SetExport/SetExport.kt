@@ -2,6 +2,7 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
+import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___testOptSetInt__TypesOfArguments__Swift_Set_Swift_Int32__opt___")
 public fun __root___testOptSetInt__TypesOfArguments__Swift_Set_Swift_Int32__opt___(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
