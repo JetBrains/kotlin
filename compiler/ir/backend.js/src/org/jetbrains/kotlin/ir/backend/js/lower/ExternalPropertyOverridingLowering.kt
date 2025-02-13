@@ -105,7 +105,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
         externalPropertyAccessorsTransformer
             .primaryConstructorBody
             .statements
-            .addAll(positionInConstructorForAccessors, declaredSuperVariableAndFields.reversed().map { it.value })
+            .addAll(positionInConstructorForAccessors, declaredSuperVariableAndFields.map { it.value })
 
         declaredSuperVariableAndFields.forEach { (variable, field) ->
             if (field == null) return@forEach
