@@ -40,7 +40,7 @@ val IrWhen.isBoxParameterDefaultResolution: Boolean
     get() = origin == ES6_BOX_PARAMETER_DEFAULT_RESOLUTION
 
 val IrFunction.boxParameter: IrValueParameter?
-    get() = valueParameters.lastOrNull()?.takeIf { it.isBoxParameter }
+    get() = parameters.lastOrNull { it.isBoxParameter }
 
 /**
  * Adds box parameter to a constructor if needed.
@@ -61,7 +61,8 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
 
     private fun IrConstructor.addBoxParameter() {
         val irClass = parentAsClass
-        val boxParameter = generateBoxParameter(irClass).also { valueParameters = valueParameters memoryOptimizedPlus it }
+        val boxParameter = generateBoxParameter(irClass)
+        parameters = parameters memoryOptimizedPlus boxParameter
 
         val body = body as? IrBlockBody ?: return
         val isBoxUsed = body.replaceThisWithBoxBeforeSuperCall(irClass, boxParameter.symbol)
