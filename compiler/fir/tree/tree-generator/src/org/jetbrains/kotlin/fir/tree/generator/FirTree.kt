@@ -511,6 +511,8 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val contractDescriptionOwner: Element by sealedElement(Declaration) {
         +field(contractDescription, withReplace = true, nullable = true, withTransform = true)
+        +field("body", block, nullable = true)
+        +listField("valueParameters", valueParameter)
     }
 
     val property: Element by element(Declaration) {

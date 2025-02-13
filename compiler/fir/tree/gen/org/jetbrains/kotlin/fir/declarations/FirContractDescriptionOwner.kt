@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 sealed interface FirContractDescriptionOwner : FirElement {
     override val source: KtSourceElement?
     val contractDescription: FirContractDescription?
+    val body: FirBlock?
+    val valueParameters: List<FirValueParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitContractDescriptionOwner(this, data)
