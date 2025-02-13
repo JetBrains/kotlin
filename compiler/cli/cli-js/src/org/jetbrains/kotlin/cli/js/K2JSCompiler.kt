@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -147,7 +149,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyIRGenerationFinished()
+            performanceManager?.notifyPhaseFinished(PhaseMeasurementType.IrGeneration)
             return OK
         }
 
@@ -235,28 +237,28 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         outputKlibPath: String,
     ): ModulesStructure {
         val performanceManager = environmentForJS.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-        performanceManager?.notifyAnalysisStarted()
         lateinit var sourceModule: ModulesStructure
-        do {
-            val analyzerFacade = when (arguments.wasm) {
-                true -> TopDownAnalyzerFacadeForWasm.facadeFor(environmentForJS.configuration.get(WasmConfigurationKeys.WASM_TARGET))
-                else -> TopDownAnalyzerFacadeForJSIR
-            }
-            sourceModule = prepareAnalyzedSourceModule(
-                environmentForJS.project,
-                environmentForJS.getSourceFiles(),
-                environmentForJS.configuration,
-                libraries,
-                friendLibraries,
-                AnalyzerWithCompilerReport(environmentForJS.configuration),
-                analyzerFacade = analyzerFacade
-            )
-            val result = sourceModule.jsFrontEndResult.jsAnalysisResult
-            if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
-                environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
-            }
-        } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
-        performanceManager?.notifyAnalysisFinished()
+        performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+            do {
+                val analyzerFacade = when (arguments.wasm) {
+                    true -> TopDownAnalyzerFacadeForWasm.facadeFor(environmentForJS.configuration.get(WasmConfigurationKeys.WASM_TARGET))
+                    else -> TopDownAnalyzerFacadeForJSIR
+                }
+                sourceModule = prepareAnalyzedSourceModule(
+                    environmentForJS.project,
+                    environmentForJS.getSourceFiles(),
+                    environmentForJS.configuration,
+                    libraries,
+                    friendLibraries,
+                    AnalyzerWithCompilerReport(environmentForJS.configuration),
+                    analyzerFacade = analyzerFacade
+                )
+                val result = sourceModule.jsFrontEndResult.jsAnalysisResult
+                if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
+                    environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
+                }
+            } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
+        }
 
         if (sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && (arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
             val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files

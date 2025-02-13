@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.pipeline
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
-import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 
 abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext> {
     object CheckMessageCollector : CheckCompilationErrors() {
@@ -46,30 +46,35 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
 
 object PerformanceNotifications {
     // frontend
-    object AnalysisStarted : AbstractNotification(PerformanceManager::notifyAnalysisStarted)
-    object AnalysisFinished : AbstractNotification(PerformanceManager::notifyAnalysisFinished)
+    object AnalysisStarted : AbstractNotification(PhaseMeasurementType.Analysis, start = true)
+    object AnalysisFinished : AbstractNotification(PhaseMeasurementType.Analysis, start = false)
 
     // fir2ir
-    object IrGenerationStarted : AbstractNotification(PerformanceManager::notifyIRGenerationStarted)
-    object IrGenerationFinished : AbstractNotification(PerformanceManager::notifyIRGenerationFinished)
+    object IrGenerationStarted : AbstractNotification(PhaseMeasurementType.IrGeneration, start = true)
+    object IrGenerationFinished : AbstractNotification(PhaseMeasurementType.IrGeneration, start = false)
 
     // backend lowerings
-    object IrLoweringStarted : AbstractNotification(PerformanceManager::notifyIRLoweringStarted)
-    object IrLoweringFinished : AbstractNotification(PerformanceManager::notifyIRLoweringFinished)
+    object IrLoweringStarted : AbstractNotification(PhaseMeasurementType.IrLowering, start = true)
+    object IrLoweringFinished : AbstractNotification(PhaseMeasurementType.IrLowering, start = false)
 
     // backend codegen
-    object BackendGenerationStarted : AbstractNotification(PerformanceManager::notifyBackendGenerationStarted)
-    object BackendGenerationFinished : AbstractNotification(PerformanceManager::notifyBackendGenerationFinished)
+    object BackendGenerationStarted : AbstractNotification(PhaseMeasurementType.BackendGeneration, start = true)
+    object BackendGenerationFinished : AbstractNotification(PhaseMeasurementType.BackendGeneration, start = false)
 
     sealed class AbstractNotification(
-        val notify: PerformanceManager.() -> Unit
+        val phaseType: PhaseMeasurementType,
+        val start: Boolean,
     ) : Action<PipelineArtifact, PipelineContext> {
         override fun invoke(
             state: ActionState,
             input: PipelineArtifact,
             c: PipelineContext,
         ) {
-            c.performanceManager.notify()
+            if (start) {
+                c.performanceManager.notifyPhaseStarted(phaseType)
+            } else {
+                c.performanceManager.notifyPhaseFinished(phaseType)
+            }
         }
     }
 }

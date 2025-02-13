@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 @OptIn(LegacyK2CliPipeline::class)
 fun runFrontendForKapt(
@@ -68,40 +70,40 @@ private fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
     val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
     @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
     performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
-    performanceManager?.notifyAnalysisStarted()
+    return performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+        val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
+            AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
+        }
 
-    val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-        AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
+        val scriptsInCommonSourcesErrors = JvmFrontendPipelinePhase.checkIfScriptsInCommonSources(configuration, ktFiles)
+
+        val sourceScope: AbstractProjectFileSearchScope = projectEnvironment.getSearchScopeByPsiFiles(ktFiles) +
+                projectEnvironment.getSearchScopeForProjectJavaSources()
+
+        var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
+
+        val providerAndScopeForIncrementalCompilation =
+            createContextForIncrementalCompilation(projectEnvironment, configuration, sourceScope)
+
+        providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
+            librariesScope -= it
+        }
+        val sessionsWithSources = prepareJvmSessions(
+            ktFiles,
+            rootModuleName,
+            friendPaths,
+            librariesScope,
+            isCommonSource = { it.isCommonSource == true },
+            isScript = { it.isScript() },
+            fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },
+            createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
+        )
+
+        val outputs = sessionsWithSources.map { (session, sources) ->
+            buildResolveAndCheckFirFromKtFiles(session, sources, diagnosticsReporter)
+        }
+        outputs.runPlatformCheckers(diagnosticsReporter)
+
+        runUnless(!ignoreErrors && (syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors)) { FirResult(outputs) }
     }
-
-    val scriptsInCommonSourcesErrors = JvmFrontendPipelinePhase.checkIfScriptsInCommonSources(configuration, ktFiles)
-
-    val sourceScope: AbstractProjectFileSearchScope = projectEnvironment.getSearchScopeByPsiFiles(ktFiles) +
-            projectEnvironment.getSearchScopeForProjectJavaSources()
-
-    var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-
-    val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(projectEnvironment, configuration, sourceScope)
-
-    providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
-        librariesScope -= it
-    }
-    val sessionsWithSources = prepareJvmSessions(
-        ktFiles,
-        rootModuleName,
-        friendPaths,
-        librariesScope,
-        isCommonSource = { it.isCommonSource == true },
-        isScript = { it.isScript() },
-        fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },
-        createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
-    )
-
-    val outputs = sessionsWithSources.map { (session, sources) ->
-        buildResolveAndCheckFirFromKtFiles(session, sources, diagnosticsReporter)
-    }
-    outputs.runPlatformCheckers(diagnosticsReporter)
-
-    performanceManager?.notifyAnalysisFinished()
-    return runUnless(!ignoreErrors && (syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors)) { FirResult(outputs) }
 }

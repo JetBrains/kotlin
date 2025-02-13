@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
@@ -153,7 +154,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 rootDisposable, configuration, messageCollector,
                 moduleChunk.targetDescription()
             ) ?: run {
-                configuration.perfManager?.notifyCompilerInitialized()
+                configuration.perfManager?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
                 return COMPILATION_ERROR
             }
             environment.registerJavacIfNeeded(arguments).let {
