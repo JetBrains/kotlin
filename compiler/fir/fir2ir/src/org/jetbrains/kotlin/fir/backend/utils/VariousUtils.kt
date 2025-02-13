@@ -42,12 +42,6 @@ fun FirRegularClass.getIrSymbolsForSealedSubclasses(c: Fir2IrComponents): List<I
     }.filterIsInstance<IrClassSymbol>()
 }
 
-fun FirCallableDeclaration.contextParametersForFunctionOrContainingProperty(): List<FirValueParameter> =
-    if (this is FirPropertyAccessor)
-        this.propertySymbol.fir.contextParameters
-    else
-        this.contextParameters
-
 fun List<IrDeclaration>.extractFirDeclarations(): Set<FirDeclaration> {
     return this.mapTo(mutableSetOf()) { ((it as IrMetadataSourceOwner).metadata as FirMetadataSource).fir }
 }

@@ -8263,6 +8263,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/contracts/contractForCast.kt");
     }
 
+    @TestMetadata("contractOnContextParameter.kt")
+    public void testContractOnContextParameter() {
+      runTest("compiler/testData/codegen/box/contracts/contractOnContextParameter.kt");
+    }
+
     @TestMetadata("destructuredVariable.kt")
     public void testDestructuredVariable() {
       runTest("compiler/testData/codegen/box/contracts/destructuredVariable.kt");

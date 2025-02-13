@@ -1020,6 +1020,22 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
     }
 
     @Nested
+    @TestMetadata("compiler/testData/loadJava/compiledKotlin/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextParameters {
+      @Test
+      public void testAllFilesPresentInContextParameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("contractOnContextParameter.kt")
+      public void testContractOnContextParameter() {
+        runTest("compiler/testData/loadJava/compiledKotlin/contextParameters/contractOnContextParameter.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")
     public class ContextReceivers {

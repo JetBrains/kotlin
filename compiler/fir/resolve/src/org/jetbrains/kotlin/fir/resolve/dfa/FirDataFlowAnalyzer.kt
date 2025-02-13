@@ -965,6 +965,9 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitStringConcatenationCall(call).mergeIncomingFlow()
     }
 
+    /**
+     * Receiver, value arguments, context arguments
+     */
     private fun FirStatement.orderedArguments(callee: FirFunction): Array<out FirExpression?>? {
         fun FirQualifiedAccessExpression.firstReceiver(): FirExpression? {
             val candidate = candidate()
@@ -981,19 +984,19 @@ abstract class FirDataFlowAnalyzer(
             else -> null
         }
 
-        return when (this) {
-            is FirFunctionCall -> {
-                // Processing case with a candidate might be necessary for PCLA, because even top-level calls might be not fully completed
+        return buildList {
+            add(receiver)
+
+            if (this@orderedArguments is FirFunctionCall) {
                 val argumentToParameter = resolvedArgumentMapping ?: candidate()?.argumentMapping?.unwrapAtoms() ?: return null
                 val parameterToArgument = argumentToParameter.entries.associate { it.value to it.key.unwrapArgument() }
-                Array(callee.valueParameters.size + 1) { i ->
-                    if (i > 0) parameterToArgument[callee.valueParameters[i - 1]] else receiver
-                }
+                callee.valueParameters.forEach { add(parameterToArgument[it]) }
             }
-            is FirQualifiedAccessExpression -> arrayOf(receiver)
-            is FirVariableAssignment -> arrayOf(receiver, rValue)
-            else -> return null
-        }
+
+            if (this@orderedArguments is FirQualifiedAccessExpression) {
+                contextArguments.forEach { add(it) }
+            }
+        }.toTypedArray()
     }
 
     private fun processConditionalContract(

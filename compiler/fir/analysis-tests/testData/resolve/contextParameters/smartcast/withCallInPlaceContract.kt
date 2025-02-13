@@ -11,7 +11,7 @@ context(block: () -> R)
 @ExperimentalContracts
 fun <R> myRun(): R {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!>
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     return block()
 }
@@ -20,6 +20,8 @@ fun <R> myRun(): R {
 fun test() {
     var x: Any = materialize()
     if (x !is String) return
+    // Lambda can never be passed as context argument, therefore invocation kinds are meaningless for context parameters.
+    // Note that the context argument to the call myRun() is not the lambda, but the extension receiver of the lambda argument to `with`.
     with({
         x.<!UNRESOLVED_REFERENCE!>length<!>
         x = 10

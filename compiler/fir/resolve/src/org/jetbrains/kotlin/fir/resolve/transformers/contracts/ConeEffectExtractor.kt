@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 class ConeEffectExtractor(
     private val session: FirSession,
     private val owner: FirContractDescriptionOwner,
-    private val valueParameters: List<FirValueParameter>
+    private val valueAndContextParameters: List<FirValueParameter>
 ) : FirDefaultVisitor<ConeContractDescriptionElement, Nothing?>() {
     companion object {
         private val BOOLEAN_AND = FirContractsDslNames.id("kotlin", "Boolean", "and")
@@ -151,7 +150,7 @@ class ConeEffectExtractor(
             ?: return KtErroneousValueParameterReference(
                 ConeContractDescriptionError.IllegalParameter(symbol, "'${symbol.name}' is not a value parameter")
             )
-        val index = valueParameters.indexOf(parameter).takeUnless { it < 0 } ?: return KtErroneousValueParameterReference(
+        val index = valueAndContextParameters.indexOf(parameter).takeUnless { it < 0 } ?: return KtErroneousValueParameterReference(
             ConeContractDescriptionError.IllegalParameter(symbol, "value parameter '${symbol.name}' is not found in parameters of outer function")
         )
         val type = parameter.returnTypeRef.coneType
