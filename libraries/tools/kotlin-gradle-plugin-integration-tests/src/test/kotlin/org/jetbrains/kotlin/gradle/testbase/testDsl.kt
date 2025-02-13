@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
-import java.io.File
-import java.io.InputStream
-import java.io.PrintWriter
-import java.io.StringWriter
+import java.io.*
 import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
@@ -177,6 +174,7 @@ fun TestProject.build(
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     inputStream: InputStream? = null,
+    stdoutRedirect: Writer? = null,
     forwardBuildOutput: Boolean = true,
     assertions: BuildResult.() -> Unit = {},
 ) = buildWithAction(
@@ -195,6 +193,7 @@ fun TestProject.build(
     ),
     assertions = assertions,
     inputStream = inputStream,
+    stdoutRedirect = stdoutRedirect,
     action = GradleRunner::build,
 )
 
@@ -231,6 +230,7 @@ fun TestProject.buildAndFail(
     ),
     assertions = assertions,
     inputStream = inputStream,
+    stdoutRedirect = null,
     action = GradleRunner::buildAndFail,
 )
 
@@ -252,6 +252,7 @@ private data class BuildParameterization(
 private fun TestProject.buildWithAction(
     parameters: BuildParameterization,
     inputStream: InputStream?,
+    stdoutRedirect: Writer?,
     assertions: BuildResult.() -> Unit = {},
     action: GradleRunner.() -> BuildResult = GradleRunner::build,
 ) {
@@ -281,6 +282,7 @@ private fun TestProject.buildWithAction(
             .also { if (parameters.forwardBuildOutput) it.forwardOutput() }
             .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
             .withDebug(runWithDebug && !connectSubprocessVMToDebugger)
+            .also { daemon -> stdoutRedirect?.let { daemon.forwardStdOutput(it) } }
             .withArguments(allBuildArguments)
 
         inputStream?.let {
