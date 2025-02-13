@@ -129,12 +129,9 @@ open class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
     }
 }
 
-@Disabled("KT-72822: Compilation errors for now")
 @DisplayName("Default incremental compilation with default precise java tracking on K2 using Fir Runner")
 class IncrementalK2JavaChangeDefaultWithFirIT : IncrementalK2JavaChangeDefaultIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions
-        .copy(useFirJvmRunner = true)
-        .copyEnsuringK2()
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 @DisplayName("Default incremental compilation via Build Tools API")
@@ -326,8 +323,13 @@ class IncrementalK1JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePrec
 }
 
 @DisplayName("Default incremental compilation with disabled precise java tracking and enabled K2")
-class IncrementalK2JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
+open class IncrementalK2JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+@DisplayName("Default incremental compilation with disabled precise java tracking and enabled FIR runner and K2")
+class IncrementalK2JavaChangeDisablePreciseFirIT : IncrementalK2JavaChangeDisablePreciseIT() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 @JvmGradlePluginTests

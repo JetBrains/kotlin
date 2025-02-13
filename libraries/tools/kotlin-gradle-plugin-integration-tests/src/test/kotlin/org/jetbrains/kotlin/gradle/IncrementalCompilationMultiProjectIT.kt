@@ -365,16 +365,24 @@ class IncrementalCompilationK1JvmMultiProjectWithoutPreciseBackupIT : Incrementa
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
 
-class IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+open class IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+open class IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupFirRunnerIT : IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 class IncrementalCompilationK1JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
 
-class IncrementalCompilationK2JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+open class IncrementalCompilationK2JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+class IncrementalCompilationK2JvmMultiProjectFirRunnerIT : IncrementalCompilationK2JvmMultiProjectIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilationBaseIT() {
