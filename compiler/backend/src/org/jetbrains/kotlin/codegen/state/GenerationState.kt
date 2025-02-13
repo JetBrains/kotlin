@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
@@ -50,10 +50,10 @@ class GenerationState(
     private val onIndependentPartCompilationEnd: (GenerationState) -> Unit = {},
     val jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module),
     val ignoreErrors: Boolean = false,
-    diagnosticReporter: DiagnosticReporter? = null,
+    diagnosticReporter: BaseDiagnosticsCollector? = null,
     compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty
 ) {
-    val diagnosticReporter: DiagnosticReporter =
+    val diagnosticReporter: BaseDiagnosticsCollector =
         diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector)
 
     abstract class GenerateClassFilter {

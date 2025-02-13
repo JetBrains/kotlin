@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.js.test.utils.createTestPhaseConfig
@@ -33,6 +36,7 @@ class JsIrInliningFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
         val phaseConfig = createTestPhaseConfig(testServices, module)
 
         val transformedModule = PhaseEngine(
@@ -41,7 +45,7 @@ class JsIrInliningFacade(
             JsPreSerializationLoweringContext(
                 inputArtifact.irPluginContext.irBuiltIns,
                 configuration,
-                inputArtifact.diagnosticReporter,
+                diagnosticReporter,
             ),
         ).runPreSerializationLoweringPhases(
             jsLoweringsOfTheFirstPhase,
@@ -50,6 +54,6 @@ class JsIrInliningFacade(
 
         // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
         // Later, third artifact of class `JsIrDeserializedFromKlibBackendInput` might replace it again during some test pipelines.
-        return inputArtifact.copy(irModuleFragment = transformedModule)
+        return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = diagnosticReporter)
     }
 }

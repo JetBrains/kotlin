@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
-abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
-    abstract val diagnostics: List<KtDiagnostic>
-    abstract val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-    abstract val hasErrors: Boolean
+interface DiagnosticsHolder {
+    val diagnostics: List<KtDiagnostic>
+    val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
+    val hasErrors: Boolean
+}
 
+abstract class BaseDiagnosticsCollector : DiagnosticsHolder, DiagnosticReporter() {
     abstract val rawReporter: RawReporter
 
     fun interface RawReporter {
