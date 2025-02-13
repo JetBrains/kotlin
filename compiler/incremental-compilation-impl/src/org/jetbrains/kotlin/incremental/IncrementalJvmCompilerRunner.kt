@@ -119,7 +119,7 @@ open class IncrementalJvmCompilerRunner(
         }
     }
 
-    private fun verifyBuildHistoryFilesState(): CompilationMode.Rebuild? {
+    private fun verifyBuildHistoryFilesState(): BuildAttribute? {
         if (buildHistoryFile == null) {
             error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
         }
@@ -128,10 +128,10 @@ open class IncrementalJvmCompilerRunner(
             // @LocalState in the Gradle task. Therefore, this compilation will need to run non-incrementally.
             // (Note that buildHistoryFile is outside workingDir. We don't need to perform the same check for files inside
             // workingDir as workingDir is an @OutputDirectory, so the files must be present in an incremental build.)
-            return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
+            return BuildAttribute.NO_BUILD_HISTORY
         }
         if (!lastBuildInfoFile.exists()) {
-            return CompilationMode.Rebuild(BuildAttribute.NO_LAST_BUILD_INFO)
+            return BuildAttribute.NO_LAST_BUILD_INFO
         }
         return null // no rebuild necessary so far, compilation might proceed
     }
@@ -170,7 +170,9 @@ open class IncrementalJvmCompilerRunner(
         reporter.debug { "Classpath changes info passed from Gradle task: ${classpathChanges::class.simpleName}" }
         val changedAndImpactedSymbols = when (classpathChanges) {
             is ClasspathSnapshotDisabled -> reporter.measure(GradleBuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
-                verifyBuildHistoryFilesState()
+                verifyBuildHistoryFilesState()?.let { rebuildReason ->
+                    return CompilationMode.Rebuild(rebuildReason)
+                }
                 val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector)
                     ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
                 changedAndImpactedSymbolsBasedOnHistoryFiles(
