@@ -25,6 +25,7 @@ internal class StandaloneSirSession(
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
     override val moduleProvider: SirModuleProvider,
     val targetPackageFqName: FqName? = null,
+    val referencedTypeHandler: SirKaClassReferenceHandler? = null,
 ) : SirSession {
 
     override val declarationNamer = SirDeclarationNamerImpl()
@@ -33,6 +34,7 @@ internal class StandaloneSirSession(
         declarationsProvider = SirDeclarationFromKtSymbolProvider(
             ktModule = useSiteModule,
             sirSession = sirSession,
+            kaClassReferenceHandler = referencedTypeHandler,
         )
     )
 
