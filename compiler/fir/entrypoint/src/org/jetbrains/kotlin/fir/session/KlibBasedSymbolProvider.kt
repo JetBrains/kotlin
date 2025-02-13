@@ -1,18 +1,26 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.library.KLIB_LEGACY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadataVersion
+import org.jetbrains.kotlin.library.packageFqName
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.utils.SmartList
 import java.nio.file.Paths
 
@@ -30,6 +38,24 @@ class KlibBasedSymbolProvider(
     flexibleTypeFactory,
     defaultDeserializationOrigin,
 ) {
+    private val ownMetadataVersion: MetadataVersion = KLIB_LEGACY_METADATA_VERSION // TODO get from config
+
+    private val KotlinLibrary.incompatibility: IncompatibleVersionErrorData<MetadataVersion>?
+        get() {
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.skipMetadataVersionCheck)) return null
+
+            val libraryMetadataVersion = this.metadataVersion ?: MetadataVersion.INVALID_VERSION
+            if (libraryMetadataVersion.isCompatible(ownMetadataVersion)) return null
+            return IncompatibleVersionErrorData(
+                actualVersion = libraryMetadataVersion,
+                compilerVersion = MetadataVersion.INSTANCE,
+                languageVersion = ownMetadataVersion,
+                expectedVersion = ownMetadataVersion.lastSupportedVersionWithThisLanguageVersion(libraryMetadataVersion.isStrictSemantics),
+                filePath = this.libraryFile.absolutePath,
+                classId = ClassId.fromString(this.packageFqName!!) // TODO
+            )
+        }
+
     private val moduleHeaders by lazy {
         resolvedLibraries.associate { it to parseModuleHeader(it.moduleHeaderData) }
     }
@@ -71,6 +97,7 @@ class KlibBasedSymbolProvider(
         resolvedLibrary,
         moduleHeaders[resolvedLibrary]!!,
         deserializationConfiguration,
-        packageFqName
+        packageFqName,
+        resolvedLibrary.incompatibility
     )
 }
