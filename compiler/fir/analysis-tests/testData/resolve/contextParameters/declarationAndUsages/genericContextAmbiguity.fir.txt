@@ -20,5 +20,5 @@ FILE: genericContextAmbiguity.kt
     }
     context(<unused var>: R|Describer<A>|, <unused var>: R|Describer<B>|)
     public final fun bar(): R|kotlin/Unit| {
-        R|/log<Inapplicable(INAPPLICABLE): /log>#|<R|A|>(R|/A.A|())
+        R|/log|<R|A|>(R|/A.A|())
     }

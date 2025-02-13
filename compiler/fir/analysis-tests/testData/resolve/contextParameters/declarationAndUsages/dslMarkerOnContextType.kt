@@ -47,7 +47,7 @@ fun test4() {
     withExampleContext(3) {
         withExampleReceiver("string") {
             similarExampleTo("string")
-            similarExampleTo(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+            <!DSL_SCOPE_VIOLATION!>similarExampleTo<!>(1)
         }
     }
 }
@@ -56,7 +56,7 @@ fun test5() {
     withExampleReceiver("string") {
         withExampleContext(true) {
             similarExampleTo(true)
-            similarExampleTo(<!ARGUMENT_TYPE_MISMATCH!>"string"<!>)
+            <!DSL_SCOPE_VIOLATION!>similarExampleTo<!>("string")
         }
     }
 }
@@ -64,7 +64,7 @@ fun test5() {
 fun test6() {
     withExampleContext("b") {
         withExampleContext(true) {
-            similarExampleTo(<!ARGUMENT_TYPE_MISMATCH!>"a"<!>)
+            <!DSL_SCOPE_VIOLATION!>similarExampleTo<!>("a")
             similarExampleTo(true)
         }
     }
