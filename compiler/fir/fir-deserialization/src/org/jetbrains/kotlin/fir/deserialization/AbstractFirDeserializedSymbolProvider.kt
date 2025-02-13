@@ -104,7 +104,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
      * [packageNamesForNonClassDeclarations] might contain names of packages containing type aliases, on top of packages containing
      * callables, so it's not the same as `symbolNamesProvider.getPackageNamesWithTopLevelCallables` and cannot be replaced by it.
      */
-    private val packageNamesForNonClassDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val packageNamesForNonClassDeclarations: Set<String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         computePackageSetWithNonClassDeclarations()
     }
 
@@ -118,7 +118,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
         override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<Name>? {
             val classesInPackage = knownTopLevelClassesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) } ?: return null
 
-            if (packageFqName.asString() !in packageNamesForNonClassDeclarations) return classesInPackage
+            packageNamesForNonClassDeclarations?.let { if (packageFqName.asString() !in it) return classesInPackage }
 
             val typeAliasNames = typeAliasesNamesByPackage.getValue(packageFqName)
             if (typeAliasNames.isEmpty()) return classesInPackage
@@ -131,9 +131,9 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
         override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
 
-        override fun getPackageNamesWithTopLevelCallables(): Set<String> = packageNamesForNonClassDeclarations
+        override fun getPackageNamesWithTopLevelCallables(): Set<String>? = packageNamesForNonClassDeclarations
 
-        override fun computePackageNamesWithTopLevelCallables(): Set<String> = packageNamesForNonClassDeclarations
+        override fun computePackageNamesWithTopLevelCallables(): Set<String>? = packageNamesForNonClassDeclarations
 
         override fun computeTopLevelCallableNames(packageFqName: FqName): Set<Name> =
             getPackageParts(packageFqName).flatMapTo(mutableSetOf()) {
@@ -178,8 +178,9 @@ abstract class AbstractFirDeserializedSymbolProvider(
     // Return full package names that might be not empty (have some non-class declarations) in this provider
     // In JVM, it's expensive to compute all the packages that might contain a Java class among dependencies
     // But, as we have all the metadata, we may be sure about top-level callables and type aliases
-    // This method should only be used for sake of optimization to avoid having too many empty-list/null values in our caches
-    protected abstract fun computePackageSetWithNonClassDeclarations(): Set<String>
+    // This method should only be used for sake of optimization to avoid having too many empty-list/null values in our caches;
+    // it can return null if computing the set is too expensive.
+    protected abstract fun computePackageSetWithNonClassDeclarations(): Set<String>?
 
     protected abstract fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>?
 
@@ -321,7 +322,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
         // Don't actually query FirCache when we're sure there are no relevant value
         // It helps to decrease the size of a cache thus leading to better query time
         val packageFqName = classId.packageFqName
-        if (packageFqName.asString() !in packageNamesForNonClassDeclarations) return null
+        packageNamesForNonClassDeclarations?.let { if (packageFqName.asString() !in it) return null }
         if (classId.shortClassName !in typeAliasesNamesByPackage.getValue(packageFqName)) return null
 
         return typeAliasCache.getValue(classId)
