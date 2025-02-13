@@ -145,6 +145,7 @@ open class IncrementalFirJvmCompilerRunner(
                 configureAdvancedJvmOptions(args)
                 configureKlibPaths(args)
                 configureJdkClasspathRoots()
+                configureJdkHome(args)
 
                 val destination = File(args.destination ?: ".")
                 if (destination.path.endsWith(".jar")) {
