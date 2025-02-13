@@ -78,7 +78,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                 IrCallImpl(
                         startOffset, endOffset, type, symbol, typeArguments.size, origin
                 ).apply {
-                    putValueArgument(0, result)
+                    arguments[0] = result
                 }
             }
         }
@@ -86,7 +86,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
 
     private fun IrFunction.getCoercedClass(): IrClass {
         if (name.asString().endsWith("-box>"))
-            return valueParameters[0].type.classifierOrFail.owner as IrClass
+            return parameters[0].type.classifierOrFail.owner as IrClass
         if (name.asString().endsWith("-unbox>"))
             return returnType.classifierOrFail.owner as IrClass
         error("Unexpected coercion: ${this.render()}")
@@ -109,7 +109,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
             if (!expression.isBoxOrUnboxCall())
                 return super.visitCall(expression, null)
 
-            val argument = expression.getValueArgument(0)!!
+            val argument = expression.arguments[0]!!
             return if (expression.symbol.owner.getCoercedClass() == data?.coercion?.symbol?.owner?.getCoercedClass()) {
                 data.folded = true
                 argument.transform(this, null)
@@ -119,7 +119,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                 if (state.folded)
                     result
                 else
-                    expression.also { it.putValueArgument(0, result) }
+                    expression.also { it.arguments[0] = result }
             }
         }
 
