@@ -53,6 +53,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         check(!function.isEffectivelyPrivate()) { "Deserialization of private inline functions is not supported: ${function.render()}" }
 
+        resetSymbolTable()
         val deserializedContainerSource = function.containerSource
         check(deserializedContainerSource is KlibDeserializedContainerSource) {
             "Cannot deserialize inline function from a non-Kotlin library: ${function.render()}\nFunction source: " +
@@ -142,6 +143,11 @@ class NonLinkingIrInlineFunctionDeserializer(
                 )
             }
         }
+    }
+
+    @OptIn(DelicateSymbolTableApi::class)
+    private fun resetSymbolTable() {
+        detachedSymbolTable.reset()
     }
 
     private fun referencePublicSymbol(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =

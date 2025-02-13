@@ -12,12 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMo
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -207,6 +202,7 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
                     sourceBaseDirs = sourceBaseDirs,
                     languageVersionSettings = languageVersionSettings,
                     shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
+                    reuseExistingSignaturesForSymbols = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
                 ),
                 diagnosticReporter = irDiagnosticReporter,
                 irBuiltIns = irBuiltIns,

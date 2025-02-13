@@ -114,6 +114,11 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
         internal fun forEachSymbol(block: (IrSymbol) -> Unit) {
             signatureToSymbol.forEach { (_, symbol) -> block(symbol) }
         }
+
+        @SymbolTableInternals
+        internal fun reset() {
+            signatureToSymbol.clear()
+        }
     }
 
     class Scoped<Key, SymbolOwner, Symbol>(lock: IrLock) : SymbolTableSlice<Key, SymbolOwner, Symbol>(lock)

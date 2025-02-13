@@ -447,6 +447,17 @@ open class SymbolTable(
         fieldSlice.forEachSymbol { block(it) }
     }
 
+    @DelicateSymbolTableApi
+    fun reset() {
+        classSlice.reset()
+        constructorSlice.reset()
+        functionSlice.reset()
+        propertySlice.reset()
+        enumEntrySlice.reset()
+        typeAliasSlice.reset()
+        fieldSlice.reset()
+    }
+
     /**
      * This method should not be used directly, because in a lot of cases there are unbound symbols
      *   not only in SymbolTable itself, but in descriptorExtension too
