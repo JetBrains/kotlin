@@ -166,6 +166,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("stdlibTypes")
+  public void testStdlibTypes() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/stdlibTypes/");
+  }
+
+  @Test
   @TestMetadata("strings")
   public void testStrings() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/strings/");
