@@ -27,4 +27,4 @@ test-dependencies:
   - #org.jetbrains.kotlin.kotlin.kotlin-scripting-compiler-embeddable.main
   - ./../../../libraries/scripting/scripting-jvm
   - ./../../../libraries/scripting/common
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663

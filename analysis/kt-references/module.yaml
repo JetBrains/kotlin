@@ -98,7 +98,7 @@ test-dependencies:
   - ./../../compiler/frontend.common
   - ./../../compiler/util
   - ./../../core/compiler.common
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../core/deserialization.common.jvm
   - ./../../core/deserialization.common
   - ./../../core/metadata.jvm

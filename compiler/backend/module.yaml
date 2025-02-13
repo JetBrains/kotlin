@@ -114,7 +114,7 @@ test-dependencies:
   - ./../frontend.common
   - ./../config
   - ./../container
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../core/compiler.common.jvm
   - ./../compiler.version
   - ./../../core/util.runtime

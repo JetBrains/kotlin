@@ -228,7 +228,7 @@ test-dependencies:
   - ./../../psi
   - ./../../config
   - ./../../container
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../checkers/checkers.web.common
   - ./../../../core/compiler.common.js
   - ./../../../js/js.ast

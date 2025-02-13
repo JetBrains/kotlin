@@ -41,4 +41,4 @@ test-dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - #org.jetbrains.kotlin.kotlin.native.swift.swift-export-embeddable.main
   - ./../../../prepare/compiler-embeddable
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663

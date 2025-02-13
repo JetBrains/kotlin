@@ -199,7 +199,7 @@ test-dependencies:
   - ./../../../core/metadata.jvm
   - ./../../../compiler/frontend.common
   - ./../../../core/compiler.common
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../core/metadata
   - ./../../../core/util.runtime
   - ./../../../compiler/cli/cli-base

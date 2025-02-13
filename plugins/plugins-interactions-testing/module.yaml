@@ -201,7 +201,7 @@ test-dependencies:
   - ./../../compiler/frontend.common-psi
   - ./../../compiler/config
   - ./../../compiler/container
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../compiler/ir/backend.wasm
   - ./../../compiler/ir/backend.js
   - ./../../compiler/ir/serialization.js

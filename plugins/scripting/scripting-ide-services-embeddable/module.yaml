@@ -34,5 +34,5 @@ test-dependencies:
   - #org.jetbrains.kotlin.kotlin.kotlin-scripting-ide-services.main
   - ./../../../libraries/scripting/scripting-jvm
   - ./../../../prepare/compiler-embeddable
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../libraries/scripting/common

@@ -116,7 +116,7 @@ test-dependencies:
   - ./../ir/ir.tree
   - ./../fir/raw-fir/psi2fir
   - ./../fir/raw-fir/light-tree2fir
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../tests-compiler-utils
   - ./../cli/cli-js
   - ./../cli

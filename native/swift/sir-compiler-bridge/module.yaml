@@ -255,7 +255,7 @@ test-dependencies:
   - ./../../../compiler/resolution
   - ./../../../compiler/frontend.common-psi
   - ./../../../compiler/container
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../core/deserialization.common
   - ./../../../core/metadata
   - ./../../../core/compiler.common

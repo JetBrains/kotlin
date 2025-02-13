@@ -90,7 +90,7 @@ test-dependencies:
   - ./../../resolution
   - ./../../util-io
   - ./../../../core/compiler.common
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../compiler.version
   - ./../../../core/util.runtime
   - ./../../config

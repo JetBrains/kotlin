@@ -253,7 +253,7 @@ test-dependencies:
   - ./../../../compiler/preloader
   - ./../../../compiler/test-infrastructure-utils
   - ./../../../analysis/analysis-internal-utils
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../compiler/cli/cli-base
   - ./../../../compiler/backend-common
   - ./../../../compiler/ir/ir.inline

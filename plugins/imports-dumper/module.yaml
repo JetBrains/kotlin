@@ -159,7 +159,7 @@ test-dependencies:
   - ./../../compiler/fir/raw-fir/psi2fir
   - ./../../compiler/fir/raw-fir/light-tree2fir
   - ./../scripting/scripting-compiler
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../core/descriptors.jvm
   - ./../../compiler/frontend
   - ./../../core/descriptors

@@ -50,7 +50,7 @@ test-dependencies:
   - ./../../../compiler/test-infrastructure-utils
   - ./../../../plugins/scripting/scripting-compiler
   - ./../scripting-jvm
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../common
   - ./../../../compiler/cli/cli-base
   - ./../../../compiler/backend

@@ -215,7 +215,7 @@ test-dependencies:
   - ./../../../core/util.runtime
   - ./../../../compiler/frontend.common
   - ./../../../core/compiler.common
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../core/metadata.jvm
   - ./../../../compiler/ir/backend.jvm/entrypoint
   - ./../../../compiler/ir/backend.wasm

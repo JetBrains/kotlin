@@ -178,7 +178,7 @@ test-dependencies:
   - ./../../../compiler/resolution
   - ./../../../compiler/container
   - ./../../../libraries/tools/kotlin-annotations-jvm
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../compiler/compiler.version
   - ./../../../wasm/wasm.frontend
   - ./../../../compiler/ir/ir.actualization

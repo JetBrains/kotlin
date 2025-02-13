@@ -135,7 +135,7 @@ test-dependencies:
   - org.jetbrains:annotations:13.0
   - #kotlin.kotlin-scripting-jvm-host-unshaded.main
   - ./../scripting-jvm
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../common
 
 test-settings:

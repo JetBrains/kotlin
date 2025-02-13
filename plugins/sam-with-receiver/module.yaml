@@ -168,7 +168,7 @@ test-dependencies:
   - ./sam-with-receiver.k1
   - ./sam-with-receiver.k2
   - ./../../libraries/scripting/scripting-jvm
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../libraries/scripting/common
   - ./../../compiler/ir/backend.jvm/entrypoint
   - ./../../compiler/psi

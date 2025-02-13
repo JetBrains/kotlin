@@ -291,7 +291,7 @@ test-dependencies:
   - ./../../compiler/frontend.common
   - ./../../core/compiler.common
   - ./../../compiler/util
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../compiler/resolution.common.jvm
   - ./../kt-references
   - ./../../compiler/frontend.java

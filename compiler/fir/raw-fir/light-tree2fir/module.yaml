@@ -178,7 +178,7 @@ test-dependencies:
   - ./../../../../analysis/analysis-internal-utils
   - ./../../../frontend.common
   - ./../../../../core/compiler.common
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../ir/backend.jvm/entrypoint
   - ./../../../ir/backend.wasm
   - ./../../../ir/backend.js

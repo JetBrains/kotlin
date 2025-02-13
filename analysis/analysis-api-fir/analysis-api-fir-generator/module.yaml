@@ -173,7 +173,7 @@ test-dependencies:
   - ./../../../compiler/fir/cones
   - ./../../../compiler/frontend.common
   - ./../../../dependencies/intellij-core
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../libraries/tools/kotlin-annotations-jvm
   - ./../../../compiler/compiler.version
   - ./../../../compiler/config

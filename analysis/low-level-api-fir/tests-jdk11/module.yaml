@@ -186,7 +186,7 @@ test-dependencies:
   - ./../../../native/utils
   - ./../../../core/util.runtime
   - ./../../../core/compiler.common
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../../compiler/util-klib-metadata
   - ./../../../compiler/util-klib
   - ./../../../compiler/fir/checkers/checkers.web.common

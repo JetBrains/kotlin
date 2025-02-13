@@ -37,7 +37,7 @@ test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:23.0.0
   - ./../compiler-prepare
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
 
 test-settings:
   kotlin:

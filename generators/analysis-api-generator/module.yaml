@@ -172,7 +172,7 @@ test-dependencies:
   - ./../../core/util.runtime
   - ./../../compiler/fir/analysis-tests/legacy-fir-tests
   - ./../../compiler/tests-common-new
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../../analysis/analysis-api-standalone/analysis-api-standalone-base
   - ./../../analysis/analysis-api-standalone/analysis-api-fir-standalone-base
   - ./../../js/js.tests

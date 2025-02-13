@@ -212,7 +212,7 @@ test-dependencies:
   - ./fir/fir2ir
   - ./fir/analysis-tests
   - ./../plugins/scripting/scripting-compiler
-  - #org.jetbrains.kotlin.kotlin.kotlin-script-runtime.main
+  - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../dependencies/intellij-core
   - ./daemon/daemon-common
   - ./tests-compiler-utils
