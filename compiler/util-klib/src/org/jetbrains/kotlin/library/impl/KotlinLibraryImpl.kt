@@ -119,49 +119,49 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
         combinedDeclarations.tableItemBytes(fileIndex, DeclarationId(index))
 
     private val combinedDeclarations: DeclarationIrMultiTableFileReader by lazy {
-        DeclarationIrMultiTableFileReader(access.realFiles {
+        DeclarationIrMultiTableFileReader(access.inPlace {
             it.irDeclarations
         })
     }
 
     private val types: IrMultiArrayFileReader by lazy {
-        IrMultiArrayFileReader(access.realFiles {
+        IrMultiArrayFileReader(access.inPlace {
             it.irTypes
         })
     }
 
     private val signatures: IrMultiArrayFileReader by lazy {
-        IrMultiArrayFileReader(access.realFiles {
+        IrMultiArrayFileReader(access.inPlace {
             it.irSignatures
         })
     }
 
     private val strings: IrMultiArrayFileReader by lazy {
-        IrMultiArrayFileReader(access.realFiles {
+        IrMultiArrayFileReader(access.inPlace {
             it.irStrings
         })
     }
 
     private val bodies: IrMultiArrayFileReader by lazy {
-        IrMultiArrayFileReader(access.realFiles {
+        IrMultiArrayFileReader(access.inPlace {
             it.irBodies
         })
     }
 
     private val debugInfos: IrMultiArrayFileReader? by lazy {
-        access.realFiles {
+        access.inPlace {
             it.irDebugInfo.let { diFile -> if (diFile.exists) IrMultiArrayFileReader(diFile) else null }
         }
     }
 
     private val fileEntries: IrMultiArrayFileReader? by lazy {
-        access.realFiles {
+        access.inPlace {
             it.irFileEntries.let { feFile -> if (feFile.exists) IrMultiArrayFileReader(feFile) else null }
         }
     }
 
     private val files: IrArrayFileReader by lazy {
-        IrArrayFileReader(access.realFiles {
+        IrArrayFileReader(access.inPlace {
             it.irFiles
         })
     }
