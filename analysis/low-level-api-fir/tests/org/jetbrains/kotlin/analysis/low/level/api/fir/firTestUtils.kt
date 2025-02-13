@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
+import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
@@ -56,9 +55,7 @@ internal inline fun <R> withResolveSession(module: KaModule, action: (LLFirResol
 }
 
 internal fun clearCaches(project: Project) {
-    project.analysisMessageBus
-        .syncPublisher(KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION)
-        .onModification()
+    project.publishGlobalModuleStateModificationEvent()
 }
 
 internal val LLFirResolveSession.isSourceSession: Boolean

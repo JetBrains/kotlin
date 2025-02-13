@@ -10,8 +10,9 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -147,8 +148,12 @@ private fun LLFirDeclarationModificationService.modifyElement(element: PsiElemen
     var isOutOfBlock = false
     try {
         project.analysisMessageBus.connect(disposable).subscribe(
-            KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION,
-            KotlinModuleOutOfBlockModificationListener { isOutOfBlock = true },
+            KotlinModificationEvent.TOPIC,
+            KotlinModificationEventListener { event ->
+                if (event is KotlinModuleOutOfBlockModificationEvent) {
+                    isOutOfBlock = true
+                }
+            }
         )
 
         elementModified(element, modificationType = KaElementModificationType.Unknown)

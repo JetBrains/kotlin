@@ -6,16 +6,28 @@
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import java.util.Objects
 
-public fun interface KotlinModuleStateModificationListener {
-    /**
-     * [onModification] is invoked in a write action *before* the [module] is updated or removed (see [modificationKind] for specifics).
-     *
-     * @see KotlinModificationTopics
-     */
-    public fun onModification(module: KaModule, modificationKind: KotlinModuleStateModificationKind)
+/**
+ * [KotlinModuleStateModificationEvent] signals that [module]'s settings or structure are changing. The event is published in a write action
+ * *before* the [module] is updated or removed (see [KotlinModuleStateModificationKind] for specifics). This allows subscribers to access
+ * the module's properties and dependencies to invalidate or update caches.
+ */
+public class KotlinModuleStateModificationEvent(
+    public val module: KaModule,
+    public val modificationKind: KotlinModuleStateModificationKind,
+) : KotlinModificationEvent {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other is KotlinModuleStateModificationEvent && module == other.module && modificationKind == other.modificationKind
+    }
+
+    override fun hashCode(): Int = Objects.hash(module, modificationKind)
 }
 
+/**
+ * Describes the kind of module state modification affecting a [KaModule] in more detail.
+ */
 public enum class KotlinModuleStateModificationKind {
     /**
      * The [KaModule]'s properties or references to other modules are being changed.

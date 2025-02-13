@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.psi.KtElement
 
 /**
  * In-block modification is a source code modification that doesn't affect the state of other non-local declarations.
+ *
  * #### Example 1
  *
  * ```
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * This will change the return type of `z` as it does not have an explicit type.
  * So, it is an **out-of-block modification**.
  *
- * @see org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
+ * @see org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent
  * @see LLFirDeclarationModificationService
  * */
 internal object LLFirDeclarationModificationTopics {

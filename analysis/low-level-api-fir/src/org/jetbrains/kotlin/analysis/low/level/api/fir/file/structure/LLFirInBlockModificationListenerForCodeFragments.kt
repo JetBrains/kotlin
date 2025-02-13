@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
+import org.jetbrains.kotlin.analysis.api.platform.modification.publishCodeFragmentContextModificationEvent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class LLFirInBlockModificationListenerForCodeFragments(val project: Project) : LLFirInBlockModificationListener {
     override fun afterModification(element: KtElement, module: KaModule) {
-        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION).onModification(module)
+        module.publishCodeFragmentContextModificationEvent()
     }
 }
