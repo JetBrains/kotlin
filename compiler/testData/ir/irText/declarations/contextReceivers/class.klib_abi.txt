@@ -5,7 +5,7 @@
 
 // Library unique name: <main>
 final class /Inner { // /Inner|null[0]
-    constructor context(/Outer) <init>(kotlin/Any) // /Inner.<init>|<init>(Outer)(kotlin.Any){}[0]
+    constructor (context(/Outer)).<init>(kotlin/Any) // /Inner.<init>|<init>(Outer)(kotlin.Any){}[0]
     final fun bar(): kotlin/Int // /Inner.bar|bar(){}[0]
 }
 final class /Outer { // /Outer|null[0]

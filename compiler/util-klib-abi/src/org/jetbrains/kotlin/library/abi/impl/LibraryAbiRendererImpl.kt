@@ -399,20 +399,23 @@ internal class AbiRendererImpl(
 
         companion object {
             private fun StringBuilder.appendIrregularValueParametersOf(function: AbiFunction) {
-                function.valueParameters
-                    .filter { it.kind == AbiValueParameterKind.CONTEXT }
-                    .takeIf { it.isNotEmpty() }
-                    ?.joinTo(this, separator = ", ", prefix = "context(", postfix = ") ") { valueParameter ->
-                        appendValueParameter(valueParameter)
-                    }
+                val contextParameters = function.valueParameters.filter { it.kind == AbiValueParameterKind.CONTEXT }
+                val extensionReceiver = function.valueParameters.firstOrNull { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }
+                if (contextParameters.isEmpty() && extensionReceiver == null) {
+                    return
+                }
 
-                function.valueParameters
-                    .firstOrNull { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }
-                    ?.let { extensionReceiver ->
-                        append('(')
-                        appendValueParameter(extensionReceiver)
-                        append(").")
+                append("(")
+                if (contextParameters.isNotEmpty()) {
+                    contextParameters.joinTo(this, separator = ", ", prefix = "context(", postfix = ")") { appendValueParameter(it) }
+                    if (extensionReceiver != null) {
+                        append(", ")
                     }
+                }
+                if (extensionReceiver != null) {
+                    append(appendValueParameter(extensionReceiver))
+                }
+                append(").")
             }
 
             private fun StringBuilder.appendRegularValueParametersOf(function: AbiFunction) {

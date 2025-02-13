@@ -26,9 +26,9 @@ final class /CounterConfig { // /CounterConfig|null[0]
     final fun toString(): kotlin/String // /CounterConfig.toString|toString(){}[0]
 }
 final class /CounterIterator : kotlin.collections/Iterator<kotlin/Int> { // /CounterIterator|null[0]
-    constructor context(/CounterConfig) <init>(/Counter) // /CounterIterator.<init>|<init>(CounterConfig)(Counter){}[0]
+    constructor (context(/CounterConfig)).<init>(/Counter) // /CounterIterator.<init>|<init>(CounterConfig)(Counter){}[0]
     final fun hasNext(): kotlin/Boolean // /CounterIterator.hasNext|hasNext(){}[0]
     final fun next(): kotlin/Int // /CounterIterator.next|next(){}[0]
 }
 final fun /box(): kotlin/String // /box|box(){}[0]
-final fun context(/CounterConfig) (/Counter)./iterator(): /CounterIterator // /iterator|iterator(CounterConfig)@Counter(){}[0]
+final fun (context(/CounterConfig), /Counter)./iterator(): /CounterIterator // /iterator|iterator(CounterConfig)@Counter(){}[0]
