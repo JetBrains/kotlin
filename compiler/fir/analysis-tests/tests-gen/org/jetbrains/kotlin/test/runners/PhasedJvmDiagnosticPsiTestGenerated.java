@@ -51689,6 +51689,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("genericContextAmbiguity.kt")
+        public void testGenericContextAmbiguity() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/genericContextAmbiguity.kt");
+        }
+
+        @Test
         @TestMetadata("inFunctionDeclaration.kt")
         public void testInFunctionDeclaration() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/inFunctionDeclaration.kt");
