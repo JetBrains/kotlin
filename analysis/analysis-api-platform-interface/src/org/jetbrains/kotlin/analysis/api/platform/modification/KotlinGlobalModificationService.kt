@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 /**
  * [KotlinGlobalModificationService] is a central service for the invalidation of caches during/between tests.
  *
- * All `publish` functions must be called in a write action because the events in [KotlinModificationTopics] guarantee that the listener is called in a
+ * All `publish` functions must be called in a write action because [KotlinModificationEvent]s guarantee that the listener is called in a
  * write action.
  *
  * Implementations of this service should publish global modification events to at least the following components:
+ *
  * - [KotlinModificationTrackerFactory]
- * - [KotlinModificationTopics] via [analysisMessageBus][org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus]
+ * - [KotlinModificationEvent.TOPIC] via [analysisMessageBus][org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus]
  */
 public interface KotlinGlobalModificationService : KotlinPlatformComponent {
     /**

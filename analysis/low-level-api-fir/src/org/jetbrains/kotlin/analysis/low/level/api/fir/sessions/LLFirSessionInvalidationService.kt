@@ -12,14 +12,9 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationKind
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalScriptModuleStateModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.*
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
@@ -30,7 +25,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 
 /**
- * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics]
+ * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEvent]
  * and invalidates [LLFirSession]s which depend on the modified [KaModule].
  *
  * Its invalidation functions should always be invoked in a **write action** because invalidation affects multiple sessions in
@@ -39,55 +34,28 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBui
  */
 @KaImplementationDetail
 class LLFirSessionInvalidationService(private val project: Project) {
-    internal class LLKotlinModuleStateModificationListener(val project: Project) : KotlinModuleStateModificationListener {
-        override fun onModification(module: KaModule, modificationKind: KotlinModuleStateModificationKind) {
-            val sessionInvalidationService = getInstance(project)
-            if (module is KaBuiltinsModule) {
-                // Modification of builtins might affect any session, so all sessions need to be invalidated.
-                sessionInvalidationService.invalidateAll(includeLibraryModules = true)
-            } else {
-                sessionInvalidationService.invalidate(module)
+    internal class LLKotlinModificationEventListener(val project: Project) : KotlinModificationEventListener {
+        override fun onModification(event: KotlinModificationEvent) {
+            val invalidationService = getInstance(project)
+            when (event) {
+                is KotlinModuleStateModificationEvent ->
+                    when (val module = event.module) {
+                        is KaBuiltinsModule -> {
+                            // Modification of builtins might affect any session, so all sessions need to be invalidated.
+                            invalidationService.invalidateAll(includeLibraryModules = true)
+                        }
+                        else -> invalidationService.invalidate(module)
+                    }
+
+                // We do not need to handle `KaBuiltinsModule` here because builtins cannot be affected by out-of-block modification.
+                is KotlinModuleOutOfBlockModificationEvent -> invalidationService.invalidate(event.module)
+
+                is KotlinGlobalModuleStateModificationEvent -> invalidationService.invalidateAll(includeLibraryModules = true)
+                is KotlinGlobalSourceModuleStateModificationEvent -> invalidationService.invalidateAll(includeLibraryModules = false)
+                is KotlinGlobalScriptModuleStateModificationEvent -> invalidationService.invalidateScriptSessions()
+                is KotlinGlobalSourceOutOfBlockModificationEvent -> invalidationService.invalidateAll(includeLibraryModules = false)
+                is KotlinCodeFragmentContextModificationEvent -> invalidationService.invalidateContextualDanglingFileSessions(event.module)
             }
-        }
-    }
-
-    internal class LLKotlinModuleOutOfBlockModificationListener(val project: Project) : KotlinModuleOutOfBlockModificationListener {
-        override fun onModification(module: KaModule) {
-            // We do not need to handle `KaBuiltinsModule` here because builtins cannot be affected by out-of-block modification.
-            getInstance(project).invalidate(module)
-        }
-    }
-
-    internal class LLKotlinGlobalModuleStateModificationListener(val project: Project) : KotlinGlobalModuleStateModificationListener {
-        override fun onModification() {
-            getInstance(project).invalidateAll(includeLibraryModules = true)
-        }
-    }
-
-    internal class LLKotlinGlobalSourceModuleStateModificationListener(val project: Project) :
-        KotlinGlobalSourceModuleStateModificationListener {
-        override fun onModification() {
-            getInstance(project).invalidateAll(includeLibraryModules = false)
-        }
-    }
-
-    internal class LLKotlinGlobalScriptModuleStateModificationListener(val project: Project) :
-        KotlinGlobalScriptModuleStateModificationListener {
-        override fun onModification() {
-            getInstance(project).invalidateScriptSessions()
-        }
-    }
-
-    internal class LLKotlinGlobalSourceOutOfBlockModificationListener(val project: Project) :
-        KotlinGlobalSourceOutOfBlockModificationListener {
-        override fun onModification() {
-            getInstance(project).invalidateAll(includeLibraryModules = false)
-        }
-    }
-
-    internal class LLKotlinCodeFragmentContextModificationListener(val project: Project) : KotlinCodeFragmentContextModificationListener {
-        override fun onModification(module: KaModule) {
-            getInstance(project).invalidateContextualDanglingFileSessions(module)
         }
     }
 

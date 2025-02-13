@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.platform.modification
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 
 public abstract class KotlinGlobalModificationServiceBase(private val project: Project) : KotlinGlobalModificationService {
     @TestOnly
@@ -19,7 +18,7 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = true)
-        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION).onModification()
+        project.publishGlobalModuleStateModificationEvent()
     }
 
     @TestOnly
@@ -27,7 +26,7 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = false)
-        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION).onModification()
+        project.publishGlobalSourceModuleStateModificationEvent()
     }
 
     @TestOnly
@@ -35,6 +34,6 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = false)
-        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION).onModification()
+        project.publishGlobalSourceOutOfBlockModificationEvent()
     }
 }
