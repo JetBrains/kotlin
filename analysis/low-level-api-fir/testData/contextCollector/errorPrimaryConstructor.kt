@@ -1,0 +1,1 @@
+interface Temp : <expr>s</expr> () -> Unit

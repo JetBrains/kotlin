@@ -564,6 +564,10 @@ private class ContextCollectorVisitor(
         processList(anonymousObject.superTypeRefs)
     }
 
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) {
+        visitConstructor(errorPrimaryConstructor)
+    }
+
     override fun visitConstructor(constructor: FirConstructor) = withProcessor(constructor) {
         dumpContext(constructor, ContextKind.SELF)
 

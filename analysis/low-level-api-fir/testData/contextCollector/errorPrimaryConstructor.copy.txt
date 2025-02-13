@@ -1,0 +1,21 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] errorPrimaryConstructor.kt
+    public abstract [ResolvedTo(STATUS)] interface Temp : <ERROR TYPE REF: Symbol not found for s> {
+        public [ResolvedTo(BODY_RESOLVE)] error_constructor(): R|Temp| {
+            super<<ERROR TYPE REF: Symbol not found for s>>()
+        }
+
+    }

@@ -61,6 +61,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("errorPrimaryConstructor.kt")
+  public void testErrorPrimaryConstructor() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/errorPrimaryConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("extensionFunction.kt")
   public void testExtensionFunction() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/extensionFunction.kt");
