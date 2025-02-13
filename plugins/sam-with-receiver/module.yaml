@@ -8,6 +8,7 @@ repositories:
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
   - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
   - https://www.jetbrains.com/intellij-repository/releases
+  - https://download.jetbrains.com/teamcity-repository
 
 
 module:

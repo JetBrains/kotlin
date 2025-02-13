@@ -7,6 +7,7 @@ repositories:
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
   - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
   - https://www.jetbrains.com/intellij-repository/releases
+  - https://download.jetbrains.com/teamcity-repository
 
 
 dependencies:
@@ -206,4 +207,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn,org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn,-opt-in, org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction, -Xskip-prerelease-check, -Xwhen-guards]

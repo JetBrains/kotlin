@@ -7,6 +7,7 @@ repositories:
   - https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap
   - https://packages.jetbrains.team/maven/p/ij/intellij-dependencies
   - https://www.jetbrains.com/intellij-repository/releases
+  - https://download.jetbrains.com/teamcity-repository
 
 dependencies:
   - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
