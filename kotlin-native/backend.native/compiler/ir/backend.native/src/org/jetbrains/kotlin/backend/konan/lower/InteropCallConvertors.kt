@@ -16,11 +16,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
 private class InteropCallContext(
@@ -76,7 +74,7 @@ private fun InteropCallContext.readValueFromMemory(
     val memReadFn = findMemoryAccessFunction(isRead = true, valueType = memoryValueType)
     val memRead = builder.irCall(memReadFn).also { memRead ->
         memRead.dispatchReceiver = builder.irGetObject(symbols.nativeMemUtils)
-        memRead.putValueArgument(0, readPointed(nativePtr))
+        memRead.putValueArgument(0, readPointed(nativePtr, symbols.nativePointed.defaultType))
     }
     return castPrimitiveIfNeeded(memRead, memoryValueType, returnType)
 }
@@ -92,7 +90,7 @@ private fun InteropCallContext.writeValueToMemory(
     return with(builder) {
         irCall(memWriteFn).also { memWrite ->
             memWrite.dispatchReceiver = irGetObject(symbols.nativeMemUtils)
-            memWrite.putValueArgument(0, readPointed(nativePtr))
+            memWrite.putValueArgument(0, readPointed(nativePtr, symbols.nativePointed.defaultType))
             memWrite.putValueArgument(1, valueToWrite)
         }
     }
@@ -261,13 +259,15 @@ private fun InteropCallContext.calculateFieldPointer(receiver: IrExpression, off
     }
 }
 
-private fun InteropCallContext.interpretCPointer(nativePtr: IrExpression) =
-        builder.irCallWithSubstitutedType(symbols.interopInterpretCPointer, listOf(symbols.interopCPointed.defaultType)).also {
-            it.putValueArgument(0, nativePtr)
-        }
+private fun InteropCallContext.interpretCPointer(nativePtr: IrExpression, type: IrType): IrMemberAccessExpression<*> {
+    require(type.isCPointer()) { "A CPointer expected but was: ${type.render()}" }
+    return builder.irCallWithSubstitutedType(
+            symbols.interopInterpretCPointer, listOf((type as IrSimpleType).arguments[0].typeOrFail)
+    ).also { it.putValueArgument(0, nativePtr) }
+}
 
-private fun InteropCallContext.readPointed(nativePtr: IrExpression) =
-        builder.irCallWithSubstitutedType(symbols.interopInterpretNullablePointed, listOf(symbols.nativePointed.defaultType)).also {
+private fun InteropCallContext.readPointed(nativePtr: IrExpression, type: IrType) =
+        builder.irCallWithSubstitutedType(symbols.interopInterpretNullablePointed, listOf(type)).also {
             it.putValueArgument(0, nativePtr)
         }
 
@@ -329,8 +329,8 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
             when {
                 type.isCEnumType() -> readEnumValueFromMemory(fieldPointer, type)
                 type.isCStructFieldTypeStoredInMemoryDirectly() -> readValueFromMemory(fieldPointer, type)
-                type.isCPointer() -> interpretCPointer(readValueFromMemory(fieldPointer, symbols.nativePtrType))
-                type.isNativePointed() -> readPointed(fieldPointer)
+                type.isCPointer() -> interpretCPointer(readValueFromMemory(fieldPointer, symbols.nativePtrType), type)
+                type.isNativePointed() -> readPointed(fieldPointer, type)
                 type.isSupportedReference() -> readObjectiveCReferenceFromMemory(fieldPointer, type)
                 else -> failCompilation("Unsupported struct field type: ${type.getClass()?.name}")
             }
@@ -355,7 +355,7 @@ private fun InteropCallContext.generateArrayMemberAtAccess(callSite: IrCall): Ir
     val memberAt = accessor.getAnnotation(RuntimeNames.cStructArrayMemberAt)!!
     val offset = (memberAt.getValueArgument(0) as IrConst).value as Long
     val fieldPointer = calculateFieldPointer(callSite.dispatchReceiver!!, offset)
-    return interpretCPointer(fieldPointer)
+    return interpretCPointer(fieldPointer, accessor.returnType)
 }
 
 private fun InteropCallContext.writeBits(

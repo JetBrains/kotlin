@@ -900,7 +900,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
     }
 
     private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: KonanSymbols): IrExpression =
-        irCallWithSubstitutedType(symbols.interopCValueRead.owner, listOf(symbols.cStuctVar.defaultType)).apply {
+        irCallWithSubstitutedType(symbols.interopCValueRead.owner, listOf(kotlinPointedType)).apply {
             extensionReceiver = kotlinPointed
             putValueArgument(0, getTypeObject())
         }
@@ -915,7 +915,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
         val kotlinPtr = passThroughBridge("&$result", CTypes.voidPtr, symbols.nativePtrType)
 
         kotlinBridgeStatements += irCallWithSubstitutedType(
-                symbols.interopCValueWrite.owner, listOf(symbols.interopCVariable.defaultType)
+                symbols.interopCValueWrite.owner, listOf(kotlinPointedType)
         ).apply {
             extensionReceiver = expression
             putValueArgument(0, irGet(kotlinPtr))
