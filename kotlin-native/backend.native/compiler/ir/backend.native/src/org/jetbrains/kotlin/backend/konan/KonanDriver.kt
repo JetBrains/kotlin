@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.util.*
 
@@ -150,7 +151,7 @@ class KonanDriver(
         performanceManager?.apply {
             targetDescription = "${konanConfig.moduleId}-${konanConfig.produce}"
             addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
-            notifyCompilerInitialized()
+            notifyPhaseFinished(PhaseMeasurementType.Initialization)
         }
 
         DynamicCompilerDriver(performanceManager).run(konanConfig, environment)
