@@ -66,12 +66,12 @@ class FirCallCompleter(
         // Only expected to be true for resolving different versions of augmented assignments
         skipEvenPartialCompletion: Boolean = false,
     ): T where T : FirResolvable, T : FirExpression {
-        val typeRef = components.typeFromCallee(call)
+        val type = components.typeFromCallee(call)
 
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return call
 
         val candidate = reference.candidate
-        val initialType = typeRef.initialTypeOfCandidate(candidate)
+        val initialType = type.initialTypeOfCandidate(candidate)
 
         // Annotation types are resolved during type resolution, and generic arguments aren't inferred.
         // Updating the type of an annotation call is a no-op, it only checks if it's the same as the type of the annotation type ref.
