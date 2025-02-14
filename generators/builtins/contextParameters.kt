@@ -29,13 +29,18 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
         val parameters = parameterNames.zip(parameterTypes) { name, type -> "$name: $type" }.joinToString()
         val types = parameterTypes.joinToString()
 
+        val values = if (parameterTypes.size == 1) "value" else "values"
+        val receivers = if (parameterTypes.size == 1) "receiver" else "receivers"
+
         out.println(
             """
 /**
- * Runs the specified [block] with the given values in context scope.
+ * Runs the specified [block] with the given $values in context scope.
  *
- * As opposed to [with], [context] only makes the values available for
- * context parameter resolution, but not as implicit receivers.
+ * As opposed to [with], [context] only makes the $values available for
+ * context parameter resolution, but not as implicit $receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")

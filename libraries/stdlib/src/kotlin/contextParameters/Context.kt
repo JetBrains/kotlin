@@ -12,10 +12,12 @@ package kotlin
 
 
 /**
- * Runs the specified [block] with the given values in context scope.
+ * Runs the specified [block] with the given value in context scope.
  *
- * As opposed to [with], [context] only makes the values available for
- * context parameter resolution, but not as implicit receivers.
+ * As opposed to [with], [context] only makes the value available for
+ * context parameter resolution, but not as implicit receiver.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -32,6 +34,8 @@ public inline fun <T, R> context(context: T, block: context(T) () -> R): R {
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -48,6 +52,8 @@ public inline fun <A, B, Result> context(a: A, b: B, block: context(A, B) () -> 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -64,6 +70,8 @@ public inline fun <A, B, C, Result> context(a: A, b: B, c: C, block: context(A, 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -80,6 +88,8 @@ public inline fun <A, B, C, D, Result> context(a: A, b: B, c: C, d: D, block: co
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -96,6 +106,8 @@ public inline fun <A, B, C, D, E, Result> context(a: A, b: B, c: C, d: D, e: E, 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -112,6 +124,8 @@ public inline fun <A, B, C, D, E, F, Result> context(a: A, b: B, c: C, d: D, e: 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -128,6 +142,8 @@ public inline fun <A, B, C, D, E, F, G, Result> context(a: A, b: B, c: C, d: D, 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -144,6 +160,8 @@ public inline fun <A, B, C, D, E, F, G, H, Result> context(a: A, b: B, c: C, d: 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -160,6 +178,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, Result> context(a: A, b: B, c: C, 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -176,6 +196,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, Result> context(a: A, b: B, c: 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -192,6 +214,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, Result> context(a: A, b: B, 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -208,6 +232,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, Result> context(a: A, b: 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -224,6 +250,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, Result> context(a: A, 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -240,6 +268,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, Result> context(a: 
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -256,6 +286,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, Result> context(
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -272,6 +304,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Result> conte
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -288,6 +322,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, Result> co
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -304,6 +340,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, Result>
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -320,6 +358,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, Resu
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -336,6 +376,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, R
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")
@@ -352,6 +394,8 @@ public inline fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U
  *
  * As opposed to [with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
  */
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin("2.1")

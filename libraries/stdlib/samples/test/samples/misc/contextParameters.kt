@@ -10,6 +10,24 @@ import samples.*
 class ContextParameters {
 
     @Sample
+    fun useContext() {
+        abstract class Logger { abstract fun log(message: String) }
+        class ConsoleLogger : Logger() { override fun log(message: String) = println(message) }
+
+        context(logger: Logger) fun doSomething() {
+            logger.log("hello")
+            // do something
+            logger.log("bye")
+        }
+
+        fun example() {
+            context(ConsoleLogger()) {
+                doSomething()
+            }
+        }
+    }
+
+    @Sample
     fun implicitContextParameter() {
         abstract class Logger { abstract fun log(message: String) }
         class ConsoleLogger : Logger() { override fun log(message: String) = println(message) }
