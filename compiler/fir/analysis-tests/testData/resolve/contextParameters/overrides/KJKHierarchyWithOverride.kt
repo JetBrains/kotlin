@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// TARGET_BACKEND: JVM
 // ISSUE: KT-74501
 // LANGUAGE: +ContextParameters
 // SCOPE_DUMP: KJK:foo;bar;baz;qux;quux
@@ -22,6 +21,12 @@ interface KotlinContextInterface {
 
     context(a: String, b: String)
     fun quux(c: String): String
+
+    context(a: String)
+    val boo: String
+
+    context(a: String)
+    val String.booo: String
 }
 
 interface KotlinInterface2 {
@@ -38,6 +43,12 @@ interface KotlinInterface2 {
 
     context(a: String, b: String)
     fun String.quux(): String
+
+    context(a: String)
+    val boo: String
+
+    context(a: String)
+    val String.booo: String
 }
 
 interface KotlinInterface3 {
@@ -72,6 +83,16 @@ public class JavaClass implements KotlinContextInterface, KotlinInterface2, Kotl
 
     @Override
     public String quux(String a, String b, String c) {
+        return a;
+    }
+
+    @Override
+    public String getBoo(String a) {
+        return a;
+    }
+
+    @Override
+    public String getBooo(String a, String b) {
         return a;
     }
 }
