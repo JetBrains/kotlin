@@ -237,7 +237,6 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
     }
 
     private fun FirFunctionTypeParameter.findSourceForParameterName(): KtSourceElement? {
-        val source = this.source ?: return null
         val name = this.name ?: return null
         val treeStructure = source.treeStructure
         val nodes = source.lighterASTNode.getChildren(treeStructure)

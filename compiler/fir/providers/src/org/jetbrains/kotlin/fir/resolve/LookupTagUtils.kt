@@ -44,7 +44,7 @@ fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParamet
     // Existing @ParameterName annotation takes precedence
     if (attributes.parameterNameAttribute != null) return this
 
-    val fakeSource = parameter.source?.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
+    val fakeSource = parameter.source.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
     val parameterNameAnnotationCall = buildAnnotation {
         source = fakeSource
         annotationTypeRef =
