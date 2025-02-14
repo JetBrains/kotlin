@@ -883,14 +883,12 @@ private sealed class Bridge(
                     val argsInClosure = parameters
                         .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
                     val defineArgs = argsInClosure
-                        ?.let { "${it.joinToString { "${it.first}: ${typeNamer.kotlinFqName(it.second.swiftType)}" }} ->" }
+                        ?.let { " ${it.joinToString { "${it.first}: ${typeNamer.kotlinFqName(it.second.swiftType)}" }} ->" }
                     val callArgs = argsInClosure
                         ?.let { it.joinToString { it.second.inKotlinSources.kotlinToSwift(typeNamer, it.first) } } ?: ""
                     return """{    
-                    |    val objcHolder = createObjCObjectHolder($valueExpression);
-                    |    { ${defineArgs ?: ""} 
-                    |        val objcBlock = objcHolder!!.objcPtr()
-                    |        val kotlinFun = convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>(objcBlock)
+                    |    val kotlinFun = convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>($valueExpression);
+                    |    {${defineArgs ?: ""}
                     |        ${returnType.inKotlinSources.swiftToKotlin(typeNamer, "kotlinFun(${callArgs})")} 
                     |    }
                     |}()""".replaceIndentByMargin("    ")

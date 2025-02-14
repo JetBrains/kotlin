@@ -7,15 +7,11 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 @ExportedBridge("root_foo_consuming_closure_returning_closure__TypesOfArguments__function__")
 public fun root_foo_consuming_closure_returning_closure__TypesOfArguments__function__(arg1: kotlin.native.internal.NativePtr): Int {
     val __arg1 = {
-        val objcHolder = createObjCObjectHolder(arg1);
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->kotlin.native.internal.NativePtr>(arg1);
         {
-            val objcBlock = objcHolder!!.objcPtr()
-            val kotlinFun = convertBlockPtrToKotlinFunction<()->kotlin.native.internal.NativePtr>(objcBlock)
             {
-        val objcHolder = createObjCObjectHolder(kotlinFun());
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(kotlinFun());
         {
-            val objcBlock = objcHolder!!.objcPtr()
-            val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(objcBlock)
             kotlinFun()
         }
     }()
@@ -28,10 +24,8 @@ public fun root_foo_consuming_closure_returning_closure__TypesOfArguments__funct
 @ExportedBridge("root_foo_consuming_closure_with_param__TypesOfArguments__function_MyAnotherClass__")
 public fun root_foo_consuming_closure_with_param__TypesOfArguments__function_MyAnotherClass__(arg1: kotlin.native.internal.NativePtr): Int {
     val __arg1 = {
-        val objcHolder = createObjCObjectHolder(arg1);
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(arg1);
         { arg0: MyAnotherClass ->
-            val objcBlock = objcHolder!!.objcPtr()
-            val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(objcBlock)
             kotlin.native.internal.ref.dereferenceExternalRCRef(kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))) as MyClass
         }
     }()
@@ -42,10 +36,8 @@ public fun root_foo_consuming_closure_with_param__TypesOfArguments__function_MyA
 @ExportedBridge("root_foo_consuming_simple_closure__TypesOfArguments__function__")
 public fun root_foo_consuming_simple_closure__TypesOfArguments__function__(arg1: kotlin.native.internal.NativePtr): Int {
     val __arg1 = {
-        val objcHolder = createObjCObjectHolder(arg1);
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(arg1);
         {
-            val objcBlock = objcHolder!!.objcPtr()
-            val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(objcBlock)
             kotlinFun()
         }
     }()

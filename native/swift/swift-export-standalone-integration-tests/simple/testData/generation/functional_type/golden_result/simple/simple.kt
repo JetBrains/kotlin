@@ -16,10 +16,8 @@ public fun __root___closure_property_get(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__")
 public fun __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = {
-        val objcHolder = createObjCObjectHolder(newValue);
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(newValue);
         {
-            val objcBlock = objcHolder!!.objcPtr()
-            val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(objcBlock)
             kotlinFun()
         }
     }()
@@ -47,13 +45,10 @@ public fun __root___foo_2(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__")
 public fun __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
     val __block = {
-        val objcHolder = createObjCObjectHolder(block);
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(block);
         {
-            val objcBlock = objcHolder!!.objcPtr()
-            val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(objcBlock)
             kotlinFun()
         }
     }()
     foo_consume_simple(__block)
 }
-
