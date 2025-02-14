@@ -15,7 +15,6 @@ sealed class ReadBuffer {
     abstract fun get(result: ByteArray, offset: Int, length: Int)
     abstract var position: Int
 
-
     abstract val int: Int
     abstract val long: Long
 
@@ -30,7 +29,9 @@ sealed class ReadBuffer {
 
         override var position: Int
             get() = buffer.position()
-            set(value) { buffer.position(value) }
+            set(value) {
+                buffer.position(value)
+            }
 
         override val int: Int
             get() = buffer.int
