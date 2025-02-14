@@ -97,13 +97,17 @@ class CacheBuilder(
         }
 
     fun build() {
+        System.err.println("CACHES-BUILD-START")
+        System.err.println("CACHES-IC-ENABLED: $icEnabled")
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
         val icedLibraries = mutableListOf<KotlinLibrary>()
 
         allLibraries.forEach { library ->
             val isSubjectOfIC = !library.isCacheableExternalLibrary
+            System.err.println("CACHES-IS-IC-SUBJECT: ${library.libraryFile.path} -> $isSubjectOfIC")
             val cache = konanConfig.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
             cache?.let {
+                System.err.println("CACHES-DETECTED-CACHE ${library.libraryName} -> $it, ${it.rootDirectory}")
                 caches[library] = it
                 cacheRootDirectories[library] = it.rootDirectory
             }
@@ -111,9 +115,13 @@ class CacheBuilder(
                 if (icEnabled && (library.isNativeStdlib || library.isDefault)) {
                     error("Unexpected attempt to cache the standard library or default one: ${library.libraryName}")
                 }
+                System.err.println("CACHES-BUILD-FOR-IC ${library.libraryName} ${library.libraryFile.path}")
                 icedLibraries += library
             } else {
-                if (cache == null) externalLibrariesToCache += library
+                if (cache == null) {
+                    System.err.println("CACHES-NULL-ADD ${library.libraryName} ${library.libraryFile.path}")
+                    externalLibrariesToCache += library
+                }
             }
             library.unresolvedDependencies.forEach dependenciesLoop@{
                 val dependency = uniqueNameToLibrary[it.path] ?: return@dependenciesLoop
