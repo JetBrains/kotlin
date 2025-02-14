@@ -13,4 +13,6 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
     val WITH_KOTLIN_JVM_ANNOTATIONS by directive("Add kotlin-annotations-jvm.jar to classpath")
 
     val DISABLE_TYPEALIAS_EXPANSION by directive("Disables automatic expansion of aliased types in type resolution")
+
+    val SKIP_K1 by directive("Skip K1 tests")
 }
