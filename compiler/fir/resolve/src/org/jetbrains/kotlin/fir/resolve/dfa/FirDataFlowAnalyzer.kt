@@ -1123,7 +1123,12 @@ abstract class FirDataFlowAnalyzer(
         if (stability == SmartcastStability.STABLE_VALUE || stability == SmartcastStability.CAPTURED_VARIABLE) {
             val initializerVariable = flow.getVariableIfUsedOrReal(initializer)
             if (!hasExplicitType && initializerVariable is RealVariable &&
-                initializerVariable.getStability(flow, targetTypes = null) == SmartcastStability.STABLE_VALUE
+                // It's impossible to reference implicit when subjects.
+                // With explicit local variables, we want to give the user an option to
+                // choose whether they want to access the variable with smartcasts
+                // or the original expression without them.
+                (property.isImplicitWhenSubjectVariable ||
+                        initializerVariable.getStability(flow, targetTypes = null) == SmartcastStability.STABLE_VALUE)
             ) {
                 // val a = ...
                 // val b = a
