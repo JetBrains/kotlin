@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
+import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
@@ -39,6 +40,7 @@ internal fun KaSession.initializeSirModule(
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
     moduleProvider: SirModuleProvider,
+    stdlibReferencesCollector: SirKaClassReferenceHandler? = null,
 ): SwiftModuleBuildResults {
     val moduleForPackageEnums = buildModule { name = config.moduleForPackagesName }
     val sirSession = StandaloneSirSession(
@@ -50,6 +52,7 @@ internal fun KaSession.initializeSirModule(
         unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
         moduleProvider = moduleProvider,
         targetPackageFqName = moduleConfig.targetPackageFqName,
+        referencedTypeHandler = stdlibReferencesCollector,
     )
 
     // this lines produce critical side effect
