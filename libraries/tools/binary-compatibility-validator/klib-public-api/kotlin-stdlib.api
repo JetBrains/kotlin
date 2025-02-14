@@ -9759,6 +9759,11 @@ open annotation class kotlin.js/JsName : kotlin/Annotation { // kotlin.js/JsName
 }
 
 // Targets: [native]
+open annotation class kotlin.annotations/ExperimentalExpectRefinement : kotlin/Annotation { // kotlin.annotations/ExperimentalExpectRefinement|null[0]
+    constructor <init>() // kotlin.annotations/ExperimentalExpectRefinement.<init>|<init>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.concurrent/Volatile : kotlin/Annotation { // kotlin.concurrent/Volatile|null[0]
     constructor <init>() // kotlin.concurrent/Volatile.<init>|<init>(){}[0]
 }
@@ -13905,6 +13910,11 @@ open annotation class kotlin.native/RefinesInSwift : kotlin/Annotation { // kotl
 // Targets: [js, wasmJs, wasmWasi]
 open annotation class kotlin.native/ShouldRefineInSwift : kotlin/Annotation { // kotlin.native/ShouldRefineInSwift|null[1]
     constructor <init>() // kotlin.native/ShouldRefineInSwift.<init>|<init>(){}[1]
+}
+
+// Targets: [js, wasmJs, wasmWasi]
+open annotation class kotlin/ExperimentalExpectRefinement : kotlin/Annotation { // kotlin/ExperimentalExpectRefinement|null[0]
+    constructor <init>() // kotlin/ExperimentalExpectRefinement.<init>|<init>(){}[0]
 }
 
 // Targets: [js, wasmJs, wasmWasi]
