@@ -1,0 +1,4 @@
+compiler/testData/cli/syntaxError.kt:1:10: error: syntax error: Expecting '}'.
+fun a() {
+         ^
+COMPILATION_ERROR
