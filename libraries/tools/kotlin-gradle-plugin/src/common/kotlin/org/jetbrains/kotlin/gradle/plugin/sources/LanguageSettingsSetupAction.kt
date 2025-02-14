@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 
+// FIXME: KT-75216 Synchronise common source set language settings with compile tasks in a better way
 internal val LanguageSettingsSetupAction = KotlinProjectSetupAction {
     // common source sets use the compiler options from the metadata compilation:
     val metadataCompilation = multiplatformExtension.metadata().compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
