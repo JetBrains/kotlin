@@ -126,7 +126,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS, context,
             )
             Applicability.USELESS_IS_CHECK -> when {
-                l.argument.unwrapSmartcastExpression() !is FirWhenSubjectExpression -> reportOn(
+                !isLastBranchOfExhaustiveWhen(l, context) -> reportOn(
                     expression.source, FirErrors.USELESS_IS_CHECK, expression.operation == FirOperation.IS, context,
                 )
             }
@@ -138,6 +138,21 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             }
             else -> error("Shouldn't be here")
         }
+    }
+
+    private fun isLastBranchOfExhaustiveWhen(l: ArgumentInfo, context: CheckerContext): Boolean {
+        if (context.containingElements.size < 2) {
+            return false
+        }
+
+        val (whenExpression, whenBranch) = context.containingElements.dropLast(1).takeLast(2)
+
+        return whenExpression is FirWhenExpression && whenBranch is FirWhenBranch
+                && whenExpression.isExhaustive && whenBranch == whenExpression.branches.lastOrNull()
+                // Ensures it's not redundantly exhaustive
+                && !l.argument.resolvedType.isNothing
+                // Having an exhaustive `when` with only one branch is useless in general
+                && whenExpression.branches.size > 1
     }
 
     private fun getImpossibilityDiagnostic(l: TypeInfo, rType: ConeKotlinType, context: CheckerContext) = when {

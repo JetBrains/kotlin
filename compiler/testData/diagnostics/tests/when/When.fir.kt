@@ -20,9 +20,9 @@ fun foo() : Int {
     val x = 1
     when (x) {
       <!USELESS_IS_CHECK!>is String<!> -> 1
-      !is Int -> 1
-      is Any? -> 1
-      is Any -> 1
+      <!USELESS_IS_CHECK!>!is Int<!> -> 1
+      <!USELESS_IS_CHECK!>is Any?<!> -> 1
+      <!USELESS_IS_CHECK!>is Any<!> -> 1
       <!INCOMPATIBLE_TYPES!>s<!> -> 1
       1 -> 1
       1 + <!UNRESOLVED_REFERENCE!>a<!> -> 1

@@ -31,11 +31,11 @@ fun Int?.isNull() = when (this) {
 }
 
 fun <T> List<T>.isNull() = when (this) {
-    is List<T> -> false
+    <!USELESS_IS_CHECK!>is List<T><!> -> false
 }
 
 fun <T> List<T>.isNull1() = when (this) {
-    is List<*> -> false
+    <!USELESS_IS_CHECK!>is List<*><!> -> false
 }
 
 fun <T: Int?> isNull(arg: T) = when(arg) {
@@ -135,7 +135,7 @@ fun testJavaNullableProps() {
     }
 
     a = when (JClass.intProp) {
-        is Int -> false
+        <!USELESS_IS_CHECK!>is Int<!> -> false
     }
 
     a = when (JClass.integerProp) {
@@ -189,9 +189,9 @@ fun typeErased(list: MutableList<String>?) = when (list) {
 }
 
 fun <T> testDNN(arg: T& Any) = when (arg) {
-    is T -> false
+    <!USELESS_IS_CHECK!>is T<!> -> false
 }
 
 fun isNullable(a: Int?) = when (a) {
-    is Number? -> false
+    <!USELESS_IS_CHECK!>is Number?<!> -> false
 }
