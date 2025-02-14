@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -56,8 +57,8 @@ private val IrClass.constructorPostfix: String
     get() = fqNameWhenAvailable?.asString()?.replace('.', '_') ?: name.toString()
 
 private fun IrCall.setFactoryFunctionArguments(dispatchReceiver: IrExpression, otherArguments: Collection<IrExpression?>): IrCall {
-    require(symbol.owner.isInitFunction || symbol.owner.isEs6ConstructorReplacement) {
-        "Expected to have init function or constructor replacement"
+    if (!symbol.owner.isInitFunction && !symbol.owner.isEs6ConstructorReplacement) {
+        compilationException("Expected to have init function or constructor replacement", this)
     }
     arguments[0] = dispatchReceiver
     otherArguments.forEachIndexed { i, argument ->
