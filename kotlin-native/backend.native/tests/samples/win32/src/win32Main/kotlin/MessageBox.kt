@@ -12,7 +12,7 @@ fun main() {
     val message = StringBuilder()
     memScoped {
       val buffer = allocArray<UShortVar>(MAX_PATH)
-      GetModuleFileNameW(null, buffer, MAX_PATH)
+      GetModuleFileNameW(null, buffer, MAX_PATH.toUInt())
       val path = buffer.toKString().split("\\").dropLast(1).joinToString("\\")
       message.append("Я нахожусь в $path\n")
     }
