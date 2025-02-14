@@ -151,8 +151,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
+        fun IrSimpleFunction.hasImplicitParameters(): Boolean =
+            parameters.any { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context }
+
         if (!irClass.isInterface) {
             for (property in properties) {
+                if (property.getter?.hasImplicitParameters() == true || property.setter?.hasImplicitParameters() == true)
+                    continue
+
                 if (!property.visibility.isPublicAPI || property.isSimpleProperty || property.isJsExportIgnore())
                     continue
 
