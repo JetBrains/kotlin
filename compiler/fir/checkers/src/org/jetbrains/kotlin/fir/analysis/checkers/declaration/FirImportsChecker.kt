@@ -81,7 +81,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         }
         if (!classLike.isVisible(context)) {
             val source = import.getLastImportedFqNameSegmentSource() ?: error("`${import.source}` does not contain `$fqName`")
-            reporter.report(classLike.toInvisibleReferenceDiagnostic(source), context)
+            reporter.report(classLike.toInvisibleReferenceDiagnostic(source, context.session), context)
         }
     }
 
@@ -100,7 +100,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
             fun reportInvisibleParentClasses(classSymbol: FirClassLikeSymbol<*>, depth: Int) {
                 if (!classSymbol.isVisible(context)) {
                     val source = import.getSourceForImportSegment(indexFromLast = depth)
-                    reporter.report(classSymbol.toInvisibleReferenceDiagnostic(source), context)
+                    reporter.report(classSymbol.toInvisibleReferenceDiagnostic(source, context.session), context)
                 }
             }
 
@@ -128,7 +128,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
                 }
                 is ImportStatus.Invisible -> {
                     val source = import.getSourceForImportSegment(0)
-                    reporter.report(status.symbol.toInvisibleReferenceDiagnostic(source), context)
+                    reporter.report(status.symbol.toInvisibleReferenceDiagnostic(source, context.session), context)
                 }
                 else -> {
                     val classId = parentClassSymbol.classId.createNestedClassId(importedName)
@@ -169,7 +169,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
 
         resolvedDeclaration?.let {
             val source = import.getSourceForImportSegment(0) ?: import.source
-            reporter.report(it.toInvisibleReferenceDiagnostic(source), context)
+            reporter.report(it.toInvisibleReferenceDiagnostic(source, context.session), context)
             return
         }
 

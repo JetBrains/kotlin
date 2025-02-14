@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.context
 
 import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
@@ -46,7 +47,7 @@ class MutableCheckerContext private constructor(
         containingFile = null,
         sessionHolder,
         returnTypeCalculator,
-        suppressedDiagnostics = getGloballySuppressedDiagnostics(sessionHolder.session),
+        suppressedDiagnostics = persistentSetOf(),
         allInfosSuppressed = false,
         allWarningsSuppressed = false,
         allErrorsSuppressed = false

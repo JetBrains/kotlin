@@ -87,7 +87,7 @@ object AnalysisFlags {
     @JvmStatic
     val expandTypeAliasesInTypeResolution by AnalysisFlag.Delegates.Boolean(defaultValue = true)
 
-    val globallySuppressedDiagnostics by AnalysisFlag.Delegates.ListOfStrings
+    val warningLevels by AnalysisFlag.Delegates.WarningLevelMap
 }
 
 @Deprecated(

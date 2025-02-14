@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -58,16 +59,18 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private fun ConeDiagnostic.toKtDiagnostic(
     source: KtSourceElement?,
-    callOrAssignmentSource: KtSourceElement?
+    callOrAssignmentSource: KtSourceElement?,
+    session: FirSession,
 ): KtDiagnostic? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(
         source,
         this.name.asString(),
         null,
+        session,
     )
 
-    is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString(), null)
-    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken)
+    is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString(), null, session)
+    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, session)
     is ConeUnresolvedTypeQualifierError -> {
         when {
             // this.qualifiers will contain all resolved qualifiers from the left up to (including) the first unresolved qualifier.
@@ -76,24 +79,24 @@ private fun ConeDiagnostic.toKtDiagnostic(
             // Resolved.<!UNRESOLVED_REFERENCE!>Unresolved<!>, Resolved.<!UNRESOLVED_REFERENCE!>Unresolved<!>.Foo
             source?.kind == KtRealSourceElementKind -> {
                 val lastQualifier = this.qualifiers.last()
-                FirErrors.UNRESOLVED_REFERENCE.createOn(lastQualifier.source, lastQualifier.name.asString(), null)
+                FirErrors.UNRESOLVED_REFERENCE.createOn(lastQualifier.source, lastQualifier.name.asString(), null, session)
             }
             else -> {
-                FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier, null)
+                FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier, null, session)
             }
         }
     }
-    is ConeFunctionCallExpectedError -> FirErrors.FUNCTION_CALL_EXPECTED.createOn(source, this.name.asString(), this.hasValueParameters)
-    is ConeFunctionExpectedError -> FirErrors.FUNCTION_EXPECTED.createOn(source, this.expression, this.type)
-    is ConeNoConstructorError -> FirErrors.NO_CONSTRUCTOR.createOn(callOrAssignmentSource ?: source)
+    is ConeFunctionCallExpectedError -> FirErrors.FUNCTION_CALL_EXPECTED.createOn(source, this.name.asString(), this.hasValueParameters, session)
+    is ConeFunctionExpectedError -> FirErrors.FUNCTION_EXPECTED.createOn(source, this.expression, this.type, session)
+    is ConeNoConstructorError -> FirErrors.NO_CONSTRUCTOR.createOn(callOrAssignmentSource ?: source, session)
     is ConeResolutionToClassifierError -> when (this.candidateSymbol.classKind) {
-        ClassKind.INTERFACE -> FirErrors.INTERFACE_AS_FUNCTION.createOn(source, this.candidateSymbol)
+        ClassKind.INTERFACE -> FirErrors.INTERFACE_AS_FUNCTION.createOn(source, this.candidateSymbol, session)
         ClassKind.CLASS -> when {
-            this.candidateSymbol.isInner -> FirErrors.INNER_CLASS_CONSTRUCTOR_NO_RECEIVER.createOn(source, this.candidateSymbol)
-            this.candidateSymbol.isExpect -> FirErrors.EXPECT_CLASS_AS_FUNCTION.createOn(source, this.candidateSymbol)
-            else -> FirErrors.RESOLUTION_TO_CLASSIFIER.createOn(source, this.candidateSymbol)
+            this.candidateSymbol.isInner -> FirErrors.INNER_CLASS_CONSTRUCTOR_NO_RECEIVER.createOn(source, this.candidateSymbol, session)
+            this.candidateSymbol.isExpect -> FirErrors.EXPECT_CLASS_AS_FUNCTION.createOn(source, this.candidateSymbol, session)
+            else -> FirErrors.RESOLUTION_TO_CLASSIFIER.createOn(source, this.candidateSymbol, session)
         }
-        else -> FirErrors.RESOLUTION_TO_CLASSIFIER.createOn(source, this.candidateSymbol)
+        else -> FirErrors.RESOLUTION_TO_CLASSIFIER.createOn(source, this.candidateSymbol, session)
     }
     is ConeHiddenCandidateError -> {
         // Usages of callables with @Deprecated(DeprecationLevel.HIDDEN) should look like unresolved references.
@@ -102,17 +105,18 @@ private fun ConeDiagnostic.toKtDiagnostic(
             source,
             ((this.candidateSymbol as? FirCallableSymbol)?.name ?: SpecialNames.NO_NAME_PROVIDED).asString(),
             null,
+            session,
         )
     }
 
-    is ConeTypeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(smallestUnresolvablePrefix.last().source)
-    is ConeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(source)
+    is ConeTypeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(smallestUnresolvablePrefix.last().source, session)
+    is ConeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(source, session)
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {
         is DynamicReceiverExpectedButWasNonDynamic ->
-            FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC.createOn(source, diagnostic.actualType)
-        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbols)
+            FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC.createOn(source, diagnostic.actualType, session)
+        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbols, session)
     }
-    is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>)
+    is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
     is ConeAmbiguityError -> @OptIn(ApplicabilityDetail::class) when {
         // Don't report ambiguity when some non-lambda, non-callable-reference argument has an error type
         candidates.all {
@@ -123,15 +127,21 @@ private fun ConeDiagnostic.toKtDiagnostic(
                     it.contextArguments?.any(AbstractConeResolutionAtom::containsErrorTypeForSuppressingAmbiguityError) == true ||
                     it.chosenExtensionReceiver?.containsErrorTypeForSuppressingAmbiguityError() == true
         } -> null
-        applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
+        applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol }, session)
         applicability == CandidateApplicability.UNSAFE_CALL -> {
             val diagnosticAndCandidate = candidates.firstNotNullOfOrNull {
                 (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<InapplicableNullableReceiver>()?.to(it)
             }
             if (diagnosticAndCandidate != null) {
-                mapInapplicableNullableReceiver(diagnosticAndCandidate.second, diagnosticAndCandidate.first, source, callOrAssignmentSource)
+                mapInapplicableNullableReceiver(
+                    diagnosticAndCandidate.second,
+                    diagnosticAndCandidate.first,
+                    source,
+                    callOrAssignmentSource,
+                    session
+                )
             } else {
-                FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
+                FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
             }
         }
 
@@ -139,77 +149,85 @@ private fun ConeDiagnostic.toKtDiagnostic(
             val unstableSmartcast = this.candidates.firstNotNullOf {
                 (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<UnstableSmartCast>()
             }
-            unstableSmartcast.mapUnstableSmartCast()
+            unstableSmartcast.mapUnstableSmartCast(session)
         }
 
-        else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
+        else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
     }
 
-    is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols)
-    is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.createOn(source)
+    is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols, session)
+    is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.createOn(source, session)
 
-    is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source ?: source, "for type parameters")
-    is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.createOn(source, this.name.asString())
+    is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(
+        this.source ?: source,
+        "for type parameters",
+        session
+    )
+    is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.createOn(source, this.name.asString(), session)
     is ConeWrongNumberOfTypeArgumentsError ->
-        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol)
+        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol, session)
     is ConeTypeArgumentsNotAllowedOnPackageError ->
-        FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source, "for packages")
+        FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source, "for packages", session)
     is ConeTypeArgumentsForOuterClassWhenNestedReferencedError ->
-        FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED.createOn(this.source)
+        FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED.createOn(this.source, session)
     is ConeNestedClassAccessedViaInstanceReference ->
-        FirErrors.NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.createOn(this.source, this.symbol)
+        FirErrors.NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.createOn(this.source, this.symbol, session)
 
     is ConeOuterClassArgumentsRequired ->
-        FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(callOrAssignmentSource ?: source, this.symbol)
+        FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(callOrAssignmentSource ?: source, this.symbol, session)
 
     is ConeNoTypeArgumentsOnRhsError ->
-        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(callOrAssignmentSource ?: source, this.desiredCount, this.symbol)
+        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(callOrAssignmentSource ?: source, this.desiredCount, this.symbol, session)
 
-    is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(callOrAssignmentSource ?: source, reason)
+    is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(callOrAssignmentSource ?: source, reason, session)
 
     is ConeSimpleDiagnostic -> when {
         (source?.kind as? KtFakeSourceElementKind)?.shouldIgnoreSimpleDiagnostic == true -> null
-        else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source)
+        else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source, session)
     }
 
     is ConeDestructuringDeclarationsOnTopLevel -> null // TODO Currently a parsing error. Would be better to report here instead KT-58563
-    is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
+    is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, session)
     is ConeCannotInferValueParameterType -> when {
-        isTopLevelLambda -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE.createOn(source)
-        else -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
+        isTopLevelLambda -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE.createOn(source, session)
+        else -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, session)
     }
-    is ConeCannotInferReceiverParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
-    is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(callOrAssignmentSource ?: source)
-    is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
+    is ConeCannotInferReceiverParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, session)
+    is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(callOrAssignmentSource ?: source, session)
+    is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target, session)
     is ConeUnreportedDuplicateDiagnostic -> null // Unreported because we always report something different
     is ConeIntermediateDiagnostic -> null // At least some usages are accounted in FirMissingDependencyClassChecker
-    is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason)
-    is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason)
+    is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason, session)
+    is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason, session)
     is ConeTypeParameterInQualifiedAccess -> null // reported in various checkers instead
     is ConeNotAnnotationContainer -> null // Reported in FirAnnotationExpressionChecker.checkAnnotationUsedAsAnnotationArgument
-    is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name)
-    is ConeUnsupported -> FirErrors.UNSUPPORTED.createOn(this.source ?: source, this.reason)
+    is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name, session)
+    is ConeUnsupported -> FirErrors.UNSUPPORTED.createOn(this.source ?: source, this.reason, session)
     is ConeLocalVariableNoTypeOrInitializer -> runIf(variable.isLocalMember) { // Top/Class-level declarations are handled in FirTopLevelPropertiesChecker
-        FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source)
+        FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source, session)
     }
     is ConeForbiddenIntersection -> null // reported in FirDefinitelyNotNullableChecker
 
-    is ConeUnderscoreIsReserved -> FirErrors.UNDERSCORE_IS_RESERVED.createOn(this.source)
-    is ConeUnderscoreUsageWithoutBackticks -> FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.createOn(this.source)
-    is ConeAmbiguousSuper -> FirErrors.AMBIGUOUS_SUPER.createOn(source, this.candidateTypes)
+    is ConeUnderscoreIsReserved -> FirErrors.UNDERSCORE_IS_RESERVED.createOn(this.source, session)
+    is ConeUnderscoreUsageWithoutBackticks -> FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.createOn(this.source, session)
+    is ConeAmbiguousSuper -> FirErrors.AMBIGUOUS_SUPER.createOn(source, this.candidateTypes, session)
     is ConeUnresolvedParentInImport -> null // reported in FirUnresolvedImportChecker
-    is ConeAmbiguousAlteredAssign -> FirErrors.AMBIGUOUS_ALTERED_ASSIGN.createOn(source, this.altererNames)
+    is ConeAmbiguousAlteredAssign -> FirErrors.AMBIGUOUS_ALTERED_ASSIGN.createOn(source, this.altererNames, session)
     is ConeAmbiguouslyResolvedAnnotationFromPlugin -> {
-        FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY.createOn(source, typeFromCompilerPhase, typeFromTypesPhase)
+        FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY.createOn(source, typeFromCompilerPhase, typeFromTypesPhase, session)
     }
     is ConeAmbiguouslyResolvedAnnotationArgument ->
-        FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT.createOn(source, listOfNotNull(symbolFromCompilerPhase, symbolFromAnnotationArgumentsPhase))
-    is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds)
-    is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
-    is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source)
-    is ConeNoInferTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(source, lowerType, upperType, false)
-    is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, FirDynamicUnsupportedChecker.MESSAGE)
-    is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source)
+        FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT.createOn(
+            source,
+            listOfNotNull(symbolFromCompilerPhase, symbolFromAnnotationArgumentsPhase),
+            session
+        )
+    is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds, session)
+    is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source, session)
+    is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source, session)
+    is ConeNoInferTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(source, lowerType, upperType, false, session)
+    is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, FirDynamicUnsupportedChecker.MESSAGE, session)
+    is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
@@ -226,11 +244,18 @@ private val KtFakeSourceElementKind.shouldIgnoreSimpleDiagnostic: Boolean
     get() = this == KtFakeSourceElementKind.DelegatingConstructorCall
             || this == KtFakeSourceElementKind.ErrorTypeRef
 
-fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?): KtDiagnostic = when (val symbol = this) {
-    is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId.classId)
-    is FirClassLikeSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.classId.outerClassId)
-    else -> shouldNotBeCalled("Unexpected receiver $javaClass")
-}
+fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?, session: FirSession): KtDiagnostic? =
+    when (val symbol = this) {
+        is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId.classId, session)
+        is FirClassLikeSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(
+            source,
+            symbol,
+            symbol.visibility,
+            symbol.classId.outerClassId,
+            session
+        )
+        else -> shouldNotBeCalled("Unexpected receiver $javaClass")
+    }
 
 fun ConeDiagnostic.toFirDiagnostics(
     session: FirSession,
@@ -240,7 +265,7 @@ fun ConeDiagnostic.toFirDiagnostics(
     return when (this) {
         is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, callOrAssignmentSource)
         is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, callOrAssignmentSource)
-        else -> listOfNotNull(toKtDiagnostic(source, callOrAssignmentSource))
+        else -> listOfNotNull(toKtDiagnostic(source, callOrAssignmentSource, session))
     }
 }
 
@@ -249,9 +274,10 @@ private fun mapInapplicableNullableReceiver(
     rootCause: InapplicableNullableReceiver,
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
-): KtDiagnostic {
+    session: FirSession,
+): KtDiagnostic? {
     if (candidate.callInfo.isImplicitInvoke) {
-        return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.createOn(source, rootCause.actualType)
+        return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.createOn(source, rootCause.actualType, session)
     }
 
     val candidateFunctionSymbol = candidate.symbol as? FirNamedFunctionSymbol
@@ -277,6 +303,7 @@ private fun mapInapplicableNullableReceiver(
                 receiverExpression,
                 candidateFunctionName!!.asString(),
                 singleArgument.takeIf { it.source != null },
+                session,
             )
         } else {
             FirErrors.UNSAFE_OPERATOR_CALL.createOn(
@@ -285,13 +312,14 @@ private fun mapInapplicableNullableReceiver(
                 receiverExpression,
                 candidateFunctionName!!.asString(),
                 singleArgument.takeIf { it.source != null },
+                session,
             )
         }
     }
     return if (source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference) {
-        FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression)
+        FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression, session)
     } else {
-        FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression)
+        FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression, session)
     }
 }
 
@@ -302,21 +330,24 @@ private fun mapInapplicableCandidateError(
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
     val typeContext = session.typeContext
-    val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol)
+    val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol, session)
 
     val diagnostics = diagnostic.candidate.diagnostics.filter { !it.isSuccess }.mapNotNull { rootCause ->
         when (rootCause) {
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.createOn(
-                rootCause.argument.source ?: qualifiedAccessSource
+                rootCause.argument.source ?: qualifiedAccessSource,
+                session
             )
 
             is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.createOn(
                 rootCause.argument.source,
-                rootCause.forbiddenNamedArgumentsTarget
+                rootCause.forbiddenNamedArgumentsTarget,
+                session
             )
 
             is MixingNamedAndPositionArguments -> FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS.createOn(
                 rootCause.argument.source,
+                session,
             )
 
             is ArgumentTypeMismatch -> {
@@ -338,6 +369,7 @@ private fun mapInapplicableCandidateError(
                     isMismatchDueToNullability = rootCause.isMismatchDueToNullability,
                     candidate = diagnostic.candidate,
                     rootCause.anonymousFunctionIfReturnExpression,
+                    session,
                 )
             }
 
@@ -352,7 +384,8 @@ private fun mapInapplicableCandidateError(
                         diagnostic.candidate,
                         typeContext,
                     ),
-                    false // not isMismatchDueToNullability
+                    false,
+                    session // not isMismatchDueToNullability
                 )
             }
 
@@ -364,9 +397,9 @@ private fun mapInapplicableCandidateError(
             is UnsuccessfulCallableReferenceArgument -> null
 
             is MultipleContextReceiversApplicableForExtensionReceivers ->
-                FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source)
+                FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source, session)
 
-            is NoReceiverAllowed -> FirErrors.NO_RECEIVER_ALLOWED.createOn(qualifiedAccessSource ?: source)
+            is NoReceiverAllowed -> FirErrors.NO_RECEIVER_ALLOWED.createOn(qualifiedAccessSource ?: source, session)
 
             is NoContextArgument ->
                 FirErrors.NO_CONTEXT_ARGUMENT.createOn(
@@ -374,10 +407,11 @@ private fun mapInapplicableCandidateError(
                     rootCause.expectedContextReceiverType.substituteTypeVariableTypes(
                         diagnostic.candidate,
                         typeContext,
-                    )
+                    ),
+                    session
                 )
 
-            is UnsupportedContextualDeclarationCall -> FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL.createOn(source)
+            is UnsupportedContextualDeclarationCall -> FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL.createOn(source, session)
 
             is AmbiguousContextArgument ->
                 FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT.createOn(
@@ -385,7 +419,8 @@ private fun mapInapplicableCandidateError(
                     rootCause.expectedContextReceiverType.substituteTypeVariableTypes(
                         diagnostic.candidate,
                         typeContext,
-                    )
+                    ),
+                    session
                 )
 
             is TypeVariableAsExplicitReceiver -> {
@@ -394,7 +429,8 @@ private fun mapInapplicableCandidateError(
                     rootCause.explicitReceiver.source,
                     typeParameter.symbol.name,
                     typeParameter.symbol.containingDeclarationSymbol.memberDeclarationNameOrNull
-                        ?: error("containingDeclarationSymbol must have been a member declaration")
+                        ?: error("containingDeclarationSymbol must have been a member declaration"),
+                    session
                 )
             }
 
@@ -402,45 +438,68 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source ?: source, rootCause.expectedType.substituteTypeVariableTypes(
                     diagnostic.candidate,
                     typeContext,
-                )
+                ), session
             )
 
-            is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
-            is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source)
+            is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(
+                rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!,
+                session
+            )
+            is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source, session)
             is TooManyArguments ->
-                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument)
-                    ?: FirErrors.TOO_MANY_ARGUMENTS.createOn(rootCause.argument.source ?: source, rootCause.function.symbol)
+                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument, session)
+                    ?: FirErrors.TOO_MANY_ARGUMENTS.createOn(
+                rootCause.argument.source ?: source,
+                rootCause.function.symbol,
+                session
+            )
             is NoValueForParameter -> FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
                 qualifiedAccessSource ?: source,
-                rootCause.valueParameter.symbol
+                rootCause.valueParameter.symbol,
+                session
             )
 
             is NameNotFound -> FirErrors.NAMED_PARAMETER_NOT_FOUND.createOn(
                 rootCause.argument.source ?: source,
-                rootCause.argument.name.asString()
+                rootCause.argument.name.asString(),
+                session
             )
 
             is NameForAmbiguousParameter -> FirErrors.NAME_FOR_AMBIGUOUS_PARAMETER.createOn(
-                rootCause.argument.source ?: source
+                rootCause.argument.source ?: source,
+                session
             )
 
-            is InapplicableNullableReceiver -> mapInapplicableNullableReceiver(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
+            is InapplicableNullableReceiver -> mapInapplicableNullableReceiver(
+                diagnostic.candidate,
+                rootCause,
+                source,
+                qualifiedAccessSource,
+                session
+            )
             is ManyLambdaExpressionArguments ->
-                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument)
-                    ?: FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(rootCause.argument.source ?: source)
-            is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.createOn(source, rootCause.function)
+                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument, session)
+                    ?: FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(
+                rootCause.argument.source ?: source,
+                session
+            )
+            is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.createOn(source, rootCause.function, session)
             is OperatorCallOfNonOperatorFunction ->
-                FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, rootCause.function.name.asString())
+                FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, rootCause.function.name.asString(), session)
 
-            is OperatorCallOfConstructor -> FirErrors.OPERATOR_CALL_ON_CONSTRUCTOR.createOn(source, rootCause.constructor.name.asString())
-            is UnstableSmartCast -> rootCause.mapUnstableSmartCast()
+            is OperatorCallOfConstructor -> FirErrors.OPERATOR_CALL_ON_CONSTRUCTOR.createOn(
+                source,
+                rootCause.constructor.name.asString(),
+                session
+            )
+            is UnstableSmartCast -> rootCause.mapUnstableSmartCast(session)
 
-            is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol)
+            is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol, session)
             is InferenceError -> {
                 rootCause.constraintError.toDiagnostic(
                     source,
                     qualifiedAccessSource,
-                    session.typeContext,
+                    session,
                     diagnostic.candidate
                 )
             }
@@ -451,26 +510,29 @@ private fun mapInapplicableCandidateError(
                 rootCause.incompatibleTypes,
                 rootCause.causingTypes,
                 rootCause.kind,
-                isError = rootCause.isError
+                isError = rootCause.isError,
+                session
             )
 
             is AdaptedCallableReferenceIsUsedWithReflection -> FirErrors.ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE.createOn(
-                qualifiedAccessSource
+                qualifiedAccessSource,
+                session
             )
 
             // Reported later
             is TypeParameterAsExpression -> null
 
-            is AmbiguousInterceptedSymbol -> FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL.createOn(source, rootCause.pluginNames)
+            is AmbiguousInterceptedSymbol -> FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL.createOn(source, rootCause.pluginNames, session)
 
             is MissingInnerClassConstructorReceiver -> FirErrors.INNER_CLASS_CONSTRUCTOR_NO_RECEIVER.createOn(
                 qualifiedAccessSource ?: source,
-                rootCause.candidateSymbol
+                rootCause.candidateSymbol,
+                session
             )
 
             is WrongNumberOfTypeArguments -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(
                 qualifiedAccessSource ?: source,
-                rootCause.desiredCount, rootCause.symbol
+                rootCause.desiredCount, rootCause.symbol, session
             )
 
             else -> genericDiagnostic
@@ -484,12 +546,12 @@ private fun mapInapplicableCandidateError(
     }
 }
 
-private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression): KtSimpleDiagnostic? {
+private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, session: FirSession): KtSimpleDiagnostic? {
     return when (val argumentSource = argument.source) {
         is KtPsiSourceElement if argumentSource.psi.let { it is KtLambdaExpression && it.isTrailingLambdaOnNewLine }
-            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource)
+            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
         is KtLightSourceElement if argumentSource.isTrailingLambdaOnNewLine()
-            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource)
+            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
         else
             -> null
     }
@@ -519,14 +581,15 @@ private fun diagnosticForArgumentTypeMismatch(
      * See [org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
      */
     anonymousFunctionIfReturnExpression: FirAnonymousFunction?,
-): KtDiagnostic {
+    session: FirSession,
+): KtDiagnostic? {
     val symbol = candidate.symbol as FirCallableSymbol
     val receiverType = (candidate.chosenExtensionReceiver ?: candidate.dispatchReceiver)?.expression?.resolvedType
 
     return when {
         anonymousFunctionIfReturnExpression != null ->
             FirErrors.RETURN_TYPE_MISMATCH.createOn(
-                source, expectedType, actualType, anonymousFunctionIfReturnExpression, isMismatchDueToNullability
+                source, expectedType, actualType, anonymousFunctionIfReturnExpression, isMismatchDueToNullability, session
             )
         expectedType is ConeCapturedType && expectedType.isBasedOnStarOrOut() && receiverType != null ->
             FirErrors.MEMBER_PROJECTED_OUT.createOn(
@@ -534,12 +597,14 @@ private fun diagnosticForArgumentTypeMismatch(
                 receiverType,
                 expectedType.projectionKindAsString(),
                 symbol.originalOrSelf(),
+                session,
             )
         else -> FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
             source,
             actualType,
             expectedType,
-            isMismatchDueToNullability
+            isMismatchDueToNullability,
+            session
         )
     }
 }
@@ -547,7 +612,7 @@ private fun diagnosticForArgumentTypeMismatch(
 private fun ConeCapturedType.isBasedOnStarOrOut(): Boolean =
     constructor.projection.kind.let { it == ProjectionKind.OUT || it == ProjectionKind.STAR }
 
-private fun UnstableSmartCast.mapUnstableSmartCast(): KtDiagnosticWithParameters4<ConeKotlinType, FirExpression, String, Boolean> {
+private fun UnstableSmartCast.mapUnstableSmartCast(session: FirSession): KtDiagnosticWithParameters4<ConeKotlinType, FirExpression, String, Boolean>? {
     val factory = when {
         isImplicitInvokeReceiver -> FirErrors.SMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER
         else -> FirErrors.SMARTCAST_IMPOSSIBLE
@@ -557,7 +622,8 @@ private fun UnstableSmartCast.mapUnstableSmartCast(): KtDiagnosticWithParameters
         targetType,
         argument,
         argument.smartcastStability.description,
-        isCastToNotNull
+        isCastToNotNull,
+        session
     )
 }
 
@@ -573,7 +639,7 @@ private fun mapSystemHasContradictionError(
                 error.toDiagnostic(
                     source,
                     qualifiedAccessSource,
-                    session.typeContext,
+                    session,
                     diagnostic.candidate,
                 )
             )
@@ -596,7 +662,7 @@ private fun mapSystemHasContradictionError(
                     if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
                 }
 
-                FirErrors.NEW_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message)
+                FirErrors.NEW_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message, session)
             }
         )
     }
@@ -605,9 +671,10 @@ private fun mapSystemHasContradictionError(
 private fun ConstraintSystemError.toDiagnostic(
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
-    typeContext: ConeTypeContext,
+    session: FirSession,
     candidate: AbstractCallCandidate<*>,
 ): KtDiagnostic? {
+    val typeContext = session.typeContext
     return when (this) {
         is NewConstraintError -> {
             val position = position.from
@@ -636,6 +703,7 @@ private fun ConstraintSystemError.toDiagnostic(
                     isMismatchDueToNullability = typeMismatchDueToNullability,
                     candidate = candidate,
                     anonymousFunctionIfReturnExpression = (position as? ConeLambdaArgumentConstraintPosition)?.lambda,
+                    session = session,
                 )
             }
 
@@ -651,7 +719,8 @@ private fun ConstraintSystemError.toDiagnostic(
                         qualifiedAccessSource ?: source,
                         upperConeType.substituteTypeVariableTypes(candidate, typeContext),
                         inferredType.substituteTypeVariableTypes(candidate, typeContext),
-                        typeMismatchDueToNullability
+                        typeMismatchDueToNullability,
+                        session
                     )
                 }
 
@@ -678,6 +747,7 @@ private fun ConstraintSystemError.toDiagnostic(
                     ?: candidate.sourceOfCallToSymbolWith(this.typeVariable as ConeTypeVariable)
                     ?: source,
                 typeVariableName,
+                session,
             )
         }
 
@@ -693,13 +763,15 @@ private fun ConstraintSystemError.toDiagnostic(
                 causingTypes as Collection<ConeKotlinType>,
                 kind,
                 this is InferredEmptyIntersectionError,
+                session,
             )
         }
 
         is OnlyInputTypesDiagnostic -> {
             FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR.createOn(
                 source,
-                (typeVariable as ConeTypeParameterBasedTypeVariable).typeParameterSymbol
+                (typeVariable as ConeTypeParameterBasedTypeVariable).typeParameterSymbol,
+                session
             )
         }
 
@@ -709,7 +781,8 @@ private fun ConstraintSystemError.toDiagnostic(
                 anonymous.source ?: source,
                 typeParameterSymbol.name,
                 typeParameterSymbol.containingDeclarationSymbol.memberDeclarationNameOrNull
-                    ?: error("containingDeclarationSymbol must have been a member declaration")
+                    ?: error("containingDeclarationSymbol must have been a member declaration"),
+                session
             )
         }
 
@@ -761,8 +834,9 @@ private fun reportInferredIntoEmptyIntersection(
     incompatibleTypes: Collection<ConeKotlinType>,
     causingTypes: Collection<ConeKotlinType>,
     kind: EmptyIntersectionTypeKind,
-    isError: Boolean
-): KtDiagnostic {
+    isError: Boolean,
+    session: FirSession
+): KtDiagnostic? {
     val typeVariableText =
         (typeVariable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.name?.asString()
             ?: typeVariable.toString()
@@ -774,7 +848,7 @@ private fun reportInferredIntoEmptyIntersection(
             else -> FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.warningFactory
         }
 
-    return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText)
+    return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText, session)
 }
 
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
@@ -837,26 +911,29 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 private fun KtDiagnosticFactory0.createOn(
-    element: KtSourceElement?
-): KtSimpleDiagnostic {
-    return on(element.requireNotNull(), positioningStrategy = null)
+    element: KtSourceElement?,
+    session: FirSession,
+): KtSimpleDiagnostic? {
+    return on(element.requireNotNull(), positioningStrategy = null, session.languageVersionSettings)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 private fun <A> KtDiagnosticFactory1<A>.createOn(
     element: KtSourceElement?,
-    a: A
-): KtDiagnosticWithParameters1<A> {
-    return on(element.requireNotNull(), a, positioningStrategy = null)
+    a: A,
+    session: FirSession,
+): KtDiagnosticWithParameters1<A>? {
+    return on(element.requireNotNull(), a, positioningStrategy = null, session.languageVersionSettings)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     element: KtSourceElement?,
     a: A,
-    b: B
-): KtDiagnosticWithParameters2<A, B> {
-    return on(element.requireNotNull(), a, b, positioningStrategy = null)
+    b: B,
+    session: FirSession,
+): KtDiagnosticWithParameters2<A, B>? {
+    return on(element.requireNotNull(), a, b, positioningStrategy = null, session.languageVersionSettings)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -864,9 +941,10 @@ private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B,
-    c: C
-): KtDiagnosticWithParameters3<A, B, C> {
-    return on(element.requireNotNull(), a, b, c, positioningStrategy = null)
+    c: C,
+    session: FirSession,
+): KtDiagnosticWithParameters3<A, B, C>? {
+    return on(element.requireNotNull(), a, b, c, positioningStrategy = null, session.languageVersionSettings)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -875,7 +953,8 @@ private fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     a: A,
     b: B,
     c: C,
-    d: D
-): KtDiagnosticWithParameters4<A, B, C, D> {
-    return on(element.requireNotNull(), a, b, c, d, positioningStrategy = null)
+    d: D,
+    session: FirSession,
+): KtDiagnosticWithParameters4<A, B, C, D>? {
+    return on(element.requireNotNull(), a, b, c, d, positioningStrategy = null, session.languageVersionSettings)
 }
