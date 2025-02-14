@@ -21,12 +21,11 @@ dependencies {
     }
 }
 
-val matches = aggregation.incoming.artifactView { lenient(true) }
-
 tasks.register("aggregate") {
-    inputs.files(matches.files).withPropertyName("matches")
+    val matches = aggregation.incoming.artifactView { lenient(true) }
+    inputs.files(matches.files)
     doFirst {
-        matches.files.forEach {
+        inputs.files.forEach {
             if (it.extension != "txt") {
                 throw GradleException("Not a text file: $it")
             }
