@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 
 @KaExperimentalApi
-class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
+internal class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
-        return KaResolveExtensionProvider.Companion.provideExtensionsFor(module).map { it.getShadowedScope() }
+        return KaResolveExtensionProvider.provideExtensionsFor(module).map { it.getShadowedScope() }
     }
 }
