@@ -1,0 +1,77 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun BrokenComposable(
+    composableParameter: @Composable (
+        parameter1: String,
+        parameter2: String,
+        parameter3: String,
+        parameter4: String,
+        parameter5: String,
+        parameter6: String,
+        parameter7: String,
+        parameter8: String,
+        parameter9: String,
+        parameter10: String
+    ) -> Unit
+) {
+    val composableWithData = @Composable {
+        composableParameter(
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        )
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun BrokenComposable(composableParameter: Function13<@[ParameterName(name = 'parameter1')] String, @[ParameterName(name = 'parameter2')] String, @[ParameterName(name = 'parameter3')] String, @[ParameterName(name = 'parameter4')] String, @[ParameterName(name = 'parameter5')] String, @[ParameterName(name = 'parameter6')] String, @[ParameterName(name = 'parameter7')] String, @[ParameterName(name = 'parameter8')] String, @[ParameterName(name = 'parameter9')] String, @[ParameterName(name = 'parameter10')] String, Composer, Int, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(BrokenComposable)<{>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(composableParameter)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val composableWithData = rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<compos...>:Test.kt")
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        composableParameter("", "", "", "", "", "", "", "", "", "", %composer, 920350134, 0)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    BrokenComposable(composableParameter, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
