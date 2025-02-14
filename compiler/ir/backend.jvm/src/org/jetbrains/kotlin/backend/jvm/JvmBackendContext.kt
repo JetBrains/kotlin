@@ -147,10 +147,11 @@ class JvmBackendContext(
     override val optimizeNullChecksUsingKotlinNullability: Boolean
         get() = false
 
+    override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
+        get() = true
+
     inner class JvmIr : Ir() {
         override val symbols = JvmSymbols(this@JvmBackendContext)
-
-        override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 
     override fun remapMultiFieldValueClassStructure(

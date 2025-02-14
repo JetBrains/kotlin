@@ -42,7 +42,7 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
         newIrFunction: IrFunction
     ) {
         if (irFunction !is IrSimpleFunction
-            || !this@JvmDefaultArgumentStubGenerator.context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()
+            || !this@JvmDefaultArgumentStubGenerator.context.shouldGenerateHandlerParameterForDefaultBodyFun
             || irFunction.isTopLevelDeclaration
             || (irFunction.parent as? IrClass)?.isFinalClass == true
         )

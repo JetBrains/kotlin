@@ -53,6 +53,9 @@ interface CommonBackendContext : LoweringContext, BackendContextHolder {
         get() = PartialLinkageSupportForLowerings.DISABLED
 
     val innerClassesSupport: InnerClassesSupport
+
+    val shouldGenerateHandlerParameterForDefaultBodyFun
+        get() = false
 }
 
 /**

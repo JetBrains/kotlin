@@ -168,8 +168,10 @@ class JsIrBackendContext(
     override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
     override val ir = object : Ir() {
         override val symbols = this@JsIrBackendContext.symbols
-        override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
+
+    override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
+        get() = true
 
     // classes forced to be loaded
 
