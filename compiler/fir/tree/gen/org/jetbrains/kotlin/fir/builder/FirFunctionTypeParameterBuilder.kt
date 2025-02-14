@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirFunctionTypeParameterBuilder {
-    var source: KtSourceElement? = null
+    lateinit var source: KtSourceElement
     var name: Name? = null
     lateinit var returnTypeRef: FirTypeRef
 
