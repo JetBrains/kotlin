@@ -13,5 +13,5 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 @PhaseDescription("NativeAssertionWrapperLowering")
 class NativeAssertionWrapperLowering(context: LoweringContext) : KlibAssertionWrapperLowering(context) {
-    override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol = (context.ir.symbols as KonanSymbols).isAssertionArgumentEvaluationEnabled
+    override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol = (context.symbols as KonanSymbols).isAssertionArgumentEvaluationEnabled
 }

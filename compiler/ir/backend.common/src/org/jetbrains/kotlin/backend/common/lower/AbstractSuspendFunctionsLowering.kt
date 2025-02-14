@@ -83,7 +83,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     }
 
     protected fun IrCall.isReturnIfSuspendedCall() =
-        symbol == context.ir.symbols.returnIfSuspended
+        symbol == context.symbols.returnIfSuspended
 
     private fun simplifyTailSuspendCalls(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) {
         if (tailSuspendCalls.isEmpty()) return
@@ -106,7 +106,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         })
     }
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 

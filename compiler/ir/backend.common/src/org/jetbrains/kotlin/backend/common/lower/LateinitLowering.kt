@@ -46,7 +46,7 @@ open class LateinitLowering(
     private val visitedLateinitVariables = mutableSetOf<IrVariable>()
 
     constructor(loweringContext: LoweringContext) :
-            this(loweringContext, UninitializedPropertyAccessExceptionThrower(loweringContext.ir.symbols))
+            this(loweringContext, UninitializedPropertyAccessExceptionThrower(loweringContext.symbols))
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)

@@ -136,7 +136,7 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
         op = { generationState, input ->
             val lifetimes = mutableMapOf<IrElement, Lifetime>()
             val context = generationState.context
-            val entryPoint = context.ir.symbols.entryPoint?.owner
+            val entryPoint = context.symbols.entryPoint?.owner
             val nonDevirtualizedCallSitesUnfoldFactor =
                     if (entryPoint != null) {
                         // For a final program it can be safely assumed that what classes we see is what we got,

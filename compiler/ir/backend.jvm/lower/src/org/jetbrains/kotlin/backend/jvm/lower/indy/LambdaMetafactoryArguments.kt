@@ -261,7 +261,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // Create a fake instance method as if it was defined in a class implementing SAM interface
         // (such class would be eventually created by LambdaMetafactory at run-time).
         val fakeClass = context.irFactory.buildClass { name = Name.special("<fake>") }
-        fakeClass.parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
+        fakeClass.parent = context.symbols.kotlinJvmInternalInvokeDynamicPackage
         val fakeInstanceMethod = buildFakeOverrideMember(samType, samMethod, fakeClass) as IrSimpleFunction
         (fakeInstanceMethod as IrFunctionWithLateBinding).acquireSymbol(IrSimpleFunctionSymbolImpl())
         fakeInstanceMethod.overriddenSymbols = listOf(samMethod.symbol)

@@ -118,7 +118,7 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
     }
 
     private val irBuiltIns = context.irBuiltIns
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     private val kFunctionImplSymbol = symbols.kFunctionImpl
     private val kFunctionDescriptionSymbol = symbols.kFunctionDescription

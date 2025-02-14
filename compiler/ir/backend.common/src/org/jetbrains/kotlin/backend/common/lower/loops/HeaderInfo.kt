@@ -259,7 +259,7 @@ internal abstract class HeaderInfoBuilder(
     private val scopeOwnerSymbol: () -> IrSymbol,
     private val allowUnsignedBounds: Boolean = false
 ) : IrVisitor<HeaderInfo?, IrCall?>() {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     protected open val progressionHandlers = listOf(
         CollectionIndicesHandler(context),

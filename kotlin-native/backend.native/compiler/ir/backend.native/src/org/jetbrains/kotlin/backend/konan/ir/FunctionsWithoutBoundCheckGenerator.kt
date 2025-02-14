@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // Generate additional functions for array set and get operators without bounds checking.
 internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendContext) {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     private fun generateFunction(baseFunction: IrSimpleFunction, delegatingToFunction: IrSimpleFunction?, functionName: Name) =
             context.irFactory.createSimpleFunction(

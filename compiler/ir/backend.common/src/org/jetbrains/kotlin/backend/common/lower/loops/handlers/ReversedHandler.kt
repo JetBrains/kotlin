@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.FqName
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
 internal class ReversedHandler(context: CommonBackendContext, private val visitor: HeaderInfoBuilder) :
     HeaderInfoHandler<IrCall, Nothing?> {
-    private val progressionClassesTypes = context.ir.symbols.progressionClasses.map { it.defaultType }.toSet()
+    private val progressionClassesTypes = context.symbols.progressionClasses.map { it.defaultType }.toSet()
 
     override fun matchIterable(expression: IrCall): Boolean {
         // TODO: Handle reversed String, Progression.withIndex(), etc.

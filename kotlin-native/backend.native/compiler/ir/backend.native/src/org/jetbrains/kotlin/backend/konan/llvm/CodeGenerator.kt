@@ -453,7 +453,7 @@ internal class StackLocalsManagerImpl(
         }
     }
 
-    private val symbols = functionGenerationContext.context.ir.symbols
+    private val symbols = functionGenerationContext.context.symbols
     private val llvm = functionGenerationContext.llvm
 
     // TODO: find better place?
@@ -505,7 +505,7 @@ internal class StackLocalsManagerImpl(
 
     private fun clean(stackLocal: StackLocal, refsOnly: Boolean) = with(functionGenerationContext) {
         if (stackLocal.isArray) {
-            if (stackLocal.irClass.symbol == context.ir.symbols.array) {
+            if (stackLocal.irClass.symbol == context.symbols.array) {
                 call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
             } else if (!refsOnly) {
                 val arrayType = localArrayType(stackLocal.irClass, stackLocal.arraySize!!)
@@ -1180,7 +1180,7 @@ internal abstract class FunctionGenerationContext(
         val exceptionRawPtr = call(llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
 
         // This will take care of ARC - need to be done in the catching scope, i.e. before __cxa_end_catch
-        val exception = call(context.ir.symbols.createForeignException.owner.llvmFunction,
+        val exception = call(context.symbols.createForeignException.owner.llvmFunction,
                 listOf(exceptionRawPtr),
                 Lifetime.GLOBAL, exceptionHandler)
 

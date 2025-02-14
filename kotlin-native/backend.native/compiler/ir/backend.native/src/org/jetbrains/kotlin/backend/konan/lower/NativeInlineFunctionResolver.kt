@@ -71,7 +71,7 @@ internal class NativeInlineFunctionResolver(
     inner class NativeCallInlinerStrategy : CallInlinerStrategy {
         private lateinit var builder: NativeRuntimeReflectionIrBuilder
         override fun at(scope: Scope, expression: IrExpression) {
-            val symbols = this@NativeInlineFunctionResolver.context.ir.symbols
+            val symbols = this@NativeInlineFunctionResolver.context.symbols
             builder = context.createIrBuilder(scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
                     .toNativeRuntimeReflectionBuilder(symbols) { message ->
                         this@NativeInlineFunctionResolver.context.reportCompilationError(message, getCompilerMessageLocation())

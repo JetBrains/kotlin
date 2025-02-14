@@ -25,7 +25,7 @@ internal class NativeDefaultParameterInjector(context: KonanBackendContext) : De
 ) {
 
     override fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression {
-        val symbols = context.ir.symbols
+        val symbols = context.symbols
 
         // Actual scope for builder is the current function that we don't have access to. So we put a new symbol as scope here,
         // but it will not affect the result because we are not creating any declarations here.

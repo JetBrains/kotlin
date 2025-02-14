@@ -401,7 +401,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             else
                 IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, -1)
 
-            return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, context.ir.symbols.intPostfixIncrDecr).apply {
+            return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, context.symbols.intPostfixIncrDecr).apply {
                 putValueArgument(0, getIncrVar)
                 putValueArgument(1, delta)
             }
@@ -485,7 +485,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
         private fun prefixIncr(expression: IrSetValue, delta: Int): IrExpression {
             val startOffset = expression.startOffset
             val endOffset = expression.endOffset
-            return IrCallImpl.fromSymbolOwner(startOffset, endOffset, context.ir.symbols.intPrefixIncrDecr).apply {
+            return IrCallImpl.fromSymbolOwner(startOffset, endOffset, context.symbols.intPrefixIncrDecr).apply {
                 putValueArgument(0, IrGetValueImpl(startOffset, endOffset, expression.symbol))
                 putValueArgument(1, IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, delta))
             }

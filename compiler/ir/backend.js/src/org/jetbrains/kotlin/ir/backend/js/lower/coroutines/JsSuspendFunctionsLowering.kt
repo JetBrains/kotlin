@@ -49,7 +49,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
     private var coroutineId = 0
 
     override val stateMachineMethodName = Name.identifier("doResume")
-    override fun getCoroutineBaseClass(function: IrFunction) = context.ir.symbols.coroutineImpl
+    override fun getCoroutineBaseClass(function: IrFunction) = context.symbols.coroutineImpl
 
     override fun nameForCoroutineClass(function: IrFunction) = "${function.name}COROUTINE\$${coroutineId++}".synthesizedName
 

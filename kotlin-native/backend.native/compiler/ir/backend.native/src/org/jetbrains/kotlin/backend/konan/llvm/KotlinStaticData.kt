@@ -61,7 +61,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         val hashCode = value.hashCode()
         val header = Struct(
                 llvm.structTypeWithFlexibleArray(runtime.stringHeaderType, data.size),
-                permanentTag(context.ir.symbols.string.owner.typeInfoPtr), // equivalent to CharArray
+                permanentTag(context.symbols.string.owner.typeInfoPtr), // equivalent to CharArray
                 llvm.constInt32((runtime.stringHeaderExtraSize + data.size) / 2), // array size in Chars
                 llvm.constInt32(hashCode),
                 // flags = HASHCODE_IS_ZERO or IGNORE_LAST_BYTE or (encoding shl ENCODING_OFFSET)
@@ -106,8 +106,8 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 
     fun unique(kind: UniqueKind): ConstPointer {
         val descriptor = when (kind) {
-            UniqueKind.UNIT -> context.ir.symbols.unit.owner
-            UniqueKind.EMPTY_ARRAY -> context.ir.symbols.array.owner
+            UniqueKind.UNIT -> context.symbols.unit.owner
+            UniqueKind.EMPTY_ARRAY -> context.symbols.array.owner
         }
         return if (isExternal(descriptor)) {
             constPointer(importGlobal(kind.llvmName, runtime.objHeaderType, descriptor))
@@ -124,7 +124,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     fun createImmutableBlob(value: IrConst): LLVMValueRef {
         val strValue = value.value as String
         val args = strValue.map { llvm.int8(it.code.toByte()) }
-        return createConstKotlinArray(context.ir.symbols.immutableBlob.owner, args)
+        return createConstKotlinArray(context.symbols.immutableBlob.owner, args)
     }
 }
 

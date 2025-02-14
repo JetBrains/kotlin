@@ -69,9 +69,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         get() = (this as? IrPropertyReference)?.field
 
     private val arrayItemGetter =
-        context.ir.symbols.array.owner.functions.single { it.name.asString() == "get" }
+        context.symbols.array.owner.functions.single { it.name.asString() == "get" }
 
-    private val signatureStringIntrinsic = context.ir.symbols.signatureStringIntrinsic
+    private val signatureStringIntrinsic = context.symbols.signatureStringIntrinsic
 
     private val kPropertyStarType = IrSimpleTypeImpl(
         context.irBuiltIns.kPropertyClass,
@@ -81,7 +81,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     )
 
     private val kPropertiesFieldType =
-        context.ir.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
+        context.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
 
     private val IrClass.isSynthetic
         get() = metadata !is MetadataSource.File && metadata !is MetadataSource.Class && metadata !is MetadataSource.Script
@@ -180,7 +180,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
     private fun propertyReferenceKind(expression: IrCallableReference<*>, mutable: Boolean, i: Int): PropertyReferenceKind {
         check(i in 0..2) { "Incorrect number of receivers ($i) for property reference: ${expression.render()}" }
-        val symbols = context.ir.symbols
+        val symbols = context.symbols
         return PropertyReferenceKind(
             symbols.getPropertyReferenceClass(mutable, i, true),
             symbols.reflection.owner.functions.single {

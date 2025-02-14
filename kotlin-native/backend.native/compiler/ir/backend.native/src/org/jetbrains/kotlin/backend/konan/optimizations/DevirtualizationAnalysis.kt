@@ -68,7 +68,7 @@ internal object DevirtualizationAnalysis {
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
     fun computeRootSet(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
-        val entryPoint = context.ir.symbols.entryPoint?.owner
+        val entryPoint = context.symbols.entryPoint?.owner
         val exported = if (entryPoint != null)
             listOf(moduleDFG.symbolTable.mapFunction(entryPoint))
         else {
@@ -131,7 +131,7 @@ internal object DevirtualizationAnalysis {
                                                 val irModule: IrModuleFragment,
                                                 val moduleDFG: ModuleDFG) {
 
-        private val entryPoint = context.ir.symbols.entryPoint?.owner
+        private val entryPoint = context.symbols.entryPoint?.owner
 
         private val symbolTable = moduleDFG.symbolTable
 
@@ -579,7 +579,7 @@ internal object DevirtualizationAnalysis {
             }
 
             val result = mutableMapOf<DataFlowIR.Node.VirtualCall, Pair<DevirtualizedCallSite, DataFlowIR.FunctionSymbol>>()
-            val nothing = symbolTable.classMap[context.ir.symbols.nothing.owner]
+            val nothing = symbolTable.classMap[context.symbols.nothing.owner]
             for (function in functions.values) {
                 if (!constraintGraph.functions.containsKey(function.symbol)) continue
                 function.body.forEachNonScopeNode { node ->
@@ -1307,7 +1307,7 @@ internal object DevirtualizationAnalysis {
     fun devirtualize(irModule: IrModuleFragment, moduleDFG: ModuleDFG, generationState: NativeGenerationState,
                      maxVTableUnfoldFactor: Int, maxITableUnfoldFactor: Int) {
         val context = generationState.context
-        val symbols = context.ir.symbols
+        val symbols = context.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val isSubtype = symbols.isSubtype
         val getObjectTypeInfo = symbols.getObjectTypeInfo

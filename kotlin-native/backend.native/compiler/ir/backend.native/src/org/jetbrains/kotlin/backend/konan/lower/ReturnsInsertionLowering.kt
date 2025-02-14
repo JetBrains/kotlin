@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  * Generates [IrReturn]s for `Unit`-returning functions.
  */
 internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrVisitorVoid() {

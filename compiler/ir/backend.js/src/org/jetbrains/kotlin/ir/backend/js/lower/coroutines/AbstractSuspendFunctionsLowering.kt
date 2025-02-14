@@ -415,7 +415,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         }
     }
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
@@ -579,5 +579,5 @@ fun getSuspendFunctionKind(
 // Suppress since it is used in native
 @Suppress("MemberVisibilityCanBePrivate")
 fun IrCall.isReturnIfSuspendedCall(context: JsCommonBackendContext) =
-    symbol == context.ir.symbols.returnIfSuspended
+    symbol == context.symbols.returnIfSuspended
 

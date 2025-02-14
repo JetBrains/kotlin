@@ -142,8 +142,8 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
 
                 wrapper.createThisReceiverParameter()
 
-                val lambdaSuperClass = backendContext.ir.symbols.lambdaClass
-                val functionClass = backendContext.ir.symbols.getJvmSuspendFunctionClass(0)
+                val lambdaSuperClass = backendContext.symbols.lambdaClass
+                val functionClass = backendContext.symbols.getJvmSuspendFunctionClass(0)
 
                 wrapper.superTypes += lambdaSuperClass.defaultType
                 wrapper.superTypes += functionClass.typeWith(backendContext.irBuiltIns.anyNType)
@@ -190,7 +190,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
                 }
             }
 
-            +irCall(backendContext.ir.symbols.runSuspendFunction).apply {
+            +irCall(backendContext.symbols.runSuspendFunction).apply {
                 putValueArgument(
                     0, IrConstructorCallImpl.fromSymbolOwner(
                         UNDEFINED_OFFSET,

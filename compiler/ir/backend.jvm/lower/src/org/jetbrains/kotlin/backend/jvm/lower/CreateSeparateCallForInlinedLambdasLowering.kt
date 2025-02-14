@@ -36,7 +36,7 @@ class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext
         val inlinedBlock = expression.statements.lastOrNull() as? IrInlinedFunctionBlock ?: return super.visitReturnableBlock(expression)
         if (inlinedBlock.isFunctionInlining()) {
             val newStatements = inlinedBlock.getOnlyInlinableArguments().map { arg ->
-                IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.singleArgumentInlineFunction)
+                IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.symbols.singleArgumentInlineFunction)
                     .also { it.putValueArgument(0, arg.transform(this, null)) }
             }
 

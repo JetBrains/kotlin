@@ -299,7 +299,7 @@ class StateMachineBuilder(
             val irReturn = JsIrBuilder.buildReturn(function, getSuspendResultAsType(anyN), nothing)
             val check = JsIrBuilder.buildCall(eqeqeqSymbol).apply {
                 arguments[0] = getSuspendResultAsType(anyN)
-                arguments[1] = JsIrBuilder.buildCall(context.ir.symbols.coroutineSuspendedGetter)
+                arguments[1] = JsIrBuilder.buildCall(context.symbols.coroutineSuspendedGetter)
             }
 
             val suspensionBlock = JsIrBuilder.buildBlock(unit, listOf(irReturn))

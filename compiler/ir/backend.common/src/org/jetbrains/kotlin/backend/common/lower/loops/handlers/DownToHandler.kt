@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 /** Builds a [HeaderInfo] for progressions built using the `downTo` extension function. */
 internal class DownToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
-    private val progressionElementTypes = context.ir.symbols.progressionElementTypes
+    private val progressionElementTypes = context.symbols.progressionElementTypes
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner

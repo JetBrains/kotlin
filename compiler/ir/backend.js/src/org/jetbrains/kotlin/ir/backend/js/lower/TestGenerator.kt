@@ -94,7 +94,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             arguments[0] = JsIrBuilder.buildString(context.irBuiltIns.stringType, name)
             arguments[1] = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, ignored)
 
-            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
+            val refType = IrSimpleTypeImpl(context.symbols.functionN(0), false, emptyList(), emptyList())
             arguments[2] = JsIrBuilder.buildFunctionExpression(refType, function)
         }
 
@@ -225,7 +225,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 )
             }
 
-            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
+            val refType = IrSimpleTypeImpl(context.symbols.functionN(0), false, emptyList(), emptyList())
             val finallyLambda = JsIrBuilder.buildFunctionExpression(refType, afterFunction)
             val finally = promiseSymbol.owner.declarations
                 .findIsInstanceAnd<IrSimpleFunction> { it.name.asString() == "finally" }!!

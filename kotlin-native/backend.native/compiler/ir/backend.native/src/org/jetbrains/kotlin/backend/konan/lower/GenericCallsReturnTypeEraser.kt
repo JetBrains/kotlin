@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * a pure and simple function call with no conversions/coercions of the return type and the parameter types.
  */
 internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLoweringPass {
-    private val reinterpret = context.ir.symbols.reinterpret.owner
+    private val reinterpret = context.symbols.reinterpret.owner
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irBuilder = context.createIrBuilder(container.symbol)

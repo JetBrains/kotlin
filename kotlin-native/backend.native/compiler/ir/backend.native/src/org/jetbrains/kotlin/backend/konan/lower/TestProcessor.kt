@@ -52,7 +52,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
         val IGNORE_FQ_NAME = FqName.fromSegments(listOf("kotlin", "test" , "Ignore"))
     }
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     private val baseClassSuite = symbols.baseClassSuite.owner
 
@@ -628,8 +628,8 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
             }.apply {
                 parent = irFile
                 irFile.declarations.add(this)
-                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
-                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.threadLocal.owner)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.symbols.eagerInitialization.owner)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.symbols.threadLocal.owner)
                 statements.forEach { it.accept(SetDeclarationsParentVisitor, this) }
                 initializer = context.irFactory.createExpressionBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                         IrCompositeImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, null, statements)

@@ -56,7 +56,7 @@ abstract class IndexedGetIterationHandler(
             }
 
             IndexedGetHeaderInfo(
-                this@IndexedGetIterationHandler.context.ir.symbols,
+                this@IndexedGetIterationHandler.context.symbols,
                 first = irInt(0),
                 last = last,
                 step = irInt(1),
@@ -91,7 +91,7 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray())
 
     private val IrType.getFunctionName: Name
-        get() = context.ir.symbols.getWithoutBoundCheckName.let {
+        get() = context.symbols.getWithoutBoundCheckName.let {
             if (isArrayType() && it != null) {
                 it
             } else {
@@ -121,7 +121,7 @@ internal open class CharSequenceIterationHandler(
     canCacheLast: Boolean = false
 ) : IndexedGetIterationHandler(context, canCacheLast) {
     override fun matchIterable(expression: IrExpression): Boolean =
-        expression.type.isSubtypeOfClass(context.ir.symbols.charSequence)
+        expression.type.isSubtypeOfClass(context.symbols.charSequence)
 
     // We only want to handle the known extension function for CharSequence in the standard library (top level `kotlin.text.iterator`).
     // The behavior of this iterator is well-defined and can be lowered. CharSequences can have their own iterators, either as a member or
@@ -134,10 +134,10 @@ internal open class CharSequenceIterationHandler(
     }
 
     override val IrType.sizePropertyGetter: IrSimpleFunction
-        get() = context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+        get() = context.symbols.charSequence.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction: IrSimpleFunction
-        get() = context.ir.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+        get() = context.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }
 
 /**
@@ -150,8 +150,8 @@ internal class StringIterationHandler(context: CommonBackendContext) : CharSeque
         expression.type.isString()
 
     override val IrType.sizePropertyGetter: IrSimpleFunction
-        get() = context.ir.symbols.string.getPropertyGetter("length")!!.owner
+        get() = context.symbols.string.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction: IrSimpleFunction
-        get() = context.ir.symbols.string.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+        get() = context.symbols.string.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }

@@ -89,7 +89,7 @@ private class ExpressionValuesExtractor(val context: Context,
 
     val unit = IrCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType, context.ir.symbols.theUnitInstance,
+            context.irBuiltIns.unitType, context.symbols.theUnitInstance,
             typeArgumentsCount = 0)
 
     fun forEachValue(expression: IrExpression, block: (IrExpression) -> Unit) {
@@ -367,7 +367,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             super.visitConstantArray(expression)
             expressions += expression to currentLoop
             val arrayClass = expression.type.classOrNull
-            val arraySetSymbol = context.ir.symbols.arraySet[arrayClass] ?: error("Unexpected array type ${expression.type.render()}")
+            val arraySetSymbol = context.symbols.arraySet[arrayClass] ?: error("Unexpected array type ${expression.type.render()}")
             val isGeneric = arrayClass == context.irBuiltIns.arrayClass
             expression.elements.forEachIndexed { index, value ->
                 val call = IrCallImpl(
@@ -395,7 +395,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         }
     }
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val arrayGetSymbols = symbols.arrayGet.values
     private val arraySetSymbols = symbols.arraySet.values
     private val createUninitializedInstanceSymbol = symbols.createUninitializedInstance

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.utils.DFS
  */
 @PhaseDescription(name = "ToArray")
 internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     override fun lower(irClass: IrClass) {
         if (irClass.isJvmInterface || !irClass.isCollectionSubClass) return

@@ -97,14 +97,14 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
             visibility = if (capturesCrossinline) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }.apply {
             createThisReceiverParameter()
-            superTypes += context.ir.symbols.continuationImplClass.owner.defaultType
+            superTypes += context.symbols.continuationImplClass.owner.defaultType
             parent = irFunction
 
             copyTypeParametersFrom(irFunction)
             val resultField = addField {
                 origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD
                 name = Name.identifier(CONTINUATION_RESULT_FIELD_NAME)
-                type = context.ir.symbols.resultOfAnyType
+                type = context.symbols.resultOfAnyType
                 visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             }
             val capturedThisField = dispatchReceiverParameter?.let {
@@ -137,7 +137,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
             val capturedThisParameter = capturedThisField?.let { constructor.addValueParameter(it.name.asString(), it.type) }
             val completionParameterSymbol = constructor.addCompletionValueParameter()
 
-            val superClassConstructor = context.ir.symbols.continuationImplClass.owner.constructors.single { it.valueParameters.size == 1 }
+            val superClassConstructor = context.symbols.continuationImplClass.owner.constructors.single { it.valueParameters.size == 1 }
             constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
                 if (capturedThisField != null) {
                     +irSetField(irGet(thisReceiver!!), capturedThisField, irGet(capturedThisParameter!!))
@@ -156,7 +156,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
         isStaticSuspendImpl: Boolean
     ) {
         val backendContext = context
-        val invokeSuspend = context.ir.symbols.continuationImplClass.owner.functions
+        val invokeSuspend = context.symbols.continuationImplClass.owner.functions
             .single { it.name == Name.identifier(INVOKE_SUSPEND_METHOD_NAME) }
         addFunctionOverride(invokeSuspend, irFunction.startOffset, irFunction.endOffset) { function ->
             +irSetField(irGet(function.dispatchReceiverParameter!!), resultField, irGet(function.valueParameters[0]))
@@ -459,7 +459,7 @@ private fun IrFunction.continuationType(context: JvmBackendContext): IrType {
     return if (isInvokeOfNumberedSuspendFunction || isInvokeOfNumberedFunction)
         context.irBuiltIns.anyNType
     else
-        context.ir.symbols.continuationClass.typeWith(returnType)
+        context.symbols.continuationClass.typeWith(returnType)
 }
 
 private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspendView(

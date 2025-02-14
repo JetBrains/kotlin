@@ -89,7 +89,7 @@ private abstract class BaseInteropIrTransformer(
             private val cStubsManager = generationState.cStubsManager
 
             override val irBuiltIns get() = context.irBuiltIns
-            override val symbols get() = context.ir.symbols
+            override val symbols get() = context.symbols
             override val typeSystem: IrTypeSystemContext get() = context.typeSystem
 
             val klib: KonanLibrary? get() {
@@ -135,7 +135,7 @@ private abstract class BaseInteropIrTransformer(
 private class InteropLoweringPart1(val generationState: NativeGenerationState) : BaseInteropIrTransformer(generationState), FileLoweringPass {
     private val context = generationState.context
 
-    private val symbols get() = context.ir.symbols
+    private val symbols get() = context.symbols
 
     lateinit var currentFile: IrFile
 
@@ -178,10 +178,10 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             expression.setDeclarationsParent(this)
 
             if (threadLocal)
-                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.threadLocal.owner)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.symbols.threadLocal.owner)
 
             if (eager)
-                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.symbols.eagerInitialization.owner)
 
             initializer = context.irFactory.createExpressionBody(startOffset, endOffset, expression)
         }
@@ -354,7 +354,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     private fun generateFunctionImp(selector: String, function: IrFunction): IrSimpleFunction {
         val signatureEncoding = getMethodSignatureEncoding(function)
 
-        val nativePtrType = context.ir.symbols.nativePtrType
+        val nativePtrType = context.symbols.nativePtrType
 
         val parameterTypes = mutableListOf(nativePtrType) // id self
 
@@ -468,7 +468,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         require(hasObjCClassSupertype) { renderCompilerError(irClass) }
 
         val methodsOfAny =
-                context.ir.symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
+                context.symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
 
         irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isReal }.forEach { method ->
             val overriddenMethodOfAny = method.allOverriddenFunctions.firstOrNull {
@@ -809,7 +809,7 @@ private class InteropTransformer(
 
     val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
 
-    val symbols = context.ir.symbols
+    val symbols = context.symbols
 
     override fun addTopLevel(declaration: IrDeclaration) {
         declaration.parent = irFile

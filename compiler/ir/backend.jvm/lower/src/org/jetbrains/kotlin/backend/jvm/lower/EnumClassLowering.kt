@@ -174,7 +174,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
 
         private fun buildEntriesField(valuesField: IrField): IrField = irClass.addField {
             name = Name.identifier(ENTRIES_FIELD_NAME)
-            type = context.ir.symbols.enumEntries.defaultType
+            type = context.symbols.enumEntries.defaultType
             visibility = DescriptorVisibilities.PRIVATE
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES
             isFinal = true
@@ -182,7 +182,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
         }.apply {
             initializer = context.createJvmIrBuilder(symbol).run {
                 irExprBody(
-                    irCall(this@EnumClassLowering.context.ir.symbols.createEnumEntries).apply {
+                    irCall(this@EnumClassLowering.context.symbols.createEnumEntries).apply {
                         putValueArgument(0, irGetField(null, valuesField))
                     }
                 )
@@ -228,13 +228,13 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
                     irExprBody(
                         when (body.kind) {
                             IrSyntheticBodyKind.ENUM_VALUES -> {
-                                irCall(this@EnumClassLowering.context.ir.symbols.objectCloneFunction, declaration.returnType).apply {
+                                irCall(this@EnumClassLowering.context.symbols.objectCloneFunction, declaration.returnType).apply {
                                     dispatchReceiver = irGetField(null, valuesField)
                                 }
                             }
 
                             IrSyntheticBodyKind.ENUM_VALUEOF ->
-                                irCall(backendContext.ir.symbols.enumValueOfFunction).apply {
+                                irCall(backendContext.symbols.enumValueOfFunction).apply {
                                     putValueArgument(0, javaClassReference(irClass.defaultType))
                                     putValueArgument(1, irGet(declaration.valueParameters[0]))
                                 }

@@ -38,7 +38,7 @@ internal val DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING = IrDeclarationOriginImpl
 internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerationState) : BodyLoweringPass {
     private val context = generationState.context
     private val irFactory = context.irFactory
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val invokeSuspendFunction = symbols.invokeSuspendFunction
     private val saveCoroutineState = symbols.saveCoroutineState
     private val restoreCoroutineState = symbols.restoreCoroutineState
@@ -110,7 +110,7 @@ internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerati
  * Computes visible variables at suspension points.
  */
 internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGenerationState) : BodyLoweringPass {
-    private val invokeSuspendFunction = generationState.context.ir.symbols.invokeSuspendFunction
+    private val invokeSuspendFunction = generationState.context.symbols.invokeSuspendFunction
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (generationState.liveVariablesAtSuspensionPoints.isNotEmpty())

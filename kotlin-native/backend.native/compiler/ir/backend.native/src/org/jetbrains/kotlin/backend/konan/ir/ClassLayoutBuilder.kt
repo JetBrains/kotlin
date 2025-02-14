@@ -315,7 +315,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         val superVtableEntries = if (irClass.isSpecialClassWithNoSupertypes()) {
             emptyList()
         } else {
-            val superClass = irClass.getSuperClassNotAny() ?: context.ir.symbols.any.owner
+            val superClass = irClass.getSuperClassNotAny() ?: context.symbols.any.owner
             context.getLayoutBuilder(superClass).vtableEntries
         }
 

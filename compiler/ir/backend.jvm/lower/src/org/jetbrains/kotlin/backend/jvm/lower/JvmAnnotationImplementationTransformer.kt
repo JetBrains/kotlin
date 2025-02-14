@@ -47,9 +47,9 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
     private val implementor = AnnotationPropertyImplementor(
         jvmContext.irFactory,
         jvmContext.irBuiltIns,
-        jvmContext.ir.symbols,
-        jvmContext.ir.symbols.javaLangClass,
-        jvmContext.ir.symbols.kClassJavaPropertyGetter.symbol,
+        jvmContext.symbols,
+        jvmContext.symbols.javaLangClass,
+        jvmContext.symbols.kClassJavaPropertyGetter.symbol,
         ANNOTATION_IMPLEMENTATION
     )
 
@@ -69,7 +69,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
     // result of property getter call
     override fun IrExpression.transformArrayEqualsArgument(type: IrType, irBuilder: IrBlockBodyBuilder): IrExpression =
         if (!type.isUnsignedArray()) this
-        else irBuilder.irCall(jvmContext.ir.symbols.unsafeCoerceIntrinsic).apply {
+        else irBuilder.irCall(jvmContext.symbols.unsafeCoerceIntrinsic).apply {
             typeArguments[0] = type
             typeArguments[1] = type.unboxInlineClass()
             putValueArgument(0, this@transformArrayEqualsArgument)
@@ -79,9 +79,9 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
         val targetType = when {
             type.isPrimitiveArray() -> type
             type.isUnsignedArray() -> type.unboxInlineClass()
-            else -> jvmContext.ir.symbols.arrayOfAnyNType
+            else -> jvmContext.symbols.arrayOfAnyNType
         }
-        val requiredSymbol = jvmContext.ir.symbols.arraysClass.owner.findDeclaration<IrFunction> {
+        val requiredSymbol = jvmContext.symbols.arraysClass.owner.findDeclaration<IrFunction> {
             it.name.asString() == "equals" && it.valueParameters.size == 2 && it.valueParameters.first().type == targetType
         }
         requireNotNull(requiredSymbol) { "Can't find Arrays.equals method for type ${targetType.render()}" }
@@ -97,7 +97,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
 
         implClass.addFunction(
             name = "annotationType",
-            returnType = jvmContext.ir.symbols.javaLangClass.starProjectedType,
+            returnType = jvmContext.symbols.javaLangClass.starProjectedType,
             origin = ANNOTATION_IMPLEMENTATION,
             isStatic = false
         ).apply {

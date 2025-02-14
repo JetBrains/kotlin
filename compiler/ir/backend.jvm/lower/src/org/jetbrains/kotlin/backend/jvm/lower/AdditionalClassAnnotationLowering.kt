@@ -38,7 +38,7 @@ import java.lang.annotation.ElementType
     prerequisite = [/* RepeatedAnnotationLowering::class */]
 )
 internal class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-    private val symbols = context.ir.symbols.javaAnnotations
+    private val symbols = context.symbols.javaAnnotations
     private val noNewJavaAnnotationTargets =
         context.config.noNewJavaAnnotationTargets || !context.isCompilingAgainstJdk8OrLater
 

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.render
 
 internal class TestsDumper(private val context: Context) : FileLoweringPass {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     private val baseClassSuite = symbols.baseClassSuite
     private val topLevelSuite = symbols.topLevelSuite

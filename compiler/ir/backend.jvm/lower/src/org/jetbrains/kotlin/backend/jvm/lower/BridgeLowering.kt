@@ -446,7 +446,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         val body = this.body as? IrBlockBody ?: return false
         if (body.statements.size != 1) return false
         val irCall = body.statements[0] as? IrCall ?: return false
-        return irCall.symbol == context.ir.symbols.throwUnsupportedOperationException
+        return irCall.symbol == context.symbols.throwUnsupportedOperationException
     }
 
     private fun IrType.isTypeParameterWithPrimitiveUpperBound(): Boolean =

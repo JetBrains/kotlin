@@ -581,7 +581,7 @@ internal object DataFlowIR {
         private fun choosePrimary(erasure: List<IrClass>): IrClass {
             if (erasure.size == 1) return erasure[0]
             // A parameter with constraints - choose class if exists.
-            return erasure.singleOrNull { !it.isInterface } ?: context.ir.symbols.any.owner
+            return erasure.singleOrNull { !it.isInterface } ?: context.symbols.any.owner
         }
 
         private fun mapPrimitiveBinaryType(primitiveBinaryType: PrimitiveBinaryType): Type =

@@ -28,7 +28,7 @@ private var IrClass.objectClassInstanceFunction: IrSimpleFunction? by irAttribut
 
 internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = clazz::objectClassInstanceFunction.getOrSetIfNull {
     when {
-        clazz.isUnit() -> ir.symbols.theUnitInstance.owner
+        clazz.isUnit() -> symbols.theUnitInstance.owner
         clazz.isCompanion -> {
             require((clazz.parent as? IrClass)?.isExternalObjCClass() != true) { "External objc Classes can't be used this way"}
             val property = irFactory.buildProperty {
@@ -65,7 +65,7 @@ internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = clazz::obj
 
 internal class ObjectClassLowering(val generationState: NativeGenerationState) : FileLoweringPass {
     val context = generationState.context
-    val symbols = context.ir.symbols
+    val symbols = context.symbols
 
     override fun lower(irFile: IrFile) {
         irFile.transform(object: IrBuildingTransformer(context) {
@@ -144,7 +144,7 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
             field.initializer = builder.irExprBody(initializer)
         }
         if (declaration.annotations.hasAnnotation(KonanFqNames.threadLocal)) {
-            property.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.threadLocal.owner)
+            property.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.symbols.threadLocal.owner)
         }
         function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
             +irReturn(irGetField(null, property.backingField!!))

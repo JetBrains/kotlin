@@ -37,7 +37,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
         // It is therefore safe to deep-copy as it does not contain any functions or classes.
         get() = field.shallowCopyOrNull() ?: field.deepCopyWithSymbols()
 
-    protected val symbols = context.ir.symbols
+    protected val symbols = context.symbols
 
     init {
         with(builder) {

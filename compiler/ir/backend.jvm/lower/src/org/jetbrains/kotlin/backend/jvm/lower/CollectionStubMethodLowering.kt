@@ -207,9 +207,9 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 
     private fun liftStubMethodReturnType(function: IrSimpleFunction): IrType {
         val klass = when (function.name.asString()) {
-            "iterator" -> context.ir.symbols.iterator
-            "listIterator" -> context.ir.symbols.listIterator
-            "subList" -> context.ir.symbols.list
+            "iterator" -> context.symbols.iterator
+            "listIterator" -> context.symbols.listIterator
+            "subList" -> context.symbols.list
             else -> return function.returnType
         }
         return klass.typeWithArguments((function.returnType as IrSimpleType).arguments)
@@ -409,7 +409,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 fun createThrowingStubBody(context: JvmBackendContext, function: IrSimpleFunction) =
     context.createIrBuilder(function.symbol).irBlockBody {
         // Function body consist only of throwing UnsupportedOperationException statement
-        +irCall(context.ir.symbols.throwUnsupportedOperationException)
+        +irCall(context.symbols.throwUnsupportedOperationException)
             .apply {
                 putValueArgument(0, irString("Operation is not supported for read-only collection"))
             }

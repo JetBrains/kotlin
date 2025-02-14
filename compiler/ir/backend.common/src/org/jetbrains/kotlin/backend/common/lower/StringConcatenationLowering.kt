@@ -42,13 +42,13 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
     }
 
     private val irBuiltIns = context.irBuiltIns
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     private val typesWithSpecialAppendFunction = irBuiltIns.primitiveIrTypes + irBuiltIns.stringType
 
     private val nameAppend = Name.identifier("append")
 
-    private val stringBuilder = context.ir.symbols.stringBuilder.owner
+    private val stringBuilder = context.symbols.stringBuilder.owner
 
     //TODO: calculate and pass string length to the constructor.
     private val constructor = stringBuilder.constructors.single {

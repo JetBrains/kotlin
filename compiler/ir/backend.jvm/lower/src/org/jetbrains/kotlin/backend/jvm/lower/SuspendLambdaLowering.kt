@@ -99,7 +99,7 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
         addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType())
 
     protected fun IrFunction.continuationType(): IrType =
-        context.ir.symbols.continuationClass.typeWith(returnType).makeNullable()
+        context.symbols.continuationClass.typeWith(returnType).makeNullable()
 }
 
 /**
@@ -149,10 +149,10 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                 it.type.classOrNull?.isClassWithFqName(FqNameUnsafe("kotlin.coroutines.RestrictsSuspension")) == true
             }
             val suspendLambda =
-                if (isRestricted) context.ir.symbols.restrictedSuspendLambdaClass.owner
-                else context.ir.symbols.suspendLambdaClass.owner
+                if (isRestricted) context.symbols.restrictedSuspendLambdaClass.owner
+                else context.symbols.suspendLambdaClass.owner
             val arity = (reference.type as IrSimpleType).arguments.size - 1
-            val functionNClass = context.ir.symbols.getJvmFunctionClass(arity + 1)
+            val functionNClass = context.symbols.getJvmFunctionClass(arity + 1)
             val functionNType = functionNClass.typeWith(
                 function.parameters.subList(0, arity).map { it.type }
                         + function.continuationType()
@@ -345,8 +345,8 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
 
     private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression =
         irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, irCall(
-            this@SuspendLambdaLowering.context.ir.symbols.unsafeCoerceIntrinsic,
-            this@SuspendLambdaLowering.context.ir.symbols.resultOfAnyType
+            this@SuspendLambdaLowering.context.symbols.unsafeCoerceIntrinsic,
+            this@SuspendLambdaLowering.context.symbols.resultOfAnyType
         ).apply {
             typeArguments[0] = context.irBuiltIns.anyNType
             typeArguments[1] = type

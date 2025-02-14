@@ -96,7 +96,7 @@ internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val irFactory: IrFacto
 }
 internal class WorkersBridgesBuilding(val context: Context) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
     private val bridgesPolicy = context.config.bridgesPolicy
-    val symbols = context.ir.symbols
+    val symbols = context.symbols
     lateinit var runtimeJobFunction: IrSimpleFunction
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {

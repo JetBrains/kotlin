@@ -350,7 +350,7 @@ class JvmCachedDeclarations(
                             it.isAnnotationWithEqualFqName(StandardNames.FqNames.target)
                 }
                 .map { it.deepCopyWithSymbols(containerClass) } +
-                    context.createJvmIrBuilder(containerClass.symbol).irCall(context.ir.symbols.repeatableContainer.constructors.single())
+                    context.createJvmIrBuilder(containerClass.symbol).irCall(context.symbols.repeatableContainer.constructors.single())
 
             containerClass
         }

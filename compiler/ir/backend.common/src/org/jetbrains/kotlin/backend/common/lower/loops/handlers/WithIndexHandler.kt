@@ -40,7 +40,7 @@ internal class WithIndexHandler(
                             (supportsUnsignedArrays && isUnsignedArray())
                 }
             "kotlin.text.withIndex" ->
-                extensionReceiverParameter.type.isSubtypeOfClass(context.ir.symbols.charSequence)
+                extensionReceiverParameter.type.isSubtypeOfClass(context.symbols.charSequence)
             "kotlin.sequences.withIndex" ->
                 extensionReceiverParameter.type.isSequence()
             else -> false

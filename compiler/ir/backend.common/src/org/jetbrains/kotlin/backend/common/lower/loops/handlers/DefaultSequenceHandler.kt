@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for Sequences not handled by more specialized handlers. */
 internal class DefaultSequenceHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrExpression, Nothing?> {
-    private val sequenceClassSymbol = context.ir.symbols.sequence
+    private val sequenceClassSymbol = context.symbols.sequence
 
     override fun matchIterable(expression: IrExpression): Boolean =
         sequenceClassSymbol != null && expression.type.isSubtypeOfClass(sequenceClassSymbol)

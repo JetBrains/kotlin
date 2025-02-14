@@ -220,7 +220,7 @@ private fun mustNotInline(context: Context, irFunction: IrSimpleFunction): Boole
             return true
         }
     }
-    if (irFunction.symbol == context.ir.symbols.entryPoint) {
+    if (irFunction.symbol == context.symbols.entryPoint) {
         return true
     }
 

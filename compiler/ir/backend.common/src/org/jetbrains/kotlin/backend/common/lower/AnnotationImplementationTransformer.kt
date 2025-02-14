@@ -137,7 +137,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
 
                     val arrayConstructorCall =
                         if (arrayType.isBoxedArray) {
-                            val arrayFunction = context.ir.symbols.arrayOfNulls
+                            val arrayFunction = context.symbols.arrayOfNulls
                             IrCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayFunction)
                         } else {
                             val arrayConstructor = arrayType.classOrNull!!.constructors.single {

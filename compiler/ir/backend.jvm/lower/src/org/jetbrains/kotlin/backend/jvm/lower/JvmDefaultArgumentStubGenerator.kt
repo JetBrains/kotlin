@@ -52,7 +52,7 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
         +irIfThen(
             context.irBuiltIns.unitType,
             irNot(irEqualsNull(irGet(handlerDeclaration))),
-            irCall(this@JvmDefaultArgumentStubGenerator.context.ir.symbols.throwUnsupportedOperationException).apply {
+            irCall(this@JvmDefaultArgumentStubGenerator.context.symbols.throwUnsupportedOperationException).apply {
                 putValueArgument(
                     0,
                     irString("Super calls with default arguments not supported in this target, function: ${irFunction.name.asString()}")

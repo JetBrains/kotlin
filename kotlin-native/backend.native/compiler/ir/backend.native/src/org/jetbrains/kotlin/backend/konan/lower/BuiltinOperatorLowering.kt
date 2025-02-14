@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass, IrBuildingTransformer(context) {
 
     private val irBuiltins = context.irBuiltIns
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -54,8 +54,8 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
             irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl.fromSymbolOwner(
                     expression.startOffset, expression.endOffset,
-                    context.ir.symbols.throwNoWhenBranchMatchedException.owner.returnType,
-                    context.ir.symbols.throwNoWhenBranchMatchedException)
+                    context.symbols.throwNoWhenBranchMatchedException.owner.returnType,
+                    context.symbols.throwNoWhenBranchMatchedException)
 
             irBuiltins.linkageErrorSymbol -> with(symbols.throwIrLinkageError) { irCall(expression, this, newReturnType = owner.returnType) }
 

@@ -541,7 +541,7 @@ class BlockDecomposerTransformer(
                     compositesLeft == 0 -> value
                     index == 0 && dontDetachFirstArgument -> value
                     value == null -> value
-                    value.isPure(anyVariable = false, symbols = context.ir.symbols) -> value
+                    value.isPure(anyVariable = false, symbols = context.symbols) -> value
                     else -> {
                         // TODO: do not wrap if value is pure (const, variable, etc)
                         val (newArg, tempVar) = mapArgument(value)

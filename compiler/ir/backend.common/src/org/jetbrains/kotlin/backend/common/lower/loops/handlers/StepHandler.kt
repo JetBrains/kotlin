@@ -33,7 +33,7 @@ internal class StepHandler(
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
         return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
-                callee.parameters[0].type.classOrNull in context.ir.symbols.progressionClasses &&
+                callee.parameters[0].type.classOrNull in context.symbols.progressionClasses &&
                 callee.parameters[1].type.let { it.isInt() || it.isLong() } &&
                 callee.kotlinFqName == FqName("kotlin.ranges.step")
     }

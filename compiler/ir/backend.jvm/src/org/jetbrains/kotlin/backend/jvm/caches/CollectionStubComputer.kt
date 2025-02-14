@@ -64,7 +64,7 @@ class CollectionStubComputer(val context: JvmBackendContext) {
     }
 
     private val preComputedStubs: Collection<StubsForCollectionClass> by lazy {
-        with(context.ir.symbols) {
+        with(context.symbols) {
             listOf(
                 LazyStubsForCollectionClass(collection, mutableCollection),
                 LazyStubsForCollectionClass(set, mutableSet),

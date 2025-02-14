@@ -40,9 +40,9 @@ internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPa
 
         val isToString = expression.symbol == irBuiltins.dataClassArrayMemberToStringSymbol
         val newCalleeSymbol = if (isToString)
-            context.ir.symbols.arrayContentToString[argumentClassifier]!!
+            context.symbols.arrayContentToString[argumentClassifier]!!
         else
-            context.ir.symbols.arrayContentHashCode[argumentClassifier]!!
+            context.symbols.arrayContentHashCode[argumentClassifier]!!
 
         val newCallee = newCalleeSymbol.owner
 

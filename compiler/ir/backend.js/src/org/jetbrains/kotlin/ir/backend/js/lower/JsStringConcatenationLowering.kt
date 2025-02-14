@@ -57,11 +57,11 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
         assert(type.shouldExplicitlyConvertToString)
 
         return if (type.isNullable()) {
-            JsIrBuilder.buildCall(context.ir.symbols.extensionToString).apply {
+            JsIrBuilder.buildCall(context.symbols.extensionToString).apply {
                 arguments[0] = this@explicitlyConvertedToString
             }
         } else {
-            val anyToStringMethodSymbol = context.ir.symbols.memberToString
+            val anyToStringMethodSymbol = context.symbols.memberToString
             val toStringMethodSymbol = type.classOrNull?.let {
                 val toStringMethods = it.owner.declarations.filterIsInstanceAnd<IrSimpleFunction> { f ->
                     f.overrides(anyToStringMethodSymbol.owner)
@@ -76,7 +76,7 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
     }
 
     private val IrFunctionSymbol.isStringPlus: Boolean
-        get() = context.ir.symbols.isStringPlus(this)
+        get() = context.symbols.isStringPlus(this)
 
     override fun visitCall(expression: IrCall): IrExpression {
         fun explicitlyConvertToStringIfNeeded(): IrExpression {

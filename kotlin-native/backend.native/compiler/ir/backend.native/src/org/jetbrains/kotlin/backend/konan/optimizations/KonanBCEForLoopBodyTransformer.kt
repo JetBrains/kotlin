@@ -192,7 +192,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
     private fun IrExpression.isProgressionPropertyGetter(propertyName: String) =
             this is IrCall && symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
                     (symbol.signature as? IdSignature.AccessorSignature)?.propertySignature?.asPublic()?.shortName == propertyName &&
-                    dispatchReceiver?.type?.getClass()?.symbol in context.ir.symbols.progressionClasses
+                    dispatchReceiver?.type?.getClass()?.symbol in context.symbols.progressionClasses
 
     private val untilFqName = FqName("kotlin.ranges.until")
 

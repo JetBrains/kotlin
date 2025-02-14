@@ -138,7 +138,7 @@ internal class MappedEnumWhenLowering(override val context: JvmBackendContext) :
                         putValueArgument(1, irInt(index))
                     }
                     val noSuchFieldVariable = scope.createTemporaryVariableDeclaration(
-                        this@MappedEnumWhenLowering.context.ir.symbols.noSuchFieldErrorType,
+                        this@MappedEnumWhenLowering.context.symbols.noSuchFieldErrorType,
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET
                     )

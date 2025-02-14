@@ -36,7 +36,7 @@ internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : 
             override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrFunction?) {
                 require(data != null) { "function call not in a method: ${expression.render()}" }
                 when {
-                    expression.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic -> {
+                    expression.symbol == context.symbols.indyLambdaMetafactoryIntrinsic -> {
                         val reference = expression.getValueArgument(1)
                         if (reference is IrFunctionReference && reference.origin.isLambda) {
                             recordEnclosingMethodOverride(reference.symbol.owner, data)
