@@ -60,4 +60,11 @@ fun usage(a: JavaWithOverride, b: JavaWithFakeOverride) {
         a.foo(1)
         b.foo(1)
     }
+
+    with("OK") {
+        with(4) {
+            with(a) { baz }
+            with(b) { baz }
+        }
+    }
 }

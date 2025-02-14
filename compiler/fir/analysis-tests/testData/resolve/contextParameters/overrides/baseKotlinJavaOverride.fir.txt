@@ -37,4 +37,18 @@ FILE: test.kt
             ^ R|<local>/b|.R|/KotlinContextInterface.foo|(Int(1))
         }
         )
+        R|kotlin/with|<R|kotlin/String|, R|kotlin/Double|>(String(OK), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|kotlin/with|<R|kotlin/Int|, R|kotlin/Double|>(Int(4), <L> = with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|kotlin/with|<R|JavaWithOverride|, R|kotlin/Double|>(R|<local>/a|, <L> = with@fun R|JavaWithOverride|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    ^ (this@R|special/anonymous|, this@R|special/anonymous|).R|/JavaWithOverride.baz|
+                }
+                )
+                ^ R|kotlin/with|<R|JavaWithFakeOverride|, R|kotlin/Double|>(R|<local>/b|, <L> = with@fun R|JavaWithFakeOverride|.<anonymous>(): R|kotlin/Double| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    ^ (this@R|special/anonymous|, this@R|special/anonymous|).R|/KotlinContextInterface.baz|
+                }
+                )
+            }
+            )
+        }
+        )
     }
