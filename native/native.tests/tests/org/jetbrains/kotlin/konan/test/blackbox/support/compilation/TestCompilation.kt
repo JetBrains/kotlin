@@ -782,6 +782,7 @@ class StaticCacheCompilation(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
             "-Xcache-directory=${expectedArtifact.cacheDir.path}",
         )
+        System.err.println("STATIC-CACHE: Building static cache for ${dependencies.libraryToCache.path} into ${expectedArtifact.cacheDir.path}")
         if (makePerFileCache)
             add("-Xmake-per-file-cache")
 
