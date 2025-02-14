@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -144,6 +145,9 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
     ): AnalyzedFirWithPsiOutput {
+        for (ktFile in ktFiles) {
+            AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, diagnosticsReporter)
+        }
         val output = compileModuleToAnalyzedFir(
             moduleStructure,
             ktFiles,
