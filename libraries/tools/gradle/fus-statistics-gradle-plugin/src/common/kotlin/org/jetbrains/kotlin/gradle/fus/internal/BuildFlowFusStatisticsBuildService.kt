@@ -14,13 +14,13 @@ import javax.inject.Inject
 
 abstract class BuildFlowFusStatisticsBuildService @Inject constructor(
     private val objects: ObjectFactory,
-    private val providersFactor: ProviderFactory,
+    private val providerFactory: ProviderFactory,
 ) : InternalGradleBuildFusStatisticsService<InternalGradleBuildFusStatisticsService.Parameter>() {
 
     private val configurationMetrics: ListProperty<Metric> = objects.listProperty(Metric::class.java)
 
     override fun getExecutionTimeMetrics(): Provider<List<Metric>> {
-        return providersFactor.provider {
+        return providerFactory.provider {
             val reportedMetrics = ArrayList<Metric>()
             reportedMetrics.addAll(executionTimeMetrics)
             reportedMetrics
@@ -28,7 +28,7 @@ abstract class BuildFlowFusStatisticsBuildService @Inject constructor(
     }
 
     fun getConfigurationReportedMetrics(): Provider<List<Metric>> {
-        return providersFactor.provider {
+        return providerFactory.provider {
             synchronized(this) {
                 configurationMetrics.disallowChanges()
                 configurationMetrics.get()
