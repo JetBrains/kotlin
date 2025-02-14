@@ -151,6 +151,21 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
         }
     }
 
+    private fun isExpectAndNonExpect(first: FirBasedSymbol<*>, second: FirBasedSymbol<*>): Boolean {
+        val firstIsExpect = first.resolvedStatus?.isExpect == true
+        val secondIsExpect = second.resolvedStatus?.isExpect == true
+        /*
+         * this `xor` is equivalent to the following check:
+         * when {
+         *    !firstIsExpect && secondIsExpect -> true
+         *    firstIsExpect && !secondIsExpect -> true
+         *    else -> false
+         * }
+         */
+
+        return firstIsExpect xor secondIsExpect
+    }
+
     private val FirBasedSymbol<*>.isPrimaryConstructor: Boolean
         get() = this is FirConstructorSymbol && isPrimary || origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 

@@ -3,7 +3,7 @@
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
-expect val <!REDECLARATION!>x1<!>: Int
+expect val x1: Int
 
 <!AMBIGUOUS_ACTUALS{JVM}!>expect<!> val x2: Int
 

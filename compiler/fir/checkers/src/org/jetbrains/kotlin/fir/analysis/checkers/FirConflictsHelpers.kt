@@ -90,20 +90,8 @@ internal val FirBasedSymbol<*>.resolvedStatus
         else -> null
     }
 
-internal fun isExpectAndNonExpect(first: FirBasedSymbol<*>, second: FirBasedSymbol<*>): Boolean {
-    val firstIsExpect = first.resolvedStatus?.isExpect == true
-    val secondIsExpect = second.resolvedStatus?.isExpect == true
-    /*
-     * this `xor` is equivalent to the following check:
-     * when {
-     *    !firstIsExpect && secondIsExpect -> true
-     *    firstIsExpect && !secondIsExpect -> true
-     *    else -> false
-     * }
-     */
-
-    return firstIsExpect xor secondIsExpect
-}
+private fun isAtLeastOneExpect(first: FirBasedSymbol<*>, second: FirBasedSymbol<*>): Boolean =
+    first.resolvedStatus?.isExpect == true || second.resolvedStatus?.isExpect == true
 
 private class DeclarationBuckets {
     val simpleFunctions = mutableListOf<Pair<FirNamedFunctionSymbol, String>>()
@@ -434,7 +422,7 @@ private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<
      * If one of declarations is expect and the other is not expect, ExpectActualChecker will handle this case
      * All other cases (both are expect or both are not expect) should be reported as declarations conflict
      */
-    return !isExpectAndNonExpect(dependency, dependent)
+    return !isAtLeastOneExpect(dependency, dependent)
 }
 
 private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
@@ -500,7 +488,7 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
 ): Boolean {
-    if (isExpectAndNonExpect(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
+    if (isAtLeastOneExpect(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
 
     val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)
