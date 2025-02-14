@@ -57,7 +57,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendConte
         val field = mappingsClass.enums.getOrPut(enumClass) {
             mappingsClass.irClass.addField {
                 name = Name.identifier("entries\$${mappingsClass.enums.size}")
-                type = context.ir.symbols.enumEntries.typeWith(enumClass.defaultType)
+                type = context.symbols.enumEntries.typeWith(enumClass.defaultType)
                 origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_ENTRIES
                 isFinal = true
                 isStatic = true
@@ -83,7 +83,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendConte
                     val enumValues = enum.findEnumValuesFunction(backendContext)
                     +irSetField(
                         null, field,
-                        irCall(backendContext.ir.symbols.createEnumEntries).apply {
+                        irCall(backendContext.symbols.createEnumEntries).apply {
                             putValueArgument(0, irCall(enumValues))
                         }
                     )

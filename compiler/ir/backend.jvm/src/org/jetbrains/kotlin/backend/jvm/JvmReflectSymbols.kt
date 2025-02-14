@@ -75,7 +75,7 @@ class JvmReflectSymbols(val context: JvmBackendContext) {
         }
 
     init {
-        val klass = context.ir.symbols.javaLangClass.owner
+        val klass = context.symbols.javaLangClass.owner
         klass.addFunction("getDeclaredMethod", javaLangReflectMethod.defaultType.makeNullable()).apply {
             addValueParameter("methodName", irBuiltIns.stringType.makeNullable())
             addValueParameter {
@@ -106,13 +106,13 @@ class JvmReflectSymbols(val context: JvmBackendContext) {
         javaLangReflectConstructor.functionByName("setAccessible")
 
     val getDeclaredField: IrSimpleFunctionSymbol =
-        context.ir.symbols.javaLangClass.functionByName("getDeclaredField")
+        context.symbols.javaLangClass.functionByName("getDeclaredField")
 
     val getDeclaredMethod: IrSimpleFunctionSymbol =
-        context.ir.symbols.javaLangClass.functionByName("getDeclaredMethod")
+        context.symbols.javaLangClass.functionByName("getDeclaredMethod")
 
     val getDeclaredConstructor: IrSimpleFunctionSymbol =
-        context.ir.symbols.javaLangClass.functionByName("getDeclaredConstructor")
+        context.symbols.javaLangClass.functionByName("getDeclaredConstructor")
 
     val javaLangReflectFieldGet: IrSimpleFunctionSymbol =
         javaLangReflectField.functionByName("get")

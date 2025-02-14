@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.Name
 
 class JsIrArithBuilder(val context: JsIrBackendContext) {
 
-    val symbols = context.ir.symbols
+    val symbols = context.symbols
 
     private fun buildBinaryOperator(name: Name, l: IrExpression, r: IrExpression): IrExpression {
         val symbol = context.getOperatorByName(name, l.type as IrSimpleType, r.type as IrSimpleType)

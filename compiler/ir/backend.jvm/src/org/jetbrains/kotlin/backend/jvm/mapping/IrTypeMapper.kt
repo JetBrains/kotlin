@@ -290,7 +290,7 @@ private class IrTypeCheckerContextForTypeMapping(
     }
 
     override fun continuationTypeConstructor(): IrClassSymbol {
-        return backendContext.ir.symbols.continuationClass
+        return backendContext.symbols.continuationClass
     }
 
     override fun functionNTypeConstructor(n: Int): IrClassSymbol {

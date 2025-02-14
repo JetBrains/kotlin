@@ -355,7 +355,7 @@ fun IrDeclarationParent.getCallableReferenceOwnerKClassType(context: JvmBackendC
         // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
         // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
         // and construct a special KCallable object.
-        context.ir.symbols.intrinsicsKotlinClass.defaultType
+        context.symbols.intrinsicsKotlinClass.defaultType
     }
 
 fun IrDeclaration.getCallableReferenceTopLevelFlag(): Int =

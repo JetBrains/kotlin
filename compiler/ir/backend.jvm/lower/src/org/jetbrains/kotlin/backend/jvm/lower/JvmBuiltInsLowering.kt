@@ -35,8 +35,8 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
                 if (parentClassName == "kotlin.CompareToKt" && functionName == "compareTo") {
                     val operandType = expression.getValueArgument(0)!!.type
                     when {
-                        operandType.isUInt() -> return expression.replaceWithCallTo(context.ir.symbols.compareUnsignedInt)
-                        operandType.isULong() -> return expression.replaceWithCallTo(context.ir.symbols.compareUnsignedLong)
+                        operandType.isUInt() -> return expression.replaceWithCallTo(context.symbols.compareUnsignedInt)
+                        operandType.isULong() -> return expression.replaceWithCallTo(context.symbols.compareUnsignedLong)
                     }
                 }
                 val jvm8Replacement = jvm8builtInReplacements[parentClassName to functionName]
@@ -62,14 +62,14 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
     }
 
     private val jvm8builtInReplacements = mapOf(
-        ("kotlin.UInt" to "compareTo") to context.ir.symbols.compareUnsignedInt,
-        ("kotlin.UInt" to "div") to context.ir.symbols.divideUnsignedInt,
-        ("kotlin.UInt" to "rem") to context.ir.symbols.remainderUnsignedInt,
-        ("kotlin.UInt" to "toString") to context.ir.symbols.toUnsignedStringInt,
-        ("kotlin.ULong" to "compareTo") to context.ir.symbols.compareUnsignedLong,
-        ("kotlin.ULong" to "div") to context.ir.symbols.divideUnsignedLong,
-        ("kotlin.ULong" to "rem") to context.ir.symbols.remainderUnsignedLong,
-        ("kotlin.ULong" to "toString") to context.ir.symbols.toUnsignedStringLong
+        ("kotlin.UInt" to "compareTo") to context.symbols.compareUnsignedInt,
+        ("kotlin.UInt" to "div") to context.symbols.divideUnsignedInt,
+        ("kotlin.UInt" to "rem") to context.symbols.remainderUnsignedInt,
+        ("kotlin.UInt" to "toString") to context.symbols.toUnsignedStringInt,
+        ("kotlin.ULong" to "compareTo") to context.symbols.compareUnsignedLong,
+        ("kotlin.ULong" to "div") to context.symbols.divideUnsignedLong,
+        ("kotlin.ULong" to "rem") to context.symbols.remainderUnsignedLong,
+        ("kotlin.ULong" to "toString") to context.symbols.toUnsignedStringLong
     )
 
     // Originals are so far only instance methods and extensions, while the replacements are
@@ -118,7 +118,7 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
         return if (fromJvmType != toJvmType)
             null
         else
-            IrCallImpl.fromSymbolOwner(startOffset, endOffset, toType, context.ir.symbols.unsafeCoerceIntrinsic).also { call ->
+            IrCallImpl.fromSymbolOwner(startOffset, endOffset, toType, context.symbols.unsafeCoerceIntrinsic).also { call ->
                 call.typeArguments[0] = type
                 call.typeArguments[1] = toType
                 call.putValueArgument(0, this)

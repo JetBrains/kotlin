@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -39,12 +40,9 @@ internal class Context(
         override val irBuiltIns: IrBuiltIns,
         val irModules: Map<String, IrModuleFragment>,
         val irLinker: KonanIrLinker,
-        symbols: KonanSymbols,
+        override val symbols: KonanSymbols,
         val symbolTable: ReferenceSymbolTable,
 ) : KonanBackendContext(config) {
-
-    override val ir: KonanIr = KonanIr(symbols)
-
     override val configuration get() = config.configuration
 
     override val optimizeLoopsOverUnsignedArrays = true

@@ -824,7 +824,7 @@ internal class CodeGeneratorVisitor(
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
                             if (declaration.isReifiedInline) {
-                                callDirect(context.ir.symbols.throwIllegalStateExceptionWithMessage.owner,
+                                callDirect(context.symbols.throwIllegalStateExceptionWithMessage.owner,
                                         listOf(codegen.staticData.kotlinStringLiteral(
                                                 "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`").llvm),
                                         Lifetime.IRRELEVANT, null)
@@ -1072,7 +1072,7 @@ internal class CodeGeneratorVisitor(
          */
         private val handler by lazy {
             using(outerContext) {
-                continuationBlock(context.ir.symbols.throwable.owner.defaultType, endLocationInfoFromScope()) {
+                continuationBlock(context.symbols.throwable.owner.defaultType, endLocationInfoFromScope()) {
                     genHandler(it.value)
                 }
             }
@@ -1488,7 +1488,7 @@ internal class CodeGeneratorVisitor(
                         codegen.kNullObjHeaderPtr
                     } else {
                         callDirect(
-                                context.ir.symbols.throwNullPointerException.owner,
+                                context.symbols.throwNullPointerException.owner,
                                 listOf(),
                                 Lifetime.GLOBAL,
                                 null
@@ -1502,7 +1502,7 @@ internal class CodeGeneratorVisitor(
                                 if (dstClass.defaultType.isObjCObjectType()) {
                                     val dstFullClassName = dstClass.fqNameWhenAvailable?.toString() ?: dstClass.name.toString()
                                     callDirect(
-                                            context.ir.symbols.throwTypeCastException.owner,
+                                            context.symbols.throwTypeCastException.owner,
                                             listOf(argument, codegen.staticData.kotlinStringLiteral(dstFullClassName).llvm),
                                             Lifetime.GLOBAL,
                                             null
@@ -1510,7 +1510,7 @@ internal class CodeGeneratorVisitor(
                                 } else {
                                     val dstTypeInfo = functionGenerationContext.bitcast(llvm.int8PtrType, codegen.typeInfoValue(dstClass))
                                     callDirect(
-                                            context.ir.symbols.throwClassCastException.owner,
+                                            context.symbols.throwClassCastException.owner,
                                             listOf(argument, dstTypeInfo),
                                             Lifetime.GLOBAL,
                                             null
@@ -1531,7 +1531,7 @@ internal class CodeGeneratorVisitor(
         val type     = value.typeOperand
         return genInstanceOf(
                 value,
-                type.getClass() ?: context.ir.symbols.any.owner,
+                type.getClass() ?: context.symbols.any.owner,
                 resultSlot = null,
                 onSuperClassCast = { arg ->
                     if (type.isNullable())
@@ -1608,7 +1608,7 @@ internal class CodeGeneratorVisitor(
 
     private fun genInstanceOfObjC(obj: LLVMValueRef, dstClass: IrClass): LLVMValueRef {
         val objCObject = callDirect(
-                context.ir.symbols.interopObjCObjectRawValueGetter.owner,
+                context.symbols.interopObjCObjectRawValueGetter.owner,
                 listOf(obj),
                 Lifetime.IRRELEVANT,
                 null
@@ -1839,7 +1839,7 @@ internal class CodeGeneratorVisitor(
             }
 
     private fun evaluateConstantValueImpl(value: IrConstantValue): ConstValue {
-        val symbols = context.ir.symbols
+        val symbols = context.symbols
         return when (value) {
             is IrConstantPrimitive -> {
                 val constructedType = value.value.type
@@ -2541,7 +2541,7 @@ internal class CodeGeneratorVisitor(
                         }
                         functionSymbol == context.irBuiltIns.illegalArgumentExceptionSymbol -> {
                             callDirect(
-                                    context.ir.symbols.throwIllegalArgumentExceptionWithMessage.owner,
+                                    context.symbols.throwIllegalArgumentExceptionWithMessage.owner,
                                     args,
                                     Lifetime.GLOBAL,
                                     null

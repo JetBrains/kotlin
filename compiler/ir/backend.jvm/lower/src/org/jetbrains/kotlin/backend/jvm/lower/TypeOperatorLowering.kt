@@ -105,7 +105,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                             // it can be uninitialized value, which is 'null' for reference types in JMM.
                             // Most of such null checks will never actually throw, but we can't do anything about it.
                             irBlock(resultType = type) {
-                                +irCall(backendContext.ir.symbols.checkNotNullWithMessage).apply {
+                                +irCall(backendContext.symbols.checkNotNullWithMessage).apply {
                                     putValueArgument(0, irGet(tmp.owner))
                                     putValueArgument(1, message)
                                 }
@@ -161,10 +161,10 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         return !irVariable.isVar && irVariable.initializer?.isDefinitelyNotNull() == true
     }
 
-    private val jvmIndyLambdaMetafactoryIntrinsic = backendContext.ir.symbols.indyLambdaMetafactoryIntrinsic
+    private val jvmIndyLambdaMetafactoryIntrinsic = backendContext.symbols.indyLambdaMetafactoryIntrinsic
 
     private fun JvmIrBuilder.jvmMethodHandle(handle: Handle) =
-        irCall(backendContext.ir.symbols.jvmMethodHandle).apply {
+        irCall(backendContext.symbols.jvmMethodHandle).apply {
             putValueArgument(0, irInt(handle.tag))
             putValueArgument(1, irString(handle.owner))
             putValueArgument(2, irString(handle.name))
@@ -177,7 +177,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         bootstrapMethodHandle: Handle,
         bootstrapMethodArguments: List<IrExpression>
     ) =
-        irCall(backendContext.ir.symbols.jvmIndyIntrinsic, dynamicCall.type).apply {
+        irCall(backendContext.symbols.jvmIndyIntrinsic, dynamicCall.type).apply {
             typeArguments[0] = dynamicCall.type
             putValueArgument(0, dynamicCall)
             putValueArgument(1, jvmMethodHandle(bootstrapMethodHandle))
@@ -185,7 +185,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         }
 
     private fun JvmIrBuilder.jvmOriginalMethodType(methodSymbol: IrFunctionSymbol) =
-        irCall(backendContext.ir.symbols.jvmOriginalMethodTypeIntrinsic, context.irBuiltIns.anyType).apply {
+        irCall(backendContext.symbols.jvmOriginalMethodTypeIntrinsic, context.irBuiltIns.anyType).apply {
             putValueArgument(0, irRawFunctionReference(context.irBuiltIns.anyType, methodSymbol))
         }
 
@@ -323,12 +323,12 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             origin = JvmLoweredDeclarationOrigin.DESERIALIZE_LAMBDA_FUN
         }
         deserializeLambdaFun.parent = irClass
-        val lambdaParameter = deserializeLambdaFun.addValueParameter("lambda", backendContext.ir.symbols.serializedLambda.irType)
+        val lambdaParameter = deserializeLambdaFun.addValueParameter("lambda", backendContext.symbols.serializedLambda.irType)
         deserializeLambdaFun.returnType = backendContext.irBuiltIns.anyType
         deserializeLambdaFun.body = backendContext.createJvmIrBuilder(deserializeLambdaFun.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).run {
             irBlockBody {
                 val tmp = irTemporary(
-                    irCall(backendContext.ir.symbols.serializedLambda.getImplMethodName).apply {
+                    irCall(backendContext.symbols.serializedLambda.getImplMethodName).apply {
                         dispatchReceiver = irGet(lambdaParameter)
                     }
                 )
@@ -351,7 +351,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                 )
 
                 +irThrow(
-                    irCall(backendContext.ir.symbols.illegalArgumentExceptionCtorString).also { ctorCall ->
+                    irCall(backendContext.symbols.illegalArgumentExceptionCtorString).also { ctorCall ->
                         ctorCall.putValueArgument(
                             0,
                             // Replace argument with:
@@ -389,27 +389,27 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
         return irAndAnd(
             irEquals(
-                irGetLambdaProperty(backendContext.ir.symbols.serializedLambda.getImplMethodKind),
+                irGetLambdaProperty(backendContext.symbols.serializedLambda.getImplMethodKind),
                 irInt(implMethodHandle.tag)
             ),
             irObjectEquals(
-                irGetLambdaProperty(backendContext.ir.symbols.serializedLambda.getFunctionalInterfaceClass),
+                irGetLambdaProperty(backendContext.symbols.serializedLambda.getFunctionalInterfaceClass),
                 irString(functionalInterfaceClass)
             ),
             irObjectEquals(
-                irGetLambdaProperty(backendContext.ir.symbols.serializedLambda.getFunctionalInterfaceMethodName),
+                irGetLambdaProperty(backendContext.symbols.serializedLambda.getFunctionalInterfaceMethodName),
                 irString(samMethod.name)
             ),
             irObjectEquals(
-                irGetLambdaProperty(backendContext.ir.symbols.serializedLambda.getFunctionalInterfaceMethodSignature),
+                irGetLambdaProperty(backendContext.symbols.serializedLambda.getFunctionalInterfaceMethodSignature),
                 irString(samMethod.descriptor)
             ),
             irObjectEquals(
-                irGetLambdaProperty(backendContext.ir.symbols.serializedLambda.getImplClass),
+                irGetLambdaProperty(backendContext.symbols.serializedLambda.getImplClass),
                 irString(implMethodHandle.owner)
             ),
             irObjectEquals(
-                irGetLambdaProperty(backendContext.ir.symbols.serializedLambda.getImplMethodSignature),
+                irGetLambdaProperty(backendContext.symbols.serializedLambda.getImplMethodSignature),
                 irString(implMethodHandle.desc)
             )
         )
@@ -441,7 +441,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     ): IrExpression {
         val dynamicCall = irCall(info.dynamicCallSymbol)
         for ((index, dynamicValueParameter) in info.dynamicCallSymbol.owner.valueParameters.withIndex()) {
-            val capturedArg = irCall(backendContext.ir.symbols.serializedLambda.getCapturedArg).also { call ->
+            val capturedArg = irCall(backendContext.symbols.serializedLambda.getCapturedArg).also { call ->
                 call.dispatchReceiver = irGet(lambdaParameter)
                 call.putValueArgument(0, irInt(index))
             }
@@ -450,7 +450,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                 if (expectedType.isInlineClassType()) {
                     // Inline class type arguments are stored as their underlying representation.
                     val unboxedType = expectedType.unboxInlineClass()
-                    irCall(backendContext.ir.symbols.unsafeCoerceIntrinsic).also { coercion ->
+                    irCall(backendContext.symbols.unsafeCoerceIntrinsic).also { coercion ->
                         coercion.typeArguments[0] = unboxedType
                         coercion.typeArguments[1] = expectedType
                         coercion.putValueArgument(0, capturedArg)
@@ -618,7 +618,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             name = samMethod.name
             returnType = erasedSamType
         }.apply {
-            parent = backendContext.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
+            parent = backendContext.symbols.kotlinJvmInternalInvokeDynamicPackage
 
             val targetFun = targetRef.symbol.owner
             val refDispatchReceiver = targetRef.dispatchReceiver
@@ -746,7 +746,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                                 putValueArgument(1, irString(text.trimForRuntimeAssertion()))
                             }
                         } else {
-                            +irCall(backendContext.ir.symbols.checkNotNull).apply {
+                            +irCall(backendContext.symbols.checkNotNull).apply {
                                 putValueArgument(0, irGet(valueSymbol.owner))
                             }
                         }
@@ -817,11 +817,11 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         declaration.fileParent.getKtFile()?.viewProvider?.contents
 
     private val throwTypeCastException: IrSimpleFunctionSymbol =
-        backendContext.ir.symbols.throwTypeCastException
+        backendContext.symbols.throwTypeCastException
 
     private val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
         if (backendContext.config.unifiedNullChecks)
-            backendContext.ir.symbols.checkNotNullExpressionValue
+            backendContext.symbols.checkNotNullExpressionValue
         else
-            backendContext.ir.symbols.checkExpressionValueIsNotNull
+            backendContext.symbols.checkExpressionValueIsNotNull
 }

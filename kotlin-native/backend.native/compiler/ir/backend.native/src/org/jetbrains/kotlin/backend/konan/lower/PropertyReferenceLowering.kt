@@ -39,7 +39,7 @@ internal val KonanSymbols.mutablePropertiesConstructors
     )
 
 internal class PropertyReferenceLowering(generationState: NativeGenerationState) : AbstractPropertyReferenceLowering<Context>(generationState.context) {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val immutableSymbols = symbols.immutablePropertiesConstructors
     private val mutableSymbols = symbols.mutablePropertiesConstructors
 

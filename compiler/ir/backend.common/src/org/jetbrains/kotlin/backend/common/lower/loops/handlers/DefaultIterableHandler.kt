@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for Iterables not handled by more specialized handlers. */
 internal class DefaultIterableHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrExpression, Nothing?> {
-    private val iterableClassSymbol = context.ir.symbols.iterable
+    private val iterableClassSymbol = context.symbols.iterable
 
     override fun matchIterable(expression: IrExpression): Boolean =
         expression.type.isSubtypeOfClass(iterableClassSymbol)

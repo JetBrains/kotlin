@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  */
 internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
-    private val symbols get() = context.ir.symbols
+    private val symbols get() = context.symbols
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irFile = container.file
@@ -116,7 +116,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                         // Basic Multilingual Plane, so we could just append data "as is".
                         builder.append(value.toInt().toChar())
                     }
-                    return data.irCall(context.ir.symbols.immutableBlobOfImpl).apply {
+                    return data.irCall(context.symbols.immutableBlobOfImpl).apply {
                         arguments[0] = data.irString(builder.toString())
                     }
                 }

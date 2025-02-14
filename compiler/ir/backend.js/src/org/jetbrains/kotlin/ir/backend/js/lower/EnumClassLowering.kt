@@ -527,7 +527,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
         return null
     }
 
-    private val throwIAESymbol = context.ir.symbols.throwIAE
+    private val throwIAESymbol = context.symbols.throwIAE
 
     private fun createEnumEntriesBody(entriesGetter: IrFunction, enumClass: IrClass): IrBlockBody {
         val entriesField = enumClass.buildEntriesField()

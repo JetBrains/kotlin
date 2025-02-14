@@ -464,7 +464,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitCreateEmptyString(callSite: IrCall, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val clazz = context.ir.symbols.string.owner
+        val clazz = context.symbols.string.owner
         val size = llvm.constInt32(runtime.stringHeaderExtraSize / 2).llvm // in Chars
         return allocArray(clazz, size, environment.calculateLifetime(callSite), environment.exceptionHandler, resultSlot)
     }
@@ -760,7 +760,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitThrowIfZero(divider: LLVMValueRef) {
         ifThen(icmpEq(divider, Zero(divider.type).llvm)) {
-            val throwArithExc = codegen.llvmFunction(context.ir.symbols.throwArithmeticException.owner)
+            val throwArithExc = codegen.llvmFunction(context.symbols.throwArithmeticException.owner)
             call(throwArithExc, emptyList(), Lifetime.GLOBAL, environment.exceptionHandler)
             unreachable()
         }
@@ -768,7 +768,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitThrowIfOOB(index: LLVMValueRef, size: LLVMValueRef) {
         ifThen(icmpUGe(index, size)) {
-            val throwIndexOutOfBoundsException = codegen.llvmFunction(context.ir.symbols.throwIndexOutOfBoundsException.owner)
+            val throwIndexOutOfBoundsException = codegen.llvmFunction(context.symbols.throwIndexOutOfBoundsException.owner)
             call(throwIndexOutOfBoundsException, emptyList(), Lifetime.GLOBAL, environment.exceptionHandler)
             unreachable()
         }

@@ -85,7 +85,7 @@ class JsCommonAnnotationImplementationTransformer(context: JsCommonBackendContex
     }
 
     private val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> =
-        requireNotNull(context.ir.symbols.arraysContentEquals) { "contentEquals symbols should be defined in the context" }
+        requireNotNull(context.symbols.arraysContentEquals) { "contentEquals symbols should be defined in the context" }
 
     override fun getArrayContentEqualsSymbol(type: IrType) =
         when {

@@ -12,6 +12,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 internal class NativeAssertionRemoverLowering(context: Context) : KlibAssertionRemoverLowering(
         context, context.config.assertsEnabled, context.config.assertsEnabled
 ) {
-    override val isAssertionThrowingErrorEnabled: IrSimpleFunctionSymbol = context.ir.symbols.isAssertionThrowingErrorEnabled
-    override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol = context.ir.symbols.isAssertionArgumentEvaluationEnabled
+    override val isAssertionThrowingErrorEnabled: IrSimpleFunctionSymbol = context.symbols.isAssertionThrowingErrorEnabled
+    override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol = context.symbols.isAssertionArgumentEvaluationEnabled
 }

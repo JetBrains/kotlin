@@ -35,7 +35,7 @@ private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
     val argument = normalizeArgument(expression)
     val argumentType = if (argument.type.isPrimitiveType()) argument.type else context.irBuiltIns.anyNType
 
-    return irCall(backendContext.ir.symbols.typeToStringValueOfFunction(argumentType)).apply {
+    return irCall(backendContext.symbols.typeToStringValueOfFunction(argumentType)).apply {
         putValueArgument(0, argument)
     }
 }
@@ -129,7 +129,7 @@ private const val MAX_STRING_CONCAT_DEPTH = 23
 internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
-    private val stringBuilder = context.ir.symbols.stringBuilder.owner
+    private val stringBuilder = context.symbols.stringBuilder.owner
 
     private val constructor = stringBuilder.constructors.single {
         it.valueParameters.isEmpty()

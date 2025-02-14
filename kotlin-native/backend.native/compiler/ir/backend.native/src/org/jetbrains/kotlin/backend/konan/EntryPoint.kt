@@ -26,7 +26,7 @@ internal val DECLARATION_ORIGIN_ENTRY_POINT = IrDeclarationOriginImpl("ENTRY_POI
 
 internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction {
     val context = generationState.context
-    val actualMain = context.ir.symbols.entryPoint!!.owner
+    val actualMain = context.symbols.entryPoint!!.owner
     // TODO: Do we need to do something with the offsets if <main> is in a cached library?
     val startOffset = if (generationState.llvmModuleSpecification.containsDeclaration(actualMain))
         actualMain.startOffset
@@ -54,7 +54,7 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
     }
     entryPoint.annotations += buildSimpleAnnotation(context.irBuiltIns,
             startOffset, endOffset,
-            context.ir.symbols.exportForCppRuntime.owner, "Konan_start")
+            context.symbols.exportForCppRuntime.owner, "Konan_start")
 
     val builder = context.createIrBuilder(entryPoint.symbol, startOffset, endOffset)
     entryPoint.body = builder.irBlockBody(entryPoint) {
@@ -78,10 +78,10 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
             catches += irCatch(
                     catchParameter,
                     result = irBlock {
-                        +irCall(context.ir.symbols.processUnhandledException).apply {
+                        +irCall(context.symbols.processUnhandledException).apply {
                             arguments[0] = irGet(catchParameter)
                         }
-                        +irCall(context.ir.symbols.terminateWithUnhandledException).apply {
+                        +irCall(context.symbols.terminateWithUnhandledException).apply {
                             arguments[0] = irGet(catchParameter)
                         }
                     }

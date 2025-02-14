@@ -162,7 +162,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
                 val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
                 expression.makeStatic(context.irBuiltIns, staticProxy)
             }
-            callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic -> {
+            callee.symbol == context.symbols.indyLambdaMetafactoryIntrinsic -> {
                 val implFunRef = expression.getValueArgument(1) as? IrFunctionReference
                     ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${expression.dump()}")
                 val implFun = implFunRef.symbol.owner

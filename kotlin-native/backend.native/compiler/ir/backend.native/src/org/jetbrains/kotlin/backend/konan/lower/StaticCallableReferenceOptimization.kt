@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 internal class StaticCallableReferenceOptimization(val context: Context) : FileLoweringPass {
     private val allPropertyReferenceSymbols = buildList {
-        val immutableSymbols = context.ir.symbols.immutablePropertiesConstructors
+        val immutableSymbols = context.symbols.immutablePropertiesConstructors
         addAll(immutableSymbols.byRecieversCount)
         add(immutableSymbols.local)
 
-        val mutableSymbols = context.ir.symbols.mutablePropertiesConstructors
+        val mutableSymbols = context.symbols.mutablePropertiesConstructors
         addAll(mutableSymbols.byRecieversCount)
         add(mutableSymbols.local)
     }.toSet()

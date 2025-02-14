@@ -75,10 +75,10 @@ internal val LOWERED_DELEGATING_CONSTRUCTOR_CALL by IrStatementOriginImpl
  * Replaces constructor calls by (alloc + static call).
  */
 internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
-    private val createUninitializedInstance = context.ir.symbols.createUninitializedInstance
-    private val createUninitializedArray = context.ir.symbols.createUninitializedArray
-    private val createEmptyString = context.ir.symbols.createEmptyString
-    private val initInstance = context.ir.symbols.initInstance
+    private val createUninitializedInstance = context.symbols.createUninitializedInstance
+    private val createUninitializedArray = context.symbols.createUninitializedArray
+    private val createEmptyString = context.symbols.createEmptyString
+    private val initInstance = context.symbols.initInstance
 
     override fun lower(irFile: IrFile) {
         irFile.transform(this, data = null)

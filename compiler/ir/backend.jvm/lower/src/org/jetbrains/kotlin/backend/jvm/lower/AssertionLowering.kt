@@ -101,7 +101,7 @@ internal class AssertionLowering(private val context: JvmBackendContext) :
     private fun IrBuilderWithScope.checkAssertion(assertCondition: IrExpression, lambdaArgument: IrExpression?) =
         irBlock {
             val generator = lambdaArgument?.asInlinable(this)
-            val constructor = this@AssertionLowering.context.ir.symbols.assertionErrorConstructor
+            val constructor = this@AssertionLowering.context.symbols.assertionErrorConstructor
             val throwError = irThrow(irCall(constructor).apply {
                 putValueArgument(0, generator?.inline(parent) ?: irString("Assertion failed"))
             })

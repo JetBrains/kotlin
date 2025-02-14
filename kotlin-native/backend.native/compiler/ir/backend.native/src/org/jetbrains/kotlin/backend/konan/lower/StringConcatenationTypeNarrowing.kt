@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  */
 internal class StringConcatenationTypeNarrowing(val context: Context) : FileLoweringPass, IrBuildingTransformer(context) {
 
-    private val string = context.ir.symbols.string.owner
-    private val stringBuilder = context.ir.symbols.stringBuilder.owner
+    private val string = context.symbols.string.owner
+    private val stringBuilder = context.symbols.stringBuilder.owner
     private val namePlusImpl = Name.identifier("plusImpl")
     private val nameAppend = Name.identifier("append")
 
@@ -140,7 +140,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
             val calleeOrNull = argument.type.classOrNull?.owner?.functions?.singleOrNull {
                 it.name == OperatorNameConventions.TO_STRING && it.valueParameters.isEmpty()
             }?.symbol
-            val callee = calleeOrNull ?: context.ir.symbols.memberToString  // defaults to `Any.toString()`
+            val callee = calleeOrNull ?: context.symbols.memberToString  // defaults to `Any.toString()`
             builder
                     .irCall(callee, callee.owner.returnType, typeArgumentsCount = 0)
                     .apply { dispatchReceiver = argument }

@@ -42,7 +42,7 @@ private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunct
 internal var IrSimpleFunction.volatileField: IrField? by irAttribute(followAttributeOwner = false)
 
 internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val irBuiltins = context.irBuiltIns
     private fun IrBuilderWithScope.irByteToBool(expression: IrExpression) = irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!).apply {
         arguments[0] = expression
@@ -77,7 +77,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
         builder()
         annotations += buildSimpleAnnotation(context.irBuiltIns,
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                context.ir.symbols.typedIntrinsic.owner, intrinsicType.name)
+                context.symbols.typedIntrinsic.owner, intrinsicType.name)
     }
 
     private fun buildCasFunction(irField: IrField, intrinsicType: IntrinsicType, functionReturnType: IrType) =
@@ -180,7 +180,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
             }
 
 
-            private fun unsupported(message: String) = builder.irCall(context.ir.symbols.throwIllegalArgumentExceptionWithMessage).apply {
+            private fun unsupported(message: String) = builder.irCall(context.symbols.throwIllegalArgumentExceptionWithMessage).apply {
                 arguments[0] = builder.irString(message)
             }
 

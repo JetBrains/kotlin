@@ -25,7 +25,7 @@ internal class NativeAnnotationImplementationLowering(context: Context) : Annota
 private class NativeAnnotationImplementationTransformer(context: Context, irFile: IrFile) :
         AnnotationImplementationTransformer(context, context.symbolTable, irFile) {
 
-    private val arrayContentEqualsMap = context.ir.symbols.arraysContentEquals
+    private val arrayContentEqualsMap = context.symbols.arraysContentEquals
 
     override fun getArrayContentEqualsSymbol(type: IrType) =
             when {

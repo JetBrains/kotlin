@@ -41,7 +41,7 @@ private class ArrayConstructorTransformer(
             val clazz = irConstructor.constructedClass.symbol
             return when {
                 irConstructor.parameters.size != 2 -> null
-                clazz == context.irBuiltIns.arrayClass -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
+                clazz == context.irBuiltIns.arrayClass -> context.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
                 context.irBuiltIns.primitiveArraysToPrimitiveTypes.contains(clazz) -> clazz.constructors.single {
                     it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.intType))
                 }

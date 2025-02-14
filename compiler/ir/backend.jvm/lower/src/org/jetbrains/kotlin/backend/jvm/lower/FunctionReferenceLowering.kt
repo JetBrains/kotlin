@@ -398,7 +398,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         return block
     }
 
-    private val jvmIndyLambdaMetafactoryIntrinsic = context.ir.symbols.indyLambdaMetafactoryIntrinsic
+    private val jvmIndyLambdaMetafactoryIntrinsic = context.symbols.indyLambdaMetafactoryIntrinsic
 
     private val specialNullabilityAnnotationsFqNames =
         setOf(
@@ -515,12 +515,12 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val superType =
             samSuperType
                 ?: when {
-                    isLightweightLambda -> context.ir.symbols.any
-                    isHeavyweightLambda -> context.ir.symbols.lambdaClass
-                    isFunInterfaceConstructorReference -> context.ir.symbols.funInterfaceConstructorReferenceClass
+                    isLightweightLambda -> context.symbols.any
+                    isHeavyweightLambda -> context.symbols.lambdaClass
+                    isFunInterfaceConstructorReference -> context.symbols.funInterfaceConstructorReferenceClass
                     else -> when {
-                        isAdaptedReference -> context.ir.symbols.adaptedFunctionReference
-                        else -> context.ir.symbols.functionReferenceImpl
+                        isAdaptedReference -> context.symbols.adaptedFunctionReference
+                        else -> context.symbols.functionReferenceImpl
                     }
                 }.defaultType
 
@@ -539,7 +539,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     functionSuperClass.typeWith(parameterTypes)
                 else null,
                 if (needToGenerateSamEqualsHashCodeMethods)
-                    context.ir.symbols.functionAdapter.defaultType
+                    context.symbols.functionAdapter.defaultType
                 else null,
             )
             if (samInterface != null && origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
@@ -603,8 +603,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
             SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) {
                 val internalClass = when {
-                    isAdaptedReference -> backendContext.ir.symbols.adaptedFunctionReference
-                    else -> backendContext.ir.symbols.functionReferenceImpl
+                    isAdaptedReference -> backendContext.symbols.adaptedFunctionReference
+                    else -> backendContext.symbols.functionReferenceImpl
                 }
                 val constructor = internalClass.owner.constructors.single {
                     // arity, [receiver], owner, name, signature, flags
@@ -638,7 +638,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 val constructor =
                     when {
                         isFunInterfaceConstructorReference ->
-                            context.ir.symbols.funInterfaceConstructorReferenceClass.owner.constructors.single()
+                            context.symbols.funInterfaceConstructorReferenceClass.owner.constructors.single()
                         samSuperType != null ->
                             context.irBuiltIns.anyClass.owner.constructors.single()
                         else -> {
@@ -905,7 +905,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             get() = metadata?.name ?: name
 
         private fun JvmIrBuilder.generateSignature(target: IrFunctionSymbol): IrExpression =
-            irCall(backendContext.ir.symbols.signatureStringIntrinsic).apply {
+            irCall(backendContext.symbols.signatureStringIntrinsic).apply {
                 putValueArgument(
                     0,
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters

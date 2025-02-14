@@ -124,7 +124,7 @@ internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationSt
         postactions = getDefaultIrActions(),
 ) { context, module ->
     val parent = context.context
-    val entryPoint = parent.ir.symbols.entryPoint!!.owner
+    val entryPoint = parent.symbols.entryPoint!!.owner
     val file: IrFile = if (context.llvmModuleSpecification.containsDeclaration(entryPoint)) {
         entryPoint.file
     } else {

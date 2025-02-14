@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
-import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
@@ -27,9 +26,6 @@ object KonanNameConventions {
     val setWithoutBoundCheck = Name.special("<setWithoutBoundCheck>")
     val getWithoutBoundCheck = Name.special("<getWithoutBoundCheck>")
 }
-
-// This is what Context collects about IR.
-class KonanIr(override val symbols: KonanSymbols): Ir()
 
 @OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
 class KonanSymbols(

@@ -173,7 +173,7 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
 
         private val shouldBeCoroutineImpl = isLambda && function.isSuspend && !context.compileSuspendAsJsGenerator
 
-        private val superClass = if (shouldBeCoroutineImpl) context.ir.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
+        private val superClass = if (shouldBeCoroutineImpl) context.symbols.coroutineImpl.owner.defaultType else context.irBuiltIns.anyType
         private var boundReceiverField: IrField? = null
 
         private val referenceType = reference.type as IrSimpleType
@@ -189,9 +189,9 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
         private val secondFunctionInterface: IrClass? = if (isKReference) {
             val arity = referenceType.arguments.size - 1
             if (function.isSuspend)
-                context.ir.symbols.suspendFunctionN(arity).owner
+                context.symbols.suspendFunctionN(arity).owner
             else
-                context.ir.symbols.functionN(arity).owner
+                context.symbols.functionN(arity).owner
         } else null
 
         private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
@@ -245,7 +245,7 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                 )
 //                if (samSuperType == null)
 //                    superTypes += functionSuperClass.typeWith(parameterTypes)
-//                if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
+//                if (irFunctionReference.isSuspend) superTypes += context.symbols.suspendFunctionInterface.defaultType
                 createThisReceiverParameter()
                 createReceiverField()
             }

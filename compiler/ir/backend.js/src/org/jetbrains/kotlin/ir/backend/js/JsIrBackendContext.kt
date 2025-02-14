@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.reportWarning
@@ -166,9 +165,6 @@ class JsIrBackendContext(
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
     override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
-    override val ir = object : Ir() {
-        override val symbols = this@JsIrBackendContext.symbols
-    }
 
     override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
         get() = true

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
@@ -78,9 +77,9 @@ class JvmBackendContext(
 
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
-    override val ir = JvmIr()
+    override val symbols = JvmSymbols(this)
 
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns, irFactory)
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, symbols, irBuiltIns, irFactory)
 
     lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
 
@@ -149,10 +148,6 @@ class JvmBackendContext(
 
     override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
         get() = true
-
-    inner class JvmIr : Ir() {
-        override val symbols = JvmSymbols(this@JvmBackendContext)
-    }
 
     override fun remapMultiFieldValueClassStructure(
         oldFunction: IrFunction,

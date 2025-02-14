@@ -89,10 +89,10 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
         return when {
             function.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
-                context.ir.symbols.suspendCoroutineUninterceptedOrReturn.owner
+                context.symbols.suspendCoroutineUninterceptedOrReturn.owner
 
-            symbol == context.ir.symbols.coroutineContextGetter ->
-                context.ir.symbols.coroutineGetContext.owner
+            symbol == context.symbols.coroutineContextGetter ->
+                context.symbols.coroutineGetContext.owner
 
             else -> function
         }

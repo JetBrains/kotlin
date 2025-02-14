@@ -61,7 +61,7 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
     }
 
     override fun visitCall(expression: IrCall, data: Data): IrElement {
-        if (expression.symbol == context.ir.symbols.singleArgumentInlineFunction) return expression
+        if (expression.symbol == context.symbols.singleArgumentInlineFunction) return expression
         return super.visitCall(expression, data)
     }
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
 ) : AbstractSuspendFunctionsLowering<Context>(generationState.context) {
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val fileLowerState = generationState.fileLowerState
     private val saveCoroutineState = symbols.saveCoroutineState
     private val restoreCoroutineState = symbols.restoreCoroutineState

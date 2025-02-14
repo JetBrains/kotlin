@@ -137,7 +137,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
 }
 
 private fun IrFunction.continuationType(context: CommonBackendContext): IrType {
-    return context.ir.symbols.continuationClass.typeWith(returnType)
+    return context.symbols.continuationClass.typeWith(returnType)
 }
 
 fun loweredSuspendFunctionReturnType(function: IrFunction, irBuiltIns: IrBuiltIns): IrType =

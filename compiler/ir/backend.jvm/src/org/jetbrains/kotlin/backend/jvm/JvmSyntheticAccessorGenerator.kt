@@ -60,7 +60,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
 
             accessor.addValueParameter(
                 CONSTRUCTOR_MARKER_PARAMETER_NAME.synthesizedString,
-                context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable(),
+                context.symbols.defaultConstructorMarker.defaultType.makeNullable(),
                 IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
             )
 

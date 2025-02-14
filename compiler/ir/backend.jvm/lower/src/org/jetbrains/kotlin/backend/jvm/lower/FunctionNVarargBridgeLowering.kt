@@ -56,7 +56,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             irCall(functionNInvokeFun).apply {
                 dispatchReceiver = irImplicitCast(
                     expression.dispatchReceiver!!.transformVoid(),
-                    this@FunctionNVarargBridgeLowering.context.ir.symbols.functionN.defaultType
+                    this@FunctionNVarargBridgeLowering.context.symbols.functionN.defaultType
                 )
                 putValueArgument(0, irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
                     (0 until expression.valueArgumentsCount).forEach {
@@ -84,7 +84,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
         // which will cause conflicting inherited JVM signatures error diagnostics in case of multiple big arity function supertypes.
         for (superType in bigArityFunctionSuperTypes) {
             declaration.superTypes -= superType
-            declaration.superTypes += context.ir.symbols.functionN.typeWith(
+            declaration.superTypes += context.symbols.functionN.typeWith(
                 (superType.arguments.last() as IrTypeProjection).type
             )
 
@@ -163,7 +163,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
         }
 
     private val functionNInvokeFun =
-        context.ir.symbols.functionN.functions.single { it.owner.name.toString() == "invoke" }
+        context.symbols.functionN.functions.single { it.owner.name.toString() == "invoke" }
 
     private val arraySizePropertyGetter by lazy {
         context.irBuiltIns.arrayClass.owner.properties.single { it.name.toString() == "size" }.getter!!

@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class JvmPropertiesLowering(
     private val backendContext: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-    val uninitializedPropertyAccessExceptionThrower = JvmUninitializedPropertyAccessExceptionThrower(backendContext.ir.symbols)
+    val uninitializedPropertyAccessExceptionThrower = JvmUninitializedPropertyAccessExceptionThrower(backendContext.symbols)
 
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)

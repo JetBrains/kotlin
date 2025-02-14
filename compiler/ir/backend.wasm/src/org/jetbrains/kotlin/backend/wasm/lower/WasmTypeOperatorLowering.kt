@@ -272,7 +272,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val failResult = if (isSafe) {
             builder.irNull()
         } else {
-            builder.irCall(context.ir.symbols.throwTypeCastException)
+            builder.irCall(context.symbols.throwTypeCastException)
         }
 
         return builder.irComposite(resultType = expression.type) {

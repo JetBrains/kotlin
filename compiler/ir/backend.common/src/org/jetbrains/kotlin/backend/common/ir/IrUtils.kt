@@ -118,14 +118,14 @@ fun CommonBackendContext.createArrayOfExpression(
     arrayElements: List<IrExpression>
 ): IrExpression {
 
-    val arrayType = ir.symbols.array.typeWith(arrayElementType)
+    val arrayType = symbols.array.typeWith(arrayElementType)
     val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
 
     return IrCallImpl(
         startOffset,
         endOffset,
         arrayType,
-        ir.symbols.arrayOf,
+        symbols.arrayOf,
         typeArgumentsCount = 1,
     ).apply {
         typeArguments[0] = arrayElementType

@@ -289,7 +289,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 
             val kotlinArguments = arguments.map { objCReferenceToKotlin(it, Lifetime.ARGUMENT) }
 
-            val invokeMethod = context.ir.symbols.functionN(numberOfParameters).owner.simpleFunctions()
+            val invokeMethod = context.symbols.functionN(numberOfParameters).owner.simpleFunctions()
                     .single { it.name == OperatorNameConventions.INVOKE }
             val llvmDeclarations = codegen.getVirtualFunctionTrampoline(invokeMethod)
             val result = callFromBridge(llvmDeclarations, listOf(kotlinFunction) + kotlinArguments, Lifetime.ARGUMENT)

@@ -74,7 +74,7 @@ internal fun dce(
         }
 
         override fun visitClass(declaration: IrClass): IrStatement {
-            if (declaration == context.ir.symbols.nativePointed)
+            if (declaration == context.symbols.nativePointed)
                 return super.visitClass(declaration)
             declaration.declarations.removeAll {
                 (it is IrSimpleFunction && it.isReal && !referencedFunctions.contains(it))

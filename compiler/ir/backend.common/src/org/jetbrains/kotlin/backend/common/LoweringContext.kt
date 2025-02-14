@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LoggingContext
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
  */
 interface LoweringContext : LoggingContext, ErrorReportingContext {
     val configuration: CompilerConfiguration
-    val ir: Ir
+    val symbols: Symbols
     val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
     val sharedVariablesManager: SharedVariablesManager

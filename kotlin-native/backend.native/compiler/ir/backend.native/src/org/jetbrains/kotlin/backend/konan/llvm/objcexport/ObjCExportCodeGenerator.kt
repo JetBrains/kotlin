@@ -199,7 +199,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
 }
 
 internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCodeGenerator(codegen) {
-    val symbols get() = context.ir.symbols
+    val symbols get() = context.symbols
     val runtime get() = codegen.runtime
     val staticData get() = codegen.staticData
 
@@ -902,7 +902,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         continuation != null -> kotlinExceptionHandler { exception ->
             // Callee haven't suspended, so it isn't going to call the completion. Call it here:
             callFromBridge(
-                    context.ir.symbols.objCExportResumeContinuationWithException.owner.llvmFunction,
+                    context.symbols.objCExportResumeContinuationWithException.owner.llvmFunction,
                     listOf(continuation!!, exception)
             )
             // Note: completion block could be called directly instead, but this implementation is
@@ -940,14 +940,14 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             MethodBridge.ReturnValue.Instance.FactoryResult -> return autoreleaseAndRet(kotlinReferenceToRetainedObjC(targetResult!!)) // provided by [callKotlin]
             MethodBridge.ReturnValue.Suspend -> {
                 val coroutineSuspended = callFromBridge(
-                        codegen.llvmFunction(context.ir.symbols.objCExportGetCoroutineSuspended.owner),
+                        codegen.llvmFunction(context.symbols.objCExportGetCoroutineSuspended.owner),
                         emptyList(),
                         Lifetime.STACK
                 )
                 ifThen(icmpNe(targetResult!!, coroutineSuspended)) {
                     // Callee haven't suspended, so it isn't going to call the completion. Call it here:
                     callFromBridge(
-                            context.ir.symbols.objCExportResumeContinuation.owner.llvmFunction,
+                            context.symbols.objCExportResumeContinuation.owner.llvmFunction,
                             listOf(continuation!!, targetResult)
                     )
                     // Note: completion block could be called directly instead, but this implementation is
@@ -1099,7 +1099,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     )
                     // TODO: consider placing interception into the converter to reduce code size.
                     val intercepted = callFromBridge(
-                            context.ir.symbols.objCExportInterceptedContinuation.owner.llvmFunction,
+                            context.symbols.objCExportInterceptedContinuation.owner.llvmFunction,
                             listOf(continuation),
                             Lifetime.ARGUMENT
                     )
@@ -1204,7 +1204,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                 // for calling the completion, so in Kotlin coroutines machinery terms it suspends,
                 // which is indicated by the return value:
                 callFromBridge(
-                        context.ir.symbols.objCExportGetCoroutineSuspended.owner.llvmFunction,
+                        context.symbols.objCExportGetCoroutineSuspended.owner.llvmFunction,
                         emptyList(),
                         Lifetime.RETURN_VALUE
                 )

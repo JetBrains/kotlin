@@ -50,7 +50,7 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
 }
 
 private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTransformer(
-        context.ir.symbols,
+        context.symbols,
         context.irBuiltIns
 ) {
     private val insertSafeCasts = context.config.genericSafeCasts
@@ -218,7 +218,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
 private class InlineClassTransformer(private val context: Context) : IrBuildingTransformer(context) {
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val irBuiltIns = context.irBuiltIns
 
     private val builtBoxUnboxFunctions = mutableListOf<IrFunction>()

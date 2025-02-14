@@ -55,7 +55,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 expression.transformChildrenVoid()
 
                 if (!expression.isSuspend) {
-                    if (expression.symbol == context.ir.symbols.getContinuation)
+                    if (expression.symbol == context.symbols.getContinuation)
                         return getContinuation() ?: expression.throwLinkageError(plFile)
                     return expression
                 }

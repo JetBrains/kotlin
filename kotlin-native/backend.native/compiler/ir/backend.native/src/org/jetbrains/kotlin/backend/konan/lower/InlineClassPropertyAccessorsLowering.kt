@@ -34,7 +34,7 @@ internal class InlineClassPropertyAccessorsLowering(val context: Context) : File
 
 private class InlineClassAccessorsTransformer(private val context: Context) : IrBuildingTransformer(context) {
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)

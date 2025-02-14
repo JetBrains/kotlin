@@ -114,7 +114,7 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
         }
 
         private fun IrCall.isReturnIfSuspendedCall() =
-            symbol == context.ir.symbols.returnIfSuspended
+            symbol == context.symbols.returnIfSuspended
     }
 
     body.accept(visitor, VisitorState(insideTryBlock = false, isTailExpression = true))

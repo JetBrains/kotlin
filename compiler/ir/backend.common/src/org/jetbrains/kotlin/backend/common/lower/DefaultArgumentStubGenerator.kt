@@ -81,7 +81,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
 
                 generateSuperCallHandlerCheckIfNeeded(originalDeclaration, newIrFunction)
 
-                val intAnd = this@DefaultArgumentStubGenerator.context.ir.symbols.getBinaryOperator(
+                val intAnd = this@DefaultArgumentStubGenerator.context.symbols.getBinaryOperator(
                     OperatorNameConventions.AND, context.irBuiltIns.intType, context.irBuiltIns.intType
                 )
                 var defaultableParameterIndex = -1
@@ -505,7 +505,7 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
         }
 
         if (useConstructorMarker) {
-            val markerType = context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable()
+            val markerType = context.symbols.defaultConstructorMarker.defaultType.makeNullable()
             addValueParameter("marker".synthesizedString, markerType, IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER)
         } else if (context.shouldGenerateHandlerParameterForDefaultBodyFun) {
             addValueParameter(

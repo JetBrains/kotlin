@@ -160,7 +160,7 @@ internal class SpecialAccessLowering(
      * IR Generation for java.lang.reflect.{field, method, constructor} API
      */
 
-    private val symbols = context.ir.symbols
+    private val symbols = context.symbols
     private val reflectSymbols = symbols.javaLangReflectSymbols
 
     private fun IrBuilderWithScope.javaClassObject(klass: IrType): IrExpression =

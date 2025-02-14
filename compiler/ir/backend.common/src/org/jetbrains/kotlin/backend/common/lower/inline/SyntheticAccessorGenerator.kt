@@ -466,7 +466,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     }
 
     fun createAccessorMarkerArgument() =
-        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable())
+        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.symbols.defaultConstructorMarker.defaultType.makeNullable())
 
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _read_ expression [oldExpression].

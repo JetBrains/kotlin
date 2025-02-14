@@ -122,7 +122,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
     private fun addJvmInlineAnnotation(valueClass: IrClass) {
         if (valueClass.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return
-        val constructor = context.ir.symbols.jvmInlineAnnotation.constructors.first()
+        val constructor = context.symbols.jvmInlineAnnotation.constructors.first()
         valueClass.annotations = valueClass.annotations + IrConstructorCallImpl.fromSymbolOwner(
             constructor.owner.returnType,
             constructor
@@ -255,7 +255,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     }
 
     private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType, skipCast: Boolean = false): IrExpression {
-        return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
+        return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.symbols.unsafeCoerceIntrinsic).apply {
             val underlyingType = from.erasedUpperBound.inlineClassRepresentation?.underlyingType
             if (underlyingType?.isTypeParameter() == true && !skipCast) {
                 typeArguments[0] = from

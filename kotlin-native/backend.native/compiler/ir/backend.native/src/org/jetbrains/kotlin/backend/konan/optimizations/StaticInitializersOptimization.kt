@@ -229,8 +229,8 @@ internal object StaticInitializersOptimization {
             }
         }
 
-        private val executeImplSymbol = context.ir.symbols.executeImpl
-        private val getContinuationSymbol = context.ir.symbols.getContinuation
+        private val executeImplSymbol = context.symbols.executeImpl
+        private val getContinuationSymbol = context.symbols.getContinuation
 
         private var dummySet = mutableSetOf<IrCall>()
 
