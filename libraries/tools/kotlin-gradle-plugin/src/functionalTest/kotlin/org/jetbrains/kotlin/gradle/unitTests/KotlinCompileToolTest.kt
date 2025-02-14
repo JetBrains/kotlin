@@ -33,7 +33,10 @@ class KotlinCompileToolTest {
 
     @Test
     fun callingSourceShouldAddSources() {
-        val task = kotlinJvmFactory.registerKotlinJvmCompileTask("test", "test").get()
+        val task = kotlinJvmFactory.registerKotlinJvmCompileTask(
+            taskName ="test",
+            compilerOptions = kotlinJvmFactory.createCompilerJvmOptions().apply { moduleName.set("test") }
+        ).get()
         val kotlinSourceFiles = project.testKotlinSourceFiles()
 
         task.source(kotlinSourceFiles[0], kotlinSourceFiles[1])
@@ -48,7 +51,9 @@ class KotlinCompileToolTest {
 
     @Test
     fun callingSetSourceShouldReplaceSources() {
-        val task = kotlinJvmFactory.registerKotlinJvmCompileTask("test", "test").get()
+        val task = kotlinJvmFactory.registerKotlinJvmCompileTask(
+            taskName = "test",
+            compilerOptions = kotlinJvmFactory.createCompilerJvmOptions().apply { moduleName.set("test") }).get()
         val kotlinSourceFiles = project.testKotlinSourceFiles()
 
         task.source(kotlinSourceFiles[0], kotlinSourceFiles[1])
