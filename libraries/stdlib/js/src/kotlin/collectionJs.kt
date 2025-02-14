@@ -46,7 +46,7 @@ internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: A
  *
  * @sample samples.collections.Collections.Lists.singletonReadOnlyList
  */
-public actual fun <T> listOf(element: T): List<T> = arrayListOf(element)
+public actual fun <T> listOf(element: T): List<T> = ArrayList(arrayOf(element))
 
 @PublishedApi
 @SinceKotlin("1.3")
@@ -97,7 +97,6 @@ internal actual inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
 internal actual inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     return LinkedHashMap<K, V>(capacity).apply(builderAction).build()
 }
-
 
 /**
  * Fills the list with the provided [value].
@@ -193,7 +192,6 @@ internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = 
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
 
-
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
     if (isVarargs)
@@ -201,8 +199,6 @@ internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean)
         this
     else
         this.copyOf()
-
-
 
 @PublishedApi
 internal actual fun checkIndexOverflow(index: Int): Int {
@@ -219,7 +215,6 @@ internal actual fun checkCountOverflow(count: Int): Int {
     }
     return count
 }
-
 
 /**
  * JS map and set implementations do not make use of capacities or load factors.
