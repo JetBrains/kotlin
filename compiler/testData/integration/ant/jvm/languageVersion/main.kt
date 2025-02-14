@@ -1,2 +1,7 @@
-@JvmInline
-value class Holder<T>(val value: T)
+fun test() {
+    while (true) {
+        run {
+            break
+        }
+    }
+}

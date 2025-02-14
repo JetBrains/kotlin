@@ -22,7 +22,7 @@
     </dependencies>
 
     <properties>
-        <kotlin.compiler.languageVersion>1.7</kotlin.compiler.languageVersion>
+        <kotlin.compiler.languageVersion>2.1</kotlin.compiler.languageVersion>
     </properties>
 
     <build>

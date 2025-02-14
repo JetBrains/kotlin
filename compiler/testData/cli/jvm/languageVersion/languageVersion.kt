@@ -1,4 +1,9 @@
 package test
 
-@JvmInline
-value class Holder<T>(val value: T)
+fun test(a: Any) {
+     while (true) {
+          run {
+               break
+          }
+     }
+}
