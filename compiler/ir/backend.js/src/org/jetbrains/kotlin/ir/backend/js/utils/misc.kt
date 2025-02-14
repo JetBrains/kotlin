@@ -63,14 +63,7 @@ fun IrFunction.isEqualsInheritedFromAny(): Boolean =
             parameters[1].type.isNullableAny()
 
 val IrValueDeclaration.isDispatchReceiver: Boolean
-    get() {
-        val parent = this.parent
-        if (parent is IrClass)
-            return true
-        if (parent is IrFunction && parent.dispatchReceiverParameter == this)
-            return true
-        return false
-    }
+    get() = this is IrValueParameter && kind == IrParameterKind.DispatchReceiver
 
 fun IrBody.prependFunctionCall(
     call: IrCall
