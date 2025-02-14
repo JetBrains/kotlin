@@ -2,6 +2,6 @@ $TESTDATA_DIR$/warningSuppression.kt
 -d
 $TEMP_DIR$
 -Xrender-internal-diagnostic-names
--Xsuppress-warning=UNCHECKED_CAST
--Xsuppress-warning=REDUNDANT_PROJECTION
+-Xwarning-level=UNCHECKED_CAST\:disabled
+-Xwarning-level=REDUNDANT_PROJECTION\:disabled
 -Werror
