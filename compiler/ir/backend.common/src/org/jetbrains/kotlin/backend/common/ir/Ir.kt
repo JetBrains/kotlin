@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.name.Name
 abstract class Ir {
 
     abstract val symbols: Symbols
-
-    internal val localScopeWithCounterMap = LocalDeclarationsLowering.LocalScopeWithCounterMap()
 }
 
 @OptIn(InternalSymbolFinderAPI::class)
