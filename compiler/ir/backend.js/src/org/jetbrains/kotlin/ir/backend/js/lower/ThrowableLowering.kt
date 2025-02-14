@@ -119,9 +119,8 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     .filterIsInstanceAnd<IrSimpleFunction> { !it.isFakeOverride }
                     .any { function ->
                         val property = function.correspondingPropertySymbol?.owner ?: return@any false
-                        property.name == Name.identifier("message") && property.overriddenSymbols.any {
-                            it.owner.realOverrideTarget.parent == throwableClass.owner
-                        }
+                        property.name == Name.identifier("message") &&
+                                property.collectRealOverrides(filter = { it.parent == throwableClass.owner }).isNotEmpty()
                     }
 
                 val messageTmp = JsIrBuilder.buildVar(
