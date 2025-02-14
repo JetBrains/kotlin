@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.putArgument
 
 internal class NativeAnnotationImplementationLowering(context: Context) : AnnotationImplementationLowering(
     { NativeAnnotationImplementationTransformer(context, it) }
@@ -48,19 +47,19 @@ private class NativeAnnotationImplementationTransformer(context: Context, irFile
      * instantiating annotations, hope there shouldn't be too many of them in each module.
      */
     override fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall) : IrConstructor {
-        val existingValueArguments = (0 until expression.valueArgumentsCount)
-                .filter { expression.getValueArgument(it) != null }
-                .map { expression.symbol.owner.valueParameters[it].name }
+        val existingArguments = expression.symbol.owner.parameters
+                .filter { expression.arguments[it] != null }
+                .map { it.name}
                 .toSet()
         return implClass.constructors.singleOrNull { cons ->
-            cons.valueParameters.map { it.name }.toSet() == existingValueArguments
+            cons.parameters.map { it.name }.toSet() == existingArguments
         } ?: implClass.addConstructor {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             visibility = DescriptorVisibilities.PUBLIC
         }.apply {
-            expression.symbol.owner.valueParameters
-                    .filter { it.name in existingValueArguments }
+            expression.symbol.owner.parameters
+                    .filter { it.name in existingArguments }
                     .forEach { parameter -> addValueParameter(parameter.name.asString(), parameter.type) }
             createConstructorBody(this, expression.symbol.owner)
         }
@@ -87,9 +86,9 @@ private class NativeAnnotationImplementationTransformer(context: Context, irFile
                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, delegate.symbol,
                         typeArgumentsCount = 0,
                 ).apply {
-                    constructor.valueParameters.forEach { param ->
-                        putArgument(delegate.valueParameters.single { it.name == param.name },
-                                IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, param.symbol))
+                    constructor.parameters.forEach { param ->
+                        arguments[delegate.parameters.single { it.name == param.name }] =
+                                IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, param.symbol)
                     }
                 }
         ))
