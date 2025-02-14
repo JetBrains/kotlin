@@ -28,6 +28,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var phaseStartTime: Time? = currentTime()
     private var compilationMXBean: CompilationMXBean? = null
     private var jitStartTime: Long? = null
+    private var garbageCollectorMXBeans: List<GarbageCollectorMXBean> = emptyList()
 
     private val phaseMeasurements: SortedMap<PhaseMeasurementType, Time> = sortedMapOf()
     private val phaseSideMeasurements: SortedMap<PhaseMeasurementType, SortedMap<PhaseSideMeasurementType, PhaseSidePerformanceMeasurement>> = sortedMapOf()
@@ -39,7 +40,6 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         protected set
     var isK2: Boolean = true
         private set
-    private var startGCData = mutableMapOf<String, GCData>()
 
     var targetDescription: String? = null
     var files: Int = 0
@@ -148,7 +148,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
         compilationMXBean = ManagementFactory.getCompilationMXBean()
         jitStartTime = compilationMXBean?.totalCompilationTime
-        ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
+        garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans()
+        garbageCollectorMXBeans.associateTo(gcMeasurements) {
+            it.name to GarbageCollectionMeasurement(it.name, it.collectionTime, it.collectionCount)
+        }
     }
 
     open fun addSourcesStats(files: Int, lines: Int) {
@@ -202,14 +205,22 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         notifyCurrentPhaseFinishedIfNeeded()
 
-        recordGcTime()
+        for (garbageCollectorMXBean in garbageCollectorMXBeans) {
+            val startGcMeasurement = gcMeasurements.getValue(garbageCollectorMXBean.name)
+            gcMeasurements[garbageCollectorMXBean.name] = GarbageCollectionMeasurement(
+                garbageCollectorMXBean.name,
+                garbageCollectorMXBean.collectionTime - startGcMeasurement.milliseconds,
+                garbageCollectorMXBean.collectionCount - startGcMeasurement.count,
+            )
+        }
 
         if (compilationMXBean != null && jitStartTime != null) {
             jitMeasurement = JitCompilationMeasurement(compilationMXBean!!.totalCompilationTime - jitStartTime!!)
         }
 
         if (!isK2) {
-            recordPerfCountersMeasurements()
+            @OptIn(DeprecatedPerformanceDeclaration::class)
+            PerformanceCounter.report { s -> extraMeasurements += PerformanceCounterMeasurement(s) }
         }
     }
 
@@ -226,27 +237,6 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
         phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + (currentTime() - phaseStartTime!!)
         phaseStartTime = null
-    }
-
-    private fun recordGcTime() {
-        if (!isEnabled) return
-
-        ManagementFactory.getGarbageCollectorMXBeans().forEach {
-            val startCounts = startGCData[it.name]
-            val startCollectionTime = startCounts?.collectionTime ?: 0
-            val startCollectionCount = startCounts?.collectionCount ?: 0
-            val existingGcMeasurement = gcMeasurements[it.name]
-            gcMeasurements[it.name] = GarbageCollectionMeasurement(
-                it.name,
-                (existingGcMeasurement?.milliseconds ?: 0) + it.collectionTime - startCollectionTime,
-                (existingGcMeasurement?.count ?: 0) + it.collectionCount - startCollectionCount
-            )
-        }
-    }
-
-    @OptIn(DeprecatedPerformanceDeclaration::class)
-    private fun recordPerfCountersMeasurements() {
-        PerformanceCounter.report { s -> extraMeasurements += PerformanceCounterMeasurement(s) }
     }
 
     internal fun <T> measureTime(phaseSideMeasurementType: PhaseSideMeasurementType, block: () -> T): T {
@@ -283,10 +273,6 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private fun ensureNotFinalizedAndSameThread() {
         assert(!isFinalized) { "Cannot add performance measurements because it's already finalized" }
         assert(Thread.currentThread() == thread) { "PerformanceManager functions can be run only from the same thread" }
-    }
-
-    private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
-        constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
     }
 }
 
