@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
+import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtFile
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
 import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.Serializable
 import java.nio.file.Path
@@ -130,6 +133,7 @@ public fun runSwiftExport(
     config: SwiftExportConfig,
 ): Result<Set<SwiftExportModule>> = runCatching {
     logConfigIssues(input, config.logger)
+    val referencedKotlinStdlibClassifiers = mutableSetOf<FqName>()
     val translatedModules = input
         .map { rootModule ->
             /**
@@ -139,9 +143,9 @@ public fun runSwiftExport(
              * a need to remove the current translation module from the list of dependencies.
              */
             val dependencies = input - rootModule
-            translateModule(rootModule, dependencies, config)
+            translateModule(rootModule, dependencies, config, referencedKotlinStdlibClassifiers)
         }
-
+    println("Referenced Kotlin classifiers: ${referencedKotlinStdlibClassifiers.joinToString()}")
     val packagesModule = writeKotlinPackagesModule(
         sirModule = translatedModules.createModuleForPackages(config),
         outputPath = config.outputPath.parent / config.moduleForPackagesName / "${config.moduleForPackagesName}.swift"
@@ -153,12 +157,27 @@ public fun runSwiftExport(
     return@runCatching setOf(packagesModule, runtimeSupportModule) + translatedModules.map(TranslationResult::writeModule)
 }
 
-private fun translateModule(module: InputModule, dependencies: Set<InputModule>, config: SwiftExportConfig): TranslationResult {
+private fun translateModule(
+    module: InputModule,
+    dependencies: Set<InputModule>,
+    config: SwiftExportConfig,
+    referencedKotlinClassifiers: MutableSet<FqName>
+): TranslationResult {
     val moduleWithScopeProvider = createModuleWithScopeProviderFromBinary(module, config.distribution.stdlib, dependencies)
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(moduleWithScopeProvider.useSiteModule) {
-        val buildResult = initializeSirModule(moduleWithScopeProvider, config, module.config, SirOneToOneModuleProvider())
+
+        val stdlibReferencesCollector = SirKaClassReferenceHandler { kaClass ->
+            val containingModule = kaClass.containingModule
+            if (containingModule !is KaLibraryModule || containingModule.libraryName != "stdlib") {
+                return@SirKaClassReferenceHandler
+            }
+            // Add only top-level declarations to the working queue.
+            referencedKotlinClassifiers.addIfNotNull(kaClass.classId?.outermostClassId?.asSingleFqName())
+        }
+
+        val buildResult = initializeSirModule(moduleWithScopeProvider, config, module.config, SirOneToOneModuleProvider(), stdlibReferencesCollector)
 
         // Assume that parts of the KotlinRuntimeSupport module are used.
         // It might not be the case, but precise tracking seems like an overkill at the moment.
