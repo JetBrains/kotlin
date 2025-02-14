@@ -23,7 +23,7 @@ fun test(a: A): Int {
         is SubAandB -> 1
     }
     i += when(a) {
-        is A -> 1
+        <!USELESS_IS_CHECK!>is A<!> -> 1
         is SubA -> 1
         is B -> 1
         <!USELESS_IS_CHECK!>is SubB<!> -> 1
@@ -48,7 +48,7 @@ fun test(b: B): Int {
     i += when(b) {
         is A -> 1
         <!USELESS_IS_CHECK!>is SubA<!> -> 1
-        is B -> 1
+        <!USELESS_IS_CHECK!>is B<!> -> 1
         is SubB -> 1
         is SubAandB -> 1
     }
@@ -71,9 +71,9 @@ fun testIntersection(both: A): Int {
         is SubAandB -> 1
     }
     i += when(both) {
-        is A -> 1
+        <!USELESS_IS_CHECK!>is A<!> -> 1
         <!USELESS_IS_CHECK!>is SubA<!> -> 1
-        is B -> 1
+        <!USELESS_IS_CHECK!>is B<!> -> 1
         <!USELESS_IS_CHECK!>is SubB<!> -> 1
         is SubAandB -> 1
     }
@@ -96,9 +96,9 @@ fun testIntersection(both: B): Int {
         is SubAandB -> 1
     }
     i += when(both) {
-        is A -> 1
+        <!USELESS_IS_CHECK!>is A<!> -> 1
         <!USELESS_IS_CHECK!>is SubA<!> -> 1
-        is B -> 1
+        <!USELESS_IS_CHECK!>is B<!> -> 1
         <!USELESS_IS_CHECK!>is SubB<!> -> 1
         is SubAandB -> 1
     }
