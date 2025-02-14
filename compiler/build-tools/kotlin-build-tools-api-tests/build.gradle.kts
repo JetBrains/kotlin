@@ -33,11 +33,11 @@ fun KotlinToolingVersionCopy(kotlinVersionString: String): KotlinToolingVersion 
     val baseVersionSplit = baseVersion.split(".")
 
     val majorVersion = baseVersionSplit[0].toIntOrNull()
-    val minorVersion = baseVersionSplit.getOrNull(1)?.toIntOrNull()
-
-    if (majorVersion == null || minorVersion == null) {
-        throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString (Failed parsing major/minor version)")
-    }
+        ?: throw IllegalArgumentException("Invalid major version: ${baseVersionSplit[0]} from $baseVersion")
+    val minorVersion = baseVersionSplit.getOrNull(1)?.let {
+        it.toIntOrNull()
+            ?: throw IllegalArgumentException("Invalid minor version: $it from $baseVersion")
+    } ?: throw IllegalStateException("Minor version not found in $baseVersion")
 
     return KotlinToolingVersion(
         major = majorVersion,

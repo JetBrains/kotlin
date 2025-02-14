@@ -23,10 +23,6 @@ fun KotlinToolingVersion(kotlinVersionString: String): KotlinToolingVersion {
             ?: throw IllegalArgumentException("Invalid minor version: $it from $baseVersion")
     } ?: throw IllegalStateException("Minor version not found in $baseVersion")
 
-    if (majorVersion == null || minorVersion == null) {
-        throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString (Failed parsing major/minor version)")
-    }
-
     return KotlinToolingVersion(
         major = majorVersion,
         minor = minorVersion,
