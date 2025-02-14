@@ -18,4 +18,5 @@ internal class TranslationResult(
     val config: SwiftExportConfig,
     val moduleConfig: SwiftModuleConfig,
     val bridgesModuleName: String,
+    val referencedKotlinClassifiers: Set<FqName>,
 )
