@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 
 @FirBuilderDsl
 class FirCodeFragmentBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData

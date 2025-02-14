@@ -631,7 +631,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     fun createDeepCopyOfTypeRef(original: FirUserTypeRef): FirUserTypeRef = buildUserTypeRef {
-        source = original.source
+        source = original.source!!
         isMarkedNullable = original.isMarkedNullable
         annotations.addAll(original.annotations)
         original.qualifier.mapTo(qualifier) { it.createDeepCopy() }

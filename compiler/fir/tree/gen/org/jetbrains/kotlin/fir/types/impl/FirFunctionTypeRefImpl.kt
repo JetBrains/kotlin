@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 internal class FirFunctionTypeRefImpl(
-    override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val isMarkedNullable: Boolean,
+    override val source: KtSourceElement,
     override var receiverTypeRef: FirTypeRef?,
     override val parameters: MutableList<FirFunctionTypeParameter>,
     override var returnTypeRef: FirTypeRef,
