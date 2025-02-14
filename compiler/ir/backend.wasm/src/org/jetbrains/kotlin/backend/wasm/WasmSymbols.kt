@@ -233,6 +233,7 @@ class WasmSymbols(
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
     val stringGetLiteral = getFunction("stringLiteral", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
+    val createString = getFunction("createString", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
     val stringGetPoolSize = getInternalFunction("stringGetPoolSize")
 
     val testFun = maybeGetFunction("test", kotlinTestPackageFqName)

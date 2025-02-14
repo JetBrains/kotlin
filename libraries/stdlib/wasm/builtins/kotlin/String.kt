@@ -144,11 +144,14 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun WasmCharArray.createString(): String =
+internal fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
 
 internal fun stringLiteral(poolId: Int, startAddress: Int, length: Int): String {
+    if (poolId == -1) {
+        return ""
+    }
+
     val cached = stringPool[poolId]
     if (cached !== null) {
         return cached
