@@ -99,6 +99,8 @@ private abstract class BaseInteropIrTransformer(
             override val language: String
                 get() = klib?.manifestProperties?.getProperty("language") ?: "C"
 
+            override val isSwiftExportEnabled = context.config.swiftExport
+
             override fun addKotlin(declaration: IrDeclaration) {
                 addTopLevel(declaration)
             }
