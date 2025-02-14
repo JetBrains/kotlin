@@ -507,7 +507,7 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
         if (useConstructorMarker) {
             val markerType = context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable()
             addValueParameter("marker".synthesizedString, markerType, IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER)
-        } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
+        } else if (context.shouldGenerateHandlerParameterForDefaultBodyFun) {
             addValueParameter(
                 "handler".synthesizedString,
                 context.irBuiltIns.anyNType,

@@ -103,8 +103,10 @@ class WasmBackendContext(
 
     override val ir = object : Ir() {
         override val symbols: WasmSymbols = wasmSymbols
-        override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
+
+    override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
+        get() = true
 
     override val inlineClassesUtils = WasmInlineClassesUtils(wasmSymbols)
 
