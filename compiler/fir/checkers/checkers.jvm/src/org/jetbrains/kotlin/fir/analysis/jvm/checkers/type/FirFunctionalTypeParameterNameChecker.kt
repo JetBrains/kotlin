@@ -22,7 +22,7 @@ object FirFunctionalTypeParameterNameChecker : FirFunctionTypeRefChecker(MppChec
 
     private fun check(typeRef: FirFunctionTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         val name = typeRef.name ?: return
-        val typeRefSource = typeRef.source ?: return
+        val typeRefSource = typeRef.source
         FirJvmNamesChecker.checkNameAndReport(name, typeRefSource, context, reporter)
     }
 }
