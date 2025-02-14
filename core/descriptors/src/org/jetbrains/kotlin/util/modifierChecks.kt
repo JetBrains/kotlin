@@ -216,7 +216,7 @@ object OperatorChecks : AbstractModifierChecks() {
         Checks(BINARY_OPERATION_NAMES, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(SIMPLE_UNARY_OPERATION_NAMES, MemberOrExtension, NoValueParameters),
         Checks(listOf(INC, DEC), MemberOrExtension) {
-            val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
+            val receiver = extensionReceiverParameter ?: dispatchReceiverParameter
             ensure(receiver != null && ((returnType?.isSubtypeOf(receiver.type) ?: false) || incDecCheckForExpectClass(receiver))) {
                 "receiver must be a supertype of the return type"
             }
