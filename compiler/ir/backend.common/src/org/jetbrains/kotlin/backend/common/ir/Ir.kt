@@ -20,12 +20,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
-// This is what Context collects about IR.
-abstract class Ir {
-
-    abstract val symbols: Symbols
-}
-
 @OptIn(InternalSymbolFinderAPI::class)
 open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     val symbolFinder = irBuiltIns.symbolFinder
