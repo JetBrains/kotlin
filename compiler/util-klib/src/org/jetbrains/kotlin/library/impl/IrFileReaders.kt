@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.library.impl.ReadBuffer
 import java.nio.ByteBuffer
 
 abstract class IrArrayReader(private val buffer: ReadBuffer) {
@@ -33,7 +34,7 @@ abstract class IrArrayReader(private val buffer: ReadBuffer) {
     }
 }
 
-class IrArrayFileReader(file: File) : IrArrayReader(ReadBuffer.WeakFileBuffer(file.javaFile()))
+class IrArrayFileReader(file: File) : IrArrayReader(ReadBuffer.OnDemandMemoryBuffer { file.javaFile().readBytes() })
 class IrArrayMemoryReader(bytes: ByteArray) : IrArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
 class IrIntArrayMemoryReader(bytes: ByteArray) {
@@ -114,7 +115,7 @@ abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
     }
 }
 
-class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(ReadBuffer.WeakFileBuffer(file.javaFile()))
+class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(ReadBuffer.OnDemandMemoryBuffer { file.javaFile().readBytes() })
 class IrMultiArrayMemoryReader(bytes: ByteArray) : IrMultiArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
 abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val keyReader: ReadBuffer.() -> K) {
@@ -212,19 +213,19 @@ val ByteArray.buffer: ByteBuffer get() = ByteBuffer.wrap(this)
 
 fun File.javaFile(): java.io.File = java.io.File(path)
 
-class IndexIrTableFileReader(file: File) : IrTableReader<Long>(ReadBuffer.WeakFileBuffer(file.javaFile()), { long })
+class IndexIrTableFileReader(file: File) : IrTableReader<Long>(ReadBuffer.OnDemandMemoryBuffer { file.javaFile().readBytes() }, { long })
 class IndexIrTableMemoryReader(bytes: ByteArray) : IrTableReader<Long>(ReadBuffer.MemoryBuffer(bytes), { long })
 
 data class DeclarationId(val id: Int)
 
 class DeclarationIrTableFileReader(file: File) :
-    IrTableReader<DeclarationId>(ReadBuffer.WeakFileBuffer(file.javaFile()), { DeclarationId(int) })
+    IrTableReader<DeclarationId>(ReadBuffer.OnDemandMemoryBuffer { file.javaFile().readBytes() }, { DeclarationId(int) })
 
 class DeclarationIrTableMemoryReader(bytes: ByteArray) :
     IrTableReader<DeclarationId>(ReadBuffer.MemoryBuffer(bytes), { DeclarationId(int) })
 
 class DeclarationIrMultiTableFileReader(file: File) :
-    IrMultiTableReader<DeclarationId>(ReadBuffer.WeakFileBuffer(file.javaFile()), { DeclarationId(int) })
+    IrMultiTableReader<DeclarationId>(ReadBuffer.OnDemandMemoryBuffer { file.javaFile().readBytes() }, { DeclarationId(int) })
 
 class DeclarationIrMultiTableMemoryReader(bytes: ByteArray) :
     IrMultiTableReader<DeclarationId>(ReadBuffer.MemoryBuffer(bytes), { DeclarationId(int) })

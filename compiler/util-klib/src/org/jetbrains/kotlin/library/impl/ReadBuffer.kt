@@ -105,6 +105,4 @@ sealed interface ReadBuffer {
             return tmpBuffer
         }
     }
-
-    class WeakFileBuffer(file: File) : ReadBuffer by OnDemandMemoryBuffer({ file.readBytes() })
 }
