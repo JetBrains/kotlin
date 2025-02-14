@@ -480,6 +480,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("isInitializedCommonModule.kt")
+    public void testIsInitializedCommonModule() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/isInitializedCommonModule.kt");
+    }
+
+    @Test
     @TestMetadata("noReceiverOnLambda.kt")
     public void testNoReceiverOnLambda() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/noReceiverOnLambda.kt");
