@@ -22,7 +22,12 @@ sealed interface ReadBuffer {
     val int: Int
     val long: Long
 
-    abstract class NIOReader(private val buffer: ByteBuffer) : ReadBuffer {
+    /**
+     * Allows reading data directly from the byte array [bytes].
+     * The byte array is known at the time of [MemoryBuffer] creation.
+     */
+    class MemoryBuffer(bytes: ByteArray) : ReadBuffer {
+        private val buffer: ByteBuffer = bytes.buffer
 
         override val size: Int
             get() = buffer.limit()
@@ -43,8 +48,6 @@ sealed interface ReadBuffer {
         override val long: Long
             get() = buffer.long
     }
-
-    class MemoryBuffer(bytes: ByteArray) : NIOReader(bytes.buffer)
 
     class WeakFileBuffer(private val file: File) : ReadBuffer {
         override val size: Int
