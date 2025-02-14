@@ -13,3 +13,12 @@ public class A
         /* ACCESSOR use-site */ access$privateMethod($this = Nested())
 internal inline fun internalInlineMethodOutsideOfOuterClass(): Int
     /* ACCESSOR use-site */ access$privateMethod($this = Nested())
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateMethod($this = Nested())
+    /* ACCESSOR use-site */ access$privateMethod($this = Nested())

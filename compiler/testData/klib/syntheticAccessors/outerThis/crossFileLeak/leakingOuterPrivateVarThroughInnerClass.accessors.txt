@@ -22,3 +22,14 @@ public class Outer
     /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: Outer, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
     /* TARGET declaration */ <this>: Outer
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+    /* ACCESSOR use-site */ access$<get-privateVar>($this = access$<outer-this-0>($this = this))
+    /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+    /* ACCESSOR use-site */ access$<set-privateVar>($this = access$<outer-this-0>($this = this), <set-?> = value)
+    /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+    /* ACCESSOR use-site */ access$<get-privateVar>($this = access$<outer-this-0>($this = this))

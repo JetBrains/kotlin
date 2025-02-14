@@ -40,3 +40,18 @@ public lateinit var k: String?
     /* TARGET use-site */ #o
 /* ACCESSOR declaration */ public fun access$<get-k>$p$tOKKt(): String?
     /* TARGET use-site */ #k
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-o>$p$tOKKt()
+    /* ACCESSOR use-site */ access$<set-o>$tOKKt(<set-?> = "O")
+    /* ACCESSOR use-site */ access$<get-o>$p$tOKKt()
+    local class <no name provided>
+        public fun run()
+            /* ACCESSOR use-site */ access$<get-k>$p$tOKKt()
+            /* ACCESSOR use-site */ access$<get-k>$p$tOKKt()
+    /* ACCESSOR use-site */ access$<get-o>$tOKKt()

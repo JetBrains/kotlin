@@ -20,3 +20,10 @@ internal inline fun topLevelInlineFun(): String
     /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
 /* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: A): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)

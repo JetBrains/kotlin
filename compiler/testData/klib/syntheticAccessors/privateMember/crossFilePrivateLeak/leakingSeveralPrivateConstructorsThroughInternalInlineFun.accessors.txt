@@ -20,3 +20,11 @@ public class A
         /* TARGET use-site */ A(a = a, b = b)
     /* ACCESSOR declaration */ public /* static */ fun access$<init>(a: Char): A
         /* TARGET use-site */ A(a = a)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<init>(s = s)
+    /* ACCESSOR use-site */ access$<init>(a = ' ')
+    /* ACCESSOR use-site */ access$<init>(a = s, b = "")

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.io.File
 
@@ -142,9 +141,31 @@ private class SyntheticAccessorCollector : IrVisitorVoid() {
         element.acceptChildrenVoid(this)
     }
 
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
+        visitProbablyAccessorSymbol(expression.symbol)
+        super.visitMemberAccess(expression)
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
+        visitProbablyAccessorSymbol(expression.overriddenFunctionSymbol)
+        super.visitRichFunctionReference(expression)
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
+        visitProbablyAccessorSymbol(expression.getterFunction.symbol)
+        visitProbablyAccessorSymbol(expression.setterFunction?.symbol)
+        super.visitRichPropertyReference(expression)
+    }
+
     override fun visitFunction(declaration: IrFunction) {
-        runIf(declaration.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR) { accessorSymbols += declaration.symbol }
+        visitProbablyAccessorSymbol(declaration.symbol)
         super.visitFunction(declaration)
+    }
+
+    private fun visitProbablyAccessorSymbol(symbol: IrSymbol?) {
+        if (symbol is IrFunctionSymbol && symbol.owner.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR) {
+            accessorSymbols += symbol
+        }
     }
 }
 

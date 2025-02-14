@@ -7,3 +7,9 @@ internal inline fun internalInlineFun(): String
     /* ACCESSOR use-site */ access$privateFun$tAKt()
 /* ACCESSOR declaration */ internal fun access$privateFun$tAKt(): String
     /* TARGET use-site */ privateFun()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateFun$tAKt()

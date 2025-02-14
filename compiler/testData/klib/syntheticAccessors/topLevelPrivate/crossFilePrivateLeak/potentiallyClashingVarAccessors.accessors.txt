@@ -1,5 +1,16 @@
 /* MODULE name=<main> */
 
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-fileNameVar>$tFile1Kt()
+    /* ACCESSOR use-site */ access$<get-fileNameVar>$tFile2Kt()
+    /* ACCESSOR use-site */ access$<set-fileNameVar>$tFile1Kt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<set-fileNameVar>$tFile2Kt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<get-fileNameVar>$tFile1Kt()
+    /* ACCESSOR use-site */ access$<get-fileNameVar>$tFile2Kt()
+
+
 /* FILE package=org.sample fileName=file1.kt */
 
 private var fileNameVar: String

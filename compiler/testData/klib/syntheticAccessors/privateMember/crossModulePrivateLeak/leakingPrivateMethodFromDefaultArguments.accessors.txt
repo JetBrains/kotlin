@@ -15,3 +15,13 @@ public class Foo
         /* TARGET use-site */ $this.o()
     /* ACCESSOR declaration */ public /* static */ fun access$k($this: Foo): String
         /* TARGET use-site */ $this.k()
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    val oo: String =
+        /* ACCESSOR use-site */ access$o($this = this)
+    /* ACCESSOR use-site */ access$k($this = this)

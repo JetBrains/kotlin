@@ -43,3 +43,16 @@ public class OK
         /* TARGET use-site */ $this.#o
     /* ACCESSOR declaration */ public /* static */ fun access$<get-k>$p($this: OK): String?
         /* TARGET use-site */ $this.#k
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-o>$p($this = this)
+    /* ACCESSOR use-site */ access$<set-o>($this = this, <set-?> = "O")
+    /* ACCESSOR use-site */ access$<get-o>$p($this = this)
+    local class <no name provided>
+        public fun run()
+            /* ACCESSOR use-site */ access$<get-k>$p($this = this)
+            /* ACCESSOR use-site */ access$<get-k>$p($this = this)
+    /* ACCESSOR use-site */ access$<get-o>($this = this)

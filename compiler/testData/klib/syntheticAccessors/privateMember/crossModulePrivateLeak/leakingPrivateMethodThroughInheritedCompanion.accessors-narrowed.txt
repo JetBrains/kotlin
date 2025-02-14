@@ -10,3 +10,11 @@ public class ChildCompanion
             /* TARGET use-site */ super<Parent>.x()
 public open class Parent
     /* TARGET declaration */ private fun x(): String
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$x($this = this)

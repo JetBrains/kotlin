@@ -17,3 +17,12 @@ public class A
         /* TARGET use-site */ $this.<get-privateVal>()
     /* ACCESSOR declaration */ public /* static */ fun access$<get-privateValFunctional>($this: A): Function0<Int>
         /* TARGET use-site */ $this.<get-privateValFunctional>()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    val param: Int =
+        /* ACCESSOR use-site */ access$<get-privateVal>($this = this)
+    val block: Function0<Int> =
+        /* ACCESSOR use-site */ access$<get-privateValFunctional>($this = this)

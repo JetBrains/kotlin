@@ -12,3 +12,11 @@ private inline fun privateSetVar1(value: Int)
     /* TARGET use-site */ <set-privateSetterVar>(<set-?> = value)
 /* ACCESSOR declaration */ public fun access$<set-privateSetterVar>$tAKt(<set-?>: Int)
     /* TARGET use-site */ <set-privateSetterVar>(<set-?> = <set-?>)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-privateSetterVar>$tAKt(<set-?> = value)

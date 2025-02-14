@@ -32,3 +32,16 @@ internal var libNameInlineVar2: String
     /* TARGET use-site */ <get-libName>()
 /* ACCESSOR declaration */ internal fun access$<set-libName>$tFile2Kt(<set-?>: String)
     /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-libName>$tFile1Kt()
+    /* ACCESSOR use-site */ access$<get-libName>$tFile2Kt()
+    /* ACCESSOR use-site */ access$<set-libName>$tFile1Kt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<set-libName>$tFile2Kt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<get-libName>$tFile1Kt()
+    /* ACCESSOR use-site */ access$<get-libName>$tFile2Kt()

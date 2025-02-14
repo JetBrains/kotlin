@@ -9,3 +9,9 @@ public class A
             /* ACCESSOR use-site */ access$privateMethod($this = <this>)
         /* ACCESSOR declaration */ public /* static */ fun access$privateMethod($this: Nested): String
             /* TARGET use-site */ $this.privateMethod()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateMethod($this = this)

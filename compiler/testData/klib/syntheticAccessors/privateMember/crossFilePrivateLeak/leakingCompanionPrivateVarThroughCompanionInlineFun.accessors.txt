@@ -15,3 +15,11 @@ public class A
             /* TARGET use-site */ $this.<get-privateVar>()
         /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: Companion, <set-?>: Int)
             /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
+    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
+    /* ACCESSOR use-site */ access$<get-privateVar>($this = this)

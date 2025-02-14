@@ -15,3 +15,12 @@ public class Outer
     /* ACCESSOR declaration */ public /* static */ fun access$privateMethod($this: Outer): String
         /* TARGET use-site */ $this.privateMethod()
     /* TARGET declaration */ <this>: Outer
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+    /* ACCESSOR use-site */ access$privateMethod($this = access$<outer-this-0>($this = this))

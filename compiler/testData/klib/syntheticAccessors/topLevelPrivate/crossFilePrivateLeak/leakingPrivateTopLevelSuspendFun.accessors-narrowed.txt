@@ -7,3 +7,10 @@ internal suspend inline fun internalInline(): String
     /* ACCESSOR use-site */ access$privateSuspendMethod$tAKt()
 /* ACCESSOR declaration */ internal suspend fun access$privateSuspendMethod$tAKt(): String
     /* TARGET use-site */ privateSuspendMethod()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    local suspend fun <anonymous>(): String
+        /* ACCESSOR use-site */ access$privateSuspendMethod$tAKt()

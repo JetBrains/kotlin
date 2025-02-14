@@ -10,3 +10,13 @@ public class A
                 /* ACCESSOR use-site */ access$privateMethod($this = <this>)
     /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod($this: A): String
         /* TARGET use-site */ $this.privateMethod()
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    local class <no name provided>
+        public fun run(): String
+            /* ACCESSOR use-site */ access$privateMethod($this = this)

@@ -20,3 +20,12 @@ internal fun topLevelFun(): String
     /* ACCESSOR use-site */ access$privateMethod($this = this)
 internal inline fun topLevelInlineFun(): String
     /* ACCESSOR use-site */ access$privateMethod($this = this)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateMethod($this = this)
+    /* ACCESSOR use-site */ access$privateMethod($this = this)

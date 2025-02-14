@@ -13,3 +13,13 @@ private var Int.privateVar: Int
     /* TARGET use-site */ <get-privateVar>(/* <this> = $receiver */)
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tAKt($receiver: Int, value: Int)
     /* TARGET use-site */ <set-privateVar>(/* <this> = $receiver, */ value = value)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = 0)
+    /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = 0, value = value)
+    /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = 0)

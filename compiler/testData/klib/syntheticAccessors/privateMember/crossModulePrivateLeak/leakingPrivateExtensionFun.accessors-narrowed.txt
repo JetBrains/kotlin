@@ -8,3 +8,11 @@ public class A
 /* TARGET declaration */ private fun A.privateExtension(): String
 /* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: A): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)

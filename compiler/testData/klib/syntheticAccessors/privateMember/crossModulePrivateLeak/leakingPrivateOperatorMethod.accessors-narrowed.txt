@@ -8,3 +8,11 @@ public class A
         /* ACCESSOR use-site */ access$plus($this = <this>, increment = 1)
     /* ACCESSOR declaration */ internal /* static */ fun access$plus($this: A, increment: Int): String
         /* TARGET use-site */ $this.plus(increment = increment)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$plus($this = this, increment = 1)

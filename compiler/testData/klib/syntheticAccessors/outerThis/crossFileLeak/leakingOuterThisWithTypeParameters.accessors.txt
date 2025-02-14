@@ -18,3 +18,11 @@ public class Outer<O : Any?>
                 /* ACCESSOR use-site */ $this.<outer-this-1>()
         /* TARGET declaration */ <this>: InnerL1<I1, O>
     /* TARGET declaration */ <this>: Outer<O>
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    val result: String =
+        /* ACCESSOR use-site */ access$<outer-this-1>($this = this)
+        /* ACCESSOR use-site */ access$<outer-this-0>($this = this)

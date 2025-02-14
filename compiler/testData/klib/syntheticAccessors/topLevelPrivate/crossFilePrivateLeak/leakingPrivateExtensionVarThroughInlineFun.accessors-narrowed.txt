@@ -13,3 +13,11 @@ internal inline fun A.customGetVar(): Int
     /* TARGET use-site */ <get-privateVar>(/* <this> = $receiver */)
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tBKt($receiver: A, value: Int)
     /* TARGET use-site */ <set-privateVar>(/* <this> = $receiver, */ value = value)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = this)
+    /* ACCESSOR use-site */ access$<set-privateVar>$tBKt($receiver = this, value = value)
+    /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = this)

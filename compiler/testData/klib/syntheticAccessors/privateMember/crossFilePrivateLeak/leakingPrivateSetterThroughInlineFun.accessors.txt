@@ -15,3 +15,10 @@ public class A
         /* TARGET use-site */ $this.<set-a>(<set-?> = <set-?>)
     /* ACCESSOR declaration */ public /* static */ fun access$<set-b>($this: A, value: Int)
         /* TARGET use-site */ $this.<set-b>(value = value)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-a>($this = this, <set-?> = 42)
+    /* ACCESSOR use-site */ access$<set-b>($this = this, value = 21)

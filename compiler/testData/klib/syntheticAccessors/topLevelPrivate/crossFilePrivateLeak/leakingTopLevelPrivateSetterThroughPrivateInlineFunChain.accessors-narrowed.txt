@@ -12,3 +12,9 @@ internal inline fun internalSetVar(value: Int)
     /* ACCESSOR use-site */ access$<set-privateSetterVar>$tAKt(<set-?> = value)
 /* ACCESSOR declaration */ internal fun access$<set-privateSetterVar>$tAKt(<set-?>: Int)
     /* TARGET use-site */ <set-privateSetterVar>(<set-?> = <set-?>)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-privateSetterVar>$tAKt(<set-?> = value)

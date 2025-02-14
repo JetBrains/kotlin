@@ -14,3 +14,11 @@ public class A
     /* TARGET use-site */ <get-o>()
 /* ACCESSOR declaration */ public fun access$<set-o>$tAKt(<set-?>: String)
     /* TARGET use-site */ <set-o>(<set-?> = <set-?>)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    local fun <anonymous>()
+        /* ACCESSOR use-site */ access$<set-o>$tAKt(<set-?> = "O")
+    /* ACCESSOR use-site */ access$<get-o>$tAKt()

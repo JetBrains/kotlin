@@ -9,3 +9,12 @@ internal val internalInlineVal: Function0<String>
 /* TARGET declaration */ private fun privateMethod(): String
 /* ACCESSOR declaration */ internal fun access$privateMethod$tAKt(): String
     /* TARGET use-site */ privateMethod()
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    local fun <anonymous>(): String
+        /* ACCESSOR use-site */ access$privateMethod$tAKt()

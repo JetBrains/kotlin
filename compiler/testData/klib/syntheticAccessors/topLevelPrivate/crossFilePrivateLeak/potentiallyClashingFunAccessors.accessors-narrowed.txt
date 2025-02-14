@@ -1,5 +1,12 @@
 /* MODULE name=<main> */
 
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$fileName$tFile1Kt()
+    /* ACCESSOR use-site */ access$fileName$tFile2Kt()
+
+
 /* FILE package=org.sample fileName=file1.kt */
 
 /* TARGET declaration */ private fun fileName(): String

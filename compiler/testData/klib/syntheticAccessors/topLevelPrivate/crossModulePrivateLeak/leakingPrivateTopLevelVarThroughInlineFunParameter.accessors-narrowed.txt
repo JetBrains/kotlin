@@ -16,3 +16,14 @@ internal inline fun executorFunctional(noinline block: Function0<Int>): Int
     /* TARGET use-site */ <get-privateVal>()
 /* ACCESSOR declaration */ internal fun access$<get-privateValFunctional>$tAKt(): Function0<Int>
     /* TARGET use-site */ <get-privateValFunctional>()
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    val param: Int =
+        /* ACCESSOR use-site */ access$<get-privateVal>$tAKt()
+    val block: Function0<Int> =
+        /* ACCESSOR use-site */ access$<get-privateValFunctional>$tAKt()

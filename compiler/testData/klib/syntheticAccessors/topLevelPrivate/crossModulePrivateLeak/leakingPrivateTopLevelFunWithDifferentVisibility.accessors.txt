@@ -44,3 +44,22 @@ internal inline fun inlineAllEffectivelyPublic2(): String
     /* TARGET use-site */ onlyInternalPA()
 /* ACCESSOR declaration */ public fun access$allEffectivelyPublic$tAKt(): String
     /* TARGET use-site */ allEffectivelyPublic()
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$onlyInternal$tAKt()
+    /* ACCESSOR use-site */ access$onlyInternal$tAKt()
+    /* ACCESSOR use-site */ access$internalAndPublic$tAKt()
+    /* ACCESSOR use-site */ access$internalAndPublic$tAKt()
+    /* ACCESSOR use-site */ access$internalAndInternalPA$tAKt()
+    /* ACCESSOR use-site */ access$internalAndInternalPA$tAKt()
+    /* ACCESSOR use-site */ access$onlyPublic$tAKt()
+    /* ACCESSOR use-site */ access$onlyPublic$tAKt()
+    /* ACCESSOR use-site */ access$onlyInternalPA$tAKt()
+    /* ACCESSOR use-site */ access$onlyInternalPA$tAKt()
+    /* ACCESSOR use-site */ access$allEffectivelyPublic$tAKt()
+    /* ACCESSOR use-site */ access$allEffectivelyPublic$tAKt()

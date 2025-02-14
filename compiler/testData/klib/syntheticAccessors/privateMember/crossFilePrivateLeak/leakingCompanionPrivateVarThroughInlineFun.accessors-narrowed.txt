@@ -15,3 +15,11 @@ public class A
         /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, <set-?> = value)
     internal inline fun customGetVar(): Int
         /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
+    /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, <set-?> = value)
+    /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)

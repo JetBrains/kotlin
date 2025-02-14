@@ -10,3 +10,11 @@ public class Outer
     public inner class Inner
         internal inline fun internalMethod(): String
             /* ACCESSOR use-site */ access$privateMethod($this = Companion)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateMethod($this = Companion)

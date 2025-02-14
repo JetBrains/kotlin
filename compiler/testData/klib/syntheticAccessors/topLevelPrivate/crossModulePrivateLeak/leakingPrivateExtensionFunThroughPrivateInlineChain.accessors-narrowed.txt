@@ -19,3 +19,12 @@ private inline fun String.privateInlineExtension1(): String
 /* TARGET declaration */ private fun String.privateExtension(): String
 /* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: String): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)

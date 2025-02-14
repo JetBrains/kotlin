@@ -14,3 +14,11 @@ internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
     /* TARGET use-site */ o()
 /* ACCESSOR declaration */ public fun access$k$tAKt(): String
     /* TARGET use-site */ k()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    val oo: String =
+        /* ACCESSOR use-site */ access$o$tAKt()
+    /* ACCESSOR use-site */ access$k$tAKt()

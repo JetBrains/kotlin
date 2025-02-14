@@ -18,3 +18,12 @@ internal inline fun inlineFun2(): String
 /* TARGET declaration */ private fun libName(): String
 /* ACCESSOR declaration */ public fun access$libName$tFile2Kt(): String
     /* TARGET use-site */ libName()
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$libName$tFile1Kt()
+    /* ACCESSOR use-site */ access$libName$tFile2Kt()

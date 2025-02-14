@@ -15,3 +15,18 @@ internal inline fun A.internalInlineExtension(): String
     /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = this)
 /* ACCESSOR declaration */ public fun access$privateExtension$tBKt($receiver: A): String
     /* TARGET use-site */ privateExtension(/* <this> = $receiver */)
+
+
+/* FILE package=<root> fileName=C.kt */
+
+internal fun topLevelFun(): String
+    /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = this)
+internal inline fun topLevelInlineFun(): String
+    /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = this)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = this)
+    /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = this)

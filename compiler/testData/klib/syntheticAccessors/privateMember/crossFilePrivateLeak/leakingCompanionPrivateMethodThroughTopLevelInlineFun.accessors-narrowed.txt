@@ -9,3 +9,9 @@ public class A
             /* TARGET use-site */ $this.privateMethod()
 internal inline fun internalInlineMethod(): String
     /* ACCESSOR use-site */ access$privateMethod($this = Companion)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateMethod($this = Companion)

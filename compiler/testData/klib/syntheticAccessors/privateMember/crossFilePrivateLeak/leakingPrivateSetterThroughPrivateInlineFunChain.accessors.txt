@@ -17,3 +17,10 @@ internal fun topLevelSet(a: A, value: Int)
     /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
 internal inline fun topLevelInlineSet(a: A, value: Int)
     /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
+    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)

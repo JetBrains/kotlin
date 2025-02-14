@@ -15,3 +15,11 @@ private inline fun privateInlineFun1(): String
 /* TARGET declaration */ private fun privateFun(): String
 /* ACCESSOR declaration */ public fun access$privateFun$tAKt(): String
     /* TARGET use-site */ privateFun()
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateFun$tAKt()
