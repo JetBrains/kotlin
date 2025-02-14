@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 
 @FirBuilderDsl
 class FirIndexedAccessAugmentedAssignmentBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var lhsGetCall: FirFunctionCall
     lateinit var rhs: FirExpression

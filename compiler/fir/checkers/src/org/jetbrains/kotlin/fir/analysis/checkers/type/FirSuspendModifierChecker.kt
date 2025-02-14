@@ -27,7 +27,7 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
         if (typeRef !is FirTypeRefWithNullability) return
 
         val suspendModifierSources = mutableListOf<KtSourceElement>()
-        typeRef.source?.getChild(KtStubElementTypes.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
+        typeRef.source.getChild(KtStubElementTypes.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
             suspendModifierSources += it
         }
         if (suspendModifierSources.isEmpty()) return

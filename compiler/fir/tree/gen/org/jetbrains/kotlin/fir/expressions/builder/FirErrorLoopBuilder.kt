@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirErrorLoopImpl
 
 @FirBuilderDsl
 class FirErrorLoopBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var label: FirLabel? = null
     lateinit var diagnostic: ConeDiagnostic

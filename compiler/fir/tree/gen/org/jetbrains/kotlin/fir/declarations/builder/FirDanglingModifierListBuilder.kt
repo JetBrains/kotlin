@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirDanglingModifierSymbol
 
 @FirBuilderDsl
 class FirDanglingModifierListBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
