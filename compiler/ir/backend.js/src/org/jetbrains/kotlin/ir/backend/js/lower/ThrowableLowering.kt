@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
@@ -17,15 +18,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.isNullableString
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 /**
  * Links [kotlin.Throwable] and JavaScript `Error` together to provide proper interop between language and platform exceptions.
  */
-class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
+class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val throwableClass = context.throwableClass
     private val throwableConstructors = context.throwableConstructors
     private val newThrowableFunction = context.newThrowableSymbol
@@ -40,8 +41,8 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
         val cause: IrExpression?
     )
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(Transformer())
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildren(Transformer(), container as? IrConstructor)
     }
 
     private fun IrFunctionAccessExpression.extractThrowableArguments(): ThrowableArguments =
@@ -61,11 +62,14 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
             }
         }
 
-    inner class Transformer : IrElementTransformerVoidWithContext() {
+    inner class Transformer : IrTransformer<IrConstructor?>() {
         private val anyConstructor = context.irBuiltIns.anyClass.constructors.first()
 
-        override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-            expression.transformChildrenVoid(this)
+        override fun visitConstructor(declaration: IrConstructor, data: IrConstructor?) =
+            super.visitConstructor(declaration, declaration)
+
+        override fun visitConstructorCall(expression: IrConstructorCall, data: IrConstructor?): IrExpression {
+            expression.transformChildren(this, data)
             if (expression.symbol !in throwableConstructors) return expression
 
             val (messageArg, causeArg) = expression.extractThrowableArguments()
@@ -81,11 +85,13 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
             }
         }
 
-        override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-            expression.transformChildrenVoid(this)
+        override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrConstructor?): IrExpression {
+            expression.transformChildren(this, data)
             if (expression.symbol !in throwableConstructors) return expression
 
-            val klass = currentClass?.irElement as IrClass
+            val currentConstructor = data ?: compilationException("Delegation call outside of constructor", expression)
+            val klass = currentConstructor.constructedClass
+
             val (messageArg, causeArg) = expression.extractThrowableArguments()
             val thisReceiver = IrGetValueImpl(expression.startOffset, expression.endOffset, klass.thisReceiver!!.symbol)
 
@@ -108,7 +114,6 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
              */
             if (context.es6mode) {
                 var delegatingCall = expression
-                val currentConstructor = currentFunction?.irElement as IrConstructor
 
                 val thereIsAnOverrideOfThrowableMessage = klass.properties
                     .filter { !it.isFakeOverride }
