@@ -137,6 +137,7 @@ class ClassicJvmCliFacade(private val testServices: TestServices) : AbstractTest
 
             add(CommonCompilerArguments::languageVersion.cliArgument)
             add(LanguageVersion.KOTLIN_1_9.versionString)
+            add(CommonCompilerArguments::suppressVersionWarnings.cliArgument)
         }
         val diagnosticCollector = DiagnosticCollectingMessageRenderer()
         CompilerTestUtil.executeCompiler(K2JVMCompiler(), args, diagnosticCollector)
