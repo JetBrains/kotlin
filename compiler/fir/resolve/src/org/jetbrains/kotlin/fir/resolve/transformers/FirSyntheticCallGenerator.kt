@@ -215,7 +215,7 @@ class FirSyntheticCallGenerator(
             source = arrayLiteral.source
         }.also {
             if (arrayOfSymbol == null) {
-                it.resultType = components.typeFromCallee(it).coneType
+                it.resultType = components.typeFromCallee(it)
             }
         }
     }

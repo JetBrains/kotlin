@@ -125,7 +125,7 @@ class FirCallResolver(
         } else {
             functionCall
         }
-        val type = components.typeFromCallee(resultFunctionCall).coneType
+        val type = components.typeFromCallee(resultFunctionCall)
         if (type is ConeErrorType) {
             resultFunctionCall.resultType = type
         }

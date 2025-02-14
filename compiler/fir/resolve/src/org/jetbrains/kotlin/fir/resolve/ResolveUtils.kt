@@ -453,19 +453,15 @@ private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowe
     return resolvedSymbol
 }
 
-fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
-    val calleeReference = access.calleeReference
-    return typeFromCallee(access, calleeReference)
+fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): ConeKotlinType {
+    return typeFromCallee(access.calleeReference)
 }
 
-fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: FirReference): FirResolvedTypeRef {
+fun BodyResolveComponents.typeFromCallee(calleeReference: FirReference): ConeKotlinType {
     return when (calleeReference) {
-        is FirErrorNamedReference ->
-            buildErrorTypeRef {
-                source = access.source?.fakeElement(KtFakeSourceElementKind.ErrorTypeRef)
-                // The diagnostic is reported on the callee reference, no need to report it again on the error type ref.
-                diagnostic = ConeUnreportedDuplicateDiagnostic(calleeReference.diagnostic)
-            }
+        is FirErrorNamedReference -> {
+            ConeErrorType(ConeUnreportedDuplicateDiagnostic(calleeReference.diagnostic))
+        }
         is FirNamedReferenceWithCandidate -> {
             typeFromSymbol(calleeReference.candidateSymbol)
         }
@@ -479,17 +475,14 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
         is FirThisReference -> {
             val labelName = calleeReference.labelName
             val possibleImplicitReceivers = implicitValueStorage[labelName]
-            buildResolvedTypeRef {
-                source = null
-                coneType = when {
-                    possibleImplicitReceivers.size >= 2 -> ConeErrorType(
-                        ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
-                    )
-                    possibleImplicitReceivers.isEmpty() -> ConeErrorType(
-                        ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel)
-                    )
-                    else -> possibleImplicitReceivers.single().type
-                }
+            when {
+                possibleImplicitReceivers.size >= 2 -> ConeErrorType(
+                    ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
+                )
+                possibleImplicitReceivers.isEmpty() -> ConeErrorType(
+                    ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel)
+                )
+                else -> possibleImplicitReceivers.single().type
             }
         }
         else -> errorWithAttachment("Failed to extract type from: ${calleeReference::class.simpleName}") {
@@ -498,18 +491,15 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
     }
 }
 
-private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): FirResolvedTypeRef {
+private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): ConeKotlinType {
     return when (symbol) {
         is FirSyntheticPropertySymbol -> typeFromSymbol(symbol.getterSymbol!!.delegateFunctionSymbol)
         is FirCallableSymbol<*> -> {
             val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
-            returnTypeRef.copyWithNewSource(null)
+            returnTypeRef.coneType
         }
         is FirClassifierSymbol<*> -> {
-            buildResolvedTypeRef {
-                source = null
-                coneType = symbol.constructType()
-            }
+            symbol.constructType()
         }
         else -> errorWithAttachment("Failed to extract type from symbol: ${symbol::class.java}") {
             withFirEntry("declaration", symbol.fir)
@@ -604,14 +594,14 @@ fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirReg
 }
 
 fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
-    val typeRef = typeFromSymbol(candidate.symbol)
-    return typeRef.initialTypeOfCandidate(candidate)
+    val type = typeFromSymbol(candidate.symbol)
+    return type.initialTypeOfCandidate(candidate)
 }
 
-fun FirResolvedTypeRef.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
+fun ConeKotlinType.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
     val system = candidate.system
     val resultingSubstitutor = system.buildCurrentSubstitutor()
-    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(coneType)) as ConeKotlinType
+    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(this)) as ConeKotlinType
 }
 
 /**
