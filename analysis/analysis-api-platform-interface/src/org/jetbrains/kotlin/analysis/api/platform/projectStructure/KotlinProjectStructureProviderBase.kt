@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.explicitModule
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.analysisContext
 
@@ -66,16 +69,34 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
 
         file.contextModule?.let { return it }
 
-        val contextElement = file.context
-            ?: file.analysisContext
+        val contextElement = file.context?.takeIf(::isSupportedContextElement)
+            ?: file.analysisContext?.takeIf(::isSupportedContextElement)
             ?: originalFile
 
         if (contextElement != null) {
-            return getModule(contextElement, useSiteModule = null)
+            val contextModule = getModule(contextElement, useSiteModule = null)
+            if (contextModule is KaDanglingFileModule && file !is KtCodeFragment) {
+                // Only code fragments can have dangling file modules in contexts
+                return unwrapDanglingFileModuleContext(contextModule)
+            }
+            return contextModule
         }
 
         return getNotUnderContentRootModule(file.project)
     }
+
+    private fun isSupportedContextElement(context: PsiElement): Boolean {
+        // Support Kotlin files and Java/Kotlin packages
+        return context.language == KotlinLanguage.INSTANCE || context is PsiDirectory
+    }
+}
+
+private fun unwrapDanglingFileModuleContext(module: KaDanglingFileModule): KaModule {
+    var current: KaModule = module
+    while (current is KaDanglingFileModule) {
+        current = current.contextModule
+    }
+    return current
 }
 
 @OptIn(KaExperimentalApi::class)
