@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
 import org.jetbrains.kotlin.sir.providers.utils.*
+import org.jetbrains.kotlin.swiftexport.standalone.builders.createInputModuleForStdlib
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateModule
+import org.jetbrains.kotlin.swiftexport.standalone.translation.translateStlibModuleParts
 import org.jetbrains.kotlin.swiftexport.standalone.utils.logConfigIssues
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtFile
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.Serializable
 import java.nio.file.Path
@@ -122,7 +125,7 @@ public fun runSwiftExport(
     config: SwiftExportConfig,
 ): Result<Set<SwiftExportModule>> = runCatching {
     logConfigIssues(input, config.logger)
-    val referencedKotlinStdlibClassifiers = mutableSetOf<FqName>()
+    val stdlibModule = createInputModuleForStdlib(config.distribution)
     val translatedModules = input
         .map { rootModule ->
             /**
@@ -132,9 +135,11 @@ public fun runSwiftExport(
              * a need to remove the current translation module from the list of dependencies.
              */
             val dependencies = input - rootModule
-            translateModule(rootModule, dependencies, config, referencedKotlinStdlibClassifiers)
+            translateModule(rootModule, dependencies + stdlibModule, config)
         }
-    println("Referenced Kotlin classifiers: ${referencedKotlinStdlibClassifiers.joinToString()}")
+//    val stdlibModule = translateStlibModuleParts(
+//        traversalRoots = translatedModules.flatMap { it.referencedKotlinClassifiers }.toSet()
+//    )
     val packagesModule = writeKotlinPackagesModule(
         sirModule = translatedModules.createModuleForPackages(config),
         outputPath = config.outputPath.parent / config.moduleForPackagesName / "${config.moduleForPackagesName}.swift"

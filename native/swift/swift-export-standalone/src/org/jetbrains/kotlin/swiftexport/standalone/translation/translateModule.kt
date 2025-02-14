@@ -15,23 +15,34 @@ import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
-import org.jetbrains.kotlin.swiftexport.standalone.builders.createModuleWithScopeProviderFromBinary
-import org.jetbrains.kotlin.swiftexport.standalone.builders.initializeSirModule
+import org.jetbrains.kotlin.swiftexport.standalone.builders.createKaModulesForStandaloneAnalysis
+import org.jetbrains.kotlin.swiftexport.standalone.builders.translateWholeKotlinModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.utils.StandaloneSirTypeNamer
 import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+internal fun translateStlibModuleParts(
+    stdlibModule: InputModule,
+    traversalRoots: Set<FqName>
+) : TranslationResult {
+    val (useSiteModule, mainModule) = createKaModulesForStandaloneAnalysis(stdlibModule, emptySet())
+    analyze(useSiteModule) {
+
+    }
+    error("Not yet implemented")
+}
+
 internal fun translateModule(
     module: InputModule,
     dependencies: Set<InputModule>,
     config: SwiftExportConfig,
-    referencedKotlinClassifiers: MutableSet<FqName>
 ): TranslationResult {
-    val moduleWithScopeProvider = createModuleWithScopeProviderFromBinary(module, config.distribution.stdlib, dependencies)
+    val (useSiteModule, mainModule) = createKaModulesForStandaloneAnalysis(module, dependencies)
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
-    return analyze(moduleWithScopeProvider.useSiteModule) {
+    val referencedKotlinClassifiers = mutableSetOf<FqName>()
+    return analyze(useSiteModule) {
 
         val stdlibReferencesCollector = SirKaClassReferenceHandler { kaClass ->
             val containingModule = kaClass.containingModule
@@ -42,7 +53,7 @@ internal fun translateModule(
             referencedKotlinClassifiers.addIfNotNull(kaClass.classId?.outermostClassId?.asSingleFqName())
         }
 
-        val buildResult = initializeSirModule(moduleWithScopeProvider, config, module.config, SirOneToOneModuleProvider(), stdlibReferencesCollector)
+        val buildResult = translateWholeKotlinModule(mainModule, useSiteModule, config, module.config, SirOneToOneModuleProvider(), stdlibReferencesCollector)
 
         // Assume that parts of the KotlinRuntimeSupport module are used.
         // It might not be the case, but precise tracking seems like an overkill at the moment.
@@ -69,6 +80,7 @@ internal fun translateModule(
             config = config,
             moduleConfig = module.config,
             bridgesModuleName = module.bridgesModuleName,
+            referencedKotlinClassifiers = referencedKotlinClassifiers.toSet(),
         )
     }
 }

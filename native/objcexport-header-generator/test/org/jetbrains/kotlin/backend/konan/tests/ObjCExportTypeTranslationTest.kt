@@ -61,7 +61,7 @@ class ObjCExportTypeTranslationTest(
             class A
             class B
             class C
-            
+
             fun foo(a: A, b: B?): C? = error("stub")
         """.trimIndent()
         )
@@ -438,7 +438,7 @@ class ObjCExportTypeTranslationTest(
             """
             class A
             value class Inlined(val a: A)
-            
+
             val foo: Inlined get() = error("stub")
         """.trimIndent()
         )
@@ -539,6 +539,22 @@ class ObjCExportTypeTranslationTest(
             """.trimIndent()
         )
         assertEquals("T -> void", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - generic class with self referential type parameter`() {
+        val header = header(
+            """
+            interface Base<T>
+            interface A<T>: Base<B<T>>
+            interface B<T>: Base<C<T>>
+            interface C<T>: Base<A<T>>
+            class D<T: A<T>> {
+                fun <U: B<T>, V: C<U>> foo(value: V) = Unit
+            }
+            """.trimIndent()
+        )
+        assertEquals("id -> void", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
