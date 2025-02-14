@@ -46,8 +46,6 @@ sealed interface ReadBuffer {
 
     class MemoryBuffer(bytes: ByteArray) : NIOReader(bytes.buffer)
 
-    class DirectFileBuffer(file: File) : NIOReader(file.readBytes().buffer)
-
     class WeakFileBuffer(private val file: File) : ReadBuffer {
         override val size: Int
             get() = file.length().toInt()
