@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -1261,9 +1259,9 @@ class CallAndReferenceGenerator(
      *   * Extra type arguments that correspond to outer type parameters of an inner class (they are used while resolving, but not needed on backend)
      * We need to map them using the typealias parameters and typealias constructor substitutors.
      */
-    private fun FirCallableDeclaration?.refineTypeArgumentsOfTypeAliasConstructor(originalTypeArguments: List<FirTypeProjection>): List<FirTypeRef> {
+    private fun FirCallableDeclaration?.refineTypeArgumentsOfTypeAliasConstructor(originalTypeArguments: List<FirTypeProjection>): List<ConeKotlinType> {
         val typeAliasConstructorInfo = (this as? FirConstructor)?.typeAliasConstructorInfo
-            ?: return originalTypeArguments.map { (it as FirTypeProjectionWithVariance).typeRef }
+            ?: return originalTypeArguments.map { (it as FirTypeProjectionWithVariance).typeRef.coneType }
         val typeAliasSymbol = typeAliasConstructorInfo.typeAliasSymbol
 
         val parametersSubstitutor = createParametersSubstitutor(
@@ -1308,39 +1306,31 @@ class CallAndReferenceGenerator(
                 if (ignoredTypeArguments.contains(typeArgument)) continue
 
                 val typeProjection = parametersSubstitutor.substituteArgument(typeArgument, index) ?: typeArgument
-                val typeRef = if (typeProjection is ConeKotlinType) {
-                    buildResolvedTypeRef {
-                        coneType = typeProjection
-                    }
-                } else {
-                    buildErrorTypeRef {
-                        diagnostic = ConeSimpleDiagnostic("Expansion contains unexpected type ${typeProjection.javaClass}")
-                    }
-                }
-                add(typeRef)
+                val type = typeProjection as? ConeKotlinType
+                    ?: ConeErrorType(diagnostic = ConeSimpleDiagnostic("Expansion contains unexpected type ${typeProjection.javaClass}"))
+                add(type)
             }
         }
     }
 
     private fun IrExpression.applyTypeArguments(
-        typeArguments: List<FirTypeRef>?,
+        typeArguments: List<ConeKotlinType>?,
         typeParameters: List<FirTypeParameter>?,
     ): IrExpression {
         if (this !is IrMemberAccessExpression<*>) return this
 
         val argumentsCount = typeArguments?.size ?: return this
         if (argumentsCount <= this.typeArguments.size) {
-            for ((index, argument) in typeArguments.withIndex()) {
+            for ((index, argumentType) in typeArguments.withIndex()) {
                 val typeParameter = typeParameters?.get(index)
                 val argumentIrType = if (typeParameter?.isReified == true) {
-                    argument.approximateDeclarationType(
+                    argumentType.approximateDeclarationType(
                         session,
                         containingCallableVisibility = null,
-                        isLocal = false,
-                        stripEnhancedNullability = false
+                        isLocal = false
                     ).toIrType()
                 } else {
-                    argument.toIrType()
+                    argumentType.toIrType()
                 }
                 this.typeArguments[index] = argumentIrType
             }

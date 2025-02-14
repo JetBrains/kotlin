@@ -12,15 +12,25 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-fun <T> T.approximateDeclarationType(
+fun FirResolvedTypeRef.approximateDeclarationType(
     session: FirSession,
     containingCallableVisibility: Visibility?,
     isLocal: Boolean,
     isInlineFunction: Boolean = false,
     stripEnhancedNullability: Boolean = true
-): T {
-    if (this !is FirResolvedTypeRef) return this
-    val baseType = this.coneType
+): FirResolvedTypeRef {
+    val approximatedType = coneType.approximateDeclarationType(
+        session, containingCallableVisibility, isLocal, isInlineFunction
+    )
+    return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() }
+}
+
+fun ConeKotlinType.approximateDeclarationType(
+    session: FirSession,
+    containingCallableVisibility: Visibility?,
+    isLocal: Boolean,
+    isInlineFunction: Boolean = false
+): ConeKotlinType {
     val configuration = when (isLocal) {
         true -> TypeApproximatorConfiguration.LocalDeclaration
         false -> when (shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility, isInlineFunction)) {
@@ -29,12 +39,11 @@ fun <T> T.approximateDeclarationType(
         }
     }
 
-    var approximatedType = session.typeApproximator.approximateToSuperType(baseType, configuration) ?: baseType
+    var approximatedType = session.typeApproximator.approximateToSuperType(this, configuration) ?: this
     if (approximatedType.contains { type -> type.attributes.any { !it.keepInInferredDeclarationType } }) {
         approximatedType = UnnecessaryAttributesRemover(session).substituteOrSelf(approximatedType)
     }
-    @Suppress("UNCHECKED_CAST")
-    return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() } as T
+    return approximatedType
 }
 
 private class UnnecessaryAttributesRemover(session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
