@@ -51860,6 +51860,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("overrideWithFlexibleBaseReceiver.kt")
+        public void testOverrideWithFlexibleBaseReceiver() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/overrideWithFlexibleBaseReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("substitutionOverride.kt")
         public void testSubstitutionOverride() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/substitutionOverride.kt");
