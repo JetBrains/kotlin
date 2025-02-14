@@ -38,12 +38,12 @@ object EnumIntrinsicsUtils {
 
     fun transformEnumValueOfIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.identifier("valueOf") &&
-                it.valueParameters.count() == 1 &&
-                it.valueParameters[0].type.isString()
+                it.parameters.size == 1 &&
+                it.parameters[0].type.isString()
     }
 
     fun transformEnumValuesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
-        it.name == Name.identifier("values") && it.valueParameters.count() == 0
+        it.name == Name.identifier("values") && it.parameters.isEmpty()
     }
 
     fun transformEnumEntriesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
