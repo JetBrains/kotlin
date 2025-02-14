@@ -6,10 +6,22 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.impl.ReadBuffer
+import org.jetbrains.kotlin.library.KotlinLibraryLayout
 import java.nio.ByteBuffer
 
-abstract class IrArrayReader(private val buffer: ReadBuffer) {
+/** Read directly from a byte array. */
+fun IrArrayReader(bytes: ByteArray): IrArrayReader = IrArrayReader(ReadBuffer.MemoryBuffer(bytes))
+
+/** On-demand read from a byte array that will be loaded on the first access. */
+fun IrArrayReader(loadBytes: () -> ByteArray): IrArrayReader = IrArrayReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
+
+/** On-demand read from a file (potentially inside a KLIB archive file). */
+fun <L : KotlinLibraryLayout> IrArrayReader(
+    access: BaseLibraryAccess<L>,
+    getFile: L.() -> File
+): IrArrayReader = IrArrayReader { access.inPlace { it.getFile().readBytes() } }
+
+class IrArrayReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IntArray
 
     fun entryCount() = indexToOffset.size - 1
@@ -33,9 +45,6 @@ abstract class IrArrayReader(private val buffer: ReadBuffer) {
         return result
     }
 }
-
-class IrArrayFileReader(file: File) : IrArrayReader(ReadBuffer.OnDemandMemoryBuffer { file.readBytes() })
-class IrArrayMemoryReader(bytes: ByteArray) : IrArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
 class IrIntArrayMemoryReader(bytes: ByteArray) {
 
