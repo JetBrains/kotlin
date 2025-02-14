@@ -287,15 +287,15 @@ abstract class CompileServiceImplBase(
         performanceManager.measurements.forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> {
-                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds))
+                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.time.milliseconds))
                 }
                 is CodeAnalysisMeasurement -> {
-                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.milliseconds))
-                    if (lines != null && it.milliseconds > 0) {
+                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.time.milliseconds))
+                    if (lines != null && it.time.milliseconds > 0) {
                         performanceMetrics.add(
                             BuildMetricsValue(
                                 CompilationPerformanceMetrics.ANALYSIS_LPS,
-                                lines * 1000 / it.milliseconds
+                                lines * 1000 / it.time.milliseconds
                             )
                         )
                     }

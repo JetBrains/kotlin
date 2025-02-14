@@ -17,39 +17,61 @@ enum class PhaseMeasurementType {
     BackendGeneration,
 }
 
-sealed class PhasePerformanceMeasurement(val milliseconds: Long) : PerformanceMeasurement {
+/**
+ * Currently it holds only `System.nanoTime()` but later it can be adopted to hold User or CPU time as well
+ * that might be useful for time measurements in multithread mode.
+ */
+@JvmInline
+value class Time(val nanoseconds: Long) {
+    companion object {
+        val ZERO = Time(0)
+    }
+
+    val milliseconds: Long
+        get() = nanoseconds / 1_000_000L
+
+    operator fun plus(other: Time): Time {
+        return Time(nanoseconds + other.nanoseconds)
+    }
+
+    operator fun minus(other: Time): Time {
+        return Time(nanoseconds - other.nanoseconds)
+    }
+}
+
+sealed class PhasePerformanceMeasurement(val time: Time) : PerformanceMeasurement {
     abstract val phase: PhaseMeasurementType
     abstract val name: String
-    override fun render(lines: Int): String = "%20s%8s ms".format(name, milliseconds) +
+    override fun render(lines: Int): String = "%20s%8s ms".format(name, time.milliseconds) +
             if (phase != PhaseMeasurementType.Initialization && lines != 0) {
-                val lps = lines.toDouble() * 1000 / milliseconds
+                val lps = lines.toDouble() * 1000 / time.milliseconds
                 "%12.3f loc/s".format(lps)
             } else {
                 ""
             }
 }
 
-class CompilerInitializationMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class CompilerInitializationMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase = PhaseMeasurementType.Initialization
     override val name: String = "INIT"
 }
 
-class CodeAnalysisMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class CodeAnalysisMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase: PhaseMeasurementType = PhaseMeasurementType.Analysis
     override val name: String = "ANALYZE"
 }
 
-class IrGenerationMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class IrGenerationMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase: PhaseMeasurementType = PhaseMeasurementType.IrGeneration
     override val name: String = "IR GENERATION"
 }
 
-class IrLoweringMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class IrLoweringMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase: PhaseMeasurementType = PhaseMeasurementType.IrLowering
     override val name: String = "IR LOWERING"
 }
 
-class BackendGenerationMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class BackendGenerationMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase: PhaseMeasurementType = PhaseMeasurementType.BackendGeneration
     override val name: String = "BACKEND GENERATION"
 }
@@ -62,17 +84,17 @@ class GarbageCollectionMeasurement(val garbageCollectionKind: String, val millis
     override fun render(lines: Int): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }
 
-sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
+sealed class CounterMeasurement(val count: Int, val time: Time) : PerformanceMeasurement {
     abstract val description: String
     override fun render(lines: Int): String =
-        "$description performed $count times, total time $milliseconds ms"
+        "$description performed $count times, total time ${time.milliseconds} ms"
 }
 
-class FindJavaClassMeasurement(count: Int, milliseconds: Long) : CounterMeasurement(count, milliseconds) {
+class FindJavaClassMeasurement(count: Int, time: Time) : CounterMeasurement(count, time) {
     override val description: String = "Find Java class"
 }
 
-class BinaryClassFromKotlinFileMeasurement(count: Int, milliseconds: Long) : CounterMeasurement(count, milliseconds) {
+class BinaryClassFromKotlinFileMeasurement(count: Int, time: Time) : CounterMeasurement(count, time) {
     override val description: String = "Binary class from Kotlin file"
 }
 
