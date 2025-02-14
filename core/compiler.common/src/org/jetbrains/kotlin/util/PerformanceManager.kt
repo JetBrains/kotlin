@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
+import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.util.SortedMap
@@ -29,6 +30,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     private var currentPhaseType: PhaseType = PhaseType.Initialization
     private var phaseStartTime: Time? = currentTime()
+    private var compilationMXBean: CompilationMXBean? = null
+    private var jitStartTime: Long? = null
 
     private val phaseMeasurements: SortedMap<PhaseType, Time> = sortedMapOf()
     private val phaseSideMeasurements: SortedMap<PhaseType, SortedMap<PhaseSideType, SidePerformanceMeasurement>> = sortedMapOf()
@@ -151,6 +154,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         if (!isK2) {
             PerformanceCounter.setTimeCounterEnabled(true)
         }
+        compilationMXBean = ManagementFactory.getCompilationMXBean()
+        jitStartTime = compilationMXBean?.totalCompilationTime
         ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
     }
 
@@ -206,7 +211,11 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         notifyCurrentPhaseFinishedIfNeeded()
 
         recordGcTime()
-        recordJitCompilationTime()
+
+        if (compilationMXBean != null && jitStartTime != null) {
+            jitMeasurement = JitCompilationMeasurement(compilationMXBean!!.totalCompilationTime - jitStartTime!!)
+        }
+
         if (!isK2) {
             recordPerfCountersMeasurements()
         }
@@ -241,13 +250,6 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
                 (existingGcMeasurement?.count ?: 0) + it.collectionCount - startCollectionCount
             )
         }
-    }
-
-    private fun recordJitCompilationTime() {
-        if (!isEnabled) return
-
-        val bean = ManagementFactory.getCompilationMXBean() ?: return
-        jitMeasurement = JitCompilationMeasurement(bean.totalCompilationTime)
     }
 
     @OptIn(DeprecatedPerformanceDeclaration::class)
