@@ -15,22 +15,22 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 
 object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
     override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
-        val globallySuppressedDiagnostics = context.session.languageVersionSettings.getFlag(AnalysisFlags.globallySuppressedDiagnostics)
-        if (globallySuppressedDiagnostics.isEmpty()) return
+        val warningLevelMap = context.session.languageVersionSettings.getFlag(AnalysisFlags.warningLevels)
+        if (warningLevelMap.isEmpty()) return
 
         val allDiagnosticFactories = RootDiagnosticRendererFactory.factories
             .filterIsInstance<BaseDiagnosticRendererFactory>()
             .flatMap { it.MAP.factories }
             .associateBy { it.name }
 
-        for (diagnosticName in globallySuppressedDiagnostics) {
+        for (diagnosticName in warningLevelMap.keys) {
             val diagnosticFactory = allDiagnosticFactories[diagnosticName]
             if (diagnosticFactory == null) {
                 reporter.reportError("Warning with name \"$diagnosticName\" does not exist")
                 continue
             }
             if (diagnosticFactory.severity == Severity.ERROR) {
-                reporter.reportError("Diagnostic \"$diagnosticName\" is an error. Global suppression of errors is prohibited")
+                reporter.reportError("Diagnostic \"$diagnosticName\" is an error. Changing the severity of errors is prohibited")
             }
         }
     }

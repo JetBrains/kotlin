@@ -1813,6 +1813,21 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/version.args");
     }
 
+    @TestMetadata("warningLevels_correct.args")
+    public void testWarningLevels_correct() {
+      runTest("compiler/testData/cli/jvm/warningLevels_correct.args");
+    }
+
+    @TestMetadata("warningLevels_duplicated.args")
+    public void testWarningLevels_duplicated() {
+      runTest("compiler/testData/cli/jvm/warningLevels_duplicated.args");
+    }
+
+    @TestMetadata("warningLevels_incorrect.args")
+    public void testWarningLevels_incorrect() {
+      runTest("compiler/testData/cli/jvm/warningLevels_incorrect.args");
+    }
+
     @TestMetadata("werror.args")
     public void testWerror() {
       runTest("compiler/testData/cli/jvm/werror.args");

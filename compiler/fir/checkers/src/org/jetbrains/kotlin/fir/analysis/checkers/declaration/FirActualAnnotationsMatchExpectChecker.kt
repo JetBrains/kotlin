@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.InternalDiagnosticFactoryMethod
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.diagnostics.requireNotNull
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -41,7 +41,6 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
         checkAnnotationsMatch(expectSymbol, actualSymbol, expectContainingClass, context, reporter)
     }
 
-    @OptIn(InternalDiagnosticFactoryMethod::class)
     private fun checkAnnotationsMatch(
         expectSymbol: FirBasedSymbol<*>,
         actualSymbol: FirBasedSymbol<*>,
@@ -54,16 +53,14 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
             AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectSymbol, actualSymbol, expectContainingClass, matchingContext) ?: return
         val actualAnnotationTargetSourceElement = (incompatibility.actualAnnotationTargetElement as FirSourceElement).element
 
-        reporter.report(
-            FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.on(
-                actualSymbol.source.requireNotNull(),
-                incompatibility.expectSymbol as FirBasedSymbol<*>,
-                incompatibility.actualSymbol as FirBasedSymbol<*>,
-                actualAnnotationTargetSourceElement,
-                incompatibility.type.mapAnnotationType { it.annotationSymbol as FirAnnotation },
-                positioningStrategy = null,
-            ),
-            context,
+        reporter.reportOn(
+            actualSymbol.source.requireNotNull(),
+            FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
+            incompatibility.expectSymbol as FirBasedSymbol<*>,
+            incompatibility.actualSymbol as FirBasedSymbol<*>,
+            actualAnnotationTargetSourceElement,
+            incompatibility.type.mapAnnotationType { it.annotationSymbol as FirAnnotation },
+            context
         )
     }
 }
