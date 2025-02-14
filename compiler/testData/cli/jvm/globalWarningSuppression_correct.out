@@ -1,3 +1,4 @@
+warning: argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=UNCHECKED_CAST:disabled" instead (and the same for other warnings)
 compiler/testData/cli/jvm/globalWarningSuppression.kt:7:16: error: [CONFLICTING_PROJECTION] Projection is conflicting with variance of the corresponding type parameter of 'Out<in Int>'. Remove the projection or replace it with '*'.
 fun bar(x: Out<in Int>) {}
                ^^
