@@ -65,7 +65,7 @@ settings:
 
 
 test-dependencies:
-    - ./../assign-plugin.common
+  - ./../assign-plugin.common
 
 test-settings:
   kotlin:

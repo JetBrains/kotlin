@@ -190,7 +190,7 @@ test-dependencies:
   - ./../../compiler/ir/backend.jvm
   - ./../../compiler/ir/serialization.jvm
   - ./../../compiler/ir/ir.psi2ir
-    - ./../../compiler/ir/ir.interpreter
+  - ./../../compiler/ir/ir.interpreter
   - ./../../compiler/light-classes
   - ./../../compiler/javac-wrapper
   - ./../../compiler/frontend/cfg

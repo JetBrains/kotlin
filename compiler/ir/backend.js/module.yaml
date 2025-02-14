@@ -139,7 +139,7 @@ test-dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains:annotations:23.0.0
   - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
-    - ./../../cli/cli-base
+  - ./../../cli/cli-base
   - ./../backend.common
   - ./../serialization.js
   - ./../../backend-common

@@ -33,7 +33,7 @@ test-dependencies:
   - org.jetbrains:annotations:13.0
   - org.junit.jupiter:junit-jupiter-engine:5.10.1
   - org.junit.platform:junit-platform-engine:1.10.1
-    - ./../../compiler/util-klib
+  - ./../../compiler/util-klib
   - ./../../compiler/util-io
 
 test-settings:

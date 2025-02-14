@@ -81,7 +81,7 @@ test-dependencies:
   - jaxen:jaxen:1.2.0
   - org.apache.commons:commons-lang3:3.12.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
-    - ./../../../compiler/tests-common-new
+  - ./../../../compiler/tests-common-new
   - ./../../../compiler/test-infrastructure
   - ./../../../compiler/tests-compiler-utils
   - ./../../../compiler/plugin-api

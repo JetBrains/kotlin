@@ -185,7 +185,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:util-rt-java8:233.13135.128
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
-    - ./../../core/descriptors.runtime
+  - ./../../core/descriptors.runtime
   - ./../../compiler/fir/analysis-tests
   - ./../../js/js.tests
   - ./../../compiler/tests-common-new

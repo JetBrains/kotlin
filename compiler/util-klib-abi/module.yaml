@@ -130,7 +130,7 @@ test-dependencies:
   - jaxen:jaxen:1.2.0
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
-    - ./../../js/js.tests
+  - ./../../js/js.tests
   - ./../tests-common-new
   - ./../ir/serialization.common
   - ./../util-klib

@@ -113,7 +113,7 @@ settings:
 
 
 test-dependencies:
-    - ./../power-assert.backend
+  - ./../power-assert.backend
 
 test-settings:
   kotlin:

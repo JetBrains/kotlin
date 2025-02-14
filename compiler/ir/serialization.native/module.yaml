@@ -69,7 +69,7 @@ test-dependencies:
   - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../serialization.common
+  - ./../serialization.common
   - ./../ir.objcinterop
   - ./../ir.tree
   - ./../../fir/fir2ir

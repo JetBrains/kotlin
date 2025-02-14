@@ -151,7 +151,7 @@ test-dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - io.opentelemetry:opentelemetry-context:1.41.0
-    - ./../../../compiler/cli/cli-base
+  - ./../../../compiler/cli/cli-base
   - ./../../analysis-api-impl-base
   - ./../../analysis-api
   - ./../../analysis-api-platform-interface

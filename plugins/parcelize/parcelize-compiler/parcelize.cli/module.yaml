@@ -117,7 +117,7 @@ settings:
 
 
 test-dependencies:
-    - ./../parcelize.common
+  - ./../parcelize.common
   - ./../parcelize.k1
   - ./../parcelize.k2
   - ./../parcelize.backend

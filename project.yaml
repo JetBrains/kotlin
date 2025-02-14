@@ -82,7 +82,7 @@ modules:
 - plugins/scripting/scripting-ide-services-embeddable
 - plugins/scripting/scripting-compiler-embeddable
 - plugins/scripting/scripting-compiler-impl-embeddable
-- plugins/scripting/scripting-ide-services-test
+#- plugins/scripting/scripting-ide-services-test
 - plugins/scripting/scripting-tests
 - plugins/scripting/scripting-ide-common
 - plugins/scripting/scripting-ide-services
@@ -173,7 +173,7 @@ modules:
 - libraries/tools/abi-comparator
 - libraries/tools/kotlin-gradle-compiler-types
 - libraries/scripting/jsr223-test
-- libraries/scripting/dependencies-maven
+#- libraries/scripting/dependencies-maven
 - libraries/scripting/scripting-jvm
 - libraries/scripting/dependencies
 - libraries/scripting/common

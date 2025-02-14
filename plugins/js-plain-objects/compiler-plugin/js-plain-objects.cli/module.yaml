@@ -130,7 +130,7 @@ settings:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-    - ./../js-plain-objects.common
+  - ./../js-plain-objects.common
   - ./../js-plain-objects.backend
   - ./../js-plain-objects.k2
   - ./../../../../js/js.ast

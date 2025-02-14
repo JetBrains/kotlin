@@ -77,7 +77,7 @@ settings:
 
 
 test-dependencies:
-    - ./../kotlinx-serialization.common
+  - ./../kotlinx-serialization.common
 
 test-settings:
   kotlin:

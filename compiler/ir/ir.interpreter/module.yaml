@@ -52,7 +52,7 @@ settings:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-    - ./../../../core/compiler.common.js
+  - ./../../../core/compiler.common.js
   - ./../../../core/compiler.common
   - ./../../../core/util.runtime
   - ./../../../libraries/tools/kotlin-annotations-jvm

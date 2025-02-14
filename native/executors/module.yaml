@@ -34,7 +34,7 @@ test-dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:23.0.0
-    - ./../utils
+  - ./../utils
   - ./../../compiler/util-klib
   - ./../../compiler/util-io
 

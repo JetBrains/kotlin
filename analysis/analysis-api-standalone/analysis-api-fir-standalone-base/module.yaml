@@ -202,7 +202,7 @@ test-dependencies:
   - io.opentelemetry:opentelemetry-context:1.41.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jline:jline:3.24.1
-    - ./../../analysis-api-fir
+  - ./../../analysis-api-fir
   - ./../analysis-api-standalone-base
   - ./../../analysis-api-impl-base
   - ./../../analysis-api

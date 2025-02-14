@@ -69,7 +69,7 @@ test-dependencies:
   - it.unimi.dsi:fastutil:8.5.4
   - it.unimi.dsi:fastutil-extra:8.5.4
   - it.unimi.dsi:fastutil-core:8.5.4
-    - ./../../core/util.runtime
+  - ./../../core/util.runtime
   - ./../../dependencies/intellij-core
 
 test-settings:

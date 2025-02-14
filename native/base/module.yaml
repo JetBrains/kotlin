@@ -111,7 +111,7 @@ test-dependencies:
   - com.google.j2objc:j2objc-annotations:3.0.0
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains:annotations:23.0.0
-    - ./../../compiler/cli/cli-base
+  - ./../../compiler/cli/cli-base
   - ./../../compiler/cli/cli-common
   - ./../../core/compiler.common.native
   - ./../../core/descriptors

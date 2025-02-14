@@ -70,7 +70,7 @@ test-dependencies:
   - org.jetbrains:annotations:13.0
   - javax.inject:javax.inject:1
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../resolution.common
+  - ./../resolution.common
   - ./../../core/compiler.common.jvm
   - ./../psi
   - ./../util

@@ -56,7 +56,7 @@ test-dependencies:
   - javax.inject:javax.inject:1
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../ir.tree
+  - ./../ir.tree
   - ./../../resolution.common
   - ./../../frontend.common-psi
   - ./../../frontend.common

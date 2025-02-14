@@ -105,7 +105,7 @@ settings:
 test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains:annotations:13.0
-    - ./../sam-with-receiver.common
+  - ./../sam-with-receiver.common
   - ./../sam-with-receiver.k1
   - ./../sam-with-receiver.k2
 

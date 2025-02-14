@@ -59,7 +59,7 @@ test-dependencies:
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
   - javax.inject:javax.inject:1
   - io.vavr:vavr-match:0.10.4
-    - ./../../cli/cli-common
+  - ./../../cli/cli-common
   - ./../../../build-common
   - ./../../build-tools/kotlin-build-tools-api
   - ./../../config.jvm

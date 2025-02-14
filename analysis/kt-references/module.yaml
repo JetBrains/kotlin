@@ -87,7 +87,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:diagnostic:233.13135.128
   - io.vavr:vavr:0.10.4
   - io.vavr:vavr-match:0.10.4
-    - ./../light-classes-base
+  - ./../light-classes-base
   - ./../../compiler/psi
   - ./../../dependencies/intellij-core
   - ./../../compiler/frontend.common-psi

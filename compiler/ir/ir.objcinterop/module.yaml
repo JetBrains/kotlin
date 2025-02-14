@@ -53,7 +53,7 @@ test-dependencies:
   - javax.inject:javax.inject:1
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../ir.tree
+  - ./../ir.tree
   - ./../../../core/compiler.common
   - ./../../../core/compiler.common.native
   - ./../../../core/deserialization

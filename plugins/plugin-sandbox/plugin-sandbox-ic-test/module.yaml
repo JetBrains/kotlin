@@ -93,7 +93,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:util-rt-java8:233.13135.128
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - net.java.dev.jna:jna:5.13.0
-    - ./../../../compiler/incremental-compilation-impl
+  - ./../../../compiler/incremental-compilation-impl
   - ./../../../dependencies/intellij-core
   - ./../../../core/descriptors.runtime
   - ./../../../compiler/fir/fir-serialization

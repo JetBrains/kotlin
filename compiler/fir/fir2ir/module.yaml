@@ -201,7 +201,7 @@ test-dependencies:
   - ./../../ir/serialization.common
   - ./../../../core/deserialization.common
   - ./../../../core/metadata
-    - ./../../cli/cli-base
+  - ./../../cli/cli-base
   - ./../../backend-common
   - ./../../plugin-api
   - ./../java

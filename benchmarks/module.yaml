@@ -84,10 +84,10 @@ dependencies:
   - org.jetbrains:annotations-java5:24.0.0
   - jaxen:jaxen:1.2.0
   - net.java.dev.jna:jna:5.13.0
-    - ../compiler/cli
+  - ../compiler/cli
   - ../compiler/frontend
   - ../dependencies/intellij-core
-    - ../compiler/cli/cli-js
+  - ../compiler/cli/cli-js
   - ../compiler/backend
   - ../compiler/fir/fir-entrypoint
   - ../compiler/frontend.java
@@ -118,12 +118,12 @@ dependencies:
   - ../compiler/util
   - ../plugins/scripting/scripting-compiler
   - ../compiler/tests-mutes
-    - ../plugins/scripting/scripting-compiler-impl
+  - ../plugins/scripting/scripting-compiler-impl
   - ../compiler/fir/cones
   - ../native/frontend-native
   - ../compiler/fir/fir2ir
   - ../compiler/preloader
-    - ../compiler/tests-mutes/mutes-junit4
+  - ../compiler/tests-mutes/mutes-junit4
   - ../analysis/analysis-internal-utils
   - ../compiler/cli/cli-base
   - ../compiler/backend-common
@@ -273,7 +273,7 @@ test-dependencies:
   - org.jetbrains:annotations-java5:24.0.0
   - jaxen:jaxen:1.2.0
   - net.java.dev.jna:jna:5.13.0
-    - ./../compiler/tests-common
+  - ./../compiler/tests-common
   - ./../compiler/cli
   - ./../compiler/frontend
   - ./../dependencies/intellij-core

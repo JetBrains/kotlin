@@ -52,7 +52,7 @@ test-dependencies:
   - javax.inject:javax.inject:1
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../../frontend.common
+  - ./../../frontend.common
   - ./../cones
   - ./../../../core/compiler.common
   - ./../../config

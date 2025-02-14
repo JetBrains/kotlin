@@ -119,7 +119,7 @@ test-dependencies:
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - com.jetbrains.intellij.platform:diagnostic:233.13135.128
   - org.junit.platform:junit-platform-engine:1.10.1
-    - ./../../dependencies/intellij-core
+  - ./../../dependencies/intellij-core
   - ./../../compiler/backend
   - ./../analysis-internal-utils
   - ./../kt-references
@@ -158,4 +158,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards, -Xexplicit-api=disable ]

@@ -96,7 +96,7 @@ test-dependencies:
   - jaxen:jaxen:1.2.0
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
-    - ./../../libraries/reflect/api
+  - ./../../libraries/reflect/api
   - ./../../libraries/reflect
   - ./../../core/descriptors.runtime
   - ./../../compiler/tests-common-new

@@ -137,7 +137,7 @@ test-dependencies:
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
   - io.opentelemetry:opentelemetry-context:1.41.0
-    - ./../decompiler-to-stubs
+  - ./../decompiler-to-stubs
   - ./../../analysis-test-framework
   - ./../../../compiler/tests-common
   - ./../../../compiler/tests-common-new

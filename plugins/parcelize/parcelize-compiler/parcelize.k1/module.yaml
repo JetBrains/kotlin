@@ -77,7 +77,7 @@ settings:
 
 
 test-dependencies:
-    - ./../parcelize.common
+  - ./../parcelize.common
 
 test-settings:
   kotlin:

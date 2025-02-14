@@ -126,7 +126,7 @@ settings:
 
 
 test-dependencies:
-    - ./../lombok.common
+  - ./../lombok.common
 
 test-settings:
   kotlin:

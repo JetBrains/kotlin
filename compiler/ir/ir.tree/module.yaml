@@ -52,7 +52,7 @@ test-dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
   - org.jetbrains:annotations:13.0
-    - ./../../../core/deserialization
+  - ./../../../core/deserialization
   - ./../../../core/descriptors
   - ./../../frontend.common
   - ./../../config

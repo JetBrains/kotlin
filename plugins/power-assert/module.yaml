@@ -81,7 +81,7 @@ test-dependencies:
   - org.apache.commons:commons-lang3:3.12.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
-    - ./power-assert.backend
+  - ./power-assert.backend
   - ./../../compiler/tests-common-new
   - ./../../compiler/tests-mutes/mutes-junit5
   - ./../../compiler/test-infrastructure

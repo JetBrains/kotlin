@@ -29,7 +29,7 @@ test-dependencies:
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
   - javax.inject:javax.inject:1
   - io.vavr:vavr-match:0.10.4
-    - ./../../compiler/daemon/daemon-common
+  - ./../../compiler/daemon/daemon-common
   - ./../../compiler/cli/cli-common
   - ./../../compiler/daemon/daemon-client
   - ./../../build-common

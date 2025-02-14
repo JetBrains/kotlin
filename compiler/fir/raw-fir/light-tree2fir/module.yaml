@@ -138,7 +138,7 @@ test-dependencies:
   - ./../../../cli/cli-js
   - ./../../../cli
   - ./../../fir-entrypoint
-    - ./../../checkers/checkers.jvm
+  - ./../../checkers/checkers.jvm
   - ./../../checkers/checkers.js
   - ./../../checkers/checkers.native
   - ./../../checkers/checkers.wasm

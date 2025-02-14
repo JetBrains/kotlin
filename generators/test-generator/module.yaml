@@ -55,7 +55,7 @@ test-dependencies:
   - net.java.dev.jna:jna:5.13.0
   - org.codehaus.woodstox:stax2-api:4.2
   - org.jetbrains.intellij.deps:trove4j:1.0.20221201
-    - ./../../core/descriptors.runtime
+  - ./../../core/descriptors.runtime
   - ./..
   - ./../../core/util.runtime
   - ./../../compiler/test-infrastructure-utils

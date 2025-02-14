@@ -52,7 +52,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:diagnostic:233.13135.128
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains:annotations:23.0.0
-    - ./../../core/descriptors.runtime
+  - ./../../core/descriptors.runtime
   - ./../cli
   - ./../fir/fir-entrypoint
   - ./../../dependencies/intellij-core
@@ -148,4 +148,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi,-opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

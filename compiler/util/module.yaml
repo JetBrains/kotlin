@@ -141,7 +141,7 @@ test-dependencies:
   - ./../fir/raw-fir/psi2fir
   - ./../fir/raw-fir/light-tree2fir
   - ./../fir/tree
-    - ./../../plugins/scripting/scripting-compiler
+  - ./../../plugins/scripting/scripting-compiler
   - ./../../core/descriptors.jvm
   - ./../../core/deserialization
   - ./../../core/descriptors

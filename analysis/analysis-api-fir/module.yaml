@@ -248,7 +248,7 @@ test-dependencies:
   - org.apache.commons:commons-lang3:3.12.0
   - net.java.dev.jna:jna:5.13.0
   - com.google.code.gson:gson:2.11.0
-    - ./../low-level-api-fir
+  - ./../low-level-api-fir
   - ./../analysis-test-framework
   - ./../analysis-api-standalone/analysis-api-standalone-base
   - ./../analysis-api-impl-base

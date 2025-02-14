@@ -18,7 +18,7 @@ settings:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
 
 
-test-dependencies:
+dependencies:
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - org.fusesource.jansi:jansi:2.4.0
   - com.jetbrains.intellij.platform:util-rt:233.13135.128
@@ -52,7 +52,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:diagnostic:233.13135.128
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains:annotations:23.0.0
-    - ./../../core/descriptors.runtime
+  - ./../../core/descriptors.runtime
   - ./../cli
   - ./../fir/fir-entrypoint
   - ./../../dependencies/intellij-core
@@ -144,7 +144,3 @@ test-dependencies:
   - ./../../core/compiler.common.web
   - ./../ir/serialization.native
   - ./../ir/ir.objcinterop
-
-test-settings:
-  kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

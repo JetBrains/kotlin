@@ -105,7 +105,7 @@ test-dependencies:
   - jaxen:jaxen:1.2.0
   - net.java.dev.jna:jna:5.13.0
   - org.apache.commons:commons-lang3:3.12.0
-    - ./../tests-integration
+  - ./../tests-integration
   - ./../tests-common
   - ./../../generators/test-generator
   - ./../../dependencies/intellij-core

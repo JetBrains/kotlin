@@ -159,7 +159,7 @@ test-dependencies:
   - javax.annotation:jsr250-api:1.0
   - io.vavr:vavr:0.10.4
   - io.vavr:vavr-match:0.10.4
-    - ./../../../generators
+  - ./../../../generators
   - ./../../../compiler/resolution.common
   - ./../../../compiler/fir/tree
   - ./../../../compiler/fir/tree/tree-generator-fir

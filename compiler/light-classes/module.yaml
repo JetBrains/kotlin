@@ -96,7 +96,7 @@ test-dependencies:
   - com.google.errorprone:error_prone_annotations:2.28.0
   - com.google.j2objc:j2objc-annotations:3.0.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../../analysis/light-classes-base
+  - ./../../analysis/light-classes-base
   - ./../backend
   - ./../frontend.java
   - ./../frontend

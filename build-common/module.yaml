@@ -220,7 +220,7 @@ test-dependencies:
   - ./../compiler/config
   - ./../native/utils
   - ./../core/util.runtime
-    - ./../compiler/ir/backend.jvm/entrypoint
+  - ./../compiler/ir/backend.jvm/entrypoint
   - ./../compiler/psi
   - ./../compiler/ir/backend.wasm
   - ./../compiler/ir/backend.js

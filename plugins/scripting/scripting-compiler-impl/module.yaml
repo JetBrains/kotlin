@@ -213,7 +213,7 @@ test-dependencies:
   - ./../../../compiler/util
   - ./../../../compiler/tests-compiler-utils
   - ./../scripting-compiler
-    - ./../../../compiler/cli/cli-js
+  - ./../../../compiler/cli/cli-js
   - ./../../../compiler/daemon/daemon-common
   - ./../../../compiler/backend
   - ./../../../compiler/fir/fir-entrypoint

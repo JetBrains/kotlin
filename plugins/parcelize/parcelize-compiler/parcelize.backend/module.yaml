@@ -85,7 +85,7 @@ settings:
 
 
 test-dependencies:
-    - ./../parcelize.common
+  - ./../parcelize.common
   - ./../parcelize.k1
 
 test-settings:

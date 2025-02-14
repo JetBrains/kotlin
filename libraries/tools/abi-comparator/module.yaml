@@ -39,7 +39,7 @@ test-dependencies:
   - junit:junit:4.13.2
   - org.jetbrains:annotations:13.0
   - org.hamcrest:hamcrest-core:1.3
-    - ./../kotlinp/kotlinp-jvm
+  - ./../kotlinp/kotlinp-jvm
   - ./../../kotlinx-metadata/metadata-jvm
   - ./../../kotlinx-metadata
   - ./../kotlinp

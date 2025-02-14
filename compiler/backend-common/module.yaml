@@ -61,7 +61,7 @@ test-dependencies:
   - io.vavr:vavr-match:0.10.4
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../frontend
+  - ./../frontend
   - ./../../core/descriptors
   - ./../util
   - ./../../core/deserialization

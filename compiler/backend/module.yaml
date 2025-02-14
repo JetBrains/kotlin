@@ -94,7 +94,7 @@ test-dependencies:
   - com.google.j2objc:j2objc-annotations:3.0.0
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../backend-common
+  - ./../backend-common
   - ./../frontend.java
   - ./../frontend
   - ./../serialization

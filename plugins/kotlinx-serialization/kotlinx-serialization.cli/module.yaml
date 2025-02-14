@@ -129,7 +129,7 @@ settings:
 
 
 test-dependencies:
-    - ./../kotlinx-serialization.common
+  - ./../kotlinx-serialization.common
   - ./../kotlinx-serialization.k1
   - ./../kotlinx-serialization.k2
   - ./../kotlinx-serialization.backend

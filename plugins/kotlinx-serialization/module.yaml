@@ -104,7 +104,7 @@ test-dependencies:
   - com.github.ben-manes.caffeine:caffeine:2.9.3
   - io.opentelemetry:opentelemetry-api:1.41.0
   - io.opentelemetry:opentelemetry-context:1.41.0
-    - ./../../analysis/low-level-api-fir
+  - ./../../analysis/low-level-api-fir
   - ./../../js/js.tests
   - ./../../analysis/analysis-api-fir
   - ./../../compiler/tests-common-new

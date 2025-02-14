@@ -148,7 +148,7 @@ test-dependencies:
   - io.opentelemetry:opentelemetry-api:1.41.0
   - org.apache.commons:commons-lang3:3.12.0
   - io.opentelemetry:opentelemetry-context:1.41.0
-            - ./../plugins/atomicfu/atomicfu-compiler
+          - ./../plugins/atomicfu/atomicfu-compiler
   - ./../plugins/plugin-sandbox/plugin-sandbox-ic-test
   - ./../plugins/plugin-sandbox
   - ./../js/js.tests
@@ -224,7 +224,7 @@ test-dependencies:
   - ./../compiler/fir/fir-serialization
   - ./../compiler/tests-mutes/mutes-junit5
   - ./../libraries/tools/abi-comparator
-    - ./../compiler/cli/cli-js
+  - ./../compiler/cli/cli-js
   - ./../compiler/ir/backend.jvm/entrypoint
   - ./../compiler/frontend.java
   - ./../compiler/cli/cli-common

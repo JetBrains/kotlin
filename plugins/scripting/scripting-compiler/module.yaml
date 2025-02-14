@@ -217,7 +217,7 @@ test-dependencies:
   - ./../../../compiler/util
   - ./../../../dependencies/intellij-core
   - ./../../../compiler/tests-compiler-utils
-    - ./../../../compiler/cli/cli-js
+  - ./../../../compiler/cli/cli-js
   - ./../../../compiler/daemon/daemon-common
   - ./../../../compiler/backend
   - ./../../../compiler/fir/fir-entrypoint

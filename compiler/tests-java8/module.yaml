@@ -98,7 +98,7 @@ test-dependencies:
   - com.jetbrains.intellij.platform:util-rt-java8:233.13135.128
   - jaxen:jaxen:1.2.0
   - net.java.dev.jna:jna:5.13.0
-    - ./../tests-common
+  - ./../tests-common
   - ./../../plugins/scripting/scripting-compiler
   - ./../../generators/test-generator
   - ./../../dependencies/intellij-core

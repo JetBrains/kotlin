@@ -100,7 +100,7 @@ settings:
 
 
 test-dependencies:
-    - ./../kotlinx-serialization.common
+  - ./../kotlinx-serialization.common
   - ./../kotlinx-serialization.k1
 
 test-settings:

@@ -60,7 +60,7 @@ test-dependencies:
   - org.jetbrains:annotations:13.0
   - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
   - org.jetbrains.kotlin:protobuf-lite:2.6.1-1
-    - ./../../../core/compiler.common.native
+  - ./../../../core/compiler.common.native
   - ./../../ir/serialization.native
   - ./../../ir/serialization.common
   - ./../resolve

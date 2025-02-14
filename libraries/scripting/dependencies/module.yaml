@@ -26,7 +26,7 @@ test-dependencies:
   - org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0
   - org.jetbrains:annotations:23.0.0
   - org.hamcrest:hamcrest-core:1.3
-    - ./../common
+  - ./../common
 
 test-settings:
   kotlin:
