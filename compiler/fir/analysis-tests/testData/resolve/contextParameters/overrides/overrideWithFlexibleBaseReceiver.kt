@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-75174
 
@@ -20,10 +20,10 @@ public interface Foo<T, T2> extends Base<T, T2> {
 
 // FILE: main.kt
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl<!><E, E2> : Foo<E, E2> {
-    <!NOTHING_TO_OVERRIDE!>override<!> context(b: E) val prop1: String?
+class FooImpl<E, E2> : Foo<E, E2> {
+    override context(b: E) val prop1: String?
         get() = ""
 
-    <!NOTHING_TO_OVERRIDE!>override<!> context(b: E2) val E.prop2: String?
+    override context(b: E2) val E.prop2: String?
         get() = ""
 }

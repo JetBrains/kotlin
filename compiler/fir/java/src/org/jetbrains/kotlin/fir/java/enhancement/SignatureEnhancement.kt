@@ -936,20 +936,6 @@ class FirSignatureEnhancement(
 
         class ValueParameter(val index: Int) : TypeInSignature() {
             override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
-                if (member is FirProperty) {
-                    val receiverParameter = member.receiverParameter
-                    if (index == 0 && receiverParameter != null) {
-                        // Receiver (if any) goes as the value parameter number 0
-                        return receiverParameter.typeRef
-                    }
-                    // When we enhance a setter override, the overridden property's return type corresponds to the setter's value parameter
-                    return member.returnTypeRef
-                }
-
-                checkWithAttachment(member is FirFunction, { "Declaration is not a function" }) {
-                    withFirEntry("member", member)
-                }
-
                 // The index refers to the unenhanced Java declaration.
                 // If `member` is a Kotlin or enhanced Java declaration, it could have context parameters and/or a receiver.
                 // Therefore, we need to index into [...context parameters, receiver, ...value parameters].
@@ -962,6 +948,15 @@ class FirSignatureEnhancement(
 
                 if (receiver != null && index == contextParameters.size) {
                     return receiver.typeRef
+                }
+
+                if (member is FirProperty) {
+                    // When we enhance a setter override, the overridden property's return type corresponds to the setter's value parameter
+                    return member.returnTypeRef
+                }
+
+                checkWithAttachment(member is FirFunction, { "Declaration is not a function" }) {
+                    withFirEntry("member", member)
                 }
 
                 return member.valueParameters[index - contextParameters.size - (if (receiver != null) 1 else 0)].returnTypeRef
