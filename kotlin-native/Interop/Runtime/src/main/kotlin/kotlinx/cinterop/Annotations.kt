@@ -78,6 +78,5 @@ public annotation class ExperimentalForeignApi
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.0")
 public annotation class ObjCSignatureOverride
