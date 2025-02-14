@@ -199,7 +199,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 }
             }
             is ConeVisibilityError -> {
-                reporter.report(diagnostic.symbol.toInvisibleReferenceDiagnostic(property.source), context)
+                reporter.report(diagnostic.symbol.toInvisibleReferenceDiagnostic(property.source, context.session), context)
             }
             else -> {
                 reportDefaultDiagnostics(diagnostic, componentCall, reporter, context)

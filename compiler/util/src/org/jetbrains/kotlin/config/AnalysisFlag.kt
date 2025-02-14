@@ -38,5 +38,9 @@ class AnalysisFlag<out T> internal constructor(
         object ListOfStrings {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<String>())
         }
+
+        object WarningLevelMap {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>): Delegate<Map<String, WarningLevel>> = Delegate(property.name, emptyMap())
+        }
     }
 }

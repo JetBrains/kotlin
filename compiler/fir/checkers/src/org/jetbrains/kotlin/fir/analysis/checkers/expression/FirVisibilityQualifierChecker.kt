@@ -49,7 +49,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         ) {
             if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
                 if (context.containingFile?.declarations?.singleOrNull() !is FirCodeFragment) {
-                    reporter.report(symbol.toInvisibleReferenceDiagnostic(expression.source), context)
+                    reporter.report(symbol.toInvisibleReferenceDiagnostic(expression.source, context.session), context)
                 }
             }
 
@@ -63,7 +63,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             if (invisibleCompanion != null) {
                 if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
                     if (context.containingFile?.declarations?.singleOrNull() !is FirCodeFragment) {
-                        reporter.report(invisibleCompanion.toInvisibleReferenceDiagnostic(expression.source), context)
+                        reporter.report(invisibleCompanion.toInvisibleReferenceDiagnostic(expression.source, context.session), context)
                     }
                 }
 

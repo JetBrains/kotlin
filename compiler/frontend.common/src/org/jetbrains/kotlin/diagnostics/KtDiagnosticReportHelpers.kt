@@ -15,7 +15,7 @@ fun DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), positioningStrategy, context.languageVersionSettings), context)
 }
 
 fun <A> DiagnosticReporter.reportOn(
@@ -25,7 +25,7 @@ fun <A> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), a, positioningStrategy, context.languageVersionSettings), context)
 }
 
 fun <A, B> DiagnosticReporter.reportOn(
@@ -36,7 +36,7 @@ fun <A, B> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), a, b, positioningStrategy, context.languageVersionSettings), context)
 }
 
 fun <A, B, C> DiagnosticReporter.reportOn(
@@ -48,7 +48,7 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy, context.languageVersionSettings), context)
 }
 
 fun <A, B, C, D> DiagnosticReporter.reportOn(
@@ -61,7 +61,7 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy, context.languageVersionSettings), context)
 }
 
 fun AbstractKtSourceElement?.requireNotNull(): AbstractKtSourceElement =

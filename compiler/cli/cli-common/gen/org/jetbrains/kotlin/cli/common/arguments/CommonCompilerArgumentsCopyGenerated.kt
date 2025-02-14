@@ -89,6 +89,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.verbosePhases = from.verbosePhases?.copyOf()
     to.verifyIr = from.verifyIr
     to.verifyIrVisibility = from.verifyIrVisibility
+    to.warningLevels = from.warningLevels?.copyOf()
     to.whenGuards = from.whenGuards
 
     return to

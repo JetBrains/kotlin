@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
@@ -724,7 +725,12 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             val syntaxErrors = if (firFile.psi != null) {
                 AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
                     @OptIn(InternalDiagnosticFactoryMethod::class)
-                    FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), it.errorDescription, positioningStrategy = null)
+                    FirSyntaxErrors.SYNTAX.on(
+                        KtRealPsiSourceElement(it),
+                        it.errorDescription,
+                        positioningStrategy = null,
+                        LanguageVersionSettingsImpl.DEFAULT, // syntax errors couldn't be suppressed anyway
+                    )!!
                 }
             } else {
                 reporterForLTSyntaxErrors

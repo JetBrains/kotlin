@@ -233,7 +233,8 @@ class AnalyzerWithCompilerReport(
                 val diagnostic = FirSyntaxErrors.SYNTAX.on(
                     KtRealPsiSourceElement(element),
                     message,
-                    positioningStrategy = null
+                    positioningStrategy = null,
+                    LanguageVersionSettingsImpl.DEFAULT, // syntax errors couldn't be suppressed anyway
                 )
                 val context = object : DiagnosticContext {
                     override val containingFilePath: String?
