@@ -166,8 +166,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
                                 else -> undefinedValue()
                             }
                             arguments[2] =
-                                runIf(causeArg != null) { JsIrBuilder.buildGetValue(causeTmp.symbol) }
-                                    ?: undefinedValue()
+                                if (causeArg != null) JsIrBuilder.buildGetValue(causeTmp.symbol) else undefinedValue()
                         }
                     )
                 )
