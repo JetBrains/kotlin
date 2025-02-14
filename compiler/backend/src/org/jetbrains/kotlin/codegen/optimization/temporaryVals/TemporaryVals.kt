@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
+import org.jetbrains.kotlin.codegen.inline.resolveCatchStoreInstruction
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.isStoreOperation
@@ -74,7 +75,10 @@ class TemporaryValsAnalyzer {
             while (handlerFirstInsn != null && !handlerFirstInsn.isMeaningful) {
                 handlerFirstInsn = handlerFirstInsn.next
             }
-            if (handlerFirstInsn != null && handlerFirstInsn.opcode == Opcodes.ASTORE) {
+            if (handlerFirstInsn != null) {
+                handlerFirstInsn = resolveCatchStoreInstruction(handlerFirstInsn)
+            }
+            if (handlerFirstInsn != null) {
                 potentiallyTemporaryStores.remove(handlerFirstInsn)
             }
             // Don't touch stack spilling at TCB start

@@ -43,10 +43,10 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                     (coneType.originalIfDefinitelyNotNullable() as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol?.isReified == true
                 }
 
-                if (isReified) {
-                    reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE, context)
-                } else {
+                if (!isReified) {
                     reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE, context)
+                } else if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AllowReifiedTypeInCatchClause)) {
+                    reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE, context)
                 }
             }
 
