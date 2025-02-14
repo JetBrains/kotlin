@@ -6,6 +6,7 @@ internal val internalInlineVal: Function0<String>
     internal inline fun <get-internalInlineVal>(): Function0<String>
         /* LOCAL declaration @0 */ local fun <anonymous>(): String
             /* ACCESSOR use-site */ access$privateMethod$tAKt()
+        /* INVOKE @0 */ local fun <anonymous>(): String
 /* TARGET declaration */ private fun privateMethod(): String
 /* ACCESSOR declaration */ internal fun access$privateMethod$tAKt(): String
     /* TARGET use-site */ privateMethod()
@@ -18,3 +19,4 @@ internal val internalInlineVal: Function0<String>
 public fun box(): String
     /* LOCAL declaration @0 */ local fun <anonymous>(): String
         /* ACCESSOR use-site */ access$privateMethod$tAKt()
+    /* INVOKE @0 */ local fun <anonymous>(): String

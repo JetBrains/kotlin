@@ -10,6 +10,7 @@ internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
     kk: Function0<String>
         /* LOCAL declaration @0 */ local fun <anonymous>(): String
             /* ACCESSOR use-site */ access$k$tAKt()
+        /* INVOKE @0 */ local fun <anonymous>(): String
 /* ACCESSOR declaration */ internal fun access$o$tAKt(): String
     /* TARGET use-site */ o()
 /* ACCESSOR declaration */ internal fun access$k$tAKt(): String

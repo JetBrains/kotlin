@@ -9,10 +9,12 @@ public class A
     internal inline fun inlineMethod(): String
         /* LOCAL declaration @0 */ local fun <anonymous>()
             /* ACCESSOR use-site */ access$<set-o>$tLeakingPrivateTopLevelLateinitVarKt(<set-?> = "O")
+        /* INVOKE @0 */ local fun <anonymous>()
         /* ACCESSOR use-site */ access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt()
 public fun box(): String
     /* LOCAL declaration @1 */ local fun <anonymous>()
         /* ACCESSOR use-site */ access$<set-o>$tLeakingPrivateTopLevelLateinitVarKt(<set-?> = "O")
+    /* INVOKE @1 */ local fun <anonymous>()
     /* ACCESSOR use-site */ access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt()
 /* ACCESSOR declaration */ internal fun access$<get-o>$tLeakingPrivateTopLevelLateinitVarKt(): String
     /* TARGET use-site */ <get-o>()

@@ -7,8 +7,10 @@ internal val internalInlineVal: Function0<String>
     internal inline fun <get-internalInlineVal>(): Function0<String>
         /* LOCAL declaration @0 */ local fun <anonymous>(): String
             /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunFromLambdaInsideInternalInlineKt()
+        /* INVOKE @0 */ local fun <anonymous>(): String
 public fun box(): String
     /* LOCAL declaration @1 */ local fun <anonymous>(): String
         /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunFromLambdaInsideInternalInlineKt()
+    /* INVOKE @1 */ local fun <anonymous>(): String
 /* ACCESSOR declaration */ internal fun access$privateMethod$tUsePrivateTopLevelFunFromLambdaInsideInternalInlineKt(): String
     /* TARGET use-site */ privateMethod()

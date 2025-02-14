@@ -8,6 +8,7 @@ public class A
         internal inline fun <get-internalInlineVal>(): Function0<String>
             /* LOCAL declaration @0 */ local fun <anonymous>(): String
                 /* ACCESSOR use-site */ access$privateMethod($this = <this>)
+            /* INVOKE @0 */ local fun <anonymous>(): String
     /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod($this: A): String
         /* TARGET use-site */ $this.privateMethod()
 
@@ -19,3 +20,4 @@ public class A
 public fun box(): String
     /* LOCAL declaration @0 */ local fun <anonymous>(): String
         /* ACCESSOR use-site */ access$privateMethod($this = this)
+    /* INVOKE @0 */ local fun <anonymous>(): String

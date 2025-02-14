@@ -6,6 +6,7 @@ public class A
     internal inline fun inlineMethod(): String
         /* LOCAL declaration @0 */ local fun <anonymous>()
             /* ACCESSOR use-site */ access$<set-o>$tAKt(<set-?> = "O")
+        /* INVOKE @0 */ local fun <anonymous>()
         /* ACCESSOR use-site */ access$<get-o>$tAKt()
 private lateinit var o: String?
     /* TARGET declaration */ private fun <get-o>(): String
@@ -23,4 +24,5 @@ private lateinit var o: String?
 public fun box(): String
     /* LOCAL declaration @0 */ local fun <anonymous>()
         /* ACCESSOR use-site */ access$<set-o>$tAKt(<set-?> = "O")
+    /* INVOKE @0 */ local fun <anonymous>()
     /* ACCESSOR use-site */ access$<get-o>$tAKt()

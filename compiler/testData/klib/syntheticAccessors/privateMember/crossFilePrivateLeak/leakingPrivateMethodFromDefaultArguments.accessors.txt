@@ -11,6 +11,7 @@ public class Foo
         kk: Function0<String>
             /* LOCAL declaration @0 */ local fun <anonymous>(): String
                 /* ACCESSOR use-site */ access$k($this = <this>)
+            /* INVOKE @0 */ local fun <anonymous>(): String
     /* ACCESSOR declaration */ public /* static */ fun access$o($this: Foo): String
         /* TARGET use-site */ $this.o()
     /* ACCESSOR declaration */ public /* static */ fun access$k($this: Foo): String
