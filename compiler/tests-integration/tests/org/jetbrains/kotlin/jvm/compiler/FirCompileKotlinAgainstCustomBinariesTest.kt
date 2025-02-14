@@ -37,7 +37,10 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         // Specifically, use K1
         val libraryUsingAnnotation = compileLibrary(
             "libraryUsingAnnotation",
-            additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, "1.8"),
+            additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument, "1.8",
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+            ),
             extraClassPath = listOf(libraryAnnotation)
         )
 
