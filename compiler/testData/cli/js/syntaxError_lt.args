@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/../syntaxError.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+compilationErrorK2.kt
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main
+-Xuse-fir-lt=true

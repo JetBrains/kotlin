@@ -1558,11 +1558,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/firStdlibDependency.args");
     }
 
-    @TestMetadata("firSyntaxError.args")
-    public void testFirSyntaxError() {
-      runTest("compiler/testData/cli/jvm/firSyntaxError.args");
-    }
-
     @TestMetadata("firVsClassicAnnotation.args")
     public void testFirVsClassicAnnotation() {
       runTest("compiler/testData/cli/jvm/firVsClassicAnnotation.args");
@@ -1771,6 +1766,16 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("simple.args")
     public void testSimple() {
       runTest("compiler/testData/cli/jvm/simple.args");
+    }
+
+    @TestMetadata("syntaxError_lt.args")
+    public void testSyntaxError_lt() {
+      runTest("compiler/testData/cli/jvm/syntaxError_lt.args");
+    }
+
+    @TestMetadata("syntaxError_psi.args")
+    public void testSyntaxError_psi() {
+      runTest("compiler/testData/cli/jvm/syntaxError_psi.args");
     }
 
     @TestMetadata("syntheticAccessorForPropertiesSignatureClash.args")
@@ -2096,6 +2101,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/suppressAllWarningsJS.args");
     }
 
+    @TestMetadata("syntaxError_lt.args")
+    public void testSyntaxError_lt() {
+      runTest("compiler/testData/cli/js/syntaxError_lt.args");
+    }
+
+    @TestMetadata("syntaxError_psi.args")
+    public void testSyntaxError_psi() {
+      runTest("compiler/testData/cli/js/syntaxError_psi.args");
+    }
+
     @TestMetadata("warningsSuppressionDisablesErrors_Js.args")
     public void testWarningsSuppressionDisablesErrors_Js() {
       runTest("compiler/testData/cli/js/warningsSuppressionDisablesErrors_Js.args");
@@ -2212,6 +2227,16 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfWithError.args")
     public void testReportPerfWithError() {
       runTest("compiler/testData/cli/metadata/reportPerfWithError.args");
+    }
+
+    @TestMetadata("syntaxError_lt.args")
+    public void testSyntaxError_lt() {
+      runTest("compiler/testData/cli/metadata/syntaxError_lt.args");
+    }
+
+    @TestMetadata("syntaxError_psi.args")
+    public void testSyntaxError_psi() {
+      runTest("compiler/testData/cli/metadata/syntaxError_psi.args");
     }
 
     @TestMetadata("unsignedDeclarationsFromStdlib.args")

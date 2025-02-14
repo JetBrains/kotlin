@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/syntaxError.kt
+-o
+syntaxError
+-Xuse-fir-lt=false
