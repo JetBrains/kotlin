@@ -110,13 +110,11 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 var delegatingCall = expression
                 val currentConstructor = currentFunction?.irElement as IrConstructor
 
-                val thereIsAnOverrideOfThrowableMessage = klass.declarations
-                    .filterIsInstanceAnd<IrSimpleFunction> { !it.isFakeOverride }
-                    .any { function ->
-                        val property = function.correspondingPropertySymbol?.owner ?: return@any false
-                        property.name == Name.identifier("message") && property.overriddenSymbols.any {
-                            it.owner.realOverrideTarget.parent == throwableClass.owner
-                        }
+                val thereIsAnOverrideOfThrowableMessage = klass.properties
+                    .filter { !it.isFakeOverride }
+                    .any { property ->
+                        property.name == Name.identifier("message") &&
+                                property.collectRealOverrides(filter = { it.parent == throwableClass.owner }).isNotEmpty()
                     }
 
                 val messageTmp = JsIrBuilder.buildVar(
