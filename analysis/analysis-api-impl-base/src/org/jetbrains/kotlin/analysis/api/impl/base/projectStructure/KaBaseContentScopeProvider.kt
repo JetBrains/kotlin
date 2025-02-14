@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
-class KaBaseContentScopeProvider : KaContentScopeProvider {
+internal class KaBaseContentScopeProvider : KaContentScopeProvider {
     @OptIn(KaPlatformInterface::class)
     override fun getRefinedContentScope(module: KaModule): GlobalSearchScope {
         val baseContentScope = module.baseContentScope
 
-        val refiners = KotlinContentScopeRefiner.Companion.getRefiners(module.project).ifEmpty {
+        val refiners = KotlinContentScopeRefiner.getRefiners(module.project).ifEmpty {
             return baseContentScope
         }
 
@@ -34,7 +34,7 @@ class KaBaseContentScopeProvider : KaContentScopeProvider {
             )
         }
 
-        val scopeMerger = KotlinGlobalSearchScopeMerger.Companion.getInstance(module.project)
+        val scopeMerger = KotlinGlobalSearchScopeMerger.getInstance(module.project)
 
         val mergedEnlargementScope = scopeMerger.union(enlargementScopes)
         if (shadowedScopes.isEmpty()) {
