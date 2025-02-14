@@ -670,6 +670,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val functionTypeParameter: Element by element(Other) {
         parent(rootElement)
 
+        +field("source", sourceElementType, nullable = false)
         +field("name", nameType, nullable = true)
         +field("returnTypeRef", typeRef)
     }
