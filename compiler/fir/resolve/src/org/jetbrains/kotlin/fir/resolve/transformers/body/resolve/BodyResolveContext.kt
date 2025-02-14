@@ -1020,7 +1020,6 @@ class BodyResolveContext(
     }
 
     fun <T> withWhenExpression(whenExpression: FirWhenExpression, session: FirSession, f: () -> T): T {
-//        if (whenExpression.subjectVariable?.takeIf { it.isExplicitWhenSubjectVariable } == null) return f()
         if (whenExpression.subjectVariable == null) return f()
         return forBlock(session, f)
     }
