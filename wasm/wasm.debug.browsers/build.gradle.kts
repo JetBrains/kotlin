@@ -25,13 +25,13 @@ dependencies {
 val cleanBuild by tasks.registering(Delete::class) {
     group = "build"
 
-    delete = setOf("build")
+    targetFiles.setFrom(setOf("build"))
 }
 
 val cleanNpm by tasks.registering(Delete::class) {
     group = "build"
 
-    delete = setOf("node_modules")
+    targetFiles.setFrom(setOf("node_modules"))
 }
 
 val npmBuild by tasks.registering(NpxTask::class) {

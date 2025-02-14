@@ -41,6 +41,7 @@ fun runPillTask(taskName: String) {
 
 val jar: Jar by tasks
 
+@Suppress("DEPRECATION")
 val pill by tasks.creating {
     notCompatibleWithConfigurationCache("The task requires the complete Gradle project model")
     dependsOn(jar)
@@ -48,6 +49,7 @@ val pill by tasks.creating {
     doLast { runPillTask("pill") }
 }
 
+@Suppress("DEPRECATION")
 val unpill by tasks.creating {
     notCompatibleWithConfigurationCache("The task requires the complete Gradle project model")
     dependsOn(jar)

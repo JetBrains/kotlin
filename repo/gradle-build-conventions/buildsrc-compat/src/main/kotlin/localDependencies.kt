@@ -22,6 +22,7 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.assign
 import java.io.File
 
 private fun Project.kotlinBuildLocalDependenciesDir(): File =

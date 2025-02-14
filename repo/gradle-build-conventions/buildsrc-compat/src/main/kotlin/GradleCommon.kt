@@ -55,8 +55,8 @@ private fun Project.getPluginDeclarationFor(mavenPublication: MavenPublication):
         val pluginDevelopment = extensions.findByType(GradlePluginDevelopmentExtension::class)
             ?: error("Plugin marker publication $name detected without the `java-gradle-plugin` plugin")
         pluginDevelopment.plugins
-            .find { pluginDeclaration -> "${pluginDeclaration.id}${PLUGIN_MARKER_SUFFIX}" == mavenPublication.artifactId }
-            ?: error("Cannot find plugin declaration for publication ${this.name} (${mavenPublication.groupId}:${mavenPublication.artifactId})")
+            .find { pluginDeclaration -> "${pluginDeclaration.id}${PLUGIN_MARKER_SUFFIX}" == mavenPublication.artifactId.get() }
+            ?: error("Cannot find plugin declaration for publication ${this.name} (${mavenPublication.groupId.get()}:${mavenPublication.artifactId.get()})")
     }
 }
 

@@ -10,7 +10,7 @@ dependencies {
 }
 
 publish {
-    artifactId = artifactId.replace(".", "-")
+    artifactId = artifactId.get().replace(".", "-")
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
