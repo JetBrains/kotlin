@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/globalWarningSuppression.kt
+-d
+$TEMP_DIR$
+-Xrender-internal-diagnostic-names
+-Xwarning-level=UNCHECKED_CAST\:disabled
+-Xwarning-level=UNCHECKED_CAST\:error

@@ -32,14 +32,6 @@ abstract class CheckerContextForProvider(
     override val allWarningsSuppressed: Boolean,
     override val allErrorsSuppressed: Boolean
 ) : CheckerContext() {
-    protected companion object {
-        fun getGloballySuppressedDiagnostics(session: FirSession): PersistentSet<String> {
-            var set = persistentSetOf<String>()
-            set = set.addAll(session.languageVersionSettings.getFlag(AnalysisFlags.globallySuppressedDiagnostics))
-            return set
-        }
-    }
-
     abstract fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,
         allInfosSuppressed: Boolean,
