@@ -49,15 +49,37 @@ sealed interface ReadBuffer {
             get() = buffer.long
     }
 
-    class WeakFileBuffer(private val file: File) : ReadBuffer {
+    /**
+     * Allows reading data from the byte array that is obtained though [loadBytes].
+     *
+     * The byte array may not be known at the time of [OnDemandMemoryBuffer] creation.
+     * It will be created later, on the first access to any of the declared [OnDemandMemoryBuffer] members.
+     * The byte array is cached using [SoftReference], which means that it can be potentially
+     * released (garbage collected) in case of JVM heap memory deficit.
+     *
+     * This implementation allows having lesser memory consumption than [MemoryBuffer] in case
+     * of occasional reads from [ReadBuffer].
+     */
+    class OnDemandMemoryBuffer(private val loadBytes: () -> ByteArray) : ReadBuffer {
+        private var bufferRef: SoftReference<ByteBuffer> = SoftReference(null)
+        private var pos: Int = 0
+
         override val size: Int
-            get() = file.length().toInt()
+            get() = ensureBuffer().limit()
 
         override fun get(result: ByteArray, offset: Int, length: Int) {
             val buf = ensureBuffer()
             pos += length
             buf.get(result, offset, length)
         }
+
+        override var position: Int
+            get() = pos.also { assert(it == ensureBuffer().position()) }
+            set(value) {
+                val buf = ensureBuffer()
+                pos = value
+                buf.position(value)
+            }
 
         override val int: Int
             get(): Int {
@@ -73,26 +95,16 @@ sealed interface ReadBuffer {
                 return buf.long
             }
 
-        private var pos: Int = 0
-
-        override var position: Int
-            get() = pos.also { assert(it == ensureBuffer().position()) }
-            set(value) {
-                val buf = ensureBuffer()
-                pos = value
-                buf.position(value)
-            }
-
         private fun ensureBuffer(): ByteBuffer {
-            var tmpBuffer = weakBuffer.get()
+            var tmpBuffer = bufferRef.get()
             if (tmpBuffer == null) {
-                tmpBuffer = file.readBytes().buffer
+                tmpBuffer = loadBytes().buffer
                 tmpBuffer.position(pos)
-                weakBuffer = SoftReference(tmpBuffer)
+                bufferRef = SoftReference(tmpBuffer)
             }
             return tmpBuffer
         }
-
-        private var weakBuffer: SoftReference<ByteBuffer> = SoftReference(null)
     }
+
+    class WeakFileBuffer(file: File) : ReadBuffer by OnDemandMemoryBuffer({ file.readBytes() })
 }
