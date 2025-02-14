@@ -133,11 +133,16 @@ class ReadWriteTest {
     }
 
     @Test fun testURL() {
-        val url = URL("http://kotlinlang.org")
-        val text = url.readText()
-        assertFalse(text.isEmpty())
-        val text2 = url.readText(charset("UTF8"))
-        assertFalse(text2.isEmpty())
+        val file = File.createTempFile("temp", System.nanoTime().toString())
+        file.deleteOnExit()
+        val fileText = "Test Text"
+        file.writeText(fileText)
+
+        val url: URL = file.toURI().toURL()
+        val textDefault = url.readText()
+        assertEquals(fileText, textDefault)
+        val textUTF8 = url.readText(charset("UTF8"))
+        assertEquals(fileText, textUTF8)
     }
 }
 
