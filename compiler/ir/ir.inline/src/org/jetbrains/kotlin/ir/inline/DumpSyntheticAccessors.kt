@@ -179,27 +179,41 @@ private class SyntheticAccessorsDumper(
 
     fun getDump(): String? = dump.toString().takeIf(String::isNotBlank)
 
-    private inline fun <T> withNewStackFrame(declaration: IrDeclaration, crossinline block: () -> T): T =
-        stack.temporarilyPushing(StackFrame(declaration)) { block() }
+    private inline fun <T> withNewStackFrame(element: IrElement, crossinline block: () -> T): T =
+        stack.temporarilyPushing(StackFrame(element)) { block() }
 
     private fun dumpCurrentStackIfSymbolIsObserved(symbol: IrSymbol) {
         if (symbol in accessorSymbols || symbol in accessorTargetSymbols || symbol in localDeclarations) {
             for ((index, stackFrame) in stack.withIndex()) {
-                stackFrame.ifNotYetPrinted { declaration ->
-                    if (declaration.isLocal) {
-                        localDeclarations.add(declaration.symbol)
+                stackFrame.ifNotYetPrinted { element ->
+                    when (element) {
+                        is IrDeclaration -> dumpDeclaration(element, index)
+                        is IrInlinedFunctionBlock -> dumpInlinedFunctionBlock(element, index)
                     }
-                    val comment = when (declaration.symbol) {
-                        in accessorSymbols -> "/* ACCESSOR declaration */ "
-                        in accessorTargetSymbols -> "/* TARGET declaration */ "
-                        in localDeclarations -> "/* LOCAL declaration @${localDeclarations.indexOf(declaration.symbol)} */ "
-                        else -> ""
-                    }
-
-                    dump.appendIndent(indent = index).append(comment).appendIrElement(declaration)
                 }
             }
         }
+    }
+
+    private fun dumpInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, indent: Int) {
+        val function = inlinedBlock.inlinedFunctionSymbol!!.owner
+        dump.appendIndent(indent = indent)
+            .append("/* INLINED use-site @${localDeclarations.indexOf(function.symbol)} */ ")
+            .appendIrElement(function)
+    }
+
+    private fun dumpDeclaration(declaration: IrDeclaration, indent: Int) {
+        if (declaration.isLocal) {
+            localDeclarations.add(declaration.symbol)
+        }
+        val comment = when (declaration.symbol) {
+            in accessorSymbols -> "/* ACCESSOR declaration */ "
+            in accessorTargetSymbols -> "/* TARGET declaration */ "
+            in localDeclarations -> "/* LOCAL declaration @${localDeclarations.indexOf(declaration.symbol)} */ "
+            else -> ""
+        }
+
+        dump.appendIndent(indent = indent).append(comment).appendIrElement(declaration)
     }
 
     private fun dumpExpressionIfSymbolIsObserved(expression: IrDeclarationReference) {
@@ -234,12 +248,23 @@ private class SyntheticAccessorsDumper(
         super.visitDeclaration(declaration)
     }
 
-    private class StackFrame(private val declaration: IrDeclaration) {
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        val inlinedFunctionSymbol = inlinedBlock.inlinedFunctionSymbol
+        if (inlinedFunctionSymbol != null && inlinedFunctionSymbol in localDeclarations) {
+            withNewStackFrame(inlinedBlock) {
+                super.visitInlinedFunctionBlock(inlinedBlock)
+            }
+        } else {
+            super.visitInlinedFunctionBlock(inlinedBlock)
+        }
+    }
+
+    private class StackFrame(private val element: IrElement) {
         private var printed: Boolean = false
 
-        inline fun ifNotYetPrinted(block: (IrDeclaration) -> Unit) {
+        inline fun ifNotYetPrinted(block: (IrElement) -> Unit) {
             if (!printed) {
-                block(declaration)
+                block(element)
                 printed = true
             }
         }

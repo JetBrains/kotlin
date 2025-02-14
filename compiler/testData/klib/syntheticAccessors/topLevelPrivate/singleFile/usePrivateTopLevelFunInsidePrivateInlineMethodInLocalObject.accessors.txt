@@ -7,7 +7,8 @@ internal inline fun internalInlineMethod(crossinline f: Function0<String>): Stri
         /* LOCAL declaration @1 */ private inline fun impl(): String
             /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
         /* LOCAL declaration @2 */ public fun run(): String
-            /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
+            /* INLINED use-site @1 */ private inline fun impl(): String
+                /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
     /* LOCAL use-site @2 */ <anonymous object>.run()
 /* TARGET declaration */ private fun privateMethod(): String
 public fun box(): String
@@ -15,7 +16,8 @@ public fun box(): String
         /* LOCAL declaration @4 */ private inline fun impl(): String
             /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
         /* LOCAL declaration @5 */ public fun run(): String
-            /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
+            /* INLINED use-site @4 */ private inline fun impl(): String
+                /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
     /* LOCAL use-site @5 */ <anonymous object>.run()
 /* ACCESSOR declaration */ public fun access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt(): String
     /* TARGET use-site */ privateMethod()

@@ -7,7 +7,8 @@ internal inline fun internalInlineMethod(crossinline f: Function0<String>): Stri
         /* LOCAL declaration @0 */ local class <no name provided>
             /* LOCAL declaration @1 */ public inline fun run(): String
                 /* ACCESSOR use-site */ access$privateMethod$tAKt()
-    /* ACCESSOR use-site */ access$privateMethod$tAKt()
+    /* INLINED use-site @1 */ public inline fun run(): String
+        /* ACCESSOR use-site */ access$privateMethod$tAKt()
 /* TARGET declaration */ private fun privateMethod(): String
 /* ACCESSOR declaration */ public fun access$privateMethod$tAKt(): String
     /* TARGET use-site */ privateMethod()
@@ -20,4 +21,5 @@ public fun box(): String
         /* LOCAL declaration @0 */ local class <no name provided>
             /* LOCAL declaration @1 */ public inline fun run(): String
                 /* ACCESSOR use-site */ access$privateMethod$tAKt()
-    /* ACCESSOR use-site */ access$privateMethod$tAKt()
+    /* INLINED use-site @1 */ public inline fun run(): String
+        /* ACCESSOR use-site */ access$privateMethod$tAKt()
