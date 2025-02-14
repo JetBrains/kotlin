@@ -241,6 +241,7 @@ class CachingTest : TestCase() {
             standardJars.joinToString(File.pathSeparator),
             CommonCompilerArguments::languageVersion.cliArgument,
             if (isK2) "2.0" else "1.9",
+            CommonCompilerArguments::suppressVersionWarnings.cliArgument,
             inKt.path
         )
         assertTrue(
