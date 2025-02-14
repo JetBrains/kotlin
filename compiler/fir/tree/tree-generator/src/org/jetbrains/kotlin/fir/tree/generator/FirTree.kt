@@ -1124,7 +1124,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(reference)
     }
 
-    val typeRef: Element by sealedElement(TypeRefElement) {
+    val typeRef: Element by element(TypeRefElement) {
         parent(annotationContainer)
 
         +annotations
@@ -1141,6 +1141,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val typeRefWithNullability: Element by element(TypeRefElement) {
         parent(typeRef)
 
+        +field("source", sourceElementType, nullable = false)
         +field("isMarkedNullable", boolean)
     }
 
@@ -1154,7 +1155,6 @@ object FirTree : AbstractFirTreeBuilder() {
     val functionTypeRef: Element by element(TypeRefElement) {
         parent(typeRefWithNullability)
 
-        +field("source", sourceElementType, nullable = false)
         +field("receiverTypeRef", typeRef, nullable = true)
         +listField("parameters", functionTypeParameter)
         +field("returnTypeRef", typeRef)
@@ -1164,7 +1164,6 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val dynamicTypeRef: Element by element(TypeRefElement) {
         parent(typeRefWithNullability)
-        +field("source", sourceElementType, nullable = false)
     }
 
     val implicitTypeRef: Element by element(TypeRefElement) {

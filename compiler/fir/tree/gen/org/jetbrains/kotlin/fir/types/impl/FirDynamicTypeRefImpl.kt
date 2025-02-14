@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 internal class FirDynamicTypeRefImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val isMarkedNullable: Boolean,
     override val source: KtSourceElement,
+    override val isMarkedNullable: Boolean,
 ) : FirDynamicTypeRef() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

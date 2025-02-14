@@ -22,22 +22,21 @@ import org.jetbrains.kotlin.fir.types.impl.FirIntersectionTypeRefImpl
 
 @FirBuilderDsl
 class FirIntersectionTypeRefBuilder : FirAnnotationContainerBuilder {
-    var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    lateinit var source: KtSourceElement
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var leftType: FirTypeRef
     lateinit var rightType: FirTypeRef
 
     override fun build(): FirIntersectionTypeRef {
         return FirIntersectionTypeRefImpl(
-            source,
             annotations.toMutableOrEmpty(),
+            source,
             isMarkedNullable,
             leftType,
             rightType,
         )
     }
-
 }
 
 @OptIn(ExperimentalContracts::class)
