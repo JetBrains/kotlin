@@ -324,7 +324,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
     }
 
-    private fun PsiElement?.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
+    private fun PsiElement.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
         toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
 
     private data class ConstructorConversionParams(
