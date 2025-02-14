@@ -1758,6 +1758,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/reportPerfWithError.args");
     }
 
+    @TestMetadata("reportPerfWithFindJavaClass.args")
+    public void testReportPerfWithFindJavaClass() {
+      runTest("compiler/testData/cli/jvm/reportPerfWithFindJavaClass.args");
+    }
+
     @TestMetadata("reportPerfWithInitError.args")
     public void testReportPerfWithInitError() {
       runTest("compiler/testData/cli/jvm/reportPerfWithInitError.args");
