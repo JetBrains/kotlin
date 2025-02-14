@@ -12,7 +12,6 @@ import java.io.File
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.util.SortedMap
-import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
 /**
@@ -31,17 +30,17 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         initializeCurrentThread()
     }
 
-    private fun currentTime(): Long = System.nanoTime()
+    private fun currentTime(): Time = Time(System.nanoTime())
 
     private var currentPhaseType: PhaseType = PhaseType.Initialization
-    private var phaseStartNanos: Long? = currentTime()
+    private var phaseStartTime: Time? = currentTime()
 
-    private val phaseMeasurementsMs: SortedMap<PhaseType, Long> = sortedMapOf()
+    private val phaseMeasurements: SortedMap<PhaseType, Time> = sortedMapOf()
 
     // Initialize the counter measurements in strict order to get rid of difference in the same report
     private val counterMeasurements: MutableMap<KClass<*>, CounterMeasurement> = mutableMapOf(
-        FindJavaClassMeasurement::class to FindJavaClassMeasurement(0, 0),
-        BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, 0),
+        FindJavaClassMeasurement::class to FindJavaClassMeasurement(0, Time.ZERO),
+        BinaryClassFromKotlinFileMeasurement::class to BinaryClassFromKotlinFileMeasurement(0, Time.ZERO),
     )
 
     private var gcMeasurements: SortedMap<String, GarbageCollectionMeasurement> = sortedMapOf()
@@ -63,7 +62,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     var isFinalized: Boolean = false
         private set
     val isMeasuring: Boolean
-        get() = phaseStartNanos != null
+        get() = phaseStartTime != null
 
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
@@ -72,13 +71,13 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         thread = Thread.currentThread()
     }
 
-    fun getLoweringAndBackendTimeMs(): Long = (measurements.filterIsInstance<IrLoweringMeasurement>().sumOf { it.milliseconds }) +
-            (measurements.filterIsInstance<BackendMeasurement>().sumOf { it.milliseconds })
+    fun getLoweringAndBackendTimeMs(): Long = (measurements.filterIsInstance<IrLoweringMeasurement>().sumOf { it.time.millis }) +
+            (measurements.filterIsInstance<BackendMeasurement>().sumOf { it.time.millis })
 
     val measurements: List<PerformanceMeasurement> by lazy {
         isFinalized = true
         buildList {
-            for ((phaseType, measurement) in phaseMeasurementsMs) {
+            for ((phaseType, measurement) in phaseMeasurements) {
                 add(
                     when (phaseType) {
                         PhaseType.Initialization -> CompilerInitializationMeasurement(measurement)
@@ -105,20 +104,20 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         files += otherPerformanceManager.files
         lines += otherPerformanceManager.lines
 
-        for ((phase, otherPhaseMeasurementMs) in otherPerformanceManager.phaseMeasurementsMs) {
-            phaseMeasurementsMs[phase] = (phaseMeasurementsMs[phase] ?: 0) + otherPhaseMeasurementMs
+        for ((phase, otherPhaseMeasurementMs) in otherPerformanceManager.phaseMeasurements) {
+            phaseMeasurements[phase] = (phaseMeasurements[phase] ?: Time.ZERO) + otherPhaseMeasurementMs
         }
 
         for ((counterMeasurementClass, otherCounterMeasurement) in otherPerformanceManager.counterMeasurements) {
             val existingMeasurement = counterMeasurements[counterMeasurementClass]
             val newCount = (existingMeasurement?.count ?: 0) + otherCounterMeasurement.count
-            val newMillis = (existingMeasurement?.milliseconds ?: 0) + otherCounterMeasurement.milliseconds
+            val newTime = (existingMeasurement?.time ?: Time.ZERO) + otherCounterMeasurement.time
             counterMeasurements[counterMeasurementClass] = when (otherCounterMeasurement) {
                 is FindJavaClassMeasurement -> {
-                    FindJavaClassMeasurement(newCount, newMillis)
+                    FindJavaClassMeasurement(newCount, newTime)
                 }
                 is BinaryClassFromKotlinFileMeasurement -> {
-                    BinaryClassFromKotlinFileMeasurement(newCount, newMillis)
+                    BinaryClassFromKotlinFileMeasurement(newCount, newTime)
                 }
             }
         }
@@ -163,7 +162,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         // However, currently it's dropped to keep compatibility with build systems that don't call `enableCollectingPerformanceStatistics`,
         // but take some measurements from this manager (old behavior is preserved).
 
-        assert(phaseStartNanos == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
+        assert(phaseStartTime == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
 
         // Ideally, all phases always should be executed sequentially.
         // However, some pipelines are written in a way where `BackendGeneration` executed before `Analysis` or `IrLowering` (Web).
@@ -173,7 +172,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
         }
 
-        phaseStartNanos = currentTime()
+        phaseStartTime = currentTime()
         currentPhaseType = newPhaseType
     }
 
@@ -184,7 +183,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         ensureNotFinalizedAndSameThread()
 
-        assert(phaseStartNanos != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
+        assert(phaseStartTime != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
         finishPhase(phaseType)
     }
 
@@ -209,18 +208,18 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     @PotentiallyIncorrectPhaseTimeMeasurement
     fun notifyCurrentPhaseFinishedIfNeeded() {
-        if (phaseStartNanos != null) {
+        if (phaseStartTime != null) {
             finishPhase(currentPhaseType)
         }
     }
 
     private fun finishPhase(phaseType: PhaseType) {
         if (phaseType != currentPhaseType) { // It's allowed to measure the same phase multiple times (although it's better to avoid that)
-            assert(!phaseMeasurementsMs.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
+            assert(!phaseMeasurements.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
         }
-        phaseMeasurementsMs[phaseType] =
-            (phaseMeasurementsMs[phaseType] ?: 0) + TimeUnit.NANOSECONDS.toMillis(currentTime() - phaseStartNanos!!)
-        phaseStartNanos = null
+        phaseMeasurements[phaseType] =
+            (phaseMeasurements[phaseType] ?: Time.ZERO) + (currentTime() - phaseStartTime!!)
+        phaseStartTime = null
     }
 
     private fun recordGcTime() {
@@ -260,12 +259,12 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         try {
             return block()
         } finally {
-            val elapsedMillis = TimeUnit.NANOSECONDS.toMillis(currentTime() - startTime)
+            val elapsedNano = currentTime() - startTime
             synchronized(counterMeasurementsLock) {
                 val currentMeasurement = counterMeasurements[measurementClass]
                     ?: error("No counter measurement initialized for $measurementClass")
                 val newCount = currentMeasurement.count + 1
-                val newElapsed = currentMeasurement.milliseconds + elapsedMillis
+                val newElapsed = currentMeasurement.time + elapsedNano
                 val newMeasurement = when (measurementClass) {
                     FindJavaClassMeasurement::class -> FindJavaClassMeasurement(newCount, newElapsed)
                     BinaryClassFromKotlinFileMeasurement::class -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)

@@ -341,17 +341,17 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             val initMeasurement = measurements.filterIsInstance<CompilerInitializationMeasurement>().firstOrNull()
 
             val components = buildMap {
-                put("Init", initMeasurement?.milliseconds ?: 0)
-                put("Analysis", analysisMeasurement?.milliseconds ?: 0)
+                put("Init", initMeasurement?.time?.millis ?: 0)
+                put("Analysis", analysisMeasurement?.time?.millis ?: 0)
 
-                measurements.firstIsInstanceOrNull<TranslationToIrMeasurement>()?.milliseconds?.let { put("IrGeneration", it) }
-                measurements.firstIsInstanceOrNull<IrLoweringMeasurement>()?.milliseconds?.let { put("Lowering", it) }
+                measurements.firstIsInstanceOrNull<TranslationToIrMeasurement>()?.time?.millis?.let { put("IrGeneration", it) }
+                measurements.firstIsInstanceOrNull<IrLoweringMeasurement>()?.time?.millis?.let { put("Lowering", it) }
 
                 val generationTime =
-                    measurements.firstIsInstanceOrNull<BackendMeasurement>()?.milliseconds
+                    measurements.firstIsInstanceOrNull<BackendMeasurement>()?.time
 
                 if (generationTime != null) {
-                    put("Backend", generationTime)
+                    put("Backend", generationTime.millis)
                 }
             }
 

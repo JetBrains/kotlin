@@ -660,21 +660,21 @@ abstract class IncrementalCompilerRunner<
         }
         defaultPerformanceManager.measurements.forEach {
             when (it) {
-                is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)
+                is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.time.millis)
                 is CodeAnalysisMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.CODE_ANALYSIS, it.milliseconds)
-                    if (lines != null && it.milliseconds > 0) {
-                        reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, lines * 1000 / it.milliseconds)
+                    reporter.addTimeMetricMs(GradleBuildTime.CODE_ANALYSIS, it.time.millis)
+                    if (lines != null && it.time.millis > 0) {
+                        reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, lines * 1000 / it.time.millis)
                     }
                 }
                 is TranslationToIrMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.TRANSLATION_TO_IR, it.milliseconds)
+                    reporter.addTimeMetricMs(GradleBuildTime.TRANSLATION_TO_IR, it.time.millis)
                 }
                 is IrLoweringMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.IR_LOWERING, it.milliseconds)
+                    reporter.addTimeMetricMs(GradleBuildTime.IR_LOWERING, it.time.millis)
                 }
                 is BackendMeasurement -> {
-                    reporter.addTimeMetricMs(GradleBuildTime.BACKEND, it.milliseconds)
+                    reporter.addTimeMetricMs(GradleBuildTime.BACKEND, it.time.millis)
                 }
             }
         }

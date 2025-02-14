@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
-import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -285,15 +284,15 @@ abstract class CompileServiceImplBase(
         performanceManager.measurements.forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> {
-                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.milliseconds))
+                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.COMPILER_INITIALIZATION, it.time.millis))
                 }
                 is CodeAnalysisMeasurement -> {
-                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.milliseconds))
-                    if (lines != null && it.milliseconds > 0) {
+                    performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_ANALYSIS, it.time.millis))
+                    if (lines != null && it.time.millis > 0) {
                         performanceMetrics.add(
                             BuildMetricsValue(
                                 CompilationPerformanceMetrics.ANALYSIS_LPS,
-                                lines * 1000 / it.milliseconds
+                                lines * 1000 / it.time.millis
                             )
                         )
                     }

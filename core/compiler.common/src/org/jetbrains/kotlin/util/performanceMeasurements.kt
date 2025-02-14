@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.util
 
+import java.util.concurrent.TimeUnit
+
 interface PerformanceMeasurement {
     fun render(lines: Int): String
 }
@@ -17,39 +19,61 @@ enum class PhaseType {
     Backend,
 }
 
-sealed class PhasePerformanceMeasurement(val milliseconds: Long) : PerformanceMeasurement {
+/**
+ * Currently it holds only `System.nanoTime()` but later it can be adopted to hold User or CPU time as well.
+ * It might be useful for time measurements in multithread mode.
+ */
+@JvmInline
+value class Time(val nanos: Long) {
+    companion object {
+        val ZERO = Time(0)
+    }
+
+    val millis: Long
+        get() = TimeUnit.NANOSECONDS.toMillis(nanos)
+
+    operator fun plus(other: Time): Time {
+        return Time(nanos + other.nanos)
+    }
+
+    operator fun minus(other: Time): Time {
+        return Time(nanos - other.nanos)
+    }
+}
+
+sealed class PhasePerformanceMeasurement(val time: Time) : PerformanceMeasurement {
     abstract val phase: PhaseType
     abstract val name: String
-    override fun render(lines: Int): String = "%20s%8s ms".format(name, milliseconds) +
+    override fun render(lines: Int): String = "%20s%8s ms".format(name, time.millis) +
             if (phase != PhaseType.Initialization && lines != 0) {
-                val lps = lines.toDouble() * 1000 / milliseconds
+                val lps = lines.toDouble() * 1000 / time.millis
                 "%12.3f loc/s".format(lps)
             } else {
                 ""
             }
 }
 
-class CompilerInitializationMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class CompilerInitializationMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase = PhaseType.Initialization
     override val name: String = "INIT"
 }
 
-class CodeAnalysisMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class CodeAnalysisMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase: PhaseType = PhaseType.Analysis
     override val name: String = "ANALYZE"
 }
 
-class TranslationToIrMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class TranslationToIrMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase: PhaseType = PhaseType.TranslationToIr
     override val name: String = "TRANSLATION to IR"
 }
 
-class IrLoweringMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class IrLoweringMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase: PhaseType = PhaseType.IrLowering
     override val name: String = "IR LOWERING"
 }
 
-class BackendMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
+class BackendMeasurement(time: Time) : PhasePerformanceMeasurement(time) {
     override val phase: PhaseType = PhaseType.Backend
     override val name: String = "BACKEND"
 }
@@ -62,17 +86,17 @@ class GarbageCollectionMeasurement(val garbageCollectionKind: String, val millis
     override fun render(lines: Int): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }
 
-sealed class CounterMeasurement(val count: Int, val milliseconds: Long) : PerformanceMeasurement {
+sealed class CounterMeasurement(val count: Int, val time: Time) : PerformanceMeasurement {
     abstract val description: String
     override fun render(lines: Int): String =
-        "$description performed $count times, total time $milliseconds ms"
+        "$description performed $count times, total time ${time.millis} ms"
 }
 
-class FindJavaClassMeasurement(count: Int, milliseconds: Long) : CounterMeasurement(count, milliseconds) {
+class FindJavaClassMeasurement(count: Int, time: Time) : CounterMeasurement(count, time) {
     override val description: String = "Find Java class"
 }
 
-class BinaryClassFromKotlinFileMeasurement(count: Int, milliseconds: Long) : CounterMeasurement(count, milliseconds) {
+class BinaryClassFromKotlinFileMeasurement(count: Int, time: Time) : CounterMeasurement(count, time) {
     override val description: String = "Binary class from Kotlin file"
 }
 
