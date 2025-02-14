@@ -52,8 +52,8 @@ internal class NativeSuspendFunctionsLowering(
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
         +irReturn(
                 irCall(invokeSuspendFunction).apply {
-                    dispatchReceiver = receiver
-                    putValueArgument(0, irSuccess(irGetObject(symbols.unit)))
+                    arguments[0] = receiver
+                    arguments[1] = irSuccess(irGetObject(symbols.unit))
                 }
         )
     }
@@ -64,11 +64,10 @@ internal class NativeSuspendFunctionsLowering(
             argumentToPropertiesMap: Map<IrValueParameter, IrField>,
     ) {
         val originalBody = transformingFunction.body!!
-        val resultArgument = stateMachineFunction.valueParameters.single()
+
+        val (thisReceiver, resultArgument) = stateMachineFunction.parameters.also { check(it.size == 2) }
 
         val coroutineClass = stateMachineFunction.parentAsClass
-
-        val thisReceiver = stateMachineFunction.dispatchReceiverParameter!!
 
         val labelField = coroutineClass.addField(Name.identifier("label"), symbols.nativePtrType, true)
 
@@ -157,10 +156,7 @@ internal class NativeSuspendFunctionsLowering(
             irBuilder.run {
                 val children = when (expression) {
                     is IrSetField -> listOf(expression.receiver, expression.value)
-                    is IrMemberAccessExpression<*> -> (
-                            listOf(expression.dispatchReceiver, expression.extensionReceiver)
-                                    + (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
-                            )
+                    is IrMemberAccessExpression<*> -> expression.arguments
                     else -> throw Error("Unexpected expression: $expression")
                 }
 
@@ -221,12 +217,12 @@ internal class NativeSuspendFunctionsLowering(
                 when {
                     expression.isReturnIfSuspendedCall -> {
                         calledSaveState = true
-                        val firstArgument = newChildren[2]!!
-                        newChildren[2] = irBlock(firstArgument) {
+                        val firstArgument = newChildren[0]!!
+                        newChildren[0] = irBlock(firstArgument) {
                             +saveState()
                             +firstArgument
                         }
-                        suspendCall = newChildren[2]
+                        suspendCall = newChildren[0]
                     }
                     expression.isSuspendCall -> {
                         val lastChildIndex = newChildren.indexOfLast { it != null }
@@ -257,10 +253,8 @@ internal class NativeSuspendFunctionsLowering(
                         expression.value = newChildren[1]!!
                     }
                     is IrMemberAccessExpression<*> -> {
-                        expression.dispatchReceiver = newChildren[0]
-                        expression.extensionReceiver = newChildren[1]
-                        newChildren.drop(2).forEachIndexed { index, newChild ->
-                            expression.putValueArgument(index, newChild)
+                        newChildren.forEachIndexed { index, newChild ->
+                            expression.arguments[index] = newChild
                         }
                     }
                 }
@@ -381,7 +375,7 @@ internal class NativeSuspendFunctionsLowering(
 
     private fun IrBuilderWithScope.irGetOrThrow(result: IrExpression): IrExpression =
             irCall(symbols.kotlinResultGetOrThrow.owner).apply {
-                extensionReceiver = result
+                arguments[0] = result
             } // TODO: consider inlining getOrThrow function body here.
 
     private fun IrBuilderWithScope.irExceptionOrNull(result: IrExpression): IrExpression {
@@ -395,7 +389,7 @@ internal class NativeSuspendFunctionsLowering(
     fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrMemberAccessExpression<*> {
         val createResult = symbols.kotlinResult.owner.constructors.single { it.isPrimary }
         return irCall(createResult).apply {
-            putValueArgument(0, value)
+            arguments[0] = value
         }
     }
 }
