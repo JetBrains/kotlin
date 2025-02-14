@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
-import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
+import org.jetbrains.kotlin.library.impl.IrArrayReader
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.name.ClassId
@@ -554,9 +554,9 @@ internal object ClassFieldsSerializer {
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedClassFields>) {
-        val reader = IrArrayMemoryReader(data)
-        val signatures = IrArrayMemoryReader(reader.tableItemBytes(0))
-        val signatureStrings = IrArrayMemoryReader(reader.tableItemBytes(1))
+        val reader = IrArrayReader(data)
+        val signatures = IrArrayReader(reader.tableItemBytes(0))
+        val signatureStrings = IrArrayReader(reader.tableItemBytes(1))
         val libFile: IrLibraryFile = object: IrLibraryFile() {
             override fun declaration(index: Int) = error("Declarations are not needed for IdSignature deserialization")
             override fun type(index: Int) = error("Types are not needed for IdSignature deserialization")

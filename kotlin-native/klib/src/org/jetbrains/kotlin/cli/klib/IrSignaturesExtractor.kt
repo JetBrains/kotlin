@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
+import org.jetbrains.kotlin.library.impl.IrArrayReader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -59,7 +59,7 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
 
         private fun collectAllKnownSignatures() {
             val maxSignatureIndex =
-                IrArrayMemoryReader(library.signatures(fileIndex)).entryCount() - 1 // Index of the latest signature in the current file.
+                IrArrayReader(library.signatures(fileIndex)).entryCount() - 1 // Index of the latest signature in the current file.
             (0..maxSignatureIndex).mapTo(allKnownSignatures, signatureDeserializer::deserializeIdSignature)
         }
 

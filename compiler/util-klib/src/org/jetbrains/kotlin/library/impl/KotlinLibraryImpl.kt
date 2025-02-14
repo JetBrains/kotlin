@@ -160,10 +160,8 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
         }
     }
 
-    private val files: IrArrayFileReader by lazy {
-        IrArrayFileReader(access.inPlace {
-            it.irFiles
-        })
+    private val files: IrArrayReader by lazy {
+        IrArrayReader(access, IrKotlinLibraryLayout::irFiles)
     }
 
     override fun types(fileIndex: Int): ByteArray {
