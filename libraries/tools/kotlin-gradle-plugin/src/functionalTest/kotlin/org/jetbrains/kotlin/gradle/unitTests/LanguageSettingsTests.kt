@@ -14,11 +14,14 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.util.allCauses
+import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.assertContains
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.util.assertThrows
@@ -218,6 +221,67 @@ class LanguageSettingsTests {
         }
 
         project.evaluate()
+    }
+
+    /**
+     * See: [org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction]
+     * FIXME: KT-75216 Update this test to actually verify Language Settings propagation to IDE import when legacy way is deprecated and removed
+     * */
+    @Test
+    fun `language settings setup action test`() {
+        val project = kmpProject {
+            androidLibrary { compileSdk = 31 }
+            with(multiplatformExtension) {
+                androidTarget()
+                jvm().compilations.create("custom")
+            }
+        }
+        project.evaluate()
+
+        val sourceSetToCompileTask = mapOf(
+            "androidDebug" to "compileDebugKotlinAndroid",
+            "androidInstrumentedTest" to "compileDebugAndroidTestKotlinAndroid",
+            "androidInstrumentedTestDebug" to "compileDebugAndroidTestKotlinAndroid",
+            "androidMain" to "compileDebugKotlinAndroid",
+            "androidRelease" to "compileReleaseKotlinAndroid",
+            "androidUnitTest" to "compileDebugUnitTestKotlinAndroid",
+            "androidUnitTestDebug" to "compileDebugUnitTestKotlinAndroid",
+            "androidUnitTestRelease" to "compileReleaseUnitTestKotlinAndroid",
+            "appleMain" to "compileKotlinMetadata",
+            "appleTest" to "compileKotlinMetadata",
+            "commonMain" to "compileKotlinMetadata",
+            "commonTest" to "compileKotlinMetadata",
+            "jsMain" to "compileKotlinJs",
+            "jsTest" to "compileTestKotlinJs",
+            "jvmCustom" to "compileCustomKotlinJvm",
+            "jvmMain" to "compileKotlinJvm",
+            "jvmTest" to "compileTestKotlinJvm",
+            "linuxArm64Main" to "compileKotlinLinuxArm64",
+            "linuxArm64Test" to "compileTestKotlinLinuxArm64",
+            "linuxMain" to "compileKotlinMetadata",
+            "linuxTest" to "compileKotlinMetadata",
+            "linuxX64Main" to "compileKotlinLinuxX64",
+            "linuxX64Test" to "compileTestKotlinLinuxX64",
+            "macosArm64Main" to "compileKotlinMacosArm64",
+            "macosArm64Test" to "compileTestKotlinMacosArm64",
+            "macosMain" to "compileKotlinMetadata",
+            "macosTest" to "compileKotlinMetadata",
+            "macosX64Main" to "compileKotlinMacosX64",
+            "macosX64Test" to "compileTestKotlinMacosX64",
+            "mingwMain" to "compileKotlinMingwX64",
+            "mingwTest" to "compileTestKotlinMingwX64",
+            "mingwX64Main" to "compileKotlinMingwX64",
+            "mingwX64Test" to "compileTestKotlinMingwX64",
+            "nativeMain" to "compileKotlinMetadata",
+            "nativeTest" to "compileKotlinMetadata",
+            "wasmJsMain" to "compileKotlinWasmJs",
+            "wasmJsTest" to "compileTestKotlinWasmJs",
+        )
+        val actualTasks = project.kotlinExtension.sourceSets.associate { sourceSet ->
+            sourceSet.name to (sourceSet.languageSettings as DefaultLanguageSettingsBuilder).compilerPluginOptionsTask.value?.name
+        }
+
+        assertEquals(sourceSetToCompileTask, actualTasks)
     }
 
     companion object {
