@@ -41,4 +41,9 @@ val test by tasks.existing(Test::class) {
     systemProperty("kotlinVersion", project.version)
     systemProperty("testCasesClassesDirs", sourceSets["test"].output.classesDirs.asPath)
     jvmArgs("-ea")
+
+    val testTags = findProperty("kotlin.native.tests.tags")?.toString()
+    useJUnitPlatform {
+        testTags?.let { includeTags(it) }
+    }
 }
