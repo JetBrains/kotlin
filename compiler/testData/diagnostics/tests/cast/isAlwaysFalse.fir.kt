@@ -45,7 +45,7 @@ fun test_3(a: Any) {
 
 fun test_4(a: A) {
     when (a) {
-        is A -> {} // always true
+        <!USELESS_IS_CHECK!>is A<!> -> {} // always true
         is B -> {}
 
         is AS -> {} // always false
@@ -58,7 +58,7 @@ fun test_4(a: A) {
 
 fun test_5(a: A) {
     when (a) {
-        !is A -> {} // always false
+        <!USELESS_IS_CHECK!>!is A<!> -> {} // always false
         !is B -> {}
 
         !is AS -> {} // always true
