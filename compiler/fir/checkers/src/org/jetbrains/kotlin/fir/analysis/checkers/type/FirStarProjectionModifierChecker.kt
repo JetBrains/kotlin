@@ -23,7 +23,7 @@ object FirStarProjectionModifierChecker : FirResolvedTypeRefChecker(MppCheckerKi
         for (part in delegatedTypeRef.qualifier) {
             for (typeArgument in part.typeArgumentList.typeArguments) {
                 if (typeArgument !is FirStarProjection) continue
-                val source = typeArgument.source?.takeIf { it.kind is KtRealSourceElementKind } ?: continue
+                val source = typeArgument.source?.takeIf { it.kind is KtRealSourceElementKind }
                 val modifierList = source.getModifierList() ?: continue
 
                 for (modifier in modifierList.modifiers) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -30,7 +31,7 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = typeRef.source
         val delegatedTypeRef = typeRef.delegatedTypeRef
-        if (source?.kind !is KtRealSourceElementKind) return
+        if (source?.kind is KtFakeSourceElementKind) return
         // ConeClassLikeType filters out all delegatedTypeRefs from here
         val expandedTypealiasType = typeRef.coneType.fullyExpandedType(context.session).lowerBoundIfFlexible() as? ConeClassLikeType ?: return
         val coneType = expandedTypealiasType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
@@ -48,7 +49,7 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
                 processedSymbol.isExperimentalMarker(context.session) ->
                     reporter.reportOn(source, OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, context)
                 delegatedTypeRef is FirUserTypeRef && delegatedTypeRef.qualifier.isNotEmpty() -> {
-                    processedSymbol.checkContainingClasses(source, delegatedTypeRef.qualifier, context, reporter)
+                    processedSymbol.checkContainingClasses(source ?: delegatedTypeRef.source, delegatedTypeRef.qualifier, context, reporter)
                 }
             }
         }
