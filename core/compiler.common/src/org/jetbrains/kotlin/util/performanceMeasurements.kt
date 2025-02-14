@@ -76,14 +76,6 @@ class BackendGenerationMeasurement(time: Time) : PhasePerformanceMeasurement(tim
     override val name: String = "BACKEND GENERATION"
 }
 
-class JitCompilationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(lines: Int): String = "JIT time is $milliseconds ms"
-}
-
-class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
-    override fun render(lines: Int): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
-}
-
 enum class PhaseSideMeasurementType {
     FindJavaClass,
     BinaryClassFromKotlinFile,
@@ -104,6 +96,16 @@ class FindJavaClassMeasurement(count: Int, time: Time) : PhaseSidePerformanceMea
 class BinaryClassFromKotlinFileMeasurement(count: Int, time: Time) : PhaseSidePerformanceMeasurement(count, time) {
     override val type = PhaseSideMeasurementType.BinaryClassFromKotlinFile
     override val description: String = "Binary class from Kotlin file"
+}
+
+sealed class JvmPerformanceMeasurement(val milliseconds: Long) : PerformanceMeasurement
+
+class JitCompilationMeasurement(milliseconds: Long) : JvmPerformanceMeasurement(milliseconds) {
+    override fun render(lines: Int): String = "JIT time is $milliseconds ms"
+}
+
+class GarbageCollectionMeasurement(val garbageCollectionKind: String, milliseconds: Long, val count: Long) : JvmPerformanceMeasurement(milliseconds) {
+    override fun render(lines: Int): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }
 
 @DeprecatedPerformanceDeclaration
