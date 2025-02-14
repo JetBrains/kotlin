@@ -148,7 +148,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
         val parentClassDispatchReceiver = irClass.thisReceiver ?: compilationException("Unexpected thisReceiver of class", irClass)
 
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
-            declaration.body?.transformChildren(this, declaration)
+            declaration.transformChildren(this, declaration)
             return declaration
         }
 
