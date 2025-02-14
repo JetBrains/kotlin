@@ -833,6 +833,10 @@ class FirRenderer(
 
         override fun visitTypeRef(typeRef: FirTypeRef) {
             annotationRenderer?.render(typeRef)
+            if (typeRef.customRenderer) {
+                print(typeRef.toString())
+                return
+            }
             visitElement(typeRef)
         }
 
@@ -905,10 +909,6 @@ class FirRenderer(
 
         override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
             annotationRenderer?.render(userTypeRef)
-            if (userTypeRef.customRenderer) {
-                print(userTypeRef.toString())
-                return
-            }
             for ((index, qualifier) in userTypeRef.qualifier.withIndex()) {
                 if (index != 0) {
                     print(".")

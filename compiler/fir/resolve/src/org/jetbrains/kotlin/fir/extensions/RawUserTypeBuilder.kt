@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
@@ -27,12 +28,16 @@ class QualifierPartBuilder(internal val destination: MutableList<FirQualifierPar
     }
 }
 
-fun buildUserTypeFromQualifierParts(
+fun resolvedTypeRefFromQualifierParts(
     isMarkedNullable: Boolean,
+    typeResolver: FirSupertypeGenerationExtension.TypeResolveService,
+    source: KtSourceElement,
     builder: QualifierPartBuilder.() -> Unit
-): FirUserTypeRef {
-    return buildUserTypeRef {
+): FirResolvedTypeRef {
+    val userTypeRef = buildUserTypeRef {
         this.isMarkedNullable = isMarkedNullable
+        this.source = source
         QualifierPartBuilder(qualifier).builder()
     }
+    return typeResolver.resolveUserType(userTypeRef)
 }

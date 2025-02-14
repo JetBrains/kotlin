@@ -2423,7 +2423,7 @@ class LightTreeRawFirDeclarationBuilder(
                 simpleFirUserType?.let { qualifierPart ->
                     if (qualifierPart.qualifier.isNotEmpty()) {
                         partiallyResolvedTypeRef = buildUserTypeRef {
-                            source = qualifierPart.qualifier.last().source
+                            source = qualifierPart.qualifier.last().source!!
                             isMarkedNullable = false
                             this.qualifier.addAll(qualifierPart.qualifier)
                         }

@@ -20,6 +20,9 @@ sealed class FirImplicitBuiltinTypeRef(
     typeArguments: Array<out ConeTypeProjection> = emptyArray(),
     isNullable: Boolean = false
 ) : FirResolvedTypeRef() {
+    override val customRenderer: Boolean
+        get() = false
+
     override val annotations: List<FirAnnotation>
         get() = emptyList()
 

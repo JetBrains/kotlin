@@ -56,16 +56,16 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement?): R {
             source = newSource
         }
         is FirUserTypeRefImpl -> buildUserTypeRef {
-            source = newSource
+            source = newSource!!
             isMarkedNullable = typeRef.isMarkedNullable
             qualifier += typeRef.qualifier
             annotations += typeRef.annotations
         }
         is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(typeRef) {
-            source = newSource
+            source = newSource!!
         }
         is FirDynamicTypeRef -> buildDynamicTypeRef {
-            source = newSource
+            source = newSource!!
             isMarkedNullable = typeRef.isMarkedNullable
             annotations += typeRef.annotations
         }

@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeRefWithNullability]
  */
 abstract class FirTypeRefWithNullability : FirTypeRef() {
-    abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
+    abstract override val customRenderer: Boolean
+    abstract override val source: KtSourceElement
     abstract val isMarkedNullable: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

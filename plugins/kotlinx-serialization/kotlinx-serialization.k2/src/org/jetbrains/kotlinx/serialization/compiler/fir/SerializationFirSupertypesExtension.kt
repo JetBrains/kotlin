@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.buildUserTypeFromQualifierParts
+import org.jetbrains.kotlin.fir.extensions.resolvedTypeRefFromQualifierParts
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -89,15 +89,18 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
 
     // Function helps to resolve class call from annotation argument to `ConeKotlinType`
     private fun resolveConeTypeFromArgument(getClassCall: FirGetClassCall, typeResolver: TypeResolveService): ConeKotlinType {
-        val typeToResolve = buildUserTypeFromQualifierParts(isMarkedNullable = false) {
+        return resolvedTypeRefFromQualifierParts(
+            isMarkedNullable = false,
+            source = getClassCall.source!!,
+            typeResolver = typeResolver
+        ) {
             fun visitQualifiers(expression: FirExpression) {
                 if (expression !is FirPropertyAccessExpression) return
                 expression.explicitReceiver?.let { visitQualifiers(it) }
                 expression.qualifierName?.let { part(it) }
             }
             visitQualifiers(getClassCall.argument)
-        }
-        return typeResolver.resolveUserType(typeToResolve).coneType
+        }.coneType
     }
 
     private val FirPropertyAccessExpression.qualifierName: Name?

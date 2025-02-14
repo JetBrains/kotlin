@@ -20,7 +20,7 @@ import kotlin.contracts.contract
 
 @FirBuilderDsl
 class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     override var annotations: MutableList<FirAnnotation> = mutableListOf()
     var coneType: ConeKotlinType? = null
     var delegatedTypeRef: FirTypeRef? = null

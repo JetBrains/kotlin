@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 internal class FirScriptImpl(
-    override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
@@ -34,6 +33,7 @@ internal class FirScriptImpl(
     override val attributes: FirDeclarationAttributes,
     override val name: Name,
     override val declarations: MutableList<FirDeclaration>,
+    override val source: KtSourceElement,
     override val symbol: FirScriptSymbol,
     override val parameters: MutableList<FirProperty>,
     override var receivers: MutableOrEmptyList<FirScriptReceiverParameter>,
