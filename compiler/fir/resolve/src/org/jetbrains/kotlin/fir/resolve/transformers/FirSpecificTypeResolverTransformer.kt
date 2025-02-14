@@ -268,7 +268,7 @@ class FirSpecificTypeResolverTransformer(
             val typeRefToTry = buildUserTypeRef {
                 qualifier += qualifiersToTry
                 isMarkedNullable = false
-                source = typeRef.source!!
+                source = typeRef.source
             }
 
             val (resolvedType, diagnostic) = withBareTypes { resolveType(typeRefToTry, data) }
