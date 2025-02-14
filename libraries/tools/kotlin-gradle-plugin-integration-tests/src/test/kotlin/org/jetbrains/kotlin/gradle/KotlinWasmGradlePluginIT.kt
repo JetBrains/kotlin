@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
+import kotlin.io.path.Path
 import kotlin.io.path.appendText
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertTrue
@@ -457,11 +460,15 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             }
 
             build(":foo:compileProductionExecutableKotlinWasmJsOptimize") {
-                assertOutputContains("binaryen-version_119/bin/wasm-opt")
+                assertOutputContains(
+                    Path("binaryen-version_119").resolve("bin").resolve("wasm-opt").pathString
+                )
             }
 
             build(":bar:compileProductionExecutableKotlinWasmJsOptimize") {
-                assertOutputContains("binaryen-version_118/bin/wasm-opt")
+                assertOutputContains(
+                    Path("binaryen-version_118").resolve("bin").resolve("wasm-opt").pathString
+                )
             }
         }
     }
