@@ -23,6 +23,7 @@ open class FirUserTypeRefBuilder : FirAnnotationContainerBuilder {
     val qualifier: MutableList<FirQualifierPart> = mutableListOf()
 
     override fun build(): FirUserTypeRef {
+        val source = source ?: throw AssertionError("FirUserTypeRef.source must not be null")
         return FirUserTypeRefImpl(source, isMarkedNullable, qualifier, annotations.toMutableOrEmpty())
     }
 }

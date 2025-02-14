@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-class FirUserTypeRefImpl(
-    override var source: KtSourceElement?,
+internal class FirUserTypeRefImpl(
+    source: KtSourceElement,
     override val isMarkedNullable: Boolean,
     override val qualifier: MutableList<FirQualifierPart>,
     override var annotations: MutableOrEmptyList<FirAnnotation>
 ) : FirUserTypeRef() {
+    override var source: KtSourceElement? = source
+
     override val customRenderer: Boolean
         get() = false
 
