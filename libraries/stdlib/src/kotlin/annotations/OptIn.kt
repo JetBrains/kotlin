@@ -172,7 +172,6 @@ public annotation class ExperimentalSubclassOptIn
  * @property markerClass specifies marker annotation that require explicit opt-in.
  * @see RequiresOptIn for a detailed description of opt-in semantics and propagation rules.
  */
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @Target(CLASS)
 @Retention(BINARY)
 @SinceKotlin("2.1")
