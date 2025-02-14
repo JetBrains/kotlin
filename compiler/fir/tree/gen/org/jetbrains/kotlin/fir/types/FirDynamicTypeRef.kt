@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.dynamicTypeRef]
  */
 abstract class FirDynamicTypeRef : FirTypeRefWithNullability() {
-    abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val isMarkedNullable: Boolean
+    abstract override val source: KtSourceElement
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitDynamicTypeRef(this, data)

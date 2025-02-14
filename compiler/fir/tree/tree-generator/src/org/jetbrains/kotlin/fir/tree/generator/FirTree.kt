@@ -1164,6 +1164,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val dynamicTypeRef: Element by element(TypeRefElement) {
         parent(typeRefWithNullability)
+        +field("source", sourceElementType, nullable = false)
     }
 
     val implicitTypeRef: Element by element(TypeRefElement) {
