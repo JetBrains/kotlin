@@ -1,10 +1,9 @@
 // FIR_IDENTICAL
 // SKIP_K1
 // WITH_STDLIB
-// IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-expect internal <!CONFLICTING_OVERLOADS!>fun foo()<!>
+expect internal fun foo()
 expect class Foo {
     internal fun foo()
 }
