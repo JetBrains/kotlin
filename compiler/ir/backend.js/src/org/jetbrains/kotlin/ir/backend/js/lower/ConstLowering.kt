@@ -33,16 +33,16 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
         vararg args: C
     ): IrExpression {
         val constructor = irClass.constructors.single { it.owner.isPrimary }
-        val argType = constructor.owner.valueParameters.first().type
+        val argType = constructor.owner.parameters[0].type
 
         return IrConstructorCallImpl.fromSymbolOwner(
-                expression.startOffset,
-                expression.endOffset,
-                irClass.defaultType,
-                constructor
-            ).apply {
+            expression.startOffset,
+            expression.endOffset,
+            irClass.defaultType,
+            constructor
+        ).apply {
             for (i in args.indices) {
-                putValueArgument(i, carrierFactory(startOffset, endOffset, argType, args[i]))
+                arguments[i] = carrierFactory(startOffset, endOffset, argType, args[i])
             }
         }
     }
