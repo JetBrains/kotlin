@@ -21,8 +21,11 @@ import kotlin.collections.set
  */
 abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presentableName: String) {
     private val thread: Thread = Thread.currentThread()
+    private val threadMXBean = ManagementFactory.getThreadMXBean().also { it.isThreadCpuTimeEnabled = true }
 
-    private fun currentTime(): Time = Time(System.nanoTime())
+    private fun currentTime(): Time {
+        return Time(System.nanoTime(), threadMXBean.currentThreadUserTime, threadMXBean.currentThreadCpuTime)
+    }
 
     private var currentPhaseType: PhaseMeasurementType = PhaseMeasurementType.Initialization
     private var phaseStartTime: Time? = currentTime()

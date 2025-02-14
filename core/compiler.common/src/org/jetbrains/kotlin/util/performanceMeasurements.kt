@@ -21,21 +21,20 @@ enum class PhaseMeasurementType {
  * Currently it holds only `System.nanoTime()` but later it can be adopted to hold User or CPU time as well
  * that might be useful for time measurements in multithread mode.
  */
-@JvmInline
-value class Time(val nanoseconds: Long) {
+class Time(val nanoseconds: Long, val userTimeNs: Long, val cpuTimeNs: Long) {
     companion object {
-        val ZERO = Time(0)
+        val ZERO = Time(0, 0, 0)
     }
 
     val milliseconds: Long
         get() = nanoseconds / 1_000_000L
 
     operator fun plus(other: Time): Time {
-        return Time(nanoseconds + other.nanoseconds)
+        return Time(nanoseconds + other.nanoseconds, userTimeNs + other.userTimeNs, cpuTimeNs + other.cpuTimeNs)
     }
 
     operator fun minus(other: Time): Time {
-        return Time(nanoseconds - other.nanoseconds)
+        return Time(nanoseconds - other.nanoseconds, userTimeNs - other.userTimeNs, cpuTimeNs - other.cpuTimeNs)
     }
 }
 
