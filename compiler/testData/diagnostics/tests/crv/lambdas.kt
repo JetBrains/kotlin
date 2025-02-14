@@ -24,7 +24,7 @@ fun main() {
         stringF() // used
     }
     unitLambda {
-        stringF() // TODO: unused because of coercion, not supported for now
+        stringF()
     }
     stringLambdaReturns {
         stringF()
