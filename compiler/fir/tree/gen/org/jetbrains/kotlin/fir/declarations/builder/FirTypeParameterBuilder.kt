@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.types.Variance
 
 @FirBuilderDsl
 class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin

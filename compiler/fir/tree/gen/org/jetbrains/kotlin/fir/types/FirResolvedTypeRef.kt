@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.mpp.TypeRefMarker
 abstract class FirResolvedTypeRef : FirTypeRef(), TypeRefMarker {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
+    abstract override val customRenderer: Boolean
     abstract val coneType: ConeKotlinType
     abstract val delegatedTypeRef: FirTypeRef?
 

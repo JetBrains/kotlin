@@ -15,7 +15,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         val annotationContainerBuilder by builder {
-            fields from annotationContainer
+            fields from annotationContainer without "source"
         }
 
         val expressionBuilder by builder {

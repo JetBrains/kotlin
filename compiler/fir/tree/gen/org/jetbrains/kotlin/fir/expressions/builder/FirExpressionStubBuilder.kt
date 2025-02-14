@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
 class FirExpressionStubBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+    var source: KtSourceElement? = null
     var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
 

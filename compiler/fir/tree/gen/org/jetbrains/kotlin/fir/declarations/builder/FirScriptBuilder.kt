@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirScriptBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var moduleData: FirModuleData
@@ -32,6 +31,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
     val declarations: MutableList<FirDeclaration> = mutableListOf()
+    lateinit var source: KtSourceElement
     lateinit var symbol: FirScriptSymbol
     val parameters: MutableList<FirProperty> = mutableListOf()
     val receivers: MutableList<FirScriptReceiverParameter> = mutableListOf()
@@ -39,7 +39,6 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
 
     override fun build(): FirScript {
         return FirScriptImpl(
-            source,
             resolvePhase,
             annotations.toMutableOrEmpty(),
             moduleData,
@@ -47,6 +46,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
             attributes,
             name,
             declarations,
+            source,
             symbol,
             parameters,
             receivers.toMutableOrEmpty(),
@@ -70,7 +70,6 @@ inline fun buildScriptCopy(original: FirScript, init: FirScriptBuilder.() -> Uni
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirScriptBuilder()
-    copyBuilder.source = original.source
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.moduleData = original.moduleData
@@ -78,6 +77,7 @@ inline fun buildScriptCopy(original: FirScript, init: FirScriptBuilder.() -> Uni
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
+    copyBuilder.source = original.source
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.receivers.addAll(original.receivers)
     copyBuilder.resultPropertyName = original.resultPropertyName

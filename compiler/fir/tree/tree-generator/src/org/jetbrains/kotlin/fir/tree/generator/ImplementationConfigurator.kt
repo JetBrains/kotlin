@@ -542,6 +542,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedTypeRef) {
             publicImplementation()
+            defaultFalse("customRenderer", withGetter = true)
         }
 
         impl(errorExpression) {
@@ -560,7 +561,15 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             additionalImports(errorTypeRefImplType)
         }
 
-        impl(functionTypeRef)
+        impl(functionTypeRef) {
+            defaultFalse("customRenderer", withGetter = true)
+        }
+        impl(dynamicTypeRef) {
+            defaultFalse("customRenderer", withGetter = true)
+        }
+        impl(intersectionTypeRef) {
+            defaultFalse("customRenderer", withGetter = true)
+        }
         noImpl(implicitTypeRef)
 
         impl(reference, "FirStubReference") {

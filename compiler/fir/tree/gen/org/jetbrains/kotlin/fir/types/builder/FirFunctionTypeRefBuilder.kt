@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.types.impl.FirFunctionTypeRefImpl
 
 @FirBuilderDsl
 class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    lateinit var source: KtSourceElement
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var receiverTypeRef: FirTypeRef? = null
     val parameters: MutableList<FirFunctionTypeParameter> = mutableListOf()
@@ -34,8 +34,8 @@ class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
 
     override fun build(): FirFunctionTypeRef {
         return FirFunctionTypeRefImpl(
-            source,
             annotations.toMutableOrEmpty(),
+            source,
             isMarkedNullable,
             receiverTypeRef,
             parameters,
@@ -61,8 +61,8 @@ inline fun buildFunctionTypeRefCopy(original: FirFunctionTypeRef, init: FirFunct
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirFunctionTypeRefBuilder()
-    copyBuilder.source = original.source
     copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.source = original.source
     copyBuilder.isMarkedNullable = original.isMarkedNullable
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.parameters.addAll(original.parameters)

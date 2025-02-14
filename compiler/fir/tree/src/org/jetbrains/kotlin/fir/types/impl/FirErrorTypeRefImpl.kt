@@ -30,6 +30,9 @@ internal class FirErrorTypeRefImpl(
     override val diagnostic: ConeDiagnostic,
     override var partiallyResolvedTypeRef: FirTypeRef? = null,
 ) : FirErrorTypeRef() {
+    override val customRenderer: Boolean
+        get() = false
+
     override val coneType: ConeKotlinType = typeOrNull ?: ConeErrorType(diagnostic)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

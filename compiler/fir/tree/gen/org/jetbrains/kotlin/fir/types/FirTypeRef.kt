@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeRef]
  */
-sealed class FirTypeRef : FirPureAbstractElement(), FirAnnotationContainer {
+abstract class FirTypeRef : FirPureAbstractElement(), FirAnnotationContainer {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
+    abstract val customRenderer: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitTypeRef(this, data)

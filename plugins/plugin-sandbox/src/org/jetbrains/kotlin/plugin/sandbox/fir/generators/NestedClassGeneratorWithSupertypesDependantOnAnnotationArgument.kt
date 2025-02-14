@@ -24,10 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
-import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
@@ -102,8 +98,17 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
         val annotation = container.annotations.getAnnotationByClassId(ANNOTATION_ID, session) as? FirAnnotationCall ?: return emptyList()
         val getClassCall = annotation.arguments.singleOrNull() as? FirGetClassCall ?: return emptyList()
         val qualifierParts = createQualifier(getClassCall.argument) ?: return emptyList()
-        val unresolvedType = createUserType(qualifierParts)
-        return listOf(typeResolver.resolveUserType(unresolvedType))
+        return listOf(
+            resolvedTypeRefFromQualifierParts(
+                isMarkedNullable = false,
+                source = klass.source!!,
+                typeResolver = typeResolver
+            ) {
+                for (name in qualifierParts) {
+                    part(name)
+                }
+            }
+        )
     }
 
     private fun createQualifier(argument: FirExpression): List<Name>? {
@@ -118,15 +123,6 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
 
         createQualifierImpl(argument)
         return result.takeIf { it.isNotEmpty() }
-    }
-
-    private fun createUserType(qualifierParts: List<Name>): FirUserTypeRef {
-        return buildUserTypeRef {
-            isMarkedNullable = false
-            qualifierParts.mapTo(qualifier) {
-                FirQualifierPartImpl(source = null, it, typeArgumentList = FirTypeArgumentListImpl(source = null))
-            }
-        }
     }
 }
 
