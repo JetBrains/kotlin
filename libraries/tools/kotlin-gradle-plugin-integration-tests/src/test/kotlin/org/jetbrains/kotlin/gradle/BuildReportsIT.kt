@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.statistics.formatSize
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -108,7 +109,7 @@ class BuildReportsIT : KGPBaseTest() {
             "kotlin-js-plugin-project",
             "compileKotlinJs",
             gradleVersion,
-            languageVersion = KotlinVersion.KOTLIN_1_7.version
+            languageVersion = LanguageVersion.LATEST_STABLE.versionString,
         )
     }
 

@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
@@ -24,7 +25,11 @@ class UpToDateIT : KGPBaseTest() {
             gradleVersion,
             propertyMutationChain(
                 "compileKotlin.kotlinOptions.languageVersion",
-                "null", "'1.9'", "'1.8'", "'1.7'", "null"
+                "null",
+                LanguageVersion.LATEST_STABLE.versionString,
+                LanguageVersion.FIRST_NON_DEPRECATED.versionString,
+                LanguageVersion.FIRST_SUPPORTED.versionString,
+                "null"
             )
         )
     }
@@ -36,7 +41,11 @@ class UpToDateIT : KGPBaseTest() {
             gradleVersion,
             propertyMutationChain(
                 "compileKotlin.kotlinOptions.apiVersion",
-                "null", "'1.9'", "'1.8'", "'1.7'", "null"
+                "null",
+                LanguageVersion.LATEST_STABLE.versionString,
+                LanguageVersion.FIRST_NON_DEPRECATED.versionString,
+                LanguageVersion.FIRST_SUPPORTED.versionString,
+                "null",
             )
         )
     }

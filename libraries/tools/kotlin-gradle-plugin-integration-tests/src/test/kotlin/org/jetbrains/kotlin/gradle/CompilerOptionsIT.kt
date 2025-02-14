@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.fir.declarations.builder.buildScript
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
@@ -18,6 +19,8 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 internal class CompilerOptionsIT : KGPBaseTest() {
+    private val firstNonDeprecatedKotlinVersion = LanguageVersion.FIRST_NON_DEPRECATED.asKotlinVersion()
+    private val latestStableKotlinVersion = LanguageVersion.LATEST_STABLE.asKotlinVersion()
 
     // In Gradle 7.3-8.0 'kotlin-dsl' plugin tries to set up freeCompilerArgs in doFirst task action
     // Related issue: https://github.com/gradle/gradle/issues/22091
@@ -48,8 +51,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                     afterEvaluate {
                         tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
                             // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-                            compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
-                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
+                            compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${latestStableKotlinVersion.name})
+                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${latestStableKotlinVersion.name})
                         }
                     }
                     """.trimIndent()
@@ -497,8 +500,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """
                 |
                 |kotlin.sourceSets.configureEach {
-                |    languageSettings.apiVersion = "1.7"
-                |    languageSettings.languageVersion = "1.8"
+                |    languageSettings.apiVersion = "${firstNonDeprecatedKotlinVersion.version}"
+                |    languageSettings.languageVersion = "${latestStableKotlinVersion.version}"
                 |}
                 |
                 |tasks.register("printCompilerOptions") {
@@ -526,8 +529,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 "compileKotlinIosArm64"
             ).forEach { task ->
                 build("printCompilerOptions", "-PkotlinTaskToCheck=$task") {
-                    assertOutputContains("###AV:KOTLIN_1_7")
-                    assertOutputContains("###LV:KOTLIN_1_8")
+                    assertOutputContains("###AV:${firstNonDeprecatedKotlinVersion.name}")
+                    assertOutputContains("###LV:${latestStableKotlinVersion.name}")
                 }
             }
         }
@@ -545,8 +548,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 |
                 |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).all {
                 |    compilerOptions {
-                |        apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7
-                |        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
+                |        apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${firstNonDeprecatedKotlinVersion.name}
+                |        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${latestStableKotlinVersion.name}
                 |    }
                 |}
                 |
@@ -574,10 +577,12 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 "iosArm64Main",
             ).forEach { sourceSet ->
                 build("printLanguageSettingsOptions", "-PkotlinSourceSet=${sourceSet}") {
-                    assertOutputContains("###AV:1.7")
-                    assertOutputContains("###LV:1.8")
+                    assertOutputContains("###AV:${firstNonDeprecatedKotlinVersion.version}")
+                    assertOutputContains("###LV:${latestStableKotlinVersion.version}")
                 }
             }
         }
     }
 }
+
+internal fun LanguageVersion.asKotlinVersion() = KotlinVersion.fromVersion(versionString)
