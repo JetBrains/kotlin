@@ -215,7 +215,7 @@ where advanced options include:
                              Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xsuppress-warning=<WARNING_NAME>
-                             Suppress specified warning module-wide.
+                             Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
