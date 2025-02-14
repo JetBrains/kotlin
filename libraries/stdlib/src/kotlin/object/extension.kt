@@ -30,7 +30,7 @@ import kotlin.contracts.contract
  * }
  * ```
  *
- * @see kotlin.contracts.Contract
+ * @see kotlin.contracts.contract
  */
 public fun <T> T.isNotNull(): Boolean {
     contract {
