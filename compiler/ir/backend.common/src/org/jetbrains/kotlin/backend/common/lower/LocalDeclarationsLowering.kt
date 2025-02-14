@@ -9,13 +9,12 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.capturedFields
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.ScopeWithCounter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
@@ -55,6 +53,8 @@ interface VisibilityPolicy {
 val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
 val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
+
+private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(followAttributeOwner = false)
 
 /*
  * Moves local declarations into nearest declaration container.
@@ -125,15 +125,9 @@ open class LocalDeclarationsLowering(
         val usedLocalFunctionNames: MutableSet<Name> = hashSetOf()
     }
 
-    internal class LocalScopeWithCounterMap {
-        val scopeMap: MutableMap<IrSymbolOwner, ScopeWithCounter> = hashMapOf()
-    }
-
     // Need to keep LocalFunctionContext.index
-    private val IrSymbolOwner.scopeWithCounter: ScopeWithCounter
-        get() = context.ir.localScopeWithCounterMap.scopeMap.getOrPut(this) {
-            ScopeWithCounter(this)
-        }
+    private fun IrSymbolOwner.getOrCreateScopeWithCounter(): ScopeWithCounter =
+        scopeWithCounter ?: ScopeWithCounter(this).also { scopeWithCounter = it }
 
     abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
@@ -1093,9 +1087,9 @@ open class LocalDeclarationsLowering(
 
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) {
                         val enclosingScope = data.currentClass
-                            ?: enclosingClass?.scopeWithCounter
+                            ?: enclosingClass?.getOrCreateScopeWithCounter()
                             // File is required for K/N because file declarations are not split by classes.
-                            ?: enclosingPackageFragment.scopeWithCounter
+                            ?: enclosingPackageFragment.getOrCreateScopeWithCounter()
                         val index =
                             if (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
                                 enclosingScope.counter++
