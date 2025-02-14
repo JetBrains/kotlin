@@ -53,6 +53,9 @@ public final class kotlin/ExceptionsKt {
 	public static final fun stackTraceToString (Ljava/lang/Throwable;)Ljava/lang/String;
 }
 
+public abstract interface annotation class kotlin/ExperimentalExpectRefinement : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExperimentalMultiplatform : java/lang/annotation/Annotation {
 }
 
