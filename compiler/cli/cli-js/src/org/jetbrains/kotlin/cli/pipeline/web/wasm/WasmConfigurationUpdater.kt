@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.js.config.wasmCompilation
+import org.jetbrains.kotlin.platform.wasm.WasmMultimoduleMode
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
@@ -50,6 +51,10 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         configuration.put(WasmConfigurationKeys.WASM_USE_JS_TAG, arguments.wasmUseJsTag ?: arguments.wasmUseNewExceptionProposal)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, arguments.forceDebugFriendlyCompilation)
+        configuration.put(
+            WasmConfigurationKeys.WASM_MULTIMODULE_MODE,
+            arguments.wasmMultimoduleCompilationMode?.let { WasmMultimoduleMode.fromName(it) } ?: WasmMultimoduleMode.NONE
+        )
         configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
         configuration.putIfNotNull(WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE, arguments.irDceDumpDeclarationIrSizesToFile)
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization

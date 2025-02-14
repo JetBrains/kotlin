@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.StronglyConnectedComponents
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.jetbrains.kotlin.wasm.ir.*
 
-typealias RecursiveTypeGroup = List<WasmTypeDeclaration>
+typealias RecursiveTypeGroup = MutableList<WasmTypeDeclaration>
 
 private fun WasmType.toTypeDeclaration(): WasmTypeDeclaration? {
     val heapType = when (val type = this) {
@@ -54,17 +54,10 @@ private fun wasmTypeDeclarationOrderKey(declaration: WasmTypeDeclaration): Int {
 }
 
 
-fun createRecursiveTypeGroups(types: Sequence<WasmTypeDeclaration>): List<RecursiveTypeGroup> {
+fun createRecursiveTypeGroups(types: Sequence<WasmTypeDeclaration>): MutableList<RecursiveTypeGroup> {
     val componentFinder = StronglyConnectedComponents(::dependencyTypes)
     types.forEach(componentFinder::visit)
-
-    val components = componentFinder.findComponents()
-
-    components.forEach { component ->
-        component.sortBy(::wasmTypeDeclarationOrderKey)
-    }
-
-    return components
+    return componentFinder.findComponents()
 }
 
 private fun typeFingerprint(type: WasmType, currentHash: Hash128Bits, visited: MutableSet<WasmTypeDeclaration>): Hash128Bits {
@@ -129,31 +122,62 @@ private val indexes = arrayOf(
     WasmStructRef,
 )
 
-internal fun encodeIndex(index: Int): List<WasmStructFieldDeclaration> {
+internal fun encodeIndex(index: UInt): List<WasmStructFieldDeclaration> {
     var current = index
     val result = mutableListOf<WasmStructFieldDeclaration>()
     //i31 type is not used by kotlin/wasm, so mixin index would never clash with regular signature
     result.add(WasmStructFieldDeclaration("", WasmI31Ref, false))
-    while (current != 0) {
-        result.add(WasmStructFieldDeclaration("", indexes[current % 10], false))
-        current /= 10
+    while (current != 0U) {
+        result.add(WasmStructFieldDeclaration("", indexes[(current % 10U).toInt()], false))
+        current /= 10U
     }
     return result
 }
 
-internal fun addMixInGroup(group: RecursiveTypeGroup, mixInIndexesForGroups: MutableMap<Hash128Bits, Int>): RecursiveTypeGroup {
-    val firstDeclaration = group.firstOrNull() ?: return group
+internal fun canonicalSort(group: RecursiveTypeGroup, stableSort: Boolean) {
+    if (group.size == 1) return
+    if (stableSort) {
+        group.sortWith(WasmTypeDeclaratorByFingerprint())
+    }
+    group.sortBy(::wasmTypeDeclarationOrderKey)
+}
 
-    val fingerprint = wasmDeclarationFingerprint(firstDeclaration, Hash128Bits(), visited = mutableSetOf())
+private class WasmTypeDeclaratorByFingerprint : Comparator<WasmTypeDeclaration> {
+    private val fingerprintCache = mutableMapOf<WasmTypeDeclaration, Hash128Bits>()
 
-    val groupIndex = mixInIndexesForGroups[fingerprint]
-    if (groupIndex != null) {
-        val nextIndex = groupIndex + 1
-        mixInIndexesForGroups[fingerprint] = nextIndex
-        val mixIn = WasmStructDeclaration("mixin_$nextIndex", encodeIndex(nextIndex), null, true)
-        return group + mixIn
-    } else {
-        mixInIndexesForGroups[fingerprint] = 0
-        return group
+    private fun getFingerprint(type: WasmTypeDeclaration) = fingerprintCache.getOrPut(type) {
+        wasmDeclarationFingerprint(type, Hash128Bits(), visited = mutableSetOf())
+    }
+
+    private fun diff(x: ULong, y: ULong): Int {
+        if (x == y) return 0
+        return if (x > y) {
+            val diff = x - y
+            if (diff > Int.MAX_VALUE.toUInt()) {
+                Int.MAX_VALUE
+            } else {
+                (x - y).toInt()
+            }
+        } else {
+            val diff = y - x
+            if (diff > Int.MAX_VALUE.toUInt()) {
+                Int.MIN_VALUE
+            } else {
+                -diff.toInt()
+            }
+        }
+    }
+
+    override fun compare(
+        o1: WasmTypeDeclaration,
+        o2: WasmTypeDeclaration,
+    ): Int {
+        val o1Hash = getFingerprint(o1)
+        val o2Hash = getFingerprint(o2)
+        return if (o1Hash.highBytes == o2Hash.highBytes) {
+            diff(o1Hash.lowBytes, o2Hash.lowBytes)
+        } else {
+            diff(o1Hash.highBytes, o2Hash.highBytes)
+        }
     }
 }

@@ -10,15 +10,32 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
 
-class WasmFileCodegenContext(
+
+enum class TypeGlobalImportPrefix(val prefix: String) {
+    VTABLE("vtable_"),
+    ITABLE("itable_"),
+    RTTI("rtti_"),
+}
+
+const val FunctionImportPrefix = "func_"
+
+open class WasmFileCodegenContext(
     private val wasmFileFragment: WasmCompiledFileFragment,
-    private val idSignatureRetriever: IdSignatureRetriever,
+    protected val idSignatureRetriever: IdSignatureRetriever,
 ) {
+    open fun handleFunctionWithImport(declaration: IrFunctionSymbol): Boolean = false
+    open fun handleVTableWithImport(declaration: IrClassSymbol): Boolean = false
+    open fun handleClassITableWithImport(declaration: IrClassSymbol): Boolean = false
+    open fun handleRTTIWithImport(declaration: IrClassSymbol, superType: IrClassSymbol?): Boolean = false
+
     private fun IrSymbol.getReferenceKey(): IdSignature =
         idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)!!
 
@@ -38,7 +55,7 @@ class WasmFileCodegenContext(
     private fun IrClassSymbol.getSignature(): IdSignature =
         idSignatureRetriever.declarationSignature(this.owner)!!
 
-    fun defineFunction(irFunction: IrFunctionSymbol, wasmFunction: WasmFunction) {
+    open fun defineFunction(irFunction: IrFunctionSymbol, wasmFunction: WasmFunction) {
         wasmFileFragment.functions.define(irFunction.getReferenceKey(), wasmFunction)
     }
 
@@ -46,11 +63,11 @@ class WasmFileCodegenContext(
         wasmFileFragment.globalFields.define(irField.getReferenceKey(), wasmGlobal)
     }
 
-    fun defineGlobalVTable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
+    open fun defineGlobalVTable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
         wasmFileFragment.globalVTables.define(irClass.getReferenceKey(), wasmGlobal)
     }
 
-    fun defineGlobalClassITable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
+    open fun defineGlobalClassITable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
         wasmFileFragment.globalClassITables.define(irClass.getReferenceKey(), wasmGlobal)
     }
 
@@ -179,7 +196,7 @@ class WasmFileCodegenContext(
 
     val rttiType: WasmSymbol<WasmStructDeclaration> get() = rttiElements.rttiType
 
-    fun defineRttiGlobal(global: WasmGlobal, irClass: IrClassSymbol, irSuperClass: IrClassSymbol?) {
+    open fun defineRttiGlobal(global: WasmGlobal, irClass: IrClassSymbol, irSuperClass: IrClassSymbol?) {
         rttiElements.globals.add(
             RttiGlobal(
                 global = global,

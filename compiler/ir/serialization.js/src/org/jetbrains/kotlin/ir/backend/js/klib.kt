@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.*
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -211,6 +213,92 @@ fun loadIr(
             ) { depsDescriptors.getModuleDescriptor(it) }
         }
     }
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun loadIrForMultimoduleMode(
+    depsDescriptors: ModulesStructure,
+    irFactory: IrFactory,
+    masterDeserializer: (JsIrLinker, ModuleDescriptor, KotlinLibrary) -> IrModuleFragment,
+    slaveDeserializer: (JsIrLinker, ModuleDescriptor, KotlinLibrary) -> IrModuleFragment,
+): IrModuleInfo {
+    val mainModule = depsDescriptors.mainModule
+    val configuration = depsDescriptors.compilerConfiguration
+    val allDependencies = depsDescriptors.allDependencies
+    val messageCollector = configuration.messageCollector
+
+    val signaturer = IdSignatureDescriptor(JsManglerDesc)
+    val symbolTable = SymbolTable(signaturer, irFactory)
+
+    check(mainModule is MainModule.Klib)
+
+    val mainPath = File(mainModule.libPath).canonicalPath
+    val mainModuleLibA = allDependencies.find { it.libraryFile.canonicalPath == mainPath }
+        ?: error("No module with ${mainModule.libPath} found")
+    val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModuleLibA)
+    val sortedDependencies = sortDependencies(depsDescriptors.moduleDependencies)
+    val friendModules = mapOf(mainModuleLibA.uniqueName to depsDescriptors.friendDependencies.map { it.uniqueName })
+
+    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
+    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+
+    val irLinker = JsIrLinker(
+        currentModule = null,
+        messageCollector = messageCollector,
+        builtIns = irBuiltIns,
+        symbolTable = symbolTable,
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = PartialLinkageConfig.DEFAULT,
+            builtIns = irBuiltIns,
+            messageCollector = messageCollector
+        ),
+        icData = null,
+        friendModules = friendModules
+    )
+
+    val stdlibDependency = sortedDependencies.first()
+    val mainDependency = sortedDependencies.last()
+
+    val deserializedFragments = mutableListOf<IrModuleFragment>()
+
+    val deserializedStdlib = masterDeserializer(
+        irLinker,
+        depsDescriptors.getModuleDescriptor(stdlibDependency),
+        stdlibDependency
+    )
+    deserializedFragments.add(deserializedStdlib)
+
+    sortedDependencies.forEach { klib ->
+        if (klib != stdlibDependency && klib != mainDependency) {
+            deserializedFragments.add(
+                masterDeserializer(irLinker, depsDescriptors.getModuleDescriptor(klib), klib)
+            )
+        }
+    }
+
+    val deserializedMain = slaveDeserializer(irLinker, depsDescriptors.getModuleDescriptor(mainDependency), mainDependency)
+    deserializedFragments.add(deserializedMain)
+
+    irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
+        irBuiltIns = irBuiltIns,
+        symbolTable = symbolTable,
+        typeTranslator = typeTranslator,
+        getPackageFragment = FunctionTypeInterfacePackages().makePackageAccessor(deserializedStdlib),
+        referenceFunctionsWhenKFunctionAreReferenced = true
+    )
+
+    irLinker.init(null)
+    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+    irLinker.postProcess(inOrAfterLinkageStep = true)
+
+    return IrModuleInfo(
+        deserializedMain,
+        deserializedFragments,
+        irBuiltIns,
+        symbolTable,
+        irLinker,
+        emptyMap()
+    )
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

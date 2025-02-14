@@ -36,6 +36,8 @@ class DeclarationGenerator(
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
+    private val useStringPool: Boolean = true,
+    private val inlineUnitGetter: Boolean = true,
 ) : IrVisitorVoid() {
 
     // Shortcuts
@@ -96,8 +98,9 @@ class DeclarationGenerator(
             "Sanity check that $declaration is a real function that can be used in calls"
         }
 
-        val functionTypeSymbol = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
+        if (wasmFileCodegenContext.handleFunctionWithImport(declaration.symbol)) return
 
+        val functionTypeSymbol = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
         val wasmImportModule = declaration.getWasmImportDescriptor()
         val jsCode = declaration.getJsFunAnnotation()
 
@@ -159,6 +162,8 @@ class DeclarationGenerator(
             functionCodegenContext,
             wasmModuleMetadataCache,
             wasmModuleTypeTransformer,
+            useStringPool,
+            inlineUnitGetter,
         )
 
         val declarationBody = declaration.body
@@ -311,6 +316,8 @@ class DeclarationGenerator(
 
         if (klass.isAbstractOrSealed) return
 
+        if (wasmFileCodegenContext.handleVTableWithImport(symbol)) return
+
         val vTableTypeReference = wasmFileCodegenContext.referenceVTableGcType(symbol)
         val vTableRefGcType = WasmRefType(WasmHeapType.Type(vTableTypeReference))
 
@@ -365,16 +372,7 @@ class DeclarationGenerator(
         val symbol = klass.symbol
         val superType = klass.getSuperClass(irBuiltIns)?.symbol
 
-        val fqnShouldBeEmitted = backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
-        val qualifier =
-            if (fqnShouldBeEmitted) {
-                (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
-            } else {
-                ""
-            }
-        val simpleName = klass.name.asString()
-        val (packageNameAddress, packageNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(qualifier)
-        val (simpleNameAddress, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
+        if (wasmFileCodegenContext.handleRTTIWithImport(symbol, superType)) return
 
         val location = SourceLocation.NoLocation("Create instance of rtti struct")
         val initRttiGlobal = buildWasmExpression {
@@ -385,13 +383,33 @@ class DeclarationGenerator(
                 buildRefNull(WasmHeapType.Simple.None, location)
             }
 
-            buildConstI32Symbol(packageNameAddress, location)
-            buildConstI32(qualifier.length, location)
-            buildConstI32Symbol(packageNamePoolId, location)
+            if (useStringPool) {
+                val fqnShouldBeEmitted = backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
+                val qualifier =
+                    if (fqnShouldBeEmitted) {
+                        (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
+                    } else {
+                        ""
+                    }
+                val simpleName = klass.name.asString()
+                val (packageNameAddress, packageNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(qualifier)
+                val (simpleNameAddress, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
 
-            buildConstI32Symbol(simpleNameAddress, location)
-            buildConstI32(simpleName.length, location)
-            buildConstI32Symbol(simpleNamePoolId, location)
+                buildConstI32Symbol(packageNameAddress, location)
+                buildConstI32(qualifier.length, location)
+                buildConstI32Symbol(packageNamePoolId, location)
+
+                buildConstI32Symbol(simpleNameAddress, location)
+                buildConstI32(simpleName.length, location)
+                buildConstI32Symbol(simpleNamePoolId, location)
+            } else {
+                buildConstI32(-1, location)
+                buildConstI32(-1, location)
+                buildConstI32(-1, location)
+                buildConstI32(-1, location)
+                buildConstI32(-1, location)
+                buildConstI32(-1, location)
+            }
 
             buildConstI64(wasmFileCodegenContext.referenceTypeId(symbol), location)
 
@@ -412,6 +430,8 @@ class DeclarationGenerator(
         val klass = metadata.klass
         if (klass.isAbstractOrSealed) return
         if (!klass.hasInterfaceSuperClass()) return
+
+        if (wasmFileCodegenContext.handleClassITableWithImport(klass.symbol)) return
 
         val location = SourceLocation.NoLocation("Create instance of itable struct")
 
@@ -535,7 +555,6 @@ class DeclarationGenerator(
     override fun visitField(declaration: IrField) {
         // Member fields are generated as part of struct type
         if (!declaration.isStatic) return
-
         val wasmType = wasmModuleTypeTransformer.transformType(declaration.type)
 
         val initBody = mutableListOf<WasmInstr>()
@@ -549,7 +568,8 @@ class DeclarationGenerator(
                     wasmExpressionGenerator,
                     wasmFileCodegenContext,
                     backendContext,
-                    initValue.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+                    initValue.getSourceLocation(declaration.symbol, declaration.fileOrNull),
+                    useStringPool,
                 )
             } else {
                 val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())
@@ -567,6 +587,8 @@ class DeclarationGenerator(
                     functionCodegenContext,
                     wasmModuleMetadataCache,
                     wasmModuleTypeTransformer,
+                    useStringPool,
+                    inlineUnitGetter,
                 )
                 bodyGenerator.generateExpression(initValue)
                 wasmFileCodegenContext.addFieldInitializer(
@@ -625,7 +647,8 @@ fun generateConstExpression(
     body: WasmExpressionBuilder,
     context: WasmFileCodegenContext,
     backendContext: WasmBackendContext,
-    location: SourceLocation
+    location: SourceLocation,
+    useStringPool: Boolean,
 ) =
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
@@ -643,12 +666,28 @@ fun generateConstExpression(
         is IrConstKind.Double -> body.buildConstF64(expression.value as Double, location)
         is IrConstKind.String -> {
             val stringValue = expression.value as String
-            val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+
             body.commentGroupStart { "const string: \"$stringValue\"" }
-            body.buildConstI32Symbol(literalPoolId, location)
-            body.buildConstI32Symbol(literalAddress, location)
-            body.buildConstI32(stringValue.length, location)
-            body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteral), location)
+
+            val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+            if (useStringPool) {
+                body.buildConstI32Symbol(literalPoolId, location)
+                body.buildConstI32Symbol(literalAddress, location)
+                body.buildConstI32(stringValue.length, location)
+                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteral), location)
+            } else {
+                body.buildConstI32Symbol(literalAddress, location)
+                body.buildConstI32(stringValue.length, location)
+
+                val createString = backendContext.wasmSymbols.createString
+                val wasmCharArrayType = createString.owner.parameters[0].type
+                val arrayGcType = WasmImmediate.GcType(
+                    context.referenceGcType(wasmCharArrayType.getRuntimeClass(backendContext.irBuiltIns).symbol)
+                )
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
+                body.buildCall(context.referenceFunction(createString), location)
+            }
+
             body.commentGroupEnd()
         }
     }

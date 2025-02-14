@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.config;
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
+import org.jetbrains.kotlin.platform.wasm.WasmMultimoduleMode;
 import org.jetbrains.kotlin.platform.wasm.WasmTarget;
 
 public class WasmConfigurationKeys {
@@ -41,4 +42,7 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_FORCE_DEBUG_FRIENDLY_COMPILATION =
             CompilerConfigurationKey.create("avoid optimizations that can break debugging.");
+
+    public static final CompilerConfigurationKey<WasmMultimoduleMode> WASM_MULTIMODULE_MODE =
+            CompilerConfigurationKey.create("set multimodule compilation mode.");
 }
