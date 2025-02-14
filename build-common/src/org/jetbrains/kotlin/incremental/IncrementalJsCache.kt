@@ -336,7 +336,7 @@ private class IrTranslationResultMap(
         fqn: ByteArray,
         newFileMetadata: ByteArray,
         debugInfos: ByteArray?,
-        fileEntries: ByteArray?,
+        fileEntries: ByteArray,
     ) {
         this[sourceFile] =
             IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries)

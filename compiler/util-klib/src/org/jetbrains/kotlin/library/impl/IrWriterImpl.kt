@@ -58,8 +58,6 @@ class IrPerFileWriterImpl(_irLayout: IrKotlinLibraryLayout) : IrWriterImpl(_irLa
         irLayout.irSignatures(fileDir).writeBytes(file.signatures)
         irLayout.irStrings(fileDir).writeBytes(file.strings)
         irLayout.irBodies(fileDir).writeBytes(file.bodies)
-        file.fileEntries?.let {
-            irLayout.irFileEntries(fileDir).writeBytes(it)
-        }
+        irLayout.irFileEntries(fileDir).writeBytes(file.fileEntries)
     }
 }

@@ -54,9 +54,7 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             val withSignaturesHash = cityHash128WithSeed(withTypesHash, file.signatures)
             val withStringsHash = cityHash128WithSeed(withSignaturesHash, file.strings)
             val withBodiesHash = cityHash128WithSeed(withStringsHash, file.bodies)
-            val withFileEntriesHash = withBodiesHash.applyIf(file.fileEntries != null) {
-                cityHash128WithSeed(this, file.fileEntries!!)
-            }
+            val withFileEntriesHash = cityHash128WithSeed(withBodiesHash, file.fileEntries)
             return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, file.declarations))
         }
 
