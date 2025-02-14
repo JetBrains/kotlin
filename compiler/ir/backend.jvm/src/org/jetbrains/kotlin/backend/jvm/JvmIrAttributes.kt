@@ -15,7 +15,17 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
-var IrElement.localClassType: Type? by irAttribute(copyByDefault = true)
+private var IrElement._localClassType: Type? by irAttribute(copyByDefault = true)
+// This sort of a hack for IR inliner case, where IrFunctionExpression stores and "shares" localClassType
+// between IrFunctionReferences that are lowered from this IrFunctionExpression, but linked to it via attributeOwnerId.
+// It can be changed to simply store the attribute on the function reference itself when either:
+// - IR inliner (-Xserialize-ir) is dropped, or
+// - IrFunctionExpression is dropped (KT-74383).
+var IrElement.localClassType: Type?
+    get() = attributeOwnerId._localClassType
+    set(value) {
+        attributeOwnerId._localClassType = value
+    }
 
 var IrFunction.enclosingMethodOverride: IrFunction? by irAttribute(copyByDefault = false)
 
