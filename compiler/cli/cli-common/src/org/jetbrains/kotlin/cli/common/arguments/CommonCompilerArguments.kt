@@ -822,7 +822,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
     @Argument(
         value = "-Xsuppress-warning",
         valueDescription = "<WARNING_NAME>",
-        description = "Suppress specified warning module-wide."
+        description = """Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag"""
     )
     var suppressedDiagnostics: Array<String>? = null
         set(value) {
@@ -915,6 +915,14 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
     private fun HashMap<AnalysisFlag<*>, Any>.fillWarningLevelMap(collector: MessageCollector) {
         val result = buildMap {
             suppressedDiagnostics.orEmpty().associateWithTo(this) { WarningLevel.Disabled }
+            if (suppressedDiagnostics.orEmpty().isNotEmpty()) {
+                val replacement = "-Xwarning-level=${suppressedDiagnostics!!.first()}:disabled"
+                val suffix = if (suppressedDiagnostics!!.size > 1) " (and the same for other warnings)" else ""
+                collector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    """Argument "-Xsuppress-warning" is deprecated. Use "$replacement" instead$suffix"""
+                )
+            }
             for (rawArgument in warningLevels.orEmpty()) {
                 val split = rawArgument.split(":", limit = 2)
                 if (split.size < 2) {
