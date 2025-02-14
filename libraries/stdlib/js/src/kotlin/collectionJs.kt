@@ -48,6 +48,13 @@ internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: A
  */
 public actual fun <T> listOf(element: T): List<T> = ArrayList(arrayOf(element))
 
+/**
+ * Returns a new [ArrayList] from the given Array.
+ */
+@kotlin.internal.InlineOnly
+internal actual inline fun <T> Array<out T>.asArrayList(): ArrayList<T> =
+    ArrayList(this.unsafeCast<Array<Any?>>())
+
 @PublishedApi
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly

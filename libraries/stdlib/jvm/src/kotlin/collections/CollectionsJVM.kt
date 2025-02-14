@@ -20,6 +20,13 @@ import kotlin.internal.InlineOnly
  */
 public actual fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
 
+/**
+ * Returns a new [ArrayList] from the given Array.
+ */
+@kotlin.internal.InlineOnly
+internal actual inline fun <T> Array<out T>.asArrayList(): ArrayList<T> =
+    ArrayList(asCollection(isVarargs = true))
+
 @PublishedApi
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
@@ -121,3 +128,5 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
     }
     return count
 }
+
+
