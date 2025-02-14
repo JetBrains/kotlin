@@ -38,14 +38,14 @@ val FirBlock.lastExpression: FirExpression?
     get() = statements.lastOrNull() as? FirExpression
 
 fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: KtFakeSourceElementKind): R {
-    if (source == null) return this
-    if (source?.kind == newKind) return this
-    return copyWithNewSource(source?.fakeElement(newKind))
+    val source = source ?: return this
+    if (source.kind == newKind) return this
+    return copyWithNewSource(source.fakeElement(newKind))
 }
 
 // do we need a deep copy here ?
-fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement?): R {
-    if (source?.kind == newSource?.kind) return this
+fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
+    if (source?.kind == newSource.kind) return this
 
     @Suppress("UNCHECKED_CAST")
     return when (val typeRef = this) {
@@ -56,16 +56,16 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement?): R {
             source = newSource
         }
         is FirUserTypeRefImpl -> buildUserTypeRef {
-            source = newSource!!
+            source = newSource
             isMarkedNullable = typeRef.isMarkedNullable
             qualifier += typeRef.qualifier
             annotations += typeRef.annotations
         }
         is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(typeRef) {
-            source = newSource!!
+            source = newSource
         }
         is FirDynamicTypeRef -> buildDynamicTypeRef {
-            source = newSource!!
+            source = newSource
             isMarkedNullable = typeRef.isMarkedNullable
             annotations += typeRef.annotations
         }
