@@ -54,8 +54,7 @@ internal object EmptyList : List<Nothing>, Serializable, RandomAccess {
 }
 
 @kotlin.internal.InlineOnly
-expect inline internal fun <T> Array<out T>.asArrayList(): ArrayList<T>
-//= ArrayAsCollection(this, isVarargs = false)
+internal expect inline fun <T> Array<out T>.asArrayList(): ArrayList<T>
 
 internal fun <T> Array<out T>.asCollection(isVarargs: Boolean = false): Collection<T> = ArrayAsCollection(this, isVarargs = isVarargs)
 
