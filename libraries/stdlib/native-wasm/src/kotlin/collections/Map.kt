@@ -20,8 +20,8 @@ package kotlin.collections
  * It is also implementation-specific how [Map] handles `null` keys and values: some [Map] implementations may support them, while
  * other may not. It is recommended to explicitly define key/value nullability policy when implementing [Map].
  *
- * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but [Map] implementations should override these functions and provide implementations such that:
+ * Unlike [Collection] implementations, [Map] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
+ * and provide implementations such that:
  * - [Map.toString] should return a string containing string representation of contained key-value pairs in iteration order.
  * - [Map.equals] should consider two maps equal if and only if they contain the same keys and values associated with these keys
  *   are equal. Unlike some other `equals` implementations, [Map.equals] should consider two maps equal even

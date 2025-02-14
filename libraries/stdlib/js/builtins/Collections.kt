@@ -208,8 +208,8 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
  *
  * Unlike [Set], lists can contain duplicate elements.
  *
- * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but [List] implementations should override these functions and provide implementations such that:
+ * Unlike [Collection] implementations, [List] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
+ * and provide implementations such that:
  * - [List.toString] should return a string containing string representation of contained elements in exact same order
  *   these elements are stored within the list.
  * - [List.equals] should consider two lists equal if and only if they contain the same number of elements and each element
@@ -456,8 +456,8 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
  * are free to have fixed iteration order, like "smaller", in some sense, elements are visited prior to "larger". In this case,
  * it is recommended to explicitly document ordering guarantees for the [Set] implementation.
  *
- * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but [Set] implementations should override these functions and provide implementations such that:
+ * Unlike [Collection] implementations, [Set] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
+ * and provide implementations such that:
  * - [Set.toString] should return a string containing string representation of contained elements in iteration order.
  * - [Set.equals] should consider two sets equal if and only if they contain the same number of elements and each element
  *   from one set is contained in another set. Unlike some other `equals` implementations, [Set.equals]
@@ -563,8 +563,8 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
  * It is also implementation-specific how [Map] handles `null` keys and values: some [Map] implementations may support them, while
  * other may not. It is recommended to explicitly define key/value nullability policy when implementing [Map].
  *
- * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but [Map] implementations should override these functions and provide implementations such that:
+ * Unlike [Collection] implementations, [Map] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
+ * and provide implementations such that:
  * - [Map.toString] should return a string containing string representation of contained key-value pairs in iteration order.
  * - [Map.equals] should consider two maps equal if and only if they contain the same keys and values associated with these keys
  *   are equal. Unlike some other `equals` implementations, [Map.equals] should consider two maps equal even

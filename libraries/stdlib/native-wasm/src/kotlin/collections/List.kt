@@ -20,8 +20,8 @@ package kotlin.collections
  *
  * Unlike [Set], lists can contain duplicate elements.
  *
- * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but [List] implementations should override these functions and provide implementations such that:
+ * Unlike [Collection] implementations, [List] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
+ * and provide implementations such that:
  * - [List.toString] should return a string containing string representation of contained elements in exact same order
  *   these elements are stored within the list.
  * - [List.equals] should consider two lists equal if and only if they contain the same number of elements and each element

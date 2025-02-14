@@ -22,8 +22,8 @@ package kotlin.collections
  * are free to have fixed iteration order, like "smaller", in some sense, elements are visited prior to "larger". In this case,
  * it is recommended to explicitly document ordering guarantees for the [Set] implementation.
  *
- * As with [Collection], implementing [Any.toString], [Any.equals] and [Any.hashCode] is not enforced,
- * but [Set] implementations should override these functions and provide implementations such that:
+ * Unlike [Collection] implementations, [Set] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
+ * and provide implementations such that:
  * - [Set.toString] should return a string containing string representation of contained elements in iteration order.
  * - [Set.equals] should consider two sets equal if and only if they contain the same number of elements and each element
  *   from one set is contained in another set. Unlike some other `equals` implementations, [Set.equals]
