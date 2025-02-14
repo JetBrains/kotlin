@@ -38,6 +38,11 @@ open class MyCustomError5 : Throwable {
     }
 }
 
+open class MyCustomError6 : Throwable(message = null) {
+    override val message: String?
+        get() = "MyCustomError6: The overridden message"
+}
+
 open class SandwichError1 : MyCustomError3() {
     override var message = "Initial: ${super.message}"
         get() = "Sandwich1: ${super.message}"
@@ -82,6 +87,11 @@ fun box(): String {
     if (fifthError.message != "The overridden message") return fifthError.message.toString()
     if (fifthError.message != fifthError.asDynamic().message) return fifthError.asDynamic().message
     if (capturedMessage2 != "MyCustomError5: super message") return "Fail: $capturedMessage2"
+
+    val sixthError = MyCustomError6()
+
+    if (sixthError.message != "MyCustomError6: The overridden message") return sixthError.message.toString()
+    if (sixthError.message != sixthError.asDynamic().message) return sixthError.asDynamic().message
 
     val notExported1 = NotExported1()
     if (notExported1.message != "NotExported1: Fail: the original message was taken") return notExported1.message
