@@ -9,16 +9,20 @@ import java.io.File
 import java.lang.ref.SoftReference
 import java.nio.ByteBuffer
 
-sealed class ReadBuffer {
+/**
+ * A buffer that allows effectively reading data from an underlying byte buffer.
+ * See inheritors for implementation details.
+ */
+sealed interface ReadBuffer {
 
-    abstract val size: Int
-    abstract fun get(result: ByteArray, offset: Int, length: Int)
-    abstract var position: Int
+    val size: Int
+    fun get(result: ByteArray, offset: Int, length: Int)
+    var position: Int
 
-    abstract val int: Int
-    abstract val long: Long
+    val int: Int
+    val long: Long
 
-    abstract class NIOReader(private val buffer: ByteBuffer) : ReadBuffer() {
+    abstract class NIOReader(private val buffer: ByteBuffer) : ReadBuffer {
 
         override val size: Int
             get() = buffer.limit()
@@ -44,7 +48,7 @@ sealed class ReadBuffer {
 
     class DirectFileBuffer(file: File) : NIOReader(file.readBytes().buffer)
 
-    class WeakFileBuffer(private val file: File) : ReadBuffer() {
+    class WeakFileBuffer(private val file: File) : ReadBuffer {
         override val size: Int
             get() = file.length().toInt()
 
