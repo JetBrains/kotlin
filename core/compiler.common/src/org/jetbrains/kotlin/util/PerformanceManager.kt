@@ -234,6 +234,7 @@ abstract class PerformanceManager(private val presentableName: String) {
         jitMeasurement = JitCompilationMeasurement(bean.totalCompilationTime)
     }
 
+    @OptIn(DeprecatedPerformanceDeclaration::class)
     private fun recordPerfCountersMeasurements() {
         PerformanceCounter.report { s -> extraMeasurements += PerformanceCounterMeasurement(s) }
     }
