@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerpri
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
 
 private class LibraryHashComputer {
@@ -35,6 +38,7 @@ private fun getArtifactName(target: KonanTarget, baseName: String, kind: Compile
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
 
 class CachedLibraries(
+        private val configuration: CompilerConfiguration,
         private val target: KonanTarget,
         allLibraries: List<KotlinLibrary>,
         explicitCaches: Map<KotlinLibrary, String>,
@@ -202,8 +206,16 @@ class CachedLibraries(
                                 library.trySelectCacheAt { cacheName -> dir.child(cacheName) }
                             }
         }
-
-        cache?.let { library to it }
+        cache?.let {
+            if (target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
+                configuration.report(CompilerMessageSeverity.WARNING,
+                        "MinGW target does not support caches for libraries except for stdlib. Found cache at ${cache.path}"
+                )
+                null
+            } else {
+                library to it
+            }
+        }
     }.toMap()
 
     fun isLibraryCached(library: KotlinLibrary): Boolean =
