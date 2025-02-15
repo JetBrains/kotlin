@@ -252,6 +252,7 @@ class CacheBuilder(
     private val footprintSize = 16
 
     private fun buildLibraryCache(library: KotlinLibrary, isExternal: Boolean, filesToCache: List<String>) {
+        System.err.println("CACHES-BUILD-LIBRARY ${library.libraryName} external=$isExternal, filesToCache=$filesToCache")
         val dependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary)
         val dependencyCaches = dependencies.map {
             cacheRootDirectories[it] ?: run {

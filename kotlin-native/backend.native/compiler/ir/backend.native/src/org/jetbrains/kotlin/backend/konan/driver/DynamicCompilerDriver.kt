@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.util.PerformanceManager
 
@@ -174,6 +176,13 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
      * Produce a single binary artifact.
      */
     private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        if (config.produce == CompilerOutputKind.STATIC_CACHE && config.target == KonanTarget.MINGW_X64) {
+            config.libraryToCache?.let {
+                if (!it.klib.isNativeStdlib) {
+                    config.configuration.report(CompilerMessageSeverity.WARNING, "Unsupported caching $it")
+                }
+            }
+        }
         val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
 
         val psiToIrOutput = performanceManager.trackIRTranslation { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
