@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.lang.management.GarbageCollectorMXBean
@@ -155,10 +156,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         assert(phaseStartNanos == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
 
         // Ideally, all phases always should be executed sequentially.
-        // However, some pipelines are written in a way where `BackendGeneration` executed before `IrLowering` (Web).
-        // TODO: Consider using multiple `PerformanceManager` for measuring `IrLowering + BackendGeneration` times per each module
-        // or fixing a time measurement bug where `BackendGeneration` is executed before `IrLowering`
-        if (newPhaseType != PhaseMeasurementType.IrLowering) {
+        // However, some pipelines are written in a way where `BackendGeneration` executed before `Analysis` or `IrLowering` (Web).
+        // TODO: KT-75227 Consider using multiple `PerformanceManager` for measuring times per each unit
+        // or fixing a time measurement bug where `BackendGeneration` is executed before `Analysis` or `IrLowering`
+        if (!targetPlatform.isJs()) {
             assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
         }
 
