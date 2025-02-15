@@ -57,7 +57,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
     abstract val platform: TargetPlatform
 
     open val defaultPerformanceManager: PerformanceManager by lazy {
-        PerformanceManagerImpl(platform, "Kotlin to ${if (platform.isCommon()) "Metadata" else platform.first().platformName} Compiler")
+        PerformanceManagerImpl(platform, "Kotlin to ${if (platform.isCommon()) "Metadata" else platform.first().platformName} compiler")
     }
 
     var isReadingSettingsFromEnvironmentAllowed: Boolean =

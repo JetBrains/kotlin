@@ -1,4 +1,4 @@
-Kotlin to JVM Compiler performance report
+Kotlin to JVM compiler performance report
                 INIT        $INT>>$ ms
 Find Java class performed $INT$ times, total time $INT$ ms
 Binary class from Kotlin file performed $INT$ times, total time $INT$ ms
