@@ -100,7 +100,7 @@ abstract class PerformanceManager(private val presentableName: String) {
         for ((counterMeasurementClass, otherCounterMeasurement) in otherPerformanceManager.counterMeasurements) {
             val existingMeasurement = counterMeasurements[counterMeasurementClass]
             val newCount = (existingMeasurement?.count ?: 0) + otherCounterMeasurement.count
-            val newMillis = (existingMeasurement?.count ?: 0) + otherCounterMeasurement.milliseconds
+            val newMillis = (existingMeasurement?.milliseconds ?: 0) + otherCounterMeasurement.milliseconds
             counterMeasurements[counterMeasurementClass] = when (otherCounterMeasurement) {
                 is FindJavaClassMeasurement -> {
                     FindJavaClassMeasurement(newCount, newMillis)
@@ -189,10 +189,13 @@ abstract class PerformanceManager(private val presentableName: String) {
 
         assert(phaseStartNanos == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
 
-        // Ideally, here should be the following check (phases are almost always executed sequentially):
-        // assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
-        // However, currently some pipelines are written in a way where `BackendGeneration` executed before `IrLowering` (JS).
-        // If needed, it can be fixed later, or an option that disables the check for specified pipelines can be added.
+        // Ideally, all phases always should be executed sequentially.
+        // However, some pipelines are written in a way where `BackendGeneration` executed before `IrLowering` (Web).
+        // TODO: Consider using multiple `PerformanceManager` for measuring `IrLowering + BackendGeneration` times per each module
+        // or fixing a time measurement bug where `BackendGeneration` is executed before `IrLowering`
+        if (newPhaseType != PhaseMeasurementType.IrLowering) {
+            assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
+        }
 
         phaseStartNanos = currentTime()
         currentPhaseType = newPhaseType

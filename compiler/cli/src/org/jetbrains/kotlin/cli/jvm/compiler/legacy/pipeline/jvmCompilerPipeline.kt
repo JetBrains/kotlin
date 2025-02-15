@@ -155,7 +155,7 @@ fun generateCodeFromIr(
 
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
     @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
-    performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
+    performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyIRGenerationFinished`, but this phase not always started or already finished
     performanceManager?.notifyIRLoweringStarted()
     val backendInput = JvmIrCodegenFactory.BackendInput(
         input.irModuleFragment,

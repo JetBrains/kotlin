@@ -134,7 +134,7 @@ fun compileIr(
     // TODO should be done incrementally
     generateJsTests(context, allModules.last())
     @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
-    performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
+    performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyIRGenerationFinished`, but this phase not always started or already finished
 
     performanceManager?.notifyIRLoweringStarted()
     (irFactory.stageController as? WholeWorldStageController)?.let {
