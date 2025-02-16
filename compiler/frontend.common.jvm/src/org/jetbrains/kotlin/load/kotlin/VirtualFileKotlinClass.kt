@@ -74,6 +74,15 @@ class VirtualFileKotlinClass private constructor(
                     throw logFileReadingErrorMessage(e, file)
                 }
                 null
+            }.also { result ->
+                if (perfManager != null) {
+                    val size = when (result) {
+                        is KotlinClass -> result.byteContent?.size ?: 0
+                        is KotlinClassFinder.Result.ClassFileContent -> result.content.size
+                        null -> 0
+                    }
+                    perfManager.addBinaryClassSize(size)
+                }
             }
         }
 

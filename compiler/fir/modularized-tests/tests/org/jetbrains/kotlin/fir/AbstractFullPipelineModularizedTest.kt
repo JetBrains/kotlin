@@ -335,7 +335,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
         fun reportCumulativeTime(): CumulativeTime {
             val gcInfo = measurements.filterIsInstance<GarbageCollectionMeasurement>()
-                .associate { it.garbageCollectionKind to GCInfo(it.garbageCollectionKind, it.milliseconds, it.count) }
+                .associate { it.kind to GCInfo(it.kind, it.milliseconds, it.count) }
 
             val analysisMeasurement = measurements.filterIsInstance<CodeAnalysisMeasurement>().firstOrNull()
             val initMeasurement = measurements.filterIsInstance<CompilerInitializationMeasurement>().firstOrNull()

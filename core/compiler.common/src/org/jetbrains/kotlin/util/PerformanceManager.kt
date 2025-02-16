@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
@@ -43,16 +45,33 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         protected set
     var isK2: Boolean = true
         private set
+    var hasErrors: Boolean = false
+        private set
 
     var targetDescription: String? = null
     var files: Int = 0
         protected set
     var lines: Int = 0
         protected set
+    var backendFiles: Int = 0
+        private set
+    var backendBytes: Long = 0
+        private set
     var isFinalized: Boolean = false
         private set
     val isMeasuring: Boolean
         get() = phaseStartTime != null
+
+    var frontendStats: FrontendStats = FrontendStats.EMPTY
+        private set
+    var irStats: OldBackendStats = OldBackendStats.EMPTY
+        private set
+    var irLoweringStats: OldBackendStats = OldBackendStats.EMPTY
+        private set
+    var binaryFilesSize: Int = 0
+        private set
+    var javaFilesSize: Long = 0
+        private set
 
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
@@ -166,6 +185,40 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         this.lines = this.lines + lines
     }
 
+    fun addFrontendStats(frontendStats: FrontendStats) {
+        if (!isEnabled) return
+        ensureNotFinalizedAndSameThread()
+
+        this.frontendStats += frontendStats
+    }
+
+    fun addIrStats(irStats: OldBackendStats) {
+        if (!isEnabled) return
+        ensureNotFinalizedAndSameThread()
+
+        this.irStats += irStats
+    }
+
+    fun addIrLoweringStats(irLoweringStats: OldBackendStats) {
+        if (!isEnabled) return
+        ensureNotFinalizedAndSameThread()
+
+        this.irLoweringStats += irLoweringStats
+    }
+
+    fun addBinaryClassSize(binaryFileSize: Int) {
+        this.binaryFilesSize += binaryFileSize
+    }
+
+    fun addJavaClassSize(javaFileSize: Long) {
+        this.javaFilesSize += javaFileSize
+    }
+
+    open fun addBackendStats(backendFiles: Int, backendBytes: Long) {
+        this.backendFiles += backendFiles
+        this.backendBytes += backendBytes
+    }
+
     fun notifyPhaseStarted(newPhaseType: PhaseMeasurementType) {
         // Here should be the following check: `if (!isEnabled) return`.
         // However, currently it's dropped to keep compatibility with build systems that don't call `enableCollectingPerformanceStatistics`,
@@ -201,6 +254,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         ensureNotFinalizedAndSameThread()
         isFinalized = true
+
+        if (currentPhaseType != PhaseMeasurementType.BackendGeneration || phaseStartTime != null) {
+            hasErrors = true
+        }
 
         // Ideally, all phases should be finished explicitly by using `notifyPhaseFinished` call.
         // However, sometimes exceptions are thrown, and it's not always easy to handle them properly.
@@ -264,13 +321,119 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             PhaseSideMeasurementType.BinaryClassFromKotlinFile -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)
         }
 
+    companion object {
+        val writeJsonLock = Any()
+    }
+
     fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport().toByteArray())
+        //destination.writeBytes(createPerformanceReport().toByteArray())
+
+        val report = createReport()
+        val json = report.getJson(trailingComma = true)
+        synchronized(writeJsonLock) {
+            destination.appendText(json)
+        }
     }
 
     fun createPerformanceReport(): String = buildString {
         append("$presentableName performance report\n")
         measurements.map { it.render(lines) }.forEach { append("$it\n") }
+    }
+
+    fun createReport(): PerformanceMeasurementResult {
+        val firstPlatformName = targetPlatform.componentPlatforms.first().platformName
+        val platform = when {
+            firstPlatformName.contains("JVM") -> PlatformType.JVM
+            firstPlatformName.contains("Native") -> PlatformType.Native
+            targetPlatform.isJs() -> PlatformType.JS
+            targetPlatform.isCommon() -> PlatformType.Common
+            else -> error("Unexpected platform $targetPlatform")
+        }
+
+        val measurements = measurements
+
+        val initStats = measurements.firstIsInstanceOrNull<CompilerInitializationMeasurement>()?.let { measurement ->
+            InitStats(
+                files,
+                lines,
+                measurement.time
+            )
+        }
+
+        val firStats = measurements.firstIsInstanceOrNull<CodeAnalysisMeasurement>()?.let { measurement ->
+            FirStats(
+                frontendStats.allNodesCount,
+                frontendStats.leafNodesCount,
+                frontendStats.starImportsCount,
+                measurement.time
+            )
+        }
+
+        val irStats = measurements.firstIsInstanceOrNull<IrGenerationMeasurement>()?.let { measurement ->
+            IrStats(
+                irStats.allNodesCount,
+                irStats.leafNodesCount,
+                measurement.time
+            )
+        }
+
+        val irLoweringStats = measurements.firstIsInstanceOrNull<IrLoweringMeasurement>()?.let { measurement ->
+            IrStats(
+                irLoweringStats.allNodesCount,
+                irLoweringStats.leafNodesCount,
+                measurement.time
+            )
+        }
+
+        val backendStats = measurements.firstIsInstanceOrNull<BackendGenerationMeasurement>()?.let { measurement ->
+            BinaryStats(
+                backendFiles,
+                backendBytes,
+                measurement.time
+            )
+        }
+
+        val findBinaryClassStats = measurements.firstIsInstanceOrNull<BinaryClassFromKotlinFileMeasurement>()?.let { measurement ->
+            BinaryStats(
+                measurement.count,
+                binaryFilesSize.toLong(),
+                measurement.time,
+            )
+        }
+
+        val findJavaClassStats = measurements.firstIsInstanceOrNull<FindJavaClassMeasurement>()?.let { measurement ->
+            BinaryStats(
+                measurement.count,
+                javaFilesSize,
+                measurement.time,
+            )
+        }
+
+        val foldedGcMeasurement = measurements.filterIsInstance<GarbageCollectionMeasurement>().fold(
+            GarbageCollectionMeasurement("", 0, 0),
+        ) { gcMeasurement, otherGcMeasurement ->
+            GarbageCollectionMeasurement(
+                if (gcMeasurement.kind.isEmpty()) otherGcMeasurement.kind else "${gcMeasurement.kind}, ${otherGcMeasurement.kind}",
+                gcMeasurement.milliseconds + otherGcMeasurement.milliseconds,
+                gcMeasurement.count + otherGcMeasurement.count
+            )
+        }
+
+        return PerformanceMeasurementResult(
+            moduleName = targetDescription!!.removeSuffix("-java-production"),
+            platform = platform,
+            isK2 = isK2,
+            hasErrors = hasErrors,
+            initStats = initStats,
+            firStats = firStats,
+            irStats = irStats,
+            irLoweringStats = irLoweringStats,
+            backendStats = backendStats,
+            findBinaryClassStats = findBinaryClassStats,
+            findJavaClassStats = findJavaClassStats,
+            gcStats = foldedGcMeasurement,
+            jitTimeMilliseconds = jitMeasurement?.milliseconds ?: 0,
+        )
     }
 
     private fun ensureNotFinalizedAndSameThread() {

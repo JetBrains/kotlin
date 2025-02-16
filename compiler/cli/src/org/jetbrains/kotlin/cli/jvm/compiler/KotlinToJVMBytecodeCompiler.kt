@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.cli.common.BackendStatsCounter
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
@@ -411,6 +412,13 @@ object KotlinToJVMBytecodeCompiler {
 
         return performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
             codegenFactory.invokeLowerings(state, backendInput)
+        }.also { codegenInput ->
+            if (performanceManager != null) {
+                BackendStatsCounter().apply {
+                    visitElement(codegenInput.module, null)
+                    performanceManager.addIrLoweringStats(backendStats)
+                }
+            }
         }
     }
 
@@ -428,6 +436,17 @@ object KotlinToJVMBytecodeCompiler {
 
         performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.BackendGeneration) {
             codegenFactory.invokeCodegen(codegenInput)
+        }
+
+        val outDir = configuration.outputDirectory
+        if (performanceManager != null && outDir != null) {
+            var backendFilesCount = 0
+            var backendBytesCount = 0L
+            outDir.walkTopDown().filter { entity -> entity.isFile && entity.extension == "class" }.forEach { file ->
+                backendFilesCount++
+                backendBytesCount += file.length()
+            }
+            performanceManager.addBackendStats(backendFilesCount, backendBytesCount)
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

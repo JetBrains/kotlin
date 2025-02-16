@@ -107,12 +107,22 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             //
             // Otherwise B.kt will not see the newly added field in A.
             val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
-            singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)?.let { SmartList(it) }
+            val virtualFiles = singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)?.let { SmartList(it) }
                 ?: SmartList(
                     index.findClasses(outerMostClassId) { dir, type ->
                         findVirtualFileGivenPackage(dir, relativeClassName, type)
                     }
                 ).takeIf { it.isNotEmpty() }
+
+            if (virtualFiles != null) {
+                perfManager?.let {
+                    virtualFiles.forEach { file ->
+                        it.addJavaClassSize(file.length)
+                    }
+                }
+            }
+
+            virtualFiles
         }?.firstOrNull { it in searchScope }
     }
 

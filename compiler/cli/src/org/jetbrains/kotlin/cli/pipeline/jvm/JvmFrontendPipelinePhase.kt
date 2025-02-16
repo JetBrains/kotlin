@@ -64,14 +64,16 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val messageCollector = configuration.messageCollector
 
         val perfManager = configuration.perfManager
+        val chunk = configuration.moduleChunk!!
+        val targetDescription = chunk.targetDescription()
+        perfManager?.targetDescription = targetDescription
 
         if (!checkNotSupportedPlugins(configuration, messageCollector)) {
             perfManager?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
             return null
         }
 
-        val chunk = configuration.moduleChunk!!
-        val targetDescription = chunk.targetDescription()
+
         val (environment, sourcesProvider) = createEnvironmentAndSources(
             configuration,
             rootDisposable,
@@ -167,9 +169,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         )
 
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
+        val countFrontendStats = if (perfManager == null) null else perfManager::addFrontendStats
         val outputs = sessionsWithSources.map { (session, sources) ->
             val rawFirFiles = when (configuration.useLightTree) {
-                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, countFilesAndLines)
+                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, countFilesAndLines, countFrontendStats)
                 else -> session.buildFirFromKtFiles(sources.asKtFilesList())
             }
             resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)

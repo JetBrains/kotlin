@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
-import kotlin.reflect.KFunction2
+import org.jetbrains.kotlin.util.FrontendStats
 
 fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
     diagnosticsReporter: DiagnosticReporter?,
     reportFilesAndLines: ((Int, Int) -> Unit)?,
+    countFrontendStats: ((FrontendStats) -> Unit)? = null,
 ): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
     val sourcesToPathsMapper = sourcesToPathsMapper
@@ -43,7 +44,23 @@ fun FirSession.buildFirViaLightTree(
         }
     }
     reportFilesAndLines?.invoke(files.count(), linesCount)
+
+    countFrontendStats?.invoke(firFiles.countFirStats())
+
     return firFiles
+}
+
+private fun List<FirFile>.countFirStats(): FrontendStats {
+    val firStatsCounter = FirStatsCounter()
+    var frontendStats: FrontendStats = FrontendStats.EMPTY
+
+    for (firFile in this) {
+        firStatsCounter.visitFile(firFile, null)
+        frontendStats += firStatsCounter.frontendStats
+        firStatsCounter.reset()
+    }
+
+    return frontendStats
 }
 
 fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
@@ -82,8 +99,9 @@ fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
     diagnosticsReporter: BaseDiagnosticsCollector,
-    countFilesAndLines: KFunction2<Int, Int, Unit>?
+    countFilesAndLines: ((Int, Int) -> Unit)?,
+    countFrontendStats: ((FrontendStats) -> Unit)?,
 ): ModuleCompilerAnalyzedOutput {
-    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
+    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines, countFrontendStats)
     return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }

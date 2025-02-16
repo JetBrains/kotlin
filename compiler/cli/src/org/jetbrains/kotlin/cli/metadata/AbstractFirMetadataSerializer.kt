@@ -116,7 +116,12 @@ internal abstract class AbstractFirMetadataSerializer(
                 }
             )
             sessionsWithSources.map { (session, files) ->
-                val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter, performanceManager::addSourcesStats)
+                val firFiles = session.buildFirViaLightTree(
+                    files,
+                    diagnosticsReporter,
+                    performanceManager::addSourcesStats,
+                    performanceManager::addFrontendStats,
+                )
                 resolveAndCheckFir(session, firFiles, diagnosticsReporter)
             }
         } else {

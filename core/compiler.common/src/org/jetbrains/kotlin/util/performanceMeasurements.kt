@@ -21,7 +21,7 @@ enum class PhaseMeasurementType {
  * Currently it holds only `System.nanoTime()` but later it can be adopted to hold User or CPU time as well
  * that might be useful for time measurements in multithread mode.
  */
-class Time(val nanoseconds: Long, val userTimeNs: Long, val cpuTimeNs: Long) {
+class Time(val nanoseconds: Long, val userTimeNanoseconds: Long, val cpuTimeNanoseconds: Long) {
     companion object {
         val ZERO = Time(0, 0, 0)
     }
@@ -30,11 +30,11 @@ class Time(val nanoseconds: Long, val userTimeNs: Long, val cpuTimeNs: Long) {
         get() = nanoseconds / 1_000_000L
 
     operator fun plus(other: Time): Time {
-        return Time(nanoseconds + other.nanoseconds, userTimeNs + other.userTimeNs, cpuTimeNs + other.cpuTimeNs)
+        return Time(nanoseconds + other.nanoseconds, userTimeNanoseconds + other.userTimeNanoseconds, cpuTimeNanoseconds + other.cpuTimeNanoseconds)
     }
 
     operator fun minus(other: Time): Time {
-        return Time(nanoseconds - other.nanoseconds, userTimeNs - other.userTimeNs, cpuTimeNs - other.cpuTimeNs)
+        return Time(nanoseconds - other.nanoseconds, userTimeNanoseconds - other.userTimeNanoseconds, cpuTimeNanoseconds - other.cpuTimeNanoseconds)
     }
 }
 
@@ -103,8 +103,8 @@ class JitCompilationMeasurement(milliseconds: Long) : JvmPerformanceMeasurement(
     override fun render(lines: Int): String = "JIT time is $milliseconds ms"
 }
 
-class GarbageCollectionMeasurement(val garbageCollectionKind: String, milliseconds: Long, val count: Long) : JvmPerformanceMeasurement(milliseconds) {
-    override fun render(lines: Int): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
+class GarbageCollectionMeasurement(val kind: String, milliseconds: Long, val count: Long) : JvmPerformanceMeasurement(milliseconds) {
+    override fun render(lines: Int): String = "GC time for $kind is $milliseconds ms, $count collections"
 }
 
 @DeprecatedPerformanceDeclaration
