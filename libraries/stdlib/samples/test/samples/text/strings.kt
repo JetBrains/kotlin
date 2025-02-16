@@ -549,7 +549,7 @@ class Strings {
     }
 
     @Sample
-    fun `subString(startIndex)`() {
+    fun subStringFromStartIndex() {
         val str = "abcde"
         assertPrints(str.substring(0), "abcde")
         assertPrints(str.substring(1), "bcde")
@@ -557,7 +557,7 @@ class Strings {
     }
 
     @Sample
-    fun `subString(startIndex, endIndex)`() {
+    fun substringByStandAndEndIndices() {
         val str = "abcde"
         assertPrints(str.substring(0, 0), "")
         assertPrints(str.substring(0, 1), "a")
@@ -566,7 +566,7 @@ class Strings {
     }
 
     @Sample
-    fun `startsWith(prefix)`() {
+    fun startsWithFromPrefix() {
         val str = "abcde"
         assertTrue(str.startsWith("abc"))
         assertFalse(str.startsWith("ABC"))
@@ -575,7 +575,7 @@ class Strings {
     }
 
     @Sample
-    fun `startsWith(prefix, ignoreCase)`() {
+    fun startsWithFromPrefixAndIgnoreCase() {
         val str = "abcde"
         assertTrue(str.startsWith("abc", true))
         assertTrue(str.startsWith("ABC", true))
@@ -584,7 +584,7 @@ class Strings {
     }
 
     @Sample
-    fun `startsWith(prefix, startIndex)`() {
+    fun startsWithFromPrefixAndStartIndex() {
         val str = "abcde"
         assertFalse(str.startsWith("abc", 1))
         assertFalse(str.startsWith("ABC", 1))
@@ -593,7 +593,7 @@ class Strings {
     }
 
     @Sample
-    fun `startsWith(prefix, startIndex, ignoreCase)`() {
+    fun startsWithFromPrefixAndStartIndexAndIgnoreCase() {
         val str = "abcde"
         assertFalse(str.startsWith("abc", 1, true))
         assertFalse(str.startsWith("ABC", 1, true))
@@ -602,7 +602,7 @@ class Strings {
     }
 
     @Sample
-    fun `endsWith(suffix)`() {
+    fun endsWithFromSuffix() {
         val str = "abcde"
         assertTrue(str.endsWith("cde"))
         assertFalse(str.endsWith("CDE"))

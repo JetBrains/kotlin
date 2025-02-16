@@ -44,7 +44,6 @@ internal actual external fun String.nativeLastIndexOf(str: String, fromIndex: In
  * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
- * @sample samples.text.Strings.equals
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
@@ -127,8 +126,6 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
  *
  * @param startIndex the start index (inclusive).
  * @param endIndex the end index (exclusive).
- *
- * @sample samples.text.Strings.substring
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int, endIndex: Int): String =

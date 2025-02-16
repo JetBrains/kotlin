@@ -575,10 +575,6 @@ public inline fun String.codePointBefore(index: Int): Int = (this as java.lang.S
 
 /**
  * Returns the number of Unicode code points in the specified text range of this String.
- *
- */
-/**
- * Returns the number of Unicode code points in the specified text range of this String.
  * The text range begins at the specified [beginIndex] and extends to the [Char] at index [endIndex] - 1.
  * Thus the length (in [Char]s) of the text range is [endIndex]-[beginIndex].
  * Unpaired surrogates within the text range count as one code point each.
