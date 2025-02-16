@@ -15,3 +15,4 @@ fun J.test3() {
   <this>.plusAssign(i = ::f /*-> Runnable */)
   <this>.minusAssign(i = ::f /*-> Runnable */)
 }
+

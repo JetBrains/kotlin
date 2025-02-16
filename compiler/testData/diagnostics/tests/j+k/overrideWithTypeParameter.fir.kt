@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +AllowDnnTypeOverridingFlexibleType
 // FILE: Super.java
 public interface Super {
     <A> A foo(Class<A> klass);
@@ -39,11 +39,11 @@ class NotNullSub : OtherSuper, NotNull()
 
 // ---
 
-open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class DnnNullableGeneric<!><B : Any?> : SuperGeneric<B> {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(klass: Class<B & Any>): B = TODO()
+open class DnnNullableGeneric<B : Any?> : SuperGeneric<B> {
+    override fun foo(klass: Class<B & Any>): B = TODO()
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class DnnNullableSubGeneric<!><B : Any?> : OtherSuperGeneric<B>, DnnNullableGeneric<B>()
+class DnnNullableSubGeneric<B : Any?> : OtherSuperGeneric<B>, DnnNullableGeneric<B>()
 
 open class NullableGeneric<B : Any?> : SuperGeneric<B> {
     override fun foo(klass: Class<B>): B = TODO()

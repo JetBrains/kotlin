@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCustomKotlinAbiVersion
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
@@ -35,7 +37,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KlibMetadataVersion(*versionArray)
 
-    override val defaultPerformanceManager: CommonCompilerPerformanceManager by lazy {
+    override val defaultPerformanceManager: PerformanceManager by lazy {
         K2NativeCompilerPerformanceManager()
     }
 
@@ -49,8 +51,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             return ExitCode.OK
         }
 
-        val pluginLoadResult =
-                PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, arguments.pluginConfigurations, configuration)
+        val pluginLoadResult = PluginCliParser.loadPluginsSafe(
+            arguments.pluginClasspaths, arguments.pluginOptions, arguments.pluginConfigurations, configuration, rootDisposable,
+        )
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
@@ -109,18 +112,19 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
         configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
 
-        configuration.put(KlibConfigurationKeys.NO_DOUBLE_INLINING, arguments.noDoubleInlining)
         arguments.dumpSyntheticAccessorsTo?.let { configuration.put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, it) }
-        configuration.put(
-            KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
-            arguments.narrowedSyntheticAccessorsVisibility
-        )
+        configuration.syntheticAccessorsWithNarrowedVisibility = arguments.narrowedSyntheticAccessorsVisibility
         configuration.put(
             KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
             DuplicatedUniqueNameStrategy.parseOrDefault(
                 arguments.duplicatedUniqueNameStrategy,
                 default = if (arguments.metadataKlib) DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING else DuplicatedUniqueNameStrategy.DENY
             )
+        )
+
+        configuration.putIfNotNull(
+            KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION,
+            parseCustomKotlinAbiVersion(arguments.customKlibAbiVersion, configuration.messageCollector)
         )
 
         return environment

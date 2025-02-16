@@ -121,7 +121,7 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     @Override
     @NotNull
     public AnnotationVisitor newAnnotation(@NotNull String desc, boolean visible) {
-        return new AnnotationRemapper(builder.newAnnotation(remapper.mapDesc(desc), visible), remapper);
+        return new AnnotationRemapper(null, builder.newAnnotation(remapper.mapDesc(desc), visible), remapper);
     }
 
     @Override

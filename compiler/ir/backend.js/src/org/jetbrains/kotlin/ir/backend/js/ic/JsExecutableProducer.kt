@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -66,7 +67,7 @@ class JsExecutableProducer(
         jsMultiArtifactCache.loadRequiredJsIrModules(crossModuleReferences)
 
         fun CacheInfo.compileModule(moduleName: String, isMainModule: Boolean): CompilationOutputs {
-            if (jsIrHeader.associatedModule == null) {
+            if (jsIrHeader.associatedModule == null || jsMultiArtifactCache.commitOnyTypeScriptFiles(this)) {
                 stopwatch.startNext("Fetching cached JS code")
                 val compilationOutputs = jsMultiArtifactCache.fetchCompiledJsCode(this)
                 if (compilationOutputs != null) {

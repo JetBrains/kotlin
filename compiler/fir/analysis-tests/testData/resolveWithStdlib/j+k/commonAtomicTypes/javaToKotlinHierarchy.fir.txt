@@ -1,0 +1,29 @@
+FILE: test.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/concurrent/atomics/ExperimentalAtomicApi|)))
+    public final class KotlinClassWithFakeOverride : R|JavaClass| {
+        public constructor(): R|KotlinClassWithFakeOverride| {
+            super<R|JavaClass|>()
+        }
+
+    }
+    public final class KotlinClassWithExplicitOverride : R|JavaClass| {
+        public constructor(): R|KotlinClassWithExplicitOverride| {
+            super<R|JavaClass|>()
+        }
+
+        public open override fun foo(i: R|kotlin/concurrent/atomics/AtomicInt|): R|kotlin/Unit| {
+        }
+
+        public open override fun foo(i: R|java/util/concurrent/atomic/AtomicInteger|): R|kotlin/Unit| {
+        }
+
+        public open override val a: R|kotlin/concurrent/atomics/AtomicInt| = R|kotlin/concurrent/atomics/AtomicInt.AtomicInt|(Int(0))
+            public get(): R|kotlin/concurrent/atomics/AtomicInt|
+
+    }
+    public final fun usage(a: R|KotlinClassWithFakeOverride|): R|kotlin/Unit| {
+        R|<local>/a|.R|/JavaClass.foo|(R|java/util/concurrent/atomic/AtomicInteger.AtomicInteger|(Int(0)))
+        R|<local>/a|.R|/JavaClass.foo<Inapplicable(INAPPLICABLE): /JavaClass.foo>#|(R|kotlin/concurrent/atomics/AtomicInt.AtomicInt|(Int(0)))
+        lval t1: R|java/util/concurrent/atomic/AtomicInteger| = R|<local>/a|.R|/JavaClass.a|
+        lval t2: R|kotlin/concurrent/atomics/AtomicInt| = R|<local>/a|.R|/JavaClass.a|
+    }

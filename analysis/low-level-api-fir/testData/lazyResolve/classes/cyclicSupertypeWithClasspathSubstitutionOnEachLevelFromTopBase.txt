@@ -481,7 +481,7 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] top.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|org/example/TopAdditional| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : <ERROR TYPE REF: Loop in supertypes involving org/example/Base> {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun top(): R|kotlin/Unit|
 
     }

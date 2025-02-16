@@ -1,0 +1,77 @@
+KtCallExpression(96,101): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = foo
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+            receiverParameter: null
+            returnType: KaClassErrorType:
+              annotations: []
+              type: ERROR_TYPE
+            visibility: LOCAL
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = false

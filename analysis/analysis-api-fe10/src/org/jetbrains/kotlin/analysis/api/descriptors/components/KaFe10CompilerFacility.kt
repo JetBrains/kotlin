@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.InlineFunctionAnalyze
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlineDelegatedPropertyAccessors
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaClassBuilderFactory
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -55,7 +56,7 @@ internal class KaFe10CompilerFacility(
         allowedErrorFilter: (KaDiagnostic) -> Boolean
     ): KaCompilationResult = withValidityAssertion {
         try {
-            compileUnsafe(file, configuration, target, allowedErrorFilter)
+            compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter)
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
             throw KaCodeCompilationException(e)
@@ -65,7 +66,7 @@ internal class KaFe10CompilerFacility(
     private fun compileUnsafe(
         file: KtFile,
         configuration: CompilerConfiguration,
-        target: KaCompilerTarget,
+        target: KaCompilerTarget.Jvm,
         allowedErrorFilter: (KaDiagnostic) -> Boolean
     ): KaCompilationResult {
         if (file is KtCodeFragment) {
@@ -115,15 +116,20 @@ internal class KaFe10CompilerFacility(
 
         val codegenFactory = createJvmIrCodegenFactory(effectiveConfiguration)
 
+        val classBuilderFactory = KaClassBuilderFactory.create(
+            delegateFactory = if (target.isTestMode) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES,
+            compiledClassHandler = target.compiledClassHandler
+        )
+
         val state = GenerationState(
             file.project,
             analysisContext.resolveSession.moduleDescriptor,
             effectiveConfiguration,
-            target.classBuilderFactory,
+            classBuilderFactory,
             generateDeclaredClassFilter = generateClassFilter,
         )
 
-        KotlinCodegenFacade.compileCorrectFiles(filesToCompile, state, bindingContext, codegenFactory)
+        codegenFactory.convertAndGenerate(filesToCompile, state, bindingContext)
         val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
         return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
     }

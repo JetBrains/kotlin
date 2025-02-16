@@ -1,7 +1,6 @@
 // DISABLE_JAVA_FACADE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-63067
-// LATEST_LV_DIFFERENCE
 // FILE: KotlinFile.kt
 open class KotlinClass {
     public open fun getSomething1(): Int = 1

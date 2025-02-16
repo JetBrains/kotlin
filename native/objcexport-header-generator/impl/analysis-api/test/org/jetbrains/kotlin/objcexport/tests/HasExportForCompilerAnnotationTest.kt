@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasExportForCompilerAnnotation
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getPropertyOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse

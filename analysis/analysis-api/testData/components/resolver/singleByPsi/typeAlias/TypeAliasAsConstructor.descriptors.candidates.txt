@@ -4,6 +4,7 @@ KtNameReferenceExpression(76,83): 'MyAlias'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtNameReferenceExpression(76,83): 'MyAlias'
           returnType = test.MyAlias
           symbol = <constructor>(): test.MyClass
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

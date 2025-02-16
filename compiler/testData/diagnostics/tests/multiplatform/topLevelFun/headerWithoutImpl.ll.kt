@@ -3,3 +3,5 @@
 // FILE: common.kt
 
 expect fun foo()
+
+// MODULE: m1-jvm()()(m1-common)

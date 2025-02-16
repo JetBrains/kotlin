@@ -4,6 +4,7 @@ KtSuperTypeCallEntry(26,44): 'java.lang.Object()'
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtSuperTypeCallEntry(26,44): 'java.lang.Object()'
           returnType = java.lang.Object
           symbol = <constructor>(): java.lang.Object
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/destructuringDeclaration.kts
   CLASS SCRIPT_CLASS CLASS name:DestructuringDeclaration modality:FINAL visibility:public superTypes:[kotlin.script.templates.standard.ScriptTemplateWithArgs]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DestructuringDeclaration
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.DestructuringDeclaration
     FIELD SCRIPT_CALL_PARAMETER name:args type:kotlin.Array<kotlin.String> visibility:local [final]
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
@@ -9,25 +9,25 @@ FILE fqName:<root> fileName:/destructuringDeclaration.kts
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=null
           value: CALL 'public final fun component1 (): kotlin.Int declared in <root>.DestructuringDeclaration.A' type=kotlin.Int origin=COMPONENT_N(index=1)
-            $this: GET_VAR 'val tmp_0: <root>.DestructuringDeclaration.A declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration.A origin=null
+            ARG <this>: GET_VAR 'val tmp_0: <root>.DestructuringDeclaration.A declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration.A origin=null
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=null
           value: CALL 'public final fun component2 (): kotlin.Int declared in <root>.DestructuringDeclaration.A' type=kotlin.Int origin=COMPONENT_N(index=2)
-            $this: GET_VAR 'val tmp_0: <root>.DestructuringDeclaration.A declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration.A origin=null
+            ARG <this>: GET_VAR 'val tmp_0: <root>.DestructuringDeclaration.A declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration.A origin=null
     PROPERTY SCRIPT_K2 name:abc visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abc> visibility:public modality:FINAL <> ($this:<root>.DestructuringDeclaration) returnType:kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abc> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER SCRIPT_THIS_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration
         correspondingProperty: PROPERTY SCRIPT_K2 name:abc visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER SCRIPT_THIS_RECEIVER name:<this> type:<root>.DestructuringDeclaration
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-abc> (): kotlin.Int declared in <root>.DestructuringDeclaration'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration.<get-abc>' type=<root>.DestructuringDeclaration origin=null
     PROPERTY SCRIPT_K2 name:def visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-def> visibility:public modality:FINAL <> ($this:<root>.DestructuringDeclaration) returnType:kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-def> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER SCRIPT_THIS_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration
         correspondingProperty: PROPERTY SCRIPT_K2 name:def visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER SCRIPT_THIS_RECEIVER name:<this> type:<root>.DestructuringDeclaration
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-def> (): kotlin.Int declared in <root>.DestructuringDeclaration'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
@@ -36,59 +36,59 @@ FILE fqName:<root> fileName:/destructuringDeclaration.kts
       FIELD PROPERTY_BACKING_FIELD name:rv type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            $this: CALL 'public final fun <get-abc> (): kotlin.Int declared in <root>.DestructuringDeclaration' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=GET_PROPERTY
-            other: CALL 'public final fun <get-def> (): kotlin.Int declared in <root>.DestructuringDeclaration' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=GET_PROPERTY
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rv> visibility:public modality:FINAL <> ($this:<root>.DestructuringDeclaration) returnType:kotlin.Int
+            ARG <this>: CALL 'public final fun <get-abc> (): kotlin.Int declared in <root>.DestructuringDeclaration' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=GET_PROPERTY
+            ARG other: CALL 'public final fun <get-def> (): kotlin.Int declared in <root>.DestructuringDeclaration' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rv> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER SCRIPT_THIS_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration
         correspondingProperty: PROPERTY SCRIPT_K2 name:rv visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER SCRIPT_THIS_RECEIVER name:<this> type:<root>.DestructuringDeclaration
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-rv> (): kotlin.Int declared in <root>.DestructuringDeclaration'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rv type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration.<get-rv>' type=<root>.DestructuringDeclaration origin=null
     CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DestructuringDeclaration.A
-      CONSTRUCTOR visibility:public <> () returnType:<root>.DestructuringDeclaration.A [primary]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.DestructuringDeclaration.A
+      CONSTRUCTOR visibility:public returnType:<root>.DestructuringDeclaration.A [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.DestructuringDeclaration.A) returnType:kotlin.Int [operator]
-        $this: VALUE_PARAMETER name:<this> type:<root>.DestructuringDeclaration.A
+      FUN name:component1 visibility:public modality:FINAL returnType:kotlin.Int [operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.DestructuringDeclaration.A'
             CONST Int type=kotlin.Int value=123
-      FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.DestructuringDeclaration.A) returnType:kotlin.Int [operator]
-        $this: VALUE_PARAMETER name:<this> type:<root>.DestructuringDeclaration.A
+      FUN name:component2 visibility:public modality:FINAL returnType:kotlin.Int [operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.DestructuringDeclaration.A'
             CONST Int type=kotlin.Int value=2
-    CONSTRUCTOR visibility:public <> (args:kotlin.Array<kotlin.String>) returnType:<root>.DestructuringDeclaration [primary]
-      VALUE_PARAMETER SCRIPT_CALL_PARAMETER name:args index:0 type:kotlin.Array<kotlin.String>
+    CONSTRUCTOR visibility:public returnType:<root>.DestructuringDeclaration [primary]
+      VALUE_PARAMETER SCRIPT_CALL_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<kotlin.String>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (args: kotlin.Array<kotlin.String>) declared in kotlin.script.templates.standard.ScriptTemplateWithArgs'
-          args: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.<init>' type=kotlin.Array<kotlin.String> origin=null
+          ARG args: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.<init>' type=kotlin.Array<kotlin.String> origin=null
         SET_FIELD 'FIELD SCRIPT_CALL_PARAMETER name:args type:kotlin.Array<kotlin.String> visibility:local [final] declared in <root>.DestructuringDeclaration' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=null
           value: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.<init>' type=kotlin.Array<kotlin.String> origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS SCRIPT_CLASS CLASS name:DestructuringDeclaration modality:FINAL visibility:public superTypes:[kotlin.script.templates.standard.ScriptTemplateWithArgs]' type=kotlin.Unit
-    FUN name:main visibility:public modality:FINAL <> (args:kotlin.Array<kotlin.String>) returnType:kotlin.Unit
-      VALUE_PARAMETER name:args index:0 type:kotlin.Array<kotlin.String>
+    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<kotlin.String>
       EXPRESSION_BODY
         CALL 'public final fun runCompiledScript (scriptClass: java.lang.Class, vararg args: kotlin.Any?): kotlin.Unit declared in kotlin.script.experimental.jvm.RunnerKt' type=kotlin.Unit origin=null
-          scriptClass: CALL 'public final fun <get-java> (): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
-            $receiver: CLASS_REFERENCE 'CLASS INTERFACE name:KClass modality:ABSTRACT visibility:public [expect] superTypes:[kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
-          args: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.main' type=kotlin.Array<kotlin.String> origin=null
+          ARG scriptClass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+            ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public [expect] superTypes:[kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+          ARG args: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.main' type=kotlin.Array<kotlin.String> origin=null

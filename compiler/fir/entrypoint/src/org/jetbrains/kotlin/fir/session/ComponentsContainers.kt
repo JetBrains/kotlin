@@ -80,6 +80,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
 
     register(FirSubstitutionOverrideStorage::class, FirSubstitutionOverrideStorage(this))
     register(FirIntersectionOverrideStorage::class, FirIntersectionOverrideStorage(this))
+    register(FirTypealiasConstructorStorage::class, FirTypealiasConstructorStorage(this))
     register(FirSynthesizedStorage::class, FirSynthesizedStorage(this))
     register(FirGeneratedMemberDeclarationsStorage::class, FirGeneratedMemberDeclarationsStorage(this))
     register(FirSamConstructorStorage::class, FirSamConstructorStorage(this))
@@ -110,7 +111,6 @@ fun FirSession.registerCliCompilerOnlyComponents(languageVersionSettings: Langua
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
     register(FirExceptionHandler::class, FirCliExceptionHandler)
-    register(FirModulePrivateVisibilityChecker::class, FirModulePrivateVisibilityChecker.Standard(this))
     register(
         FirLookupDefaultStarImportsInSourcesSettingHolder::class,
         FirLookupDefaultStarImportsInSourcesSettingHolder.createDefault(languageVersionSettings)

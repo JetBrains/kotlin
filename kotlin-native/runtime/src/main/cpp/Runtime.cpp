@@ -392,8 +392,8 @@ KBoolean Kotlin_Debugging_isPermanent(KRef obj) {
     return obj->permanent();
 }
 
-RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isLocal(KRef obj) {
-    return obj->local();
+RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isStack(KRef obj) {
+    return obj->stack();
 }
 
 static void CallInitGlobalAwaitInitialized(uintptr_t* state) {

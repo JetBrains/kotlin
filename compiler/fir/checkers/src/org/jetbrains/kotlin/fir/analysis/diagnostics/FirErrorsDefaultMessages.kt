@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.EMPTY
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.FUNCTION_PARAMETERS
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NOT_RENDERED
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.NULLABLE_STRING
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID_RELATIVE_NAME_ONLY
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.VISIBILITY
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.commaSeparated
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
-import org.jetbrains.kotlin.fir.analysis.checkers.config.FirContextReceiversLanguageVersionSettingsChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLABLES_FQ_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.suggestIfNotNull
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.prefix
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE
@@ -213,7 +214,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_DECLARATION_OF_ENUM_ENTRY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DECLARATION_OF_ENUM_ENTRY_ENTRIES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION
@@ -426,6 +427,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_SUSPEND_AN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES
@@ -715,7 +718,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_CONTEXT_LISTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -858,7 +868,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE,
-            "Cannot access class ''{0}'' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.",
+            "Cannot access class ''{0}'' in the expression type. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
         )
         map.put(
@@ -868,20 +878,26 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
         )
         map.put(
+            MISSING_DEPENDENCY_SUPERCLASS_WARNING,
+            "Cannot access ''{0}'' which is a supertype of ''{1}''. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+        )
+        map.put(
             MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT,
-            "Cannot access ''{0}'' which is a supertype of ''{1}'' or one of its type/supertype arguments. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.",
+            "Cannot access ''{0}'' which is a supertype of ''{1}'' or one of its arguments. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
             RENDER_TYPE,
         )
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER,
-            "Class ''{0}'' of the parameter ''{1}'' is inaccessible. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.",
+            "Class ''{0}'' of the parameter ''{1}'' is inaccessible. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
             NAME,
         )
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER,
-            "Class ''{0}'' of the lambda receiver is inaccessible. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.",
+            "Class ''{0}'' of the lambda receiver is inaccessible. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
         )
 
@@ -1176,6 +1192,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations can only be applied to primary constructor parameters.")
         map.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''.", TO_STRING)
         map.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration.")
+        map.put(INAPPLICABLE_ALL_TARGET, "'@all:' annotations can only be applied to non-local properties.")
+        map.put(
+            INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION,
+            "Multiple annotation syntax with '@all:' use-site target is forbidden, use '@all:A1 @all:A2 ...' instead."
+        )
         map.put(
             WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
             "This annotation is not applicable to target ''{0}'' and use-site target ''@{1}''. Applicable targets: {2}",
@@ -1202,6 +1223,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "See https://youtrack.jetbrains.com/issue/KT-73255 for more details. " +
                     "To remove this warning, use the ''@param:'' annotation target.",
             TO_STRING,
+        )
+        map.put(
+            ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE,
+            "Annotations on block-level expressions are parsed differently depending on the presence of a new line. " +
+                    "Add a new line after the annotations to annotate the entire expression."
         )
 
         // OptIn
@@ -1401,6 +1427,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''.", DECLARATION_NAME)
         map.put(NAMED_PARAMETER_NOT_FOUND, "No parameter with name ''{0}'' found.", TO_STRING)
         map.put(NAME_FOR_AMBIGUOUS_PARAMETER, "Named argument is prohibited for parameter with an ambiguous name.")
+        map.put(
+            MIXING_NAMED_AND_POSITIONAL_ARGUMENTS,
+            "Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters."
+        )
 
         map.put(MANY_LAMBDA_EXPRESSION_ARGUMENTS, "Only one lambda expression is allowed outside a parenthesized argument list.")
         map.put(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Not enough information to infer type argument for ''{0}''.", STRING)
@@ -1462,6 +1492,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL,
             "Usage of a qualifier with type arguments to call nested class constructor is deprecated. The type arguments must be removed."
         )
+        map.put(
+            ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY,
+            "This call may have inconsistent results because ''{0}'' uses identity equality and ''{1}'' does not have a consistent identity.{2}",
+            CLASS_ID_RELATIVE_NAME_ONLY,
+            RENDER_TYPE,
+            suggestIfNotNull(" Consider using ''{0}'' instead.", CLASS_ID_RELATIVE_NAME_ONLY),
+        )
 
         map.put(TYPE_MISMATCH, "Type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
         map.put(
@@ -1473,7 +1510,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is ''{0}'' but ''Boolean'' was expected.", RENDER_TYPE, NOT_RENDERED)
         map.put(
             ARGUMENT_TYPE_MISMATCH,
-            "Argument type mismatch: actual type is ''{1}'', but ''{0}'' was expected.",
+            "Argument type mismatch: actual type is ''{0}'', but ''{1}'' was expected.",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED
@@ -1508,7 +1545,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(AMBIGUOUS_FUNCTION_TYPE_KIND, "Multiple function type conversions are prohibited for a single type. Detected type conversions: {0}", FUNCTIONAL_TYPE_KINDS)
         map.put(NEXT_NONE_APPLICABLE, "None of the ''next()'' functions is applicable for this expression. Candidates are:{0}", SYMBOLS_ON_NEXT_LINES)
 
-        map.put(CONTEXT_RECEIVERS_DEPRECATED, FirContextReceiversLanguageVersionSettingsChecker.CONTEXT_RECEIVER_MESSAGE)
+        map.put(CONTEXT_RECEIVERS_DEPRECATED, "{0}", STRING)
         map.put(CONTEXT_CLASS_OR_CONSTRUCTOR,
                 """
                     Contextual classes and constructors are deprecated and will not be supported when context parameters are enabled. Consider migrating to regular parameters.
@@ -1545,6 +1582,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION,
             "Callable reference to ''{0}'' is unsupported because it has context parameters.",
             SYMBOL,
+        )
+        map.put(
+            MULTIPLE_CONTEXT_LISTS,
+            "Multiple context parameter lists are forbidden. Put all context parameters in one list.",
+        )
+        map.put(
+            NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE,
+            "Named context parameters in function types are unsupported. Use syntax 'context(Type)' instead.",
         )
         map.put(
             SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR,
@@ -2771,6 +2816,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Type alias with type projection ('in', 'out' or '*') in expanded type in constructor call or supertype position. " +
             "See https://youtrack.jetbrains.com/issue/KT-60305."
         )
+        map.put(
+            TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS,
+            "Type alias expansion captures outer type parameters: {0}.",
+            commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION),
+        )
 
         // Returns
         map.put(RETURN_NOT_ALLOWED, "'return' is prohibited here.")
@@ -2963,7 +3013,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Ambiguous access to the 'entries' qualifier is deprecated. In the future, it will be shadowed by enum 'entries' property. Ambiguity can be resolved by renaming conflicting declaration."
         )
         map.put(
-            DEPRECATED_DECLARATION_OF_ENUM_ENTRY,
+            DECLARATION_OF_ENUM_ENTRY_ENTRIES,
             "Conflicting declarations: the enum entry 'entries' and the property 'Enum.entries' (KT-48872)."
         )
 

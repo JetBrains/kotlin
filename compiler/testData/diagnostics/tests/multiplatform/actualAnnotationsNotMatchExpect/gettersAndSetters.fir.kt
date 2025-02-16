@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
@@ -26,19 +25,19 @@ expect var onSetter: String
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 actual val onGetter: String
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>get<!>() = ""
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>get<!>() = ""
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> val onGetterImplicit: String = ""
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> val onGetterImplicit: String = ""
 
 actual val onGetterWithExplicitTarget: String
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>get<!>() = ""
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>get<!>() = ""
 
 actual val explicitTargetMatchesWithoutTarget: String
     @Ann get() = ""
 
 @Ann
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> val setOnPropertyWithoutTargetNotMatch: String = ""
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> val setOnPropertyWithoutTargetNotMatch: String = ""
 
 actual var onSetter: String
     get() = ""
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>set<!>(_) {}
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>set<!>(_) {}

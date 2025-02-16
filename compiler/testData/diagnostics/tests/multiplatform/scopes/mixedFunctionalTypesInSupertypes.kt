@@ -1,17 +1,17 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // MODULE: common
 // FILE: common.kt
-expect interface <!NO_ACTUAL_FOR_EXPECT!>I1<!><out R> {
+expect interface I1<out R> {
     fun invoke(): R
 }
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>I2<!><out R> {
+expect interface I2<out R> {
     suspend fun invoke(): R
 }
 
-<!CONFLICTING_INHERITED_MEMBERS, CONFLICTING_INHERITED_MEMBERS{JVM}!>expect interface <!NO_ACTUAL_FOR_EXPECT!>ExpectInterface<!><!> : <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES{JVM}!>I1<Int>, I2<Int><!>
+<!CONFLICTING_INHERITED_MEMBERS, CONFLICTING_INHERITED_MEMBERS{JVM}!>expect interface ExpectInterface<!> : <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES{JVM}!>I1<Int>, I2<Int><!>
 
 <!CONFLICTING_INHERITED_MEMBERS, CONFLICTING_INHERITED_MEMBERS{JVM}!>interface CommonInterface<!> : <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES{JVM}!>I1<Int>, I2<Int><!>
 

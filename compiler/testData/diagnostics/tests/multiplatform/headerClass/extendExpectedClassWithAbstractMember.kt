@@ -3,10 +3,10 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect abstract class BaseA() {
+expect abstract class <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseA<!>() {
     abstract fun foo()
 }
-expect open class BaseAImpl() : BaseA
+expect open class <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseAImpl<!>() : BaseA
 
 class DerivedA1 : BaseAImpl()
 class DerivedA2 : BaseAImpl() {
@@ -15,10 +15,10 @@ class DerivedA2 : BaseAImpl() {
 
 
 
-expect interface BaseB {
+expect interface <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseB<!> {
     fun foo()
 }
-expect open class BaseBImpl() : BaseB
+expect open class <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseBImpl<!>() : BaseB
 
 class DerivedB1 : BaseBImpl()
 class DerivedB2 : BaseBImpl() {
@@ -27,47 +27,49 @@ class DerivedB2 : BaseBImpl() {
 
 
 
-expect interface BaseC {
+expect interface <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseC<!> {
     fun foo()
 }
-expect abstract class BaseCImpl() : BaseC
+expect abstract class <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseCImpl<!>() : BaseC
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class DerivedC1<!> : BaseCImpl()
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{JVM}!>class DerivedC1<!> : BaseCImpl()
 class DerivedC2 : BaseCImpl() {
-    override fun foo() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
+    override fun foo() = super.<!ABSTRACT_SUPER_CALL, ABSTRACT_SUPER_CALL{JVM}!>foo<!>()
 }
 
 
 
-expect interface BaseD {
+expect interface <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseD<!> {
     fun foo()
 }
 abstract class BaseDImpl() : BaseD {
-    fun bar() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
+    fun bar() = super.<!ABSTRACT_SUPER_CALL, ABSTRACT_SUPER_CALL{JVM}!>foo<!>()
 }
 
 
 
-expect interface BaseE {
+expect interface <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseE<!> {
     fun foo()
 }
 sealed class BaseEImpl() : BaseE {
-    fun bar() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
+    fun bar() = super.<!ABSTRACT_SUPER_CALL, ABSTRACT_SUPER_CALL{JVM}!>foo<!>()
 }
 
 
 
-expect interface BaseF {
+expect interface <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseF<!> {
     fun foo()
 }
-expect class BaseFImpl() : BaseF
+expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseFImpl<!>() : BaseF
 
 
 
-expect abstract class BaseG() {
+expect abstract class <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseG<!>() {
     abstract fun foo()
 }
-expect open class BaseGImpl() : BaseG {
+expect open class <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseGImpl<!>() : BaseG {
     override fun foo()
 }
 class DerivedG1 : BaseGImpl()
+
+// MODULE: m1-jvm()()(m1-common)

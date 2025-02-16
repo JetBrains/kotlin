@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
@@ -13,4 +12,4 @@ expect class Foo: @Ann I
 // FILE: jvm.kt
 typealias ITypealias = I
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class Foo : ITypealias
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class Foo : ITypealias

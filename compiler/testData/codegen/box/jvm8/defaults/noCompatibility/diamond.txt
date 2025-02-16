@@ -1,0 +1,34 @@
+@kotlin.Metadata
+public final class DiamondKt {
+    // source: 'diamond.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface Test {
+    // source: 'diamond.kt'
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface Test2 {
+    // source: 'diamond.kt'
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface Test3 {
+    // source: 'diamond.kt'
+}
+
+@kotlin.Metadata
+public class TestClass {
+    // source: 'diamond.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class TestClass2 {
+    // source: 'diamond.kt'
+    public method <init>(): void
+}

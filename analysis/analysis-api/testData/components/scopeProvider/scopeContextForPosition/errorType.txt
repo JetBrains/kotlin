@@ -74,6 +74,7 @@ scopes:
         annotations: []
         callableId: /test
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

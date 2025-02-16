@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // JVM_TARGET: 1.8
+// FIR_DUMP
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.function.IntPredicate
 import java.util.stream.Stream
@@ -15,11 +17,11 @@ interface Process {
 }
 
 fun run(filter: IntPredicate, allProcesses: Stream<Process>): List<IntLongPair> {
-    return allProcesses.filter {
+    return <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>allProcesses.filter {
         filter.test(it.pid())
     }.map<IntLongPair?> {
         val duration = it.totalCpuDuration()
         if (duration != null) IntLongPair(it.pid(), duration)
         else null
-    }.toList()
+    }.toList()<!>
 }

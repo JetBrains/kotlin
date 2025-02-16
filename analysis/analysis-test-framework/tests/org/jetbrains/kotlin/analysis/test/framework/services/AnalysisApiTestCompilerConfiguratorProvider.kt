@@ -62,6 +62,6 @@ class AnalysisApiTestCompilerConfiguratorProvider(
 
     @OptIn(TestInfrastructureInternals::class)
     private fun createKotlinCompilerConfiguration(module: TestModule): CompilerConfiguration {
-        return createCompilerConfiguration(module, configurators)
+        return createCompilerConfiguration(testServices, module, configurators)
     }
 }

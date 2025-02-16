@@ -12,7 +12,6 @@
 #include "MemoryPrivate.hpp"
 #include "ObjectTestSupport.hpp"
 #include "ThreadData.hpp"
-#include "WeakRef.hpp"
 
 namespace kotlin {
 

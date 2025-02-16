@@ -7,10 +7,12 @@ KtNameReferenceExpression(165,170): 'check'
           receiverType = null
           returnType = {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
           symbol = list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtNameReferenceExpression(165,170): 'check'
               receiverType = null
               returnType = {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
               symbol = list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = library4/MyInterface.check
       typeArgumentsMapping = {}
     isInBestCandidates = true

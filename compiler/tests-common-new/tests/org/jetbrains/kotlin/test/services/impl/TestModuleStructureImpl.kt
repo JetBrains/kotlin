@@ -32,14 +32,14 @@ class TestModuleStructureImpl(
     }
 
     companion object {
-        fun TargetPlatform.toArtifactKind(frontendKind: FrontendKind<out ResultingArtifact.FrontendOutput<*>>): BinaryKind<*> {
+        fun TargetPlatform.toArtifactKind(frontendKind: FrontendKind<out ResultingArtifact.FrontendOutput<*>>): ArtifactKind<*> {
             if (frontendKind == FrontendKinds.ClassicAndFIR && this in JvmPlatforms.allJvmPlatforms) return ArtifactKinds.JvmFromK1AndK2
             return when (this) {
                 in JvmPlatforms.allJvmPlatforms -> ArtifactKinds.Jvm
                 in JsPlatforms.allJsPlatforms -> ArtifactKinds.Js
                 in NativePlatforms.allNativePlatforms -> ArtifactKinds.Native
                 in WasmPlatforms.allWasmPlatforms -> ArtifactKinds.Wasm
-                else -> BinaryKind.NoArtifact
+                else -> ArtifactKind.NoArtifact
             }
         }
     }

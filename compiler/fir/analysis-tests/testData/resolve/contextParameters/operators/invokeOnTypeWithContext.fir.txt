@@ -1,0 +1,33 @@
+FILE: invokeOnTypeWithContext.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test1 : R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
+        public constructor(): R|Test1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun invoke(p1: R|A|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class Test2 : R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
+        public constructor(): R|Test2| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public open override fun invoke(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        R|/Test1.Test1|().R|/Test1.invoke|(R|/A.A|())
+        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/Test1.Test1|().R|/Test1.invoke|(this@R|special/anonymous|)
+        }
+        )
+    }

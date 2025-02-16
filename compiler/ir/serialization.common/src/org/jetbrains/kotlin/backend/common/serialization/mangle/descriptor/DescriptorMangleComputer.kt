@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor
 
-import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
+import org.jetbrains.kotlin.ir.util.varargElementType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import kotlin.collections.isNotEmpty
+import kotlin.collections.orEmpty
 
 /**
  * The descriptor-based mangle computer. Used to compute a mangled name for a declaration given its [DeclarationDescriptor].
@@ -25,7 +28,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             /*Declaration=*/DeclarationDescriptor,
             /*Type=*/KotlinType,
             /*TypeParameter=*/TypeParameterDescriptor,
-            /*ValueParameter=*/ValueParameterDescriptor,
+            /*ValueParameter=*/ParameterDescriptor,
             /*TypeParameterContainer=*/DeclarationDescriptor, // CallableDescriptor or ClassDescriptor
             /*FunctionDeclaration=*/FunctionDescriptor,
             /*Session=*/Nothing?,
@@ -54,13 +57,13 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
     override fun DeclarationDescriptor.asTypeParameterContainer(): DeclarationDescriptor =
         this
 
-    override fun getContextReceiverTypes(function: FunctionDescriptor): List<KotlinType> =
-        function.contextReceiverParameters.map { it.type }
+    override fun getContextParameters(function: FunctionDescriptor): List<ParameterDescriptor> =
+        function.contextReceiverParameters
 
-    override fun getExtensionReceiverParameterType(function: FunctionDescriptor): KotlinType? =
-        function.extensionReceiverParameter?.type
+    override fun getExtensionReceiverParameter(function: FunctionDescriptor): ParameterDescriptor? =
+        function.extensionReceiverParameter
 
-    override fun getValueParameters(function: FunctionDescriptor): List<ValueParameterDescriptor> =
+    override fun getRegularParameters(function: FunctionDescriptor): List<ValueParameterDescriptor> =
         function.valueParameters
 
     override fun getReturnType(function: FunctionDescriptor): KotlinType? =
@@ -78,13 +81,9 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
 
     override fun isUnit(type: KotlinType) = type.isUnit()
 
-    private fun mangleExtensionReceiverParameter(vpBuilder: StringBuilder, param: ReceiverParameterDescriptor) {
-        mangleType(vpBuilder, param.type, null)
-    }
+    final override fun isVararg(valueParameter: ParameterDescriptor) = valueParameter.varargElementType != null
 
-    final override fun isVararg(valueParameter: ValueParameterDescriptor) = valueParameter.varargElementType != null
-
-    final override fun getValueParameterType(valueParameter: ValueParameterDescriptor): KotlinType =
+    final override fun getValueParameterType(valueParameter: ParameterDescriptor): KotlinType =
         valueParameter.type
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -208,10 +207,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             if (descriptor is IrImplementingDelegateDescriptor) {
                 descriptor.mangleSimpleDeclaration(descriptor.name.asString())
             } else {
-
                 val actualDescriptor = (descriptor as? IrPropertyDelegateDescriptor)?.correspondingProperty ?: descriptor
-
-                val extensionReceiver = actualDescriptor.extensionReceiverParameter
 
                 typeParameterContainers.add(actualDescriptor)
                 actualDescriptor.containingDeclaration.visit()
@@ -220,9 +216,17 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
                     builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
                 }
 
+                val contextParameters = actualDescriptor.contextReceiverParameters
+                if (contextParameters.isNotEmpty()) {
+                    contextParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+                        mangleValueParameter(this, it, null)
+                    }
+                }
+
+                val extensionReceiver = actualDescriptor.extensionReceiverParameter
                 if (extensionReceiver != null) {
                     builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-                    mangleExtensionReceiverParameter(builder, extensionReceiver)
+                    mangleValueParameter(builder, extensionReceiver, null)
                 }
 
                 actualDescriptor.typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) {

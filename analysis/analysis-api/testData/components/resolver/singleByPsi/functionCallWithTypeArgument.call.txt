@@ -7,16 +7,19 @@ KtCallExpression(53,68): 'function(1, "")'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: A
+          contextParameters = []
           callableId = null),
         "" -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.String
           symbol = b: B
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -29,14 +32,17 @@ KtCallExpression(53,68): 'function(1, "")'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: A
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.String
               symbol = b: B
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {
         A -> (kotlin.Int),

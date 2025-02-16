@@ -7,7 +7,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide().memberFunction(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of class ScopeOwner<SOT>)>")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultA<!>
@@ -17,7 +17,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide().extensionFunction(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTB (of fun <SOTB, B> ScopeOwner<SOTB>.extensionFunction)>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of class ScopeOwner<SOT>)> & ScopeOwner<SOTB (of fun <SOTB, B> ScopeOwner<SOTB>.extensionFunction)>")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultB<!>
@@ -27,7 +27,7 @@ fun testStandardNavigation() {
         // should fix OTv := ScopeOwner<Value> for scope navigation
         otvOwner.provide().fix()
         // expected: Interloper </: ScopeOwner<Value>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of class ScopeOwner<SOT>)>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of class ScopeOwner<SOT>)>")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>")!>resultC<!>
@@ -39,7 +39,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner<Value>? for scope navigation
         otvOwner.provide()?.memberFunction(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of fun <SOT> Nullable)>?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of fun <SOT> Nullable)>?")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultA<!>
@@ -49,7 +49,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner<Value>? for scope navigation
         otvOwner.provide()?.extensionFunction(TypeArgument)
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Nothing?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; Nothing?")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultB<!>
@@ -59,7 +59,7 @@ fun testSafeNavigation() {
         // should fix OTv := ScopeOwner<Value>? for scope navigation
         otvOwner.provide()?.fix()
         // expected: Interloper </: ScopeOwner<Value>?
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner<SOT (of fun <SOT> Nullable)>?; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner<SOT (of fun <SOT> Nullable)>?")!>Interloper<!>)
     }
     // expected: ScopeOwner<Value>?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner<Value>?")!>resultC<!>

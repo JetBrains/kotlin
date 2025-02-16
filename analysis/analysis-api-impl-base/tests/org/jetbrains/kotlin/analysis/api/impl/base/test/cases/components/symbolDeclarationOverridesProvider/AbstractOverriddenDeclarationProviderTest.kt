@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
@@ -24,7 +27,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(mainFile) {
-                val symbol = getCallableSymbol(mainFile, testServices)
+                val symbol = getCallableSymbol(mainFile, mainModule, testServices)
                 val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
 
@@ -47,12 +50,22 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KaSession.getCallableSymbol(mainFile: KtFile, testServices: TestServices): KaCallableSymbol {
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
+    private fun KaSession.getCallableSymbol(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices): KaCallableSymbol {
+        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
         if (declaration != null) {
             return declaration.symbol as KaCallableSymbol
         }
-        return getSingleTestTargetSymbolOfType<KaCallableSymbol>(mainFile, testDataPath)
+
+        val referenceExpression = testServices.expressionMarkerProvider
+            .getTopmostSelectedElementOfTypeByDirectiveOrNull(mainFile, mainModule, defaultType = KtExpression::class) as? KtExpression
+        if (referenceExpression != null) {
+            val reference = referenceExpression.mainReference ?: error("No reference at caret")
+            val symbol = reference.resolveToSymbol() ?: error("Reference cannot be resolved")
+            require(symbol is KaCallableSymbol) { "Resolved to non-callable symbol $${symbol::class.simpleName}" }
+            return symbol
+        }
+
+        return getSingleTestTargetSymbolOfType<KaCallableSymbol>(testDataPath, mainFile)
     }
 
     private fun KaSession.renderSignature(symbol: KaCallableSymbol): String = buildString {

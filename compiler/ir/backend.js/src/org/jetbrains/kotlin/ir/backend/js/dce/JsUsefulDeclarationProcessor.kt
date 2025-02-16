@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -36,7 +38,10 @@ internal class JsUsefulDeclarationProcessor(
 
             when (expression.symbol) {
                 context.intrinsics.jsBoxIntrinsic -> {
-                    val inlineClass = context.inlineClassesUtils.getInlinedClass(expression.typeArguments[0]!!)!!
+                    val inlineClass = expression.typeArguments[0]?.let {
+                        context.inlineClassesUtils.getRuntimeClassFor(it)
+                    } ?: compilationException("Unexpected type argument in box intrinsic", expression)
+
                     val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
                     constructor.enqueue(data, "intrinsic: jsBoxIntrinsic")
                 }
@@ -245,9 +250,7 @@ internal class JsUsefulDeclarationProcessor(
                 val annotationClass = annotation.symbol.owner.constructedClass
                 if (removeUnusedAssociatedObjects && annotationClass !in referencedJsClasses) continue
 
-                annotation.associatedObject()?.let { obj ->
-                    context.mapping.objectToGetInstanceFunction[obj]?.enqueue(klass, "associated object factory")
-                }
+                annotation.associatedObject()?.objectGetInstanceFunction?.enqueue(klass, "associated object factory")
             }
         }
     }

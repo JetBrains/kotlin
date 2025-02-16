@@ -1,6 +1,59 @@
-KtNameReferenceExpression(269,278): 'something'
-  KtSimpleNameReference:
-    (in JavaClass) var JavaClass.something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference:
-    (in JavaClass) open fun setSomething(value: kotlin.Int)
+<caret_1>:
+  KtNameReferenceExpression(115,124): 'something'
+    KtSimpleNameReference:
+      (in JavaClass) var JavaClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun getSomething(): kotlin.Int
+
+<caret_2>:
+  KtNameReferenceExpression(140,149): 'something'
+    KtSimpleNameReference:
+      (in JavaClass) var JavaClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+<caret_3>:
+  KtNameReferenceExpression(168,177): 'something'
+    KtSimpleNameReference:
+      (in JavaClass) var JavaClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+<caret_4>:
+  KtNameReferenceExpression(197,206): 'something'
+    KtSimpleNameReference:
+      (in JavaClass) var JavaClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+<caret_5>:
+  KtNameReferenceExpression(225,234): 'something'
+    KtSimpleNameReference:
+      (in JavaClass) var JavaClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+<caret_6>:
+  KtNameReferenceExpression(240,249): 'something'
+    KtSimpleNameReference:
+      (in JavaClass) var JavaClass.something: kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun getSomething(): kotlin.Int
+
+    SyntheticPropertyAccessorReference:
+      (in JavaClass) open fun setSomething(value: kotlin.Int)

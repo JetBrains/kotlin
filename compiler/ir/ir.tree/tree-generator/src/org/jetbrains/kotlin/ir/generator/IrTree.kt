@@ -9,9 +9,14 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
-import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.VariableKind
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.anonymousInitializerSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classifierSymbol
@@ -25,6 +30,7 @@ import org.jetbrains.kotlin.ir.generator.IrSymbolTree.functionSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.localDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.packageFragmentSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.replSnippetSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.returnTargetSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.returnableBlockSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.scriptSymbol
@@ -38,9 +44,8 @@ import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Element.Category.*
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.*
-import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Array
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.MutableList
+import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.name.FqName
@@ -107,6 +112,14 @@ object IrTree : AbstractTreeBuilder() {
 
         +offsetField("start")
         +offsetField("end")
+
+        +field("attributeOwnerId", rootElement, isChild = false) {
+            deepCopyExcludeFromApply = true
+            kDoc = """
+                Original element before copying. Always satisfies the following
+                invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
+            """.trimIndent()
+        }
 
         kDoc = "The root interface of the IR tree. Each IR node implements this interface."
     }
@@ -225,7 +238,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(valueDeclaration)
 
         +descriptor("ParameterDescriptor")
-        +field("isAssignable", boolean, mutable = false)
+        +field("isAssignable", boolean)
         +declaredSymbol(valueParameterSymbol)
         +field("varargElementType", irTypeType, nullable = true)
         +field("isCrossinline", boolean)
@@ -278,7 +291,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationWithVisibility)
         parent(typeParametersContainer)
         parent(declarationContainer)
-        parent(attributeContainer)
         parent(metadataSourceOwner)
 
         +descriptor("ClassDescriptor")
@@ -315,25 +327,6 @@ object IrTree : AbstractTreeBuilder() {
             NOTE: If this [${render()}] was deserialized from a klib, this list will always be empty!
             See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
             """.trimIndent()
-        }
-    }
-    val attributeContainer: Element by element(Declaration) {
-        kDoc = """
-            Represents an IR element that can be copied, but must remember its original element. It is
-            useful, for example, to keep track of generated names for anonymous declarations.
-            @property attributeOwnerId original element before copying. Always satisfies the following
-              invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
-            @property originalBeforeInline original element before inlining. Useful only with IR
-              inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
-              idempotence invariant and can contain a chain of declarations.
-        """.trimIndent()
-
-        +field("attributeOwnerId", attributeContainer, isChild = false) {
-            deepCopyExcludeFromApply = true
-        }
-        // null <=> this element wasn't inlined
-        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false) {
-            deepCopyExcludeFromApply = true
         }
     }
     val mutableAnnotationContainer: Element by element(Declaration) {
@@ -434,11 +427,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("initializerExpression", expressionBody, nullable = true)
         +field("correspondingClass", `class`, nullable = true)
     }
-    val errorDeclaration: Element by element(Declaration) {
-        parent(declarationBase)
-
-        +field("symbol", IrSymbolTree.rootElement, mutable = false)
-    }
     val functionWithLateBinding: Element by declarationWithLateBinding(simpleFunctionSymbol) {
         parent(simpleFunction)
     }
@@ -489,7 +477,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(possiblyExternalDeclaration)
         parent(overridableDeclaration.withArgs("S" to propertySymbol))
         parent(metadataSourceOwner)
-        parent(attributeContainer)
         parent(memberWithContainerSource)
 
         +descriptor("PropertyDescriptor")
@@ -537,10 +524,40 @@ object IrTree : AbstractTreeBuilder() {
             deepCopyExcludeFromApply = true
         } // K1
     }
+    val replSnippet: Element by element(Declaration) {
+        parent(declarationBase)
+        parent(declarationWithName)
+        parent(declarationParent)
+        parent(metadataSourceOwner)
+
+        kDoc = """
+            Represents a REPL snippet entity that corresponds to the analogous FIR entity.
+        """.trimIndent()
+
+        +declaredSymbol(replSnippetSymbol)
+        +listField("receiverParameters", valueParameter, mutability = Var) {
+            kDoc = """
+                Stores implicit receiver parameters configured for the snippet.
+            """.trimIndent()
+        }
+        +listField("variablesFromOtherSnippets", variable, mutability = MutableList)
+        +listField("declarationsFromOtherSnippets", declaration, mutability = MutableList)
+        +referencedSymbol("stateObject", classSymbol, nullable = true) {
+            kDoc = """
+                Contains link to the static state object for this compilation session.
+            """.trimIndent()
+        }
+        +field("body", body)
+        +field("returnType", irTypeType, nullable = true)
+        +referencedSymbol("targetClass", classSymbol, nullable = true){
+            kDoc = """
+                Contains link to the IrClass symbol to which this snippet should be lowered on the appropriate stage.
+            """.trimIndent()
+        }
+    }
     val simpleFunction: Element by element(Declaration) {
         parent(function)
         parent(overridableDeclaration.withArgs("S" to simpleFunctionSymbol))
-        parent(attributeContainer)
 
         +descriptor("FunctionDescriptor")
         +declaredSymbol(simpleFunctionSymbol)
@@ -629,7 +646,6 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(statement)
         parent(varargElement)
-        parent(attributeContainer)
 
         +field("type", irTypeType)
     }
@@ -696,9 +712,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(type<AnnotationMarker>())
 
         +referencedSymbol(constructorSymbol)
-        +field("source", type<SourceElement>()) {
-            deepCopyExcludeFromConstructor = true
-        }
+        +field("source", type<SourceElement>())
         +field("constructorTypeArgumentsCount", int)
     }
     val getSingletonValue: Element by element(Expression) {
@@ -758,8 +772,18 @@ object IrTree : AbstractTreeBuilder() {
 
         visitorParameterName = "inlinedBlock"
 
-        +field("inlineFunctionSymbol", functionSymbol, isChild = false, nullable = true)
-        +field("fileEntry", type(Packages.tree, "IrFileEntry"), isChild = false)
+        +field("inlinedFunctionStartOffset", int) {
+            kDoc = """
+                Represents the start offset of the inlined function that was located inside `fileEntry`.
+            """.trimIndent()
+        }
+        +field("inlinedFunctionEndOffset", int) {
+            kDoc = """
+                Represents the end offset of the inlined function that was located inside `fileEntry`.                
+            """.trimIndent()
+        }
+        +field("inlinedFunctionSymbol", functionSymbol, isChild = false, nullable = true)
+        +field("inlinedFunctionFileEntry", type(Packages.tree, "IrFileEntry"), isChild = false)
     }
     val syntheticBody: Element by element(Expression) {
         visitorParameterName = "body"

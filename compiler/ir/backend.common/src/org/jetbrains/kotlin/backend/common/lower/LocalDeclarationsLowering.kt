@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.capturedFields
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -523,6 +523,13 @@ open class LocalDeclarationsLowering(
                 }
             }
 
+            // note: we don't need to upgrade property references as properties are not moved by the lowering
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                expression.transformChildrenVoid(this)
+                expression.reflectionTargetSymbol = expression.reflectionTargetSymbol?.run { owner.transformed ?: owner }?.symbol
+                return expression
+            }
+
             override fun visitReturn(expression: IrReturn): IrExpression {
                 expression.transformChildrenVoid(this)
 
@@ -607,7 +614,7 @@ open class LocalDeclarationsLowering(
                             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irClass.thisReceiver!!.symbol),
                             constructorContext.irGet(UNDEFINED_OFFSET, UNDEFINED_OFFSET, capturedValue)!!,
                             context.irBuiltIns.unitType,
-                            LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                            IrStatementOrigin.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
                         )
                     }
                 )
@@ -1051,7 +1058,7 @@ open class LocalDeclarationsLowering(
                     if (isInline && !isInInlineFunction) Data(currentClass, true) else this
             }
 
-            irElement.accept(object : IrElementVisitor<Unit, Data> {
+            irElement.accept(object : IrVisitor<Unit, Data>() {
                 override fun visitElement(element: IrElement, data: Data) {
                     element.acceptChildren(this, data)
                 }
@@ -1067,6 +1074,17 @@ open class LocalDeclarationsLowering(
                     // Also, a note: even if a lambda is not an inline one, there still cannot be a reference to it
                     // from an outside declaration, so it is safe to skip them here and correctly handle later, after the above conversion.
                     expression.function.acceptChildren(this, data)
+                }
+
+                override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Data) {
+                    expression.boundValues.forEach { it.accept(this, data) }
+                    expression.invokeFunction.acceptChildren(this, data)
+                }
+
+                override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: Data) {
+                    expression.boundValues.forEach { it.accept(this, data) }
+                    expression.getterFunction.acceptChildren(this, data)
+                    expression.setterFunction?.acceptChildren(this, data)
                 }
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {

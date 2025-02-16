@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -91,7 +91,7 @@ class JsIrCompilerWithIC(
             moveBodilessDeclarationsToSeparatePlace(context, it)
         }
 
-        generateJsTests(context, mainModule, groupByPackage = false)
+        generateJsTests(context, mainModule)
 
         lowerPreservingTags(allModules, context, context.irFactory.stageController as WholeWorldStageController)
 
@@ -108,7 +108,7 @@ fun lowerPreservingTags(
     // Lower all the things
     controller.currentStage = 0
 
-    val phaserState = PhaserState<IrModuleFragment>()
+    val phaserState = PhaserState()
     val jsLowerings = getJsLowerings(context.configuration)
 
     jsLowerings.forEachIndexed { i, lowering ->

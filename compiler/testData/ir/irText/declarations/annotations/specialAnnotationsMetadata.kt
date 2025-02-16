@@ -1,5 +1,7 @@
 // IGNORE_BACKEND: JS_IR
 // REASON: KT-69567 Missing source annotation @UnsafeVariance on `unsafeVariance ()` symbol usage in `main()`
+// IGNORE_BACKEND: NATIVE
+// REASON: native tests use source dependencies and JVM tests use binary dependencies, so source annotations are invisble here
 
 // MODULE: lib
 // FILE: lib.kt

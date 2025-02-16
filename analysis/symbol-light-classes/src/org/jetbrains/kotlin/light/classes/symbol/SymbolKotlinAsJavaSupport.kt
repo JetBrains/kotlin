@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,16 +14,14 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.modification.createAllLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
@@ -31,6 +29,7 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolBasedFakeLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForScript
@@ -44,7 +43,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import java.util.WeakHashMap
+import java.util.*
 
 private val KMP_CACHE: ThreadLocal<MutableMap<KtElement, KtLightClass?>> = ThreadLocal.withInitial { null }
 
@@ -60,6 +59,32 @@ private val isMultiplatformSupportAvailable: Boolean
  *
  * The method is designed to be used only for UAST (see https://plugins.jetbrains.com/docs/intellij/uast.html) in Android Lint.
  */
+@KaNonPublicApi
+@RequiresReadLock
+fun <T> withMultiplatformLightClassSupport(project: Project, block: () -> T): T {
+    if (isMultiplatformSupportAvailable) {
+        // Allow reentrant access
+        return block()
+    }
+
+    val permissionChecker = KaAnalysisPermissionChecker.getInstance(project)
+    check(permissionChecker.isAnalysisAllowed()) {
+        val rejectionReason = permissionChecker.getRejectionReason()
+        "Cannot enable multiplatform light class support. $rejectionReason"
+    }
+
+    try {
+        KMP_CACHE.set(WeakHashMap())
+        return block()
+    } finally {
+        KMP_CACHE.set(null)
+    }
+}
+
+@Deprecated(
+    "Use withMultiplatformLightClassSupport(project, block) instead",
+    ReplaceWith("withMultiplatformLightClassSupport(project, block)")
+)
 @KaNonPublicApi
 @RequiresReadLock
 fun <T> withMultiplatformLightClassSupport(block: () -> T): T {
@@ -84,7 +109,8 @@ private fun KaModule.isLightClassSupportAvailable(): Boolean {
 }
 
 internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KaModule>(project) {
-    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.Companion.getInstance(project) }
+    @KaCachedService
+    private val projectStructureProvider by lazyPub { KotlinProjectStructureProvider.getInstance(project) }
 
     private fun PsiElement.getModuleIfSupportEnabled(): KaModule? {
         return projectStructureProvider.getModule(
@@ -134,19 +160,20 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
         }
     }
 
-    override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> =
-        fqName.toClassIdSequence().flatMap {
-            project.createDeclarationProvider(searchScope, contextualModule = null).getAllClassesByClassId(it)
-        }
+    override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
+        val declarationProvider = project.createDeclarationProvider(searchScope, contextualModule = null)
+        return fqName.toClassIdSequence()
+            .flatMap(declarationProvider::getAllClassesByClassId)
             .filter { it.isFromSourceOrLibraryBinary() }
             .toSet()
+    }
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean =
         project.createPackageProvider(scope).doesKotlinOnlyPackageExist(fqName)
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> =
         project.createPackageProvider(scope)
-            .getKotlinOnlySubPackagesFqNames(fqn, nameFilter = { true })
+            .getKotlinOnlySubpackageNames(fqn)
             .map { fqn.child(it) }
 
     override fun createInstanceOfLightScript(script: KtScript): KtLightClass? {

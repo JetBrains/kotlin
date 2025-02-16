@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
@@ -20,6 +21,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app/sample-lib")
+    @BrokenOnMacosTest
     fun testMppBuildWithCompilerPlugins(gradleVersion: GradleVersion) {
 
         val printOptionsTaskName = "printCompilerPluginOptions"

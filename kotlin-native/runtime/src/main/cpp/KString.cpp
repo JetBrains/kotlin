@@ -19,7 +19,9 @@
 #include <limits>
 #include <string.h>
 #include <string>
+#include <optional>
 
+#include "CompilerConstants.hpp"
 #include "KAssert.h"
 #include "Exceptions.h"
 #include "Memory.h"
@@ -31,6 +33,7 @@
 #include "utf8.h"
 
 #include "polyhash/PolyHash.h"
+#include "polyhash/naive.h"
 
 using namespace kotlin;
 
@@ -39,62 +42,113 @@ namespace {
 static constexpr const uint32_t MAX_STRING_SIZE =
     static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
 
-KChar* StringUtf16Data(ObjHeader* kstring) {
-    return reinterpret_cast<KChar*>(StringRawData(kstring));
+size_t encodingUnitSize(StringEncoding encoding) {
+    switch (encoding) {
+    case StringEncoding::kUTF16: return sizeof(typename StringData<StringEncoding::kUTF16>::unit);
+    case StringEncoding::kLatin1: return sizeof(typename StringData<StringEncoding::kLatin1>::unit);
+    }
 }
 
-const KChar* StringUtf16Data(KConstRef kstring) {
-    return reinterpret_cast<const KChar*>(StringRawData(kstring));
+template <typename F /* = R(StringData<*>) */>
+auto encodingAware(KConstRef string, F&& impl) {
+    auto header = StringHeader::of(string);
+    switch (header->encoding()) {
+    case StringEncoding::kUTF16: return impl(StringData<StringEncoding::kUTF16>(header));
+    case StringEncoding::kLatin1: return impl(StringData<StringEncoding::kLatin1>(header));
+    }
 }
 
-size_t StringUtf16Length(KConstRef kstring) {
-    return kstring->array()->count_;
+template <typename F /* = R(StringData<*>, StringData<*>) */>
+auto encodingAware(KConstRef string1, KConstRef string2, F&& impl) {
+    return encodingAware(string1, [&](auto string1) {
+        return encodingAware(string2, [&](auto string2) { return impl(string1, string2); });
+    });
 }
 
-template <typename CharCountF /*= uint32_t(const char*, const char*) */, typename ConvertF /*= void(const char*, const char*, KChar*) */>
-OBJ_GETTER(convertToUTF16, const char* rawString, size_t rawStringLength, CharCountF&& countChars, ConvertF&& convert) {
-    if (rawString == nullptr) RETURN_OBJ(nullptr);
-    if (rawStringLength == 0) RETURN_RESULT_OF0(TheEmptyString);
+template <uint64_t maskT, uint64_t mask64, typename T>
+bool allZeroWhenMasked(const T* data, size_t size) {
+    auto vectorSize = sizeof(uint64_t) / sizeof(T);
+    if (size >= vectorSize * 2) {
+        auto misalignment = (vectorSize - reinterpret_cast<uintptr_t>(data) / sizeof(T)) % vectorSize;
+        for (; misalignment--; size--) if (*data++ & maskT) return false;
+        // now (uintptr_t)data % sizeof(uint64_t) == 0, so it's safe to cast
+        for (; size >= vectorSize; data += vectorSize, size -= vectorSize) {
+            if (*reinterpret_cast<const uint64_t*>(data) & mask64) return false;
+        }
+    }
+    while (size--) if (*data++ & maskT) return false;
+    return true;
+}
 
-    auto rawStringEnd = rawString + rawStringLength;
-    auto result = CreateUninitializedUtf16String(countChars(rawString, rawStringEnd), OBJ_RESULT);
-    convert(rawString, rawStringEnd, StringUtf16Data(result));
-    RETURN_OBJ(result);
+bool utf8StringIsASCII(const char* utf8, size_t lengthBytes) {
+    return allZeroWhenMasked<0x80, 0x8080808080808080ull>(utf8, lengthBytes);
+}
+
+bool utf16StringIsLatin1(const uint16_t* utf16, size_t lengthChars) {
+    return allZeroWhenMasked<0xFF00, 0xFF00FF00FF00FF00ull>(utf16, lengthChars);
+}
+
+template <typename String, typename It>
+bool isInSurrogatePair(String&& string, It&& it) {
+    return string.at(it.ptr()) != it;
+}
+
+template <typename Allocator /*= KRef(size_t sizeInChars) */>
+KRef allocateString(StringEncoding encoding, uint32_t sizeInUnits, Allocator&& allocate) {
+    auto sizeInBytes = sizeInUnits * encodingUnitSize(encoding);
+    auto flags = (static_cast<uint32_t>(encoding) << StringHeader::ENCODING_OFFSET) |
+        (StringHeader::IGNORE_LAST_BYTE * (sizeInBytes % 2));
+    // All strings are stored as KChar arrays regardless of the actual byte encoding
+    auto result = allocate((sizeInBytes + StringHeader::extraLength(flags)) / sizeof(KChar));
+    StringHeader::of(result)->flags_ = flags;
+    return result;
+}
+
+KRef allocatePermanentString(StringEncoding encoding, size_t sizeInUnits) {
+    return allocateString(encoding, sizeInUnits, [](size_t sizeInChars) {
+        auto result = reinterpret_cast<ObjHeader*>(std::calloc(sizeof(ArrayHeader) + sizeInChars * sizeof(KChar), 1));
+        result->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT);
+        result->array()->count_ = sizeInChars;
+        return result;
+    });
+}
+
+template <StringEncoding encoding, typename F /*= void(UnitType*) */>
+OBJ_GETTER(createString, uint32_t lengthUnits, F&& initializer) {
+    if (lengthUnits == 0) RETURN_RESULT_OF0(TheEmptyString);
+    auto result = CreateUninitializedString(encoding, lengthUnits, OBJ_RESULT);
+    initializer(reinterpret_cast<typename StringData<encoding>::unit*>(StringHeader::of(result)->data()));
+    return result;
+}
+
+OBJ_GETTER(createStringFromUTF8, const char* utf8, uint32_t lengthBytes, bool ensureValid) {
+    if (utf8 == nullptr) RETURN_OBJ(nullptr);
+    if (lengthBytes == 0) RETURN_RESULT_OF0(TheEmptyString);
+    if (kotlin::compiler::latin1Strings() && utf8StringIsASCII(utf8, lengthBytes)) {
+        RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, lengthBytes,
+            [=](uint8_t* out) { std::copy_n(utf8, lengthBytes, out); })
+    }
+    size_t lengthChars;
+    try {
+        lengthChars = ensureValid
+            ? utf8::utf16_length(utf8, utf8 + lengthBytes)
+            : utf8::with_replacement::utf16_length(utf8, utf8 + lengthBytes);
+    } catch (...) {
+        ThrowCharacterCodingException();
+    }
+    RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, lengthChars, [=](KChar* out) {
+        return ensureValid
+            ? utf8::unchecked::utf8to16(utf8, utf8 + lengthBytes, out) // already known to be valid
+            : utf8::with_replacement::utf8to16(utf8, utf8 + lengthBytes, out);
+    });
 }
 
 template <KStringConversionMode mode>
 OBJ_GETTER(unsafeConvertToUTF8, KConstRef thiz, KInt start, KInt size) {
-    RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
-
-    std::string utf8;
-    try {
-        utf8 = kotlin::to_string<mode>(thiz, static_cast<size_t>(start), static_cast<size_t>(size));
-    } catch (...) {
-        ThrowCharacterCodingException();
-    }
-
-    ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT)->array();
-    ::memcpy(ByteArrayAddressOfElementAt(result, 0), utf8.data(), utf8.size());
-    RETURN_OBJ(result->obj());
-}
-
-uint32_t mismatch(const uint16_t* first, const uint16_t* second, uint32_t size) {
-    const long* firstLong = reinterpret_cast<const long*>(first);
-    const long* secondLong = reinterpret_cast<const long*>(second);
-    constexpr int step = sizeof(long) / sizeof(uint16_t);
-    uint32_t sizeLong = size / step;
-    uint32_t iLong;
-    for (iLong = 0; iLong < sizeLong; iLong++) {
-        if (firstLong[iLong] != secondLong[iLong]) {
-            break;
-        }
-    }
-    for (uint32_t i = iLong * step; i < size; i++) {
-        if (first[i] != second[i]) {
-            return i;
-        }
-    }
-    return size;
+    std::string utf8 = kotlin::to_string<mode>(thiz, static_cast<size_t>(start), static_cast<size_t>(size));
+    auto result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT);
+    std::copy(utf8.begin(), utf8.end(), ByteArrayAddressOfElementAt(result->array(), 0));
+    return result;
 }
 
 const char* unsafeGetByteArrayData(KConstRef thiz, KInt start) {
@@ -103,29 +157,15 @@ const char* unsafeGetByteArrayData(KConstRef thiz, KInt start) {
 }
 
 template <typename T>
-int threeWayCompare(T a, T b) {
-    return (a == b) ? 0 : (a < b ? -1 : 1);
-}
-
-PERFORMANCE_INLINE inline const KChar* boundsCheckedIteratorAt(KConstRef string, KInt index) {
+PERFORMANCE_INLINE inline auto boundsCheckedIteratorAt(T string, KInt index) {
     // We couldn't have created a string bigger than max KInt value.
     // So if index is < 0, conversion to an unsigned value would make it bigger
     // than the array size.
-    if (static_cast<uint32_t>(index) >= StringUtf16Length(string)) {
+    if (static_cast<uint32_t>(index) >= string.sizeInChars()) {
         ThrowArrayIndexOutOfBoundsException();
     }
-    return StringUtf16Data(string) + index;
+    return string.begin() + index;
 }
-
-#if KONAN_WINDOWS
-void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen) {
-    for (size_t i = 0; i + littleLen <= bigLen; ++i) {
-        void* pos = ((char*)big) + i;
-        if (memcmp(little, pos, littleLen) == 0) return pos;
-    }
-    return nullptr;
-}
-#endif
 
 } // namespace
 
@@ -133,42 +173,43 @@ extern "C" OBJ_GETTER(CreateStringFromCString, const char* cstring) {
     RETURN_RESULT_OF(CreateStringFromUtf8, cstring, cstring ? strlen(cstring) : 0);
 }
 
-extern "C" OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes) {
-    RETURN_RESULT_OF(convertToUTF16, utf8, lengthBytes,
-        [](auto data, auto end) { return utf8::with_replacement::utf16_length(data, end); },
-        [](auto data, auto end, auto out) { utf8::with_replacement::utf8to16(data, end, out); });
+extern "C" OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t length) {
+    RETURN_RESULT_OF(createStringFromUTF8, utf8, length, false);
 }
 
-extern "C" OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t lengthBytes) {
-    RETURN_RESULT_OF(convertToUTF16, utf8, lengthBytes,
-        [](const char* data, const char* end) {
-            try {
-                return utf8::utf16_length(data, end);
-            } catch (...) {
-                ThrowCharacterCodingException();
-            }
-        },
-        [](auto data, auto end, auto out) { utf8::unchecked::utf8to16(data, end, out); });
+extern "C" OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t length) {
+    RETURN_RESULT_OF(createStringFromUTF8, utf8, length, true);
 }
 
-extern "C" OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars) {
+extern "C" OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length) {
     if (utf16 == nullptr) RETURN_OBJ(nullptr);
-    if (lengthChars == 0) RETURN_RESULT_OF0(TheEmptyString);
-
-    auto result = CreateUninitializedUtf16String(lengthChars, OBJ_RESULT);
-    memcpy(StringRawData(result), utf16, StringRawSize(result));
-    RETURN_OBJ(result);
+    RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, length, [=](KChar* out) { std::copy_n(utf16, length, out); });
 }
 
-extern "C" OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars) {
-    RETURN_RESULT_OF(AllocArrayInstance, theStringTypeInfo, lengthChars);
+extern "C" OBJ_GETTER(CreateUninitializedString, StringEncoding encoding, uint32_t length) {
+    if (length == 0) RETURN_RESULT_OF0(TheEmptyString);
+    return allocateString(encoding, length, [=](size_t sizeInChars) {
+        RETURN_RESULT_OF(AllocArrayInstance, theStringTypeInfo, sizeInChars);
+    });
+}
+
+extern "C" OBJ_GETTER(ConvertStringToUtf16, KRef kstringPtr) {
+    return encodingAware(kstringPtr, [=](auto kstring) {
+        if constexpr (kstring.encoding == StringEncoding::kUTF16) {
+            RETURN_OBJ(kstringPtr);
+        } else {
+            auto length = kstring.sizeInChars();
+            RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, length,
+                [&](KChar* out) { std::copy_n(kstring.begin(), length, out); });
+        }
+    });
 }
 
 extern "C" char* CreateCStringFromString(KConstRef kref) {
     if (kref == nullptr) return nullptr;
     std::string utf8 = kotlin::to_string<KStringConversionMode::UNCHECKED>(kref);
     char* result = reinterpret_cast<char*>(std::calloc(1, utf8.size() + 1));
-    ::memcpy(result, utf8.data(), utf8.size());
+    std::copy(utf8.begin(), utf8.end(), result);
     return result;
 }
 
@@ -180,16 +221,18 @@ extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8)
     // Note: this function can be called in "Native" thread state. But this is fine:
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
-    const char* end = nullTerminatedUTF8 + strlen(nullTerminatedUTF8);
-    size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
-    size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(char16_t));
-    size_t arraySize = headerSize + count * sizeof(char16_t);
-
-    auto header = (ObjHeader*)std::calloc(arraySize, 1);
-    header->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT_CONTAINER);
-    header->array()->count_ = count;
-    utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, StringUtf16Data(header));
-    return header;
+    auto sizeInBytes = strlen(nullTerminatedUTF8);
+    if (kotlin::compiler::latin1Strings() && utf8StringIsASCII(nullTerminatedUTF8, sizeInBytes)) {
+        auto result = allocatePermanentString(StringEncoding::kLatin1, sizeInBytes);
+        std::copy_n(nullTerminatedUTF8, sizeInBytes, StringHeader::of(result)->data());
+        return result;
+    } else {
+        auto end = nullTerminatedUTF8 + sizeInBytes;
+        auto sizeInChars = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
+        auto result = allocatePermanentString(StringEncoding::kUTF16, sizeInChars);
+        utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, reinterpret_cast<KChar*>(StringHeader::of(result)->data()));
+        return result;
+    }
 }
 
 extern "C" void FreePermanentStringForTests(KConstRef header) {
@@ -198,91 +241,134 @@ extern "C" void FreePermanentStringForTests(KConstRef header) {
 
 // String.kt
 extern "C" KInt Kotlin_String_getStringLength(KConstRef thiz) {
-    return StringUtf16Length(thiz);
+    return encodingAware(thiz, [](auto thiz) { return thiz.sizeInChars(); });
 }
 
-extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thiz, KChar oldChar, KChar newChar) {
-    auto count = StringUtf16Length(thiz);
-    auto result = CreateUninitializedUtf16String(count, OBJ_RESULT);
-    auto resultRaw = StringUtf16Data(result);
-    for (auto it = StringUtf16Data(thiz), end = it + count; it != end; it++) {
-        KChar thizChar = *it;
-        *resultRaw++ = thizChar == oldChar ? newChar : thizChar;
-    }
-    RETURN_OBJ(result);
+extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thizPtr, KChar oldChar, KChar newChar) {
+    return encodingAware(thizPtr, [=](auto thiz) {
+        if (!thiz.canEncode(oldChar)) RETURN_OBJ(const_cast<KRef>(thizPtr));
+        if (thiz.encoding == StringEncoding::kLatin1 && thiz.canEncode(newChar)) {
+            RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, thiz.sizeInUnits(),
+                [=](uint8_t* out) { std::replace_copy(thiz.begin().ptr(), thiz.end().ptr(), out, oldChar, newChar); })
+        }
+        RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, thiz.sizeInChars(),
+            [=](KChar* out) { std::replace_copy(thiz.begin(), thiz.end(), out, oldChar, newChar); });
+    });
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
-    RuntimeAssert(thiz != nullptr, "this cannot be null");
-    RuntimeAssert(other != nullptr, "other cannot be null");
-    RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
-    RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
-
-    auto thizLength = StringUtf16Length(thiz);
-    auto otherLength = StringUtf16Length(other);
-    RuntimeAssert(thizLength <= MAX_STRING_SIZE, "this cannot be this large");
-    RuntimeAssert(otherLength <= MAX_STRING_SIZE, "other cannot be this large");
-    auto resultLength = thizLength + otherLength; // can't overflow since MAX_STRING_SIZE is (max value)/2
-    if (resultLength > MAX_STRING_SIZE) {
-        ThrowOutOfMemoryError();
+    if (kotlin::compiler::latin1Strings()) {
+        if (StringHeader::of(thiz)->size() == 0) RETURN_OBJ(const_cast<KRef>(other));
+        if (StringHeader::of(other)->size() == 0) RETURN_OBJ(const_cast<KRef>(thiz));
     }
+    return encodingAware(thiz, other, [=](auto thiz, auto other) {
+        RuntimeAssert(thiz.sizeInChars() <= MAX_STRING_SIZE, "this cannot be this large");
+        RuntimeAssert(other.sizeInChars() <= MAX_STRING_SIZE, "other cannot be this large");
+        auto resultLength = thiz.sizeInChars() + other.sizeInChars(); // can't overflow since MAX_STRING_SIZE is (max value)/2
+        if (resultLength > MAX_STRING_SIZE) {
+            ThrowOutOfMemoryError();
+        }
 
-    auto result = CreateUninitializedUtf16String(resultLength, OBJ_RESULT);
-    auto resultRaw = StringUtf16Data(result);
-    memcpy(resultRaw, StringUtf16Data(thiz), StringRawSize(thiz));
-    memcpy(resultRaw + thizLength, StringUtf16Data(other), StringRawSize(other));
-    RETURN_OBJ(result);
+        if (thiz.encoding == other.encoding &&
+            // In non-UTF-16 encodings, the total size in units could still overflow, e.g.
+            // UTF-8 has characters that encode to 3 bytes while only needing 2 in UTF-16.
+            (thiz.encoding == StringEncoding::kUTF16 || thiz.sizeInUnits() < std::numeric_limits<size_t>::max() - other.sizeInUnits())
+        ) {
+            RETURN_RESULT_OF(createString<thiz.encoding>, thiz.sizeInUnits() + other.sizeInUnits(), [=](auto* out) {
+                auto halfway = std::copy(thiz.begin().ptr(), thiz.end().ptr(), out);
+                std::copy(other.begin().ptr(), other.end().ptr(), halfway);
+            });
+        } else {
+            RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, thiz.sizeInChars() + other.sizeInChars(), [=](KChar* out) {
+                auto halfway = std::copy(thiz.begin(), thiz.end(), out);
+                std::copy(other.begin(), other.end(), halfway);
+            });
+        }
+    });
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, KInt start, KInt size) {
     RuntimeAssert(thiz->type_info() == theCharArrayTypeInfo, "Must use a char array");
-
-    if (size == 0) {
-        RETURN_RESULT_OF0(TheEmptyString);
+    if (kotlin::compiler::latin1Strings() && utf16StringIsLatin1(CharArrayAddressOfElementAt(thiz->array(), start), size)) {
+        RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, size,
+            [=](uint8_t* out) { std::copy_n(CharArrayAddressOfElementAt(thiz->array(), start), size, out); });
     }
+    RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, size,
+        [=](KChar* out) { std::copy_n(CharArrayAddressOfElementAt(thiz->array(), start), size, out); });
+}
 
-    auto result = CreateUninitializedUtf16String(size, OBJ_RESULT);
-    memcpy(StringRawData(result), CharArrayAddressOfElementAt(thiz->array(), start), size * sizeof(KChar));
-    RETURN_OBJ(result);
+static void Kotlin_String_overwriteArray(KConstRef string, KRef destination, KInt destinationOffset, KInt start, KInt size) {
+    encodingAware(string, [=](auto string) {
+        auto it = string.begin() + start;
+        auto out = CharArrayAddressOfElementAt(destination->array(), destinationOffset);
+        if constexpr (string.encoding == StringEncoding::kUTF16) {
+            std::copy_n(it.ptr(), size, out);
+        } else {
+            std::copy_n(it, size, out);
+        }
+    });
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_toCharArray, KConstRef string, KRef destination, KInt destinationOffset, KInt start, KInt size) {
-    memcpy(CharArrayAddressOfElementAt(destination->array(), destinationOffset),
-        StringUtf16Data(string) + start, size * sizeof(KChar));
+    Kotlin_String_overwriteArray(string, destination, destinationOffset, start, size);
     RETURN_OBJ(destination);
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_subSequence, KConstRef thiz, KInt startIndex, KInt endIndex) {
-    if (startIndex < 0 || static_cast<uint32_t>(endIndex) > StringUtf16Length(thiz) || startIndex > endIndex) {
-        // TODO: is it correct exception?
-        ThrowArrayIndexOutOfBoundsException();
-    }
+    return encodingAware(thiz, [=](auto thiz) {
+        if (startIndex < 0 || static_cast<uint32_t>(endIndex) > thiz.sizeInChars() || startIndex > endIndex) {
+            // Kotlin/JVM uses StringIndexOutOfBounds, but Native doesn't have it and this is close enough.
+            ThrowArrayIndexOutOfBoundsException();
+        }
 
-    if (startIndex == endIndex) {
-        RETURN_RESULT_OF0(TheEmptyString);
-    }
+        if (startIndex == endIndex) {
+            RETURN_RESULT_OF0(TheEmptyString);
+        }
 
-    KInt length = endIndex - startIndex;
-    auto result = CreateUninitializedUtf16String(length, OBJ_RESULT);
-    memcpy(StringUtf16Data(result), StringUtf16Data(thiz) + startIndex, length * sizeof(KChar));
-    RETURN_OBJ(result);
+        auto start = thiz.begin() + startIndex;
+        auto end = start + (endIndex - startIndex);
+        if (isInSurrogatePair(thiz, start) || isInSurrogatePair(thiz, end)) {
+            RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, endIndex - startIndex,
+                [=](KChar* out) { std::copy(start, end, out); });
+        }
+        RETURN_RESULT_OF(createString<thiz.encoding>, end.ptr() - start.ptr(),
+            [=](auto* out) { std::copy(start.ptr(), end.ptr(), out); });
+    });
+}
+
+template <typename It1, typename It2>
+static KInt Kotlin_String_compareAt(It1 it1, It1 end1, It2 it2, It2 end2) {
+    if (it1 == end1 && it2 == end2) return 0;
+    if (it1 == end1) return -1;
+    if (it2 == end2) return 1;
+    KChar c1 = *it1, c2 = *it2;
+    if (c1 == c2) {
+        // Assuming the iterators were produced by std::mismatch, this is only possible
+        // when searching in raw memory then rolling back to the previous unit in non-UTF-16
+        // encodings. In this case this must be a surrogate pair where the first element is
+        // equal, but the second element is not.
+        c1 = *++it1;
+        c2 = *++it2;
+    }
+    return c1 < c2 ? -1 : 1;
 }
 
 extern "C" KInt Kotlin_String_compareTo(KConstRef thiz, KConstRef other) {
-    auto first = StringUtf16Data(thiz);
-    auto firstSize = StringUtf16Length(thiz);
-    auto second = StringUtf16Data(other);
-    auto secondSize = StringUtf16Length(other);
-    auto minSize = std::min(firstSize, secondSize);
-    auto mismatch_position = mismatch(first, second, minSize);
-    if (mismatch_position != minSize) {
-        return threeWayCompare(first[mismatch_position], second[mismatch_position]);
-    }
-    return threeWayCompare(firstSize, secondSize);
+    return encodingAware(thiz, other, [=](auto thiz, auto other) {
+        auto begin1 = thiz.begin(), end1 = thiz.end();
+        auto begin2 = other.begin(), end2 = other.end();
+        if constexpr (thiz.encoding == other.encoding) {
+            auto [ptr1, ptr2] = std::mismatch(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
+            return Kotlin_String_compareAt(thiz.at(ptr1), end1, other.at(ptr2), end2);
+        } else {
+            auto [it1, it2] = std::mismatch(begin1, end1, begin2, end2);
+            return Kotlin_String_compareAt(it1, end1, it2, end2);
+        }
+    });
 }
 
 extern "C" KChar Kotlin_String_get(KConstRef thiz, KInt index) {
-    return *boundsCheckedIteratorAt(thiz, index);
+    return encodingAware(thiz, [=](auto thiz) { return *boundsCheckedIteratorAt(thiz, index); });
 }
 
 extern "C" OBJ_GETTER(Kotlin_ByteArray_unsafeStringFromUtf8OrThrow, KConstRef thiz, KInt start, KInt size) {
@@ -302,10 +388,7 @@ extern "C" OBJ_GETTER(Kotlin_String_unsafeStringToUtf8OrThrow, KConstRef thiz, K
 }
 
 extern "C" KInt Kotlin_StringBuilder_insertString(KRef builder, KInt distIndex, KConstRef fromString, KInt sourceIndex, KInt count) {
-    auto toArray = builder->array();
-    RuntimeAssert(sourceIndex >= 0 && static_cast<uint32_t>(sourceIndex + count) <= StringUtf16Length(fromString), "must be true");
-    RuntimeAssert(distIndex >= 0 && static_cast<uint32_t>(distIndex + count) <= toArray->count_, "must be true");
-    memcpy(CharArrayAddressOfElementAt(toArray, distIndex), StringUtf16Data(fromString) + sourceIndex, count * sizeof(KChar));
+    Kotlin_String_overwriteArray(fromString, builder, distIndex, sourceIndex, count);
     return count;
 }
 
@@ -319,23 +402,65 @@ extern "C" KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt
     auto* from = &cstring[0];
     auto* to = CharArrayAddressOfElementAt(toArray, position);
     while (*from) {
-        *to++ = *from++;
+        *to++ = static_cast<KChar>(*from++); // always ASCII
     }
     return from - cstring;
 }
 
-
-extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
-    if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
-    if (thiz == other) return true;
-    // TODO: this assumes identical encodings
-    return StringRawSize(thiz) == StringRawSize(other) &&
-        memcmp(StringRawData(thiz), StringRawData(other), StringRawSize(thiz)) == 0;
+static std::optional<KInt> Kotlin_String_cachedHashCode(KConstRef thiz) {
+    auto header = StringHeader::of(thiz);
+    if (header->size() == 0) return 0;
+    auto hash = kotlin::std_support::atomic_ref{header->hashCode_}.load(std::memory_order_relaxed);
+    if (hash || kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_relaxed) & StringHeader::HASHCODE_IS_ZERO) {
+        return hash;
+    }
+    return {};
 }
 
-// Bounds checks is are performed on Kotlin side
+extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
+    if (thiz == other) return true;
+    if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
+
+    if (auto thizHash = Kotlin_String_cachedHashCode(thiz)) {
+        if (auto otherHash = Kotlin_String_cachedHashCode(other)) {
+            if (*thizHash != *otherHash) return false;
+        }
+    }
+
+    return encodingAware(thiz, other, [=](auto thiz, auto other) {
+        if constexpr (thiz.encoding == other.encoding) {
+            return std::equal(thiz.begin().ptr(), thiz.end().ptr(), other.begin().ptr(), other.end().ptr());
+        } else {
+            return std::equal(thiz.begin(), thiz.end(), other.begin(), other.end());
+        }
+    });
+}
+
+// Bounds checks are performed on Kotlin side
 extern "C" KBoolean Kotlin_String_unsafeRangeEquals(KConstRef thiz, KInt thizOffset, KConstRef other, KInt otherOffset, KInt length) {
-    return memcmp(StringUtf16Data(thiz) + thizOffset, StringUtf16Data(other) + otherOffset, length * sizeof(KChar)) == 0;
+    return length == 0 || encodingAware(thiz, other, [=](auto thiz, auto other) {
+        auto begin1 = thiz.begin() + thizOffset;
+        auto begin2 = other.begin() + otherOffset;
+        // Questionable moment: in variable-length encodings, is it more efficient to advance the iterator first
+        // and then compare the known fixed range, or to decode characters one by one and count while comparing?
+        auto end1 = begin1 + length;
+        auto end2 = begin2 + length;
+        if constexpr (thiz.encoding == other.encoding) {
+            // Assuming only one "canonical" encoding, can byte-compare encoded values.
+            // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
+            bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
+                ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
+                : isInSurrogatePair(other, begin2);
+            if (startsWithUnequalLowSurrogate) return false;
+            bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
+                ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
+                : isInSurrogatePair(other, end2);
+            if (endsWithUnequalHighSurrogate) return false;
+            return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
+        } else {
+            return std::equal(begin1, end1, begin2, end2);
+        }
+    });
 }
 
 extern "C" KBoolean Kotlin_Char_isISOControl(KChar ch) {
@@ -351,141 +476,162 @@ extern "C" KBoolean Kotlin_Char_isLowSurrogate(KChar ch) {
 }
 
 extern "C" KInt Kotlin_String_indexOfChar(KConstRef thiz, KChar ch, KInt fromIndex) {
-    if (fromIndex < 0) {
-        fromIndex = 0;
-    }
-    KInt count = Kotlin_String_getStringLength(thiz);
-    if (static_cast<uint32_t>(fromIndex) > static_cast<uint32_t>(count)) {
+    auto unsignedIndex = fromIndex < 0 ? 0 : static_cast<size_t>(fromIndex);
+    return encodingAware(thiz, [=](auto thiz) {
+        auto i = std::min(unsignedIndex, thiz.sizeInChars());
+        for (auto it = thiz.begin() + i; i < thiz.sizeInChars(); ++i) {
+            if (*it++ == ch) return static_cast<KInt>(i);
+        }
         return -1;
-    }
-    auto thizRaw = StringUtf16Data(thiz) + fromIndex;
-    while (fromIndex < count) {
-        if (*thizRaw++ == ch) return fromIndex;
-        fromIndex++;
-    }
-    return -1;
+    });
 }
 
 extern "C" KInt Kotlin_String_lastIndexOfChar(KConstRef thiz, KChar ch, KInt fromIndex) {
-    auto length = static_cast<uint32_t>(Kotlin_String_getStringLength(thiz));
-    if (fromIndex < 0 || length == 0) {
+    if (fromIndex < 0) return -1;
+    auto unsignedIndex = static_cast<size_t>(fromIndex) + 1; // convert to exclusive bound
+    return encodingAware(thiz, [=](auto thiz) {
+        auto i = std::min(unsignedIndex, thiz.sizeInChars());
+        for (auto it = thiz.begin() + i; i-- > 0; ) {
+            if (*--it == ch) return static_cast<KInt>(i);
+        }
         return -1;
-    }
-    if (static_cast<uint32_t>(fromIndex) >= length) {
-        fromIndex = length - 1;
-    }
-    KInt index = fromIndex;
-    const KChar* thizRaw = StringUtf16Data(thiz) + index;
-    while (index >= 0) {
-        if (*thizRaw-- == ch) return index;
-        index--;
-    }
-    return -1;
+    });
 }
 
-// TODO: or code up Knuth-Moris-Pratt,
-//       or use std::search with std::boyer_moore_searcher:
-//       https://en.cppreference.com/w/cpp/algorithm/search
+// TODO: or code up Knuth-Moris-Pratt, or use std::boyer_moore_searcher (might need backporting)
 extern "C" KInt Kotlin_String_indexOfString(KConstRef thiz, KConstRef other, KInt fromIndex) {
-    if (fromIndex < 0) {
-        fromIndex = 0;
-    }
-    KInt thizLength = Kotlin_String_getStringLength(thiz);
-    KInt otherLength = Kotlin_String_getStringLength(other);
-    if (static_cast<uint32_t>(fromIndex) >= static_cast<uint32_t>(thizLength)) {
-        return otherLength == 0 ? thizLength : -1;
-    }
-    if (otherLength > thizLength - fromIndex) {
-        return -1;
-    }
-    // An empty string can be always found.
-    if (otherLength == 0) {
-        return fromIndex;
-    }
+    auto unsignedIndex = fromIndex < 0 ? 0 : static_cast<size_t>(fromIndex);
+    return encodingAware(thiz, other, [=](auto thiz, auto other) {
+        auto thizLength = thiz.sizeInChars();
+        auto otherLength = other.sizeInChars();
+        if (unsignedIndex >= thizLength) {
+            return otherLength == 0 ? static_cast<KInt>(thizLength) : -1;
+        } else if (otherLength > thizLength) {
+            return -1;
+        } else if (otherLength == 0) {
+            return static_cast<KInt>(unsignedIndex);
+        }
 
-    auto thizRaw = StringUtf16Data(thiz);
-    auto otherRaw = StringUtf16Data(other);
-    auto otherRawSize = StringRawSize(other);
-    while (true) {
-        void* result = memmem(thizRaw + fromIndex, (thizLength - fromIndex) * sizeof(KChar),
-                              otherRaw, otherRawSize);
-        if (result == nullptr) return -1;
-        auto byteIndex = reinterpret_cast<intptr_t>(result) - reinterpret_cast<intptr_t>(thizRaw);
-        if (byteIndex % sizeof(KChar) == 0) {
-            return byteIndex / sizeof(KChar);
+        auto start = thiz.begin() + unsignedIndex, end = thiz.end();
+        auto patternStart = other.begin(), patternEnd = other.end();
+        if constexpr (thiz.encoding == other.encoding) {
+            auto shift = unsignedIndex;
+            while (start != end) {
+                if (isInSurrogatePair(thiz, start)) {
+                    // `start` points into a surrogate pair, skip its second half since presumably
+                    // this encoding doesn't allow `other` to start with it anyway.
+                    ++start;
+                    ++shift;
+                }
+                auto ptr = std::search(start.ptr(), end.ptr(), patternStart.ptr(), patternEnd.ptr());
+                if (ptr == end.ptr()) break;
+                auto it = thiz.at(ptr);
+                if (ptr == it.ptr()) return static_cast<KInt>(it - start + shift);
+                // Found a bytewise match, but it starts in the middle of a unit, so it's not a character-wise match.
+                shift += it - start + 1;
+                start = ++it;
+            }
+            return -1;
         } else {
-            fromIndex = byteIndex / sizeof(KChar) + 1;
+            auto it = std::search(start, end, patternStart, patternEnd);
+            return it == end ? -1 : static_cast<KInt>(it - start + unsignedIndex);
         }
-    }
+    });
 }
 
-extern "C" KInt Kotlin_String_lastIndexOfString(KConstRef thiz, KConstRef other, KInt fromIndex) {
-    KInt count = Kotlin_String_getStringLength(thiz);
-    KInt otherCount = Kotlin_String_getStringLength(other);
-
-    if (fromIndex < 0 || otherCount > count) {
-        return -1;
-    }
-    if (otherCount == 0) {
-        return fromIndex < count ? fromIndex : count;
+extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
+    if (auto cached = Kotlin_String_cachedHashCode(thiz)) {
+        return *cached;
     }
 
-    KInt start = std::min(fromIndex, count - otherCount);
-    KChar firstChar = Kotlin_String_get(other, 0);
-    while (true) {
-        KInt candidate = Kotlin_String_lastIndexOfChar(thiz, firstChar, start);
-        if (candidate == -1) return -1;
-        if (memcmp(StringUtf16Data(thiz) + candidate, StringUtf16Data(other), otherCount * sizeof(KChar)) == 0) {
-            return candidate;
+    KInt result = encodingAware(thiz, [](auto thiz) {
+        if constexpr (thiz.encoding == StringEncoding::kUTF16 || thiz.encoding == StringEncoding::kLatin1) {
+            return polyHash(thiz.sizeInUnits(), thiz.begin().ptr());
+        } else {
+            return polyHash_naive(thiz.begin(), thiz.end());
         }
-        start = candidate - 1;
-    }
-}
+    });
 
-extern "C" KInt Kotlin_String_hashCode(KConstRef thiz) {
-    // TODO: consider caching strings hashes.
-    return polyHash(StringUtf16Length(thiz), StringUtf16Data(thiz));
+    auto header = StringHeader::of(thiz);
+    // Having exactly one write per computation allows them to be relaxed, since there's no need to order them with any other write.
+    // Since most relevant platforms have atomic word-sized writes by default, this is theoretically much faster.
+    if (result != 0) {
+        kotlin::std_support::atomic_ref{header->hashCode_}.store(result, std::memory_order_relaxed);
+    } else {
+        kotlin::std_support::atomic_ref{header->flags_}.fetch_or(StringHeader::HASHCODE_IS_ZERO, std::memory_order_relaxed);
+    }
+    return result;
 }
 
 extern "C" const KChar* Kotlin_String_utf16pointer(KConstRef message) {
-    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
-    return StringUtf16Data(message);
+    auto header = StringHeader::of(message);
+    if (header->encoding() != StringEncoding::kUTF16) ThrowIllegalArgumentException();
+    return reinterpret_cast<const KChar*>(header->data());
 }
 
 extern "C" KInt Kotlin_String_utf16length(KConstRef message) {
-    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
-    return StringRawSize(message);
+    auto header = StringHeader::of(message);
+    if (header->encoding() != StringEncoding::kUTF16) ThrowIllegalArgumentException();
+    return header->size();
 }
 
 extern "C" KConstNativePtr Kotlin_Arrays_getStringAddressOfElement(KConstRef thiz, KInt index) {
-    return reinterpret_cast<KConstNativePtr>(boundsCheckedIteratorAt(thiz, index));
+    return encodingAware(thiz, [=](auto thiz) { return reinterpret_cast<KConstNativePtr>(boundsCheckedIteratorAt(thiz, index).ptr()); });
+}
+
+template <KStringConversionMode mode>
+static std::string to_string_impl(const KChar* it, const KChar* end) noexcept(mode != KStringConversionMode::CHECKED) {
+    std::string utf8;
+    utf8.reserve(end - it);
+    switch (mode) {
+    case KStringConversionMode::UNCHECKED:
+        utf8::unchecked::utf16to8(it, end, back_inserter(utf8));
+        break;
+    case KStringConversionMode::CHECKED:
+        try {
+            utf8::utf16to8(it, end, back_inserter(utf8));
+        } catch (...) {
+            ThrowCharacterCodingException();
+        }
+        break;
+    case KStringConversionMode::REPLACE_INVALID:
+        utf8::with_replacement::utf16to8(it, end, back_inserter(utf8));
+        break;
+    }
+    return utf8;
+}
+
+template <KStringConversionMode>
+static std::string to_string_impl(const uint8_t* it, const uint8_t* end) noexcept {
+    std::string result;
+    result.resize((end - it) + std::count_if(it, end, [](uint8_t c) { return c & 0x80; }));
+    auto out = result.begin();
+    while (it != end) {
+        auto latin1 = *it++;
+        if (latin1 & 0x80) {
+            *out++ = 0xC0 | (latin1 >> 6);
+            *out++ = latin1 & 0xBF;
+        } else {
+            *out++ = latin1;
+        }
+    }
+    return result;
 }
 
 template <KStringConversionMode mode>
 std::string kotlin::to_string(KConstRef kstring, size_t start, size_t size) noexcept(mode != KStringConversionMode::CHECKED) {
     RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
-    auto length = StringUtf16Length(kstring);
-    RuntimeAssert(start <= length, "start index out of bounds");
-    auto utf16 = StringUtf16Data(kstring) + start;
-    if (size == std::string::npos) {
-        size = length - start;
-    } else {
-        RuntimeAssert(size <= length - start, "size out of bounds");
-    }
-    std::string utf8;
-    utf8.reserve(size);
-    switch (mode) {
-    case KStringConversionMode::UNCHECKED:
-        utf8::unchecked::utf16to8(utf16, utf16 + size, back_inserter(utf8));
-        break;
-    case KStringConversionMode::CHECKED:
-        utf8::utf16to8(utf16, utf16 + size, back_inserter(utf8));
-        break;
-    case KStringConversionMode::REPLACE_INVALID:
-        utf8::with_replacement::utf16to8(utf16, utf16 + size, back_inserter(utf8));
-        break;
-    }
-    return utf8;
+    return encodingAware(kstring, [=](auto kstring) {
+        auto length = kstring.sizeInChars();
+        RuntimeAssert(start <= length, "start index out of bounds");
+        auto it = kstring.begin() + start;
+        auto end = kstring.end();
+        if (size != std::string::npos) {
+            RuntimeAssert(size <= length - start, "size out of bounds");
+            end = it + size;
+        }
+        return to_string_impl<mode>(it.ptr(), end.ptr());
+    });
 }
 
 template std::string kotlin::to_string<KStringConversionMode::CHECKED>(KConstRef, size_t, size_t);

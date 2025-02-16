@@ -250,7 +250,12 @@ sealed class CacheMode {
                 .map { KonanTarget.predefinedTargets.getValue(it) }
                 .toSet()
 
-            return if (kotlinNativeTargets.testTarget in cacheableTargets) Alias.STATIC_ONLY_DIST else Alias.NO
+            return when (kotlinNativeTargets.testTarget) {
+                in cacheableTargets -> Alias.STATIC_ONLY_DIST
+                // Support stdlib caches only for tests speedup
+                KonanTarget.MINGW_X64 -> Alias.STATIC_ONLY_DIST
+                else -> Alias.NO
+            }
         }
 
         fun computeCacheDirName(

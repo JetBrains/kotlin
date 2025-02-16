@@ -7,10 +7,12 @@ KtBinaryExpression(156,164): 'd1 == d2'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = d1
           isSafeNavigation = false
@@ -26,7 +28,9 @@ KtBinaryExpression(156,164): 'd1 == d2'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /D.equals
       typeArgumentsMapping = {}

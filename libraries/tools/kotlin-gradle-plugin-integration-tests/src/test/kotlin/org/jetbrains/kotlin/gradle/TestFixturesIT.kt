@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
@@ -36,6 +37,7 @@ class TestFixturesIT : KGPBaseTest() {
     fun testInternalAccessInMppProjectWithJava(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -54,6 +56,7 @@ class TestFixturesIT : KGPBaseTest() {
     fun testInternalAccessInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -96,6 +99,7 @@ class TestFixturesIT : KGPBaseTest() {
     fun testInternalAccessFromTestsInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
+            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -121,6 +125,8 @@ class TestFixturesIT : KGPBaseTest() {
     fun testTestFixturesAndFunctionalTestsInJvmProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
+            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
+
             build("functionalTest") {
                 assertOutputContains("src/main OK!")
                 assertOutputContains("src/test OK!")
@@ -136,6 +142,8 @@ class TestFixturesIT : KGPBaseTest() {
     fun testTestFixturesAndFunctionalTestsInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
+            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
+
             build("functionalTest") {
                 assertOutputContains("src/main OK!")
                 assertOutputContains("src/test OK!")

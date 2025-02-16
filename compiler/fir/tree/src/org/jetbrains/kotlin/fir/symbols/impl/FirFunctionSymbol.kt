@@ -127,4 +127,7 @@ class FirSyntheticPropertyAccessorSymbol : FirPropertyAccessorSymbol() {
         get() = (fir as FirSyntheticPropertyAccessor).delegate.symbol
 }
 
-class FirErrorFunctionSymbol : FirFunctionWithoutNameSymbol<FirErrorFunction>(Name.identifier("error"))
+interface FirErrorCallableSymbol<F : FirCallableDeclaration>
+
+class FirErrorFunctionSymbol : FirFunctionWithoutNameSymbol<FirErrorFunction>(Name.identifier("error")),
+    FirErrorCallableSymbol<FirErrorFunction>

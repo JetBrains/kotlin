@@ -22,6 +22,7 @@ class KT41506WithJavaSourceSet {
             kotlin {
                 jvm {
                     compilations.create("integrationTest")
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
             }

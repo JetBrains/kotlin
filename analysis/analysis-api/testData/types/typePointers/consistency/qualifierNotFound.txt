@@ -8,10 +8,10 @@ KaClassErrorType:
   nullability: NON_NULLABLE
   presentableText: Foo.Bar
   qualifiers: [
-    qualifier:
+    KaUnresolvedClassTypeQualifier:
       name: Foo
       typeArguments: []
-    qualifier:
+    KaUnresolvedClassTypeQualifier:
       name: Bar
       typeArguments: [
         KaUsualClassType:
@@ -20,7 +20,7 @@ KaClassErrorType:
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []

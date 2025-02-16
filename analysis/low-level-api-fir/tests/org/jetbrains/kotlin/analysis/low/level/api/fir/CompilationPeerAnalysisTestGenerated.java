@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -24,6 +25,18 @@ public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPee
   }
 
   @Test
+  @TestMetadata("classesInsideInlineFunctions.kt")
+  public void testClassesInsideInlineFunctions() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/classesInsideInlineFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("classesInsideInlineProperties.kt")
+  public void testClassesInsideInlineProperties() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/classesInsideInlineProperties.kt");
+  }
+
+  @Test
   @TestMetadata("functionCall.kt")
   public void testFunctionCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCall.kt");
@@ -36,9 +49,15 @@ public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPee
   }
 
   @Test
-  @TestMetadata("inlinedClasses.kt")
-  public void testInlinedClasses() {
-    runTest("analysis/low-level-api-fir/testData/compilationPeers/inlinedClasses.kt");
+  @TestMetadata("intertwinedInline.kt")
+  public void testIntertwinedInline() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/intertwinedInline.kt");
+  }
+
+  @Test
+  @TestMetadata("intertwinedInline2.kt")
+  public void testIntertwinedInline2() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/intertwinedInline2.kt");
   }
 
   @Test
@@ -57,5 +76,27 @@ public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPee
   @TestMetadata("propertyCall.kt")
   public void testPropertyCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/propertyCall.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/compilationPeers/multiModule")
+  @TestDataPath("$PROJECT_ROOT")
+  public class MultiModule {
+    @Test
+    public void testAllFilesPresentInMultiModule() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/compilationPeers/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("transitive.kt")
+    public void testTransitive() {
+      runTest("analysis/low-level-api-fir/testData/compilationPeers/multiModule/transitive.kt");
+    }
   }
 }

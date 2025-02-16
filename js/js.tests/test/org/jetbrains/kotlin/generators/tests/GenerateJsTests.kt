@@ -260,6 +260,11 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
                 model("boxInline")
             }
+
+            testClass<AbstractFirJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest> {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
+                model("boxInline")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/debug", testRunnerMethodName = "runTest0") {
@@ -349,6 +354,14 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
+            testClass<AbstractFirJsDiagnosticWithIrInlinerTest>(suiteTestClassName = "FirJsDiagnosticWithIrInlinerTestGenerated") {
+                model(
+                    relativeRootPath = "irInliner",
+                    pattern = "^([^_](.+))\\.kt$",
                     targetBackend = TargetBackend.JS_IR
                 )
             }

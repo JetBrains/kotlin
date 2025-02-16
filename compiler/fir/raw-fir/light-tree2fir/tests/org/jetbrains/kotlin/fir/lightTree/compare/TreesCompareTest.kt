@@ -81,11 +81,6 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
-                if (treeFromLightTree.contains("<strcat>")) {
-                    // temporarily ignore differences of string literal concatenations between light-tree and psi due to KT-29222
-                    return@compareBase true
-                }
-
                 if (treeFromLightTree != treeFromPsi) {
                     return@compareBase false
                 }
@@ -139,11 +134,6 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
                     .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
-
-                if (treeFromLightTree.contains("<strcat>") || treeFromLightTree.contains("Not an expression")) {
-                    // temporarily ignore differences of string literal concatenations between light-tree and psi due to KT-29222
-                    return@compareBase true
-                }
 
                 if (treeFromLightTree != treeFromPsi) {
                     return@compareBase false

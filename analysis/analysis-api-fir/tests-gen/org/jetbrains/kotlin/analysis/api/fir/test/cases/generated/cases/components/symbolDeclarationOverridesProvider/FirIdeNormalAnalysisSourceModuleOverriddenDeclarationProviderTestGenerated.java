@@ -160,6 +160,12 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   }
 
   @Test
+  @TestMetadata("stringBuilderLength.kt")
+  public void testStringBuilderLength() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/stringBuilderLength.kt");
+  }
+
+  @Test
   @TestMetadata("substitutionOverrideFunctionDelegate.kt")
   public void testSubstitutionOverrideFunctionDelegate() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/substitutionOverrideFunctionDelegate.kt");

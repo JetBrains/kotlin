@@ -1,6 +1,5 @@
-// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
 // KT-59611
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 import kotlin.enums.*

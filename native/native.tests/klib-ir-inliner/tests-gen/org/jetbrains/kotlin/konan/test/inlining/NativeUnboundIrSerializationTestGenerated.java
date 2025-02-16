@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.konan.test.inlining;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -24,14 +24,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
   @Nested
   @TestMetadata("compiler/testData/codegen/box")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-fir")
   @FirPipeline()
   @Tag("klib")
   public class Box {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Annotations {
@@ -110,7 +108,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class AnnotatedLambda {
@@ -119,7 +116,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/instances")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Instances {
@@ -202,6 +198,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         }
 
         @Test
+        @TestMetadata("rearrangedArgumentsInAnnotationCall.kt")
+        public void testRearrangedArgumentsInAnnotationCall() {
+          runTest("compiler/testData/codegen/box/annotations/instances/rearrangedArgumentsInAnnotationCall.kt");
+        }
+
+        @Test
         @TestMetadata("varargInAnnotationParameterInstantiation.kt")
         public void testVarargInAnnotationParameterInstantiation() {
           runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
@@ -211,7 +213,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/kClassMapping")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class KClassMapping {
@@ -220,7 +221,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/repeatable")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Repeatable {
@@ -229,7 +229,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/typeAnnotations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TypeAnnotations {
@@ -250,7 +249,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/argumentOrder")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ArgumentOrder {
@@ -354,7 +352,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arithmetic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Arithmetic {
@@ -428,7 +425,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Arrays {
@@ -801,7 +797,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/arraysOfInlineClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ArraysOfInlineClass {
@@ -827,7 +822,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/forInReversed")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInReversed {
@@ -859,7 +853,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/forInUnsignedArray")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInUnsignedArray {
@@ -915,7 +908,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class MultiDecl {
@@ -970,7 +962,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/int")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Int {
@@ -1002,7 +993,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/long")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Long {
@@ -1036,7 +1026,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/assert")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Assert {
@@ -1085,7 +1074,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/assert/jvm")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Jvm {
@@ -1095,7 +1083,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/basics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Basics {
@@ -1337,7 +1324,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bce")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Bce {
@@ -1453,7 +1439,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/binaryOp")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class BinaryOp {
@@ -1617,7 +1602,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/boxing")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Boxing {
@@ -1739,7 +1723,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/boxingOptimization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class BoxingOptimization {
@@ -1987,7 +1970,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/branching")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Branching {
@@ -2067,7 +2049,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Bridges {
@@ -2279,6 +2260,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("kt46389_jvmDefault.kt")
       public void testKt46389_jvmDefault() {
         runTest("compiler/testData/codegen/box/bridges/kt46389_jvmDefault.kt");
+      }
+
+      @Test
+      @TestMetadata("kt74377.kt")
+      public void testKt74377() {
+        runTest("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -2632,7 +2619,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SubstitutionInSuperClass {
@@ -2707,7 +2693,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class BuiltinStubMethods {
@@ -2720,7 +2705,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class BridgesForStubs {
@@ -2729,7 +2713,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ExtendJavaClasses {
@@ -2743,7 +2726,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class MapGetOrDefault {
@@ -2752,7 +2734,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapRemove")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class MapRemove {
@@ -2762,7 +2743,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class CallableReference {
@@ -2949,7 +2929,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class AdaptedReferences {
@@ -2975,6 +2954,60 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @TestMetadata("boundReferences.kt")
         public void testBoundReferences() {
           runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/boundReferences.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionAdaptedReferences.kt")
+        public void testContextFunctionAdaptedReferences() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionAdaptedReferences.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionAnonymous.kt")
+        public void testContextFunctionAnonymous() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionAnonymous.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithDefaultValue.kt")
+        public void testContextFunctionWithDefaultValue() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithDefaultValue.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithExtensionProperty.kt")
+        public void testContextFunctionWithExtensionProperty() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithExtensionProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithPassedSuperType.kt")
+        public void testContextFunctionWithPassedSuperType() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithPassedSuperType.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithSam.kt")
+        public void testContextFunctionWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithSam.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithVararg.kt")
+        public void testContextFunctionWithVararg() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithVararg.kt");
+        }
+
+        @Test
+        @TestMetadata("contextPropertyWithSam.kt")
+        public void testContextPropertyWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextPropertyWithSam.kt");
+        }
+
+        @Test
+        @TestMetadata("contextTypeWithSam.kt")
+        public void testContextTypeWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextTypeWithSam.kt");
         }
 
         @Test
@@ -3035,6 +3068,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @TestMetadata("extensionPropertyToFun.kt")
         public void testExtensionPropertyToFun() {
           runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyToFun.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionPropertyWithAnonymousContextFun.kt")
+        public void testExtensionPropertyWithAnonymousContextFun() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyWithAnonymousContextFun.kt");
         }
 
         @Test
@@ -3196,7 +3235,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class SuspendConversion {
@@ -3379,7 +3417,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/bound")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Bound {
@@ -3554,7 +3591,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/callableReference/bound/equals")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Equals {
@@ -3575,7 +3611,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/equality")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Equality {
@@ -3679,7 +3714,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/funInterfaceConstructor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class FunInterfaceConstructor {
@@ -3717,7 +3751,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/function")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Function {
@@ -4138,7 +4171,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/callableReference/function/local")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Local {
@@ -4273,7 +4305,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/property")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Property {
@@ -4428,6 +4459,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         }
 
         @Test
+        @TestMetadata("kt74104.kt")
+        public void testKt74104() {
+          runTest("compiler/testData/codegen/box/callableReference/property/kt74104.kt");
+        }
+
+        @Test
         @TestMetadata("listOfStringsMapLength.kt")
         public void testListOfStringsMapLength() {
           runTest("compiler/testData/codegen/box/callableReference/property/listOfStringsMapLength.kt");
@@ -4515,7 +4552,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/serializability")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Serializability {
@@ -4530,7 +4566,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Casts {
@@ -4729,7 +4764,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/functions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Functions {
@@ -4815,7 +4849,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class JavaInterop {
@@ -4824,7 +4857,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class LiteralExpressionAsGenericArgument {
@@ -4868,7 +4900,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/mutableCollections")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class MutableCollections {
@@ -4918,7 +4949,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/nativeCCEMessage")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class NativeCCEMessage {
@@ -4951,7 +4981,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/checkcastOptimization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class CheckcastOptimization {
@@ -4983,7 +5012,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classDelegation")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ClassDelegation {
@@ -5063,7 +5091,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classLiteral")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ClassLiteral {
@@ -5088,7 +5115,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Bound {
@@ -5120,7 +5146,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/classLiteral/java")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Java {
@@ -5130,7 +5155,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Classes {
@@ -5797,7 +5821,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/classes/inner")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Inner {
@@ -5848,7 +5871,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Closures {
@@ -6137,7 +6159,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/closures/captureInSuperConstructorCall")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CaptureInSuperConstructorCall {
@@ -6337,7 +6358,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/closures/captureOuterProperty")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CaptureOuterProperty {
@@ -6393,7 +6413,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CapturedVarsOptimization {
@@ -6479,7 +6498,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ClosureInsideClosure {
@@ -6524,7 +6542,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/collectionLiterals")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class CollectionLiterals {
@@ -6533,7 +6550,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/collections")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Collections {
@@ -6577,7 +6593,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/companion")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Companion {
@@ -6609,7 +6624,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/compatibility")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Compatibility {
@@ -6623,7 +6637,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class CompileKotlinAgainstKotlin {
@@ -6840,7 +6853,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Fir {
@@ -6849,7 +6861,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InlineClasses {
@@ -6940,7 +6951,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class OldMangling {
@@ -6955,14 +6965,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Jvm8 {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Defaults {
@@ -6991,52 +6999,50 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
+          @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
-          public class AllCompatibility {
+          public class Enable {
             @Test
             @TestMetadata("superCall.kt")
             public void testSuperCall() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCall.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCall.kt");
             }
 
             @Test
             @TestMetadata("superCallFromInterface.kt")
             public void testSuperCallFromInterface() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallFromInterface.kt");
             }
 
             @Test
             @TestMetadata("superCallFromInterface2.kt")
             public void testSuperCallFromInterface2() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallFromInterface2.kt");
             }
 
             @Test
             @TestMetadata("superPropAccess.kt")
             public void testSuperPropAccess() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccess.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccess.kt");
             }
 
             @Test
             @TestMetadata("superPropAccessFromInterface.kt")
             public void testSuperPropAccessFromInterface() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccessFromInterface.kt");
             }
 
             @Test
             @TestMetadata("superPropAccessFromInterface2.kt")
             public void testSuperPropAccessFromInterface2() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccessFromInterface2.kt");
             }
 
             @Nested
-            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
+            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class DelegationBy {
@@ -7046,20 +7052,13 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Interop {
             @Test
-            @TestMetadata("allAgainsAllCompatibility.kt")
-            public void testAllAgainsAllCompatibility() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
-            }
-
-            @Test
-            @TestMetadata("allCompatibilityAgainsAll.kt")
-            public void testAllCompatibilityAgainsAll() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
+            @TestMetadata("enableAgainstNoCompatibility.kt")
+            public void testEnableAgainstNoCompatibility() {
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/enableAgainstNoCompatibility.kt");
             }
 
             @Test
@@ -7085,13 +7084,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             public void testNewAndOldSchemes2Compatibility() {
               runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
             }
+
+            @Test
+            @TestMetadata("noCompatibilityAgainstEnable.kt")
+            public void testNoCompatibilityAgainstEnable() {
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/noCompatibilityAgainstEnable.kt");
+            }
           }
         }
 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Jvm8against6 {
@@ -7128,7 +7132,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Delegation {
@@ -7156,7 +7159,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TypeAnnotations {
@@ -7166,7 +7168,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/constants")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Constants {
@@ -7252,7 +7253,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/constructor")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Constructor {
@@ -7261,7 +7261,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/constructorCall")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ConstructorCall {
@@ -7270,14 +7269,103 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/contextParameters")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ContextParameters {
       @Test
+      @TestMetadata("assignmentOfContextVar.kt")
+      public void testAssignmentOfContextVar() {
+        runTest("compiler/testData/codegen/box/contextParameters/assignmentOfContextVar.kt");
+      }
+
+      @Test
+      @TestMetadata("classMemberAndTopLevelExtensionWithContext.kt")
+      public void testClassMemberAndTopLevelExtensionWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelExtensionWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("classMemberAndTopLevelWithContext.kt")
+      public void testClassMemberAndTopLevelWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("companionObjectInContext.kt")
+      public void testCompanionObjectInContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/companionObjectInContext.kt");
+      }
+
+      @Test
+      @TestMetadata("contextFunInSam.kt")
+      public void testContextFunInSam() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextFunInSam.kt");
+      }
+
+      @Test
       @TestMetadata("contextParameterToDefaultArgument.kt")
       public void testContextParameterToDefaultArgument() {
         runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextPropertyInInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualAnonymousFunAsAnExpression.kt")
+      public void testContextualAnonymousFunAsAnExpression() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunAsAnExpression.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualAnonymousFunction.kt")
+      public void testContextualAnonymousFunction() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunAndTopLevelFun.kt")
+      public void testContextualLocalFunAndTopLevelFun() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunAndTopLevelFun.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunWithExtensiionReceiver.kt")
+      public void testContextualLocalFunWithExtensiionReceiver() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunWithExtensiionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunWithTypeParam.kt")
+      public void testContextualLocalFunWithTypeParam() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunWithTypeParam.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunction.kt")
+      public void testContextualLocalFunction() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalWithLocalExtensionAndValue.kt")
+      public void testContextualLocalWithLocalExtensionAndValue() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalWithLocalExtensionAndValue.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyWithContextAndWithout.kt")
+      public void testPropertyWithContextAndWithout() {
+        runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
+      }
+
+      @Test
+      @TestMetadata("sameExtensionContextAndDispatchReceiver.kt")
+      public void testSameExtensionContextAndDispatchReceiver() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameExtensionContextAndDispatchReceiver.kt");
       }
 
       @Test
@@ -7299,9 +7387,21 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
+      @TestMetadata("sameNameWithLocalValueParameter.kt")
+      public void testSameNameWithLocalValueParameter() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalValueParameter.kt");
+      }
+
+      @Test
       @TestMetadata("sameNameWithMemberProperty.kt")
       public void testSameNameWithMemberProperty() {
         runTest("compiler/testData/codegen/box/contextParameters/sameNameWithMemberProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithOuterContext.kt")
+      public void testSameNameWithOuterContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithOuterContext.kt");
       }
 
       @Test
@@ -7309,12 +7409,35 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       public void testSameNameWithPropertyName() {
         runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
       }
+
+      @Test
+      @TestMetadata("typealiasOnTypeWithContext.kt")
+      public void testTypealiasOnTypeWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/typealiasOnTypeWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverAndThis.kt")
+      public void testWithExtensionReceiverAndThis() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverAndThis.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverInSupertype.kt")
+      public void testWithExtensionReceiverInSupertype() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverInSupertype.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverInType.kt")
+      public void testWithExtensionReceiverInType() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverInType.kt");
+      }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/contracts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Contracts {
@@ -7448,7 +7571,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ControlStructures {
@@ -7947,7 +8069,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class BreakContinueInExpressions {
@@ -8074,7 +8195,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class InlinedBreakContinue {
@@ -8155,7 +8275,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArray")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInArray {
@@ -8223,7 +8342,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInArrayWithIndex {
@@ -8351,7 +8469,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInCharSequenceWithIndex {
@@ -8443,7 +8560,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInIterableWithIndex {
@@ -8523,7 +8639,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInIterator {
@@ -8532,7 +8647,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInSequenceWithIndex {
@@ -8600,7 +8714,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ReturnsNothing {
@@ -8638,7 +8751,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/slowDsl")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SlowDsl {
@@ -8647,7 +8759,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TryCatchInExpressions {
@@ -8836,7 +8947,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlflow")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Controlflow {
@@ -8964,7 +9074,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Coroutines {
@@ -9979,7 +10088,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/bridges")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Bridges {
@@ -10023,7 +10131,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/controlFlow")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ControlFlow {
@@ -10100,12 +10207,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         }
 
         @Test
-        @TestMetadata("kt72464.kt")
-        public void testKt72464() {
-          runTest("compiler/testData/codegen/box/coroutines/controlFlow/kt72464.kt");
-        }
-
-        @Test
         @TestMetadata("labeledWhile.kt")
         public void testLabeledWhile() {
           runTest("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt");
@@ -10175,7 +10276,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/debug")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Debug {
@@ -10184,7 +10284,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class FeatureIntersection {
@@ -10305,7 +10404,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class CallableReference {
@@ -10330,7 +10428,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Bound {
@@ -10344,7 +10441,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Function {
@@ -10363,7 +10459,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Local {
@@ -10379,7 +10474,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class FunInterface {
@@ -10411,14 +10505,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class JvmDefault {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Kt46007 {
@@ -10428,7 +10520,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Tailrec {
@@ -10521,7 +10612,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InlineClasses {
@@ -10546,7 +10636,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/direct")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Direct {
@@ -10836,7 +10925,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resume")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Resume {
@@ -11126,7 +11214,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ResumeWithException {
@@ -11387,7 +11474,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class IntLikeVarSpilling {
@@ -11455,7 +11541,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class IntrinsicSemantics {
@@ -11523,7 +11608,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class JavaInterop {
@@ -11532,14 +11616,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class LocalFunctions {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Named {
@@ -11620,7 +11702,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/multiModule")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class MultiModule {
@@ -11682,7 +11763,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/redundantLocalsElimination")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class RedundantLocalsElimination {
@@ -11696,7 +11776,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/reflect")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Reflect {
@@ -11705,7 +11784,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/stackUnwinding")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class StackUnwinding {
@@ -11749,7 +11827,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/suspendConversion")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SuspendConversion {
@@ -11787,7 +11864,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SuspendFunctionAsCoroutine {
@@ -11897,7 +11973,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SuspendFunctionTypeCall {
@@ -11935,7 +12010,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TailCallOptimizations {
@@ -11966,7 +12040,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Unit {
@@ -11976,7 +12049,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/tailOperations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TailOperations {
@@ -12008,7 +12080,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class UnitTypeReturn {
@@ -12058,7 +12129,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class VarSpilling {
@@ -12119,7 +12189,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Cleanup {
@@ -12128,7 +12197,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class CleanupWithoutStdlibFunction {
@@ -12137,7 +12205,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class DebugMode {
@@ -12146,7 +12213,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class NoCleanup {
@@ -12157,7 +12223,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/correctFrontendCode")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class CorrectFrontendCode {
@@ -12171,7 +12236,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/cycles")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Cycles {
@@ -12197,7 +12261,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DataClasses {
@@ -12324,7 +12387,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/components")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Components {
@@ -12344,7 +12406,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/copy")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Copy {
@@ -12400,7 +12461,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/equals")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Equals {
@@ -12444,7 +12504,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/hashCode")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class HashCode {
@@ -12518,7 +12577,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/toString")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ToString {
@@ -12569,7 +12627,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataObjects")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DataObjects {
@@ -12595,7 +12652,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataflow")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Dataflow {
@@ -12615,7 +12671,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DeadCodeElimination {
@@ -12647,7 +12702,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DefaultArguments {
@@ -12798,7 +12852,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Constructor {
@@ -12896,7 +12949,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/convention")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Convention {
@@ -12940,7 +12992,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Function {
@@ -13116,7 +13167,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/private")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Private {
@@ -13148,7 +13198,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Reflection {
@@ -13157,7 +13206,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Signature {
@@ -13184,7 +13232,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DelegatedProperty {
@@ -13557,7 +13604,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToAnother")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DelegateToAnother {
@@ -13619,7 +13665,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DelegateToConst {
@@ -13645,7 +13690,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DelegateToFinalProperty {
@@ -13701,7 +13745,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DelegateToSingleton {
@@ -13751,7 +13794,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToThis")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DelegateToThis {
@@ -13777,7 +13819,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Local {
@@ -13881,7 +13922,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class OptimizedDelegatedProperties {
@@ -13955,7 +13995,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ProvideDelegate {
@@ -14114,7 +14153,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegation")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Delegation {
@@ -14248,7 +14286,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/deprecated")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Deprecated {
@@ -14257,7 +14294,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DestructuringDeclInLambdaParam {
@@ -14319,7 +14355,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/devirtualization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Devirtualization {
@@ -14363,21 +14398,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Diagnostics {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/functions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Functions {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/inference")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Inference {
@@ -14391,14 +14423,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Invoke {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class OnObjects {
@@ -14467,7 +14497,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class TailRecursion {
@@ -14746,7 +14775,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Vararg {
@@ -14761,7 +14789,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DifferentDependencyVersion {
@@ -14770,7 +14797,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/directInvokeOptimization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DirectInvokeOptimization {
@@ -14862,7 +14888,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/elvis")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Elvis {
@@ -14915,6 +14940,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
+      @TestMetadata("withNothingConstraintAndExpectedType.kt")
+      public void testWithNothingConstraintAndExpectedType() {
+        runTest("compiler/testData/codegen/box/elvis/withNothingConstraintAndExpectedType.kt");
+      }
+
+      @Test
       @TestMetadata("withReturn.kt")
       public void testWithReturn() {
         runTest("compiler/testData/codegen/box/elvis/withReturn.kt");
@@ -14924,7 +14955,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/enum")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Enum {
@@ -15507,7 +15537,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/enum/defaultCtor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DefaultCtor {
@@ -15558,7 +15587,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/equivalentCalls")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class EquivalentCalls {
@@ -15572,7 +15600,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/escapeAnalysis")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class EscapeAnalysis {
@@ -15676,7 +15703,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/evaluate")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Evaluate {
@@ -15690,7 +15716,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/exceptions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Exceptions {
@@ -15746,7 +15771,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/exclExcl")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ExclExcl {
@@ -15778,7 +15802,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ExtensionClasses {
@@ -15787,15 +15810,9 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ExtensionFunctions {
-      public ExtensionFunctions() {
-        register("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsASupertypeOfValueClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInValueClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-      }
-
       @Test
       @TestMetadata("classMethodCallExtensionSuper.kt")
       public void testClassMethodCallExtensionSuper() {
@@ -15829,8 +15846,7 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("extensionFunctionAsASupertypeOfValueClass.kt")
       public void testExtensionFunctionAsASupertypeOfValueClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsASupertypeOfValueClass.kt");
+        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionAsASupertypeOfValueClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -15914,8 +15930,7 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("extensionFunctionInValueClass.kt")
       public void testExtensionFunctionInValueClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInValueClass.kt");
+        runTest("compiler/testData/codegen/box/extensionFunctions/extensionFunctionInValueClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -16149,7 +16164,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ContextReceivers {
@@ -16162,7 +16176,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class FromKEEP {
@@ -16173,7 +16186,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionProperties")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ExtensionProperties {
@@ -16181,6 +16193,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("accessorForPrivateSetter.kt")
       public void testAccessorForPrivateSetter() {
         runTest("compiler/testData/codegen/box/extensionProperties/accessorForPrivateSetter.kt");
+      }
+
+      @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/extensionProperties/contextPropertyInInterface.kt");
       }
 
       @Test
@@ -16361,7 +16379,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/external")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class External {
@@ -16370,7 +16387,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fakeOverride")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class FakeOverride {
@@ -16468,7 +16484,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fieldRename")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class FieldRename {
@@ -16494,7 +16509,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/finally")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Finally {
@@ -16646,7 +16660,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fir")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Fir {
@@ -16809,7 +16822,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class PrimitivesInJava {
@@ -16819,14 +16831,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fullJdk")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class FullJdk {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/fullJdk/native")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Native {
@@ -16835,7 +16845,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/fullJdk/regressions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Regressions {
@@ -16845,7 +16854,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/funInterface")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class FunInterface {
@@ -17062,7 +17070,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/funInterface/equality")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Equality {
@@ -17101,7 +17108,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/function")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Function {
@@ -17325,7 +17331,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Functions {
@@ -17620,7 +17625,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/functions/bigArity")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class BigArity {
@@ -17670,7 +17674,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class FunctionExpression {
@@ -17708,7 +17711,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/functions/invoke")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Invoke {
@@ -17800,7 +17802,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class LocalFunctions {
@@ -17983,7 +17984,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ieee754")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Ieee754 {
@@ -18225,7 +18225,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/increment")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Increment {
@@ -18389,7 +18388,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Inference {
@@ -18606,7 +18604,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inference/pcla")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Pcla {
@@ -18805,7 +18802,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inference/pcla/issues")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Issues {
@@ -19257,21 +19253,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class OneParameter {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class OneTypeVariable {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class OneTypeInfoOrigin {
@@ -19302,7 +19295,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class SourceSinkFeedContexts {
@@ -19364,7 +19356,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class TargetTypes {
@@ -19588,7 +19579,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class TypeInfoSinks {
@@ -19650,7 +19640,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class TypeInfoSources {
@@ -19699,7 +19688,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/initializers")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Initializers {
@@ -19838,7 +19826,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/initializers/files")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Files {
@@ -19871,7 +19858,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inline")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Inline {
@@ -20116,6 +20102,24 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
+      @TestMetadata("kt67024.kt")
+      public void testKt67024() {
+        runTest("compiler/testData/codegen/box/inline/kt67024.kt");
+      }
+
+      @Test
+      @TestMetadata("kt67866.kt")
+      public void testKt67866() {
+        runTest("compiler/testData/codegen/box/inline/kt67866.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69041.kt")
+      public void testKt69041() {
+        runTest("compiler/testData/codegen/box/inline/kt69041.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaAsAny.kt")
       public void testLambdaAsAny() {
         runTest("compiler/testData/codegen/box/inline/lambdaAsAny.kt");
@@ -20209,7 +20213,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineArgsInPlace")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InlineArgsInPlace {
@@ -20283,7 +20286,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InlineClass {
@@ -20315,1153 +20317,697 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InlineClasses {
-      public InlineClasses() {
-        register("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/anySuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVars.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVarsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/callComputablePropertyInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpression.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpressionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctions.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperator.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperatorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchy.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturns.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturnsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCallsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignments.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignmentsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/classInInlineClassInit.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/classInInlineClassInitGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/computablePropertyInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethodGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/constructorCallableReference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/constructorCallableReferenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressions.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPositionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/customIterator.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/dnnInValue.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstantGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullability.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullabilityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveUnboxed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/fieldNameClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/functionExpression.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/functionExpressionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/genericInlineClassSynthMembers.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/genericVararg2ndConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/initBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/initBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/initInCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandling.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvoke.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplate.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplateGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSet.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSetGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStrings.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStringsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEqualsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCastGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValuesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValuesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/jvmInline.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt25246.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt25750.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt25750Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt25771.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt26103.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt26103_contravariantUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt26103_covariantUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt26103_original.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_enum.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_enumGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_functional.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_functionalGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_innerClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_reference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27096_referenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27113.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27113a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27113aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27132.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27132Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27140.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27140Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27705.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27705Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27706.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt27706Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt28405.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt33119.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt33119Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt37998.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt37998Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt38680.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt38680Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt38680a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt38680aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt38680b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt38680bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt44978.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt45084.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt45084Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt45991.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt46554.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt46554Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt47762.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt47762Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt51254.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt52913.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt54455.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt57973.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt70461.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/kt71649.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/mangledSuperCallsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/nestedInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/nestedInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/nullableWrapperEquality.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/overrideReturnNothing.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargs.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModule.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrder.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrderGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/removeInInlineCollectionOfInlineClassAsInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/resultRunCatchingOrElse.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBound.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBoundGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModule.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorVisibilies.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVararg.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/stringPlus.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/stringPlusGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/UIntArraySortExampleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvoke.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocation.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/unboxValueOfNullableInlineClassUsingInlineFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperator.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperatorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/whenWithSubject.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/withReturnTypeMangling.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-      }
-
       @Test
       @TestMetadata("annotatedMemberExtensionProperty.kt")
       public void testAnnotatedMemberExtensionProperty() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("annotatedMemberExtensionPropertyGeneric.kt")
       public void testAnnotatedMemberExtensionPropertyGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("anySuperCall.kt")
       public void testAnySuperCall() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("anySuperCallGeneric.kt")
       public void testAnySuperCallGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/anySuperCallGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/anySuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
       public void testBoundCallableReferencePassedToInlineFunction() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boundCallableReferencePassedToInlineFunctionGeneric.kt")
       public void testBoundCallableReferencePassedToInlineFunctionGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boundCallableReferencePassedToInlineFunctionGeneric2.kt")
       public void testBoundCallableReferencePassedToInlineFunctionGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
       public void testBoxImplDoesNotExecuteInSecondaryConstructor() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt")
       public void testBoxImplDoesNotExecuteInSecondaryConstructorGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxImplDoesNotExecuteInitBlock.kt")
       public void testBoxImplDoesNotExecuteInitBlock() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlock.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxImplDoesNotExecuteInitBlockGeneric.kt")
       public void testBoxImplDoesNotExecuteInitBlockGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlockGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableForFakeOverride.kt")
       public void testBoxNullableForFakeOverride() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverride.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableForFakeOverrideGeneric.kt")
       public void testBoxNullableForFakeOverrideGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableForFakeOverrideGeneric2.kt")
       public void testBoxNullableForFakeOverrideGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
       public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
       public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric2.kt")
       public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
       public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt")
       public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric2.kt")
       public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
       public void testBoxResultInlineClassOfConstructorCall() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxResultInlineClassOfConstructorCallGeneric.kt")
       public void testBoxResultInlineClassOfConstructorCallGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxResultInlineClassOfConstructorCallGeneric2.kt")
       public void testBoxResultInlineClassOfConstructorCallGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
       public void testBoxUnboxInlineClassesWithOperatorsGetSet() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt")
       public void testBoxUnboxInlineClassesWithOperatorsGetSetGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxUnboxOfInlineClassForCapturedVars.kt")
       public void testBoxUnboxOfInlineClassForCapturedVars() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVars.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVars.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("boxUnboxOfInlineClassForCapturedVarsGeneric.kt")
       public void testBoxUnboxOfInlineClassForCapturedVarsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVarsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVarsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("bridgeForFunctionReturningInlineClass.kt")
       public void testBridgeForFunctionReturningInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("bridgeForFunctionReturningInlineClassGeneric.kt")
       public void testBridgeForFunctionReturningInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("bridgeGenerationWithInlineClassOverAny.kt")
       public void testBridgeGenerationWithInlineClassOverAny() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAny.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("bridgeGenerationWithInlineClassOverAnyGeneric.kt")
       public void testBridgeGenerationWithInlineClassOverAnyGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("bridgeGenerationWithInlineClassOverAnyGeneric2.kt")
       public void testBridgeGenerationWithInlineClassOverAnyGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("bridgesWhenInlineClassImplementsGenericInterface.kt")
       public void testBridgesWhenInlineClassImplementsGenericInterface() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterface.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt")
       public void testBridgesWhenInlineClassImplementsGenericInterfaceGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("callComputablePropertyInsideInlineClass.kt")
       public void testCallComputablePropertyInsideInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/callComputablePropertyInsideInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/callComputablePropertyInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("callableReferencesWithInlineClasses.kt")
       public void testCallableReferencesWithInlineClasses() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClasses.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("callableReferencesWithInlineClassesGeneric.kt")
       public void testCallableReferencesWithInlineClassesGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClassesGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("castInsideWhenExpression.kt")
       public void testCastInsideWhenExpression() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpression.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpression.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("castInsideWhenExpressionGeneric.kt")
       public void testCastInsideWhenExpressionGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpressionGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpressionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxUnboxOfArgumentsOnInlinedFunctions.kt")
       public void testCheckBoxUnboxOfArgumentsOnInlinedFunctions() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctions.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctions.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt")
       public void testCheckBoxUnboxOfArgumentsOnInlinedFunctionsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingAfterAssertionOperator.kt")
       public void testCheckBoxingAfterAssertionOperator() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperator.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperator.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingAfterAssertionOperatorGeneric.kt")
       public void testCheckBoxingAfterAssertionOperatorGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperatorGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperatorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingForComplexClassHierarchy.kt")
       public void testCheckBoxingForComplexClassHierarchy() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchy.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchy.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingForComplexClassHierarchyGeneric.kt")
       public void testCheckBoxingForComplexClassHierarchyGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchyGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingForNonLocalAndLabeledReturns.kt")
       public void testCheckBoxingForNonLocalAndLabeledReturns() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturns.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturns.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingForNonLocalAndLabeledReturnsGeneric.kt")
       public void testCheckBoxingForNonLocalAndLabeledReturnsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturnsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturnsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingFromReturnTypeForInlineClasses.kt")
       public void testCheckBoxingFromReturnTypeForInlineClasses() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClasses.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingFromReturnTypeForInlineClassesGeneric.kt")
       public void testCheckBoxingFromReturnTypeForInlineClassesGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClassesGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingOnFunctionCalls.kt")
       public void testCheckBoxingOnFunctionCalls() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCalls.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingOnFunctionCallsGeneric.kt")
       public void testCheckBoxingOnFunctionCallsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCallsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCallsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingOnLocalVariableAssignments.kt")
       public void testCheckBoxingOnLocalVariableAssignments() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignments.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignments.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingOnLocalVariableAssignmentsGeneric.kt")
       public void testCheckBoxingOnLocalVariableAssignmentsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignmentsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignmentsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt")
       public void testCheckBoxingUnboxingForInheritedTypeSpecializedFunctions() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt")
       public void testCheckBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkCallingMembersInsideInlineClass.kt")
       public void testCheckCallingMembersInsideInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkCallingMembersInsideInlineClassGeneric.kt")
       public void testCheckCallingMembersInsideInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkCastToInlineClass.kt")
       public void testCheckCastToInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkCastToInlineClassGeneric.kt")
       public void testCheckCastToInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkForInstanceOfInlineClass.kt")
       public void testCheckForInstanceOfInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkForInstanceOfInlineClassGeneric.kt")
       public void testCheckForInstanceOfInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkLambdaWithInlineClassesInFunctionalType.kt")
       public void testCheckLambdaWithInlineClassesInFunctionalType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt")
       public void testCheckLambdaWithInlineClassesInFunctionalTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkUnboxingResultFromTypeVariable.kt")
       public void testCheckUnboxingResultFromTypeVariable() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariable.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkUnboxingResultFromTypeVariableGeneric.kt")
       public void testCheckUnboxingResultFromTypeVariableGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("checkUnboxingResultFromTypeVariableGeneric2.kt")
       public void testCheckUnboxingResultFromTypeVariableGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("classInInlineClassInit.kt")
       public void testClassInInlineClassInit() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInit.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInit.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("classInInlineClassInitGeneric.kt")
       public void testClassInInlineClassInitGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInitGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInitGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("computablePropertyInsideInlineClass.kt")
       public void testComputablePropertyInsideInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/computablePropertyInsideInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/computablePropertyInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("conformToComparableAndCallInterfaceMethod.kt")
       public void testConformToComparableAndCallInterfaceMethod() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethod.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("conformToComparableAndCallInterfaceMethodGeneric.kt")
       public void testConformToComparableAndCallInterfaceMethodGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethodGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethodGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("constructorCallableReference.kt")
       public void testConstructorCallableReference() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReference.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("constructorCallableReferenceGeneric.kt")
       public void testConstructorCallableReferenceGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReferenceGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReferenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("correctBoxingForBranchExpressions.kt")
       public void testCorrectBoxingForBranchExpressions() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressions.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressions.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("correctBoxingForBranchExpressionsGeneric.kt")
       public void testCorrectBoxingForBranchExpressionsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressionsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("createInlineClassInArgumentPosition.kt")
       public void testCreateInlineClassInArgumentPosition() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("createInlineClassInArgumentPositionGeneric.kt")
       public void testCreateInlineClassInArgumentPositionGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPositionGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPositionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("crossinlineWithInlineClassInParameter.kt")
       public void testCrossinlineWithInlineClassInParameter() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("crossinlineWithInlineClassInParameterGeneric.kt")
       public void testCrossinlineWithInlineClassInParameterGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("crossinlineWithInlineClassInParameterGeneric2.kt")
       public void testCrossinlineWithInlineClassInParameterGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("customIterator.kt")
       public void testCustomIterator() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/customIterator.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/customIterator.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("defaultFunctionsFromAnyForInlineClass.kt")
       public void testDefaultFunctionsFromAnyForInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("defaultFunctionsFromAnyForInlineClassGeneric.kt")
       public void testDefaultFunctionsFromAnyForInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("defaultInterfaceMethodsInInlineClass.kt")
       public void testDefaultInterfaceMethodsInInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("defaultInterfaceMethodsInInlineClassGeneric.kt")
       public void testDefaultInterfaceMethodsInInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("defaultWithInlineClassArgument.kt")
       public void testDefaultWithInlineClassArgument() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgument.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("defaultWithInlineClassArgumentGeneric.kt")
       public void testDefaultWithInlineClassArgumentGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("dnnInValue.kt")
       public void testDnnInValue() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/dnnInValue.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/dnnInValue.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
       public void testElvisWithInlineClassAndNullConstant() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("elvisWithInlineClassAndNullConstantGeneric.kt")
       public void testElvisWithInlineClassAndNullConstantGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstantGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstantGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("emptyConstructorForInlineClass.kt")
       public void testEmptyConstructorForInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("emptyConstructorForInlineClassGeneric.kt")
       public void testEmptyConstructorForInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksInlineClassNonNull.kt")
       public void testEqualityChecksInlineClassNonNull() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNull.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksInlineClassNonNullGeneric.kt")
       public void testEqualityChecksInlineClassNonNullGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNullGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksMixedNullability.kt")
       public void testEqualityChecksMixedNullability() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullability.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullability.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksMixedNullabilityGeneric.kt")
       public void testEqualityChecksMixedNullabilityGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullabilityGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullabilityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedInlineClassNonNull.kt")
       public void testEqualityChecksNegatedInlineClassNonNull() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNull.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedInlineClassNonNullGeneric.kt")
       public void testEqualityChecksNegatedInlineClassNonNullGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNullGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedNonNull.kt")
       public void testEqualityChecksNegatedNonNull() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNull.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedNonNullGeneric.kt")
       public void testEqualityChecksNegatedNonNullGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNullGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedNullable.kt")
       public void testEqualityChecksNegatedNullable() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullable.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedNullableGeneric.kt")
       public void testEqualityChecksNegatedNullableGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedNullableGeneric2.kt")
       public void testEqualityChecksNegatedNullableGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedPrimitive.kt")
       public void testEqualityChecksNegatedPrimitive() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitive.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNegatedPrimitiveGeneric.kt")
       public void testEqualityChecksNegatedPrimitiveGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitiveGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNonNull.kt")
       public void testEqualityChecksNonNull() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNull.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNonNullGeneric.kt")
       public void testEqualityChecksNonNullGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNullGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNullable.kt")
       public void testEqualityChecksNullable() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullable.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNullableGeneric.kt")
       public void testEqualityChecksNullableGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksNullableGeneric2.kt")
       public void testEqualityChecksNullableGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksPrimitive.kt")
       public void testEqualityChecksPrimitive() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitive.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksPrimitiveGeneric.kt")
       public void testEqualityChecksPrimitiveGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityChecksPrimitiveUnboxed.kt")
       public void testEqualityChecksPrimitiveUnboxed() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveUnboxed.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveUnboxed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClass.kt")
       public void testEqualityForBoxesOfNullableValuesOfInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt")
       public void testEqualityForBoxesOfNullableValuesOfInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -21473,764 +21019,655 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("equalsCallsLeftArgument.kt")
       public void testEqualsCallsLeftArgument() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsCallsLeftArgumentGeneric.kt")
       public void testEqualsCallsLeftArgumentGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgumentGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderInlineClass.kt")
       public void testEqualsEvaluationOrderInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderInlineClassGeneric.kt")
       public void testEqualsEvaluationOrderInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderNonNull.kt")
       public void testEqualsEvaluationOrderNonNull() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNull.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderNonNullGeneric.kt")
       public void testEqualsEvaluationOrderNonNullGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNullGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderNullable.kt")
       public void testEqualsEvaluationOrderNullable() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullable.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderNullableGeneric.kt")
       public void testEqualsEvaluationOrderNullableGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderNullableGeneric2.kt")
       public void testEqualsEvaluationOrderNullableGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderPrimitive.kt")
       public void testEqualsEvaluationOrderPrimitive() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitive.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsEvaluationOrderPrimitiveGeneric.kt")
       public void testEqualsEvaluationOrderPrimitiveGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitiveGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsOperatorWithGenericCall.kt")
       public void testEqualsOperatorWithGenericCall() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCall.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("equalsOperatorWithGenericCallGeneric.kt")
       public void testEqualsOperatorWithGenericCallGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCallGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("extLambdaInInlineClassFun.kt")
       public void testExtLambdaInInlineClassFun() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("extLambdaInInlineClassFun2.kt")
       public void testExtLambdaInInlineClassFun2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("extLambdaInInlineClassFun2Generic.kt")
       public void testExtLambdaInInlineClassFun2Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("extLambdaInInlineClassFunGeneric.kt")
       public void testExtLambdaInInlineClassFunGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFunGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("fieldNameClash.kt")
       public void testFieldNameClash() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("fieldNameClashGeneric.kt")
       public void testFieldNameClashGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClashGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("funInterfaceDoubleSuffux.kt")
       public void testFunInterfaceDoubleSuffux() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("funInterfaceDoubleSuffux2.kt")
       public void testFunInterfaceDoubleSuffux2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("functionExpression.kt")
       public void testFunctionExpression() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/functionExpression.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/functionExpression.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("functionExpressionGeneric.kt")
       public void testFunctionExpressionGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/functionExpressionGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/functionExpressionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("genericInlineClassSynthMembers.kt")
       public void testGenericInlineClassSynthMembers() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/genericInlineClassSynthMembers.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/genericInlineClassSynthMembers.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("genericVararg2ndConstructor.kt")
       public void testGenericVararg2ndConstructor() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/genericVararg2ndConstructor.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/genericVararg2ndConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("initBlock.kt")
       public void testInitBlock() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/initBlock.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/initBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("initBlockGeneric.kt")
       public void testInitBlockGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/initBlockGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/initBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("initInCompanion.kt")
       public void testInitInCompanion() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/initInCompanion.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/initInCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
       public void testInlineClassAsLastExpressionInInLambda() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassAsLastExpressionInInLambdaGeneric.kt")
       public void testInlineClassAsLastExpressionInInLambdaGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambdaGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt")
       public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointData() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt")
       public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassFieldHandling.kt")
       public void testInlineClassFieldHandling() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandling.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandling.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassFieldHandlingGeneric.kt")
       public void testInlineClassFieldHandlingGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassFunctionInvoke.kt")
       public void testInlineClassFunctionInvoke() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvoke.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvoke.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassFunctionInvokeGeneric.kt")
       public void testInlineClassFunctionInvokeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassHashCodeOverride.kt")
       public void testInlineClassHashCodeOverride() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassInInitBlock.kt")
       public void testInlineClassInInitBlock() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlock.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassInInitBlockGeneric.kt")
       public void testInlineClassInInitBlockGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlockGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassInStringTemplate.kt")
       public void testInlineClassInStringTemplate() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplate.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplate.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassInStringTemplateGeneric.kt")
       public void testInlineClassInStringTemplateGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplateGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplateGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassPropertyReferenceGetAndSet.kt")
       public void testInlineClassPropertyReferenceGetAndSet() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSet.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSet.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassPropertyReferenceGetAndSetGeneric.kt")
       public void testInlineClassPropertyReferenceGetAndSetGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSetGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSetGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassValueCapturedInInlineLambda.kt")
       public void testInlineClassValueCapturedInInlineLambda() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambda.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassValueCapturedInInlineLambdaGeneric.kt")
       public void testInlineClassValueCapturedInInlineLambdaGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambdaGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassValueCapturedInNonInlineLambda.kt")
       public void testInlineClassValueCapturedInNonInlineLambda() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambda.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassValueCapturedInNonInlineLambdaGeneric.kt")
       public void testInlineClassValueCapturedInNonInlineLambdaGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambdaGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassValuesInsideStrings.kt")
       public void testInlineClassValuesInsideStrings() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStrings.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStrings.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassValuesInsideStringsGeneric.kt")
       public void testInlineClassValuesInsideStringsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStringsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStringsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassWithCustomEquals.kt")
       public void testInlineClassWithCustomEquals() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassWithCustomEqualsGeneric.kt")
       public void testInlineClassWithCustomEqualsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEqualsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEqualsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassWithDefaultFunctionsFromAny.kt")
       public void testInlineClassWithDefaultFunctionsFromAny() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAny.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassWithDefaultFunctionsFromAnyGeneric.kt")
       public void testInlineClassWithDefaultFunctionsFromAnyGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAnyGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassesAsInlineFunParameters.kt")
       public void testInlineClassesAsInlineFunParameters() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParameters.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassesAsInlineFunParametersGeneric.kt")
       public void testInlineClassesAsInlineFunParametersGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParametersGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassesCheckCast.kt")
       public void testInlineClassesCheckCast() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCast.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassesCheckCastGeneric.kt")
       public void testInlineClassesCheckCastGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCastGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCastGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassesInInlineLambdaParameters.kt")
       public void testInlineClassesInInlineLambdaParameters() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParameters.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassesInInlineLambdaParametersGeneric.kt")
       public void testInlineClassesInInlineLambdaParametersGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParametersGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassesRefTypesInInlineLambdaParameters.kt")
       public void testInlineClassesRefTypesInInlineLambdaParameters() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParameters.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineClassesRefTypesInInlineLambdaParametersGeneric.kt")
       public void testInlineClassesRefTypesInInlineLambdaParametersGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParametersGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineExtLambdaInInlineClassFun.kt")
       public void testInlineExtLambdaInInlineClassFun() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineExtLambdaInInlineClassFun2.kt")
       public void testInlineExtLambdaInInlineClassFun2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineExtLambdaInInlineClassFun2Generic.kt")
       public void testInlineExtLambdaInInlineClassFun2Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineExtLambdaInInlineClassFunGeneric.kt")
       public void testInlineExtLambdaInInlineClassFunGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFunGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineFunctionInsideInlineClass.kt")
       public void testInlineFunctionInsideInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("inlineFunctionInsideInlineClassGeneric.kt")
       public void testInlineFunctionInsideInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
       public void testIterateOverArrayOfInlineClassValues() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("iterateOverArrayOfInlineClassValuesGeneric.kt")
       public void testIterateOverArrayOfInlineClassValuesGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValuesGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValuesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("iterateOverListOfInlineClassValues.kt")
       public void testIterateOverListOfInlineClassValues() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("iterateOverListOfInlineClassValuesGeneric.kt")
       public void testIterateOverListOfInlineClassValuesGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValuesGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValuesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("jvmInline.kt")
       public void testJvmInline() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/jvmInline.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/jvmInline.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt25246.kt")
       public void testKt25246() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt25246.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt25246.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt25750.kt")
       public void testKt25750() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt25750.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt25750.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt25750Generic.kt")
       public void testKt25750Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt25750Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt25750Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt25771.kt")
       public void testKt25771() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt25771.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt25771.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt26103.kt")
       public void testKt26103() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt26103.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt26103.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt26103_contravariantUnderlyingType.kt")
       public void testKt26103_contravariantUnderlyingType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt26103_contravariantUnderlyingType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt26103_contravariantUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt26103_covariantUnderlyingType.kt")
       public void testKt26103_covariantUnderlyingType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt26103_covariantUnderlyingType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt26103_covariantUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt26103_original.kt")
       public void testKt26103_original() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt26103_original.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt26103_original.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096.kt")
       public void testKt27096() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096Generic.kt")
       public void testKt27096Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_enum.kt")
       public void testKt27096_enum() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enum.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enum.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_enumGeneric.kt")
       public void testKt27096_enumGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enumGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enumGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_functional.kt")
       public void testKt27096_functional() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functional.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functional.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_functionalGeneric.kt")
       public void testKt27096_functionalGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functionalGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functionalGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_innerClass.kt")
       public void testKt27096_innerClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_innerClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_innerClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_nullablePrimitive.kt")
       public void testKt27096_nullablePrimitive() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitive.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_nullablePrimitiveGeneric.kt")
       public void testKt27096_nullablePrimitiveGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_nullablePrimitiveGeneric2.kt")
       public void testKt27096_nullablePrimitiveGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_nullableReference.kt")
       public void testKt27096_nullableReference() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReference.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_nullableReferenceGeneric.kt")
       public void testKt27096_nullableReferenceGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_nullableReferenceGeneric2.kt")
       public void testKt27096_nullableReferenceGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_primitive.kt")
       public void testKt27096_primitive() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitive.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_primitiveGeneric.kt")
       public void testKt27096_primitiveGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitiveGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_reference.kt")
       public void testKt27096_reference() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_reference.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_reference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27096_referenceGeneric.kt")
       public void testKt27096_referenceGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_referenceGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27096_referenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27113.kt")
       public void testKt27113() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27113.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27113.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27113a.kt")
       public void testKt27113a() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27113a.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27113a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27113aGeneric.kt")
       public void testKt27113aGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27113aGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27113aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27132.kt")
       public void testKt27132() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27132.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27132.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27132Generic.kt")
       public void testKt27132Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27132Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27132Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27140.kt")
       public void testKt27140() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27140.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27140.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27140Generic.kt")
       public void testKt27140Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27140Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27140Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27705.kt")
       public void testKt27705() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27705.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27705.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27705Generic.kt")
       public void testKt27705Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27705Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27705Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27706.kt")
       public void testKt27706() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27706.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27706.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt27706Generic.kt")
       public void testKt27706Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt27706Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt27706Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt28405.kt")
       public void testKt28405() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt28405.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt28405.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22254,15 +21691,13 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("kt33119.kt")
       public void testKt33119() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt33119.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt33119.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt33119Generic.kt")
       public void testKt33119Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt33119Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt33119Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22280,57 +21715,49 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("kt37998.kt")
       public void testKt37998() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt37998.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt37998.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt37998Generic.kt")
       public void testKt37998Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt37998Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt37998Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt38680.kt")
       public void testKt38680() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt38680.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt38680.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt38680Generic.kt")
       public void testKt38680Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt38680Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt38680Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt38680a.kt")
       public void testKt38680a() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt38680a.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt38680a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt38680aGeneric.kt")
       public void testKt38680aGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt38680aGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt38680aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt38680b.kt")
       public void testKt38680b() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt38680b.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt38680b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt38680bGeneric.kt")
       public void testKt38680bGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt38680bGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt38680bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22348,57 +21775,49 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("kt44978.kt")
       public void testKt44978() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt44978.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt44978.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt45084.kt")
       public void testKt45084() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt45084.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt45084.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt45084Generic.kt")
       public void testKt45084Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt45084Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt45084Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt45991.kt")
       public void testKt45991() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt45991.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt45991.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt46554.kt")
       public void testKt46554() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt46554.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt46554.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt46554Generic.kt")
       public void testKt46554Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt46554Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt46554Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt47762.kt")
       public void testKt47762() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt47762.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt47762.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt47762Generic.kt")
       public void testKt47762Generic() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt47762Generic.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt47762Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22422,78 +21841,61 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("kt51254.kt")
       public void testKt51254() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt51254.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt51254.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt52913.kt")
       public void testKt52913() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt52913.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt52913.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt54455.kt")
       public void testKt54455() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt54455.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt54455.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt57973.kt")
       public void testKt57973() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt57973.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt57973.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt70461.kt")
       public void testKt70461() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt70461.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt70461.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("kt71649.kt")
       public void testKt71649() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/kt71649.kt");
-      }
-
-      @Test
-      @TestMetadata("lateinitInlineClasses.kt")
-      public void testLateinitInlineClasses() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/kt71649.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("mangledDefaultParameterFunction.kt")
       public void testMangledDefaultParameterFunction() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("mangledDefaultParameterFunctionGeneric.kt")
       public void testMangledDefaultParameterFunctionGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("mangledSuperCalls.kt")
       public void testMangledSuperCalls() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("mangledSuperCallsGeneric.kt")
       public void testMangledSuperCallsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCallsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCallsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22505,190 +21907,163 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("nestedInlineClass.kt")
       public void testNestedInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/nestedInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/nestedInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("nestedInlineClassGeneric.kt")
       public void testNestedInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/nestedInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/nestedInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")
       public void testNoAssertionsOnInlineClassBasedOnNullableType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt")
       public void testNoAssertionsOnInlineClassBasedOnNullableTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("nullableEqeqNonNull.kt")
       public void testNullableEqeqNonNull() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("nullableEqeqNonNullGeneric.kt")
       public void testNullableEqeqNonNullGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNullGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("nullableWrapperEquality.kt")
       public void testNullableWrapperEquality() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEquality.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEquality.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("nullableWrapperEqualityGeneric.kt")
       public void testNullableWrapperEqualityGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("nullableWrapperEqualityGeneric2.kt")
       public void testNullableWrapperEqualityGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("overrideReturnNothing.kt")
       public void testOverrideReturnNothing() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/overrideReturnNothing.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/overrideReturnNothing.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("overridingFunCallingPrivateFun.kt")
       public void testOverridingFunCallingPrivateFun() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFun.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("overridingFunCallingPrivateFunGeneric.kt")
       public void testOverridingFunCallingPrivateFunGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFunGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("passInlineClassAsVararg.kt")
       public void testPassInlineClassAsVararg() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("passInlineClassAsVarargGeneric.kt")
       public void testPassInlineClassAsVarargGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVarargGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("passInlineClassWithSpreadOperatorToVarargs.kt")
       public void testPassInlineClassWithSpreadOperatorToVarargs() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargs.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargs.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("passInlineClassWithSpreadOperatorToVarargsGeneric.kt")
       public void testPassInlineClassWithSpreadOperatorToVarargsGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargsGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("privateConstructorFunInterfaceMultiModule.kt")
       public void testPrivateConstructorFunInterfaceMultiModule() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModule.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModule.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("privateConstructorFunInterfaceMultiModuleGeneric.kt")
       public void testPrivateConstructorFunInterfaceMultiModuleGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModuleGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("propertyLoweringOrder.kt")
       public void testPropertyLoweringOrder() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrder.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrder.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("propertyLoweringOrderGeneric.kt")
       public void testPropertyLoweringOrderGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrderGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrderGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("referToPropertyInCompanionObjectOfInlineClass.kt")
       public void testReferToPropertyInCompanionObjectOfInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("referToPropertyInCompanionObjectOfInlineClassGeneric.kt")
       public void testReferToPropertyInCompanionObjectOfInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("referToUnderlyingPropertyInsideInlineClass.kt")
       public void testReferToUnderlyingPropertyInsideInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("referToUnderlyingPropertyInsideInlineClassGeneric.kt")
       public void testReferToUnderlyingPropertyInsideInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("referToUnderlyingPropertyOfInlineClass.kt")
       public void testReferToUnderlyingPropertyOfInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("referToUnderlyingPropertyOfInlineClassGeneric.kt")
       public void testReferToUnderlyingPropertyOfInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("removeInInlineCollectionOfInlineClassAsInt.kt")
       public void testRemoveInInlineCollectionOfInlineClassAsInt() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/removeInInlineCollectionOfInlineClassAsInt.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/removeInInlineCollectionOfInlineClassAsInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22700,190 +22075,163 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("resultRunCatchingOrElse.kt")
       public void testResultRunCatchingOrElse() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/resultRunCatchingOrElse.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/resultRunCatchingOrElse.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("safeAsOfTypeParameterWithInlineClassBound.kt")
       public void testSafeAsOfTypeParameterWithInlineClassBound() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBound.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBound.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("safeAsOfTypeParameterWithInlineClassBoundGeneric.kt")
       public void testSafeAsOfTypeParameterWithInlineClassBoundGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBoundGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBoundGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("samWrapperDifferentModule.kt")
       public void testSamWrapperDifferentModule() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModule.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModule.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("samWrapperDifferentModuleGeneric.kt")
       public void testSamWrapperDifferentModuleGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModuleGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("secondaryConstructorVisibilies.kt")
       public void testSecondaryConstructorVisibilies() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorVisibilies.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorVisibilies.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("secondaryConstructorWithVararg.kt")
       public void testSecondaryConstructorWithVararg() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVararg.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVararg.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("secondaryConstructorWithVarargGeneric.kt")
       public void testSecondaryConstructorWithVarargGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVarargGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("secondaryConstructorsInsideInlineClass.kt")
       public void testSecondaryConstructorsInsideInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("secondaryConstructorsInsideInlineClassGeneric.kt")
       public void testSecondaryConstructorsInsideInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt")
       public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt")
       public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("secondaryConstructorsWithBody.kt")
       public void testSecondaryConstructorsWithBody() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsWithBody.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("simpleSecondaryConstructor.kt")
       public void testSimpleSecondaryConstructor() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("simpleSecondaryConstructorGeneric.kt")
       public void testSimpleSecondaryConstructorGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructorGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("smartCastOnThisOfInlineClassType.kt")
       public void testSmartCastOnThisOfInlineClassType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("smartCastOnThisOfInlineClassTypeGeneric.kt")
       public void testSmartCastOnThisOfInlineClassTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("stringPlus.kt")
       public void testStringPlus() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/stringPlus.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/stringPlus.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("stringPlusGeneric.kt")
       public void testStringPlusGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/stringPlusGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/stringPlusGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("toStringCallingPrivateFun.kt")
       public void testToStringCallingPrivateFun() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("toStringCallingPrivateFunGeneric.kt")
       public void testToStringCallingPrivateFunGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFunGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("toStringOfUnboxedNullable.kt")
       public void testToStringOfUnboxedNullable() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("toStringOfUnboxedNullableGeneric.kt")
       public void testToStringOfUnboxedNullableGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullableGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("typeChecksForInlineClasses.kt")
       public void testTypeChecksForInlineClasses() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClasses.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("typeChecksForInlineClassesGeneric.kt")
       public void testTypeChecksForInlineClassesGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClassesGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("UIntArraySortExample.kt")
       public void testUIntArraySortExample() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("UIntArraySortExampleGeneric.kt")
       public void testUIntArraySortExampleGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExampleGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExampleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22895,99 +22243,85 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
       public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
       public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt")
       public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt")
       public void testUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGWI2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType.kt")
       public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt")
       public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt")
       public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGWI2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt")
       public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
       public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt")
       public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxParameterOfSuspendLambdaBeforeInvoke.kt")
       public void testUnboxParameterOfSuspendLambdaBeforeInvoke() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvoke.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvoke.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt")
       public void testUnboxParameterOfSuspendLambdaBeforeInvokeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxReceiverOnCallingMethodFromInlineClass.kt")
       public void testUnboxReceiverOnCallingMethodFromInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxReceiverOnCallingMethodFromInlineClassGeneric.kt")
       public void testUnboxReceiverOnCallingMethodFromInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -22999,85 +22333,73 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("unboxValueFromPlatformType.kt")
       public void testUnboxValueFromPlatformType() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformType.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxValueFromPlatformTypeGeneric.kt")
       public void testUnboxValueFromPlatformTypeGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformTypeGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxValueOfAnyBeforeMethodInvocation.kt")
       public void testUnboxValueOfAnyBeforeMethodInvocation() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocation.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocation.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxValueOfAnyBeforeMethodInvocationGeneric.kt")
       public void testUnboxValueOfAnyBeforeMethodInvocationGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxValueOfAnyBeforeMethodInvocationGeneric2.kt")
       public void testUnboxValueOfAnyBeforeMethodInvocationGeneric2() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric2.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("unboxValueOfNullableInlineClassUsingInlineFunction.kt")
       public void testUnboxValueOfNullableInlineClassUsingInlineFunction() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfNullableInlineClassUsingInlineFunction.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfNullableInlineClassUsingInlineFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("useInlineClassesInsideElvisOperator.kt")
       public void testUseInlineClassesInsideElvisOperator() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperator.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperator.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("useInlineClassesInsideElvisOperatorGeneric.kt")
       public void testUseInlineClassesInsideElvisOperatorGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperatorGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperatorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("useInlineFunctionInsideInlineClass.kt")
       public void testUseInlineFunctionInsideInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("useInlineFunctionInsideInlineClassGeneric.kt")
       public void testUseInlineFunctionInsideInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("useThisInsideInlineClass.kt")
       public void testUseThisInsideInlineClass() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClass.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("useThisInsideInlineClassGeneric.kt")
       public void testUseThisInsideInlineClassGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClassGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
@@ -23101,247 +22423,187 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("whenWithSubject.kt")
       public void testWhenWithSubject() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubject.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubject.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("whenWithSubjectGeneric.kt")
       public void testWhenWithSubjectGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("withReturnTypeMangling.kt")
       public void testWithReturnTypeMangling() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeMangling.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeMangling.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test
       @TestMetadata("withReturnTypeManglingGeneric.kt")
       public void testWithReturnTypeManglingGeneric() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingGeneric.kt");
+        runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class BoxReturnValueInLambda {
-        public BoxReturnValueInLambda() {
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableString.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxString.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxStringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("boxAny.kt")
         public void testBoxAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxAnyGeneric.kt")
         public void testBoxAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxFunLiteralAny.kt")
         public void testBoxFunLiteralAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxFunLiteralAnyGeneric.kt")
         public void testBoxFunLiteralAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxInt.kt")
         public void testBoxInt() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxInt.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxIntGeneric.kt")
         public void testBoxIntGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxIntGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableAny.kt")
         public void testBoxNullableAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableAnyGeneric.kt")
         public void testBoxNullableAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableAnyGeneric2.kt")
         public void testBoxNullableAnyGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableAnyNull.kt")
         public void testBoxNullableAnyNull() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNull.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableAnyNullGeneric.kt")
         public void testBoxNullableAnyNullGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNullGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableAnyNullGeneric2.kt")
         public void testBoxNullableAnyNullGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNullGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableAnyNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableInt.kt")
         public void testBoxNullableInt() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableInt.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableIntGeneric.kt")
         public void testBoxNullableIntGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableIntGeneric2.kt")
         public void testBoxNullableIntGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableIntNull.kt")
         public void testBoxNullableIntNull() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNull.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableIntNullGeneric.kt")
         public void testBoxNullableIntNullGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNullGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableIntNullGeneric2.kt")
         public void testBoxNullableIntNullGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNullGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableIntNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableString.kt")
         public void testBoxNullableString() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableString.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableString.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableStringGeneric.kt")
         public void testBoxNullableStringGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableStringGeneric2.kt")
         public void testBoxNullableStringGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableStringNull.kt")
         public void testBoxNullableStringNull() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNull.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableStringNullGeneric.kt")
         public void testBoxNullableStringNullGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNullGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxNullableStringNullGeneric2.kt")
         public void testBoxNullableStringNullGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNullGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxNullableStringNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxString.kt")
         public void testBoxString() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxString.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxString.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxStringGeneric.kt")
         public void testBoxStringGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxStringGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxStringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -23360,941 +22622,698 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class BoxReturnValueOnOverride {
-        public BoxReturnValueOnOverride() {
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodGenericInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterfaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableList.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableListGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfaces.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecialized.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecializedGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Generic2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBack.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBackGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenerics.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("boxReturnValueInDefaultMethod.kt")
         public void testBoxReturnValueInDefaultMethod() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boxReturnValueInDefaultMethodGenericInt.kt")
         public void testBoxReturnValueInDefaultMethodGenericInt() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodGenericInt.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodGenericInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideChainErasedToAny.kt")
         public void testCovariantOverrideChainErasedToAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideChainErasedToAnyGeneric.kt")
         public void testCovariantOverrideChainErasedToAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideChainErasedToNullableAny.kt")
         public void testCovariantOverrideChainErasedToNullableAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideChainErasedToNullableAnyGeneric.kt")
         public void testCovariantOverrideChainErasedToNullableAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideChainErasedToNullableAnyGeneric2.kt")
         public void testCovariantOverrideChainErasedToNullableAnyGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnyGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideErasedToAny.kt")
         public void testCovariantOverrideErasedToAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideErasedToAnyGeneric.kt")
         public void testCovariantOverrideErasedToAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideErasedToInterface.kt")
         public void testCovariantOverrideErasedToInterface() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterface.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideErasedToInterfaceGeneric.kt")
         public void testCovariantOverrideErasedToInterfaceGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterfaceGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterfaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideErasedToPrimitive.kt")
         public void testCovariantOverrideErasedToPrimitive() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitive.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideErasedToPrimitiveGeneric.kt")
         public void testCovariantOverrideErasedToPrimitiveGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideListVsMutableList.kt")
         public void testCovariantOverrideListVsMutableList() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableList.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableList.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideListVsMutableListGeneric.kt")
         public void testCovariantOverrideListVsMutableListGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableListGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableListGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideUnrelatedInterfaces.kt")
         public void testCovariantOverrideUnrelatedInterfaces() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfaces.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfaces.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("covariantOverrideUnrelatedInterfacesGeneric.kt")
         public void testCovariantOverrideUnrelatedInterfacesGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericOverride.kt")
         public void testGenericOverride() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverride.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericOverrideGeneric.kt")
         public void testGenericOverrideGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericOverrideSpecialized.kt")
         public void testGenericOverrideSpecialized() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecialized.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecialized.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericOverrideSpecializedGeneric.kt")
         public void testGenericOverrideSpecializedGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecializedGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecializedGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassInOverriddenReturnTypes.kt")
         public void testInlineClassInOverriddenReturnTypes() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypes.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassInOverriddenReturnTypesGeneric.kt")
         public void testInlineClassInOverriddenReturnTypesGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt28483.kt")
         public void testKt28483() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt28483Generic.kt")
         public void testKt28483Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt28483Generic2.kt")
         public void testKt28483Generic2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Generic2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Generic2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt31585.kt")
         public void testKt31585() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt31585Generic.kt")
         public void testKt31585Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt35234.kt")
         public void testKt35234() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt35234Generic.kt")
         public void testKt35234Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt35234a.kt")
         public void testKt35234a() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234a.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithInlineClass.kt")
         public void testOverrideGenericWithInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithInlineClassGeneric.kt")
         public void testOverrideGenericWithInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt")
         public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric.kt")
         public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny.kt")
         public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG.kt")
         public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG2.kt")
         public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyG2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG.kt")
         public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG2.kt")
         public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNG2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull.kt")
         public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideNullableInlineClassWithNonNullAny.kt")
         public void testOverrideNullableInlineClassWithNonNullAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideNullableInlineClassWithNonNullAnyGeneric.kt")
         public void testOverrideNullableInlineClassWithNonNullAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideNullableInlineClassWithNonNullNullableAny.kt")
         public void testOverrideNullableInlineClassWithNonNullNullableAny() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAny.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyGeneric.kt")
         public void testOverrideNullableInlineClassWithNonNullNullableAnyGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyGeneric2.kt")
         public void testOverrideNullableInlineClassWithNonNullNullableAnyGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyNull.kt")
         public void testOverrideNullableInlineClassWithNonNullNullableAnyNull() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNull.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyNullGeneric.kt")
         public void testOverrideNullableInlineClassWithNonNullNullableAnyNullGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyNullGeneric2.kt")
         public void testOverrideNullableInlineClassWithNonNullNullableAnyNullGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("relatedReturnTypes1a.kt")
         public void testRelatedReturnTypes1a() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1a.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("relatedReturnTypes1aGeneric.kt")
         public void testRelatedReturnTypes1aGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("relatedReturnTypes1b.kt")
         public void testRelatedReturnTypes1b() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1b.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("relatedReturnTypes1bGeneric.kt")
         public void testRelatedReturnTypes1bGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1bGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("relatedReturnTypes2a.kt")
         public void testRelatedReturnTypes2a() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2a.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("relatedReturnTypes2aGeneric.kt")
         public void testRelatedReturnTypes2aGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("relatedReturnTypes2b.kt")
         public void testRelatedReturnTypes2b() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2b.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("relatedReturnTypes2bGeneric.kt")
         public void testRelatedReturnTypes2bGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2bGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("uncastInlineClassToAnyAndBack.kt")
         public void testUncastInlineClassToAnyAndBack() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBack.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBack.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("uncastInlineClassToAnyAndBackGeneric.kt")
         public void testUncastInlineClassToAnyAndBackGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBackGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBackGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("unrelatedGenerics.kt")
         public void testUnrelatedGenerics() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenerics.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenerics.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("unrelatedGenericsGeneric.kt")
         public void testUnrelatedGenericsGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CallableReferences {
-        public CallableReferences() {
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassPrimaryVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassPrimaryValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/constructorWithInlineClassParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/constructorWithInlineClassParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/equalsHashCodeToString.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/equalsHashCodeToStringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassInternalPrimaryVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassInternalPrimaryValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrivatePrimaryVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrivatePrimaryValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeBoundMemberVar.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeBoundMemberVarGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeMemberVar.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeMemberVarGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVar.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVarGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/kt37986.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/callableReferences/kt37986Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("boundInlineClassExtensionFun.kt")
         public void testBoundInlineClassExtensionFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassExtensionFunGeneric.kt")
         public void testBoundInlineClassExtensionFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassExtensionVal.kt")
         public void testBoundInlineClassExtensionVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassExtensionValGeneric.kt")
         public void testBoundInlineClassExtensionValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassMemberFun.kt")
         public void testBoundInlineClassMemberFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassMemberFunGeneric.kt")
         public void testBoundInlineClassMemberFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassMemberVal.kt")
         public void testBoundInlineClassMemberVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassMemberValGeneric.kt")
         public void testBoundInlineClassMemberValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassPrimaryVal.kt")
         public void testBoundInlineClassPrimaryVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassPrimaryVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassPrimaryVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("boundInlineClassPrimaryValGeneric.kt")
         public void testBoundInlineClassPrimaryValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassPrimaryValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassPrimaryValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("constructorWithInlineClassParameters.kt")
         public void testConstructorWithInlineClassParameters() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/constructorWithInlineClassParameters.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/constructorWithInlineClassParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("constructorWithInlineClassParametersGeneric.kt")
         public void testConstructorWithInlineClassParametersGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/constructorWithInlineClassParametersGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/constructorWithInlineClassParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("equalsHashCodeToString.kt")
         public void testEqualsHashCodeToString() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/equalsHashCodeToString.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/equalsHashCodeToString.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("equalsHashCodeToStringGeneric.kt")
         public void testEqualsHashCodeToStringGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/equalsHashCodeToStringGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/equalsHashCodeToStringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("funWithInlineClassParameters.kt")
         public void testFunWithInlineClassParameters() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParameters.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("funWithInlineClassParametersGeneric.kt")
         public void testFunWithInlineClassParametersGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParametersGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassExtensionFun.kt")
         public void testInlineClassExtensionFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassExtensionFunGeneric.kt")
         public void testInlineClassExtensionFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassExtensionVal.kt")
         public void testInlineClassExtensionVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassExtensionValGeneric.kt")
         public void testInlineClassExtensionValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassInternalPrimaryVal.kt")
         public void testInlineClassInternalPrimaryVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassInternalPrimaryVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassInternalPrimaryVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassInternalPrimaryValGeneric.kt")
         public void testInlineClassInternalPrimaryValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassInternalPrimaryValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassInternalPrimaryValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassMemberFun.kt")
         public void testInlineClassMemberFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassMemberFunGeneric.kt")
         public void testInlineClassMemberFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassMemberVal.kt")
         public void testInlineClassMemberVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassMemberValGeneric.kt")
         public void testInlineClassMemberValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrimaryConstructor.kt")
         public void testInlineClassPrimaryConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrimaryConstructorGeneric.kt")
         public void testInlineClassPrimaryConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrimaryVal.kt")
         public void testInlineClassPrimaryVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrimaryValGeneric.kt")
         public void testInlineClassPrimaryValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrivatePrimaryVal.kt")
         public void testInlineClassPrivatePrimaryVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrivatePrimaryVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrivatePrimaryVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrivatePrimaryValGeneric.kt")
         public void testInlineClassPrivatePrimaryValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrivatePrimaryValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrivatePrimaryValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassTypeBoundMemberVar.kt")
         public void testInlineClassTypeBoundMemberVar() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeBoundMemberVar.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeBoundMemberVar.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassTypeBoundMemberVarGeneric.kt")
         public void testInlineClassTypeBoundMemberVarGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeBoundMemberVarGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeBoundMemberVarGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassTypeMemberVar.kt")
         public void testInlineClassTypeMemberVar() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeMemberVar.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeMemberVar.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassTypeMemberVarGeneric.kt")
         public void testInlineClassTypeMemberVarGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeMemberVarGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeMemberVarGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassTypeTopLevelVar.kt")
         public void testInlineClassTypeTopLevelVar() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVar.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVar.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassTypeTopLevelVarGeneric.kt")
         public void testInlineClassTypeTopLevelVarGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVarGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVarGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt37986.kt")
         public void testKt37986() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/kt37986.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/kt37986.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt37986Generic.kt")
         public void testKt37986Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/kt37986Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/kt37986Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences/let")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Let {
-          public Let() {
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/int.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/null.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/nullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          }
-
           @Test
           @TestMetadata("any.kt")
           public void testAny() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/any.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyGeneric.kt")
           public void testAnyGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyN.kt")
           public void testAnyN() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyN.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyNGeneric.kt")
           public void testAnyNGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyNGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyNGeneric2.kt")
           public void testAnyNGeneric2() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyNGeneric2.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/anyNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("int.kt")
           public void testInt() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/int.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/int.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("intGeneric.kt")
           public void testIntGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("intN.kt")
           public void testIntN() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intN.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("intNGeneric.kt")
           public void testIntNGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intNGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("intNGeneric2.kt")
           public void testIntNGeneric2() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intNGeneric2.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/intNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("null.kt")
           public void testNull() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/null.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/null.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("nullGeneric.kt")
           public void testNullGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/nullGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/nullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
@@ -24306,36 +23325,31 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Test
           @TestMetadata("string.kt")
           public void testString() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/string.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("stringGeneric.kt")
           public void testStringGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("stringN.kt")
           public void testStringN() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringN.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("stringNGeneric.kt")
           public void testStringNGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringNGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("stringNGeneric2.kt")
           public void testStringNGeneric2() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringNGeneric2.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/let/stringNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
         }
       }
@@ -24343,548 +23357,409 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ContextsAndAccessors {
-        public ContextsAndAccessors() {
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethodGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInObject.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInObjectGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineLambdaInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt26858.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt26858Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt27513.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt27513Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt30780.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt30780Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("accessPrivateInlineClassCompanionMethod.kt")
         public void testAccessPrivateInlineClassCompanionMethod() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassCompanionMethod2.kt")
         public void testAccessPrivateInlineClassCompanionMethod2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassCompanionMethod2Generic.kt")
         public void testAccessPrivateInlineClassCompanionMethod2Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod2Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassCompanionMethodGeneric.kt")
         public void testAccessPrivateInlineClassCompanionMethodGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethodGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethodGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassConstructorFromCompanion.kt")
         public void testAccessPrivateInlineClassConstructorFromCompanion() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromCompanion.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassConstructorFromCompanionGeneric.kt")
         public void testAccessPrivateInlineClassConstructorFromCompanionGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromCompanionGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassConstructorFromLambda.kt")
         public void testAccessPrivateInlineClassConstructorFromLambda() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromLambda.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassConstructorFromLambdaGeneric.kt")
         public void testAccessPrivateInlineClassConstructorFromLambdaGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromLambdaGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromCompanion.kt")
         public void testAccessPrivateInlineClassMethodFromCompanion() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromCompanion2.kt")
         public void testAccessPrivateInlineClassMethodFromCompanion2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromCompanion2Generic.kt")
         public void testAccessPrivateInlineClassMethodFromCompanion2Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion2Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromCompanionGeneric.kt")
         public void testAccessPrivateInlineClassMethodFromCompanionGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanionGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromInlineLambda.kt")
         public void testAccessPrivateInlineClassMethodFromInlineLambda() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromInlineLambda2.kt")
         public void testAccessPrivateInlineClassMethodFromInlineLambda2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromInlineLambda2Generic.kt")
         public void testAccessPrivateInlineClassMethodFromInlineLambda2Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda2Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambda2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromInlineLambdaGeneric.kt")
         public void testAccessPrivateInlineClassMethodFromInlineLambdaGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambdaGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromLambda.kt")
         public void testAccessPrivateInlineClassMethodFromLambda() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromLambda2.kt")
         public void testAccessPrivateInlineClassMethodFromLambda2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromLambda2Generic.kt")
         public void testAccessPrivateInlineClassMethodFromLambda2Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda2Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("accessPrivateInlineClassMethodFromLambdaGeneric.kt")
         public void testAccessPrivateInlineClassMethodFromLambdaGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambdaGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("captureInlineClassInstanceInLambda.kt")
         public void testCaptureInlineClassInstanceInLambda() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("captureInlineClassInstanceInLambda2.kt")
         public void testCaptureInlineClassInstanceInLambda2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("captureInlineClassInstanceInLambda2Generic.kt")
         public void testCaptureInlineClassInstanceInLambda2Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda2Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambda2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("captureInlineClassInstanceInLambdaGeneric.kt")
         public void testCaptureInlineClassInstanceInLambdaGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambdaGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("captureInlineClassInstanceInObject.kt")
         public void testCaptureInlineClassInstanceInObject() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInObject.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInObject.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("captureInlineClassInstanceInObjectGeneric.kt")
         public void testCaptureInlineClassInstanceInObjectGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInObjectGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/captureInlineClassInstanceInObjectGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineLambdaInInlineClassFun.kt")
         public void testInlineLambdaInInlineClassFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineLambdaInInlineClassFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineLambdaInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineLambdaInInlineClassFunGeneric.kt")
         public void testInlineLambdaInInlineClassFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineLambdaInInlineClassFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt26858.kt")
         public void testKt26858() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt26858.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt26858.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt26858Generic.kt")
         public void testKt26858Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt26858Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt26858Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt27513.kt")
         public void testKt27513() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt27513.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt27513.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt27513Generic.kt")
         public void testKt27513Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt27513Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt27513Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt30780.kt")
         public void testKt30780() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt30780.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt30780.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt30780Generic.kt")
         public void testKt30780Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt30780Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/kt30780Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("lambdaInInlineClassFun.kt")
         public void testLambdaInInlineClassFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("lambdaInInlineClassFunGeneric.kt")
         public void testLambdaInInlineClassFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("objectInInlineClassFun.kt")
         public void testObjectInInlineClassFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("objectInInlineClassFunGeneric.kt")
         public void testObjectInInlineClassFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("toPrivateCompanionFun.kt")
         public void testToPrivateCompanionFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("toPrivateCompanionFunGeneric.kt")
         public void testToPrivateCompanionFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("toPrivateCompanionVal.kt")
         public void testToPrivateCompanionVal() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionVal.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionVal.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("toPrivateCompanionValGeneric.kt")
         public void testToPrivateCompanionValGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionValGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionValGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DefaultParameterValues {
-        public DefaultParameterValues() {
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxing.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValue.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt26554.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("defaultConstructorParameterValuesOfInlineClassType.kt")
         public void testDefaultConstructorParameterValuesOfInlineClassType() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt")
         public void testDefaultConstructorParameterValuesOfInlineClassTypeGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassType.kt")
         public void testDefaultInterfaceFunParameterValuesOfInlineClassType() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassType.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt")
         public void testDefaultInterfaceFunParameterValuesOfInlineClassTypeGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultParameterValuesOfInlineClassType.kt")
         public void testDefaultParameterValuesOfInlineClassType() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassType.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxing.kt")
         public void testDefaultParameterValuesOfInlineClassTypeBoxing() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxing.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxing.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt")
         public void testDefaultParameterValuesOfInlineClassTypeBoxingGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultParameterValuesOfInlineClassTypeGeneric.kt")
         public void testDefaultParameterValuesOfInlineClassTypeGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultValueOfInlineClassTypeInInlineFun.kt")
         public void testDefaultValueOfInlineClassTypeInInlineFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultValueOfInlineClassTypeInInlineFunGeneric.kt")
         public void testDefaultValueOfInlineClassTypeInInlineFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt")
         public void testDefaultValueOfInlineClassTypeInInlineFunInInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt")
         public void testDefaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassFun.kt")
         public void testInlineClassFun() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFun.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassFunGeneric.kt")
         public void testInlineClassFunGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFunGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrimaryConstructor.kt")
         public void testInlineClassPrimaryConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrimaryConstructorGeneric.kt")
         public void testInlineClassPrimaryConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrimaryConstructorWithInlineClassValue.kt")
         public void testInlineClassPrimaryConstructorWithInlineClassValue() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValue.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValue.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt")
         public void testInlineClassPrimaryConstructorWithInlineClassValueGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassSecondaryConstructor.kt")
         public void testInlineClassSecondaryConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineClassSecondaryConstructorGeneric.kt")
         public void testInlineClassSecondaryConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt26554.kt")
         public void testKt26554() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt26554.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt26554.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt27416.kt")
         public void testKt27416() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt27416Generic.kt")
         public void testKt27416Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class DefaultWithDefaultParameter {
@@ -24893,7 +23768,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class OverrideFunctionWithDefaultParameter {
@@ -24903,7 +23777,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DelegationByUnderlyingType {
@@ -24947,42 +23820,25 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/funInterface")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class FunInterface {
-        public FunInterface() {
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121_2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappers.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("argumentIC.kt")
         public void testArgumentIC() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("argumentICGeneric.kt")
         public void testArgumentICGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("argumentICGeneric2.kt")
         public void testArgumentICGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -24994,50 +23850,43 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Test
         @TestMetadata("kt51121.kt")
         public void testKt51121() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt51121_2.kt")
         public void testKt51121_2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121_2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/kt51121_2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("mangledSamWrappers.kt")
         public void testMangledSamWrappers() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappers.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappers.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("mangledSamWrappersGeneric.kt")
         public void testMangledSamWrappersGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappersGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("returnIC.kt")
         public void testReturnIC() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("returnICGeneric.kt")
         public void testReturnICGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("returnICGeneric2.kt")
         public void testReturnICGeneric2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -25050,258 +23899,193 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/functionNameMangling")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class FunctionNameMangling {
-        public FunctionNameMangling() {
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverridden.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverriddenGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("anonymousObjectInFunctionWithMangledName.kt")
         public void testAnonymousObjectInFunctionWithMangledName() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledName.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("anonymousObjectInFunctionWithMangledNameGeneric.kt")
         public void testAnonymousObjectInFunctionWithMangledNameGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledNameGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("extensionFunctionsDoNotClash.kt")
         public void testExtensionFunctionsDoNotClash() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClash.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("extensionFunctionsDoNotClashGeneric.kt")
         public void testExtensionFunctionsDoNotClashGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClashGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("functionsWithDifferentNullabilityDoNotClash.kt")
         public void testFunctionsWithDifferentNullabilityDoNotClash() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClash.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("functionsWithDifferentNullabilityDoNotClashGeneric.kt")
         public void testFunctionsWithDifferentNullabilityDoNotClashGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClashGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericFunctionsDoNotClash.kt")
         public void testGenericFunctionsDoNotClash() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClash.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericFunctionsDoNotClashGeneric.kt")
         public void testGenericFunctionsDoNotClashGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClashGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("localClassInFunctionWithMangledName.kt")
         public void testLocalClassInFunctionWithMangledName() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledName.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("localClassInFunctionWithMangledNameGeneric.kt")
         public void testLocalClassInFunctionWithMangledNameGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledNameGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("mangledFunctionsCanBeOverridden.kt")
         public void testMangledFunctionsCanBeOverridden() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverridden.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverridden.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("mangledFunctionsCanBeOverriddenGeneric.kt")
         public void testMangledFunctionsCanBeOverriddenGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverriddenGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverriddenGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("mangledFunctionsDoNotClash.kt")
         public void testMangledFunctionsDoNotClash() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClash.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("mangledFunctionsDoNotClashGeneric.kt")
         public void testMangledFunctionsDoNotClashGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("mixedSignatureFunctionsDoNotClash.kt")
         public void testMixedSignatureFunctionsDoNotClash() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClash.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("mixedSignatureFunctionsDoNotClashGeneric.kt")
         public void testMixedSignatureFunctionsDoNotClashGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClashGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overridingMethodInGenericClass.kt")
         public void testOverridingMethodInGenericClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overridingMethodInGenericClass2.kt")
         public void testOverridingMethodInGenericClass2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overridingMethodInGenericClass2Generic.kt")
         public void testOverridingMethodInGenericClass2Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overridingMethodInGenericClassGeneric.kt")
         public void testOverridingMethodInGenericClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("propertySetterWithInlineClassTypeArgument.kt")
         public void testPropertySetterWithInlineClassTypeArgument() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgument.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("propertySetterWithInlineClassTypeArgumentGeneric.kt")
         public void testPropertySetterWithInlineClassTypeArgumentGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgumentGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("reflectionForFunctionWithMangledName.kt")
         public void testReflectionForFunctionWithMangledName() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledName.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("reflectionForFunctionWithMangledNameGeneric.kt")
         public void testReflectionForFunctionWithMangledNameGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledNameGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("reflectionForPropertyOfInlineClassType.kt")
         public void testReflectionForPropertyOfInlineClassType() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassType.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("reflectionForPropertyOfInlineClassTypeGeneric.kt")
         public void testReflectionForPropertyOfInlineClassTypeGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassTypeGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("syntheticAccessorForFunctionWithMangledName.kt")
         public void testSyntheticAccessorForFunctionWithMangledName() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledName.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("syntheticAccessorForFunctionWithMangledNameGeneric.kt")
         public void testSyntheticAccessorForFunctionWithMangledNameGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledNameGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("syntheticAccessorsForPropertyOfInlineClassType.kt")
         public void testSyntheticAccessorsForPropertyOfInlineClassType() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassType.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt")
         public void testSyntheticAccessorsForPropertyOfInlineClassTypeGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class GenericUnderlyingValue {
@@ -25351,147 +24135,103 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class HiddenConstructor {
-        public HiddenConstructor() {
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("constructorReferencedFromOtherFile1.kt")
         public void testConstructorReferencedFromOtherFile1() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("constructorReferencedFromOtherFile1Generic.kt")
         public void testConstructorReferencedFromOtherFile1Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("constructorReferencedFromOtherFile2.kt")
         public void testConstructorReferencedFromOtherFile2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("constructorReferencedFromOtherFile2Generic.kt")
         public void testConstructorReferencedFromOtherFile2Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("constructorWithDefaultParameters.kt")
         public void testConstructorWithDefaultParameters() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParameters.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("constructorWithDefaultParametersGeneric.kt")
         public void testConstructorWithDefaultParametersGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParametersGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatingSuperConstructorCall.kt")
         public void testDelegatingSuperConstructorCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatingSuperConstructorCallGeneric.kt")
         public void testDelegatingSuperConstructorCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatingSuperConstructorCallInSecondaryConstructor.kt")
         public void testDelegatingSuperConstructorCallInSecondaryConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt")
         public void testDelegatingSuperConstructorCallInSecondaryConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatingThisConstructorCall.kt")
         public void testDelegatingThisConstructorCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatingThisConstructorCallGeneric.kt")
         public void testDelegatingThisConstructorCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("enumClassConstructor.kt")
         public void testEnumClassConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("enumClassConstructorGeneric.kt")
         public void testEnumClassConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("innerClassConstructor.kt")
         public void testInnerClassConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("innerClassConstructorGeneric.kt")
         public void testInnerClassConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -25503,449 +24243,340 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Test
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("primaryConstructorGeneric.kt")
         public void testPrimaryConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("privateConstructor.kt")
         public void testPrivateConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("privateConstructorGeneric.kt")
         public void testPrivateConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("sealedClassConstructor.kt")
         public void testSealedClassConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("sealedClassConstructorGeneric.kt")
         public void testSealedClassConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("secondaryConstructor.kt")
         public void testSecondaryConstructor() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("secondaryConstructorGeneric.kt")
         public void testSecondaryConstructorGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructorGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/inlineClassCollection")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InlineClassCollection {
-        public InlineClassCollection() {
-          register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMutableCollectionBulkAdd.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("inlineCollectionOfInlineClass.kt")
         public void testInlineCollectionOfInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineCollectionOfInlineClassGeneric.kt")
         public void testInlineCollectionOfInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineListOfInlineClass.kt")
         public void testInlineListOfInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineListOfInlineClassGeneric.kt")
         public void testInlineListOfInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineMapOfInlineClass.kt")
         public void testInlineMapOfInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineMapOfInlineClassGeneric.kt")
         public void testInlineMapOfInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("inlineMutableCollectionBulkAdd.kt")
         public void testInlineMutableCollectionBulkAdd() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMutableCollectionBulkAdd.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMutableCollectionBulkAdd.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceDelegation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InterfaceDelegation {
-        public InterfaceDelegation() {
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegation.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtVarDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLong.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLongGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("interfaceImplementationByDelegation.kt")
         public void testInterfaceImplementationByDelegation() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegation.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegation.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("interfaceImplementationByDelegationGeneric.kt")
         public void testInterfaceImplementationByDelegationGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegationGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt38337.kt")
         public void testKt38337() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt38337Generic.kt")
         public void testKt38337Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberExtValDelegationWithInlineClassParameterTypes.kt")
         public void testMemberExtValDelegationWithInlineClassParameterTypes() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypes.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberExtValDelegationWithInlineClassParameterTypesGeneric.kt")
         public void testMemberExtValDelegationWithInlineClassParameterTypesGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypesGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberExtVarDelegationWithInlineClassParameterTypes.kt")
         public void testMemberExtVarDelegationWithInlineClassParameterTypes() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtVarDelegationWithInlineClassParameterTypes.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtVarDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberFunDelegatedToInlineClassInt.kt")
         public void testMemberFunDelegatedToInlineClassInt() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassInt.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberFunDelegatedToInlineClassIntGeneric.kt")
         public void testMemberFunDelegatedToInlineClassIntGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassIntGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberFunDelegatedToInlineClassLong.kt")
         public void testMemberFunDelegatedToInlineClassLong() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLong.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLong.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberFunDelegatedToInlineClassLongGeneric.kt")
         public void testMemberFunDelegatedToInlineClassLongGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLongGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLongGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberFunDelegationToInlineClassWithInlineClassParameterTypes.kt")
         public void testMemberFunDelegationToInlineClassWithInlineClassParameterTypes() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypes.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt")
         public void testMemberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberFunDelegationWithInlineClassParameterTypes.kt")
         public void testMemberFunDelegationWithInlineClassParameterTypes() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypes.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("memberFunDelegationWithInlineClassParameterTypesGeneric.kt")
         public void testMemberFunDelegationWithInlineClassParameterTypesGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypesGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InterfaceMethodCalls {
-        public InterfaceMethodCalls() {
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("complexGenericMethodWithInlineClassOverride.kt")
         public void testComplexGenericMethodWithInlineClassOverride() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("complexGenericMethodWithInlineClassOverride2.kt")
         public void testComplexGenericMethodWithInlineClassOverride2() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("complexGenericMethodWithInlineClassOverride2Generic.kt")
         public void testComplexGenericMethodWithInlineClassOverride2Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("complexGenericMethodWithInlineClassOverride3.kt")
         public void testComplexGenericMethodWithInlineClassOverride3() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("complexGenericMethodWithInlineClassOverride3Generic.kt")
         public void testComplexGenericMethodWithInlineClassOverride3Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("complexGenericMethodWithInlineClassOverrideGeneric.kt")
         public void testComplexGenericMethodWithInlineClassOverrideGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverrideGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultInterfaceExtensionFunCall.kt")
         public void testDefaultInterfaceExtensionFunCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultInterfaceExtensionFunCallGeneric.kt")
         public void testDefaultInterfaceExtensionFunCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultInterfaceMethodCall.kt")
         public void testDefaultInterfaceMethodCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("defaultInterfaceMethodCallGeneric.kt")
         public void testDefaultInterfaceMethodCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericDefaultInterfaceExtensionFunCall.kt")
         public void testGenericDefaultInterfaceExtensionFunCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericDefaultInterfaceExtensionFunCallGeneric.kt")
         public void testGenericDefaultInterfaceExtensionFunCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericDefaultInterfaceMethodCall.kt")
         public void testGenericDefaultInterfaceMethodCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericDefaultInterfaceMethodCallGeneric.kt")
         public void testGenericDefaultInterfaceMethodCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericInterfaceMethodCall.kt")
         public void testGenericInterfaceMethodCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericInterfaceMethodCallGeneric.kt")
         public void testGenericInterfaceMethodCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericMethodWithInlineClassOverride.kt")
         public void testGenericMethodWithInlineClassOverride() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverride.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("genericMethodWithInlineClassOverrideGeneric.kt")
         public void testGenericMethodWithInlineClassOverrideGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverrideGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("interfaceSuperCall.kt")
         public void testInterfaceSuperCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("interfaceSuperCallGeneric.kt")
         public void testInterfaceSuperCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overriddenDefaultInterfaceMethodCall.kt")
         public void testOverriddenDefaultInterfaceMethodCall() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("overriddenDefaultInterfaceMethodCallGeneric.kt")
         public void testOverriddenDefaultInterfaceMethodCallGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCallGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class JavaInterop {
@@ -25954,7 +24585,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Jvm8DefaultInterfaceMethods {
@@ -25963,194 +24593,145 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class PropertyDelegation {
-        public PropertyDelegation() {
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegate.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegateGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("captureLocalVarDelegatedToInlineClass.kt")
         public void testCaptureLocalVarDelegatedToInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("captureLocalVarDelegatedToInlineClassGeneric.kt")
         public void testCaptureLocalVarDelegatedToInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateClassVarToInlineClass.kt")
         public void testDelegateClassVarToInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateClassVarToInlineClassGeneric.kt")
         public void testDelegateClassVarToInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateClassVarToInlineClassWithProvideDelegate.kt")
         public void testDelegateClassVarToInlineClassWithProvideDelegate() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegate.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegate.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateClassVarToInlineClassWithProvideDelegateGeneric.kt")
         public void testDelegateClassVarToInlineClassWithProvideDelegateGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegateGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegateGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateCompanionVarToInlineClass.kt")
         public void testDelegateCompanionVarToInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateCompanionVarToInlineClassGeneric.kt")
         public void testDelegateCompanionVarToInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateLocalVarToInlineClass.kt")
         public void testDelegateLocalVarToInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateLocalVarToInlineClassGeneric.kt")
         public void testDelegateLocalVarToInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateObjectVarToInlineClass.kt")
         public void testDelegateObjectVarToInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateObjectVarToInlineClassGeneric.kt")
         public void testDelegateObjectVarToInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatePrivateCompanionVarToInlineClass.kt")
         public void testDelegatePrivateCompanionVarToInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatePrivateCompanionVarToInlineClassGeneric.kt")
         public void testDelegatePrivateCompanionVarToInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateTopLevelVarToInlineClass.kt")
         public void testDelegateTopLevelVarToInlineClass() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClass.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegateTopLevelVarToInlineClassGeneric.kt")
         public void testDelegateTopLevelVarToInlineClassGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClassGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatedPropertyOfInlineClassType.kt")
         public void testDelegatedPropertyOfInlineClassType() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassType.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("delegatedPropertyOfInlineClassTypeGeneric.kt")
         public void testDelegatedPropertyOfInlineClassTypeGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassTypeGeneric.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt27070.kt")
         public void testKt27070() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt27070Generic.kt")
         public void testKt27070Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt42933.kt")
         public void testKt42933() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
         @TestMetadata("kt42933Generic.kt")
         public void testKt42933Generic() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933Generic.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/result")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Result {
@@ -26206,7 +24787,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/returnResult")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ReturnResult {
@@ -26250,107 +24830,73 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class UnboxGenericParameter {
-        public UnboxGenericParameter() {
-          register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/genericArrayInlineClassCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @Test
         @TestMetadata("genericArrayInlineClassCast.kt")
         public void testGenericArrayInlineClassCast() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/genericArrayInlineClassCast.kt");
+          runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/genericArrayInlineClassCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class FunInterface {
-          public FunInterface() {
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/iface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          }
-
           @Test
           @TestMetadata("any.kt")
           public void testAny() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/any.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyGeneric.kt")
           public void testAnyGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyN.kt")
           public void testAnyN() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyN.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyNGeneric.kt")
           public void testAnyNGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyNGeneric2.kt")
           public void testAnyNGeneric2() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric2.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("iface.kt")
           public void testIface() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/iface.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/iface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceChild.kt")
           public void testIfaceChild() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChild.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceChildGeneric.kt")
           public void testIfaceChildGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChildGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceGeneric.kt")
           public void testIfaceGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
@@ -26362,15 +24908,13 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Test
           @TestMetadata("primitive.kt")
           public void testPrimitive() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitive.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("primitiveGeneric.kt")
           public void testPrimitiveGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitiveGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
@@ -26382,118 +24926,86 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Test
           @TestMetadata("resultAny.kt")
           public void testResultAny() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAny.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("resultAnyGeneric.kt")
           public void testResultAnyGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAnyGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("string.kt")
           public void testString() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/string.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("stringGeneric.kt")
           public void testStringGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/stringGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
         }
 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Lambda {
-          public Lambda() {
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/iface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          }
-
           @Test
           @TestMetadata("any.kt")
           public void testAny() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/any.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyGeneric.kt")
           public void testAnyGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyN.kt")
           public void testAnyN() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyN.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyNGeneric.kt")
           public void testAnyNGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyNGeneric2.kt")
           public void testAnyNGeneric2() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric2.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("iface.kt")
           public void testIface() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/iface.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/iface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceChild.kt")
           public void testIfaceChild() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChild.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceChildGeneric.kt")
           public void testIfaceChildGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChildGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceGeneric.kt")
           public void testIfaceGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
@@ -26505,15 +25017,13 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Test
           @TestMetadata("primitive.kt")
           public void testPrimitive() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitive.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("primitiveGeneric.kt")
           public void testPrimitiveGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitiveGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
@@ -26525,118 +25035,86 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Test
           @TestMetadata("resultAny.kt")
           public void testResultAny() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAny.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("resultAnyGeneric.kt")
           public void testResultAnyGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAnyGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("string.kt")
           public void testString() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/string.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("stringGeneric.kt")
           public void testStringGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/stringGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
         }
 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ObjectLiteral {
-          public ObjectLiteral() {
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/iface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-            register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          }
-
           @Test
           @TestMetadata("any.kt")
           public void testAny() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/any.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyGeneric.kt")
           public void testAnyGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyN.kt")
           public void testAnyN() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyN.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyNGeneric.kt")
           public void testAnyNGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("anyNGeneric2.kt")
           public void testAnyNGeneric2() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric2.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("iface.kt")
           public void testIface() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/iface.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/iface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceChild.kt")
           public void testIfaceChild() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChild.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceChildGeneric.kt")
           public void testIfaceChildGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChildGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("ifaceGeneric.kt")
           public void testIfaceGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
@@ -26648,15 +25126,13 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Test
           @TestMetadata("primitive.kt")
           public void testPrimitive() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitive.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("primitiveGeneric.kt")
           public void testPrimitiveGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitiveGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
@@ -26668,29 +25144,25 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Test
           @TestMetadata("resultAny.kt")
           public void testResultAny() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAny.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("resultAnyGeneric.kt")
           public void testResultAnyGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAnyGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("string.kt")
           public void testString() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/string.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
 
           @Test
           @TestMetadata("stringGeneric.kt")
           public void testStringGeneric() {
-            // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/stringGeneric.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           }
         }
       }
@@ -26699,7 +25171,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/innerClass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InnerClass {
@@ -26779,7 +25250,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/innerNested")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InnerNested {
@@ -26972,7 +25442,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SuperConstructorCall {
@@ -27107,14 +25576,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/instructions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Instructions {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/instructions/swap")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Swap {
@@ -27135,7 +25602,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/interfaceCallsNCasts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InterfaceCallsNCasts {
@@ -27167,7 +25633,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/intrinsics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Intrinsics {
@@ -27301,7 +25766,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/invokedynamic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Invokedynamic {
@@ -27314,7 +25778,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Lambdas {
@@ -27327,7 +25790,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class InlineClassInSignature {
@@ -27337,14 +25799,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Sam {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class FunctionExprToJavaInterface {
@@ -27353,14 +25813,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class FunctionRefToJavaInterface {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class SpecialFunctions {
@@ -27369,7 +25827,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class WithAccessor {
@@ -27379,7 +25836,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class InlineClassInSignature {
@@ -27388,7 +25844,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class SpecializedGenerics {
@@ -27398,7 +25853,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/serializable")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Serializable {
@@ -27408,7 +25862,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InvolvesIrInterpreter {
@@ -27565,7 +26018,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ConstEvaluationFromJavaWorld {
@@ -27574,7 +26026,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class IntrinsicConst {
@@ -27648,7 +26099,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/serialization")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Serialization {
@@ -27711,7 +26161,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Ir {
@@ -27844,7 +26293,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ir/closureConversion")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ClosureConversion {
@@ -27900,7 +26348,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ir/primitiveNumberComparisons")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class PrimitiveNumberComparisons {
@@ -27932,7 +26379,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ir/privateSignatures")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class PrivateSignatures {
@@ -27952,7 +26398,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ir/serializationRegressions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SerializationRegressions {
@@ -28009,7 +26454,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JavaFieldAndKotlinProperty {
@@ -28018,21 +26462,26 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JavaInterop {
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/javaInterop/commonAtomicTypes")
+      @TestDataPath("$PROJECT_ROOT")
+      @FirPipeline()
+      @Tag("klib")
+      public class CommonAtomicTypes {
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForeignAnnotationsTests {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Tests {
@@ -28042,7 +26491,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Generics {
@@ -28051,7 +26499,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class NotNullAssertions {
@@ -28064,7 +26511,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class EnhancedNullability {
@@ -28073,7 +26519,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ExpressionAssertionMessages {
@@ -28082,7 +26527,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class NullCheckOnLambdaReturnValue {
@@ -28092,7 +26536,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ObjectMethods {
@@ -28101,7 +26544,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class PrimitiveVsWrapperTypeInInheritance {
@@ -28110,7 +26552,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Statics {
@@ -28120,14 +26561,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaVisibility")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JavaVisibility {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaVisibility/package")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Package {
@@ -28136,7 +26575,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedAndPackage")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ProtectedAndPackage {
@@ -28145,7 +26583,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedStatic")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ProtectedStatic {
@@ -28155,7 +26592,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jdk")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Jdk {
@@ -28187,14 +26623,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/js")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Js {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/js/inlinedReturnBreakContinue")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InlinedReturnBreakContinue {
@@ -28204,38 +26638,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Jvm8 {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Defaults {
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
-        @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
-        @FirPipeline()
-        @Tag("klib")
-        public class AllCompatibility {
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy")
-          @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
-          @FirPipeline()
-          @Tag("klib")
-          public class DelegationBy {
-          }
-        }
-
-        @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class DefaultCompatibilityBridges {
@@ -28244,41 +26658,51 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class DelegationBy {
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
-        public class NoDefaultImpls {
+        public class Enable {
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
+          @FirPipeline()
+          @Tag("klib")
+          public class DelegationBy {
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @FirPipeline()
+        @Tag("klib")
+        public class NoCompatibility {
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy")
+          @TestDataPath("$PROJECT_ROOT")
           @FirPipeline()
           @Tag("klib")
           public class DelegationBy {
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Specialization {
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class WithCompatibility {
@@ -28288,7 +26712,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class NonDefaultInheritance {
@@ -28297,7 +26720,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/reflection")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Reflection {
@@ -28307,7 +26729,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/interfaceFlag")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InterfaceFlag {
@@ -28316,7 +26737,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/javaDefaults")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class JavaDefaults {
@@ -28326,7 +26746,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmField")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JvmField {
@@ -28335,14 +26754,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JvmName {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class FileFacades {
@@ -28352,7 +26769,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmOverloads")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JvmOverloads {
@@ -28361,7 +26777,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmPackageName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JvmPackageName {
@@ -28370,14 +26785,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmStatic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JvmStatic {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ProtectedInSuperClass {
@@ -28387,7 +26800,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/kclass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Kclass {
@@ -28407,7 +26819,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/klib")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Klib {
@@ -28421,7 +26832,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ktype")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Ktype {
@@ -28471,7 +26881,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/labels")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Labels {
@@ -28527,7 +26936,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lambda")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Lambda {
@@ -28643,7 +27051,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lateinit")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Lateinit {
@@ -28711,7 +27118,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lazyCodegen")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class LazyCodegen {
@@ -28772,7 +27178,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/lazyCodegen/optimizations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Optimizations {
@@ -28835,7 +27240,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/literals")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Literals {
@@ -28855,7 +27259,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/localClass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class LocalClass {
@@ -28929,7 +27332,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/localClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class LocalClasses {
@@ -29177,7 +27579,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/localEscapeAnalysis")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class LocalEscapeAnalysis {
@@ -29191,7 +27592,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lower")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Lower {
@@ -29204,7 +27604,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/lower/forLoopsLowering")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForLoopsLowering {
@@ -29279,7 +27678,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/mangling")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Mangling {
@@ -29329,7 +27727,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/mixedNamedPosition")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class MixedNamedPosition {
@@ -29361,7 +27758,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class MultiDecl {
@@ -29452,7 +27848,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForIterator {
@@ -29489,7 +27884,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator/longIterator")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class LongIterator {
@@ -29522,7 +27916,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForRange {
@@ -29571,7 +27964,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ExplicitRangeTo {
@@ -29608,7 +28000,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Int {
@@ -29640,7 +28031,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Long {
@@ -29673,7 +28063,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ExplicitRangeToWithDot {
@@ -29710,7 +28099,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Int {
@@ -29742,7 +28130,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Long {
@@ -29775,7 +28162,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/int")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Int {
@@ -29807,7 +28193,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/long")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Long {
@@ -29841,14 +28226,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class MultifileClasses {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multifileClasses/optimized")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Optimized {
@@ -29858,14 +28241,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Multiplatform {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class K2 {
@@ -30040,7 +28421,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Annotations {
@@ -30066,7 +28446,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/basic")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Basic {
@@ -30086,6 +28465,24 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @TestMetadata("anyMethodInExpect.kt")
           public void testAnyMethodInExpect() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/basic/anyMethodInExpect.kt");
+          }
+
+          @Test
+          @TestMetadata("contextInFakeOverride.kt")
+          public void testContextInFakeOverride() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextInFakeOverride.kt");
+          }
+
+          @Test
+          @TestMetadata("contextOnExpect.kt")
+          public void testContextOnExpect() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextOnExpect.kt");
+          }
+
+          @Test
+          @TestMetadata("contextOnExpectActual.kt")
+          public void testContextOnExpectActual() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextOnExpectActual.kt");
           }
 
           @Test
@@ -30392,7 +28789,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/complexMatchings")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ComplexMatchings {
@@ -30412,7 +28808,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/defaultArguments")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class DefaultArguments {
@@ -30582,7 +28977,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/delegation")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Delegation {
@@ -30632,7 +29026,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Exhaustiveness {
@@ -30658,25 +29051,14 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/hmpp")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Hmpp {
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lightTree")
-        @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
-        @FirPipeline()
-        @Tag("klib")
-        public class LightTree {
-        }
-
-        @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class MigratedOldTests {
@@ -30714,7 +29096,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/multiModule")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class MultiModule {
@@ -30725,7 +29106,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class NonLocalReturns {
@@ -30757,7 +29137,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/notNullAssertions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class NotNullAssertions {
@@ -30766,7 +29145,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/nothingValue")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class NothingValue {
@@ -30792,7 +29170,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/nullCheckOptimization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class NullCheckOptimization {
@@ -30836,7 +29213,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/object")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Object {
@@ -30898,7 +29274,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/objectExpression")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ObjectExpression {
@@ -30930,7 +29305,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ObjectIntrinsics {
@@ -30944,7 +29318,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/objects")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Objects {
@@ -31401,7 +29774,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CompanionObjectAccess {
@@ -31504,7 +29876,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class MultipleCompanionsWithAccessors {
@@ -31584,7 +29955,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class PrimitiveCompanion {
@@ -31636,7 +30006,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/operatorConventions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class OperatorConventions {
@@ -31793,7 +30162,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CompareTo {
@@ -31868,7 +30236,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/optimizations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Optimizations {
@@ -31882,7 +30249,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/package")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Package {
@@ -31962,7 +30328,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/parametersMetadata")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ParametersMetadata {
@@ -31971,14 +30336,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/platformTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class PlatformTypes {
       @Nested
       @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Primitives {
@@ -32101,7 +30464,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/polymorphicSignature")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class PolymorphicSignature {
@@ -32110,7 +30472,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class PrimitiveTypes {
@@ -32471,7 +30832,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class EqualityWithObject {
@@ -32532,7 +30892,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Generated {
@@ -32649,7 +31008,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class IdentityEqualsWithNullable {
@@ -32658,7 +31016,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class NumberToChar {
@@ -32703,7 +31060,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/private")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Private {
@@ -32723,7 +31079,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/privateConstructors")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class PrivateConstructors {
@@ -32803,7 +31158,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/properties")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Properties {
@@ -32919,6 +31273,30 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("complexPropertyInitializer.kt")
       public void testComplexPropertyInitializer() {
         runTest("compiler/testData/codegen/box/properties/complexPropertyInitializer.kt");
+      }
+
+      @Test
+      @TestMetadata("eagerInitializationGlobal1.kt")
+      public void testEagerInitializationGlobal1() {
+        runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal1.kt");
+      }
+
+      @Test
+      @TestMetadata("eagerInitializationGlobal2.kt")
+      public void testEagerInitializationGlobal2() {
+        runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal2.kt");
+      }
+
+      @Test
+      @TestMetadata("eagerInitializationGlobal3.kt")
+      public void testEagerInitializationGlobal3() {
+        runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal3.kt");
+      }
+
+      @Test
+      @TestMetadata("eagerInitializationGlobal4.kt")
+      public void testEagerInitializationGlobal4() {
+        runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal4.kt");
       }
 
       @Test
@@ -33284,7 +31662,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/backingField")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class BackingField {
@@ -33293,7 +31670,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/const")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Const {
@@ -33325,7 +31701,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Lateinit {
@@ -33422,7 +31797,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class IsInitializedAndDeinitialize {
@@ -33478,7 +31852,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit/local")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Local {
@@ -33528,7 +31901,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit/topLevel")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class TopLevel {
@@ -33568,7 +31940,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/propertyCallableReference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class PropertyCallableReference {
@@ -33624,7 +31995,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/publishedApi")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class PublishedApi {
@@ -33650,7 +32020,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Ranges {
@@ -33801,7 +32170,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/contains")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Contains {
@@ -34114,7 +32482,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/contains/generated")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Generated {
@@ -34285,7 +32652,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class EvaluationOrder {
@@ -34346,14 +32712,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Stepped {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class ForInDownTo {
@@ -34409,7 +32773,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class ForInRangeLiteral {
@@ -34465,7 +32828,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class ForInUntil {
@@ -34523,7 +32885,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/expression")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Expression {
@@ -34717,7 +33078,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInDownTo")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInDownTo {
@@ -34767,7 +33127,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInIndices")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInIndices {
@@ -34919,7 +33278,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInProgressionWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInProgressionWithIndex {
@@ -35017,7 +33375,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInReversed")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInReversed {
@@ -35133,7 +33490,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInUntil")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForInUntil {
@@ -35231,7 +33587,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ForWithPossibleOverflow {
@@ -35317,14 +33672,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class JavaInterop {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop/withIndex")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class WithIndex {
@@ -35334,7 +33687,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/literal")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Literal {
@@ -35528,7 +33880,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class NullableLoopParameter {
@@ -35554,21 +33905,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/stepped")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Stepped {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Expression {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class DownTo {
@@ -35671,7 +34019,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class NestedStep {
@@ -35727,7 +34074,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Reversed {
@@ -35772,7 +34118,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class RangeTo {
@@ -35875,7 +34220,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class NestedStep {
@@ -35931,7 +34275,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Reversed {
@@ -35976,7 +34319,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class RangeUntil {
@@ -36043,7 +34385,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class NestedStep {
@@ -36099,7 +34440,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Reversed {
@@ -36144,7 +34484,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Until {
@@ -36253,7 +34592,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class NestedStep {
@@ -36309,7 +34647,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Reversed {
@@ -36355,14 +34692,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Literal {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class DownTo {
@@ -36465,7 +34800,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class NestedStep {
@@ -36521,7 +34855,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Reversed {
@@ -36566,7 +34899,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class RangeTo {
@@ -36669,7 +35001,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class NestedStep {
@@ -36725,7 +35056,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Reversed {
@@ -36770,7 +35100,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class RangeUntil {
@@ -36837,7 +35166,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class NestedStep {
@@ -36893,7 +35221,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Reversed {
@@ -36938,7 +35265,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Until {
@@ -37047,7 +35373,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class NestedStep {
@@ -37103,7 +35428,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Reversed {
@@ -37149,21 +35473,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Unsigned {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Expression {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class DownTo {
@@ -37266,7 +35587,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class NestedStep {
@@ -37322,7 +35642,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class Reversed {
@@ -37367,7 +35686,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class RangeTo {
@@ -37470,7 +35788,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class NestedStep {
@@ -37526,7 +35843,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class Reversed {
@@ -37571,7 +35887,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class RangeUntil {
@@ -37638,7 +35953,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class NestedStep {
@@ -37694,7 +36008,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class Reversed {
@@ -37739,7 +36052,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Until {
@@ -37848,7 +36160,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class NestedStep {
@@ -37904,7 +36215,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class Reversed {
@@ -37950,14 +36260,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Literal {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class DownTo {
@@ -38060,7 +36368,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class NestedStep {
@@ -38116,7 +36423,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class Reversed {
@@ -38161,7 +36467,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class RangeTo {
@@ -38264,7 +36569,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class NestedStep {
@@ -38320,7 +36624,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class Reversed {
@@ -38365,7 +36668,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class RangeUntil {
@@ -38432,7 +36734,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class NestedStep {
@@ -38488,7 +36789,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class Reversed {
@@ -38533,7 +36833,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class Until {
@@ -38642,7 +36941,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class NestedStep {
@@ -38698,7 +36996,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klib")
               public class Reversed {
@@ -38746,7 +37043,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/unsigned")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Unsigned {
@@ -38795,7 +37091,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/expression")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Expression {
@@ -38989,7 +37284,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/literal")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Literal {
@@ -39183,7 +37477,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class NullableLoopParameter {
@@ -39211,7 +37504,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/recursiveRawTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class RecursiveRawTypes {
@@ -39220,7 +37512,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Reflection {
@@ -39230,17 +37521,39 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         runTest("compiler/testData/codegen/box/reflection/associatedObjectNested.kt");
       }
 
+      @Test
+      @TestMetadata("findAssociatedObject.kt")
+      public void testFindAssociatedObject() {
+        runTest("compiler/testData/codegen/box/reflection/findAssociatedObject.kt");
+      }
+
+      @Test
+      @TestMetadata("findAssociatedObjectAndDCE.kt")
+      public void testFindAssociatedObjectAndDCE() {
+        runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectAndDCE.kt");
+      }
+
+      @Test
+      @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
+      public void testFindAssociatedObjectInSeparatedFile() {
+        runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectInSeparatedFile.kt");
+      }
+
+      @Test
+      @TestMetadata("findAssociatedObjectLazyness.kt")
+      public void testFindAssociatedObjectLazyness() {
+        runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectLazyness.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Annotations {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/annotations/onTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class OnTypes {
@@ -39249,7 +37562,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/annotations/repeatable")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Repeatable {
@@ -39259,7 +37571,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/builtins")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Builtins {
@@ -39268,14 +37579,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/call")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Call {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/bound")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Bound {
@@ -39284,14 +37593,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class InlineClasses {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class NonNullObject {
@@ -39300,7 +37607,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class NullableObject {
@@ -39309,7 +37615,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Primitive {
@@ -39319,7 +37624,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ValueClasses {
@@ -39329,28 +37633,24 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/callBy")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CallBy {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class InlineClasses {
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class NonNullObject {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class DefaultArguments {
@@ -39360,14 +37660,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class NullableObject {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class DefaultArguments {
@@ -39377,14 +37675,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Primitive {
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klib")
             public class DefaultArguments {
@@ -39396,7 +37692,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/classLiterals")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ClassLiterals {
@@ -39434,7 +37729,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/classes")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Classes {
@@ -39472,7 +37766,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/constructors")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Constructors {
@@ -39486,7 +37779,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/createAnnotation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CreateAnnotation {
@@ -39495,7 +37787,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/enclosing")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Enclosing {
@@ -39504,7 +37795,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/functions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Functions {
@@ -39524,7 +37814,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/genericSignature")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class GenericSignature {
@@ -39538,7 +37827,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class IsInstance {
@@ -39547,7 +37835,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class KClassInAnnotation {
@@ -39556,7 +37843,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/lambdaClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class LambdaClasses {
@@ -39565,7 +37851,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/localClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class LocalClasses {
@@ -39574,14 +37859,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Mapping {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/fakeOverrides")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class FakeOverrides {
@@ -39590,7 +37873,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class InlineClasses {
@@ -39599,7 +37881,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/jvmStatic")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class JvmStatic {
@@ -39608,7 +37889,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/types")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Types {
@@ -39617,7 +37897,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ValueClasses {
@@ -39627,7 +37906,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/methodsFromAny")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class MethodsFromAny {
@@ -39647,7 +37925,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/modifiers")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Modifiers {
@@ -39656,7 +37933,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/multifileClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class MultifileClasses {
@@ -39665,7 +37941,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class NoReflectAtRuntime {
@@ -39690,7 +37965,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class MethodsFromAny {
@@ -39705,7 +37979,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/parameters")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Parameters {
@@ -39714,7 +37987,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Properties {
@@ -39727,7 +37999,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/accessors")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Accessors {
@@ -39736,7 +38007,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class GetDelegate {
@@ -39755,7 +38025,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/method")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class Method {
@@ -39765,7 +38034,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/jvmField")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class JvmField {
@@ -39774,7 +38042,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class LocalDelegated {
@@ -39784,7 +38051,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/supertypes")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Supertypes {
@@ -39793,7 +38059,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/syntheticClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SyntheticClasses {
@@ -39802,7 +38067,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeOf")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TypeOf {
@@ -39869,7 +38133,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/js")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Js {
@@ -39878,7 +38141,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class NoReflect {
@@ -39891,7 +38153,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klib")
           public class NonReifiedTypeParameters {
@@ -39901,7 +38162,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class NonReifiedTypeParameters {
@@ -39976,7 +38236,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeParameters")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TypeParameters {
@@ -39985,7 +38244,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/types")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Types {
@@ -40010,7 +38268,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/types/createType")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class CreateType {
@@ -40019,7 +38276,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/types/subtyping")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Subtyping {
@@ -40030,7 +38286,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/regressions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Regressions {
@@ -40464,7 +38719,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reified")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Reified {
@@ -40627,7 +38881,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reified/arraysReification")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ArraysReification {
@@ -40648,7 +38901,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/safeCall")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SafeCall {
@@ -40758,10 +39010,21 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Sam {
+      @Test
+      @TestMetadata("funInterfaceExtendsSuspendFunction.kt")
+      public void testFunInterfaceExtendsSuspendFunction() {
+        runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("funInterfaceExtendsSuspendFunction2.kt")
+      public void testFunInterfaceExtendsSuspendFunction2() {
+        runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction2.kt");
+      }
+
       @Test
       @TestMetadata("inProjectedSam.kt")
       public void testInProjectedSam() {
@@ -40807,14 +39070,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/adapters")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Adapters {
         @Nested
         @TestMetadata("compiler/testData/codegen/box/sam/adapters/operators")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Operators {
@@ -40824,7 +39085,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/approximation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Approximation {
@@ -40856,7 +39116,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/constructors")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Constructors {
@@ -40888,7 +39147,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/equality")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Equality {
@@ -40897,7 +39155,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class JavaSamWithEqualsHashCode {
@@ -40907,7 +39164,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sameFileInSourceAndDependencies")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SameFileInSourceAndDependencies {
@@ -40927,7 +39183,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/script")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Script {
@@ -40936,7 +39191,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sealed")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Sealed {
@@ -40956,6 +39210,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("kt54028.kt")
       public void testKt54028() {
         runTest("compiler/testData/codegen/box/sealed/kt54028.kt");
+      }
+
+      @Test
+      @TestMetadata("kt54028_cursed.kt")
+      public void testKt54028_cursed() {
+        runTest("compiler/testData/codegen/box/sealed/kt54028_cursed.kt");
       }
 
       @Test
@@ -40986,7 +39246,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/secondaryConstructors")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SecondaryConstructors {
@@ -41174,7 +39433,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/serialization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Serialization {
@@ -41224,7 +39482,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/size")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Size {
@@ -41233,7 +39490,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/smap")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Smap {
@@ -41242,7 +39498,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/smartCasts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SmartCasts {
@@ -41439,6 +39694,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
+      @TestMetadata("smartCastOnSuper.kt")
+      public void testSmartCastOnSuper() {
+        runTest("compiler/testData/codegen/box/smartCasts/smartCastOnSuper.kt");
+      }
+
+      @Test
       @TestMetadata("smartCastedGenericWhenSubjectInRangeCheck.kt")
       public void testSmartCastedGenericWhenSubjectInRangeCheck() {
         runTest("compiler/testData/codegen/box/smartCasts/smartCastedGenericWhenSubjectInRangeCheck.kt");
@@ -41466,7 +39727,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/specialBuiltins")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SpecialBuiltins {
@@ -41594,7 +39854,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/statics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Statics {
@@ -41650,7 +39909,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/storeStackBeforeInline")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class StoreStackBeforeInline {
@@ -41688,7 +39946,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/stringTrim")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class StringTrim {
@@ -41702,10 +39959,21 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/strings")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Strings {
+      @Test
+      @TestMetadata("charSequenceGet.kt")
+      public void testCharSequenceGet() {
+        runTest("compiler/testData/codegen/box/strings/charSequenceGet.kt");
+      }
+
+      @Test
+      @TestMetadata("charSequenceSubSequence.kt")
+      public void testCharSequenceSubSequence() {
+        runTest("compiler/testData/codegen/box/strings/charSequenceSubSequence.kt");
+      }
+
       @Test
       @TestMetadata("concatDynamicWithConstants.kt")
       public void testConcatDynamicWithConstants() {
@@ -41932,7 +40200,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/super")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Super {
@@ -41946,6 +40213,24 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("basicproperty.kt")
       public void testBasicproperty() {
         runTest("compiler/testData/codegen/box/super/basicproperty.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondWithCovariantOverride.kt")
+      public void testDiamondWithCovariantOverride() {
+        runTest("compiler/testData/codegen/box/super/diamondWithCovariantOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondWithGenericParameterType.kt")
+      public void testDiamondWithGenericParameterType() {
+        runTest("compiler/testData/codegen/box/super/diamondWithGenericParameterType.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondWithGenericReturnType.kt")
+      public void testDiamondWithGenericReturnType() {
+        runTest("compiler/testData/codegen/box/super/diamondWithGenericReturnType.kt");
       }
 
       @Test
@@ -42113,7 +40398,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/super/superConstructor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class SuperConstructor {
@@ -42164,7 +40448,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/suppressions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Suppressions {
@@ -42178,7 +40461,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/suspendConversion")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SuspendConversion {
@@ -42264,7 +40546,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/synchronized")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Synchronized {
@@ -42273,7 +40554,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SyntheticAccessors {
@@ -42394,7 +40674,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ProtectedJavaFieldAccessor {
@@ -42403,7 +40682,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ProtectedMemberReferenceAccessor {
@@ -42436,7 +40714,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticExtensions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SyntheticExtensions {
@@ -42445,7 +40722,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/throws")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Throws {
@@ -42454,7 +40730,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/toArray")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ToArray {
@@ -42474,7 +40749,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class TopLevelInitializtion {
@@ -42512,7 +40786,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/topLevelPrivate")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class TopLevelPrivate {
@@ -42532,7 +40805,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/trailingComma")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class TrailingComma {
@@ -42546,7 +40818,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/traits")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Traits {
@@ -42752,7 +41023,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/try")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Try {
@@ -42886,7 +41156,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/typeInfo")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class TypeInfo {
@@ -42930,7 +41199,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/typeMapping")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class TypeMapping {
@@ -42980,7 +41248,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/typealias")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Typealias {
@@ -42988,6 +41255,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("abbreviationWithCapturedType.kt")
       public void testAbbreviationWithCapturedType() {
         runTest("compiler/testData/codegen/box/typealias/abbreviationWithCapturedType.kt");
+      }
+
+      @Test
+      @TestMetadata("callTypeAliasWithInnerRhsInStaticScope.kt")
+      public void testCallTypeAliasWithInnerRhsInStaticScope() {
+        runTest("compiler/testData/codegen/box/typealias/callTypeAliasWithInnerRhsInStaticScope.kt");
       }
 
       @Test
@@ -43060,6 +41333,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @TestMetadata("kt45308.kt")
       public void testKt45308() {
         runTest("compiler/testData/codegen/box/typealias/kt45308.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedTypeAliasesAndStaticScope.kt")
+      public void testNestedTypeAliasesAndStaticScope() {
+        runTest("compiler/testData/codegen/box/typealias/nestedTypeAliasesAndStaticScope.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedTypeAliasesAndTypeArguments.kt")
+      public void testNestedTypeAliasesAndTypeArguments() {
+        runTest("compiler/testData/codegen/box/typealias/nestedTypeAliasesAndTypeArguments.kt");
       }
 
       @Test
@@ -43162,7 +41447,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/unaryOp")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class UnaryOp {
@@ -43206,7 +41490,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/underscoredTypeArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class UnderscoredTypeArguments {
@@ -43238,7 +41521,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/unit")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Unit {
@@ -43336,7 +41618,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/unsignedTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class UnsignedTypes {
@@ -43631,7 +41912,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Jvm8Intrinsics {
@@ -43641,20 +41921,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ValueClasses {
       @Test
-      @TestMetadata("uLongInValueClass.kt")
-      public void testULongInValueClass() {
-        runTest("compiler/testData/codegen/box/valueClasses/uLongInValueClass.kt");
+      @TestMetadata("valueClassInValueClass.kt")
+      public void testValueClassInValueClass() {
+        runTest("compiler/testData/codegen/box/valueClasses/valueClassInValueClass.kt");
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/valueClasses/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class JavaInterop {
@@ -43664,7 +41942,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/vararg")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Vararg {
@@ -43774,7 +42051,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/volatile")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Volatile {
@@ -43872,7 +42148,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/wasm-new-exception-handling")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Wasm_new_exception_handling {
@@ -43881,7 +42156,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class When {
@@ -44182,7 +42456,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/enumOptimization")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class EnumOptimization {
@@ -44304,7 +42577,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/guard")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Guard {
@@ -44318,7 +42590,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class StringOptimization {
@@ -44380,7 +42651,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/whenSubjectVariable")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class WhenSubjectVariable {
@@ -44498,14 +42768,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
   @Nested
   @TestMetadata("compiler/testData/codegen/boxInline")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-fir")
   @FirPipeline()
   @Tag("klib")
   public class BoxInline {
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Annotations {
@@ -44525,7 +42793,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class AnonymousObject {
@@ -44946,7 +43213,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class EnumEntries {
@@ -44955,7 +43221,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class EnumWhen {
@@ -44987,7 +43252,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ProperRecapturing {
@@ -45031,7 +43295,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class ProperRecapturingInClass {
@@ -45111,7 +43374,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Sam {
@@ -45120,7 +43382,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TwoCapturedReceivers {
@@ -45171,7 +43432,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/argumentOrder")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ArgumentOrder {
@@ -45251,7 +43511,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/arrayConvention")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ArrayConvention {
@@ -45295,7 +43554,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/assert")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Assert {
@@ -45304,7 +43562,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/builders")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Builders {
@@ -45313,7 +43570,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/bytecodePreprocessing")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class BytecodePreprocessing {
@@ -45322,7 +43578,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/callableReference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class CallableReference {
@@ -45437,7 +43692,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/callableReference/adaptedReferences")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class AdaptedReferences {
@@ -45487,7 +43741,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/callableReference/bound")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Bound {
@@ -45652,7 +43905,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/capture")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Capture {
@@ -45726,7 +43978,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/complex")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Complex {
@@ -45782,7 +44033,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/complexStack")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ComplexStack {
@@ -45844,7 +44094,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/contracts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Contracts {
@@ -45942,7 +44191,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/defaultValues")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DefaultValues {
@@ -46069,7 +44317,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class LambdaInlining {
@@ -46274,7 +44521,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class CallableReferences {
@@ -46457,7 +44703,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class MaskElimination {
@@ -46508,7 +44753,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/delegatedProperty")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DelegatedProperty {
@@ -46552,7 +44796,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/dontReify")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class DontReify {
@@ -46620,7 +44863,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/enclosingInfo")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class EnclosingInfo {
@@ -46629,7 +44871,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/enum")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Enum {
@@ -46727,7 +44968,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/functionExpression")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class FunctionExpression {
@@ -46747,7 +44987,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/functionReference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class FunctionReference {
@@ -46773,7 +45012,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InlineArgsInplace {
@@ -46787,7 +45025,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InlineClasses {
@@ -46830,14 +45067,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class UnboxGenericParameter {
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class FunInterface {
@@ -46881,7 +45116,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Lambda {
@@ -46925,7 +45159,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ObjectLiteral {
@@ -46971,7 +45204,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/innerClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class InnerClasses {
@@ -47027,14 +45259,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Invokedynamic {
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic/lambdas")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Lambdas {
@@ -47043,7 +45273,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic/sam")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Sam {
@@ -47053,7 +45282,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/jvmName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JvmName {
@@ -47062,7 +45290,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class JvmPackageName {
@@ -47071,7 +45298,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/lambdaClassClash")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class LambdaClassClash {
@@ -47091,7 +45317,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/lambdaTransformation")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class LambdaTransformation {
@@ -47129,7 +45354,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/localFunInLambda")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class LocalFunInLambda {
@@ -47167,7 +45391,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/multiModule")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class MultiModule {
@@ -47181,7 +45404,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class MultifileClasses {
@@ -47190,14 +45412,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/multiplatform")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Multiplatform {
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/multiplatform/defaultArguments")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DefaultArguments {
@@ -47212,7 +45432,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/noInline")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class NoInline {
@@ -47262,7 +45481,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class NonLocalReturns {
@@ -47407,7 +45625,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Deparenthesize {
@@ -47427,7 +45644,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TryFinally {
@@ -47512,7 +45728,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class CallSite {
@@ -47556,7 +45771,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Chained {
@@ -47612,7 +45826,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class DeclSite {
@@ -47692,7 +45905,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class ExceptionTable {
@@ -47820,7 +46032,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klib")
         public class Variables {
@@ -47836,7 +46047,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/optimizations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Optimizations {
@@ -47850,7 +46060,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/private")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Private {
@@ -47930,7 +46139,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/property")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Property {
@@ -48022,7 +46230,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/reified")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Reified {
@@ -48149,7 +46356,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/reified/checkCast")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CheckCast {
@@ -48211,7 +46417,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DefaultLambda {
@@ -48220,7 +46425,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/reified/isCheck")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class IsCheck {
@@ -48247,7 +46451,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/signature")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Signature {
@@ -48256,7 +46459,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/signatureMangling")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SignatureMangling {
@@ -48265,7 +46467,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/simple")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Simple {
@@ -48411,7 +46612,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/smap")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Smap {
@@ -48538,7 +46738,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/anonymous")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Anonymous {
@@ -48606,7 +46805,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DefaultLambda {
@@ -48668,7 +46866,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InlineOnly {
@@ -48700,7 +46897,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/newsmap")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Newsmap {
@@ -48732,7 +46928,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/resolve")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Resolve {
@@ -48753,7 +46948,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/special")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Special {
@@ -48821,7 +47015,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/stackOnReturn")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class StackOnReturn {
@@ -48925,7 +47118,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/suspend")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Suspend {
@@ -49082,7 +47274,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/callableReference")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class CallableReference {
@@ -49120,7 +47311,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/defaultParameter")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class DefaultParameter {
@@ -49164,7 +47354,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InlineClass {
@@ -49196,7 +47385,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class InlineUsedAsNoinline {
@@ -49216,7 +47404,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/receiver")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class Receiver {
@@ -49272,7 +47459,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/stateMachine")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class StateMachine {
@@ -49419,7 +47605,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class SyntheticAccessors {
@@ -49462,7 +47647,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class WithinInlineLambda {
@@ -49519,7 +47703,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/trait")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Trait {
@@ -49533,7 +47716,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/tryCatchFinally")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class TryCatchFinally {
@@ -49565,7 +47747,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class TypeParameters {
@@ -49609,7 +47790,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/varargs")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Varargs {
@@ -49635,7 +47815,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/wasm-new-exception-handling")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Wasm_new_exception_handling {

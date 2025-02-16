@@ -19,7 +19,7 @@ import com.intellij.psi.search.PsiSearchScopeUtil
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
+import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -30,10 +30,13 @@ import org.jetbrains.kotlin.test.services.TestServices
 import kotlin.test.fail
 
 abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
-    override val configurator: AnalysisApiFirSourceTestConfigurator = ErrorResistanceConfigurator
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+
+    override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+        get() = super.additionalServiceRegistrars + listOf(ErrorResistanceServiceRegistrar)
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        resolveWithClearCaches(mainFile) { firResolveSession ->
+        withResolveSession(mainFile) { firResolveSession ->
             ENABLE_INTERRUPTION.set(true)
 
             try {
@@ -55,14 +58,6 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
             }
         }
     }
-}
-
-private object ErrorResistanceConfigurator : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
-    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = buildList {
-            addAll(super.serviceRegistrars)
-            add(ErrorResistanceServiceRegistrar)
-        }
 }
 
 private object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistrar() {

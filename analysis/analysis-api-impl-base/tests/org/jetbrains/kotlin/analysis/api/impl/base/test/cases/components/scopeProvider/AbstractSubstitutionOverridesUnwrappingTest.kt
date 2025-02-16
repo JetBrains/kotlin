@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest() {
 
     override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
-        val declarationUnderCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassLikeDeclaration>(ktFile)
+        val declarationUnderCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtClassLikeDeclaration>(ktFile)
         val classSymbolUnderCaret = declarationUnderCaret.symbol as KaClassLikeSymbol
 
         require(classSymbolUnderCaret is KaDeclarationContainerSymbol)

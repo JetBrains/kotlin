@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: Null argument in ExpressionCodegen for parameter VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A
+// DISABLE_NEXT_PHASE_SUGGESTION: Null argument in ExpressionCodegen for parameter VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A
 // LANGUAGE: +ContextReceivers
 
 class A
@@ -41,11 +41,16 @@ class Clazz2 {
     <!CONTEXT_CLASS_OR_CONSTRUCTOR!>constructor()<!>
 }
 
+class Clazz3 {
+    <!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(A)
+    constructor()
+}
+
 fun typeRef(body: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit): <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit {
     val x: <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) () -> Unit = body
     val y = body
     val z: suspend <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A) B.() -> Unit = {}
-    val w: (<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit, <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit) -> (<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit) = <!CONTEXT_RECEIVERS_DEPRECATED!>{ a, b -> { } }<!>
+    val w: (<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit, <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit) -> (<!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(Int) () -> Unit) = { a, b -> { } }
     return {}
 }
 

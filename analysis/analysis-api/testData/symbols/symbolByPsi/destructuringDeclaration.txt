@@ -52,6 +52,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /P.x
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -87,7 +88,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val x: Int)
+        initializer: KaNonConstantInitializerValue(val x: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -179,6 +180,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /P.y
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -214,7 +216,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val y: Int)
+        initializer: KaNonConstantInitializerValue(val y: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -363,6 +365,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /destruct
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
@@ -30,7 +31,11 @@ class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices, baseD
         listOf(AdditionalFilesDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         return buildList {
             for ((directive, path) in directiveToFileMap) {
                 if (directive in module.directives) {

@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /boolenExprContract
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
     KaContractConditionalContractEffectDeclaration:

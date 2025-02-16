@@ -26,9 +26,8 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -398,9 +397,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 result = newType.unusableClassifier
             }
 
-            dispatchReceiverParameter?.fixType() // The dispatcher (aka this) is intentionally the first one.
-            extensionReceiverParameter?.fixType()
-            valueParameters.forEach { it.fixType() }
+            parameters.forEach { it.fixType() }
 
             returnType.toPartiallyLinkedMarkerTypeOrNull()?.let { newReturnType ->
                 returnType = newReturnType
@@ -633,9 +630,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 else -> when (symbol) {
                     is IrFunctionSymbol -> with(symbol.owner) {
-                        dispatchReceiverParameter?.type?.precalculatedUnusableClassifier()
-                            ?: extensionReceiverParameter?.type?.precalculatedUnusableClassifier()
-                            ?: valueParameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
+                        parameters.firstNotNullOfOrNull { it.type.precalculatedUnusableClassifier() }
                             ?: returnType.precalculatedUnusableClassifier()
                             ?: typeParameters.firstNotNullOfOrNull { it.superTypes.precalculatedUnusableClassifier() }
                     }
@@ -716,97 +711,33 @@ internal class PartiallyLinkedIrTreePatcher(
             else null
         }
 
-        protected inline fun IrMemberAccessExpression<IrFunctionSymbol>.checkArgumentsAndValueParameters(
+        protected inline fun IrFunctionAccessExpression.checkArgumentsAndValueParameters(
             checkDefaultArgument: (index: Int, defaultArgumentExpressionBody: IrExpressionBody?) -> Boolean =
                 { _, defaultArgumentExpressionBody -> defaultArgumentExpressionBody != null }
         ): PartialLinkageCase? {
             val function = symbol.owner
 
-            val expressionEffectivelyHasDispatchReceiver = when {
-                dispatchReceiver != null -> true
-                this is IrFunctionReference -> run {
-                    // For function references it really depends on whether the reference was obtained on a class or on an instance.
-                    // Based on this the dispatch receiver may be null or non-null, but this is always reflected in the expression type.
-                    // Example:
-                    //   class C {
-                    //     fun foo(i: Int): String = i.toString()
-                    //     inner class I {
-                    //       fun bar(i: Int): String = i.toString()
-                    //     }
-                    //   }
-                    //
-                    //   fun test() {
-                    //     val a: KFunction0<C> = ::C                     //    IrConstructor.dispatchReceiverParameter == null, IrFunctionReference.dispatchReceiver == null
-                    //     val b: KFunction2<C, Int, String> = C::foo     // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val c: KFunction1<Int, String> = C()::foo      // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //     val d: KFunction1<C, C.I> = C::I               //    IrConstructor.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val e: KFunction0<C.I> = C()::I                //    IrConstructor.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //     val f: KFunction2<C.I, Int, String> = C.I::bar // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver == null
-                    //     val g: KFunction1<Int, String> = C().I()::bar  // IrSimpleFunction.dispatchReceiverParameter != null, IrFunctionReference.dispatchReceiver != null
-                    //   }
-                    val expectedDispatchReceiverClassifier: IrClassSymbol = when (symbol) {
-                        is IrSimpleFunctionSymbol -> function.parent as? IrClass
-                        is IrConstructorSymbol -> (function.parent as? IrClass)?.takeIf { it.isInner }?.parent as? IrClass
-                    }?.symbol ?: return@run false
-
-                    val referenceType: IrSimpleType = type as? IrSimpleType ?: return@run false
-                    if (!referenceType.classifier.isKFunction() && !referenceType.classifier.isKSuspendFunction()) return@run false
-
-                    val actualDispatchReceiverClassifier: IrClassifierSymbol? =
-                        (referenceType.arguments.firstOrNull() as? IrSimpleType)?.classifier
-
-                    /*
-                     * FIR generates function references for certain overridden functions in a different way than K1. Example:
-                     *   class A
-                     *
-                     *   fun test(a: A): Boolean {
-                     *       return (A::equals)(a, a)
-                     *       //         ^^^ IrFunctionReferenceImpl slightly differs:
-                     *       // | Frontend | Attribute                | Value                          |
-                     *       // +----------+--------------------------+--------------------------------+
-                     *       // | K1       | dispatchReceiver         | null                           |
-                     *       // | K1       | symbol.parent as IrClass | "class A"                      |
-                     *       // | K1       | type as IrSimpleType     | "KFunction2<A, Any?, Boolean>" |
-                     *       // | FIR      | dispatchReceiver         | null                           |
-                     *       // | FIR      | symbol.parent as IrClass | "class Any"                    |
-                     *       // | FIR      | type as IrSimpleType     | "KFunction2<A, Any?, Boolean>" |
-                     *   }
-                     *
-                     * So instead of checking that `expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier` it's
-                     * safer to check that `actualDispatchReceiverClassifier` is the same or subclass of `expectedDispatchReceiverClassifier`.
-                     */
-                    // expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier
-                    actualDispatchReceiverClassifier?.isSubtypeOfClass(expectedDispatchReceiverClassifier) ?: false
-                }
-                else -> false
-            }
-            val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
-
-            if (expressionEffectivelyHasDispatchReceiver != functionHasDispatchReceiver)
-                return MemberAccessExpressionArgumentsMismatch(
+            if (arguments.size > function.parameters.size) {
+                return MemberAccessExpressionArgumentsMismatch.ExcessiveArguments(
                     this,
-                    expressionEffectivelyHasDispatchReceiver,
-                    functionHasDispatchReceiver,
-                    0, // Does not matter here.
-                    0 // Does not matter here.
+                    arguments.size - function.parameters.size
                 )
-
-            when (this) {
-                is IrFunctionAccessExpression -> {
-                    if (function.isExternal) {
-                        // External functions may have the default arguments declared in native implementations,
-                        // which are not available from Kotlin.
-                        return null
-                    } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
-                        // This is a special case. IrEnumConstructorCall don't contain arguments.
-                        return null
-                    }
-                }
-                is IrFunctionReference -> {
-                    // Function references don't contain arguments.
-                    return null
-                }
+            } else if (arguments.size < function.parameters.size) {
+                return MemberAccessExpressionArgumentsMismatch.MissingArguments(
+                    this,
+                    function.parameters.drop(arguments.size)
+                )
             }
+
+            if (function.isExternal) {
+                // External functions may have the default arguments declared in native implementations,
+                // which are not available from Kotlin.
+                return null
+            } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
+                // This is a special case. IrEnumConstructorCall don't contain arguments.
+                return null
+            }
+
 
             // Default values are not kept in value parameters of fake override/delegated/override functions.
             // So we need to look up for default value across all overridden functions.
@@ -818,29 +749,56 @@ internal class PartiallyLinkedIrTreePatcher(
                 }
             }
 
-            val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->
-                if (getValueArgument(index) != null)
-                    return@count true
-
-                val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
-                    it.valueParameters.getOrNull(index)?.defaultValue
+            val missingValues = arguments.withIndex().filterNot { (index, arg) ->
+                if (arg != null) {
+                    return@filterNot true
                 }
 
-                return@count checkDefaultArgument(index, defaultArgumentExpressionBody)
-                        || function.valueParameters.getOrNull(index)?.isVararg == true
-            }
-            val functionValueParameterCount = function.valueParameters.size
+                val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
+                    it.parameters[index].defaultValue
+                }
 
-            return if (expressionValueArgumentCount != functionValueParameterCount)
-                MemberAccessExpressionArgumentsMismatch(
+                return@filterNot checkDefaultArgument(index, defaultArgumentExpressionBody)
+                        || function.parameters[index].isVararg
+            }
+            if (missingValues.isNotEmpty()) {
+                return MemberAccessExpressionArgumentsMismatch.MissingArgumentValues(
                     this,
-                    expressionEffectivelyHasDispatchReceiver,
-                    functionHasDispatchReceiver,
-                    expressionValueArgumentCount,
-                    functionValueParameterCount
+                    missingValues.map { function.parameters[it.index] }
                 )
-            else
-                null
+            }
+
+            return null
+        }
+
+        private fun IrFunctionReference.checkArgumentsAndValueParameters(): PartialLinkageCase? {
+            val function = symbol.owner
+
+            val referenceType = type as? IrSimpleType
+            if (referenceType != null && referenceType.classifier.isKFunction()) {
+                // How many parameters were already provided (via binding) when the reference was created.
+                // In practise, it can be either 0 or 1, because the language currently doesn't allow binding more.
+                val boundParameters = arguments.count { it != null }
+                // How many parameters were left to be provided by the caller, via the created KFunctionN.
+                val unboundParameters = (referenceType.classifier.owner as IrClass).typeParameters.size - 1
+                // Both bound and unbound parameters, as seen by the reference creation site, should add up to the actual number
+                // of parameters of the target function.
+                val expectedParameters = boundParameters + unboundParameters
+
+                if (expectedParameters > function.parameters.size) {
+                    return MemberAccessExpressionArgumentsMismatch.ExcessiveArguments(
+                        this,
+                        expectedParameters - function.parameters.size
+                    )
+                } else if (expectedParameters < function.parameters.size) {
+                    return MemberAccessExpressionArgumentsMismatch.MissingArguments(
+                        this,
+                        function.parameters.dropLast(expectedParameters)
+                    )
+                }
+            }
+
+            return null
         }
 
         private fun IrTypeOperatorCall.checkSamConversion(): PartialLinkageCase? {
@@ -948,7 +906,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 when {
                     defaultArgument == null -> {
                         // A workaround for KT-59030. See also KT-58651.
-                        val valueParameter = symbol.owner.valueParameters.getOrNull(index)
+                        val valueParameter = symbol.owner.parameters.getOrNull(index)
                         return@checkArgumentsAndValueParameters valueParameter?.hasEqualFqName(REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN) == true
                     }
                     defaultArgument is IrConst -> {
@@ -996,7 +954,7 @@ internal class PartiallyLinkedIrTreePatcher(
      * Collects direct children statements up to the first IR p.l. error (everything after the IR p.l. error
      * if effectively dead code and do not need to be kept in the IR tree).
      */
-    private class DirectChildrenStatementsCollector : IrElementVisitorVoid {
+    private class DirectChildrenStatementsCollector : IrVisitorVoid() {
         private val children = mutableListOf<IrStatement>()
         private var hasPartialLinkageRuntimeError = false
 
@@ -1010,23 +968,47 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
+    /**
+     * [ReturnTargetContext] represents all valid return targets available at certain level of IR tree.
+     *
+     * Each [IrReturn] statement is validated against [validReturnTargets] in the current [ReturnTargetContext]
+     * to make sure no non-local returns are present. See also [IllegalNonLocalReturn].
+     */
     private sealed interface ReturnTargetContext {
         val validReturnTargets: Set<IrReturnTargetSymbol>
 
+        /** Just keeps track of [validReturnTargets]. */
         data class Default(
             override val validReturnTargets: Set<IrReturnTargetSymbol>
         ) : ReturnTargetContext
 
+        /**
+         * We have just entered a function.
+         * The function is a possible [IrReturnTarget] for underlying return statements.
+         * However, returning to this function is not available yet (it will be possible only from the function's body).
+         *
+         * @property function The function being visited.
+         * @property isInlined If this function is actually an inline-able lambda argument of some inline function call.
+         */
         data class InFunction(
             override val validReturnTargets: Set<IrReturnTargetSymbol>,
             val function: IrFunction,
             val isInlined: Boolean
         ) : ReturnTargetContext
 
+        /**
+         * Now we have entered the function's body.
+         * This is the place where the symbol of the function becomes a valid return target.
+         */
         data class InFunctionBody(
             override val validReturnTargets: Set<IrReturnTargetSymbol>
         ) : ReturnTargetContext
 
+        /**
+         * We have entered an IR call of an inline function, and we are going to visit the call's arguments further.
+         * Some of these arguments could be an inline-able function expression, which should be tracked in
+         * [inlinedLambdaArgumentsWithPermittedNonLocalReturns] as a possible return target for underlying return statements.
+         */
         data class InInlinedCall(
             override val validReturnTargets: Set<IrReturnTargetSymbol>,
             val inlinedLambdaArgumentsWithPermittedNonLocalReturns: Set<IrFunctionSymbol>
@@ -1088,20 +1070,27 @@ internal class PartiallyLinkedIrTreePatcher(
                 val function = if (functionSymbol.isBound) functionSymbol.owner else return@withContext oldContext
                 if (!function.isInline && !function.isInlineArrayConstructor()) return@withContext oldContext
 
-                fun IrValueParameter?.canHaveNonLocalReturns(): Boolean = this != null && !isCrossinline && !isNoinline
-
-                val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.valueParameters.size + 1)
+                val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.parameters.size)
 
                 fun IrExpression?.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns() {
-                    inlinedLambdaArgumentsWithPermittedNonLocalReturns.addIfNotNull((this as? IrFunctionExpression)?.function?.symbol)
+                    // TODO drop this `if` after KT-72441 and KT-72777 are fixed
+                    // IR inliner can sometimes insert casts to inline lambda parameters before calling `invoke` on them.
+                    if (this is IrTypeOperatorCall && this.operator == IrTypeOperator.IMPLICIT_CAST) {
+                        return this.argument.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
+                    }
+                    inlinedLambdaArgumentsWithPermittedNonLocalReturns.addIfNotNull(
+                        when (this) {
+                            is IrFunctionExpression -> this.function.symbol
+                            is IrRichFunctionReference -> invokeFunction.symbol
+                            else -> null
+                        }
+                    )
                 }
-
-                if (function.extensionReceiverParameter.canHaveNonLocalReturns())
-                    expression.extensionReceiver.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
-
-                function.valueParameters.forEachIndexed { index, valueParameter ->
-                    if (valueParameter.canHaveNonLocalReturns())
-                        expression.getValueArgument(index).countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
+                for (param in function.parameters) {
+                    if (!param.isCrossinline && !param.isNoinline) {
+                        // the argument can have non-local returns
+                        expression.arguments[param].countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
+                    }
                 }
 
                 if (inlinedLambdaArgumentsWithPermittedNonLocalReturns.isEmpty())

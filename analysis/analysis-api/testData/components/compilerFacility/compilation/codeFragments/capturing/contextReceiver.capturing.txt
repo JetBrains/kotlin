@@ -1,3 +1,5 @@
+Captured values:
 ContextReceiver[name: Foo; isMutated: false; displayText: this@Foo]
     R|Foo|
     R|Foo|
+No captured files

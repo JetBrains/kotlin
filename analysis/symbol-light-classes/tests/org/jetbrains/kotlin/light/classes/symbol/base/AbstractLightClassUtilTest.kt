@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -21,7 +21,7 @@ abstract class AbstractLightClassUtilTest : AbstractAnalysisApiBasedTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
+        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
 
         val lightElements = declaration.toLightElements()
         testServices.assertions.assertFalse(lightElements.isEmpty())
@@ -37,10 +37,8 @@ abstract class AbstractLightClassUtilTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        builder.useDirectives(Directives)
-    }
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(Directives)
 
     private object Directives : SimpleDirectivesContainer() {
         val EXPECTED by stringDirective(description = "Expected light classes")

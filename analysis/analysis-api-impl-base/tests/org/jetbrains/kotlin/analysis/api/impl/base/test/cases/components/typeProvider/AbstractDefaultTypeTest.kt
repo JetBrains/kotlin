@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.targets.getTestTargetSymbols
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractDefaultTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val declarationAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
+        val declarationAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
 
         analyseForTest(mainFile) {
-            val symbol = declarationAtCaret?.symbol ?: with(SymbolByFqName.getSymbolDataFromFile(testDataPath)) {
-                toSymbols(mainFile).single()
-            }
+            val symbol = declarationAtCaret?.symbol ?: getTestTargetSymbols(testDataPath, mainFile).single()
 
             val defaultType = (symbol as KaClassifierSymbol).defaultType
             val actual = DebugSymbolRenderer().renderType(this@analyseForTest, defaultType)

@@ -5,17 +5,24 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ModelTarget
+import org.jetbrains.kotlin.codegen.ModuleInfo
+import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
-import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
+import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.name.FqName
@@ -100,6 +107,7 @@ abstract class JsAbstractInvalidationTest(
                 }
 
                 val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind)
+                    .apply { put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions) }
 
                 val dirtyData = when (granularity) {
                     JsGenerationGranularity.PER_FILE -> projStep.dirtyJsFiles
@@ -142,7 +150,10 @@ abstract class JsAbstractInvalidationTest(
 
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, dirtyData)
                 verifyJsCode(projStep.id, mainModuleName, writtenFiles)
-                verifyDTS(projStep.id, testInfo)
+
+                if (projectInfo.checkTypeScriptDefinitions) {
+                    verifyDTS(projStep.id, testInfo)
+                }
             }
         }
 
@@ -199,7 +210,7 @@ abstract class JsAbstractInvalidationTest(
             }
 
             return PhaseConfig(
-                toDumpStateAfter = PhaseSet.ALL,
+                toDumpStateAfter = PhaseSet.All,
                 dumpToDirectory = buildDir.resolve("irdump").resolve("step-$stepId").path
             )
         }

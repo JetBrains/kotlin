@@ -1,7 +1,8 @@
 // TARGET_BACKEND: JVM
-// FILE: enhancedNullabilityInForLoop.kt
 // WITH_JDK
+// DISABLE_JAVA_FACADE
 
+// FILE: enhancedNullabilityInForLoop.kt
 fun use(s: P) {}
 
 fun testForInListUnused() {

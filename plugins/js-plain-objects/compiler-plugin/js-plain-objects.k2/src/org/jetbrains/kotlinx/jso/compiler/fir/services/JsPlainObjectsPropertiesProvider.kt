@@ -13,49 +13,74 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.withReplacedConeType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlinx.jspo.compiler.fir.JsPlainObjectsPredicates
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsAnnotations
 
+data class ClassProperty(val name: Name, val resolvedTypeRef: FirResolvedTypeRef)
+
 class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessionComponent(session) {
-    private val cache: FirCache<FirClassSymbol<*>, List<FirPropertySymbol>, Nothing?> =
+
+    private val cache: FirCache<FirClassSymbol<*>, List<ClassProperty>, Nothing?> =
         session.firCachesFactory.createCache(this::createJsPlainObjectProperties)
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(JsPlainObjectsPredicates.AnnotatedWithJsPlainObject.DECLARATION)
     }
 
-    fun getJsPlainObjectsPropertiesForClass(classSymbol: FirClassSymbol<*>): List<FirPropertySymbol> {
+    fun getJsPlainObjectsPropertiesForClass(classSymbol: FirClassSymbol<*>): List<ClassProperty> {
         return cache.getValue(classSymbol)
     }
 
-    private fun createJsPlainObjectProperties(classSymbol: FirClassSymbol<*>): List<FirPropertySymbol> =
+    private fun createJsPlainObjectProperties(classSymbol: FirClassSymbol<*>): List<ClassProperty> =
         if (!classSymbol.hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session)) {
             emptyList()
         } else {
             buildList {
                 classSymbol.resolvedSuperTypes.forEach {
-                    val superInterface = it.fullyExpandedType(session)
+                    val expandedType = it.fullyExpandedType(session)
+                    val superInterface = expandedType
                         .toRegularClassSymbol(session)
                         ?.takeIf { it.classKind == ClassKind.INTERFACE } ?: return@forEach
 
+                    val substitutionMap = superInterface.typeParameterSymbols
+                        .zip(expandedType.typeArguments)
+                        .associate { (declared, provided) -> declared to provided.type!! }
+
+                    val substitutor = substitutorByMap(substitutionMap, session)
+
                     val superInterfaceSimpleObjectProperties = createJsPlainObjectProperties(superInterface)
-                    superInterfaceSimpleObjectProperties.forEach(::addIfNotNull)
+                    superInterfaceSimpleObjectProperties.forEach {
+                        add(
+                            ClassProperty(
+                                it.name,
+                                it.resolvedTypeRef.withReplacedConeType(substitutor.substituteOrNull(it.resolvedTypeRef.coneType))
+                            )
+                        )
+                    }
                 }
 
                 classSymbol
                     .declaredMemberScope(session, null)
                     .processAllProperties {
-                        addIfNotNull(it.takeIf { it.visibility == Visibilities.Public } as? FirPropertySymbol)
+                        if (it.visibility == Visibilities.Public && !it.isOverride && it is FirPropertySymbol) {
+                            addIfNotNull(ClassProperty(it.name, it.resolvedReturnTypeRef))
+                        }
                     }
             }
         }

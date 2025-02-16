@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertContains
@@ -19,6 +20,7 @@ import kotlin.test.assertTrue
 
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
+@ClassicPipeline()
 class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
     private val defaultCompilerArguments = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
 

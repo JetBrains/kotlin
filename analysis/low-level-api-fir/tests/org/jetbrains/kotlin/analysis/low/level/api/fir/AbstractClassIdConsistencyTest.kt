@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -83,10 +83,8 @@ abstract class AbstractClassIdConsistencyTest : AbstractAnalysisApiBasedTest() {
         val IGNORE_CONSISTENCY_CHECK by stringDirective("Temporary disable test until the issue is fixed")
     }
 
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        builder.useDirectives(Directives)
-    }
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(Directives)
 }
 
 abstract class AbstractSourceClassIdConsistencyTest : AbstractClassIdConsistencyTest() {

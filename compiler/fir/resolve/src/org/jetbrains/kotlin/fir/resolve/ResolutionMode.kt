@@ -100,12 +100,6 @@ sealed class ResolutionMode(
         }
     }
 
-    class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode(forceFullCompletion = false) {
-        override fun toString(): String {
-            return "LambdaResolution: ${expectedReturnTypeRef.prettyString()}"
-        }
-    }
-
     /**
      * This resolution mode is used for resolving the LHS of assignments.
      *

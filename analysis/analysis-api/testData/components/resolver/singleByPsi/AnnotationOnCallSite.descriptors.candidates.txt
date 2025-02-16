@@ -7,9 +7,11 @@ KtNameReferenceExpression(23,31): 'Suppress'
           receiverType = null
           returnType = kotlin.String
           symbol = vararg names: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -22,8 +24,10 @@ KtNameReferenceExpression(23,31): 'Suppress'
               receiverType = null
               returnType = kotlin.String
               symbol = vararg names: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

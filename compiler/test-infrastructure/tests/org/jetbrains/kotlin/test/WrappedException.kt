@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.AnalysisHandler
+import org.jetbrains.kotlin.test.model.TestModule
 
 sealed class WrappedException(
     cause: Throwable,
     val priority: Int,
-    val additionalPriority: Int
+    val additionalPriority: Int,
 ) : Exception(cause), Comparable<WrappedException> {
     /**
      * If [failureDisablesNextSteps] is `true`,
@@ -20,25 +21,68 @@ sealed class WrappedException(
      */
     open val failureDisablesNextSteps: Boolean get() = true
 
-    class FromFacade(cause: Throwable, val facade: AbstractTestFacade<*, *>) : WrappedException(cause, 0, 1) {
+    abstract val failedModule: TestModule?
+
+    class FromFacade(
+        cause: Throwable,
+        override val failedModule: TestModule,
+        val facade: AbstractTestFacade<*, *>,
+    ) : WrappedException(cause, 0, 1) {
         override val message: String
             get() = "Exception was thrown"
+
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromFacade(newCause, failedModule, facade)
+        }
     }
 
-    class FromPreAnalysisHandler(cause: Throwable) : WrappedException(cause, 1, 1)
-
-    class FromMetaInfoHandler(cause: Throwable) : WrappedException(cause, 1, 2)
-
-    class FromHandler(cause: Throwable, val handler: AnalysisHandler<*>) : WrappedException(cause, 1, 3) {
+    class FromHandler(
+        cause: Throwable,
+        override val failedModule: TestModule?,
+        val handler: AnalysisHandler<*>,
+    ) : WrappedException(cause, 1, 3) {
         override val failureDisablesNextSteps: Boolean
             get() = handler.failureDisablesNextSteps
+
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromHandler(newCause, failedModule, handler)
+        }
     }
 
-    class FromAfterAnalysisChecker(cause: Throwable) : WrappedException(cause, 2, 1)
+    sealed class WrappedExceptionWithoutModule(
+        cause: Throwable,
+        priority: Int,
+        additionalPriority: Int,
+    ) : WrappedException(cause, priority, additionalPriority) {
+        override val failedModule: TestModule?
+            get() = null
+    }
 
-    class FromModuleStructureTransformer(cause: Throwable) : WrappedException(cause, 2, 1)
+    class FromPreAnalysisHandler(cause: Throwable) : WrappedExceptionWithoutModule(cause, 1, 1) {
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromPreAnalysisHandler(newCause)
+        }
+    }
 
-    override val cause: Throwable
+    class FromMetaInfoHandler(cause: Throwable) : WrappedExceptionWithoutModule(cause, 1, 2) {
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromMetaInfoHandler(newCause)
+        }
+    }
+
+    class FromAfterAnalysisChecker(cause: Throwable) : WrappedExceptionWithoutModule(cause, 2, 1) {
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromAfterAnalysisChecker(newCause)
+        }
+    }
+
+    class FromModuleStructureTransformer(cause: Throwable) : WrappedExceptionWithoutModule(cause, 2, 1) {
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromModuleStructureTransformer(newCause)
+        }
+    }
+
+    final override val cause: Throwable
         get() = super.cause!!
 
     override fun compareTo(other: WrappedException): Int {
@@ -47,4 +91,6 @@ sealed class WrappedException(
         }
         return priority - other.priority
     }
+
+    abstract fun withReplacedCause(newCause: Throwable): WrappedException
 }

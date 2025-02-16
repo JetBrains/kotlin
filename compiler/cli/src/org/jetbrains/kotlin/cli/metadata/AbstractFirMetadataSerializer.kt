@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForPsi
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.common.prepareCommonSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -122,9 +123,14 @@ internal abstract class AbstractFirMetadataSerializer(
             ) { environment.createPackagePartProvider(it) }
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
             val extensionRegistrars = FirExtensionRegistrar.Companion.getInstances(projectEnvironment.project)
-            val psiFiles = environment.getSourceFiles()
+            val ktFiles = environment.getSourceFiles()
+
+            for (ktFile in ktFiles) {
+                AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, diagnosticsReporter)
+            }
+
             val sourceScope =
-                projectEnvironment.getSearchScopeByPsiFiles(psiFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
+                projectEnvironment.getSearchScopeByPsiFiles(ktFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
             val providerAndScopeForIncrementalCompilation = org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation(
                 projectEnvironment,
                 configuration,
@@ -134,7 +140,7 @@ internal abstract class AbstractFirMetadataSerializer(
                 librariesScope -= it
             }
             val sessionsWithSources = prepareCommonSessions(
-                psiFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
+                ktFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
                 librariesScope, libraryList, resolvedLibraries, isCommonSourceForPsi, fileBelongsToModuleForPsi,
                 createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
             )

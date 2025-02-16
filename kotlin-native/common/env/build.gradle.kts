@@ -17,3 +17,5 @@ nativeInteropPlugin {
     linkerArgs.set(emptyList<String>())
     additionalLinkedStaticLibraries.set(emptyList<String>())
 }
+
+projectTest(jUnitMode = JUnitMode.JUnit5) // `projectTest()` is not available in kotlin-native/build-tools project

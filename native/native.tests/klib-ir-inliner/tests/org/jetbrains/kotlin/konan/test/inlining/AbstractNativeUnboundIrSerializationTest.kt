@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.konan.test.inlining
 
-import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer.XStatementOrExpression
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
+import org.jetbrains.kotlin.backend.konan.serialization.KonanGlobalDeclarationTable
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrFileSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.cli.common.messages.getLogger
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -22,10 +26,11 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -37,7 +42,9 @@ import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.*
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -45,17 +52,14 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.junit.jupiter.api.Assumptions.assumeTrue
-import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KProperty1
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
-import org.jetbrains.kotlin.protobuf.MessageLite as ProtoMessage
 import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.protobuf.MessageLite as ProtoMessage
 
 /**
  * The idea of the test is the following:
@@ -69,17 +73,11 @@ import org.jetbrains.kotlin.konan.file.File as KFile
  * 5. Compare the results of points 3 and 4. They should match.
  */
 open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
-    private val registeredSourceTransformers: MutableMap<File, ReplacingSourceTransformer> = ConcurrentHashMap()
-
-    fun register(@TestDataFile testDataFilePath: String, sourceTransformer: ReplacingSourceTransformer) {
-        registeredSourceTransformers[getAbsoluteFile(testDataFilePath)] = sourceTransformer
-    }
-
-    override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
-            artifactKind = BinaryKind.NoArtifact
+            artifactKind = ArtifactKind.NoArtifact
             dependencyKind = DependencyKind.KLib
         }
 
@@ -111,14 +109,6 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
             useHandlers(::UnboundIrSerializationHandler)
         }
     }
-
-    override fun runTest(@TestDataFile filePath: String) {
-        val sourceTransformer = registeredSourceTransformers[getAbsoluteFile(filePath)]
-        if (sourceTransformer != null)
-            super.runTest(filePath, sourceTransformer)
-        else
-            super.runTest(filePath)
-    }
 }
 
 private class UnboundIrSerializationHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
@@ -135,7 +125,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
         if (KlibBasedCompilerTestDirectives.SKIP_UNBOUND_IR_SERIALIZATION in module.directives)
             return
 
-        val ir = testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend)
+        val ir = testServices.artifactsProvider.getArtifact(module, BackendKinds.IrBackend)
 
         val functionsUnderTest = collectInlineFunctions(ir.irModuleFragment)
         if (functionsUnderTest.isEmpty()) return
@@ -251,7 +241,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
         private fun collectInlineFunctions(irFragment: IrModuleFragment): Set<InlineFunctionUnderTest> {
             val result = hashSetOf<InlineFunctionUnderTest>()
 
-            irFragment.acceptVoid(object : IrElementVisitorVoid {
+            irFragment.acceptVoid(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }

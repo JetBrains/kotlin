@@ -1,0 +1,43 @@
+FILE: intersectionOverrideWithExtensionAndValue.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface First : R|kotlin/Any| {
+        context(a: R|A|)
+        public abstract fun foo(): R|kotlin/Unit|
+
+        context(a: R|A|)
+        public abstract val b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface Second : R|kotlin/Any| {
+        public abstract fun R|kotlin/Any|.foo(): R|kotlin/Unit|
+
+        public abstract val R|kotlin/Any|.b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface Third : R|kotlin/Any| {
+        public abstract fun foo(a: R|kotlin/Any|): R|kotlin/Unit|
+
+    }
+    public abstract interface IntersectionContextWithExtension : R|First|, R|Second| {
+    }
+    public abstract interface IntersectionContextWithValue : R|First|, R|Third| {
+    }
+    public final fun usage(a: R|IntersectionContextWithExtension|, b: R|IntersectionContextWithValue|): R|kotlin/Unit| {
+        R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a|.R|/First.foo|()
+            ^ R|<local>/a|.R|/First.b|
+        }
+        )
+        R|kotlin/with|<R|IntersectionContextWithExtension|, R|kotlin/String|>(R|<local>/a|, <L> = with@fun R|IntersectionContextWithExtension|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            (this@R|special/anonymous|, String()).R|/Second.foo|()
+            ^ (this@R|special/anonymous|, String()).R|/Second.b|
+        }
+        )
+    }

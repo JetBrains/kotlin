@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // FULL_JDK
+// LANGUAGE: +ContextParameters
 
 // MODULE: a
 import org.jetbrains.kotlin.plugin.sandbox.AllPropertiesConstructor
@@ -32,5 +33,11 @@ import kotlin.reflect.jvm.javaConstructor
 fun box(): String {
     val constructor = Derived::class.constructors.first { it.valueParameters.size == 3 }.javaConstructor!!
     val derived = constructor.newInstance(A("a"), B("b"), C("c"))
+    with(derived) {
+        with("") {
+            hasExtension()
+            hasContext()
+        }
+    }
     return if (derived != null) "OK" else "Error"
 }

@@ -12,20 +12,17 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.mpp.EnumEntrySymbolMarker
 import org.jetbrains.kotlin.mpp.PropertySymbolMarker
 import org.jetbrains.kotlin.mpp.ValueParameterSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 sealed class FirVariableSymbol<out E : FirVariable>(override val callableId: CallableId) : FirCallableSymbol<E>() {
     val resolvedInitializer: FirExpression?
@@ -91,6 +88,12 @@ open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProp
             lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return fir.controlFlowGraphReference
         }
+
+    override fun deprecationsAreDefinitelyEmpty(): Boolean {
+        return currentDeclarationDeprecationsAreDefinitelyEmpty()
+                && getterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
+                && setterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
+    }
 }
 
 class FirIntersectionOverridePropertySymbol(
@@ -111,6 +114,11 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
 
     val getterSymbol: FirPropertyAccessorSymbol?
         get() = fir.propertySymbol.fir.getter?.symbol
+
+    override fun deprecationsAreDefinitelyEmpty(): Boolean {
+        return currentDeclarationDeprecationsAreDefinitelyEmpty() &&
+                propertySymbol.currentDeclarationDeprecationsAreDefinitelyEmpty()
+    }
 }
 
 class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
@@ -186,7 +194,7 @@ class FirReceiverParameterSymbol : FirBasedSymbol<FirReceiverParameter>(), FirTh
 
 class FirErrorPropertySymbol(
     val diagnostic: ConeDiagnostic
-) : FirVariableSymbol<FirErrorProperty>(CallableId(FqName.ROOT, NAME)) {
+) : FirPropertySymbol(CallableId(FqName.ROOT, NAME)), FirErrorCallableSymbol<FirProperty> {
     companion object {
         val NAME: Name = Name.special("<error property>")
     }

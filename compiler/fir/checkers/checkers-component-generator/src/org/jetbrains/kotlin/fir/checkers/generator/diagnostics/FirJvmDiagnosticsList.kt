@@ -85,8 +85,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES by warning<PsiElement> {
-            parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<ConeKotlinType>("expectedType")
         }
 
         val JAVA_CLASS_ON_COMPANION by warning<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
@@ -141,6 +141,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS by deprecationError<KtAnnotationEntry>(
             featureForError = ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
         )
+        val INCOMPATIBLE_ANNOTATION_TARGETS by warning<KtAnnotationEntry> {
+            parameter<Collection<String>>("missingJavaTargets")
+            parameter<Collection<String>>("correspondingKotlinTargets")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

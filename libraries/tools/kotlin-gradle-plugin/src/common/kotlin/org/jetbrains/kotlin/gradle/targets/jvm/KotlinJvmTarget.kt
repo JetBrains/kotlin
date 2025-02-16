@@ -5,30 +5,27 @@
 
 package org.jetbrains.kotlin.gradle.targets.jvm
 
+import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
-import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDslImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
@@ -40,6 +37,9 @@ import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
 import java.util.concurrent.Callable
 import javax.inject.Inject
+
+private const val WITH_JAVA_DEPRECATION_MESSAGE =
+    "Kotlin Multiplatform JVM target compiles Java sources by default. Please remove `withJava()` call."
 
 abstract class KotlinJvmTarget @Inject constructor(
     project: Project,
@@ -95,15 +95,52 @@ abstract class KotlinJvmTarget @Inject constructor(
         mainRun.await()?.configure()
     }
 
+    private val binariesDsl by lazy {
+        // lazy is required as compilation is lateinit property
+        project.objects.DefaultKotlinJvmBinariesDsl(
+            compilations,
+            project,
+        )
+    }
+
+    /**
+     * Configures executable binaries and relevant tasks for this target.
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun binaries(configure: KotlinJvmBinariesDsl.() -> Unit) {
+        configure(binariesDsl)
+    }
+
+    /**
+     * Configures executable binaries and relevant tasks for this target.
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun binaries(configure: Action<KotlinJvmBinariesDsl>) {
+        configure.execute(binariesDsl)
+    }
+
+    @Deprecated(
+        message = WITH_JAVA_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING
+    )
     var withJavaEnabled = false
         private set
 
-    @Suppress("unused") // user DSL
+    @Deprecated(
+        message = WITH_JAVA_DEPRECATION_MESSAGE,
+        level = DeprecationLevel.WARNING
+    )
     fun withJava() {
+        project.reportDiagnostic(KotlinToolingDiagnostics.KMPWithJavaDiagnostic())
+
+        @Suppress("DEPRECATION")
         if (withJavaEnabled)
             return
 
-        project.multiplatformExtension.targets.find { it is KotlinJvmTarget && it.withJavaEnabled }
+        project.multiplatformExtension.targets.find {
+            @Suppress("DEPRECATION")
+            it is KotlinJvmTarget && it.withJavaEnabled
+        }
             ?.let { existingJavaTarget ->
                 throw InvalidUserCodeException(
                     "Only one of the JVM targets can be configured to work with Java. The target '${existingJavaTarget.name}' is " +
@@ -130,6 +167,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             project.reportDiagnostic(KotlinToolingDiagnostics.JvmWithJavaIsIncompatibleWithAndroid(androidPluginId, trace))
         }
 
+        @Suppress("DEPRECATION")
         withJavaEnabled = true
 
         project.plugins.apply(JavaBasePlugin::class.java)
@@ -143,7 +181,11 @@ abstract class KotlinJvmTarget @Inject constructor(
         // * the Java outputs contain the outputs produced by Kotlin as well
 
         javaSourceSets.all { javaSourceSet ->
-            val compilation = compilations.getByName(javaSourceSet.name)
+            val compilation = compilations.findByName(javaSourceSet.name)
+            // AbstractKotlinPlugin.setUpJavaSourceSets should already create a Kotlin compilation with 'javaSourceSet.name'.
+            // If compilation is 'null' here - it means 'javaSourceSet' is from 'KotlinJvmCompilation.defaultJavaSourceSet'
+            //  where the related compilation name is different. And all required configuration for this 'javaSourceSet' was already done.
+            if (compilation == null) return@all
             val compileJavaTask = project.tasks.withType<AbstractCompile>().named(javaSourceSet.compileJavaTaskName)
 
             setupJavaSourceSetSourcesAndResources(javaSourceSet, compilation)
@@ -157,7 +199,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             )
 
             javaSourceSet.output.setResourcesDir(Callable {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 compilation.output.resourcesDirProvider
             })
 
@@ -166,7 +208,7 @@ abstract class KotlinJvmTarget @Inject constructor(
 
         project.launchInStage(AfterFinaliseDsl) {
             javaSourceSets.all { javaSourceSet ->
-                copyUserDefinedAttributesToJavaConfigurations(javaSourceSet)
+                project.copyUserDefinedAttributesToJavaConfigurations(javaSourceSet, this@KotlinJvmTarget)
             }
         }
 
@@ -179,7 +221,11 @@ abstract class KotlinJvmTarget @Inject constructor(
         }
 
         compilations.all { compilation ->
+            @Suppress("DEPRECATION")
             compilation.maybeCreateJavaSourceSet()
+
+            /* Disabling new default Java source sets compilation tasks as they conflict with tasks created via this method */
+            compilation.defaultCompileJavaProvider.configure { it.enabled = false }
         }
     }
 
@@ -198,93 +244,6 @@ abstract class KotlinJvmTarget @Inject constructor(
         project.tasks.withType(Test::class.java).named(JavaPlugin.TEST_TASK_NAME) { javaTestTask ->
             javaTestTask.dependsOn(project.tasks.named(testTaskName))
             javaTestTask.enabled = false
-        }
-    }
-
-    private fun setupJavaSourceSetSourcesAndResources(
-        javaSourceSet: SourceSet,
-        compilation: KotlinJvmCompilation,
-    ) {
-        javaSourceSet.java.setSrcDirs(listOf("src/${compilation.defaultSourceSet.name}/java"))
-        compilation.defaultSourceSet.kotlin.srcDirs(javaSourceSet.java.sourceDirectories)
-
-        // To avoid confusion in the sources layout, remove the default Java source directories
-        // (like src/main/java, src/test/java) and instead add sibling directories to those where the Kotlin
-        // sources are placed (i.e. src/jvmMain/java, src/jvmTest/java):
-        javaSourceSet.resources.setSrcDirs(compilation.defaultSourceSet.resources.sourceDirectories)
-        compilation.defaultSourceSet.resources.srcDirs(javaSourceSet.resources.sourceDirectories)
-        project.tasks.named(
-            compilation.processResourcesTaskName,
-            ProcessResources::class.java
-        ).configure {
-            // Now 'compilation' has additional resources dir from java compilation which points to the initial
-            // resources location. Because of this, ProcessResources task will copy same files twice,
-            // so we are excluding duplicates.
-            it.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        }
-
-        // Resources processing is done with the Kotlin resource processing task:
-        project.tasks.named(javaSourceSet.processResourcesTaskName).configure {
-            it.dependsOn(project.tasks.named(compilation.processResourcesTaskName))
-            it.enabled = false
-        }
-    }
-
-    private fun setupDependenciesCrossInclusionForJava(
-        compilation: KotlinJvmCompilation,
-        javaSourceSet: SourceSet,
-    ) {
-        // Make sure Kotlin compilation dependencies appear in the Java source set classpaths:
-
-        listOfNotNull(
-            compilation.apiConfigurationName,
-            compilation.implementationConfigurationName,
-            compilation.compileOnlyConfigurationName,
-            compilation.internal.configurations.deprecatedCompileConfiguration?.name,
-        ).forEach { configurationName ->
-            project.addExtendsFromRelation(javaSourceSet.compileClasspathConfigurationName, configurationName)
-        }
-
-        listOfNotNull(
-            compilation.apiConfigurationName,
-            compilation.implementationConfigurationName,
-            compilation.runtimeOnlyConfigurationName,
-            compilation.internal.configurations.deprecatedRuntimeConfiguration?.name,
-        ).forEach { configurationName ->
-            project.addExtendsFromRelation(javaSourceSet.runtimeClasspathConfigurationName, configurationName)
-        }
-
-        listOfNotNull(
-            javaSourceSet.compileOnlyConfigurationName,
-            javaSourceSet.apiConfigurationName.takeIf { project.configurations.findByName(it) != null },
-            javaSourceSet.implementationConfigurationName
-        ).forEach { configurationName ->
-            project.addExtendsFromRelation(compilation.compileDependencyConfigurationName, configurationName)
-        }
-
-        listOfNotNull(
-            javaSourceSet.runtimeOnlyConfigurationName,
-            javaSourceSet.apiConfigurationName.takeIf { project.configurations.findByName(it) != null },
-            javaSourceSet.implementationConfigurationName
-        ).forEach { configurationName ->
-            project.addExtendsFromRelation(compilation.runtimeDependencyConfigurationName, configurationName)
-        }
-    }
-
-    private fun copyUserDefinedAttributesToJavaConfigurations(
-        javaSourceSet: SourceSet,
-    ) {
-        listOfNotNull(
-            javaSourceSet.compileClasspathConfigurationName,
-            javaSourceSet.runtimeClasspathConfigurationName,
-            javaSourceSet.apiConfigurationName,
-            javaSourceSet.implementationConfigurationName,
-            javaSourceSet.compileOnlyConfigurationName,
-            javaSourceSet.runtimeOnlyConfigurationName,
-        ).mapNotNull {
-            project.configurations.findByName(it)
-        }.forEach { configuration ->
-            copyAttributesTo(project.providers, dest = configuration)
         }
     }
 

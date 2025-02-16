@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -71,7 +69,7 @@ public class ClassBuildingContext(
             classKind = this@ClassBuildingContext.classKind
             scopeProvider = session.kotlinScopeProvider
             status = generateStatus()
-            source = owner?.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+            source = getSourceForFirDeclaration()
             name = classId.shortClassName
             symbol = FirRegularClassSymbol(classId)
 

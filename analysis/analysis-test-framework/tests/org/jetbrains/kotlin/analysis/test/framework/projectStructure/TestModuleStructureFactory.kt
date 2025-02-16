@@ -12,12 +12,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.addLibraryDependencies
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.getScopeForLibraryByRoots
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -36,8 +37,6 @@ import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
-private typealias LibraryCache = MutableMap<Set<Path>, KaLibraryModule>
-
 private typealias ModulesByName = Map<String, KtTestModule>
 
 object TestModuleStructureFactory {
@@ -50,14 +49,14 @@ object TestModuleStructureFactory {
 
         val modulesByName = modules.associateBy { it.testModule.name }
 
-        val libraryCache: LibraryCache = mutableMapOf()
+        val libraryCache = LibraryCache(testServices, project)
 
         for (ktTestModule in modules) {
-            ktTestModule.ktModule.addToLibraryCacheIfNeeded(libraryCache)
+            libraryCache.registerLibraryModuleIfNeeded(ktTestModule.ktModule)
             ktTestModule.addDependencies(testServices, modulesByName, libraryCache)
         }
 
-        return KtTestModuleStructure(moduleStructure, modules, libraryCache.values)
+        return KtTestModuleStructure(moduleStructure, modules, libraryCache.libraryModules)
     }
 
     /**
@@ -83,7 +82,7 @@ object TestModuleStructureFactory {
             val analysisContextModule = analysisContextModuleName?.let(existingModules::getValue)
 
             val dependencyBinaryRoots = testModule.regularDependencies.flatMap { dependency ->
-                val libraryModule = existingModules.getValue(dependency.moduleName).ktModule as? KaLibraryModule
+                val libraryModule = existingModules.getValue(dependency.dependencyModule.name).ktModule as? KaLibraryModule
                 libraryModule?.binaryRoots.orEmpty()
             }
 
@@ -96,18 +95,6 @@ object TestModuleStructureFactory {
         }
 
         return result
-    }
-
-    /**
-     * A main module may be a binary library module, which may be a dependency of subsequent main modules. We need to add such a module to
-     * the library cache before it is processed as a dependency. Otherwise, when another module's binary dependency is processed,
-     * [addLibraryDependencies] will create a *duplicate* binary library module with the same roots and name as the already existing binary
-     * library module.
-     */
-    private fun KaModule.addToLibraryCacheIfNeeded(libraryCache: LibraryCache) {
-        if (this is KaLibraryModule) {
-            libraryCache.put(binaryRoots.toSet(), this)
-        }
     }
 
     private fun KtTestModule.addDependencies(
@@ -123,7 +110,7 @@ object TestModuleStructureFactory {
         }
         is KtModuleWithModifiableDependencies -> {
             addModuleDependencies(testModule, modulesByName, ktModule)
-            addLibraryDependencies(testModule, testServices, ktModule, libraryCache::getOrPut)
+            addLibraryDependencies(testModule, testServices, ktModule, libraryCache)
         }
         else -> error("Unexpected module type: " + ktModule.javaClass.name)
     }
@@ -134,7 +121,7 @@ object TestModuleStructureFactory {
         ktModule: KtModuleWithModifiableDependencies,
     ) {
         testModule.allDependencies.forEach { dependency ->
-            val dependencyKtModule = modulesByName.getValue(dependency.moduleName).ktModule
+            val dependencyKtModule = modulesByName.getValue(dependency.dependencyModule.name).ktModule
             when (dependency.relation) {
                 DependencyRelation.RegularDependency -> ktModule.directRegularDependencies.add(dependencyKtModule)
                 DependencyRelation.FriendDependency -> ktModule.directFriendDependencies.add(dependencyKtModule)
@@ -147,7 +134,7 @@ object TestModuleStructureFactory {
         testModule: TestModule,
         testServices: TestServices,
         ktModule: KtModuleWithModifiableDependencies,
-        libraryCache: (paths: Set<Path>, factory: () -> KaLibraryModule) -> KaLibraryModule,
+        libraryCache: LibraryCache,
     ) {
         val project = ktModule.project
 
@@ -164,20 +151,11 @@ object TestModuleStructureFactory {
 
             val (jdkRoots, libraryRoots) = classpathRoots.partition { jdkHome != null && it.startsWith(jdkHome) }
 
-            if (testModule.targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
-                val jdkModule = libraryCache(jdkRoots.toSet()) {
-                    val jdkScope = getScopeForLibraryByRoots(jdkRoots, testServices)
-                    KaLibraryModuleImpl(
-                        "jdk",
-                        JvmPlatforms.defaultJvmPlatform,
-                        jdkScope,
-                        project,
-                        jdkRoots,
-                        librarySources = null,
-                        isSdk = true,
-                    )
-                }
-                ktModule.directRegularDependencies.add(jdkModule)
+            val targetPlatform = testModule.targetPlatform(testServices)
+            if (targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
+                ktModule.directRegularDependencies.add(
+                    libraryCache.getOrCreateJdkModule(jdkRoots)
+                )
             }
 
             for (libraryRoot in libraryRoots) {
@@ -187,14 +165,17 @@ object TestModuleStructureFactory {
 
                 val platform = when (libraryRoot.extension.toLowerCaseAsciiOnly()) {
                     "jar" -> JvmPlatforms.defaultJvmPlatform
-                    else -> testModule.targetPlatform
+                    else -> targetPlatform
                 }
 
-                val libraryModule = libraryCache(setOf(libraryRoot)) {
+                val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRoot) {
                     createLibraryModule(project, libraryRoot, platform, testServices)
                 }
 
-                ktModule.directRegularDependencies.add(libraryModule)
+                // Multiple library roots may correspond to the same library module, which should only be added once.
+                if (libraryModule !in ktModule.directRegularDependencies) {
+                    ktModule.directRegularDependencies.add(libraryModule)
+                }
             }
         }
 
@@ -204,7 +185,7 @@ object TestModuleStructureFactory {
             val libraryRoot = Paths.get(libraryRootPath)
             check(libraryRoot.extension == KLIB_FILE_EXTENSION)
 
-            val libraryModule = libraryCache(setOf(libraryRoot)) {
+            val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRoot) {
                 createLibraryModule(project, libraryRoot, JsPlatforms.defaultJsPlatform, testServices)
             }
 
@@ -260,3 +241,76 @@ object TestModuleStructureFactory {
     }
 }
 
+private class LibraryCache(
+    private val testServices: TestServices,
+    private val project: Project,
+) {
+    /**
+     * A mapping from a binary root [Path] to its [KaLibraryModule].
+     *
+     * [binaryRootToLibraryModule] maps single binary roots to their [KaLibraryModule] even for multi-root libraries. In that case, the
+     * mapping contains multiple entries for the [KaLibraryModule], and each binary root can individually resolve to its multi-root
+     * [KaLibraryModule]. This also means that each binary root must be associated with *exactly* one [KaLibraryModule] in tests.
+     *
+     * We need this functionality because [addLibraryDependencies][TestModuleStructureFactory.addLibraryDependencies] processes a flat list
+     * of all binary root dependencies of the [TestModule], taken from its compiler configuration. From this flat list, we cannot associate
+     * *sets of* binary roots with one another.
+     */
+    private val binaryRootToLibraryModule: MutableMap<Path, KaLibraryModule> = mutableMapOf()
+
+    /**
+     * Each test should have a single JDK configuration, so there should only be a need for a single JDK module.
+     */
+    private var jdkModule: KaLibraryModule? = null
+
+    val libraryModules: List<KaLibraryModule>
+        get() = listOfNotNull(jdkModule) + binaryRootToLibraryModule.values.distinct()
+
+    /**
+     * Registers a [KaLibraryModule] in the [binaryRootToLibraryModule] mapping.
+     *
+     * A main module may be a binary library module, which may be a dependency of subsequent main modules. We need to add such a module to
+     * the [binaryRootToLibraryModule] mapping before it is processed as a dependency. Otherwise, when another module's binary dependency is
+     * processed, [addLibraryDependencies] will create a *duplicate* binary library module with the same roots and name as the already
+     * existing binary library module.
+     *
+     * When the [KaLibraryModule] has multiple binary roots, [registerLibraryModuleIfNeeded] creates as many entries in the
+     * [binaryRootToLibraryModule] mapping to fulfill the requirements outlined in the KDoc of [binaryRootToLibraryModule].
+     */
+    fun registerLibraryModuleIfNeeded(module: KaModule) {
+        if (module !is KaLibraryModule) return
+
+        module.binaryRoots.forEach { binaryRoot ->
+            check(binaryRoot !in binaryRootToLibraryModule) {
+                "Each binary root should be uniquely associated with a single library module.\n" +
+                        "Binary root: $binaryRoot\n" +
+                        "Library module: $module"
+            }
+            binaryRootToLibraryModule.put(binaryRoot, module)
+        }
+    }
+
+    inline fun getOrCreateLibraryModule(binaryRoot: Path, createLibraryModule: () -> KaLibraryModule): KaLibraryModule {
+        return binaryRootToLibraryModule.getOrPut(binaryRoot) { createLibraryModule() }
+    }
+
+    fun getOrCreateJdkModule(jdkRoots: List<Path>): KaLibraryModule {
+        require(jdkRoots.isNotEmpty()) { "At least one JDK root is required." }
+
+        jdkModule?.let { return it }
+
+        val jdkScope = getScopeForLibraryByRoots(jdkRoots, testServices)
+        val jdkModule = KaLibraryModuleImpl(
+            "jdk",
+            JvmPlatforms.defaultJvmPlatform,
+            jdkScope,
+            project,
+            jdkRoots,
+            librarySources = null,
+            isSdk = true,
+        )
+
+        this.jdkModule = jdkModule
+        return jdkModule
+    }
+}

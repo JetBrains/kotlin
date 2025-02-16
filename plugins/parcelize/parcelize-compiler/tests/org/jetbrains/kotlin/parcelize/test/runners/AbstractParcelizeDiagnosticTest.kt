@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
 abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
-    override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform

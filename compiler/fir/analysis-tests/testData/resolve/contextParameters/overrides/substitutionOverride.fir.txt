@@ -1,0 +1,54 @@
+FILE: substitutionOverride.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class Base<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|T|)
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|T|)
+        public open val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(1)
+            }
+
+    }
+    public final class Derived : R|Base<A>| {
+        public constructor(): R|Derived| {
+            super<R|Base<A>|>()
+        }
+
+    }
+    public final class DerivedWithOverride : R|Base<A>| {
+        public constructor(): R|DerivedWithOverride| {
+            super<R|Base<A>|>()
+        }
+
+        context(a: R|A|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/DerivedWithOverride.DerivedWithOverride|().R|/DerivedWithOverride.foo|()
+            R|/DerivedWithOverride.DerivedWithOverride|().R|/DerivedWithOverride.b|
+            R|/Derived.Derived|().R|SubstitutionOverride</Derived.foo: R|kotlin/Unit|>|()
+            ^ R|/Derived.Derived|().R|SubstitutionOverride</Derived.b: R|kotlin/String|>|
+        }
+        )
+    }

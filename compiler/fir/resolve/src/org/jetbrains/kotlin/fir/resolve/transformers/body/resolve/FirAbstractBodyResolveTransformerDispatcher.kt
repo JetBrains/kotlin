@@ -477,6 +477,10 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirDeclarationsResolveTransformer::transformProperty,
     )
 
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: ResolutionMode): FirStatement {
+        return transformProperty(errorProperty, data)
+    }
+
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: ResolutionMode,

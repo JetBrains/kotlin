@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import kotlin.test.*
 
 internal class CompilationSpecificPluginPath {
@@ -73,7 +74,7 @@ internal class CompilationSpecificPluginPath {
 
         // Expect to see plugin classpath for each target compilation
         listOf("jvm1", "jvm2", "js")
-            .map(String::capitalize)
+            .map(String::capitalizeAsciiOnly)
             .flatMap { listOf(pluginClassPathConfiguration(it, "main"), pluginClassPathConfiguration(it, "test")) }
             .plus(pluginClassPathConfiguration("metadata", "main")) // and also one for metadata
             .forEach { assertNotNull(project.configurations.findByName(it), "Configuration $it should exist") }
@@ -147,7 +148,6 @@ internal class CompilationSpecificPluginPath {
             plugins.apply(NativeSpecificPlugin::class.java)
             plugins.apply(RegularPluginWithoutNativeArtifact::class.java)
 
-            extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
 
             // With kotlin.native.useEmbeddableCompilerJar=false
             extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.native.useEmbeddableCompilerJar", "false")
@@ -279,7 +279,7 @@ internal class CompilationSpecificPluginPath {
     }
 
     private fun pluginClassPathConfiguration(target: String, compilation: String) =
-        "kotlinCompilerPluginClasspath${target.capitalize()}${compilation.capitalize()}"
+        "kotlinCompilerPluginClasspath${target.capitalizeAsciiOnly()}${compilation.capitalizeAsciiOnly()}"
 
     private fun Project.subplugins(target: String, compilation: String = "main") = this
         .configurations

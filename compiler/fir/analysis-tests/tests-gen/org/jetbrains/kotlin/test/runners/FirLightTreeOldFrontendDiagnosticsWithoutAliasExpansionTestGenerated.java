@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -50,6 +51,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("EnumEntryAsType.kt")
     public void testEnumEntryAsType() {
       runTest("compiler/testData/diagnostics/tests/EnumEntryAsType.kt");
+    }
+
+    @Test
+    @TestMetadata("errorProneAtomicArrayPrimitives.kt")
+    public void testErrorProneAtomicArrayPrimitives() {
+      runTest("compiler/testData/diagnostics/tests/errorProneAtomicArrayPrimitives.kt");
+    }
+
+    @Test
+    @TestMetadata("errorProneAtomicReferencePrimitives.kt")
+    public void testErrorProneAtomicReferencePrimitives() {
+      runTest("compiler/testData/diagnostics/tests/errorProneAtomicReferencePrimitives.kt");
     }
 
     @Test
@@ -673,9 +686,15 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Test
-      @TestMetadata("RootPackageNoImports.kt")
-      public void testRootPackageNoImports() {
-        runTest("compiler/testData/diagnostics/tests/imports/RootPackageNoImports.kt");
+      @TestMetadata("RootPackageNoImports_differentModule.kt")
+      public void testRootPackageNoImports_differentModule() {
+        runTest("compiler/testData/diagnostics/tests/imports/RootPackageNoImports_differentModule.kt");
+      }
+
+      @Test
+      @TestMetadata("RootPackageNoImports_sameModule.kt")
+      public void testRootPackageNoImports_sameModule() {
+        runTest("compiler/testData/diagnostics/tests/imports/RootPackageNoImports_sameModule.kt");
       }
     }
 
@@ -1413,6 +1432,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Test
+      @TestMetadata("callableReferenceWithTypeAliasToObjectLHS.kt")
+      public void testCallableReferenceWithTypeAliasToObjectLHS() {
+        runTest("compiler/testData/diagnostics/tests/typealias/callableReferenceWithTypeAliasToObjectLHS.kt");
+      }
+
+      @Test
+      @TestMetadata("callableReferenceWithTypeAliasToObjectLHSOriginal.kt")
+      public void testCallableReferenceWithTypeAliasToObjectLHSOriginal() {
+        runTest("compiler/testData/diagnostics/tests/typealias/callableReferenceWithTypeAliasToObjectLHSOriginal.kt");
+      }
+
+      @Test
       @TestMetadata("capturingTypeParametersFromOuterClass.kt")
       public void testCapturingTypeParametersFromOuterClass() {
         runTest("compiler/testData/diagnostics/tests/typealias/capturingTypeParametersFromOuterClass.kt");
@@ -2103,7 +2134,7 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       @Test
       @TestMetadata("annotations.kt")
       public void testAnnotations() {
-        runTest("compiler/testData/diagnostics/tests/valueClasses/annotations.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+        runTest("compiler/testData/diagnostics/tests/valueClasses/annotations.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
       }
     }
 
@@ -2468,12 +2499,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve")
     @TestDataPath("$PROJECT_ROOT")
     public class Resolve {
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/tieredFailures")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TieredFailures {
     }
 
     @Nested

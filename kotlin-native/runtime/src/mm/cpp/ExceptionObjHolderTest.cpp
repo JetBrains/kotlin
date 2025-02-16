@@ -21,9 +21,9 @@ namespace {
 class ExceptionObjHolderTest : public ::testing::Test {
 public:
     static std::vector<ObjHeader*> Collect(mm::ThreadData& threadData) {
-        threadData.specialRefRegistry().publish();
+        threadData.externalRCRefRegistry().publish();
         std::vector<ObjHeader*> result;
-        for (const auto& obj : mm::SpecialRefRegistry::instance().roots()) {
+        for (const auto& obj : mm::ExternalRCRefRegistry::instance().roots()) {
             result.push_back(obj);
         }
         return result;

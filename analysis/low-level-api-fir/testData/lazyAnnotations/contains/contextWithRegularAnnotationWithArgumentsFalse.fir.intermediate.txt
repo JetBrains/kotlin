@@ -1,0 +1,1 @@
+[ResolvedTo(TYPES)] @R|MyAnno|[Types](LAZY_EXPRESSION) variable: R|kotlin/String|

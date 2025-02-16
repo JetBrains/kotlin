@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.reflectedNameAccessor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -210,7 +209,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
      *
      * ES6 `let` statements don't have this problem.
      */
-    private class ClosureUsageAnalyser : IrElementVisitorVoid {
+    private class ClosureUsageAnalyser : IrVisitorVoid() {
 
         private val lambdaConstructorCalls: MutableMap<IrConstructorSymbol, MutableList<IrConstructorCall>> = hashMapOf()
         private val variablesDeclaredInLoops: MutableSet<IrValueDeclaration> = hashSetOf()
@@ -242,7 +241,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         private fun IrElement.referencesVariablesDeclaredInLoops(): Boolean {
             var result = false
-            acceptVoid(object : IrElementVisitorVoid {
+            acceptVoid(object : IrVisitorVoid() {
 
                 override fun visitElement(element: IrElement) {
                     if (!result)
@@ -472,7 +471,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         return statements
             .asSequence()
             .filterIsInstance<IrSetField>()
-            .filter { it.origin == LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
+            .filter { it.origin == IrStatementOrigin.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
             .mapNotNull { irSetField ->
                 remapVP(irSetField.value.cast<IrGetValue>().symbol.cast())?.let {
                     irSetField.symbol to it

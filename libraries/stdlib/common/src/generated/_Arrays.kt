@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -6039,7 +6039,7 @@ public fun CharArray.shuffle(): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun <T> Array<T>.shuffle(random: Random): Unit {
@@ -6054,7 +6054,7 @@ public fun <T> Array<T>.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun ByteArray.shuffle(random: Random): Unit {
@@ -6069,7 +6069,7 @@ public fun ByteArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun ShortArray.shuffle(random: Random): Unit {
@@ -6084,7 +6084,7 @@ public fun ShortArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun IntArray.shuffle(random: Random): Unit {
@@ -6099,7 +6099,7 @@ public fun IntArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun LongArray.shuffle(random: Random): Unit {
@@ -6114,7 +6114,7 @@ public fun LongArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun FloatArray.shuffle(random: Random): Unit {
@@ -6129,7 +6129,7 @@ public fun FloatArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.shuffle(random: Random): Unit {
@@ -6144,7 +6144,7 @@ public fun DoubleArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun BooleanArray.shuffle(random: Random): Unit {
@@ -6159,7 +6159,7 @@ public fun BooleanArray.shuffle(random: Random): Unit {
 /**
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.4")
 public fun CharArray.shuffle(random: Random): Unit {
@@ -6174,7 +6174,8 @@ public fun CharArray.shuffle(random: Random): Unit {
 /**
  * Sorts elements in the array in-place according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
@@ -6183,7 +6184,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selecto
 /**
  * Sorts elements in the array in-place descending according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))
@@ -6471,7 +6473,8 @@ public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
  * 
  * @sample samples.collections.Collections.Sorting.sortedBy
  */
@@ -6482,7 +6485,10 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selec
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (Byte) -> R?): List<Byte> {
     return sortedWith(compareBy(selector))
@@ -6491,7 +6497,10 @@ public inline fun <R : Comparable<R>> ByteArray.sortedBy(crossinline selector: (
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: (Short) -> R?): List<Short> {
     return sortedWith(compareBy(selector))
@@ -6500,7 +6509,10 @@ public inline fun <R : Comparable<R>> ShortArray.sortedBy(crossinline selector: 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (Int) -> R?): List<Int> {
     return sortedWith(compareBy(selector))
@@ -6509,7 +6521,10 @@ public inline fun <R : Comparable<R>> IntArray.sortedBy(crossinline selector: (I
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (Long) -> R?): List<Long> {
     return sortedWith(compareBy(selector))
@@ -6518,7 +6533,10 @@ public inline fun <R : Comparable<R>> LongArray.sortedBy(crossinline selector: (
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: (Float) -> R?): List<Float> {
     return sortedWith(compareBy(selector))
@@ -6527,7 +6545,10 @@ public inline fun <R : Comparable<R>> FloatArray.sortedBy(crossinline selector: 
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector: (Double) -> R?): List<Double> {
     return sortedWith(compareBy(selector))
@@ -6536,7 +6557,10 @@ public inline fun <R : Comparable<R>> DoubleArray.sortedBy(crossinline selector:
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector: (Boolean) -> R?): List<Boolean> {
     return sortedWith(compareBy(selector))
@@ -6545,7 +6569,10 @@ public inline fun <R : Comparable<R>> BooleanArray.sortedBy(crossinline selector
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * @sample samples.collections.Collections.Sorting.sortedBy
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayBy
  */
 public inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (Char) -> R?): List<Char> {
     return sortedWith(compareBy(selector))
@@ -6554,7 +6581,10 @@ public inline fun <R : Comparable<R>> CharArray.sortedBy(crossinline selector: (
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedByDescending
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareByDescending(selector))
@@ -6562,6 +6592,11 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossin
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(crossinline selector: (Byte) -> R?): List<Byte> {
     return sortedWith(compareByDescending(selector))
@@ -6569,6 +6604,11 @@ public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(crossinline s
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(crossinline selector: (Short) -> R?): List<Short> {
     return sortedWith(compareByDescending(selector))
@@ -6576,6 +6616,11 @@ public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(crossinline 
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> IntArray.sortedByDescending(crossinline selector: (Int) -> R?): List<Int> {
     return sortedWith(compareByDescending(selector))
@@ -6583,6 +6628,11 @@ public inline fun <R : Comparable<R>> IntArray.sortedByDescending(crossinline se
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> LongArray.sortedByDescending(crossinline selector: (Long) -> R?): List<Long> {
     return sortedWith(compareByDescending(selector))
@@ -6590,6 +6640,11 @@ public inline fun <R : Comparable<R>> LongArray.sortedByDescending(crossinline s
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(crossinline selector: (Float) -> R?): List<Float> {
     return sortedWith(compareByDescending(selector))
@@ -6597,6 +6652,11 @@ public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(crossinline 
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(crossinline selector: (Double) -> R?): List<Double> {
     return sortedWith(compareByDescending(selector))
@@ -6604,6 +6664,11 @@ public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(crossinline
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(crossinline selector: (Boolean) -> R?): List<Boolean> {
     return sortedWith(compareByDescending(selector))
@@ -6611,6 +6676,11 @@ public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(crossinlin
 
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ * 
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArrayByDescending
  */
 public inline fun <R : Comparable<R>> CharArray.sortedByDescending(crossinline selector: (Char) -> R?): List<Char> {
     return sortedWith(compareByDescending(selector))
@@ -13759,11 +13829,18 @@ public fun CharArray.max(): Char {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13786,11 +13863,18 @@ public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R):
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13813,11 +13897,18 @@ public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): By
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13840,11 +13931,18 @@ public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13867,11 +13965,18 @@ public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13894,11 +13999,18 @@ public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Lo
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13921,11 +14033,18 @@ public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13948,11 +14067,18 @@ public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R)
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -13975,11 +14101,18 @@ public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -14002,9 +14135,16 @@ public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Ch
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.maxByOrNull(selector: (T) -> R): T? {
@@ -14025,9 +14165,16 @@ public inline fun <T, R : Comparable<R>> Array<out T>.maxByOrNull(selector: (T) 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ByteArray.maxByOrNull(selector: (Byte) -> R): Byte? {
@@ -14048,9 +14195,16 @@ public inline fun <R : Comparable<R>> ByteArray.maxByOrNull(selector: (Byte) -> 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ShortArray.maxByOrNull(selector: (Short) -> R): Short? {
@@ -14071,9 +14225,16 @@ public inline fun <R : Comparable<R>> ShortArray.maxByOrNull(selector: (Short) -
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> IntArray.maxByOrNull(selector: (Int) -> R): Int? {
@@ -14094,9 +14255,16 @@ public inline fun <R : Comparable<R>> IntArray.maxByOrNull(selector: (Int) -> R)
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> LongArray.maxByOrNull(selector: (Long) -> R): Long? {
@@ -14117,9 +14285,16 @@ public inline fun <R : Comparable<R>> LongArray.maxByOrNull(selector: (Long) -> 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> FloatArray.maxByOrNull(selector: (Float) -> R): Float? {
@@ -14140,9 +14315,16 @@ public inline fun <R : Comparable<R>> FloatArray.maxByOrNull(selector: (Float) -
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> DoubleArray.maxByOrNull(selector: (Double) -> R): Double? {
@@ -14163,9 +14345,16 @@ public inline fun <R : Comparable<R>> DoubleArray.maxByOrNull(selector: (Double)
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> BooleanArray.maxByOrNull(selector: (Boolean) -> R): Boolean? {
@@ -14186,9 +14375,16 @@ public inline fun <R : Comparable<R>> BooleanArray.maxByOrNull(selector: (Boolea
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharArray.maxByOrNull(selector: (Char) -> R): Char? {
@@ -16605,11 +16801,18 @@ public fun CharArray.min(): Char {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16632,11 +16835,18 @@ public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R):
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16659,11 +16869,18 @@ public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): By
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16686,11 +16903,18 @@ public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16713,11 +16937,18 @@ public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16740,11 +16971,18 @@ public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Lo
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16767,11 +17005,18 @@ public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16794,11 +17039,18 @@ public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R)
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16821,11 +17073,18 @@ public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -16848,9 +17107,16 @@ public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Ch
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.minByOrNull(selector: (T) -> R): T? {
@@ -16871,9 +17137,16 @@ public inline fun <T, R : Comparable<R>> Array<out T>.minByOrNull(selector: (T) 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ByteArray.minByOrNull(selector: (Byte) -> R): Byte? {
@@ -16894,9 +17167,16 @@ public inline fun <R : Comparable<R>> ByteArray.minByOrNull(selector: (Byte) -> 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ShortArray.minByOrNull(selector: (Short) -> R): Short? {
@@ -16917,9 +17197,16 @@ public inline fun <R : Comparable<R>> ShortArray.minByOrNull(selector: (Short) -
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> IntArray.minByOrNull(selector: (Int) -> R): Int? {
@@ -16940,9 +17227,16 @@ public inline fun <R : Comparable<R>> IntArray.minByOrNull(selector: (Int) -> R)
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> LongArray.minByOrNull(selector: (Long) -> R): Long? {
@@ -16963,9 +17257,16 @@ public inline fun <R : Comparable<R>> LongArray.minByOrNull(selector: (Long) -> 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> FloatArray.minByOrNull(selector: (Float) -> R): Float? {
@@ -16986,9 +17287,16 @@ public inline fun <R : Comparable<R>> FloatArray.minByOrNull(selector: (Float) -
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> DoubleArray.minByOrNull(selector: (Double) -> R): Double? {
@@ -17009,9 +17317,16 @@ public inline fun <R : Comparable<R>> DoubleArray.minByOrNull(selector: (Double)
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> BooleanArray.minByOrNull(selector: (Boolean) -> R): Boolean? {
@@ -17032,9 +17347,16 @@ public inline fun <R : Comparable<R>> BooleanArray.minByOrNull(selector: (Boolea
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharArray.minByOrNull(selector: (Char) -> R): Char? {

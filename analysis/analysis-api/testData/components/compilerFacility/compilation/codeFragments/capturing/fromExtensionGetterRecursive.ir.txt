@@ -1,13 +1,13 @@
 MODULE_FRAGMENT
   FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
-      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-      FUN name:run visibility:public modality:FINAL <> (p0:<root>.Aaa) returnType:kotlin.String
-        VALUE_PARAMETER name:p0 index:0 type:<root>.Aaa
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.Aaa
         EXPRESSION_BODY
           BLOCK type=kotlin.String origin=null
-            CALL 'public final fun <get-boo> (): kotlin.String declared in <root>.ContextKt' type=kotlin.String origin=GET_PROPERTY
-              $receiver: GET_VAR 'p0: <root>.Aaa declared in <root>.CodeFragment.run' type=<root>.Aaa origin=null
+            CALL 'public final fun <get-boo> (<this>: <root>.Aaa): kotlin.String declared in <root>.ContextKt' type=kotlin.String origin=GET_PROPERTY
+              ARG <this>: GET_VAR 'p0: <root>.Aaa declared in <root>.CodeFragment.run' type=<root>.Aaa origin=IMPLICIT_ARGUMENT

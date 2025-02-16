@@ -1,21 +1,18 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
-import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -34,21 +31,6 @@ internal class SymbolLightSetterParameter(
         containingPropertySymbolPointer.withSymbol(ktModule) {
             it.setter?.isDefault != false
         }
-    }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(
-            containingDeclaration = this,
-            annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = parameterSymbolPointer,
-                ),
-                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
-            ),
-        )
     }
 
     override fun typeNullability(): KaTypeNullability {

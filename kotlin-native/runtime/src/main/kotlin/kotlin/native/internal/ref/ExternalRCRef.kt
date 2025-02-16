@@ -13,8 +13,6 @@ import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 import kotlin.native.internal.NativePtr
 
-// TODO(KT-67741): Move all stdlib usages of special refs to this API (this API is allowed to grow to accommodate)
-
 /**
  * An externally-reference-counted reference to a Kotlin object.
  *
@@ -33,6 +31,8 @@ import kotlin.native.internal.NativePtr
  * - [tryRetainExternalRCRef] tries to increment the reference count of a valid [ExternalRCRef]. When reference count is >0, acts like [retainExternalRCRef].
  *   When reference count is 0, increments it only if the GC has not yet collected the underlying object.
  *
+ * `ExternalRCRef` is [NativePtr.NULL] iff the underlying object is `null`.
+ *
  * NOTE: this API is very unsafe and is subject to change.
  */
 @InternalForKotlinNative
@@ -44,7 +44,15 @@ public typealias ExternalRCRef = NativePtr
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_createRetainedExternalRCRef")
 @Escapes(0b01) // obj is stored in the created ref.
-public external fun createRetainedExternalRCRef(obj: Any): ExternalRCRef
+public external fun createRetainedExternalRCRef(obj: Any?): ExternalRCRef
+
+/**
+ * Create a new [ExternalRCRef] for Kotlin object [obj] with the initial reference count of 0.
+ */
+@InternalForKotlinNative
+@GCUnsafeCall("Kotlin_native_internal_ref_createUnretainedExternalRCRef")
+@Escapes(0b01) // obj is stored in the created ref.
+public external fun createUnretainedExternalRCRef(obj: Any?): ExternalRCRef
 
 /**
  * Dispose a valid [ExternalRCRef].
@@ -60,19 +68,19 @@ public external fun disposeExternalRCRef(ref: ExternalRCRef)
  * Return the underlying object of this [ExternalRCRef].
  *
  * May only be called if the reference count is >0. Otherwise, the behavior is undefined.
+ *
+ * @see dereferenceExternalRCRefOrNull
  */
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_dereferenceExternalRCRef")
 @Escapes(0b10) // The return value is stored in a global.
-public external fun dereferenceExternalRCRef(ref: ExternalRCRef): Any
+public external fun dereferenceExternalRCRef(ref: ExternalRCRef): Any?
 
 /**
  * Increment the reference count of this [ExternalRCRef].
  *
  * Can be called concurrently with other retain/release operations.
  * May only be called if the reference count is >0. Otherwise, the behavior is undefined.
- *
- * @see tryRetainExternalRCRef
  */
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_retainExternalRCRef")
@@ -89,14 +97,14 @@ public external fun retainExternalRCRef(ref: ExternalRCRef)
 public external fun releaseExternalRCRef(ref: ExternalRCRef)
 
 /**
- * Try to increment the reference count of this [ExternalRCRef].
+ * Try to get the underlying object of this [ExternalRCRef].
  *
  * Can be called concurrently with other retain/release operations.
- * If the reference count is >0, works just like [retainExternalRCRef].
- * If the reference count is 0, will only increment the reference count if the underlying object is not yet collected by the GC.
- *
- * @return `true` if the increment was successful and `false` if the underlying object is already collected by the GC
+ * If the reference count is >0, works just like [dereferenceExternalRCRef].
+ * If the reference count is 0, will return the underlying object only if it's not yet collected by the GC.
+ * Otherwise, returns `null`.
  */
 @InternalForKotlinNative
-@GCUnsafeCall("Kotlin_native_internal_ref_tryRetainExternalRCRef")
-public external fun tryRetainExternalRCRef(ref: ExternalRCRef): Boolean
+@GCUnsafeCall("Kotlin_native_internal_ref_dereferenceExternalRCRefOrNull")
+@Escapes(0b10) // The return value is stored in a global.
+public external fun dereferenceExternalRCRefOrNull(ref: ExternalRCRef): Any?

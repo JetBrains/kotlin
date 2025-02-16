@@ -78,43 +78,11 @@ internal class StructStubBuilder(
                 AnnotationStub.CStruct(it)
             }
         }
-        val cPlusPlusClassAnnotation = if (context.configuration.library.language == Language.CPP
-                && def.kind == StructDef.Kind.CLASS) {
-            AnnotationStub.CStruct.CPlusPlusClass
-        } else {
-            null
-        }
-        val structAnnotations = listOfNotNull(structAnnotation, cPlusPlusClassAnnotation)
+        val structAnnotations = listOfNotNull(structAnnotation)
 
         val classifier = context.getKotlinClassForPointed(decl)
 
-        val destructor = if (def.methods.any { it.isCxxDestructor && it.name == "__destroy__" }) {
-            listOf(
-                    FunctionStub(
-                            name = "__destroy__",
-                            returnType = ClassifierStubType(Classifier("kotlin", "Unit")),
-                            parameters = emptyList(),
-                            origin = StubOrigin.Synthetic.ManagedTypeDetails,
-                            annotations = mutableListOf(),
-                            receiver = null, // ReceiverParameterStub()
-                            modality = MemberStubModality.FINAL
-                    )
-            )
-        } else emptyList()
-
-        val methods: List<FunctionStub> =
-            def.methods
-                    .filter { it.isCxxInstanceMethod }
-                    // TODO: this excludes all similar named methods from all calsses.
-                    // Consider using fqnames or something.
-                    .filterNot { it.name in context.configuration.excludedFunctions }
-                    .map { func ->
-                        try {
-                            (FunctionStubBuilder(context, func, skipOverloads = true).build().map { it as FunctionStub }).single()
-                        } catch (e: Throwable) {
-                            null
-                        }
-                    }.filterNotNull() + destructor
+        val methods: List<FunctionStub> = emptyList()
 
         val fields: List<PropertyStub?> = def.fields.map { field ->
             try {
@@ -216,52 +184,6 @@ internal class StructStubBuilder(
             context.generationMode == GenerationMode.METADATA
         }
 
-        val classMethods: List<FunctionStub> =
-                def.methods
-                        .filter { !it.isCxxInstanceMethod }
-                        .map { func ->
-                            try {
-                                FunctionStubBuilder(context, func, skipOverloads = true).build().map { it as FunctionStub }.single()
-                            } catch (e: Throwable) {
-                                null
-                            }
-                        }.filterNotNull()
-
-        // Here's what we have for C++.
-        // Note that we account for constructors and the destructor twice.
-        // class XXX {
-        //
-        //    // These are in the `secondaryConstructors` variable.
-        //    // their signatures match the signatures of __init__ modulo `self` parameters.
-        //    // The primary constructor will be created for the class the same way as for interop structs.
-        //    constructor(z)
-        //    constructor(t, u)
-        //    __destroy__()
-        //
-        //    // These go into `methods`
-        //    foo()
-        //    bar(x, y)
-        //
-        //    Companion {
-        //      // These all go to `classMethods`
-        //      __init__(self, z)
-        //      __init__(self, t, u)
-        //      __destroy__(self)
-        //      aStaticMathod()
-        //    }
-        //  }
-
-        val secondaryConstructors: List<ConstructorStub> =
-                def.methods
-                    .filter { it.isCxxConstructor }
-                    .map { func ->
-                        try {
-                            ConstructorStubBuilder(context, func).build().map { it as ConstructorStub }.single()
-                        } catch (e: Throwable) {
-                            null
-                        }
-                    }.filterNotNull()
-
         val classFields = def.staticFields
                 .map { field -> (GlobalStubBuilder(context, field).build().map{ it as PropertyStub }).single() }
 
@@ -270,87 +192,22 @@ internal class StructStubBuilder(
             superClassInit = companionSuperInit,
             annotations = listOfNotNull(annotation, AnnotationStub.Deprecated.deprecatedCVariableCompanion),
             properties = classFields,
-            methods = classMethods
+            methods = emptyList()
         )
-
-        val interfaces = if (context.configuration.library.language == Language.CPP && def.kind == StructDef.Kind.CLASS) {
-            listOfNotNull(
-                    ClassifierStubType(Classifier.topLevel("kotlinx.cinterop", "CPlusPlusClass")),
-                    // TODO: Only if skia plugin is active!
-                    if (methods.any { it.name == "unref" }) {
-                        ClassifierStubType(Classifier.topLevel("kotlinx.cinterop", "SkiaRefCnt"))
-                    } else {
-                        null
-                    }
-            )
-        } else emptyList()
 
         val classStub = ClassStub.Simple(
                 classifier,
                 origin = origin,
                 properties = fields.filterNotNull() + if (platform == KotlinPlatform.NATIVE) bitFields else emptyList(),
-                constructors = listOf(primaryConstructor) + secondaryConstructors,
+                constructors = listOf(primaryConstructor),
                 methods = methods,
                 modality = ClassStubModality.NONE,
                 annotations = structAnnotations,
                 superClassInit = superClassInit,
                 companion = companion,
-                interfaces = interfaces
+                interfaces = emptyList()
         )
-
-        return if (context.configuration.library.language == Language.CPP && def.kind == StructDef.Kind.CLASS) {
-            try {
-                listOfNotNull(classStub, buildManagedWrapper(classStub))
-            } catch (e: Throwable) {
-                emptyList()
-            }
-        } else {
-            listOf(classStub)
-        }
-    }
-
-    private fun buildManagedWrapper(classStub: ClassStub.Simple): ClassStub.Simple? {
-        val copier = DeepCopyForManagedWrapper(classStub, context)
-
-        val managedName = copier.managedWrapperClassifier(classStub.classifier) ?: run {
-            return null
-        }
-
-        val managed = PropertyStub(
-                name = "managed",
-                type = ClassifierStubType(Classifier.topLevel("kotlin", "Boolean")),
-                kind = PropertyStub.Kind.Val(getter = PropertyAccessor.Getter.SimpleGetter()),
-                modality = MemberStubModality.FINAL,
-                origin = StubOrigin.Synthetic.ManagedTypeDetails
-        )
-
-        val constructors = classStub.constructors.map { copier.visitConstructor(it) }
-
-        val managedWrapper = ClassStub.Simple(
-                managedName,
-                classStub.modality,
-                constructors,
-                classStub.methods.map { copier.visitFunction(it) } ,
-                superClassInit = SuperClassInit(
-                        ClassifierStubType(
-                                Classifier.topLevel("kotlinx.cinterop", "ManagedType"),
-                                listOf(TypeArgumentStub(ClassifierStubType(classStub.classifier)))
-                        ),
-                        listOf( GetConstructorParameter(constructors.single { it.isPrimary }.parameters.first()) )
-                ),
-                interfaces = emptyList(),
-                properties = listOf(managed) + classStub.properties.map { copier.visitProperty(it) },
-                classStub.origin,
-                annotations = listOf(AnnotationStub.CStruct.ManagedType),
-                childrenClasses = emptyList(),
-                companion = ClassStub.Companion(
-                        classifier = managedName.nested("Companion"),
-                        methods = classStub.companion!!.methods
-                                .filterNot { it.name == "__init__" || it.name == "__destroy__" }
-                                .map { copier.visitFunction(it) },
-                )
-        )
-        return managedWrapper
+        return listOf(classStub)
     }
 
     private fun getArrayLength(type: ArrayType): Long {
@@ -630,12 +487,7 @@ internal abstract class FunctionalStubBuilder(
 
     fun buildParameters(parameters: MutableList<FunctionParameterStub>, platform: KotlinPlatform): Boolean {
         var hasStableParameterNames = true
-        val funcParameters = if (func.isCxxInstanceMethod) {
-            func.parameters.drop(1)
-        } else {
-            func.parameters
-        }
-        funcParameters.forEachIndexed { index, parameter ->
+        func.parameters.forEachIndexed { index, parameter ->
             val parameterName = parameter.name.let {
                 if (it == null || it.isEmpty()) {
                     hasStableParameterNames = false
@@ -772,13 +624,8 @@ internal class FunctionStubBuilder(
             annotations = buildFunctionAnnotations(func)
             mustBeExternal = true
         }
-        val name = if (context.configuration.library.language == Language.CPP && !func.isCxxMethod) {
-            func.fullName
-        } else {
-            func.name
-        }
         val functionStub = FunctionStub(
-            name,
+            func.name,
             returnType,
             parameters.toList(),
             StubOrigin.Function(func),
@@ -792,51 +639,6 @@ internal class FunctionStubBuilder(
     }
 
 }
-
-internal class ConstructorStubBuilder(
-    context: StubsBuildingContext,
-    func: FunctionDecl,
-    skipOverloads: Boolean = false
-) : FunctionalStubBuilder(context, func, skipOverloads) {
-
-    override fun build(): List<StubIrElement> {
-        if (context.configuration.library.language != Language.CPP) return emptyList() // TODO: Should we assert here?
-
-        val platform = context.platform
-        val parameters = mutableListOf<FunctionParameterStub>()
-
-        val name = func.parentName ?: return emptyList()
-
-        buildParameters(parameters, platform)
-
-        // We build it on the basis of "__init__" member, so drop the "placement" argugment.
-        parameters.removeFirst()
-
-        if (skipOverloads && context.isOverloading(func.fullName, parameters.map { it.type }))
-            return emptyList()
-
-        val annotations =
-            if (platform == KotlinPlatform.JVM) {
-                emptyList()
-            } else {
-                if (func.isVararg) {
-                    val type = KotlinTypes.any.makeNullable().toStubIrType()
-                    parameters += FunctionParameterStub("variadicArguments", type, isVararg = true)
-                }
-                buildFunctionAnnotations(func, name) + AnnotationStub.CCall.CppClassConstructor
-            }
-
-        val result = ConstructorStub(
-            parameters,
-            annotations,
-            isPrimary = false,
-            origin = StubOrigin.Function(func),
-        )
-
-        return listOf(result)
-    }
-}
-
 
 internal class GlobalStubBuilder(
         override val context: StubsBuildingContext,
@@ -919,7 +721,6 @@ internal class GlobalStubBuilder(
                     }
                     kind = PropertyStub.Kind.Val(getter)
                 }
-                is TypeMirror.Managed -> error("We don't support managed globals for now")
             }
         }
         return listOf(PropertyStub(global.name, kotlinType.toStubIrType(), kind, origin = origin))
@@ -946,10 +747,6 @@ internal class TypedefStubBuilder(
                 )
             }
             is TypeMirror.ByRef -> {
-                val varTypeAliasee = baseMirror.pointedType
-                listOf(TypealiasStub(varType, varTypeAliasee.toStubIrType(), origin))
-            }
-            is TypeMirror.Managed -> {
                 val varTypeAliasee = baseMirror.pointedType
                 listOf(TypealiasStub(varType, varTypeAliasee.toStubIrType(), origin))
             }

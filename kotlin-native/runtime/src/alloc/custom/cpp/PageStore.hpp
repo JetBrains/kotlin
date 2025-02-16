@@ -11,15 +11,15 @@
 #include <vector>
 
 #include "AtomicStack.hpp"
-#include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
+#include "FixedBlockPage.hpp"
 
 namespace kotlin::alloc {
 
-template <class T>
+template <class T, typename SweepTraits>
 class PageStore {
 public:
-    using GCSweepScope = typename T::GCSweepScope;
+    using GCSweepScope = typename SweepTraits::GCSweepScope;
 
     void PrepareForGC() noexcept {
         unswept_.TransferAllFrom(std::move(ready_));
@@ -48,7 +48,7 @@ public:
 
             if ((page = unswept_.Pop())) {
                 // If there're unswept_ pages, the GC is in progress.
-                GCSweepScope sweepHandle = T::currentGCSweepScope(*handle);
+                auto sweepHandle = SweepTraits::currentGCSweepScope(*handle);
                 if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
                     return page;
                 }
@@ -86,7 +86,7 @@ private:
             return nullptr;
         }
         do {
-            if (page->Sweep(sweepHandle, finalizerQueue)) {
+            if (page->template Sweep<SweepTraits>(sweepHandle, finalizerQueue)) {
                 to.Push(page);
                 return page;
             }
@@ -125,10 +125,10 @@ private:
     AtomicStack<T> unswept_;
 };
 
-template <>
-class PageStore<SingleObjectPage> {
+template <typename SweepTraits>
+class PageStore<SingleObjectPage, SweepTraits> {
 public:
-    using GCSweepScope = typename SingleObjectPage::GCSweepScope;
+    using GCSweepScope = typename SweepTraits::GCSweepScope;
 
     void PrepareForGC() noexcept {
         unswept_.TransferAllFrom(std::move(used_));
@@ -136,7 +136,7 @@ public:
 
     void Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
         while (auto* page = unswept_.Pop()) {
-            if (page->SweepAndDestroy(sweepHandle, finalizerQueue)) {
+            if (page->SweepAndDestroy<SweepTraits>(sweepHandle, finalizerQueue)) {
                 used_.Push(page);
             }
         }
@@ -168,8 +168,8 @@ private:
     }
 
     void Clear() noexcept {
-        while (auto* page = used_.Pop()) page->Destroy();
-        while (auto* page = unswept_.Pop()) page->Destroy();
+        while (auto* page = used_.Pop()) page->Destroy<SweepTraits>();
+        while (auto* page = unswept_.Pop()) page->Destroy<SweepTraits>();
     }
 
     template <typename F>

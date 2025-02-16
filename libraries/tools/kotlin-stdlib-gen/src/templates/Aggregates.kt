@@ -421,9 +421,10 @@ object Aggregates : TemplateGroupBase() {
                 includeDefault()
                 include(Maps, CharSequences, ArraysOfUnsigned)
             } builder {
+                val isMax = op == "maxBy"
                 inline()
                 specialFor(ArraysOfUnsigned) { inlineOnly() }
-                specialFor(Maps) { if (op == "maxBy" || !legacy) inlineOnly() }
+                specialFor(Maps) { if (isMax || !legacy) inlineOnly() }
                 typeParam("R : Comparable<R>")
                 returns("T" + "?".ifOrEmpty(nullable))
                 val isUnsigned = family == ArraysOfUnsigned
@@ -440,15 +441,27 @@ object Aggregates : TemplateGroupBase() {
                 since("1.4")
                 if (!nullable) since("1.7")
 
-                doc { "Returns the first ${f.element} yielding the ${if (op == "maxBy") "largest" else "smallest"} value of the given function${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}." }
-                sample("samples.collections.Collections.Aggregates.$op$orNull")
+                doc {
+                    """
+                        Returns the first ${f.element} yielding the ${if (isMax) "largest" else "smallest"} value of the given [selector] function${
+                        " or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                        
+                        If there are multiple equal ${if (isMax) "maximal" else "minimal"} values returned by the [selector] function, 
+                        this function returns the first of ${f.element.pluralize()} corresponding to these values.
+                        
+                        Note that the function [selector] is not invoked when the ${f.collection} contains zero or one ${f.element.pluralize()} 
+                        because in these cases it is clear which ${f.element} to return without invoking the [selector].
+                        Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each ${f.element}.
+                    """
+                }
+                sample("samples.collections.Collections.Aggregates.minMaxByOrNull")
 
                 if (!nullable) {
                     throws("NoSuchElementException", "if the ${f.collection} is empty.")
                     annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
                 }
 
-                val (elem, value, cmp) = if (op == "minBy") Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
+                val (elem, value, cmp) = if (!isMax) Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
                 body {
                     """
                     val iterator = iterator()

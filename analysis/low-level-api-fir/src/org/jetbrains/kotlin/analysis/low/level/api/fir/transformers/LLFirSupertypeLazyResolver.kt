@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
@@ -279,9 +279,8 @@ private class LLFirSuperTypeTargetResolver(
     }
 }
 
-private fun FirClassLikeDeclaration.outerClass(): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
-    llFirSession.symbolProvider.getClassLikeSymbolByClassId(parentClassId)?.fir as? FirRegularClass
-}
+private fun FirClassLikeDeclaration.outerClass(): FirRegularClass? =
+    llFirSession.firProvider.getContainingClass(symbol)?.fir as? FirRegularClass
 
 private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
     var useSiteSessions: PersistentList<LLFirSession> = persistentListOf<LLFirSession>()

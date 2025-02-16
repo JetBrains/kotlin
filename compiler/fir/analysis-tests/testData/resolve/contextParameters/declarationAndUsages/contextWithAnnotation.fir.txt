@@ -1,0 +1,52 @@
+FILE: contextWithAnnotation.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class AnnotationWithValueTarget : R|kotlin/Annotation| {
+        public constructor(): R|AnnotationWithValueTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class AnnotationWithTypeTarget : R|kotlin/Annotation| {
+        public constructor(): R|AnnotationWithTypeTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final annotation class AnnotationWithConstructor : R|kotlin/Annotation| {
+        public constructor(k: R|kotlin/String|): R|AnnotationWithConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val k: R|kotlin/String| = R|<local>/k|
+            public get(): R|kotlin/String|
+
+    }
+    context(@R|Ann|() @R|AnnotationWithValueTarget|() a: R|@R|Ann|()  @R|AnnotationWithTypeTarget|()  kotlin/String|)
+    public final fun moreThenOneAnnotation(): R|kotlin/Unit| {
+    }
+    context(@R|Ann|() a: R|@R|Ann|()  kotlin/String|, @R|Ann|() b: R|@R|Ann|()  kotlin/String|)
+    public final fun moreThenOneContextWithAnnotation(): R|kotlin/Unit| {
+    }
+    context(@R|AnnotationWithConstructor|(k = String()) a: R|@R|AnnotationWithConstructor|(k = String())  kotlin/String|)
+    public final fun annotationWithConstructor(): R|kotlin/Unit| {
+    }
+    context(@R|Ann|() @R|AnnotationWithValueTarget|() a: R|@R|Ann|()  @R|AnnotationWithTypeTarget|()  kotlin/String|)
+    public final val moreThenOneAnnotationProperty: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }
+    context(@R|Ann|() a: R|@R|Ann|()  kotlin/String|, @R|Ann|() b: R|@R|Ann|()  kotlin/String|)
+    public final val moreThenOneContextWithAnnotationProperty: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }
+    context(@R|AnnotationWithConstructor|(k = String()) a: R|@R|AnnotationWithConstructor|(k = String())  kotlin/String|)
+    public final val annotationWithConstructorProperty: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }

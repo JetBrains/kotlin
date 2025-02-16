@@ -115,6 +115,7 @@ internal object LocationTags {
     const val NO_LOCATION = 0u
     const val LOCATION = 1u
     const val IGNORED_LOCATION = 2u
+    const val NEXT_LOCATION = 3u
 }
 
 internal object IdSignatureTags {

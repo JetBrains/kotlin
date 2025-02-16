@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
@@ -90,7 +90,7 @@ internal val IrField.needsGCRegistration
 
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
 
-internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrSimpleFunction>?) : IrElementVisitorVoid {
+internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrSimpleFunction>?) : IrVisitorVoid() {
     val generator = RTTIGenerator(generationState, referencedFunctions)
 
     val kotlinObjCClassInfoGenerator = KotlinObjCClassInfoGenerator(generationState)
@@ -217,7 +217,7 @@ internal class CodeGeneratorVisitor(
         val generationState: NativeGenerationState,
         val irBuiltins: IrBuiltIns,
         val lifetimes: Map<IrElement, Lifetime>
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     private val context = generationState.context
     private val llvm = generationState.llvm
     private val debugInfo: DebugInfo
@@ -392,8 +392,8 @@ internal class CodeGeneratorVisitor(
         val scopeState = llvm.initializersGenerationState.reset(oldScopeState)
         scopeState.takeIf { !it.isEmpty() }?.let {
             buildInitializerFunctions(it)
-            val initNode = createInitNode(createInitBody(it))
-            llvm.irStaticInitializers.add(IrStaticInitializer(konanLibrary, createInitCtor(initNode)))
+            val runtimeInitializer = createInitBody(it)
+            llvm.irStaticInitializers.add(IrStaticInitializer(konanLibrary, runtimeInitializer))
         }
     }
 
@@ -445,9 +445,8 @@ internal class CodeGeneratorVisitor(
     val FILE_NOT_INITIALIZED = 0
     val FILE_INITIALIZED = 2
 
-    private fun createInitBody(state: ScopeInitializersGenerationState): LlvmCallable {
-        val initFunctionProto = kInitFuncType.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
-        return generateFunction(codegen, initFunctionProto) {
+    private fun createInitBody(state: ScopeInitializersGenerationState): RuntimeInitializer {
+        return generateRuntimeInitializer {
             using(FunctionScope(function, this)) {
                 val bbInit = basicBlock("init", null)
                 val bbLocalInit = basicBlock("local_init", null)
@@ -510,10 +509,25 @@ internal class CodeGeneratorVisitor(
         }
     }
 
+    private fun mergeRuntimeInitializers(
+            runtimeInitializers: List<RuntimeInitializer>
+    ): RuntimeInitializer = generateRuntimeInitializer {
+        runtimeInitializers.forEach {
+            this.call(it.llvmCallable, listOf(param(0), param(1)), exceptionHandler = ExceptionHandler.Caller)
+        }
+        ret(null)
+    }
+
+    private fun generateRuntimeInitializer(block: FunctionGenerationContext.() -> Unit): RuntimeInitializer {
+        val initFunctionProto = kInitFuncType.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
+        return RuntimeInitializer(generateFunction(codegen, initFunctionProto, code = block))
+    }
+
     //-------------------------------------------------------------------------//
     // Creates static struct InitNode $nodeName = {$initName, NULL};
 
-    private fun createInitNode(initFunction: LlvmCallable): LLVMValueRef {
+    private fun createInitNode(runtimeInitializer: RuntimeInitializer): LLVMValueRef {
+        val initFunction = runtimeInitializer.llvmCallable
         val nextInitNode = LLVMConstNull(pointerType(kNodeInitType))
         val argList = cValuesOf(initFunction.toConstPointer().llvm, nextInitNode)
         // Create static object of class InitNode.
@@ -1933,13 +1947,25 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) : FileScope(file = null, inlinedBlock.fileEntry) {
+    private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) : FileScope(file = null, inlinedBlock.inlinedFunctionFileEntry) {
 
-        private val inlineFunctionScope by lazy {
-            inlinedBlock.inlineFunctionSymbol?.owner.let {
-                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it?.render()}" }
-                it.scope(fileEntry().line(it.startOffset))
+        private val inlineFunctionScope: DIScopeOpaqueRef? by lazy {
+            val owner = inlinedBlock.inlinedFunctionSymbol?.owner
+            if (owner == null) {
+                @Suppress("UNCHECKED_CAST")
+                return@lazy debugInfo.diFunctionScope(
+                        inlinedBlock.inlinedFunctionFileEntry,
+                        name = "<inlined-lambda>",
+                        linkageName = "<inlined-lambda>",
+                        inlinedBlock.inlinedFunctionFileEntry.line(inlinedBlock.inlinedFunctionStartOffset),
+                        debugInfo.subroutineType(debugInfo.llvmTargetData, listOf(inlinedBlock.type)),
+                        nodebug = false,
+                        isTransparentStepping = false
+                ) as DIScopeOpaqueRef
             }
+
+            require(owner is IrSimpleFunction) { "Inline constructors should've been lowered: ${owner.render()}" }
+            owner.scope(fileEntry().line(inlinedBlock.inlinedFunctionStartOffset))
         }
 
         override fun location(offset: Int): LocationInfo? {
@@ -1949,21 +1975,12 @@ internal class CodeGeneratorVisitor(
             return LocationInfo(diScope, line, column, inlinedAt)
         }
 
-        /**
-         * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
-         */
-        private val scope by lazy {
-            if (!context.shouldContainLocationDebugInfo() || inlinedBlock.startOffset == UNDEFINED_OFFSET)
-                return@lazy null
-            val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.fileEntry.diFileScope())
-            val (line, column) = inlinedBlock.startLineAndColumn()
-            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.fileEntry.diFileScope(), line, column)!!
+        override fun scope(): DIScopeOpaqueRef? {
+            return inlineFunctionScope.takeIf { context.shouldContainLocationDebugInfo() && inlinedBlock.startOffset != UNDEFINED_OFFSET }
         }
 
-        override fun scope() = scope
-
         override fun wrapException(e: Exception): NativeCodeGeneratorException {
-            return NativeCodeGeneratorException.wrap(e, inlinedBlock.inlineFunctionSymbol?.owner)
+            return NativeCodeGeneratorException.wrap(e, inlinedBlock.inlinedFunctionSymbol?.owner)
         }
     }
 
@@ -2654,6 +2671,8 @@ internal class CodeGeneratorVisitor(
         overrideRuntimeGlobal("Kotlin_enableSafepointSignposts", llvm.constInt32(if (context.config.enableSafepointSignposts) 1 else 0))
         overrideRuntimeGlobal("Kotlin_globalDataLazyInit", llvm.constInt32(if (context.config.globalDataLazyInit) 1 else 0))
         overrideRuntimeGlobal("Kotlin_swiftExport", llvm.constInt32(if (context.config.swiftExport) 1 else 0))
+        overrideRuntimeGlobal("Kotlin_latin1Strings", llvm.constInt32(if (context.config.latin1Strings) 1 else 0))
+        overrideRuntimeGlobal("Kotlin_mmapTag", llvm.constUInt8(context.config.mmapTag))
     }
 
     //-------------------------------------------------------------------------//
@@ -2688,14 +2707,14 @@ internal class CodeGeneratorVisitor(
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
         val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
 
-        val libraryToInitializers = dependencies.associate { it?.library to mutableListOf<LlvmCallable>() }
+        val libraryToInitializers = dependencies.associate { it?.library to mutableListOf<RuntimeInitializer>() }
 
         llvm.irStaticInitializers.forEach {
             val library = it.konanLibrary
             val initializers = libraryToInitializers[library]
                     ?: error("initializer for not included library ${library?.libraryFile}")
 
-            initializers.add(it.initializer)
+            initializers.add(it.runtimeInitializer)
         }
 
         fun fileCtorName(libraryName: String, fileName: String) = "$libraryName:$fileName".moduleConstructorName
@@ -2706,7 +2725,10 @@ internal class CodeGeneratorVisitor(
 
         val ctorFunctions = dependencies.flatMap { dependency ->
             val library = dependency?.library
-            val initializers = libraryToInitializers.getValue(library)
+            val initializer = libraryToInitializers.getValue(library)
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { mergeRuntimeInitializers(it) }
+                    ?.let { createInitCtor(createInitNode(it)) }
 
             val ctorName = when {
                 // TODO: Try to not use moduleId.
@@ -2721,11 +2743,11 @@ internal class CodeGeneratorVisitor(
                 val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
 
                 listOf(
-                    appendStaticInitializers(ctorProto(ctorName), initializers + otherInitializers)
+                    appendStaticInitializers(ctorProto(ctorName), listOfNotNull(initializer) + otherInitializers)
                 )
             } else {
                 // A cached library.
-                check(initializers.isEmpty()) {
+                check(initializer == null) {
                     "found initializer from ${library.libraryFile}, which is not included into compilation"
                 }
 
@@ -2736,8 +2758,12 @@ internal class CodeGeneratorVisitor(
                     is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
                     is CachedLibraries.Cache.PerFile -> {
                         val files = when (dependency.kind) {
-                            is DependenciesTracker.DependencyKind.WholeModule ->
-                                context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds
+                            is DependenciesTracker.DependencyKind.WholeModule -> {
+                                val fileIdProvider: FileIdProvider = context.moduleDeserializerProvider.getDeserializerOrNull(library)
+                                        ?.let { FileIdProvider(it) }
+                                        ?: error("Can't find deserializer for ${library.libraryFile}")
+                                fileIdProvider.sortedFileIds
+                            }
                             is DependenciesTracker.DependencyKind.CertainFiles ->
                                 dependency.kind.files
                         }
@@ -2867,6 +2893,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
     setRuntimeConstGlobal("Kotlin_concurrentWeakSweep", llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
     setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
     setRuntimeConstGlobal("Kotlin_fixedBlockPageSize", llvm.constInt32(config.fixedBlockPageSize.toInt()))
+    setRuntimeConstGlobal("Kotlin_pagedAllocator", llvm.constInt32(if (config.pagedAllocator) 1 else 0))
 
     return llvmModule
 }

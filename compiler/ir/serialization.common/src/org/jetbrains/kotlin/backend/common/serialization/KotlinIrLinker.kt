@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -237,31 +238,30 @@ abstract class KotlinIrLinker(
      * The same applies to [IrPropertyReference].
      *
      * Because existing KLIBs already don't contain enough information for setting the correct shape, the following hack is used:
-     * After linking but before the partial linkage phase, we visit callable references and update their shape from the linked target
-     * function/property.
+     * After linking we visit callable references and update their shape from the linked target function/property.
      *
      * See [KT-71849](https://youtrack.jetbrains.com/issue/KT-71849).
      */
     private fun fixCallableReferences() {
         deserializersForModules.values.forEach {
             it.moduleFragment.acceptChildrenVoid(
-                object : IrElementVisitorVoid {
+                object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }
 
                     override fun visitFunctionReference(expression: IrFunctionReference) {
                         if (expression.symbol.isBound) {
-                            expression.forceUpdateShapeFromTargetSymbol()
+                            expression.initializeTargetShapeFromSymbol()
                         }
-                        expression.acceptChildrenVoid(this)
+                        super.visitFunctionReference(expression)
                     }
 
                     override fun visitPropertyReference(expression: IrPropertyReference) {
                         if (expression.symbol.isBound) {
-                            expression.forceUpdateShapeFromTargetSymbol()
+                            expression.initializeTargetShapeFromSymbol()
                         }
-                        expression.acceptChildrenVoid(this)
+                        super.visitPropertyReference(expression)
                     }
                 }
             )
@@ -280,10 +280,10 @@ abstract class KotlinIrLinker(
         triedToDeserializeDeclarationForSymbol.clear()
 
         if (inOrAfterLinkageStep) {
-            fixCallableReferences()
-
             // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
             partialLinkageSupport.generateStubsAndPatchUsages(symbolTable)
+
+            fixCallableReferences()
         }
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")

@@ -6,18 +6,17 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,8 +35,8 @@ private var IrSimpleFunction.staticCompanionDeclarations: Pair<IrSimpleFunction,
 
 private var IrSimpleFunction.defaultImplsMethod: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 private var IrClass.defaultImplsClass: IrClass? by irAttribute(followAttributeOwner = false)
-private var IrSimpleFunction.defaultImplsRedirection: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-private var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrSimpleFunction.classFakeOverrideReplacement: ClassFakeOverrideReplacement? by irAttribute(followAttributeOwner = false)
+var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
 private var IrClass.repeatedAnnotationSyntheticContainer: IrClass? by irAttribute(followAttributeOwner = false)
 
@@ -241,9 +240,6 @@ class JvmCachedDeclarations(
         }
     }
 
-    fun getOriginalFunctionForDefaultImpl(defaultImplFun: IrSimpleFunction): IrSimpleFunction? =
-        defaultImplFun.originalFunctionForDefaultImpl
-
     fun getDefaultImplsClass(interfaceClass: IrClass): IrClass =
         interfaceClass::defaultImplsClass.getOrSetIfNull {
             context.irFactory.buildClass {
@@ -257,37 +253,63 @@ class JvmCachedDeclarations(
             }
         }
 
-    fun getDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction =
-        fakeOverride::defaultImplsRedirection.getOrSetIfNull {
-            assert(fakeOverride.isFakeOverride)
-            val irClass = fakeOverride.parentAsClass
-            val redirectFunction = context.irFactory.buildFun {
-                origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
-                name = fakeOverride.name
-                visibility = fakeOverride.visibility
-                modality = fakeOverride.modality
-                returnType = fakeOverride.returnType
-                isInline = fakeOverride.isInline
-                isExternal = false
-                isTailrec = false
-                isSuspend = fakeOverride.isSuspend
-                isOperator = fakeOverride.isOperator
-                isInfix = fakeOverride.isInfix
-                isExpect = false
-                isFakeOverride = false
-            }.apply {
-                parent = irClass
-                overriddenSymbols = fakeOverride.overriddenSymbols
-                copyValueAndTypeParametersFrom(fakeOverride)
-                // The fake override's dispatch receiver has the same type as the real declaration's,
-                // i.e. some superclass of the current class. This is not good for accessibility checks.
-                dispatchReceiverParameter?.type = irClass.defaultType
-                annotations = fakeOverride.annotations
-                copyCorrespondingPropertyFrom(fakeOverride)
-            }
-            context.remapMultiFieldValueClassStructure(fakeOverride, redirectFunction, parametersMappingOrNull = null)
-            redirectFunction
+    fun getClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement =
+        if (!fakeOverride.isFakeOverride || fakeOverride.parentAsClass.isJvmInterface) {
+            ClassFakeOverrideReplacement.None
+        } else fakeOverride::classFakeOverrideReplacement.getOrSetIfNull {
+            computeClassFakeOverrideReplacement(fakeOverride) ?: ClassFakeOverrideReplacement.None
         }
+
+    private fun computeClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement? {
+        val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode, allowJvmDefault = true) ?: return null
+        val newFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
+        context.remapMultiFieldValueClassStructure(fakeOverride, newFunction, parametersMappingOrNull = null)
+        val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
+
+        findDefaultImplsRedirection(implementation, newFunction, superFunction)?.let { return it }
+        if (needsJvmDefaultCompatibilityBridge(fakeOverride)) {
+            return ClassFakeOverrideReplacement.DefaultCompatibilityBridge(newFunction, superFunction)
+        }
+        return null
+    }
+
+    private fun findDefaultImplsRedirection(
+        implementation: IrSimpleFunction, newFunction: IrSimpleFunction, superFunction: IrSimpleFunction,
+    ): ClassFakeOverrideReplacement.DefaultImplsRedirection? {
+        val callee =
+            if (implementation.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+                implementation.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                implementation.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
+            ) {
+                return null
+            } else if (implementation.isDefinitelyNotDefaultImplsMethod(context.config.jvmDefaultMode, implementation)) {
+                val klass = newFunction.parentAsClass
+                when (context.config.jvmDefaultMode) {
+                    JvmDefaultMode.NO_COMPATIBILITY -> return null
+                    JvmDefaultMode.ENABLE if klass.hasJvmDefaultNoCompatibilityAnnotation() -> return null
+                    else -> superFunction
+                }
+            } else {
+                getDefaultImplsFunction(superFunction)
+            }
+
+        return ClassFakeOverrideReplacement.DefaultImplsRedirection(newFunction, superFunction, callee)
+    }
+
+    // Generating the default compatibility bridge is only necessary if there's a risk that some other method will be called at runtime
+    // by JVM when resolving the call to method from this class. This is only possible when this class has a superclass, where this method
+    // is present as a bridge to DefaultImpls of some other interface.
+    private fun needsJvmDefaultCompatibilityBridge(declaration: IrSimpleFunction): Boolean {
+        var current: IrSimpleFunction? = declaration.overriddenSymbols.singleOrNull { it.owner.parentAsClass.isClass }?.owner
+        while (current != null) {
+            if (current.modality == Modality.ABSTRACT) return false
+
+            if (current.findInterfaceImplementation(context.config.jvmDefaultMode) != null) return true
+
+            current = current.overriddenSymbols.singleOrNull { it.owner.parentAsClass.isClass }?.owner
+        }
+        return false
+    }
 
     fun getRepeatedAnnotationSyntheticContainer(annotationClass: IrClass): IrClass =
         annotationClass::repeatedAnnotationSyntheticContainer.getOrSetIfNull {

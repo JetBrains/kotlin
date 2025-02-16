@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsModuleArtifactName
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
@@ -45,9 +48,10 @@ class JsIrLoweringFacade(
 
     private val jsIrPathReplacer by lazy { JsIrPathReplacer(testServices) }
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == inputKind && module.binaryKind == outputKind &&
-                JsEnvironmentConfigurator.isMainModule(module, testServices)
+    override fun shouldTransform(module: TestModule): Boolean {
+        return with(testServices.defaultsProvider) {
+            backendKind == inputKind && artifactKind == outputKind
+        } && JsEnvironmentConfigurator.isMainModule(module, testServices)
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Js? {

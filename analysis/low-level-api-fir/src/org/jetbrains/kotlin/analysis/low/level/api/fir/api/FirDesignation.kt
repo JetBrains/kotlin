@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -142,11 +142,10 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
         is FirField,
         is FirConstructor,
         is FirEnumEntry,
-        is FirErrorProperty,
             -> {
             // We shouldn't try to build a designation path for such fake declarations as they
             // do not depend on outer classes during resolution
-            if (target.isCopyCreatedInScope) return FirDesignation(target)
+            if (target.canHaveDeferredReturnTypeCalculation) return FirDesignation(target)
 
             if (target.symbol.isLocalForLazyResolutionPurposes) {
                 return null
@@ -382,7 +381,7 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
     val targetModule = target.llFirModuleData.ktModule
 
     if (targetModule is KaDanglingFileModule && targetModule.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF) {
-        val targetPsiFile = targetModule.file
+        val targetPsiFile = targetModule.files.singleOrNull() ?: return targetPath
 
         val contextModule = targetModule.contextModule
         val contextResolveSession = contextModule.getFirResolveSession(contextModule.project)

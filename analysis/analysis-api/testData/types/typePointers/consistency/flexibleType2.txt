@@ -9,7 +9,7 @@ KaFlexibleType:
     classId: kotlin/collections/MutableList
     nullability: NON_NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: MutableList
         symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
         typeArguments: [
@@ -22,7 +22,7 @@ KaFlexibleType:
               classId: kotlin/String
               nullability: NON_NULLABLE
               qualifiers: [
-                qualifier:
+                KaResolvedClassTypeQualifier:
                   name: String
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
@@ -36,7 +36,7 @@ KaFlexibleType:
               classId: kotlin/String
               nullability: NULLABLE
               qualifiers: [
-                qualifier:
+                KaResolvedClassTypeQualifier:
                   name: String
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
@@ -56,7 +56,7 @@ KaFlexibleType:
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
@@ -70,7 +70,7 @@ KaFlexibleType:
           classId: kotlin/String
           nullability: NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
@@ -85,7 +85,7 @@ KaFlexibleType:
     classId: kotlin/collections/List
     nullability: NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: List
         symbol: KaNamedClassSymbol(kotlin/collections/List)
         typeArguments: [
@@ -98,7 +98,7 @@ KaFlexibleType:
               classId: kotlin/String
               nullability: NON_NULLABLE
               qualifiers: [
-                qualifier:
+                KaResolvedClassTypeQualifier:
                   name: String
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
@@ -112,7 +112,7 @@ KaFlexibleType:
               classId: kotlin/String
               nullability: NULLABLE
               qualifiers: [
-                qualifier:
+                KaResolvedClassTypeQualifier:
                   name: String
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
@@ -132,7 +132,7 @@ KaFlexibleType:
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
@@ -146,7 +146,7 @@ KaFlexibleType:
           classId: kotlin/String
           nullability: NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []

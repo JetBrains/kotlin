@@ -1,0 +1,48 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: Foo
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: [
+    KaContextReceiver:
+      label: parameter1
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    KaContextReceiver:
+      label: parameter2
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: kotlin/collections/List<kotlin/Int>
+  ]
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: Foo
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(classWithContextParameters.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null

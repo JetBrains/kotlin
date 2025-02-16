@@ -543,7 +543,7 @@ class MethodInliner(
                     for (captured in lambda.capturedVars.asReversed()) {
                         lambda.originalBoundReceiverType?.let {
                             // The receiver is the only captured value; it needs to be boxed.
-                            StackValue.onStack(it).put(captured.type, InstructionAdapter(this))
+                            StackValue.coerce(it, captured.type, InstructionAdapter(this))
                         }
                         super.visitFieldInsn(
                             Opcodes.PUTSTATIC,

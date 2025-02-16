@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
@@ -78,7 +79,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val firExpectedFile = testDataFile.withExtension("fir.$extension")
         val expectedFile =
-            if (testServices.moduleStructure.modules.first().frontendKind == FrontendKinds.FIR && firExpectedFile.exists())
+            if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR && firExpectedFile.exists())
                 firExpectedFile
             else testDataFile.withExtension(extension)
 

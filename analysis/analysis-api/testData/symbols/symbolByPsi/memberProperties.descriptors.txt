@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /A.x
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -61,7 +62,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(10)
+  initializer: KaConstantInitializerValue(10)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -126,6 +127,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /A.y
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -164,7 +166,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Int
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: A
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -221,7 +223,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

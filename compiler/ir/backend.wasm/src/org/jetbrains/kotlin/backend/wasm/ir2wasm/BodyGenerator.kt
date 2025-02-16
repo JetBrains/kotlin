@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -37,7 +38,7 @@ class BodyGenerator(
     private val functionContext: WasmFunctionCodegenContext,
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     val body: WasmExpressionBuilder = functionContext.bodyGen
 
     // Shortcuts
@@ -134,7 +135,7 @@ class BodyGenerator(
         val arrayClass = expression.type.getClass()!!
 
         val wasmArrayType = arrayClass.constructors
-            .mapNotNull { it.valueParameters.singleOrNull()?.type }
+            .mapNotNull { it.parameters.singleOrNull()?.type }
             .firstOrNull { it.getClass()?.getWasmArrayAnnotation() != null }
             ?.getRuntimeClass(irBuiltIns)?.symbol
             ?.let(wasmFileCodegenContext::referenceGcType)
@@ -393,7 +394,7 @@ class BodyGenerator(
         else
             wasmFileCodegenContext.jsExceptionTagIndex
 
-        body.buildCatch(tag)
+        body.buildCatch(tag, SourceLocation.NextLocation)
 
         if (tag === wasmFileCodegenContext.jsExceptionTagIndex) {
             lastCatchBlock.wrapJsThrownValueIntoJsException()
@@ -548,8 +549,8 @@ class BodyGenerator(
         val location = expression.getSourceLocation()
 
         if (klass.getWasmArrayAnnotation() != null) {
-            require(expression.valueArgumentsCount == 1) { "@WasmArrayOf constructs must have exactly one argument" }
-            generateExpression(expression.getValueArgument(0)!!)
+            require(expression.arguments.size == 1) { "@WasmArrayOf constructs must have exactly one argument" }
+            generateExpression(expression.arguments[0]!!)
             body.buildInstr(
                 WasmOp.ARRAY_NEW_DEFAULT,
                 location,
@@ -561,9 +562,8 @@ class BodyGenerator(
 
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
             generateAnyParameters(klassSymbol, location)
-            for (i in 0 until expression.valueArgumentsCount) {
-                generateExpression(expression.getValueArgument(i)!!)
-            }
+            expression.arguments.forEach { generateExpression(it!!) }
+
             body.buildStructNew(wasmGcType, location)
             body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
             return
@@ -635,7 +635,9 @@ class BodyGenerator(
     }
 
     private fun generateCall(call: IrFunctionAccessExpression) {
-        val location = call.getSourceLocation()
+        val location = if (call.origin === IrStatementOrigin.DEFAULT_DISPATCH_CALL)
+            SourceLocation.NoLocation("Default dispatch")
+        else call.getSourceLocation()
 
         if (call.symbol == unitGetInstance.symbol) {
             body.buildGetUnit()
@@ -645,16 +647,16 @@ class BodyGenerator(
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
         if (call.symbol == wasmSymbols.boxBoolean) {
-            generateBox(call.getValueArgument(0)!!, irBuiltIns.booleanType)
+            generateBox(call.arguments[0]!!, irBuiltIns.booleanType)
             return
         }
         if (call.symbol == wasmSymbols.boxIntrinsic) {
             val type = call.typeArguments[0]!!
             if (type == irBuiltIns.booleanType) {
-                generateExpression(call.getValueArgument(0)!!)
+                generateExpression(call.arguments[0]!!)
                 body.buildCall(wasmFileCodegenContext.referenceFunction(backendContext.wasmSymbols.getBoxedBoolean), location)
             } else {
-                generateBox(call.getValueArgument(0)!!, type)
+                generateBox(call.arguments[0]!!, type)
             }
             return
         }
@@ -675,11 +677,7 @@ class BodyGenerator(
 
         val function: IrFunction = call.symbol.owner.realOverrideTarget
 
-        call.dispatchReceiver?.let { generateExpression(it) }
-        call.extensionReceiver?.let { generateExpression(it) }
-        for (i in 0 until call.valueArgumentsCount) {
-            generateExpression(call.getValueArgument(i)!!)
-        }
+        call.arguments.forEach { generateExpression(it!!) }
 
         if (tryToGenerateIntrinsicCall(call, function)) {
             if (function.returnType.isUnit())
@@ -795,7 +793,7 @@ class BodyGenerator(
 
     private fun isDownCastAlwaysSuccessInRuntime(fromType: IrType, toType: IrType): Boolean {
         val upperBound = fromType.erasedUpperBound
-        if (upperBound != null && upperBound.symbol.isSubtypeOfClass(backendContext.wasmSymbols.wasmAnyRefClass)) {
+        if (upperBound.symbol.isSubtypeOfClass(backendContext.wasmSymbols.wasmAnyRefClass)) {
             return false
         }
         return fromType.getRuntimeClass(irBuiltIns).isSubclassOf(toType.getRuntimeClass(irBuiltIns))
@@ -863,7 +861,7 @@ class BodyGenerator(
 
             wasmSymbols.refCastNull -> {
                 generateRefCast(
-                    fromType = call.getValueArgument(0)!!.type,
+                    fromType = call.arguments[0]!!.type,
                     toType = call.typeArguments[0]!!,
                     isRefNullCast = true,
                     location = location,
@@ -872,7 +870,7 @@ class BodyGenerator(
 
             wasmSymbols.refTest -> {
                 generateRefTest(
-                    fromType = call.getValueArgument(0)!!.type,
+                    fromType = call.arguments[0]!!.type,
                     toType = call.typeArguments[0]!!,
                     location
                 )
@@ -951,21 +949,17 @@ class BodyGenerator(
     }
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
-        body.buildNop(inlinedBlock.getSourceLocation())
-
-        functionContext.stepIntoInlinedFunction(inlinedBlock.inlineFunctionSymbol, inlinedBlock.fileEntry)
-        super.visitInlinedFunctionBlock(inlinedBlock)
-        functionContext.stepOutLastInlinedFunction()
-    }
-
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Nothing?) {
-        val inlineFunction = inlinedBlock.inlineFunctionSymbol?.owner
+        val inlineFunction = inlinedBlock.inlinedFunctionSymbol?.owner
         val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
         val owner = correspondingProperty?.owner ?: inlineFunction
         val name = owner?.fqNameWhenAvailable?.asString() ?: owner?.name?.asString() ?: "UNKNOWN"
 
         body.commentGroupStart { "Inlined call of `$name`" }
-        super.visitInlinedFunctionBlock(inlinedBlock, data)
+        body.buildNop(inlinedBlock.getSourceLocation())
+
+        functionContext.stepIntoInlinedFunction(inlinedBlock.inlinedFunctionSymbol, inlinedBlock.inlinedFunctionFileEntry)
+        super.visitInlinedFunctionBlock(inlinedBlock)
+        functionContext.stepOutLastInlinedFunction()
     }
 
     override fun visitReturnableBlock(expression: IrReturnableBlock) {
@@ -1145,22 +1139,33 @@ class BodyGenerator(
     }
 
     override fun visitWhen(expression: IrWhen) {
-        if (tryGenerateOptimisedWhen(expression, backendContext.wasmSymbols, functionContext, wasmModuleTypeTransformer)) {
+        if (!backendContext.isDebugFriendlyCompilation && tryGenerateOptimisedWhen(expression, backendContext.wasmSymbols, functionContext, wasmModuleTypeTransformer)) {
+            return
+        }
+
+        val branches = expression.branches
+        val onlyOneBranch = branches.singleOrNull()
+
+        if (onlyOneBranch != null && isElseBranch(onlyOneBranch)) {
+            generateExpression(onlyOneBranch.result)
             return
         }
 
         val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
         var ifCount = 0
         var seenElse = false
+        val isLogicalOperator = expression.origin == IrStatementOrigin.ANDAND || expression.origin == IrStatementOrigin.OROR
+        val expressionLocation = expression.takeIf { isLogicalOperator }?.getSourceLocation()
 
-        for (branch in expression.branches) {
+        for (branch in branches) {
             if (!isElseBranch(branch)) {
+                if (ifCount > 0) body.buildElse()
                 generateExpression(branch.condition)
                 body.buildIf(null, resultType)
                 generateWithExpectedType(branch.result, expression.type)
-                body.buildElse()
                 ifCount++
             } else {
+                body.buildElse(expressionLocation)
                 generateWithExpectedType(branch.result, expression.type)
                 seenElse = true
                 break
@@ -1172,13 +1177,17 @@ class BodyGenerator(
         if (!seenElse && resultType != null) {
             assert(expression.type != irBuiltIns.nothingType)
             if (expression.type.isUnit()) {
+                if (branches.isNotEmpty()) body.buildElse()
                 body.buildGetUnit()
             } else {
                 error("'When' without else branch and non Unit type: ${expression.type.dumpKotlinLike()}")
             }
         }
 
-        repeat(ifCount) { body.buildEnd() }
+        repeat(ifCount) {
+            val endLocation = branches[branches.lastIndex - it].takeIf { !isLogicalOperator }?.nextLocation()
+            body.buildEnd(endLocation)
+        }
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop) {
@@ -1240,7 +1249,7 @@ class BodyGenerator(
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = functionContext.referenceLocal(declaration.symbol)
-        body.buildSetLocal(varName, declaration.getSourceLocation())
+        body.buildSetLocal(varName, init.getSourceLocation())
     }
 
     // Return true if function is recognized as intrinsic.
@@ -1298,4 +1307,9 @@ class BodyGenerator(
     private fun IrElement.getSourceEndLocation() = getSourceLocation(
         functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull, type = LocationType.END
     )
+
+    private fun IrElement.nextLocation() = when (getSourceLocation()) {
+        is SourceLocation.DefinedLocation -> SourceLocation.NextLocation
+        else -> SourceLocation.NoLocation
+    }
 }

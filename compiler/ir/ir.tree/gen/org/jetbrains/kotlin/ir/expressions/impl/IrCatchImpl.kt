@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,5 +24,7 @@ class IrCatchImpl internal constructor(
     override var catchParameter: IrVariable,
     override var origin: IrStatementOrigin?,
 ) : IrCatch() {
+    override var attributeOwnerId: IrElement = this
+
     override lateinit var result: IrExpression
 }

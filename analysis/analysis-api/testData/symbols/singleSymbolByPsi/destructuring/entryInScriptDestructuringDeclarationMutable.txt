@@ -3,6 +3,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: null
   callableId: /a
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -34,7 +35,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: KtNonConstantInitializerValue(a)
+  initializer: KaNonConstantInitializerValue(a)
   isActual: false
   isConst: false
   isDelegatedProperty: false

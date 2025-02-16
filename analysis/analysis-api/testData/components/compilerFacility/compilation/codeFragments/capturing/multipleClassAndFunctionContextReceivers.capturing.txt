@@ -1,3 +1,4 @@
+Captured values:
 ContainingClass[name: <this>; isMutated: false; displayText: this@Test]
     context(R|Ctx1|, R|Ctx2|)
     class Test : R|kotlin/Any|
@@ -8,3 +9,4 @@ ContextReceiver[name: Ctx3; isMutated: false; displayText: this@Ctx3]
 ContextReceiver[name: Ctx4; isMutated: false; displayText: this@Ctx4]
     R|Ctx4|
     R|Ctx4|
+No captured files

@@ -2,6 +2,7 @@ KtNameReferenceExpression(64,65): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -9,6 +10,7 @@ KtNameReferenceExpression(64,65): 'a'
           receiverType = null
           returnType = test.A
           symbol = vararg a: test.A
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

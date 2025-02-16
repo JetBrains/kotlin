@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -42,7 +43,7 @@ KaNamedFunctionSymbol:
       type: kotlin/String
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(extensionFunction.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: ExtensionFunctionKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

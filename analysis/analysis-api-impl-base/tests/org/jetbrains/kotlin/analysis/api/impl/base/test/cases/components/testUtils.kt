@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,18 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.KaMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
-import org.jetbrains.kotlin.analysis.api.resolution.KaApplicableCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaInapplicableCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
-import org.jetbrains.kotlin.analysis.api.resolution.calls
-import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -66,16 +55,19 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
             }
 
             @Suppress("DEPRECATION")
-            (this@with as? KaCallableSymbol)?.dispatchReceiverType?.let { dispatchReceiverType ->
+            dispatchReceiverType?.let { dispatchReceiverType ->
                 append("<dispatch receiver>: ${dispatchReceiverType.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
+
             valueParameters.joinTo(this) { stringRepresentation(it) }
             append(")")
             append(": ${returnType.render()}")
         }
         is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
+        // Receiver parameter should be rendered as it is because it is hard to cover it with tests overwise
         is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
+        is KaParameterSymbol -> "$name: ${returnType.render()}"
         is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
         is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
@@ -145,7 +137,8 @@ private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): S
         KaCallableSignature<*>::returnType,
         KaCallableSignature<*>::symbol,
         KaFunctionSignature<*>::valueParameters.takeIf { signature is KaFunctionSignature<*> },
-        KaCallableSignature<*>::callableId
+        KaCallableSignature<*>::contextParameters,
+        KaCallableSignature<*>::callableId,
     )
 
     memberProperties.joinTo(this, separator = "\n  ", prefix = ":\n  ") { property ->
@@ -159,6 +152,12 @@ private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): S
 private fun String.indented() = replace("\n", "\n  ")
 
 internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): String = prettyPrint {
+    printCollectionIfNotEmpty(signature.contextParameters, prefix = "context(", postfix = ") ") { contextParameter ->
+        append(contextParameter.name.asString())
+        append(": ")
+        append(contextParameter.returnType.render(position = Variance.INVARIANT))
+    }
+
     when (signature) {
         is KaFunctionSignature -> {
             append("fun ")

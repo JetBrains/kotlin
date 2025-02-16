@@ -52,6 +52,18 @@ public class SourceLazyAnnotationsResolveTestGenerated extends AbstractSourceLaz
     }
 
     @Test
+    @TestMetadata("contextWithRegularAnnotation.kt")
+    public void testContextWithRegularAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/contextWithRegularAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationWithArguments.kt")
+    public void testContextWithRegularAnnotationWithArguments() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/contextWithRegularAnnotationWithArguments.kt");
+    }
+
+    @Test
     @TestMetadata("dataClassCopyParameter.kt")
     public void testDataClassCopyParameter() {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/annotations/dataClassCopyParameter.kt");
@@ -209,6 +221,18 @@ public class SourceLazyAnnotationsResolveTestGenerated extends AbstractSourceLaz
     @TestMetadata("classWithoutAnnotations.kt")
     public void testClassWithoutAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/classWithoutAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotation.kt")
+    public void testContextWithRegularAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/contextWithRegularAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationWithArguments.kt")
+    public void testContextWithRegularAnnotationWithArguments() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/classIds/contextWithRegularAnnotationWithArguments.kt");
     }
 
     @Test
@@ -375,6 +399,30 @@ public class SourceLazyAnnotationsResolveTestGenerated extends AbstractSourceLaz
     @TestMetadata("classWithoutAnnotations.kt")
     public void testClassWithoutAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/classWithoutAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationFalse.kt")
+    public void testContextWithRegularAnnotationFalse() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/contextWithRegularAnnotationFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationTrue.kt")
+    public void testContextWithRegularAnnotationTrue() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/contextWithRegularAnnotationTrue.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationWithArgumentsFalse.kt")
+    public void testContextWithRegularAnnotationWithArgumentsFalse() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/contextWithRegularAnnotationWithArgumentsFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationWithArgumentsTrue.kt")
+    public void testContextWithRegularAnnotationWithArgumentsTrue() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/contextWithRegularAnnotationWithArgumentsTrue.kt");
     }
 
     @Test
@@ -607,6 +655,30 @@ public class SourceLazyAnnotationsResolveTestGenerated extends AbstractSourceLaz
     @TestMetadata("classWithoutAnnotations.kt")
     public void testClassWithoutAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/classWithoutAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationFalse.kt")
+    public void testContextWithRegularAnnotationFalse() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/contextWithRegularAnnotationFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationTrue.kt")
+    public void testContextWithRegularAnnotationTrue() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/contextWithRegularAnnotationTrue.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationWithArgumentsFalse.kt")
+    public void testContextWithRegularAnnotationWithArgumentsFalse() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/contextWithRegularAnnotationWithArgumentsFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("contextWithRegularAnnotationWithArgumentsTrue.kt")
+    public void testContextWithRegularAnnotationWithArgumentsTrue() {
+      runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/contextWithRegularAnnotationWithArgumentsTrue.kt");
     }
 
     @Test

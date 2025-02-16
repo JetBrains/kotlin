@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -60,6 +61,8 @@ class Fir2IrLazyTypeAlias(
     override var expandedType: IrType by lazyVar(lock) {
         fir.expandedTypeRef.toIrType(typeConverter)
     }
+
+    override var attributeOwnerId: IrElement = this
 
     override var metadata: MetadataSource?
         get() = null

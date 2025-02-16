@@ -1,6 +1,5 @@
 // LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// IGNORE_BACKEND: JVM
 
 fun useSuspendVararg(vararg sfn: suspend () -> Unit) {}
 

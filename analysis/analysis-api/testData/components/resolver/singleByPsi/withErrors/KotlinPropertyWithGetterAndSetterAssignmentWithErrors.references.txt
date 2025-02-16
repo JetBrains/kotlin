@@ -1,0 +1,17 @@
+<caret_1>:
+  KtNameReferenceExpression(100,109): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+
+<caret_2>:
+  KtNameReferenceExpression(118,127): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+
+<caret_3>:
+  KtNameReferenceExpression(140,149): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int

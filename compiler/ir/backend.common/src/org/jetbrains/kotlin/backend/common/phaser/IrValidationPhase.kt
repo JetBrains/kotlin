@@ -46,6 +46,7 @@ open class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: C
         )
 }
 
+@PhaseDescription(name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase")
 class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker
@@ -59,7 +60,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
         )
 }
 
-class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>(
+class IrValidationAfterInliningAllFunctionsPhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker? = null
 ) : IrValidationPhase<Context>(context) {
@@ -75,7 +76,7 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : CommonBackendContext>
         )
 }
 
-open class IrValidationAfterLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
+open class IrValidationAfterLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig()
 }

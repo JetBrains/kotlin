@@ -3,11 +3,11 @@ FILE fqName:<root> fileName:/justLambda.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test1'
                 CONST Int type=kotlin.Int value=42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Int>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:kotlin.Function0<kotlin.Int>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function0<kotlin.Int> declared in <root>'
@@ -16,11 +16,11 @@ FILE fqName:<root> fileName:/justLambda.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
-                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit>
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL returnType:kotlin.Function0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Function0<kotlin.Unit> declared in <root>'

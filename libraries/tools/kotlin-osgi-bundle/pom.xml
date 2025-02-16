@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kotlin-project</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
-        <version>2.1.255-SNAPSHOT</version>
+        <version>2.2.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -43,6 +43,19 @@
                             <includeGroupIds>${project.parent.groupId}</includeGroupIds>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <excludes>**/MANIFEST.MF</excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>sources</classifier>
+                            <includeScope>compile</includeScope>
+                            <includeGroupIds>${project.parent.groupId}</includeGroupIds>
+                            <outputDirectory>${project.build.directory}/sources</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -86,15 +99,14 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>empty-sources-jar</id>
+                        <id>sources-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <skipIfEmpty>false</skipIfEmpty>
                             <classifier>sources</classifier>
-                            <classesDirectory>${basedir}/sources</classesDirectory>
+                            <classesDirectory>${project.build.directory}/sources</classesDirectory>
                         </configuration>
                     </execution>
                 </executions>

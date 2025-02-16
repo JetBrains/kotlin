@@ -103,7 +103,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(constructor, "FirConstructorImpl") {
             openBuilder()
-            withCopy()
         }
 
         builder(typeParameter) {
@@ -247,6 +246,13 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             withCopy()
         }
 
+        builder(errorProperty) {
+            parents += variableBuilder
+            parents += typeParametersOwnerBuilder
+            defaultFalse("isLocal")
+            default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
+        }
+
         builder(field) {
             parents += variableBuilder
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
@@ -273,6 +279,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(stringConcatenationCall) {
             parents += callBuilder
+            defaultFalse("isFoldedStrings")
         }
 
         builder(thisReceiverExpression) {
@@ -283,6 +290,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(anonymousFunction) {
             parents += functionBuilder
+            parents += typeParametersOwnerBuilder
             defaultNull("invocationKind", "label", "body", "controlFlowGraphReference", "contractDescription")
             default("inlineStatus", "InlineStatus.Unknown")
             default("status", "FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS")

@@ -1,0 +1,16 @@
+Diagnostics from elements:
+  for PSI element of type KtContextReceiverList at (14,5-18)
+    CONTEXT_PARAMETERS_UNSUPPORTED      text ranges: [(170,183)]
+      PSI: KtContextReceiverList at (14,5-18)
+  for PSI element of type KtContextReceiverList at (21,5-18)
+    CONTEXT_PARAMETERS_UNSUPPORTED      text ranges: [(298,311)]
+      PSI: KtContextReceiverList at (21,5-18)
+  for PSI element of type KtContextReceiverList at (8,5-18)
+    CONTEXT_PARAMETERS_UNSUPPORTED      text ranges: [(86,99)]
+      PSI: KtContextReceiverList at (8,5-18)
+  for PSI element of type KtNameReferenceExpression at (11,9-10)
+    UNRESOLVED_REFERENCE      text ranges: [(149,150)]
+      PSI: KtNameReferenceExpression at (11,9-10)
+  for PSI element of type KtNameReferenceExpression at (18,20-21)
+    UNRESOLVED_REFERENCE      text ranges: [(273,274)]
+      PSI: KtNameReferenceExpression at (18,20-21)

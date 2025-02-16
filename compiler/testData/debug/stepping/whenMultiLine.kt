@@ -75,16 +75,29 @@ fun box() {
 // test.kt:30 box
 
 // EXPECTATIONS WASM
-// test.kt:27 $box (8, 4, 4)
-// test.kt:6 $foo (8, 8, 8)
-// test.kt:7 $foo
-// test.kt:15 $foo (8, 8, 8)
-// test.kt:16 $foo
-// test.kt:23 $foo (11, 4, 11, 4, 11, 4)
-// test.kt:28 $box (8, 4, 4)
-// test.kt:9 $foo
-// test.kt:18 $foo
+// test.kt:27 $box (8, 4)
+// test.kt:6 $foo (8, 13, 8)
+// test.kt:7 $foo (12)
+// test.kt:15 $foo (8, 13, 8)
+// test.kt:16 $foo (12)
+// test.kt:23 $foo (11, 4)
+// test.kt:27 $box (4)
+// test.kt:28 $box (8, 4)
+// test.kt:6 $foo (8, 13, 8)
+// test.kt:8 $foo (8, 13, 8)
+// test.kt:9 $foo (12)
+// test.kt:15 $foo (8, 13, 8)
+// test.kt:17 $foo (8, 13, 8)
+// test.kt:18 $foo (12)
+// test.kt:23 $foo (11, 4)
+// test.kt:28 $box (4)
 // test.kt:29 $box (8, 4)
-// test.kt:11 $foo
-// test.kt:20 $foo
-// test.kt:30 $box
+// test.kt:6 $foo (8, 13, 8)
+// test.kt:8 $foo (8, 13, 8)
+// test.kt:11 $foo (12)
+// test.kt:15 $foo (8, 13, 8)
+// test.kt:17 $foo (8, 13, 8)
+// test.kt:20 $foo (12)
+// test.kt:23 $foo (11, 4)
+// test.kt:29 $box (4)
+// test.kt:30 $box (1)

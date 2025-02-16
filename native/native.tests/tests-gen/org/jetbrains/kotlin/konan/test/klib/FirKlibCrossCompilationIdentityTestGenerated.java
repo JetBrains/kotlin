@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.klib;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -20,7 +19,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/cross-compilation/identity")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("frontend-fir")
 @FirPipeline()
 public class FirKlibCrossCompilationIdentityTestGenerated extends AbstractFirKlibCrossCompilationIdentityTest {
   @Test

@@ -4,6 +4,7 @@ KtCallableReferenceExpression(114,120): '::Anno'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -16,7 +17,9 @@ KtCallableReferenceExpression(114,120): '::Anno'
               receiverType = null
               returnType = kotlin.String
               symbol = value: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

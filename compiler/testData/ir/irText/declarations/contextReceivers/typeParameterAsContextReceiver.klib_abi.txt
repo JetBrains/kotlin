@@ -5,4 +5,4 @@
 
 // Library unique name: <main>
 final fun /test() // /test|test(){}[0]
-final fun <#A: kotlin/Any?> context(#A) /useContext(kotlin/Function1<#A, kotlin/Unit>) // /useContext|useContext!0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> (context(#A))./useContext(kotlin/Function1<#A, kotlin/Unit>) // /useContext|useContext(0:0)(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]

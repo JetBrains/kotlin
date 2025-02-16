@@ -7,10 +7,12 @@ KtNameReferenceExpression(55,59): 'TODO'
           receiverType = null
           returnType = kotlin.String
           symbol = reason: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,7 +25,9 @@ KtNameReferenceExpression(55,59): 'TODO'
               receiverType = null
               returnType = kotlin.String
               symbol = reason: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/TODO
       typeArgumentsMapping = {}

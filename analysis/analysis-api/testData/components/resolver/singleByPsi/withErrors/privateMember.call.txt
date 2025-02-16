@@ -5,6 +5,7 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
             isSafeNavigation = false
@@ -15,6 +16,7 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
             returnType = kotlin.Unit
             symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
             valueParameters = []
+            contextParameters = []
             callableId = /A.foo
         typeArgumentsMapping = {}
     ]

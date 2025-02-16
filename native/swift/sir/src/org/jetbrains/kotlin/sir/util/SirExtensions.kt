@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.sir.*
 
 val SirCallable.allParameters: List<SirParameter>
     get() = when (this) {
-        is SirFunction -> this.parameters
+        is SirFunction -> listOfNotNull(this.extensionReceiverParameter) + this.parameters
         is SirInit -> this.parameters
         is SirSetter -> listOf(SirParameter(parameterName = parameterName, type = this.valueType))
         is SirGetter -> listOf()
@@ -50,7 +50,8 @@ fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () ->
 
 val SirType.swiftName
     get(): String = when (this) {
-        is SirExistentialType -> "Any"
+        is SirExistentialType -> protocols.takeIf { it.isNotEmpty() }?.joinToString(prefix = "any ", separator = " & ") { it.swiftFqName }
+            ?: "Any"
         is SirNominalType -> listOfNotNull(
             parent?.swiftName?.let { "$it." },
             typeDeclaration.swiftFqName,

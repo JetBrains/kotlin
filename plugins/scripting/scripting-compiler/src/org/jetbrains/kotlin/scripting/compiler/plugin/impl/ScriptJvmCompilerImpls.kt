@@ -7,27 +7,15 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
-import org.jetbrains.kotlin.cli.common.SessionWithSources
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
-import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForPsi
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
-import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.prepareJvmSessions
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
-import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -260,13 +248,9 @@ private fun doCompile(
 
     val codegenFactory = JvmIrCodegenFactory(context.environment.configuration)
 
-    val psi2irInput =
-        CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(generationState, sourceFiles, analysisResult.bindingContext)
-    val backendInput = codegenFactory.convertToIr(psi2irInput)
+    val backendInput = codegenFactory.convertToIr(generationState, sourceFiles, analysisResult.bindingContext)
 
     codegenFactory.generateModule(generationState, backendInput)
-    CodegenFactory.doCheckCancelled(generationState)
-    generationState.factory.done()
 
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
         diagnosticsReporter,

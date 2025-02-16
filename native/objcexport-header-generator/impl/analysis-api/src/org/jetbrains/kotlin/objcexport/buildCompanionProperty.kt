@@ -25,11 +25,12 @@ internal fun ObjCExportContext.buildCompanionProperty(classSymbol: KaClassSymbol
 
     val companion = if (analysisSession.hasCompanionObject(classSymbol)) analysisSession.getCompanion(classSymbol) else classSymbol
     val typeName = getObjCClassOrProtocolName(companion as KaClassSymbol)
+    val origin = analysisSession.getObjCExportStubOrigin(companion)
 
     return ObjCProperty(
         name = propertyName,
         comment = null,
-        origin = null,
+        origin = origin,
         type = ObjCClassType(typeName.objCName, extras = objCTypeExtras {
             requiresForwardDeclaration = true
             originClassId = companion.classId

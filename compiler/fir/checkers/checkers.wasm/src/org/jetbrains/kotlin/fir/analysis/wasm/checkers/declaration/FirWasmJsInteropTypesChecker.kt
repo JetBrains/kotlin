@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
@@ -48,6 +49,14 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
             !isJsExportedDeclaration(declaration, session)
         ) {
             return
+        }
+
+        if (declaration is FirFunction && isJsExportedDeclaration(declaration, session)) {
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                if (declaration.contextParameters.isNotEmpty()) {
+                    reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS, context)
+                }
+            }
         }
 
         // filter out compiler-generated declarations (data/enum methods, property accessors, primary constructors, etc.) to prevent

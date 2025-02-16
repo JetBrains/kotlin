@@ -5,7 +5,7 @@ KaClassErrorType:
     classId: expansion/FooAlias
     nullability: NON_NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: FooAlias
         symbol: KaTypeAliasSymbol(expansion/FooAlias)
         typeArguments: []
@@ -18,10 +18,10 @@ KaClassErrorType:
   nullability: NON_NULLABLE
   presentableText: base.Foo
   qualifiers: [
-    qualifier:
+    KaUnresolvedClassTypeQualifier:
       name: base
       typeArguments: []
-    qualifier:
+    KaUnresolvedClassTypeQualifier:
       name: Foo
       typeArguments: []
   ]

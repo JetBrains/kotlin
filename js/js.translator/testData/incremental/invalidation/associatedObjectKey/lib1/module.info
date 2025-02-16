@@ -1,0 +1,11 @@
+STEP 0:
+    modifications:
+        U : Annotation1.0.kt -> Annotation1.kt
+        U : Annotation2.0.kt -> Annotation2.kt
+    added file: Annotation1.kt, Annotation2.kt
+STEP 1:
+    modifications:
+        U : Annotation3.1.kt -> Annotation3.kt
+        U : Annotation4.1.kt -> Annotation4.kt
+    added file: Annotation3.kt, Annotation4.kt
+STEP 2:

@@ -1,6 +1,7 @@
 FILE: contextParameters.kt
     context(s: String)
     public final? class C : R|kotlin/Any| {
+        context(s: String, s: String)
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

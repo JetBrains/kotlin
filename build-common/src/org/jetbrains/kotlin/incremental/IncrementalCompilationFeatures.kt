@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,8 +33,15 @@ import java.io.Serializable
  */
 data class IncrementalCompilationFeatures(
     /**
-     * Snapshot-based cross-module IC if true, BuildHistory-based if false.
+     * Analyses changes in java files more carefully, but can run additional rounds of compilation.
+     *
+     * Only available in K1. See KT-57147
+     */
+    val usePreciseJavaTracking: Boolean = false,
+    /**
      * Snapshot-based IC is only available in JVM.
+     * BuildHistory-based IC is only available in JS.
+     * This field would be soon removed.
      */
     val withAbiSnapshot: Boolean = false,
     /**
@@ -54,11 +61,23 @@ data class IncrementalCompilationFeatures(
      * You can enable "unsafeIC" to use pre-2.0 behavior with potentially incorrect incremental builds.
      */
     val enableUnsafeIncrementalCompilationForMultiplatform: Boolean = false,
+    /**
+     * Scope expansion policy governs the cases where incremental compilation uses multiple compilation steps.
+     *
+     * For example, suppose that we compile a.kt incrementally, and we find out that it has introduced
+     * an overload of fun fooBar in package org.example.
+     * Now we need to recompile usages of org.example.fooBar to ensure that they're linked against the most appropriate
+     * overload visible to them. Suppose that all these usages are in b.kt.
+     *
+     * Then, in Monotonous mode the next compilation step would include both a.kt and b.kt.
+     * And in the original mode the next compilation step would include only the files that weren't compiled previously.
+     */
+    val enableMonotonousIncrementalCompileSetExpansion: Boolean = false,
 ) : Serializable {
 
     companion object {
         val DEFAULT_CONFIGURATION = IncrementalCompilationFeatures()
 
-        const val serialVersionUID: Long = 1
+        const val serialVersionUID: Long = 3L
     }
 }

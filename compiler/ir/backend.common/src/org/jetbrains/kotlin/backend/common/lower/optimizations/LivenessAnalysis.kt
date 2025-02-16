@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.backend.common.lower.optimizations
 
 import org.jetbrains.kotlin.backend.common.copy
 import org.jetbrains.kotlin.backend.common.forEachBit
+import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.backend.common.ir.isUnconditional
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.*
 
@@ -27,7 +27,7 @@ object LivenessAnalysis {
 
     private fun IrElement.getImmediateChildren(): List<IrElement> {
         val result = mutableListOf<IrElement>()
-        acceptChildrenVoid(object : IrElementVisitorVoid {
+        acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 result.add(element)
                 // Do not recurse.
@@ -41,7 +41,7 @@ object LivenessAnalysis {
      * this directly translates to the AST traversal from right to left.
      * Each visitXXX takes live variables ~after~ the [element] and returns live variables ~before~ the [element].
      */
-    private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrElementVisitor<BitSet, BitSet> {
+    private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrVisitor<BitSet, BitSet>() {
         private val variables = mutableListOf<IrVariable>()
         private val variableIds = mutableMapOf<IrVariable, Int>()
         private val filteredElementEndsLV = mutableMapOf<IrElement, BitSet>()

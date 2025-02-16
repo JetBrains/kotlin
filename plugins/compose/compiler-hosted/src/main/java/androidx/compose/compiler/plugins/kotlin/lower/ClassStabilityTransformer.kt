@@ -191,7 +191,7 @@ class ClassStabilityTransformer(
             it.putValueArgument(0, irConst(parameterMask))
         }
 
-        if (useK2) {
+        if (useK2 && cls.hasFirDeclaration()) {
             context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(
                 cls,
                 annotation,

@@ -64,8 +64,33 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /tooo
   compilerVisibility: Public
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: A
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: A
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
+      getContainingJvmClassName: SimilarSignaturesKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
   contextReceivers: [
-    KtContextReceiver:
+    KaContextReceiver:
       label: A
       type: KaUsualClassType:
         annotations: []
@@ -108,8 +133,33 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /tooo
   compilerVisibility: Public
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: B
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: B
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
+      getContainingJvmClassName: SimilarSignaturesKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
   contextReceivers: [
-    KtContextReceiver:
+    KaContextReceiver:
       label: B
       type: KaUsualClassType:
         annotations: []
@@ -152,14 +202,62 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /tooo
   compilerVisibility: Public
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: A
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: A
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
+      getContainingJvmClassName: SimilarSignaturesKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: B
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: B
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
+      getContainingJvmClassName: SimilarSignaturesKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
   contextReceivers: [
-    KtContextReceiver:
+    KaContextReceiver:
       label: A
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: A
-    KtContextReceiver:
+    KaContextReceiver:
       label: B
       type: KaUsualClassType:
         annotations: []
@@ -202,14 +300,62 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /tooo
   compilerVisibility: Public
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: B
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: B
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
+      getContainingJvmClassName: SimilarSignaturesKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: A
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: A
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
+      getContainingJvmClassName: SimilarSignaturesKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
   contextReceivers: [
-    KtContextReceiver:
+    KaContextReceiver:
       label: B
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: B
-    KtContextReceiver:
+    KaContextReceiver:
       label: A
       type: KaUsualClassType:
         annotations: []

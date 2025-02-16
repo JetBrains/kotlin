@@ -148,18 +148,6 @@ interface KaptExtensionConfig {
  * A DSL to specify arguments that are used during kapt processing.
  */
 interface KaptArguments {
-
-    /**
-     * Adds argument with the specified name and values.
-     *
-     * Expected [name] and [values] type is [String].
-     */
-    @Deprecated(
-        message = "This function with Any parameters is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameters.",
-        replaceWith = ReplaceWith("arg(name.toString(), *values.map { it.toString() }.toTypedArray())")
-    )
-    fun arg(name: Any, vararg values: Any)
-
     /**
      * Adds argument with the specified name and values.
      */
@@ -170,33 +158,10 @@ interface KaptArguments {
  * A DSL to specify javac options that are used during kapt processing.
  */
 interface KaptJavacOption {
-
-    /**
-     * Adds an option with name and value.
-     *
-     * Expected [name] and [value] type is [String].
-     */
-    @Deprecated(
-        message = "This function with Any parameters is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameters.",
-        replaceWith = ReplaceWith("option(name.toString(), value.toString())")
-    )
-    fun option(name: Any, value: Any)
-
     /**
      * Adds an option with name and value.
      */
     fun option(name: String, value: String)
-
-    /**
-     * Adds an option with name only.
-     *
-     * Expected [name] type is [String].
-     */
-    @Deprecated(
-        message = "This function with Any parameter is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameter.",
-        replaceWith = ReplaceWith("option")
-    )
-    fun option(name: Any)
 
     /**
      * Adds an option with name only.

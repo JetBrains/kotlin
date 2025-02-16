@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-63076
-// LATEST_LV_DIFFERENCE
 
 // FILE: A.kt
 open class A {

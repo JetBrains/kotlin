@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.utils.TransformersFunctions;
@@ -25,7 +25,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
   @Nested
   @TestMetadata("compiler/testData/codegen/box")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-fir")
   @FirPipeline()
   @Tag("klibIrInliner")
   @UseExtTestCaseGroupProvider()
@@ -38,7 +37,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -123,7 +121,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -137,7 +134,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/instances")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -226,6 +222,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("rearrangedArgumentsInAnnotationCall.kt")
+        public void testRearrangedArgumentsInAnnotationCall() {
+          runTest("compiler/testData/codegen/box/annotations/instances/rearrangedArgumentsInAnnotationCall.kt");
+        }
+
+        @Test
         @TestMetadata("varargInAnnotationParameterInstantiation.kt")
         public void testVarargInAnnotationParameterInstantiation() {
           runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
@@ -235,7 +237,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/kClassMapping")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -249,7 +250,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/repeatable")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -263,7 +263,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/annotations/typeAnnotations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -290,7 +289,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/argumentOrder")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -400,7 +398,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arithmetic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -480,7 +477,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -859,7 +855,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/arraysOfInlineClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -891,7 +886,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/forInReversed")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -929,7 +923,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/forInUnsignedArray")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -991,7 +984,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -1052,7 +1044,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/int")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -1090,7 +1081,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/long")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -1130,7 +1120,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/assert")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -1185,7 +1174,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/assert/jvm")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -1200,7 +1188,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/basics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -1448,7 +1435,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bce")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -1570,7 +1556,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/binaryOp")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -1740,7 +1725,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/boxing")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -1868,7 +1852,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/boxingOptimization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -2122,7 +2105,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/branching")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -2208,11 +2190,14 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/bridges")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
     public class Bridges {
+      public Bridges() {
+        register("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+      }
+
       @Test
       @TestMetadata("abstractOverrideBridge.kt")
       public void testAbstractOverrideBridge() {
@@ -2426,6 +2411,13 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("kt46389_jvmDefault.kt")
       public void testKt46389_jvmDefault() {
         runTest("compiler/testData/codegen/box/bridges/kt46389_jvmDefault.kt");
+      }
+
+      @Test
+      @TestMetadata("kt74377.kt")
+      public void testKt74377() {
+        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+        runTest("compiler/testData/codegen/box/bridges/kt74377.kt");
       }
 
       @Test
@@ -2779,7 +2771,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -2860,7 +2851,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -2879,7 +2869,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -2893,7 +2882,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -2913,7 +2901,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -2927,7 +2914,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapRemove")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -2942,7 +2928,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -3135,7 +3120,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -3167,6 +3151,60 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @TestMetadata("boundReferences.kt")
         public void testBoundReferences() {
           runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/boundReferences.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionAdaptedReferences.kt")
+        public void testContextFunctionAdaptedReferences() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionAdaptedReferences.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionAnonymous.kt")
+        public void testContextFunctionAnonymous() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionAnonymous.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithDefaultValue.kt")
+        public void testContextFunctionWithDefaultValue() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithDefaultValue.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithExtensionProperty.kt")
+        public void testContextFunctionWithExtensionProperty() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithExtensionProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithPassedSuperType.kt")
+        public void testContextFunctionWithPassedSuperType() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithPassedSuperType.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithSam.kt")
+        public void testContextFunctionWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithSam.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionWithVararg.kt")
+        public void testContextFunctionWithVararg() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextFunctionWithVararg.kt");
+        }
+
+        @Test
+        @TestMetadata("contextPropertyWithSam.kt")
+        public void testContextPropertyWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextPropertyWithSam.kt");
+        }
+
+        @Test
+        @TestMetadata("contextTypeWithSam.kt")
+        public void testContextTypeWithSam() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/contextTypeWithSam.kt");
         }
 
         @Test
@@ -3227,6 +3265,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @TestMetadata("extensionPropertyToFun.kt")
         public void testExtensionPropertyToFun() {
           runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyToFun.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionPropertyWithAnonymousContextFun.kt")
+        public void testExtensionPropertyWithAnonymousContextFun() {
+          runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/extensionPropertyWithAnonymousContextFun.kt");
         }
 
         @Test
@@ -3388,7 +3432,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -3577,7 +3620,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/bound")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -3758,7 +3800,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/callableReference/bound/equals")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -3785,7 +3826,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/equality")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -3895,7 +3935,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/funInterfaceConstructor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -3939,7 +3978,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/function")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -4366,7 +4404,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/callableReference/function/local")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -4507,7 +4544,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/property")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -4668,6 +4704,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("kt74104.kt")
+        public void testKt74104() {
+          runTest("compiler/testData/codegen/box/callableReference/property/kt74104.kt");
+        }
+
+        @Test
         @TestMetadata("listOfStringsMapLength.kt")
         public void testListOfStringsMapLength() {
           runTest("compiler/testData/codegen/box/callableReference/property/listOfStringsMapLength.kt");
@@ -4755,7 +4797,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/callableReference/serializability")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -4776,7 +4817,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -4981,7 +5021,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/functions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -5073,7 +5112,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -5087,7 +5125,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -5137,7 +5174,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/mutableCollections")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -5193,7 +5229,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/casts/nativeCCEMessage")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -5232,7 +5267,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/checkcastOptimization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -5270,7 +5304,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classDelegation")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -5356,7 +5389,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classLiteral")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -5387,7 +5419,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -5425,7 +5456,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/classLiteral/java")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -5440,7 +5470,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/classes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -6113,7 +6142,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/classes/inner")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -6170,7 +6198,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/closures")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -6465,7 +6492,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/closures/captureInSuperConstructorCall")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -6671,7 +6697,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/closures/captureOuterProperty")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -6733,7 +6758,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -6825,7 +6849,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -6876,7 +6899,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/collectionLiterals")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -6890,7 +6912,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/collections")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -6940,7 +6961,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/companion")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -6978,7 +6998,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/compatibility")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -6998,7 +7017,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -7221,7 +7239,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -7235,7 +7252,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -7332,7 +7348,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -7353,7 +7368,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -7366,7 +7380,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -7401,65 +7414,63 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
+          @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
-          public class AllCompatibility {
+          public class Enable {
             @Test
-            public void testAllFilesPresentInAllCompatibility() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            public void testAllFilesPresentInEnable() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
 
             @Test
             @TestMetadata("superCall.kt")
             public void testSuperCall() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCall.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCall.kt");
             }
 
             @Test
             @TestMetadata("superCallFromInterface.kt")
             public void testSuperCallFromInterface() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallFromInterface.kt");
             }
 
             @Test
             @TestMetadata("superCallFromInterface2.kt")
             public void testSuperCallFromInterface2() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superCallFromInterface2.kt");
             }
 
             @Test
             @TestMetadata("superPropAccess.kt")
             public void testSuperPropAccess() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccess.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccess.kt");
             }
 
             @Test
             @TestMetadata("superPropAccessFromInterface.kt")
             public void testSuperPropAccessFromInterface() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccessFromInterface.kt");
             }
 
             @Test
             @TestMetadata("superPropAccessFromInterface2.kt")
             public void testSuperPropAccessFromInterface2() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/superPropAccessFromInterface2.kt");
             }
 
             @Nested
-            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
+            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
             public class DelegationBy {
               @Test
               public void testAllFilesPresentInDelegationBy() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/enable/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
               }
             }
           }
@@ -7467,26 +7478,19 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
           public class Interop {
             @Test
-            @TestMetadata("allAgainsAllCompatibility.kt")
-            public void testAllAgainsAllCompatibility() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
-            }
-
-            @Test
-            @TestMetadata("allCompatibilityAgainsAll.kt")
-            public void testAllCompatibilityAgainsAll() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
-            }
-
-            @Test
             public void testAllFilesPresentInInterop() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("enableAgainstNoCompatibility.kt")
+            public void testEnableAgainstNoCompatibility() {
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/enableAgainstNoCompatibility.kt");
             }
 
             @Test
@@ -7512,13 +7516,18 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             public void testNewAndOldSchemes2Compatibility() {
               runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
             }
+
+            @Test
+            @TestMetadata("noCompatibilityAgainstEnable.kt")
+            public void testNoCompatibilityAgainstEnable() {
+              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/noCompatibilityAgainstEnable.kt");
+            }
           }
         }
 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -7561,7 +7570,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -7595,7 +7603,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -7610,7 +7617,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/constants")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -7702,7 +7708,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/constructor")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -7716,7 +7721,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/constructorCall")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -7730,7 +7734,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/contextParameters")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -7741,9 +7744,99 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("assignmentOfContextVar.kt")
+      public void testAssignmentOfContextVar() {
+        runTest("compiler/testData/codegen/box/contextParameters/assignmentOfContextVar.kt");
+      }
+
+      @Test
+      @TestMetadata("classMemberAndTopLevelExtensionWithContext.kt")
+      public void testClassMemberAndTopLevelExtensionWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelExtensionWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("classMemberAndTopLevelWithContext.kt")
+      public void testClassMemberAndTopLevelWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("companionObjectInContext.kt")
+      public void testCompanionObjectInContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/companionObjectInContext.kt");
+      }
+
+      @Test
+      @TestMetadata("contextFunInSam.kt")
+      public void testContextFunInSam() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextFunInSam.kt");
+      }
+
+      @Test
       @TestMetadata("contextParameterToDefaultArgument.kt")
       public void testContextParameterToDefaultArgument() {
         runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextPropertyInInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualAnonymousFunAsAnExpression.kt")
+      public void testContextualAnonymousFunAsAnExpression() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunAsAnExpression.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualAnonymousFunction.kt")
+      public void testContextualAnonymousFunction() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunAndTopLevelFun.kt")
+      public void testContextualLocalFunAndTopLevelFun() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunAndTopLevelFun.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunWithExtensiionReceiver.kt")
+      public void testContextualLocalFunWithExtensiionReceiver() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunWithExtensiionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunWithTypeParam.kt")
+      public void testContextualLocalFunWithTypeParam() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunWithTypeParam.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunction.kt")
+      public void testContextualLocalFunction() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalWithLocalExtensionAndValue.kt")
+      public void testContextualLocalWithLocalExtensionAndValue() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalWithLocalExtensionAndValue.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyWithContextAndWithout.kt")
+      public void testPropertyWithContextAndWithout() {
+        runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
+      }
+
+      @Test
+      @TestMetadata("sameExtensionContextAndDispatchReceiver.kt")
+      public void testSameExtensionContextAndDispatchReceiver() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameExtensionContextAndDispatchReceiver.kt");
       }
 
       @Test
@@ -7765,9 +7858,21 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("sameNameWithLocalValueParameter.kt")
+      public void testSameNameWithLocalValueParameter() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalValueParameter.kt");
+      }
+
+      @Test
       @TestMetadata("sameNameWithMemberProperty.kt")
       public void testSameNameWithMemberProperty() {
         runTest("compiler/testData/codegen/box/contextParameters/sameNameWithMemberProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithOuterContext.kt")
+      public void testSameNameWithOuterContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithOuterContext.kt");
       }
 
       @Test
@@ -7775,12 +7880,35 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       public void testSameNameWithPropertyName() {
         runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
       }
+
+      @Test
+      @TestMetadata("typealiasOnTypeWithContext.kt")
+      public void testTypealiasOnTypeWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/typealiasOnTypeWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverAndThis.kt")
+      public void testWithExtensionReceiverAndThis() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverAndThis.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverInSupertype.kt")
+      public void testWithExtensionReceiverInSupertype() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverInSupertype.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverInType.kt")
+      public void testWithExtensionReceiverInType() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverInType.kt");
+      }
     }
 
     @Nested
     @TestMetadata("compiler/testData/codegen/box/contracts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -7920,7 +8048,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlStructures")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -8425,7 +8552,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -8558,7 +8684,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -8645,7 +8770,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArray")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -8719,7 +8843,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -8853,7 +8976,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -8951,7 +9073,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -9037,7 +9158,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -9051,7 +9171,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -9125,7 +9244,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -9169,7 +9287,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/slowDsl")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -9183,7 +9300,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -9378,7 +9494,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/controlflow")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -9512,7 +9627,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/coroutines")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -10533,7 +10647,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/bridges")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -10583,7 +10696,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/controlFlow")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -10666,12 +10778,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
-        @TestMetadata("kt72464.kt")
-        public void testKt72464() {
-          runTest("compiler/testData/codegen/box/coroutines/controlFlow/kt72464.kt");
-        }
-
-        @Test
         @TestMetadata("labeledWhile.kt")
         public void testLabeledWhile() {
           runTest("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt");
@@ -10741,7 +10847,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/debug")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -10755,7 +10860,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -10882,7 +10986,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -10913,7 +11016,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -10933,7 +11035,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -10958,7 +11059,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -10980,7 +11080,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -11018,7 +11117,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -11031,7 +11129,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -11046,7 +11143,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -11145,7 +11241,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -11176,7 +11271,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/direct")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -11472,7 +11566,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resume")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -11768,7 +11861,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -12035,7 +12127,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12109,7 +12200,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12183,7 +12273,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12197,7 +12286,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12210,7 +12298,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -12297,7 +12384,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/multiModule")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12365,7 +12451,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/redundantLocalsElimination")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12385,7 +12470,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/reflect")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12399,7 +12483,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/stackUnwinding")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12449,7 +12532,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/suspendConversion")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12493,7 +12575,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12609,7 +12690,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12653,7 +12733,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12690,7 +12769,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -12705,7 +12783,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/tailOperations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12743,7 +12820,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12799,7 +12875,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -12866,7 +12941,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -12880,7 +12954,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -12894,7 +12967,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -12908,7 +12980,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -12924,7 +12995,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/correctFrontendCode")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -12944,7 +13014,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/cycles")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -12976,7 +13045,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -13109,7 +13177,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/components")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -13135,7 +13202,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/copy")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -13197,7 +13263,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/equals")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -13247,7 +13312,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/hashCode")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -13327,7 +13391,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/dataClasses/toString")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -13384,7 +13447,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataObjects")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -13416,7 +13478,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/dataflow")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -13442,7 +13503,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -13480,7 +13540,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -13637,7 +13696,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -13741,7 +13799,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/convention")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -13791,7 +13848,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -13973,7 +14029,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/private")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14011,7 +14066,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14025,7 +14079,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14058,7 +14111,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -14437,7 +14489,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToAnother")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14505,7 +14556,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14537,7 +14587,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14599,7 +14648,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14655,7 +14703,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToThis")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14687,7 +14734,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14797,7 +14843,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -14877,7 +14922,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -15042,7 +15086,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/delegation")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -15182,7 +15225,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/deprecated")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -15196,7 +15238,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -15264,7 +15305,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/devirtualization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -15314,7 +15354,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -15327,7 +15366,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/functions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -15340,7 +15378,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/inference")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -15360,7 +15397,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -15373,7 +15409,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -15448,7 +15483,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -15733,7 +15767,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -15754,7 +15787,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -15768,7 +15800,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/directInvokeOptimization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -15866,7 +15897,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/elvis")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -15925,6 +15955,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("withNothingConstraintAndExpectedType.kt")
+      public void testWithNothingConstraintAndExpectedType() {
+        runTest("compiler/testData/codegen/box/elvis/withNothingConstraintAndExpectedType.kt");
+      }
+
+      @Test
       @TestMetadata("withReturn.kt")
       public void testWithReturn() {
         runTest("compiler/testData/codegen/box/elvis/withReturn.kt");
@@ -15934,7 +15970,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/enum")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -16523,7 +16558,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/enum/defaultCtor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -16580,7 +16614,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/equivalentCalls")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -16600,7 +16633,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/escapeAnalysis")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -16710,7 +16742,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/evaluate")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -16730,7 +16761,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/exceptions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -16792,7 +16822,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/exclExcl")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -16830,7 +16859,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -16844,7 +16872,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -17212,7 +17239,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -17231,7 +17257,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -17247,7 +17272,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/extensionProperties")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -17261,6 +17285,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Test
       public void testAllFilesPresentInExtensionProperties() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/extensionProperties/contextPropertyInInterface.kt");
       }
 
       @Test
@@ -17441,7 +17471,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/external")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -17455,7 +17484,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fakeOverride")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -17559,7 +17587,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fieldRename")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -17591,7 +17618,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/finally")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -17749,7 +17775,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fir")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -17918,7 +17943,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -17933,7 +17957,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/fullJdk")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -17946,7 +17969,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/fullJdk/native")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -17960,7 +17982,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/fullJdk/regressions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -17975,7 +17996,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/funInterface")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -18198,7 +18218,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/funInterface/equality")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -18243,7 +18262,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/function")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -18473,7 +18491,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/functions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -18774,7 +18791,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/functions/bigArity")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -18830,7 +18846,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -18874,7 +18889,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/functions/invoke")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -18972,7 +18986,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -19161,7 +19174,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ieee754")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -19409,7 +19421,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/increment")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -19579,7 +19590,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -19802,7 +19812,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inference/pcla")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -20007,7 +20016,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inference/pcla/issues")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -20465,7 +20473,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -20478,7 +20485,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -20491,7 +20497,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -20528,7 +20533,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -20596,7 +20600,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -20826,7 +20829,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -20894,7 +20896,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -20949,7 +20950,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/initializers")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -21094,7 +21094,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/initializers/files")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -21133,7 +21132,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inline")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -21384,6 +21382,24 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("kt67024.kt")
+      public void testKt67024() {
+        runTest("compiler/testData/codegen/box/inline/kt67024.kt");
+      }
+
+      @Test
+      @TestMetadata("kt67866.kt")
+      public void testKt67866() {
+        runTest("compiler/testData/codegen/box/inline/kt67866.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69041.kt")
+      public void testKt69041() {
+        runTest("compiler/testData/codegen/box/inline/kt69041.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaAsAny.kt")
       public void testLambdaAsAny() {
         runTest("compiler/testData/codegen/box/inline/lambdaAsAny.kt");
@@ -21477,7 +21493,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineArgsInPlace")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -21557,7 +21572,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -21595,7 +21609,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -21849,7 +21862,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         register("compiler/testData/codegen/box/inlineClasses/kt57973.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/kt70461.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/kt71649.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -23748,13 +23760,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
-      @TestMetadata("lateinitInlineClasses.kt")
-      public void testLateinitInlineClasses() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt");
-      }
-
-      @Test
       @TestMetadata("mangledDefaultParameterFunction.kt")
       public void testMangledDefaultParameterFunction() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -24415,7 +24420,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -24652,7 +24656,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -25157,7 +25160,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -25493,7 +25495,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences/let")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -25653,7 +25654,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -26006,7 +26006,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -26206,7 +26205,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -26220,7 +26218,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -26235,7 +26232,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -26285,7 +26281,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/funInterface")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -26394,7 +26389,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/functionNameMangling")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -26651,7 +26645,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -26707,7 +26700,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -26922,7 +26914,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/inlineClassCollection")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -26995,7 +26986,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceDelegation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -27132,7 +27122,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -27325,7 +27314,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -27339,7 +27327,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -27353,7 +27340,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -27546,7 +27532,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/result")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -27608,7 +27593,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/returnResult")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -27658,7 +27642,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -27682,7 +27665,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -27831,7 +27813,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -27980,7 +27961,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -28131,7 +28111,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/innerClass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -28217,7 +28196,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/innerNested")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -28416,7 +28394,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -28557,7 +28534,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/instructions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -28570,7 +28546,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/instructions/swap")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -28597,7 +28572,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/interfaceCallsNCasts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -28635,7 +28609,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/intrinsics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -28775,7 +28748,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/invokedynamic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -28794,7 +28766,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -28813,7 +28784,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -28828,7 +28798,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -28841,7 +28810,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -28855,7 +28823,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -28868,7 +28835,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -28882,7 +28848,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -28897,7 +28862,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -28911,7 +28875,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -28926,7 +28889,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/serializable")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -28941,7 +28903,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -29104,7 +29065,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29118,7 +29078,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29198,7 +29157,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/serialization")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29267,7 +29225,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ir")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -29406,7 +29363,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ir/closureConversion")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29468,7 +29424,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ir/primitiveNumberComparisons")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29506,7 +29461,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ir/privateSignatures")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29532,7 +29486,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ir/serializationRegressions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29595,7 +29548,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -29609,7 +29561,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -29620,9 +29571,21 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/javaInterop/commonAtomicTypes")
+      @TestDataPath("$PROJECT_ROOT")
+      @FirPipeline()
+      @Tag("klibIrInliner")
+      @UseExtTestCaseGroupProvider()
+      public class CommonAtomicTypes {
+        @Test
+        public void testAllFilesPresentInCommonAtomicTypes() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/commonAtomicTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29635,7 +29598,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -29650,7 +29612,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29664,7 +29625,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29683,7 +29643,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -29697,7 +29656,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -29711,7 +29669,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -29726,7 +29683,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29740,7 +29696,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29754,7 +29709,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/statics")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29769,7 +29723,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/javaVisibility")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -29782,7 +29735,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaVisibility/package")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29796,7 +29748,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedAndPackage")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29810,7 +29761,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedStatic")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29825,7 +29775,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jdk")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -29863,7 +29812,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/js")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -29876,7 +29824,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/js/inlinedReturnBreakContinue")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29891,7 +29838,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -29904,7 +29850,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -29915,37 +29860,8 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
-        @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
-        @FirPipeline()
-        @Tag("klibIrInliner")
-        @UseExtTestCaseGroupProvider()
-        public class AllCompatibility {
-          @Test
-          public void testAllFilesPresentInAllCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy")
-          @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
-          @FirPipeline()
-          @Tag("klibIrInliner")
-          @UseExtTestCaseGroupProvider()
-          public class DelegationBy {
-            @Test
-            public void testAllFilesPresentInDelegationBy() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-            }
-          }
-        }
-
-        @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -29959,7 +29875,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -29971,57 +29886,79 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
-        public class NoDefaultImpls {
+        public class Enable {
           @Test
-          public void testAllFilesPresentInNoDefaultImpls() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          public void testAllFilesPresentInEnable() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
           public class DelegationBy {
             @Test
             public void testAllFilesPresentInDelegationBy() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @FirPipeline()
+        @Tag("klibIrInliner")
+        @UseExtTestCaseGroupProvider()
+        public class NoCompatibility {
+          @Test
+          public void testAllFilesPresentInNoCompatibility() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy")
+          @TestDataPath("$PROJECT_ROOT")
+          @FirPipeline()
+          @Tag("klibIrInliner")
+          @UseExtTestCaseGroupProvider()
+          public class DelegationBy {
+            @Test
+            public void testAllFilesPresentInDelegationBy() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
           public class Specialization {
             @Test
             public void testAllFilesPresentInSpecialization() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility")
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
           public class WithCompatibility {
             @Test
             public void testAllFilesPresentInWithCompatibility() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
           }
         }
@@ -30029,7 +29966,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -30043,7 +29979,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/reflection")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -30058,7 +29993,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/interfaceFlag")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -30072,7 +30006,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/javaDefaults")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -30087,7 +30020,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmField")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30101,7 +30033,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30114,7 +30045,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -30129,7 +30059,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmOverloads")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30143,7 +30072,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmPackageName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30157,7 +30085,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/jvmStatic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30170,7 +30097,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -30185,7 +30111,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/kclass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30211,7 +30136,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/klib")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30231,7 +30155,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ktype")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30287,7 +30210,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/labels")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30349,7 +30271,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lambda")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30471,7 +30392,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lateinit")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30545,7 +30465,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lazyCodegen")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30612,7 +30531,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/lazyCodegen/optimizations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -30681,7 +30599,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/literals")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30707,7 +30624,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/localClass")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -30787,7 +30703,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/localClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -31041,7 +30956,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/localEscapeAnalysis")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -31061,7 +30975,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/lower")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -31080,7 +30993,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/lower/forLoopsLowering")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -31161,7 +31073,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/mangling")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -31217,7 +31128,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/mixedNamedPosition")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -31255,7 +31165,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiDecl")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -31352,7 +31261,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -31395,7 +31303,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator/longIterator")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -31434,7 +31341,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -31489,7 +31395,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -31532,7 +31437,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -31570,7 +31474,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -31609,7 +31512,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -31652,7 +31554,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -31690,7 +31591,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -31729,7 +31629,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/int")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -31767,7 +31666,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/long")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -31807,7 +31705,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -31820,7 +31717,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multifileClasses/optimized")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -31835,7 +31731,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/multiplatform")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -31848,7 +31743,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -32029,7 +31923,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32061,7 +31954,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/basic")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32087,6 +31979,24 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @TestMetadata("anyMethodInExpect.kt")
           public void testAnyMethodInExpect() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/basic/anyMethodInExpect.kt");
+          }
+
+          @Test
+          @TestMetadata("contextInFakeOverride.kt")
+          public void testContextInFakeOverride() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextInFakeOverride.kt");
+          }
+
+          @Test
+          @TestMetadata("contextOnExpect.kt")
+          public void testContextOnExpect() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextOnExpect.kt");
+          }
+
+          @Test
+          @TestMetadata("contextOnExpectActual.kt")
+          public void testContextOnExpectActual() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextOnExpectActual.kt");
           }
 
           @Test
@@ -32393,7 +32303,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/complexMatchings")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32419,7 +32328,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/defaultArguments")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32595,7 +32503,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/delegation")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32651,7 +32558,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32683,7 +32589,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/hmpp")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32695,23 +32600,8 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lightTree")
-        @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
-        @FirPipeline()
-        @Tag("klibIrInliner")
-        @UseExtTestCaseGroupProvider()
-        public class LightTree {
-          @Test
-          public void testAllFilesPresentInLightTree() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lightTree"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-          }
-        }
-
-        @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32755,7 +32645,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/multiModule")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -32771,7 +32660,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -32809,7 +32697,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/notNullAssertions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -32823,7 +32710,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/nothingValue")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -32855,7 +32741,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/nullCheckOptimization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -32905,7 +32790,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/object")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -32973,7 +32857,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/objectExpression")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -33011,7 +32894,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -33031,7 +32913,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/objects")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -33494,7 +33375,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -33603,7 +33483,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -33689,7 +33568,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -33747,7 +33625,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/operatorConventions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -33910,7 +33787,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -33991,7 +33867,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/optimizations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -34011,7 +33886,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/package")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -34097,7 +33971,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/parametersMetadata")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -34111,7 +33984,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/platformTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -34124,7 +33996,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -34253,7 +34124,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/polymorphicSignature")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -34267,7 +34137,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -34634,7 +34503,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -34701,7 +34569,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -34824,7 +34691,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -34838,7 +34704,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -34889,7 +34754,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/private")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -34915,7 +34779,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/privateConstructors")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -35001,7 +34864,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/properties")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -35123,6 +34985,30 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("complexPropertyInitializer.kt")
       public void testComplexPropertyInitializer() {
         runTest("compiler/testData/codegen/box/properties/complexPropertyInitializer.kt");
+      }
+
+      @Test
+      @TestMetadata("eagerInitializationGlobal1.kt")
+      public void testEagerInitializationGlobal1() {
+        runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal1.kt");
+      }
+
+      @Test
+      @TestMetadata("eagerInitializationGlobal2.kt")
+      public void testEagerInitializationGlobal2() {
+        runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal2.kt");
+      }
+
+      @Test
+      @TestMetadata("eagerInitializationGlobal3.kt")
+      public void testEagerInitializationGlobal3() {
+        runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal3.kt");
+      }
+
+      @Test
+      @TestMetadata("eagerInitializationGlobal4.kt")
+      public void testEagerInitializationGlobal4() {
+        runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal4.kt");
       }
 
       @Test
@@ -35488,7 +35374,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/backingField")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -35502,7 +35387,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/const")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -35540,7 +35424,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -35643,7 +35526,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -35705,7 +35587,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit/local")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -35761,7 +35642,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit/topLevel")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -35807,7 +35687,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/propertyCallableReference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -35869,7 +35748,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/publishedApi")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -35901,7 +35779,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -36058,7 +35935,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/contains")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -36377,7 +36253,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/contains/generated")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -36554,7 +36429,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -36621,7 +36495,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -36634,7 +36507,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -36696,7 +36568,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -36758,7 +36629,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -36822,7 +36692,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/expression")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37022,7 +36891,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInDownTo")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37078,7 +36946,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInIndices")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37236,7 +37103,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInProgressionWithIndex")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37340,7 +37206,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInReversed")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37462,7 +37327,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forInUntil")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37566,7 +37430,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37658,7 +37521,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37671,7 +37533,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop/withIndex")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -37686,7 +37547,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/literal")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37886,7 +37746,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37918,7 +37777,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/stepped")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -37931,7 +37789,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -37944,7 +37801,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -38053,7 +37909,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38115,7 +37970,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38166,7 +38020,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -38275,7 +38128,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38337,7 +38189,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38388,7 +38239,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -38461,7 +38311,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38523,7 +38372,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38574,7 +38422,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -38689,7 +38536,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38751,7 +38597,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38803,7 +38648,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -38816,7 +38660,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -38925,7 +38768,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -38987,7 +38829,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -39038,7 +38879,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -39147,7 +38987,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -39209,7 +39048,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -39260,7 +39098,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -39333,7 +39170,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -39395,7 +39231,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -39446,7 +39281,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -39561,7 +39395,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -39623,7 +39456,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -39675,7 +39507,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -39688,7 +39519,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -39701,7 +39531,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -39810,7 +39639,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -39872,7 +39700,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -39923,7 +39750,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -40032,7 +39858,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40094,7 +39919,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40145,7 +39969,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -40218,7 +40041,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40280,7 +40102,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40331,7 +40152,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -40446,7 +40266,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40508,7 +40327,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40560,7 +40378,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -40573,7 +40390,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -40682,7 +40498,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40744,7 +40559,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40795,7 +40609,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -40904,7 +40717,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -40966,7 +40778,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -41017,7 +40828,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -41090,7 +40900,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -41152,7 +40961,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -41203,7 +41011,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -41318,7 +41125,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -41380,7 +41186,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
               @Nested
               @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed")
               @TestDataPath("$PROJECT_ROOT")
-              @Tag("frontend-fir")
               @FirPipeline()
               @Tag("klibIrInliner")
               @UseExtTestCaseGroupProvider()
@@ -41434,7 +41239,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/ranges/unsigned")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -41489,7 +41293,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/expression")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -41689,7 +41492,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/literal")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -41889,7 +41691,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -41923,7 +41724,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/recursiveRawTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -41937,7 +41737,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -41953,10 +41752,33 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         runTest("compiler/testData/codegen/box/reflection/associatedObjectNested.kt");
       }
 
+      @Test
+      @TestMetadata("findAssociatedObject.kt")
+      public void testFindAssociatedObject() {
+        runTest("compiler/testData/codegen/box/reflection/findAssociatedObject.kt");
+      }
+
+      @Test
+      @TestMetadata("findAssociatedObjectAndDCE.kt")
+      public void testFindAssociatedObjectAndDCE() {
+        runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectAndDCE.kt");
+      }
+
+      @Test
+      @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
+      public void testFindAssociatedObjectInSeparatedFile() {
+        runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectInSeparatedFile.kt");
+      }
+
+      @Test
+      @TestMetadata("findAssociatedObjectLazyness.kt")
+      public void testFindAssociatedObjectLazyness() {
+        runTest("compiler/testData/codegen/box/reflection/findAssociatedObjectLazyness.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -41969,7 +41791,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/annotations/onTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -41983,7 +41804,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/annotations/repeatable")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -41998,7 +41818,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/builtins")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42012,7 +41831,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/call")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42025,7 +41843,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/bound")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42039,7 +41856,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42052,7 +41868,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -42066,7 +41881,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -42080,7 +41894,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -42095,7 +41908,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42110,7 +41922,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/callBy")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42123,7 +41934,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42136,7 +41946,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -42149,7 +41958,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -42164,7 +41972,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -42177,7 +41984,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -42192,7 +41998,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -42205,7 +42010,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("frontend-fir")
             @FirPipeline()
             @Tag("klibIrInliner")
             @UseExtTestCaseGroupProvider()
@@ -42222,7 +42026,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/classLiterals")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42266,7 +42069,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/classes")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42310,7 +42112,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/constructors")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42330,7 +42131,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/createAnnotation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42344,7 +42144,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/enclosing")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42358,7 +42157,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/functions")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42384,7 +42182,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/genericSignature")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42404,7 +42201,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42418,7 +42214,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42432,7 +42227,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/lambdaClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42446,7 +42240,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/localClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42460,7 +42253,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42473,7 +42265,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/fakeOverrides")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42487,7 +42278,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42501,7 +42291,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/jvmStatic")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42515,7 +42304,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/types")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42529,7 +42317,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42544,7 +42331,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/methodsFromAny")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42570,7 +42356,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/modifiers")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42584,7 +42369,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/multifileClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42598,7 +42382,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42629,7 +42412,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42650,7 +42432,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/parameters")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42664,7 +42445,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/properties")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42683,7 +42463,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/accessors")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42697,7 +42476,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42722,7 +42500,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/method")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -42737,7 +42514,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/jvmField")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42751,7 +42527,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42766,7 +42541,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/supertypes")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42780,7 +42554,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/syntheticClasses")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42794,7 +42567,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeOf")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -42867,7 +42639,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/js")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42881,7 +42652,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42900,7 +42670,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters")
           @TestDataPath("$PROJECT_ROOT")
-          @Tag("frontend-fir")
           @FirPipeline()
           @Tag("klibIrInliner")
           @UseExtTestCaseGroupProvider()
@@ -42915,7 +42684,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -42996,7 +42764,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/typeParameters")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -43010,7 +42777,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/types")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -43041,7 +42807,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/types/createType")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -43055,7 +42820,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/types/subtyping")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -43071,7 +42835,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/regressions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -43511,7 +43274,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reified")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -43680,7 +43442,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reified/arraysReification")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -43707,7 +43468,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/safeCall")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -43823,7 +43583,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sam")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -43831,6 +43590,18 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Test
       public void testAllFilesPresentInSam() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("funInterfaceExtendsSuspendFunction.kt")
+      public void testFunInterfaceExtendsSuspendFunction() {
+        runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("funInterfaceExtendsSuspendFunction2.kt")
+      public void testFunInterfaceExtendsSuspendFunction2() {
+        runTest("compiler/testData/codegen/box/sam/funInterfaceExtendsSuspendFunction2.kt");
       }
 
       @Test
@@ -43878,7 +43649,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/adapters")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -43891,7 +43661,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/box/sam/adapters/operators")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -43906,7 +43675,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/approximation")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -43944,7 +43712,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/constructors")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -43982,7 +43749,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/equality")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -43996,7 +43762,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -44011,7 +43776,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sameFileInSourceAndDependencies")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44037,7 +43801,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/script")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44051,7 +43814,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/sealed")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44077,6 +43839,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("kt54028.kt")
       public void testKt54028() {
         runTest("compiler/testData/codegen/box/sealed/kt54028.kt");
+      }
+
+      @Test
+      @TestMetadata("kt54028_cursed.kt")
+      public void testKt54028_cursed() {
+        runTest("compiler/testData/codegen/box/sealed/kt54028_cursed.kt");
       }
 
       @Test
@@ -44107,7 +43875,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/secondaryConstructors")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44301,7 +44068,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/serialization")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44357,7 +44123,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/size")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44371,7 +44136,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/smap")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44385,7 +44149,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/smartCasts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44588,6 +44351,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("smartCastOnSuper.kt")
+      public void testSmartCastOnSuper() {
+        runTest("compiler/testData/codegen/box/smartCasts/smartCastOnSuper.kt");
+      }
+
+      @Test
       @TestMetadata("smartCastedGenericWhenSubjectInRangeCheck.kt")
       public void testSmartCastedGenericWhenSubjectInRangeCheck() {
         runTest("compiler/testData/codegen/box/smartCasts/smartCastedGenericWhenSubjectInRangeCheck.kt");
@@ -44615,7 +44384,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/specialBuiltins")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44749,7 +44517,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/statics")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44811,7 +44578,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/storeStackBeforeInline")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44855,7 +44621,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/stringTrim")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44875,7 +44640,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/strings")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -44883,6 +44647,18 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Test
       public void testAllFilesPresentInStrings() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("charSequenceGet.kt")
+      public void testCharSequenceGet() {
+        runTest("compiler/testData/codegen/box/strings/charSequenceGet.kt");
+      }
+
+      @Test
+      @TestMetadata("charSequenceSubSequence.kt")
+      public void testCharSequenceSubSequence() {
+        runTest("compiler/testData/codegen/box/strings/charSequenceSubSequence.kt");
       }
 
       @Test
@@ -45111,7 +44887,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/super")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45131,6 +44906,24 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("basicproperty.kt")
       public void testBasicproperty() {
         runTest("compiler/testData/codegen/box/super/basicproperty.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondWithCovariantOverride.kt")
+      public void testDiamondWithCovariantOverride() {
+        runTest("compiler/testData/codegen/box/super/diamondWithCovariantOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondWithGenericParameterType.kt")
+      public void testDiamondWithGenericParameterType() {
+        runTest("compiler/testData/codegen/box/super/diamondWithGenericParameterType.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondWithGenericReturnType.kt")
+      public void testDiamondWithGenericReturnType() {
+        runTest("compiler/testData/codegen/box/super/diamondWithGenericReturnType.kt");
       }
 
       @Test
@@ -45298,7 +45091,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/super/superConstructor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -45355,7 +45147,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/suppressions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45375,7 +45166,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/suspendConversion")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45467,7 +45257,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/synchronized")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45481,7 +45270,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticAccessors")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45608,7 +45396,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -45622,7 +45409,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -45661,7 +45447,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/syntheticExtensions")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45675,7 +45460,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/throws")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45689,7 +45473,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/toArray")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45715,7 +45498,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45759,7 +45541,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/topLevelPrivate")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45785,7 +45566,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/trailingComma")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -45805,7 +45585,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/traits")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46017,7 +45796,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/try")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46157,7 +45935,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/typeInfo")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46207,7 +45984,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/typeMapping")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46263,7 +46039,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/typealias")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46277,6 +46052,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Test
       public void testAllFilesPresentInTypealias() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("callTypeAliasWithInnerRhsInStaticScope.kt")
+      public void testCallTypeAliasWithInnerRhsInStaticScope() {
+        runTest("compiler/testData/codegen/box/typealias/callTypeAliasWithInnerRhsInStaticScope.kt");
       }
 
       @Test
@@ -46349,6 +46130,18 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("kt45308.kt")
       public void testKt45308() {
         runTest("compiler/testData/codegen/box/typealias/kt45308.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedTypeAliasesAndStaticScope.kt")
+      public void testNestedTypeAliasesAndStaticScope() {
+        runTest("compiler/testData/codegen/box/typealias/nestedTypeAliasesAndStaticScope.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedTypeAliasesAndTypeArguments.kt")
+      public void testNestedTypeAliasesAndTypeArguments() {
+        runTest("compiler/testData/codegen/box/typealias/nestedTypeAliasesAndTypeArguments.kt");
       }
 
       @Test
@@ -46451,7 +46244,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/unaryOp")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46501,7 +46293,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/underscoredTypeArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46539,7 +46330,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/unit")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46643,7 +46433,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/unsignedTypes")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46944,7 +46733,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -46959,7 +46747,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -46970,15 +46757,14 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
-      @TestMetadata("uLongInValueClass.kt")
-      public void testULongInValueClass() {
-        runTest("compiler/testData/codegen/box/valueClasses/uLongInValueClass.kt");
+      @TestMetadata("valueClassInValueClass.kt")
+      public void testValueClassInValueClass() {
+        runTest("compiler/testData/codegen/box/valueClasses/valueClassInValueClass.kt");
       }
 
       @Nested
       @TestMetadata("compiler/testData/codegen/box/valueClasses/javaInterop")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -46993,7 +46779,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/vararg")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -47109,7 +46894,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/volatile")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -47213,7 +46997,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/wasm-new-exception-handling")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -47227,7 +47010,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/box/when")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -47534,7 +47316,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/enumOptimization")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -47662,7 +47443,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/guard")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -47682,7 +47462,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -47750,7 +47529,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/whenSubjectVariable")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -47874,7 +47652,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
   @Nested
   @TestMetadata("compiler/testData/codegen/boxInline")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-fir")
   @FirPipeline()
   @Tag("klibIrInliner")
   @UseExtTestCaseGroupProvider()
@@ -47887,7 +47664,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/annotations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -47913,7 +47689,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -48340,7 +48115,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -48354,7 +48128,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -48392,7 +48165,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -48442,7 +48214,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -48528,7 +48299,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -48542,7 +48312,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -48599,7 +48368,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/argumentOrder")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -48685,7 +48453,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/arrayConvention")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -48735,7 +48502,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/assert")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -48749,7 +48515,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/builders")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -48763,7 +48528,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/bytecodePreprocessing")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -48777,7 +48541,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/callableReference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -48898,7 +48661,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/callableReference/adaptedReferences")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -48954,7 +48716,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/callableReference/bound")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -49125,7 +48886,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/capture")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -49205,7 +48965,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/complex")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -49267,7 +49026,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/complexStack")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -49335,7 +49093,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/contracts")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -49439,7 +49196,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/defaultValues")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -49572,7 +49328,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -49783,7 +49538,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -49972,7 +49726,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -50029,7 +49782,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/delegatedProperty")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50079,7 +49831,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/dontReify")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50153,7 +49904,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/enclosingInfo")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50167,7 +49917,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/enum")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50271,7 +50020,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/functionExpression")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50297,7 +50045,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/functionReference")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50329,7 +50076,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50349,7 +50095,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50398,7 +50143,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -50411,7 +50155,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -50461,7 +50204,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -50511,7 +50253,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -50563,7 +50304,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/innerClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50625,7 +50365,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50638,7 +50377,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic/lambdas")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -50652,7 +50390,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic/sam")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -50667,7 +50404,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/jvmName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50681,7 +50417,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50695,7 +50430,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/lambdaClassClash")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50721,7 +50455,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/lambdaTransformation")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50765,7 +50498,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/localFunInLambda")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50809,7 +50541,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/multiModule")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50829,7 +50560,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50843,7 +50573,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/multiplatform")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50856,7 +50585,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/multiplatform/defaultArguments")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -50877,7 +50605,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/noInline")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -50933,7 +50660,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -51084,7 +50810,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -51110,7 +50835,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -51201,7 +50925,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -51251,7 +50974,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -51313,7 +51035,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -51399,7 +51120,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -51533,7 +51253,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("frontend-fir")
         @FirPipeline()
         @Tag("klibIrInliner")
         @UseExtTestCaseGroupProvider()
@@ -51555,7 +51274,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/optimizations")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -51575,7 +51293,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/private")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -51661,7 +51378,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/property")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -51759,7 +51475,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/reified")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -51892,7 +51607,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/reified/checkCast")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -51960,7 +51674,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -51974,7 +51687,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/reified/isCheck")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -52007,7 +51719,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/signature")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -52021,7 +51732,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/signatureMangling")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -52035,7 +51745,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/simple")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -52187,7 +51896,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/smap")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -52320,7 +52028,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/anonymous")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -52394,7 +52101,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -52462,7 +52168,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -52500,7 +52205,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/newsmap")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -52538,7 +52242,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/smap/resolve")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -52565,7 +52268,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/special")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -52639,7 +52341,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/stackOnReturn")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -52749,7 +52450,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/suspend")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -52912,7 +52612,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/callableReference")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -52956,7 +52655,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/defaultParameter")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -53006,7 +52704,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineClass")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -53044,7 +52741,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -53070,7 +52766,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/receiver")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -53132,7 +52827,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/suspend/stateMachine")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -53285,7 +52979,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -53334,7 +53027,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @Nested
       @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klibIrInliner")
       @UseExtTestCaseGroupProvider()
@@ -53397,7 +53089,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/trait")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -53417,7 +53108,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/tryCatchFinally")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -53455,7 +53145,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -53505,7 +53194,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/varargs")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()
@@ -53537,7 +53225,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/wasm-new-exception-handling")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klibIrInliner")
     @UseExtTestCaseGroupProvider()

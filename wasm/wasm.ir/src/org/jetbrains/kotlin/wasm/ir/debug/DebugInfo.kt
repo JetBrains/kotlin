@@ -12,4 +12,7 @@ class DebugSection(val name: String, val data: DebugData)
 sealed interface DebugData {
     @JvmInline
     value class StringData(val value: String) : DebugData
+
+    @JvmInline
+    value class RawBytes(val value: ByteArray) : DebugData
 }

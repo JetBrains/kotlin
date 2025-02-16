@@ -47,6 +47,13 @@
         key="kotlin.analysis.postComputeEnhancedJavaFunctionsCache"
         restartRequired="true"
     />
+
+    <registryKey
+        defaultValue="true"
+        description="When compiling against kotlin-stdlib sources (in the Kotlin compiler project), substitute sources with compiled binaries"
+        key="kotlin.analysis.compilerFacility.useStdlibBuildOutput"
+        restartRequired="true"
+    />
   </extensions>
 
   <projectListeners>

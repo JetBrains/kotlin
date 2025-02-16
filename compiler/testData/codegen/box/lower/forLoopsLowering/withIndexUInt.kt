@@ -1,6 +1,3 @@
-// java.lang.ClassCastException: kotlin.UInt cannot be cast to java.lang.Number
-// IGNORE_BACKEND: JVM
-
 // WITH_STDLIB
 // FILECHECK_STAGE: CStubs
 import kotlin.test.*

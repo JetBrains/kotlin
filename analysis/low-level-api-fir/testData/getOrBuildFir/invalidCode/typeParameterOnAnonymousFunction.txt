@@ -1,0 +1,13 @@
+KT element: KtTypeParameter
+FIR element: FirTypeParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] T
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOnAnonymousFunction.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val t3: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    }
+
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|() -> kotlin/Unit|

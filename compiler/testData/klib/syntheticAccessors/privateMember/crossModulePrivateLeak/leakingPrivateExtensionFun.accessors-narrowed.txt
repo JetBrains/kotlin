@@ -7,4 +7,4 @@ public class A
         /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = <this>)
 /* TARGET declaration */ private fun A.privateExtension(): String
 /* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: A): String
-    /* TARGET use-site */ $receiver.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = $receiver */)

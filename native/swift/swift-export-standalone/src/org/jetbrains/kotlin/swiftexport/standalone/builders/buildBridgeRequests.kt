@@ -20,7 +20,7 @@ internal fun buildBridgeRequests(generator: BridgeGenerator, container: SirDecla
         container
             .allCallables()
             .filterIsInstance<SirFunction>()
-            .flatMap { it.constructFunctionBridgeRequests(generator) }
+            .flatMap { it.constructFunctionBridgeRequests(generator) + it.constructPropertyAccessorsBridgeRequests(generator) }
     )
     addAll(
         container
@@ -30,7 +30,7 @@ internal fun buildBridgeRequests(generator: BridgeGenerator, container: SirDecla
     addAll(
         container
             .allClasses()
-            .flatMap { it.constructTypeBindingBridgeRequests(generator) }
+            .flatMap { it.constructTypeBindingBridgeRequests() }
     )
     addAll(
         container

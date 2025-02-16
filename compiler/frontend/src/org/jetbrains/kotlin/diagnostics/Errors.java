@@ -247,6 +247,7 @@ public interface Errors {
     DiagnosticFactory0<KtPostfixExpression> DEPRECATED_SYNTAX_WITH_DEFINITELY_NOT_NULL = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<KtModifierList> MODIFIER_LIST_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtModifierList> MULTIPLE_CONTEXT_LISTS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactoryForDeprecation1<PsiElement, CallableDescriptor> PROGRESSIONS_CHANGING_RESOLVE = DiagnosticFactoryForDeprecation1.create(LanguageFeature.ProgressionsChangingResolve);
 

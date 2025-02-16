@@ -1,0 +1,21 @@
+KT element: KtClass
+KT element text:
+public final class KotlinClass<T> public constructor(block: () -> T) {
+    private final val block: () -> T /* compiled code */
+
+    public final val propertyWithFlexibleDnnImplicitType: java.util.function.Function<kotlin.String, T & Any> /* platform type */ /* compiled code */
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class KotlinClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    private final [ResolvedTo(BODY_RESOLVE)] val block: R|() -> T|
+        private [ResolvedTo(BODY_RESOLVE)] get(): R|() -> T|
+
+    public final [ResolvedTo(BODY_RESOLVE)] val propertyWithFlexibleDnnImplicitType: R|ft<java/util/function/Function<kotlin/String!, T & Any>, java/util/function/Function<kotlin/String!, ft<T & Any, T?>>?>|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|ft<java/util/function/Function<kotlin/String!, T & Any>, java/util/function/Function<kotlin/String!, ft<T & Any, T?>>?>|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] block: R|() -> T|): R|KotlinClass<T>|
+
+}

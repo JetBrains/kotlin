@@ -69,6 +69,16 @@ fun main() {
         ""
     }
 
+    Supplier<String> {
+        try {
+            if (1 == 2) return@Supplier returnNullableString()
+        } catch(e: Exception) {
+        } finally {
+            run { return@Supplier returnNullableString() }
+        }
+        ""
+    }
+
     Supplier<String?> {
         returnNullableString()
     }

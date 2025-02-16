@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 
 package lvalue_assignment
 
@@ -105,6 +104,11 @@ class Test() {
 
         @Ann
         l@ (<!VARIABLE_EXPECTED!>1<!>) = 123
+    }
+
+    fun testIllegalTypeRef(): Any {
+        <!UNREACHABLE_CODE!>Char=<!>
+            return ""
     }
 
     fun testIncompleteSyntax() {

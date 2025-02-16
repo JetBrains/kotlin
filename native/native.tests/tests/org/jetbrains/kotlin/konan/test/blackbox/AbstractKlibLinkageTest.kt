@@ -23,10 +23,19 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.opentest4j.TestAbortedException
 import java.io.File
 
 abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
+    @BeforeEach
+    fun assumeNotMimalloc() {
+        // Mimalloc is deprecated and will emit a warning, when enabled.
+        // This breaks these tests because they compile with -Werror.
+        Assumptions.assumeFalse(testRunSettings.get<Allocator>() == Allocator.MIMALLOC)
+    }
+
     protected inner class NativeTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
         override val testDir = getAbsoluteFile(testPath)
         override val buildDir get() = this@AbstractKlibLinkageTest.buildDir

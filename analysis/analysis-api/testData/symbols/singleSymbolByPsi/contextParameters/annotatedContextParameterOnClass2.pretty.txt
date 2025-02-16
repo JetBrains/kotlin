@@ -1,0 +1,1 @@
+@Anno @AnnoWithArguments(i = 0) parameter1: @Anno kotlin.String

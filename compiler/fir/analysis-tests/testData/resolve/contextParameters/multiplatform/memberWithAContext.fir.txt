@@ -1,0 +1,68 @@
+Module: m1-common
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final expect class Member : R|kotlin/Any| {
+        context(a: R|A|)
+        public final expect fun foo(): R|kotlin/Unit|
+
+        context(a: R|A|)
+        public final expect val bar: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+FILE: jvm.kt
+    public final actual class Member : R|kotlin/Any| {
+        public constructor(): R|Member| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public final actual fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final actual val bar: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+    }
+Module: m2-jvm
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final expect class Member : R|kotlin/Any| {
+        context(a: R|A|)
+        public final expect fun foo(): R|kotlin/Unit|
+
+        context(a: R|A|)
+        public final expect val bar: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+FILE: jvm.kt
+    public final actual class Member : R|kotlin/Any| {
+        public constructor(): R|Member| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public final actual fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final actual val bar: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+    }

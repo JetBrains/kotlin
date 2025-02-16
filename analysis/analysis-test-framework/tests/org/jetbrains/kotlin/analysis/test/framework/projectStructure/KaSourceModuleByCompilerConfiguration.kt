@@ -12,11 +12,7 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -31,6 +27,7 @@ import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.nio.file.Path
@@ -50,13 +47,13 @@ abstract class KtModuleByCompilerConfiguration(
 
     val directRegularDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
-            testModule.allDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
+            testModule.allDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.dependencyModule.name).ktModule }
             addAll(computeLibraryDependencies())
         }
     }
 
     private fun computeLibraryDependencies(): List<KaLibraryModule> {
-        val targetPlatform = testModule.targetPlatform
+        val targetPlatform = testModule.targetPlatform(testServices)
         return when {
             targetPlatform.isNative() -> {
                 librariesByRoots(getAllNativeDependenciesPaths(testModule, testServices).map { Paths.get(it) })
@@ -94,14 +91,14 @@ abstract class KtModuleByCompilerConfiguration(
     @Suppress("MemberVisibilityCanBePrivate") // used for overrides in subclasses
     val directDependsOnDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         testModule.dependsOnDependencies
-            .map { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
+            .map { testServices.ktTestModuleStructure.getKtTestModule(it.dependencyModule.name).ktModule }
     }
 
     val transitiveDependsOnDependencies: List<KaModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
 
     val directFriendDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
-            testModule.friendDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.moduleName).ktModule }
+            testModule.friendDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.dependencyModule.name).ktModule }
             addAll(
                 librariesByRoots(configuration[JVMConfigurationKeys.FRIEND_PATHS].orEmpty().map(Paths::get))
             )
@@ -116,7 +113,7 @@ abstract class KtModuleByCompilerConfiguration(
         get() = testModule.languageVersionSettings
 
     val targetPlatform: TargetPlatform
-        get() = testModule.targetPlatform
+        get() = testModule.targetPlatform(testServices)
 }
 
 class KaSourceModuleByCompilerConfiguration(

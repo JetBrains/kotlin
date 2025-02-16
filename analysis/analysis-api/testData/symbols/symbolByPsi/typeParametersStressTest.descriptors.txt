@@ -24,6 +24,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /topLevelFunction
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -123,6 +124,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /topLevelProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -160,7 +162,7 @@ KaKotlinPropertySymbol:
         type: B
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: TypeParametersStressTestKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaTypeParameterType:
@@ -211,7 +213,7 @@ KaKotlinPropertySymbol:
       type: B
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeParametersStressTest.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: TypeParametersStressTestKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaTypeParameterType:
@@ -436,6 +438,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -620,6 +623,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Local
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -674,6 +678,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /TopLevelClass.NestedClass.nestedFunction
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -869,6 +874,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1059,6 +1065,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Local
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1137,6 +1144,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /TopLevelClass.InnerClass.nestedFunction
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

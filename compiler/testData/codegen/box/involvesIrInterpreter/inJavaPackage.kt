@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
-
 package java2d
 
 class A {

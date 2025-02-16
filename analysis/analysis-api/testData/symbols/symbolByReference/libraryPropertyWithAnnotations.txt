@@ -29,6 +29,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: one/topLevelPropertyWithAnnotations
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [

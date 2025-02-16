@@ -185,7 +185,7 @@ fun translateCall(
         val property = function.correspondingPropertySymbol?.owner
         if (
             property != null &&
-            (property.isEffectivelyExternal() || property.isExportedMember(context.staticContext.backendContext))
+            (property.isEffectivelyExternal() || function.isExportedMember(context.staticContext.backendContext))
         ) {
             if (function.overriddenSymbols.isEmpty() || function.overriddenStableProperty(context.staticContext.backendContext)) {
                 val propertyName = context.getNameForProperty(property)

@@ -131,6 +131,24 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
   }
 
   @Test
+  @TestMetadata("intertwinedInline.kt")
+  public void testIntertwinedInline() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/intertwinedInline.kt");
+  }
+
+  @Test
+  @TestMetadata("intertwinedInline2.kt")
+  public void testIntertwinedInline2() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/intertwinedInline2.kt");
+  }
+
+  @Test
+  @TestMetadata("intertwinedInlineCommon.kt")
+  public void testIntertwinedInlineCommon() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/intertwinedInlineCommon.kt");
+  }
+
+  @Test
   @TestMetadata("javaAnnotationWithVararg.kt")
   public void testJavaAnnotationWithVararg() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/javaAnnotationWithVararg.kt");
@@ -218,6 +236,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("commonContextInline.kt")
+    public void testCommonContextInline() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonContextInline.kt");
+    }
+
+    @Test
     @TestMetadata("commonContextJvmCall.kt")
     public void testCommonContextJvmCall() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/commonContextJvmCall.kt");
@@ -284,6 +308,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("inlineChain.kt")
+    public void testInlineChain() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineChain.kt");
+    }
+
+    @Test
     @TestMetadata("inlineFunctionUsage.kt")
     public void testInlineFunctionUsage() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineFunctionUsage.kt");
@@ -293,6 +323,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     @TestMetadata("inlineFunctionUsageSource.kt")
     public void testInlineFunctionUsageSource() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineFunctionUsageSource.kt");
+    }
+
+    @Test
+    @TestMetadata("inlinedLambda.kt")
+    public void testInlinedLambda() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlinedLambda.kt");
     }
 
     @Test
@@ -416,6 +452,18 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
       @TestMetadata("initializer.kt")
       public void testInitializer() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/initializer.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmNameConstEvaluation.kt")
+      public void testJvmNameConstEvaluation() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/jvmNameConstEvaluation.kt");
+      }
+
+      @Test
+      @TestMetadata("JvmNameConstEvaluationBadName.kt")
+      public void testJvmNameConstEvaluationBadName() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/JvmNameConstEvaluationBadName.kt");
       }
 
       @Test

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -46,6 +48,13 @@ abstract class AbstractK1WasmWasiTest(
 
     override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
         get() = ::WasmWasiBoxTestHelperSourceProvider
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
+        }
+    }
 }
 
 open class AbstractK1WasmWasiCodegenBoxTest : AbstractK1WasmWasiTest(

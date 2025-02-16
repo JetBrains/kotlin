@@ -4,6 +4,7 @@ KtCallExpression(50,57): 'myRun()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = foo/Foo
@@ -13,5 +14,6 @@ KtCallExpression(50,57): 'myRun()'
           returnType = kotlin.Unit
           symbol = foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = foo/myRun
       typeArgumentsMapping = {}

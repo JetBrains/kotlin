@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -51,7 +51,7 @@ class ValueParameter(
     private val valueParameterSymbol: FirValueParameterSymbol,
     private val isVal: Boolean,
     private val isVar: Boolean,
-    private val modifiers: Modifier,
+    private val modifiers: ModifierList,
     private val valueParameterAnnotations: List<FirAnnotationCall>,
     val returnTypeRef: FirTypeRef,
     val source: KtSourceElement,
@@ -146,6 +146,9 @@ class ValueParameter(
             isVar = this@ValueParameter.isVar
             val propertySymbol = FirPropertySymbol(callableId)
             val remappedAnnotations = valueParameterAnnotations.map {
+                // We don't need error annotation calls here,
+                // it allows us to avoid double-reporting of INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
+                // (it's already reported on a value parameter)
                 buildAnnotationCallCopy(it) {
                     containingDeclarationSymbol = propertySymbol
                 }

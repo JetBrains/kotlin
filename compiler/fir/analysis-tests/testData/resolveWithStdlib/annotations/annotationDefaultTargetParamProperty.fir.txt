@@ -64,3 +64,12 @@ FILE: annotationDefaultTargetParamProperty.kt
             }
 
     }
+    public final annotation class Your : R|kotlin/Annotation| {
+        public constructor(@R|ParamOnly|() @R|ParamProperty|() @R|ParamField|() @R|ParamPropertyField|() s: R|kotlin/String|): R|Your| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|PropertyOnly|() @R|ParamProperty|() @R|PropertyField|() @R|ParamPropertyField|() @R|Inapplicable|() field:@R|FieldOnly|() public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }

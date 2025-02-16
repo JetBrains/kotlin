@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.runner.RunWith
@@ -79,7 +80,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
 
     @After
     fun disposeTestRootDisposable() {
-        Disposer.dispose(testRootDisposable)
+        disposeRootInWriteAction(testRootDisposable)
     }
 
     protected open fun CompilerConfiguration.updateConfiguration() {}
@@ -88,6 +89,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     private fun createCompilerFacade(
         additionalPaths: List<File> = listOf(),
         forcedFirSetting: Boolean? = null,
+        additionalConfigurationParameters: (CompilerConfiguration) -> Unit = {},
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
     ) = KotlinCompilerFacade.create(
         testRootDisposable,
@@ -111,6 +113,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 analysisFlags
             )
             updateConfiguration()
+            additionalConfigurationParameters(this)
             addJvmClasspathRoots(additionalPaths)
             addJvmClasspathRoots(defaultClassPath)
 
@@ -143,10 +146,14 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     protected fun compileToIr(
         sourceFiles: List<SourceFile>,
         additionalPaths: List<File> = listOf(),
+        updateConfiguration: (CompilerConfiguration) -> Unit = {},
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
     ): IrModuleFragment =
-        createCompilerFacade(additionalPaths, registerExtensions = registerExtensions)
-            .compileToIr(sourceFiles)
+        createCompilerFacade(
+            additionalPaths,
+            additionalConfigurationParameters = updateConfiguration,
+            registerExtensions = registerExtensions
+        ).compileToIr(sourceFiles)
 
     protected fun createClassLoader(
         platformSourceFiles: List<SourceFile>,

@@ -101,6 +101,18 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
   }
 
   @Test
+  @TestMetadata("contextParameter.kt")
+  public void testContextParameter() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/contextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParameterUsage.kt")
+  public void testContextParameterUsage() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/contextParameterUsage.kt");
+  }
+
+  @Test
   @TestMetadata("forExpression.kt")
   public void testForExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/forExpression.kt");
@@ -122,6 +134,12 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
   @TestMetadata("incompleteGet.kt")
   public void testIncompleteGet() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/incompleteGet.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineClassWithoutArguments.kt")
+  public void testInlineClassWithoutArguments() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/inlineClassWithoutArguments.kt");
   }
 
   @Test

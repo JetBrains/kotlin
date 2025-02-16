@@ -35,7 +35,7 @@ fun test() {
         // should fix OTv := ScopeOwner to acquire type arguments for GSOS type constructor via bare type inference
         when (otvOwner.provide()) { is GenericScopeOwnerSubtype -> Unit }
         // expected: Interloper </: GenericScopeOwner<TypeArgument>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("GenericScopeOwner<TypeArgument>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; GenericScopeOwner<TypeArgument>")!>Interloper<!>)
     }
     // expected: GenericScopeOwner<TypeArgument>
     <!DEBUG_INFO_EXPRESSION_TYPE("GenericScopeOwner<TypeArgument>")!>resultD<!>
@@ -45,7 +45,7 @@ fun test() {
         // should fix OTv := ScopeOwner for scope navigation
         when (Value) { in otvOwner.provide() -> Unit }
         // expected: Interloper <: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultE<!>
@@ -55,7 +55,7 @@ fun test() {
         // should fix OTv := ScopeOwner for scope navigation
         when (Value) { !in otvOwner.provide() -> Unit }
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultF<!>

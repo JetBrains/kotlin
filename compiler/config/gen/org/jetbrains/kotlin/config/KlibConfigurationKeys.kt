@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.config
  * DO NOT MODIFY IT MANUALLY
  */
 
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 object KlibConfigurationKeys {
     @JvmField
@@ -24,9 +25,6 @@ object KlibConfigurationKeys {
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS = CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
 
     @JvmField
-    val NO_DOUBLE_INLINING = CompilerConfigurationKey.create<Boolean>("Turns off double-inlining mode")
-
-    @JvmField
     val SYNTHETIC_ACCESSORS_DUMP_DIR = CompilerConfigurationKey.create<String>("Path to a directory to dump synthetic accessors and their use sites")
 
     @JvmField
@@ -34,6 +32,9 @@ object KlibConfigurationKeys {
 
     @JvmField
     val DUPLICATED_UNIQUE_NAME_STRATEGY = CompilerConfigurationKey.create<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
+
+    @JvmField
+    val CUSTOM_KLIB_ABI_VERSION = CompilerConfigurationKey.create<KotlinAbiVersion>("Custom klib abi version")
 
 }
 
@@ -49,10 +50,6 @@ var CompilerConfiguration.produceKlibSignaturesClashChecks: Boolean
     get() = getBoolean(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)
     set(value) { put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, value) }
 
-var CompilerConfiguration.noDoubleInlining: Boolean
-    get() = getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
-    set(value) { put(KlibConfigurationKeys.NO_DOUBLE_INLINING, value) }
-
 var CompilerConfiguration.syntheticAccessorsDumpDir: String?
     get() = get(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR)
     set(value) { put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, requireNotNull(value) { "nullable values are not allowed" }) }
@@ -64,4 +61,8 @@ var CompilerConfiguration.syntheticAccessorsWithNarrowedVisibility: Boolean
 var CompilerConfiguration.duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy?
     get() = get(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY)
     set(value) { put(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.customKlibAbiVersion: KotlinAbiVersion?
+    get() = get(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION)
+    set(value) { putIfNotNull(KlibConfigurationKeys.CUSTOM_KLIB_ABI_VERSION, value) }
 

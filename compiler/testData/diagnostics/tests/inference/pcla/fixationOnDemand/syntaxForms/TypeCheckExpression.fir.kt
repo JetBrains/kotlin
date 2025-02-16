@@ -35,7 +35,7 @@ fun test() {
         // should fix OTv := ScopeOwner to acquire type arguments for GSOS type constructor via bare type inference
         otvOwner.provide() is GenericScopeOwnerSubtype
         // expected: Interloper </: GenericScopeOwner<TypeArgument>
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("GenericScopeOwner<TypeArgument>; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; GenericScopeOwner<TypeArgument>")!>Interloper<!>)
     }
     // expected: GenericScopeOwner<TypeArgument>
     <!DEBUG_INFO_EXPRESSION_TYPE("GenericScopeOwner<TypeArgument>")!>resultD<!>

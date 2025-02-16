@@ -39,7 +39,7 @@ class FirSpecificTypeResolverTransformer(
     private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
     private val expandTypeAliases: Boolean,
 ) : FirAbstractTreeTransformer<ScopeClassDeclaration>(phase = FirResolvePhase.SUPER_TYPES) {
-    private val typeResolver = session.typeResolver
+    private val typeResolver get() = session.typeResolver
 
     @set:PrivateForInline
     var areBareTypesAllowed: Boolean = false

@@ -9,9 +9,11 @@ package kotlin.concurrent.atomics
  * An [Int] value that may be updated atomically.
  *
  * Instances of [AtomicInt] are represented by [java.util.concurrent.atomic.AtomicInteger] and provide the the same atomicity guarantees.
+ *
+ * @sample samples.concurrent.atomics.AtomicJvmSamples.processItems
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicInt(value: Int) {
     /**
      * Atomically loads the value from this [AtomicInt].
@@ -86,7 +88,7 @@ public actual class AtomicInt(value: Int) {
  * Instances of [AtomicLong] are represented by [java.util.concurrent.atomic.AtomicLong] and provide the the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicLong(value: Long) {
     /**
      * Atomically loads the value from this [AtomicLong].
@@ -161,7 +163,7 @@ public actual class AtomicLong(value: Long) {
  * Instances of [AtomicBoolean] are represented by [java.util.concurrent.atomic.AtomicBoolean] and provide the the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicBoolean (value: Boolean) {
     /**
      * Atomically loads the value from this [AtomicBoolean].
@@ -222,7 +224,7 @@ public actual class AtomicBoolean (value: Boolean) {
  * Instances of [AtomicReference] are represented by [java.util.concurrent.atomic.AtomicReference] and provide the the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicReference<T> (value: T) {
     /**
      * Atomically loads the value from this [AtomicReference].

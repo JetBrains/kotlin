@@ -34,33 +34,13 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
-import kotlin.collections.HashSet
-import kotlin.collections.List
-import kotlin.collections.all
-import kotlin.collections.any
-import kotlin.collections.contains
-import kotlin.collections.filter
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.forEachIndexed
-import kotlin.collections.hashSetOf
-import kotlin.collections.isNotEmpty
-import kotlin.collections.joinToString
-import kotlin.collections.last
-import kotlin.collections.lastOrNull
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
 import kotlin.collections.set
-import kotlin.collections.zip
 
 fun IrElement.dumpSrc(useFir: Boolean = false): String {
     val sb = StringBuilder()
@@ -89,7 +69,7 @@ class IrSourcePrinterVisitor(
     out: Appendable,
     indentUnit: String = "  ",
     private val useFir: Boolean = false,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     private val printer = Printer(out, indentUnit)
     private var currentScope: Scope = Scope()
 
@@ -305,9 +285,9 @@ class IrSourcePrinterVisitor(
                 // no names for
                 "invoke", "get", "set" -> ""
                 "iterator", "hasNext", "next", "getValue", "setValue",
-                "noWhenBranchMatchedException",
-                -> name
+                "noWhenBranchMatchedException" -> name
                 "CHECK_NOT_NULL" -> "!!"
+                "THROW_ISE" -> "throw IllegalStateException()"
                 else -> {
                     if (name.startsWith("component")) name
                     else error("Unhandled operator $name")
@@ -374,19 +354,20 @@ class IrSourcePrinterVisitor(
                 }
                 // builtin static operators
                 "greater", "less", "lessOrEqual", "greaterOrEqual", "EQEQ", "EQEQEQ",
-                "ieee754equals",
-                -> {
+                "ieee754equals" -> {
                     expression.getValueArgument(0)?.print()
                     print(" $opSymbol ")
                     expression.getValueArgument(1)?.print()
                 }
                 "iterator", "hasNext", "next",
-                "noWhenBranchMatchedException",
-                -> {
+                "noWhenBranchMatchedException" -> {
                     (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(".")
                     print(opSymbol)
                     print("()")
+                }
+                "THROW_ISE" -> {
+                    print(opSymbol)
                 }
                 else -> {
                     if (name.startsWith("component")) {

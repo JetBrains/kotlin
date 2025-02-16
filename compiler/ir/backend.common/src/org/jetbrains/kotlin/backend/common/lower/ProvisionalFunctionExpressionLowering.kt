@@ -74,7 +74,9 @@ class ProvisionalFunctionExpressionLowering(@Suppress("UNUSED_PARAMETER", "unuse
                     typeArgumentsCount = 0,
                     reflectionTarget = null,
                     origin = origin
-                ).copyAttributes(expression)
+                ).apply {
+                    copyAttributes(expression)
+                }
             )
         )
     }

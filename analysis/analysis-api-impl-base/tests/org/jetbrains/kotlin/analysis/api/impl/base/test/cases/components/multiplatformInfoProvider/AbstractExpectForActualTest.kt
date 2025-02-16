@@ -19,7 +19,7 @@ abstract class AbstractExpectForActualTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val renderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
+        val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
         val expectedSymbolText: String? = executeOnPooledThreadInReadAction {
             analyseForTest(declaration) {
                 val expectedSymbols = declaration.symbol.getExpectsForActual()

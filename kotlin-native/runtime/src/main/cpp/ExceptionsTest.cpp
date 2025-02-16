@@ -42,7 +42,7 @@ TEST(ExceptionTest, ProcessUnhandledException_WithHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -58,7 +58,7 @@ TEST(ExceptionDeathTest, ProcessUnhandledException_NoHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -78,10 +78,10 @@ TEST(ExceptionDeathTest, ProcessUnhandledException_WithFailingHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         Object hookException(typeHolder.typeInfo());
-        hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         hookException->value = 13;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -100,10 +100,10 @@ TEST(ExceptionDeathTest, ProcessUnhandledException_WithTerminatingFailingHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         Object hookException(typeHolder.typeInfo());
-        hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         hookException->value = 13;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -122,7 +122,7 @@ TEST(ExceptionDeathTest, TerminateWithUnhandledException) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     kotlin::RunInNewThread([&typeHolder]() {
         Object exception(typeHolder.typeInfo());
-        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         exception->value = 42;
         auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
         auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -139,7 +139,7 @@ TEST(ExceptionDeathTest, TerminateWithUnhandledException) {
 TEST(ExceptionDeathTest, TerminateHandler_WithHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     Object exception(typeHolder.typeInfo());
-    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
     exception->value = 42;
     auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
     auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -166,7 +166,7 @@ TEST(ExceptionDeathTest, TerminateHandler_WithHook) {
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
-                Kotlin_initRuntimeIfNeeded();
+                CalledFromNativeGuard guard;
                 try {
                     ThrowException(exception.header());
                 } catch (...) {
@@ -179,7 +179,7 @@ TEST(ExceptionDeathTest, TerminateHandler_WithHook) {
 TEST(ExceptionDeathTest, TerminateHandler_NoHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     Object exception(typeHolder.typeInfo());
-    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
     exception->value = 42;
     auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
     auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -208,7 +208,7 @@ TEST(ExceptionDeathTest, TerminateHandler_NoHook) {
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
-                Kotlin_initRuntimeIfNeeded();
+                CalledFromNativeGuard guard;
                 try {
                     ThrowException(exception.header());
                 } catch (...) {
@@ -221,10 +221,10 @@ TEST(ExceptionDeathTest, TerminateHandler_NoHook) {
 TEST(ExceptionDeathTest, TerminateHandler_WithFailingHook) {
     test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>().setSuperType(theThrowableTypeInfo)};
     Object exception(typeHolder.typeInfo());
-    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    exception.header()->typeInfoOrMeta_ = setPointerBits(exception.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
     exception->value = 42;
     Object hookException(typeHolder.typeInfo());
-    hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    hookException.header()->typeInfoOrMeta_ = setPointerBits(hookException.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
     hookException->value = 13;
     auto reportUnhandledExceptionMock = ScopedReportUnhandledExceptionMock();
     auto Kotlin_runUnhandledExceptionHookMock = ScopedKotlin_runUnhandledExceptionHookMock();
@@ -252,7 +252,7 @@ TEST(ExceptionDeathTest, TerminateHandler_WithFailingHook) {
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
-                Kotlin_initRuntimeIfNeeded();
+                CalledFromNativeGuard guard;
                 try {
                     ThrowException(exception.header());
                 } catch (...) {
@@ -407,10 +407,7 @@ TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInRunnableState) {
         // Do not use RunInNewThread because the termination handler will check initiliazation
         // of the whole runtime while RunInNewThread initializes the memory only.
         ScopedThread([]() {
-            Kotlin_initRuntimeIfNeeded();
-            SwitchThreadState(mm::GetMemoryState(), ThreadState::kRunnable);
-
-            loggingAssert(GetThreadState() == ThreadState::kRunnable, "Expected kRunanble thread state before throwing");
+            CalledFromNativeGuard guard;
             ObjHeader exception{};
             ExceptionObjHolder::Throw(&exception);
         });
@@ -432,8 +429,19 @@ TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInNativeState) {
             Kotlin_initRuntimeIfNeeded();
 
             loggingAssert(GetThreadState() == ThreadState::kNative, "Expected kNative thread state before throwing");
-            ObjHeader exception{};
-            ExceptionObjHolder::Throw(&exception);
+            // `deferred` is lazy evaluation on the current thread.
+            auto future = std::async(std::launch::deferred, []() {
+                // Initial Kotlin exception throwing requires the runtime to be initialized.
+                // Do not use ScopedMemoryInit because it clears the stable ref queue
+                // of the current thread on deinitialization. After that the ExceptionObjHolder
+                // will contain a dangling pointer to the stable ref queue entry.
+                CalledFromNativeGuard guard;
+                ObjHeader exception{};
+                ExceptionObjHolder::Throw(&exception);
+            });
+            // Actually run `future` and re-throw the resulting Kotlin exception.
+            // As if we called Kotlin function from C.
+            future.get();
         });
     };
 
@@ -454,7 +462,7 @@ TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInForeignThread) {
                 // Do not use ScopedMemoryInit because it clears the stable ref queue
                 // of the current thread on deinitialization. After that the ExceptionObjHolder
                 // will contain a dangling pointer to the stable ref queue entry.
-                Kotlin_initRuntimeIfNeeded();
+                CalledFromNativeGuard guard;
                 ObjHeader exception{};
                 ExceptionObjHolder::Throw(&exception);
             });

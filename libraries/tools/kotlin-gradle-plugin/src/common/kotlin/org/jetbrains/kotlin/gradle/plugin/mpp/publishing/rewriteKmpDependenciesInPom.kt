@@ -19,12 +19,7 @@ private val Project.pomDependenciesRewriterMap: MutableMap<KotlinTargetComponent
 
 private fun Project.pomDependenciesRewriterForTargetComponent(kotlinComponent: KotlinTargetComponent): PomDependenciesRewriter =
     pomDependenciesRewriterMap.getOrPut(kotlinComponent) {
-        if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
-            project.createDefaultPomDependenciesRewriterForTargetComponent(kotlinComponent)
-        } else {
-            @Suppress("DEPRECATION")
-            DeprecatedPomDependenciesRewriter(project, kotlinComponent)
-        }
+        project.createDefaultPomDependenciesRewriterForTargetComponent(kotlinComponent)
     }
 
 internal fun Project.rewriteKmpDependenciesInPomForTargetPublication(

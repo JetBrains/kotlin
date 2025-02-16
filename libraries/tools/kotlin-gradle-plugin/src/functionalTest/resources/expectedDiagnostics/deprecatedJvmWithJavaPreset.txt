@@ -1,4 +1,5 @@
-[DeprecatedJvmWithJavaPresetDiagnostic | ERROR] The 'jvmWithJava' preset is deprecated and will be removed soon.
+[DeprecatedJvmWithJavaPresetDiagnostic | ERROR] Deprecated 'jvmWithJava' Preset
+The 'jvmWithJava' preset is deprecated and will be removed soon.
 Please use an ordinary JVM target with Java support:
 ```
 kotlin {
@@ -13,5 +14,6 @@ For example, if the JVM target is given the default name 'jvm':
  * instead of 'src/test/java', use 'src/jvmTest/java'
 Please migrate to the new JVM target with Java support.
 ----
-[DeprecatedInKMPJavaPluginsDiagnostic | WARNING] 'java' Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin.
+[KMPJavaPluginsIncompatibilityDiagnostic | ERROR] 'java' Plugin Incompatible with 'org.jetbrains.kotlin.multiplatform' Plugin
+'java' Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin.
 Consider adding a new subproject with 'java' plugin where the KMP project is added as a dependency.

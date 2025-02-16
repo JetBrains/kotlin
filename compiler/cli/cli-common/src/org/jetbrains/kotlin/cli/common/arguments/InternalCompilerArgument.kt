@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LanguageFeature
 
 /**
@@ -51,8 +53,8 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
 
     // Expected tail form: ':(+|-)<language feature name>'
     override fun parseTail(tail: String, wholeArgument: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
-        fun reportAndReturnNull(message: String): Nothing? {
-            errors.internalArgumentsParsingProblems += message
+        fun reportAndReturnNull(message: String, severity: CompilerMessageSeverity = CompilerMessageSeverity.STRONG_WARNING): Nothing? {
+            errors.internalArgumentsParsingProblems += severity to message
             return null
         }
 
@@ -73,8 +75,24 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
         val languageFeature = LanguageFeature.fromString(languageFeatureName)
             ?: return reportAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
 
+        if (languageFeature.kind.testOnly && !areTestOnlyLanguageFeaturesAllowed) {
+            reportAndReturnNull(
+                "Language feature '$languageFeatureName' is test-only and cannot be enabled from command line",
+                severity = CompilerMessageSeverity.ERROR
+            )
+        }
+
         return ManualLanguageFeatureSetting(languageFeature, languageFeatureState, wholeArgument)
     }
+}
+
+fun allowTestsOnlyLanguageFeatures() {
+    System.setProperty("kotlinc.test.allow.testonly.language.features", "true")
+}
+
+private val areTestOnlyLanguageFeaturesAllowed: Boolean by lazy {
+    // Use system property because test infra in K/N uses an "isolated" classloader
+    System.getProperty("kotlinc.test.allow.testonly.language.features")?.toBoolean() == true
 }
 
 interface InternalArgument {

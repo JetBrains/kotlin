@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -17,7 +18,10 @@ import kotlin.io.path.writeText
 @MppGradlePluginTests
 class MppDiagnosticsIt : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(compilerArgumentsLogLevel = null)
+        get() = super.defaultBuildOptions.copy(
+            compilerArgumentsLogLevel = null,
+            ignoreWarningModeSeverityOverride = true
+        )
 
     @GradleTest
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
@@ -139,6 +143,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
+    @BrokenOnMacosTest
     fun testErrorsFailOnlyRelevantProjects(gradleVersion: GradleVersion) {
         project("errorsFailOnlyRelevantProjects", gradleVersion) {
             buildAndFail("brokenProjectA:assemble") {
@@ -174,6 +179,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
+    @BrokenOnMacosTest
     fun testDiagnosticsRenderingWithStacktraceOption(gradleVersion: GradleVersion) {
         project("diagnosticsRenderingWithStacktraceOption", gradleVersion) {
             // KGP sets showDiagnosticsStacktrace=false and --full-stacktrace by default in tests,

@@ -21,15 +21,18 @@ package org.jetbrains.kotlin.powerassert
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.isComparisonOperator
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -65,7 +68,7 @@ val IrElement.earliestStartOffset: Int
     get() {
         var offset = startOffset
         this.acceptChildrenVoid(
-            object : IrElementVisitorVoid {
+            object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     if (element.startOffset < offset) offset = element.startOffset
                     element.acceptChildrenVoid(this)
@@ -74,3 +77,31 @@ val IrElement.earliestStartOffset: Int
         )
         return offset
     }
+
+/**
+ * An implicit argument may only be either `this` class dispatch receiver ([IrGetField])
+ * or `this` extension function receiver ([IrGetValue]). As such, these are the only two
+ * IR elements that need to be checked for [IrStatementOrigin.IMPLICIT_ARGUMENT].
+ */
+internal fun IrExpression.isImplicitArgument(): Boolean = when (this) {
+    is IrGetValue -> origin == IrStatementOrigin.IMPLICIT_ARGUMENT
+    is IrGetField -> origin == IrStatementOrigin.IMPLICIT_ARGUMENT
+    else -> false
+}
+
+internal fun IrCall.getExplicitReceiver(): IrExpression? {
+    for (parameter in symbol.owner.parameters) {
+        if (parameter.kind == IrParameterKind.DispatchReceiver || parameter.kind == IrParameterKind.ExtensionReceiver) {
+            val argument = arguments[parameter] ?: continue
+            if (!argument.isImplicitArgument()) return argument
+        }
+    }
+    return null
+}
+
+internal fun IrCall.isInnerOfNotEqualOperator(): Boolean =
+    (origin == IrStatementOrigin.EXCLEQ && symbol.owner.name.asString() == BuiltInOperatorNames.EQEQ) ||
+            (origin == IrStatementOrigin.EXCLEQEQ && symbol.owner.name.asString() == BuiltInOperatorNames.EQEQEQ)
+
+internal fun IrCall.isInnerOfComparisonOperator(): Boolean =
+    origin?.isComparisonOperator() == true && symbol.owner.name.asString() == BuiltInOperatorNames.COMPARE_TO

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -47,11 +46,11 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
     abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
     abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
 
-    override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = this@AbstractLibraryAbiReaderTest.frontend
             targetPlatform = this@AbstractLibraryAbiReaderTest.targetPlatform
-            artifactKind = BinaryKind.NoArtifact
+            artifactKind = ArtifactKind.NoArtifact
             targetBackend = this@AbstractLibraryAbiReaderTest.targetBackend
             dependencyKind = DependencyKind.Binary
         }
@@ -106,9 +105,6 @@ open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<Fi
         get() = ::FirJsKlibSerializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        defaultDirectives {
-            LANGUAGE with "+ContextReceivers"
-        }
         configureFirParser(FirParser.LightTree)
         super.configure(builder)
     }

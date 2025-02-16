@@ -7,10 +7,12 @@ KtArrayAccessExpression(205,209): 'a[2]'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = a
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtArrayAccessExpression(205,209): 'a[2]'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/B.get
       typeArgumentsMapping = {}
     isInBestCandidates = true

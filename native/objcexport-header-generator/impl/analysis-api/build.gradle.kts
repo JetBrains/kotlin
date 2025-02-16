@@ -5,7 +5,7 @@ plugins {
 kotlin {
     compilerOptions {
         /* Required to use Analysis Api */
-        freeCompilerArgs.add("-Xcontext-receivers")
+        freeCompilerArgs.add("-Xcontext-parameters")
         optIn.add("org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi")
     }
 }
@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":native:analysis-api-klib-reader"))
 
     testImplementation(projectTests(":native:objcexport-header-generator"))
+    testApi(project(":native:analysis-api-based-test-utils"))
     testApi(project(":analysis:analysis-api-standalone"))
 }
 

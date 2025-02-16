@@ -10,5 +10,5 @@ final class /Matrix { // /Matrix|null[0]
 abstract interface /NumberOperations { // /NumberOperations|null[0]
     abstract fun (kotlin/Number).plus(kotlin/Number): kotlin/Number // /NumberOperations.plus|plus@kotlin.Number(kotlin.Number){}[0]
 }
-final fun context(/Matrix) (/Matrix)./plus(/Matrix): /Matrix // /plus|plus!NumberOperations@Matrix(Matrix){}[0]
+final fun (context(/NumberOperations), /Matrix)./plus(/Matrix): /Matrix // /plus|plus(NumberOperations)@Matrix(Matrix){}[0]
 final fun (/NumberOperations)./plusMatrix(/Matrix, /Matrix) // /plusMatrix|plusMatrix@NumberOperations(Matrix;Matrix){}[0]

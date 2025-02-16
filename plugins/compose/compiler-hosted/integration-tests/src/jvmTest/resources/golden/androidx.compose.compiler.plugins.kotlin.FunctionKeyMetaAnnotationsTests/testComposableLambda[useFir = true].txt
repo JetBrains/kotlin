@@ -1,0 +1,50 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable  
+@Composable 
+fun Foo(child: @Composable () -> Unit) { child() }
+
+@Composable 
+fun Bar() {
+    Foo { 
+        print("A")
+    }
+
+    Foo {
+        print("B")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+ComposableSingletons$TestKt {
+    <init> ()V null
+    getLambda$-420233864$test_module ()Lkotlin/jvm/functions/Function2; null
+    getLambda$511230191$test_module ()Lkotlin/jvm/functions/Function2; null
+    <clinit> ()V null
+}
+
+ComposableSingletons$TestKt$lambda$-420233864$1 {
+    <init> ()V null
+    invoke (Landroidx/compose/runtime/Composer;I)V [key=-420233864, startOffset=143, endOffset=170]
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
+    <clinit> ()V null
+}
+
+ComposableSingletons$TestKt$lambda$511230191$1 {
+    <init> ()V null
+    invoke (Landroidx/compose/runtime/Composer;I)V [key=511230191, startOffset=180, endOffset=206]
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
+    <clinit> ()V null
+}
+
+TestKt {
+    Foo (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V [key=-239871899, startOffset=45, endOffset=108]
+    Bar (Landroidx/compose/runtime/Composer;I)V [key=-1333506531, startOffset=110, endOffset=208]
+    Foo$lambda$0 (Lkotlin/jvm/functions/Function2;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
+    Bar$lambda$1 (ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
+}

@@ -1,0 +1,32 @@
+KtCallableReferenceExpression(71,76): '::foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = val foo: kotlin.Boolean
+          contextParameters = [
+            KaVariableSignature:
+              name = Int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = Int: kotlin.Int
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = String
+              receiverType = null
+              returnType = kotlin.String
+              symbol = String: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /foo
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

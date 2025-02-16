@@ -1,0 +1,12 @@
+public final class cases/inline/InlineExposedKt {
+	public static final fun exposedForInline ()V
+}
+
+public final class cases/inline/InternalClassExposed {
+	public field fieldExposed Ljava/lang/String;
+	public fun <init> ()V
+	public final fun funExposed ()V
+	public final fun getPropertyExposed ()Ljava/lang/String;
+	public final fun setPropertyExposed (Ljava/lang/String;)V
+}
+

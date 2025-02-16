@@ -25,21 +25,25 @@ external interface User {
     val name: String
     val age: Int
     val email: String?
+
+    // Created by the plugin declarations
+    @JsExport.Ignore
+    companion object {
+        inline operator fun invoke(name: String, age: Int, email: String? = NOTHING): User =
+            js("({ name: name, age: age, email: email })")
+
+        inline fun copy(source: User, name: String = NOTHING, age: Int = NOTHING, email: String? = NOTHING): User =
+            js("Object.assign({}, source, { name: name, age: age, email: email })")
+    }
 }
 
-// Created by the plugin declarations
-inline operator fun User.Companion.invoke(name: String, age: Int, email: String? = NOTHING): User =
-    js("({ name: name, age: age, email: email })")
-
-inline fun User.copy(name: String = NOTHING, age: Int = NOTHING, email: String? = NOTHING): User =
-    js("Object.assign({}, this, { name: name, age: age, email: email })")
 ```
 
 To create an object with the defined structure, call `User` as a constructor:
 ```kotlin
 fun main() {
     val user = User(name = "Name", age = 10)
-    val copy = user.copy(age = 11, email = "some@user.com")
+    val copy = User.copy(user, age = 11, email = "some@user.com")
 
     println(JSON.stringify(user)) 
     // { "name": "Name", "age": 10 }

@@ -2,8 +2,9 @@
 // FULL_JDK
 // JVM_TARGET: 1.8
 // WITH_STDLIB
+// CHECK_BYTECODE_LISTING
 // MODULE: lib
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // FILE: Foo.kt
 
 interface Foo {
@@ -24,32 +25,7 @@ interface Derived : Foo {
 
 class DerivedClass : Derived 
 
-
 fun box(): String {
-    checkMethodExists(DerivedClass::class.java, "toOverride")
-    checkNoMethod(DerivedClass::class.java, "nonOverride")
-
     val value = DerivedClass()
     return value.toOverride() + value.nonOverride()
-}
-
-fun checkNoMethod(clazz: Class<*>, name: String, vararg parameterTypes: Class<*>) {
-    try {
-        clazz.getDeclaredMethod(name, *parameterTypes)
-    }
-    catch (e: NoSuchMethodException) {
-        return
-    }
-    throw AssertionError("fail: method $name was found in " + clazz)
-}
-
-fun checkMethodExists(clazz: Class<*>, name: String, vararg parameterTypes: Class<*>) {
-    try {
-        clazz.getDeclaredMethod(name, *parameterTypes)
-        return
-    }
-    catch (e: NoSuchMethodException) {
-        throw AssertionError("fail: method $name was not found in " + clazz, e)
-    }
-
 }

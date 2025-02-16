@@ -42,6 +42,7 @@ sealed class ClangArgs(
                     target.family.name.takeIf { target.family != Family.MINGW },
                     "WINDOWS".takeIf { target.family == Family.MINGW },
                     "MACOSX".takeIf { target.family == Family.OSX },
+                    "APPLE".takeIf { target.family.isAppleFamily },
 
                     "NO_64BIT_ATOMIC".takeUnless { target.supports64BitAtomics() },
                     "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },

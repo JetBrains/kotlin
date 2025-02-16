@@ -68,6 +68,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info (AnalysisFlags.allowKotlinPackage)"
     )
 
+    val EXPECT_BUILTINS_AS_PART_OF_STDLIB by directive(
+        description = "Emulate kotlin-stdlib compilation"
+    )
+
     val PREFER_IN_TEST_OVER_STDLIB by directive(
         description = "Prefer in-test defined class over stdlib one if the names collide"
     )
@@ -91,6 +95,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
 
     val STDLIB_COMPILATION by directive(
         description = "Enables special features which are relevant only for stdlib compilation."
+    )
+
+    val PROGRESSIVE_MODE by directive(
+        description = "Enables progressive mode"
     )
 
     // --------------------- Jvm Analysis Flags ---------------------
@@ -121,13 +129,9 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val PARAMETERS_METADATA by directive("Add parameters metadata for 1.8 reflection")
     val USE_TYPE_TABLE by directive("Use type table in metadata serialization")
     val NO_NEW_JAVA_ANNOTATION_TARGETS by directive("Do not generate Java annotation targets TYPE_USE/TYPE_PARAMETER for Kotlin annotation classes with Kotlin targets TYPE/TYPE_PARAMETER")
-    val OLD_INNER_CLASSES_LOGIC by directive("Use old logic for generation of InnerClasses attributes")
     val LINK_VIA_SIGNATURES_K1 by directive("Use linkage via signatures instead of descriptors on the K1 frontend")
     val ENABLE_JVM_IR_INLINER by directive("Enable inlining on IR, instead of inlining on bytecode")
     val USE_INLINE_SCOPES_NUMBERS by directive("Use inline scopes numbers for inline marker variables")
-    val GENERATE_PROPERTY_ANNOTATIONS_METHODS by directive(
-        description = "Enables corresponding analysis flag (JvmAnalysisFlags.generatePropertyAnnotationsMethods)"
-    )
     val DONT_WARN_ON_ERROR_SUPPRESSION by directive("Don't emit warning when an error is suppressed")
 
 

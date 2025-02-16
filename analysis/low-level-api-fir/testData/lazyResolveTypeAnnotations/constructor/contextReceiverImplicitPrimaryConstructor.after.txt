@@ -16,6 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverImplicitPrimaryConstructor.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }

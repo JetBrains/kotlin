@@ -7,10 +7,12 @@ KtCallExpression(54,65): 'function(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = a: B
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = "str"
@@ -26,8 +28,10 @@ KtCallExpression(54,65): 'function(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = a: B
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {
         A -> (kotlin.String),

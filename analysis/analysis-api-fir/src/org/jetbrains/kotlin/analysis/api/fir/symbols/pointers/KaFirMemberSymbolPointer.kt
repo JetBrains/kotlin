@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -24,9 +25,10 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
     private val ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val isStatic: Boolean = false,
-) : KaSymbolPointer<S>() {
+    originalSymbol: S?,
+) : KaBaseCachedSymbolPointer<S>(originalSymbol) {
     @KaImplementationDetail
-    final override fun restoreSymbol(analysisSession: KaSession): S? {
+    final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)
         val scope = with(analysisSession) {
             val ownerSymbol = ownerPointer.restoreSymbol() ?: return null

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,8 +41,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLe
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -110,12 +109,8 @@ internal class KaFirSymbolRelationProvider(
                     }
                 }
 
-                is KaValueParameterSymbol -> {
-                    return firSymbolBuilder.buildSymbol(this.firSymbol.fir.containingDeclarationSymbol) as? KaDeclarationSymbol
-                }
-
                 is KaCallableSymbol -> {
-                    val typeAliasForConstructor = (firSymbol as? FirConstructorSymbol)?.typeAliasForConstructor
+                    val typeAliasForConstructor = (firSymbol as? FirConstructorSymbol)?.typeAliasConstructorInfo?.typeAliasSymbol
                     if (typeAliasForConstructor != null) {
                         return firSymbolBuilder.classifierBuilder.buildTypeAliasSymbol(typeAliasForConstructor)
                     }
@@ -195,15 +190,14 @@ internal class KaFirSymbolRelationProvider(
         return with(analysisSession) { containingDeclaration.symbol }
     }
 
-    private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
-        return when (symbol) {
-            is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
-            is KaBackingFieldSymbol -> symbol.owningProperty
-            is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
-            is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
-            is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
-            else -> null
-        }
+    private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? = when (symbol) {
+        is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
+        is KaBackingFieldSymbol -> symbol.owningProperty
+        is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
+        is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        is KaContextParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+        else -> null
     }
 
     override val KaSymbol.containingFile: KaFileSymbol?
@@ -304,6 +298,9 @@ internal class KaFirSymbolRelationProvider(
                     val constructor = source.ownerFunction as KtPrimaryConstructor
                     constructor.containingClassOrObject!!
                 }
+                is KtPrimaryConstructor -> {
+                    source.containingClassOrObject!!
+                }
                 else -> null
             }
             else -> null
@@ -345,7 +342,7 @@ internal class KaFirSymbolRelationProvider(
         get() = withValidityAssertion {
             require(this is KaFirConstructorSymbol)
 
-            val originalConstructor = firSymbol.originalConstructorIfTypeAlias ?: return null
+            val originalConstructor = firSymbol.typeAliasConstructorInfo?.originalConstructor as? FirConstructor ?: return null
 
             analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(originalConstructor.symbol)
         }

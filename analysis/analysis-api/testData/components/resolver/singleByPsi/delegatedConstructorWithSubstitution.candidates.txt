@@ -7,10 +7,12 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: T
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,14 +25,16 @@ KtConstructorDelegationCall(144,152): 'super(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -39,10 +43,12 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: T
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -55,14 +61,17 @@ KtConstructorDelegationCall(144,152): 'super(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: T
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = str
               receiverType = null
               returnType = kotlin.String
               symbol = str: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)

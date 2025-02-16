@@ -1,17 +1,17 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58845
 
 // MODULE: common
 // FILE: common.kt
-expect interface <!NO_ACTUAL_FOR_EXPECT!>I1<!>
+expect interface I1
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>I2<!>
+expect interface I2
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>I3<!>
+expect interface I3
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>I4<!>
+expect interface I4
 
 <!FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES{JVM}, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F1 : I1 {}
 

@@ -143,14 +143,27 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
-    // Advanced options
-
-    @Argument(value = "-Xuse-old-backend", description = "Use the old JVM backend.")
-    var useOldBackend = false
+    @GradleOption(
+        value = DefaultValue.JVM_DEFAULT_MODES,
+        gradleInputType = GradleInputTypes.INPUT,
+        gradleName = "jvmDefault",
+    )
+    @Argument(
+        value = "-jvm-default",
+        valueDescription = "{enable|no-compatibility|disable}",
+        description = """Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
+-jvm-default=disable             Default behavior. Do not generate JVM default methods.
+-jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes
+                                 with static methods for compatibility with code compiled in the 'disable' mode.
+-jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes."""
+    )
+    var jvmDefaultStable: String? = null
         set(value) {
             checkFrozen()
             field = value
         }
+
+    // Advanced options
 
     @Argument(
         value = "-Xallow-unstable-dependencies",
@@ -445,28 +458,12 @@ The default value is 'warn'."""
     @Argument(
         value = "-Xjvm-default",
         valueDescription = "{all|all-compatibility|disable}",
-        description = """Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
--Xjvm-default=all                Generate JVM default methods for all interface declarations with bodies in the module.
-                                 Do not generate 'DefaultImpls' stubs for interface declarations with bodies. If an interface inherits a method with a
-                                 body from an interface compiled in 'disable' mode and doesn't override it, then a 'DefaultImpls' stub will be
-                                 generated for it.
-                                 This BREAKS BINARY COMPATIBILITY if some client code relies on the presence of 'DefaultImpls' classes.
-                                 Note that if interface delegation is used, all interface methods are delegated.
--Xjvm-default=all-compatibility  Like 'all', but additionally generate compatibility stubs in the 'DefaultImpls' classes.
-                                 Compatibility stubs can help library and runtime authors maintain backward binary compatibility
-                                 for existing clients compiled against previous library versions.
-                                 'all' and 'all-compatibility' modes change the library ABI surface that will be used by clients after
-                                 the recompilation of the library. Because of this, clients might be incompatible with previous library
-                                 versions. This usually means that proper library versioning is required, for example with major version increases in SemVer.
-                                 In subtypes of Kotlin interfaces compiled in 'all' or 'all-compatibility' mode, 'DefaultImpls'
-                                 compatibility stubs will invoke the default method of the interface with standard JVM runtime resolution semantics.
-                                 Perform additional compatibility checks for classes inheriting generic interfaces where in some cases an
-                                 additional implicit method with specialized signatures was generated in 'disable' mode.
-                                 Unlike in 'disable' mode, the compiler will report an error if such a method is not overridden explicitly
-                                 and the class is not annotated with '@JvmDefaultWithoutCompatibility' (see KT-39603 for more details).
--Xjvm-default=disable            Default behavior. Do not generate JVM default methods."""
+        description = """This option is deprecated. Migrate to -jvm-default as follows:
+-Xjvm-default=disable            -> -jvm-default=disable
+-Xjvm-default=all-compatibility  -> -jvm-default=enable
+-Xjvm-default=all                -> -jvm-default=no-compatibility"""
     )
-    var jvmDefault: String = JvmDefaultMode.DISABLE.description
+    var jvmDefault: String? = null
         set(value) {
             checkFrozen()
             field = value
@@ -768,17 +765,6 @@ If API Level >= 2.2 -- no-op."""
         }
 
     @Argument(
-        value = "-Xuse-old-innerclasses-logic",
-        description = """Use the old logic for the generation of 'InnerClasses' attributes.
-This option is deprecated and will be deleted in future versions."""
-    )
-    var oldInnerClassesLogic = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xvalue-classes",
         description = "Enable experimental value classes."
     )
@@ -812,7 +798,7 @@ This option is deprecated and will be deleted in future versions."""
         value = "-Xuse-k2-kapt",
         description = "Enable the experimental support for K2 KAPT."
     )
-    var useK2Kapt = true
+    var useK2Kapt: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
@@ -844,18 +830,12 @@ This option is deprecated and will be deleted in future versions."""
         result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
             .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
-        JvmDefaultMode.fromStringOrNull(jvmDefault)?.let {
-            result[JvmAnalysisFlags.jvmDefaultMode] = it
-        } ?: collector.report(
-            CompilerMessageSeverity.ERROR,
-            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
-        )
+        result[JvmAnalysisFlags.jvmDefaultMode] = configureJvmDefaultMode(collector)
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
         result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies
-        result[JvmAnalysisFlags.useIR] = !useOldBackend
         result[JvmAnalysisFlags.outputBuiltinsMetadata] = outputBuiltinsMetadata
         if (expectBuiltinsAsPartOfStdlib && !stdlibCompilation) {
             collector.report(
@@ -867,6 +847,31 @@ This option is deprecated and will be deleted in future versions."""
         return result
     }
 
+    private fun configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode {
+        val mode = when {
+            jvmDefaultStable != null -> JvmDefaultMode.fromStringOrNull(jvmDefaultStable).also {
+                if (it == null) {
+                    collector?.report(
+                        CompilerMessageSeverity.ERROR,
+                        "Unknown -jvm-default mode: $jvmDefaultStable, supported modes: " +
+                                "${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
+                    )
+                }
+            }
+            jvmDefault != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefault).also {
+                if (it == null) {
+                    collector?.report(
+                        CompilerMessageSeverity.ERROR,
+                        "Unknown -Xjvm-default mode: $jvmDefault, supported modes: " +
+                                "${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
+                    )
+                }
+            }
+            else -> null
+        }
+        return mode ?: JvmDefaultMode.DISABLE
+    }
+
     override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
         val result = super.configureLanguageFeatures(collector)
         if (typeEnhancementImprovementsInStrictMode) {
@@ -875,7 +880,7 @@ This option is deprecated and will be deleted in future versions."""
         if (enhanceTypeParameterTypesToDefNotNull) {
             result[LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated] = LanguageFeature.State.ENABLED
         }
-        if (JvmDefaultMode.fromStringOrNull(jvmDefault)?.isEnabled == true) {
+        if (configureJvmDefaultMode(null).isEnabled) {
             result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
             result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
         }
@@ -883,34 +888,6 @@ This option is deprecated and will be deleted in future versions."""
             result[LanguageFeature.ValueClasses] = LanguageFeature.State.ENABLED
         }
         return result
-    }
-
-    override fun defaultLanguageVersion(collector: MessageCollector): LanguageVersion =
-        if (useOldBackend) {
-            if (!suppressVersionWarnings) {
-                collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Language version is automatically inferred to ${LanguageVersion.KOTLIN_1_5.versionString} when using " +
-                            "the old JVM backend. Consider specifying -language-version explicitly, or remove -Xuse-old-backend"
-                )
-            }
-            LanguageVersion.KOTLIN_1_5
-        } else super.defaultLanguageVersion(collector)
-
-    override fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        if (useOldBackend && languageVersionSettings.languageVersion >= LanguageVersion.KOTLIN_1_6) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "Old JVM backend does not support language version 1.6 or above. " +
-                        "Please use language version 1.5 or below, or remove -Xuse-old-backend"
-            )
-        }
-        if (oldInnerClassesLogic) {
-            collector.report(
-                CompilerMessageSeverity.WARNING,
-                "The -Xuse-old-innerclasses-logic option is deprecated and will be deleted in future versions."
-            )
-        }
     }
 
     override fun copyOf(): Freezable = copyK2JVMCompilerArguments(this, K2JVMCompilerArguments())

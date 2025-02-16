@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
@@ -44,13 +44,11 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  * - Lazy resolution contracts for [KaAnnotationList] API and how much resolution is required
  */
 abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationResolveTestCase() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        builder.useDirectives(Directives)
-    }
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(Directives)
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        resolveWithCaches(mainFile) { firResolveSession ->
+        withResolveSession(mainFile) { firResolveSession ->
             val (firElement, _) = findFirDeclarationToResolve(mainFile, testServices, firResolveSession)
             val psiElement = firElement.realPsi as? KtAnnotated
 
@@ -67,12 +65,8 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
 
                     psiElement is KtFile -> psiElement.symbol
                     psiElement is KtDeclaration -> psiElement.symbol
-                    else -> {
-                        val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
-                        with(symbolData) {
-                            toSymbols(mainFile).single()
-                        } as KaAnnotatedSymbol
-                    }
+
+                    else -> getSingleTestTargetSymbolOfType<KaAnnotatedSymbol>(testDataPath, mainFile)
                 }
 
                 val query = testServices.moduleStructure.allDirectives.singleValue(Directives.QUERY)

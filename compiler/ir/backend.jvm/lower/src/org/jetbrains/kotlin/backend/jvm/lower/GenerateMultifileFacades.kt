@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
-import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.*
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -227,7 +226,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
         origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-        origin == LoweredDeclarationOrigins.INLINE_LAMBDA ||
+        origin == IrDeclarationOrigin.INLINE_LAMBDA ||
         origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
         origin == IrDeclarationOrigin.PROPERTY_DELEGATE ||
         origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR ||
@@ -301,7 +300,7 @@ private class CorrespondingPropertyCache(private val context: JvmBackendContext,
 
 private class UpdateFunctionCallSites(
     private val functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
-) : FileLoweringPass, IrElementVisitor<Unit, IrFunction?> {
+) : IrVisitor<Unit, IrFunction?>(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildren(this, null)
     }

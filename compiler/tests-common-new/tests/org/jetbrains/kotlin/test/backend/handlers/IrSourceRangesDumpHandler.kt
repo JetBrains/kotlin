@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.groupWithTestFiles
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.renderFilePathForIrFile
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SOURCE_RANGES_IR
@@ -58,22 +61,29 @@ class IrSourceRangesDumpHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_SOURCE_RANGES_IR !in module.directives) return
         val builder = baseDumper.builderForModule(module.name)
+        val testFileToIrFile = info.irModuleFragment.files.groupWithTestFiles(testServices, ordered = true)
+        val dumpOptions = DumpIrTreeOptions(
+            filePathRenderer = { irFile, fullPath ->
+                renderFilePathForIrFile(testFileToIrFile, testServices, irFile, fullPath)
+            }
+        )
         for (irFile in info.irModuleFragment.files) {
-            builder.append(irFile.dumpWithSourceLocations(irFile.fileEntry))
+            builder.append(irFile.dumpWithSourceLocations(irFile.fileEntry, dumpOptions))
         }
     }
 
-    private fun IrElement.dumpWithSourceLocations(fileEntry: IrFileEntry): String =
+    private fun IrElement.dumpWithSourceLocations(fileEntry: IrFileEntry, dumpOptions: DumpIrTreeOptions): String =
         StringBuilder().also {
-            acceptVoid(DumpSourceLocations(it, fileEntry))
+            acceptVoid(DumpSourceLocations(it, fileEntry, dumpOptions))
         }.toString()
 
     private class DumpSourceLocations(
         out: Appendable,
-        val fileEntry: IrFileEntry
-    ) : IrElementVisitorVoid {
+        val fileEntry: IrFileEntry,
+        dumpOptions: DumpIrTreeOptions,
+    ) : IrVisitorVoid() {
         val printer = Printer(out, "  ")
-        val elementRenderer = RenderIrElementVisitor()
+        val elementRenderer = RenderIrElementVisitor(dumpOptions)
 
         private fun printElement(element: IrElement) {
             var sourceRangeInfo = fileEntry.getSourceRangeInfo(element.startOffset, element.endOffset)
@@ -115,7 +125,7 @@ class IrSourceRangesDumpHandler(
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(moduleStructure.modules.first().getDumpExtension())
+            .withExtension(getDumpExtension())
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
         buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
@@ -128,7 +138,7 @@ class IrSourceRangesDumpHandler(
         }
     }
 
-    private fun TestModule.getDumpExtension(ignoreFirIdentical: Boolean = false): String {
-        return IrTextDumpHandler.computeDumpExtension(this, DUMP_EXTENSION, ignoreFirIdentical)
+    private fun getDumpExtension(ignoreFirIdentical: Boolean = false): String {
+        return IrTextDumpHandler.computeDumpExtension(testServices, DUMP_EXTENSION, ignoreFirIdentical)
     }
 }

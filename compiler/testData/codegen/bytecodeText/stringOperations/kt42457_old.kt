@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=indy-with-constants
+// STRING_CONCAT: indy-with-constants
 // JVM_TARGET: 11
 // JDK_KIND: FULL_JDK_11
 // FILE: JavaClass.java

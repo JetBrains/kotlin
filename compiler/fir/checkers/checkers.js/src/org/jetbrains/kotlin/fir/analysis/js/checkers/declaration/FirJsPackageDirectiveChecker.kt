@@ -26,7 +26,7 @@ object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
         if (declaration.packageFqName.isRoot) return
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) return
 
-        declaration.packageDirective.source?.forEachChildOfType(setOf(KtNodeTypes.REFERENCE_EXPRESSION)) {
+        declaration.packageDirective.source?.forEachChildOfType(setOf(KtNodeTypes.REFERENCE_EXPRESSION), depth = -1) {
             val name = KtPsiUtil.unquoteIdentifier(it.text.toString())
             if (sanitizeName(name) != name) {
                 reporter.reportOn(

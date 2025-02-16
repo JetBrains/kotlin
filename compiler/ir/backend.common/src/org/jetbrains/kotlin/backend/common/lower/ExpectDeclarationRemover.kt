@@ -124,12 +124,6 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
 
         if (!function.descriptor.isActual) return
 
-        val index = declaration.indexInOldValueParameters
-
-        if (index < 0) return
-
-        assert(function.valueParameters[index] == declaration)
-
         // If the containing declaration is an `expect class` that matches an `actual typealias`,
         // the `actual fun` or `actual constructor` for this may be in a different module.
         // Nothing we can do with those.
@@ -138,7 +132,7 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
             (function.descriptor.findExpectForActual() as? FunctionDescriptor)?.let { symbolTable.referenceFunction(it).owner }
                 ?: return
 
-        val defaultValue = expectFunction.valueParameters[index].defaultValue ?: return
+        val defaultValue = expectFunction.parameters[declaration.indexInParameters].defaultValue ?: return
 
         val expectToActual = expectFunction to function
         if (expectToActual !in typeParameterSubstitutionMap) {

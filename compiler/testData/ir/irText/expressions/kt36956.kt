@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// LANGUAGE: -ForbidParenthesizedLhsInAssignments
 class A<T>(private val value: T) {
     operator fun get(i: Int) = value
     operator fun set(i: Int, v: T) {}

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -16,9 +17,10 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KaFirDynamicFunctionSymbolPointer(
     private val name: Name,
-) : KaSymbolPointer<KaNamedFunctionSymbol>() {
+    originalSymbol: KaNamedFunctionSymbol?,
+) : KaBaseCachedSymbolPointer<KaNamedFunctionSymbol>(originalSymbol) {
 
-    override fun restoreSymbol(analysisSession: KaSession): KaNamedFunctionSymbol {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaNamedFunctionSymbol {
         require(analysisSession is KaFirSession)
         val dynamicScope =
             analysisSession.firSession.dynamicMembersStorage.getDynamicScopeFor(analysisSession.getScopeSessionFor(analysisSession.firSession))

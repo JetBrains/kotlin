@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
@@ -15,13 +14,11 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
+import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
+import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
@@ -32,6 +29,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
@@ -78,7 +76,7 @@ abstract class AbstractInvalidationTest(
     @AfterEach
     protected fun disposeEnvironment() {
         // The test is run with `Lifecycle.PER_METHOD` (as it's the default), so the disposable needs to be disposed after each test.
-        Disposer.dispose(rootDisposable)
+        disposeRootInWriteAction(rootDisposable)
     }
 
     @AfterEach
@@ -140,7 +138,6 @@ abstract class AbstractInvalidationTest(
     protected open fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-        copy.put(JSConfigurationKeys.GENERATE_DTS, true)
         copy.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
         copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
         copy.put(JSConfigurationKeys.SOURCE_MAP, true)

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.config.LanguageFeature.Kind.*
-import org.jetbrains.kotlin.config.LanguageFeature.entries
 import org.jetbrains.kotlin.config.LanguageVersion.*
 import org.jetbrains.kotlin.utils.DescriptionAware
 import java.util.*
@@ -339,6 +338,8 @@ enum class LanguageFeature(
     ProhibitNothingAsCatchParameter(KOTLIN_2_1, kind = BUG_FIX), // KT-8322
     NullableNothingInReifiedPosition(KOTLIN_2_1, kind = UNSTABLE_FEATURE), // KT-54227, KT-67675
     ElvisInferenceImprovementsIn21(KOTLIN_2_1, kind = OTHER), // KT-71751
+    // TODO: Remove org.jetbrains.kotlin.fir.resolve.calls.stages.ConstraintSystemForks together with this LF (KT-72961)
+    ConsiderForkPointsWhenCheckingContradictions(KOTLIN_2_1), // KT-68768
 
     // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes
     // See the single usage at org.jetbrains.kotlin.fir.types.ConeTypeApproximator.fastPathSkipApproximation
@@ -348,14 +349,16 @@ enum class LanguageFeature(
     // Common feature for all non-PCLA inference enhancements in 2.1
     InferenceEnhancementsIn21(KOTLIN_2_1, kind = OTHER), // KT-61227
 
+    // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes
+    // See the single usage at org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator.computeNewDerivedFrom
+    // We enable it for already released 2.1 because it's a bug fix
+    StricterConstraintIncorporationRecursionDetector(KOTLIN_2_1, kind = OTHER), // KT-73434
+
     // 2.2
 
-    ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_2, kind = BUG_FIX), // KT-11914 Deprecation phase 2
     BreakContinueInInlineLambdas(KOTLIN_2_2), // KT-1436
     UnstableSmartcastOnDelegatedProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-57417
-    ReferencesToSyntheticJavaProperties(KOTLIN_2_2), // KT-8575
     ForbidUsingExpressionTypesWithInaccessibleContent(KOTLIN_2_2, kind = BUG_FIX), // KT-66691
-    ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(KOTLIN_2_2, kind = BUG_FIX), // KT-66691, KT-66742
     ReportExposedTypeForMoreCasesOfTypeParameterBounds(KOTLIN_2_2, kind = BUG_FIX), // KT-69653
     ForbidReifiedTypeParametersOnTypeAliases(KOTLIN_2_2, kind = BUG_FIX), // KT-70163
     ForbidProjectionsInAnnotationProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-70002
@@ -363,20 +366,26 @@ enum class LanguageFeature(
     ForbidFieldAnnotationsOnAnnotationParameters(KOTLIN_2_2, kind = BUG_FIX), // KT-70233
     ForbidParenthesizedLhsInAssignments(KOTLIN_2_2, kind = BUG_FIX), // KT-70507
     ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection(KOTLIN_2_2, kind = BUG_FIX), // KT-60305
-    // TODO: Remove org.jetbrains.kotlin.fir.resolve.calls.stages.ConstraintSystemForks together with this LF (KT-72961)
-    ConsiderForkPointsWhenCheckingContradictions(KOTLIN_2_2), // KT-68768
     CallableReferenceOverloadResolutionInLambda(KOTLIN_2_2), // KT-73011
     ForbidInferOfInvisibleTypeAsReifiedOrVararg(KOTLIN_2_2, kind = BUG_FIX), // KT-25513
     ProhibitGenericQualifiersOnConstructorCalls(KOTLIN_2_2, kind = BUG_FIX), // KT-73527
     AvoidWrongOptimizationOfTypeOperatorsOnValueClasses(KOTLIN_2_2), // KT-67517, KT-67518, KT-67520
     ForbidSyntheticPropertiesWithoutBaseJavaGetter(KOTLIN_2_2, kind = BUG_FIX), // KT-72305, KT-64358
     AnnotationDefaultTargetMigrationWarning(KOTLIN_2_2, kind = BUG_FIX), // KT-73255, KT-73494
+    AllowDnnTypeOverridingFlexibleType(KOTLIN_2_2, kind = OTHER), // KT-74049
+    PreferDependentTypeVariablesWithProperArgumentConstraint(KOTLIN_2_2, kind = OTHER), // KT-71854
+    ForbidEnumEntryNamedEntries(KOTLIN_2_2, kind = BUG_FIX), // KT-72829, KT-58920
 
     // 2.3
 
     ForbidCompanionInLocalInnerClass(KOTLIN_2_3, kind = BUG_FIX),
     ForbidImplementationByDelegationWithDifferentGenericSignature(KOTLIN_2_3, kind = BUG_FIX), // KT-72140
     ForbidJvmSerializableLambdaOnInlinedFunctionLiterals(KOTLIN_2_3, kind = BUG_FIX), // KT-71906
+    ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_3, kind = BUG_FIX), // KT-11914 Deprecation phase 2
+    ReportExposedTypeForInternalTypeParameterBounds(KOTLIN_2_3, kind = BUG_FIX), // KTLC-275
+    EnableDfaWarningsInK2(KOTLIN_2_3, kind = OTHER), // KT-50965
+    AllowEagerSupertypeAccessibilityChecks(KOTLIN_2_3, kind = OTHER), // KT-73611
+    DontMakeExplicitJavaTypeArgumentsFlexible(KOTLIN_2_3, kind = OTHER), // KT-71718
 
     // End of 2.* language features --------------------------------------------------
 
@@ -430,35 +439,40 @@ enum class LanguageFeature(
     ValueClasses(sinceVersion = null, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, kind = UNSTABLE_FEATURE),
     PropertyParamAnnotationDefaultTargetMode(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-73255
+    AnnotationAllUseSiteTarget(sinceVersion = null, kind = OTHER), // KT-73256
 
     // K1 support only. We keep it, as we may want to support it also in K2
     UnitConversionsOnArbitraryExpressions(sinceVersion = null),
 
     JsAllowImplementingFunctionInterface(sinceVersion = null, kind = OTHER),
     CustomEqualsInValueClasses(sinceVersion = null, kind = OTHER), // KT-24874
-    InlineLateinit(sinceVersion = null, kind = OTHER), // KT-23814
-    EnableDfaWarningsInK2(sinceVersion = null, kind = OTHER), // KT-50965
     ContractSyntaxV2(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-56127
-    ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null), // KT-56583
+    ReferencesToSyntheticJavaProperties(sinceVersion = null, kind = TEST_ONLY), // KT-8575
+    ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null, kind = TEST_ONLY), // KT-56583
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, kind = BUG_FIX), // KT-51221
-    IntrinsicConstEvaluation(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-49303
+    IntrinsicConstEvaluation(sinceVersion = null, kind = TEST_ONLY), // KT-49303
 
     // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, kind = OTHER), // KT-49276
 
-    ContextSensitiveEnumResolutionInWhen(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-52774
+    ContextSensitiveEnumResolutionInWhen(sinceVersion = null, kind = TEST_ONLY), // KT-52774
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, kind = OTHER), // KT-64358
     JavaTypeParameterDefaultRepresentationWithDNN(sinceVersion = null, kind = OTHER), // KT-59138
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, kind = OTHER), // KT-56386
     WhenGuards(sinceVersion = null, kind = OTHER), // KT-13626
     MultiDollarInterpolation(sinceVersion = null, kind = OTHER), // KT-2425
     IrInlinerBeforeKlibSerialization(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-69765
-    NestedTypeAliases(sinceVersion = null, kind = OTHER) // KT-45285
+    NestedTypeAliases(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-45285
+    ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, kind = BUG_FIX), // KT-66691, KT-66742
     ;
 
     init {
         if (sinceVersion == null && isEnabledWithWarning) {
             error("$this: '${::isEnabledWithWarning.name}' has no effect if the feature is disabled by default")
+        }
+
+        if (kind.testOnly && sinceVersion != null) {
+            error("$this: '${::isEnabledWithWarning.name}' should be enabled by default since version $sinceVersion but is test only")
         }
     }
 
@@ -509,7 +523,7 @@ enum class LanguageFeature(
      *
      * NB: Currently, [canBeEnabledInProgressiveMode] makes sense only for features with [sinceVersion] > [LanguageVersion.LATEST_STABLE]
      */
-    enum class Kind(val canBeEnabledInProgressiveMode: Boolean, val forcesPreReleaseBinaries: Boolean) {
+    enum class Kind(val canBeEnabledInProgressiveMode: Boolean, val forcesPreReleaseBinaries: Boolean, val testOnly: Boolean = false) {
         /**
          * Simple bug fix which just forbids some language constructions.
          * Rule of thumb: it turns "green code" into "red".
@@ -517,14 +531,14 @@ enum class LanguageFeature(
          * Note that, some actual bug fixes can affect overload resolution/inference, silently changing semantics of
          * users' code -- DO NOT use Kind.BUG_FIX for them!
          */
-        BUG_FIX(true, false),
+        BUG_FIX(canBeEnabledInProgressiveMode = true, forcesPreReleaseBinaries = false),
 
         /**
          * Enables support of some new and *unstable* construction in language.
          * Rule of thumb: it turns "red" code into "green", and we want to strongly demotivate people from manually enabling
          * that feature in production.
          */
-        UNSTABLE_FEATURE(false, true),
+        UNSTABLE_FEATURE(canBeEnabledInProgressiveMode = false, forcesPreReleaseBinaries = true),
 
         /**
          * A new feature in the language which has no impact on the binary output of the compiler, and therefore
@@ -534,7 +548,13 @@ enum class LanguageFeature(
          *
          * NB. OTHER is not a conservative fallback, as it doesn't imply generation of pre-release binaries
          */
-        OTHER(false, false),
+        OTHER(canBeEnabledInProgressiveMode = false, forcesPreReleaseBinaries = false),
+
+        /**
+         * A feature that can be used only in tests, thus it's neither possible to enable it in progressive mode,
+         * nor it forces pre-release binaries
+         */
+        TEST_ONLY(canBeEnabledInProgressiveMode = false, forcesPreReleaseBinaries = false, testOnly = true),
     }
 
     companion object {
@@ -586,7 +606,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //            1.0..1.5        1.6..1.7           1.8..2.1    2.2..2.3
+        //            1.0..1.5        1.6..1.7           1.8..2.2    2.3
         // Language:  UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
 
@@ -600,7 +620,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
         val FIRST_NON_DEPRECATED = KOTLIN_1_8
 
         @JvmField
-        val LATEST_STABLE = KOTLIN_2_1
+        val LATEST_STABLE = KOTLIN_2_2
     }
 }
 
@@ -622,6 +642,13 @@ interface LanguageOrApiVersion : DescriptionAware {
         }
 }
 
+// This is a public API used in IDEA kotlin plugin code, in particular in
+// community/plugins/kotlin/base/compiler-configuration-ui/src/org/jetbrains/kotlin/idea/base/compilerPreferences/configuration/KotlinCompilerConfigurableTab.java
+@Suppress("unused")
+@Deprecated(
+    message = "This function is no more actual after 2.0 release, consider replacing with isStable",
+    replaceWith = ReplaceWith("isStable")
+)
 fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
     isStable || this == KOTLIN_1_9 || this == KOTLIN_2_0
 

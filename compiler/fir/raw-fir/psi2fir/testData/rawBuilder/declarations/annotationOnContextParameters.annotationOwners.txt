@@ -1,0 +1,47 @@
+@Ann()
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationOnContext
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationOnContext
+
+@Ann()
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationOnContext
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationOnContext
+
+@AnnotationWithConstructor(String())
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
+
+@AnnotationWithConstructor(String())
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
+
+@Ann()
+owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
+context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
+
+@Ann()
+owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
+context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
+
+@AnnotationWithConstructor(String())
+owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
+context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
+
+@AnnotationWithConstructor(String())
+owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
+context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
+
+@Ann()
+owner -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionType
+context -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionType
+
+@AnnotationWithConstructor(String())
+owner -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionTypeWithConstructor
+context -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionTypeWithConstructor
+
+@Ann()
+owner -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionTypeNamed
+context -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionTypeNamed
+
+@AnnotationWithConstructor(String())
+owner -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionTypeNamedWithConstructor
+context -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionTypeNamedWithConstructor

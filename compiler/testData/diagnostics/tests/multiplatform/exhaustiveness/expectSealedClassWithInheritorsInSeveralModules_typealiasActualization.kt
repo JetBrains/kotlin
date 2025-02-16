@@ -1,11 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-66960
 
 // MODULE: common
 // FILE: common.kt
-expect sealed class <!NO_ACTUAL_FOR_EXPECT!>Base<!>()
+expect sealed class Base()
 
 class CommonDerived : Base()
 

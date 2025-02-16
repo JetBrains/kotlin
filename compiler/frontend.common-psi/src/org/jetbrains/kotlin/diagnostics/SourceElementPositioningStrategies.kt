@@ -11,6 +11,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DEFAULT
     )
 
+    val SYNTAX_ERROR = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DEFAULT,
+        PositioningStrategies.SYNTAX_ERROR
+    )
+
     val VAL_OR_VAR_NODE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.VAL_OR_VAR_NODE,
         PositioningStrategies.VAL_OR_VAR_NODE

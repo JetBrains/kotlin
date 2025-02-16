@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 import org.jetbrains.kotlin.backend.konan.descriptors.arraysWithFixedSizeItems
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
-import org.jetbrains.kotlin.backend.konan.lower.erasure
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
@@ -81,7 +80,7 @@ private enum class TypeKind {
 private data class TypeWithKind(val erasedType: IrType?, val kind: TypeKind) {
     companion object {
         fun fromType(irType: IrType?): TypeWithKind {
-            val erasedType = irType?.erasure()
+            val erasedType = irType?.eraseTypeParameters()
             return when {
                 irType == null -> TypeWithKind(null, TypeKind.ABSENT)
                 irType.isInlinedNative() -> TypeWithKind(erasedType, TypeKind.VALUE_TYPE)
@@ -98,9 +97,7 @@ private fun IrFunction.typeWithKindAt(index: ParameterIndex) = when (index) {
         returnType.isVoidAsReturnType() -> TypeWithKind(returnType, TypeKind.VOID)
         else -> TypeWithKind.fromType(returnType)
     }
-    ParameterIndex.DISPATCH_RECEIVER_INDEX -> TypeWithKind.fromType(dispatchReceiverParameter?.type)
-    ParameterIndex.EXTENSION_RECEIVER_INDEX -> TypeWithKind.fromType(extensionReceiverParameter?.type)
-    else -> TypeWithKind.fromType(this.valueParameters[index.unmap()].type)
+    else -> TypeWithKind.fromType(this.parameters[index.unmap()].type)
 }
 
 private fun IrFunction.needBridgeToAt(target: IrFunction, index: ParameterIndex, policy: BridgesPolicy) =
@@ -110,18 +107,16 @@ private fun IrFunction.needBridgeToAt(target: IrFunction, index: ParameterIndex,
 private value class ParameterIndex(val index: Int) {
     companion object {
         val RETURN_INDEX = ParameterIndex(0)
-        val DISPATCH_RECEIVER_INDEX = ParameterIndex(1)
-        val EXTENSION_RECEIVER_INDEX = ParameterIndex(2)
 
-        fun map(index: Int) = ParameterIndex(index + 3)
+        fun map(index: Int) = ParameterIndex(index + 1)
 
-        fun allParametersCount(irFunction: IrFunction) = irFunction.valueParameters.size + 3
+        fun allParametersCount(irFunction: IrFunction) = irFunction.parameters.size + 1
 
         inline fun forEachIndex(irFunction: IrFunction, block: (ParameterIndex) -> Unit) =
                 (0 until allParametersCount(irFunction)).forEach { block(ParameterIndex(it)) }
     }
 
-    fun unmap() = index - 3
+    fun unmap() = index - 1
 }
 
 internal fun IrFunction.needBridgeTo(target: IrFunction, policy: BridgesPolicy): Boolean {
@@ -227,8 +222,6 @@ internal class BridgeDirections(private val array: Array<BridgeDirection>) {
     private fun getDirectionAt(index: ParameterIndex) = array[index.index]
 
     val returnDirection get() = getDirectionAt(ParameterIndex.RETURN_INDEX)
-    val dispatchReceiverDirection get() = getDirectionAt(ParameterIndex.DISPATCH_RECEIVER_INDEX)
-    val extensionReceiverDirection get() = getDirectionAt(ParameterIndex.EXTENSION_RECEIVER_INDEX)
     fun parameterDirectionAt(index: Int) = getDirectionAt(ParameterIndex.map(index))
 
     override fun toString(): String {

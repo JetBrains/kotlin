@@ -20,7 +20,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirTypeConstraintsChecker,
             FirReservedUnderscoreDeclarationChecker,
             FirUpperBoundViolatedDeclarationChecker,
-            FirInfixFunctionDeclarationChecker,
             FirExposedVisibilityDeclarationChecker,
             FirCyclicTypeBoundsChecker,
             FirExpectActualDeclarationChecker,
@@ -34,7 +33,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirExpectConsistencyChecker,
             FirOptionalExpectationDeclarationChecker,
             FirMissingDependencySupertypeInDeclarationsChecker,
-            FirContextReceiversDeclarationChecker,
+            FirContextParametersDeclarationChecker,
         )
 
     override val classLikeCheckers: Set<FirClassLikeChecker>
@@ -59,14 +58,15 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirInlineDeclarationChecker,
             FirNonMemberFunctionsChecker,
             FirSuspendLimitationsChecker,
+            FirInfixFunctionDeclarationChecker,
+            FirOperatorModifierChecker,
+            FirTailrecFunctionChecker,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
             FirFunctionNameChecker,
             FirFunctionTypeParametersSyntaxChecker,
-            FirOperatorModifierChecker,
-            FirTailrecFunctionChecker,
             FirMemberFunctionsChecker,
             FirDataObjectContentChecker,
             ContractSyntaxV2FunctionChecker,
@@ -90,7 +90,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             ContractSyntaxV2PropertyChecker,
             FirVolatileAnnotationChecker,
             FirInlinePropertyChecker,
-            FirContextReceiversPropertyBackingFieldChecker
+            FirContextualPropertyWithBackingFieldChecker
         )
 
     override val backingFieldCheckers: Set<FirBackingFieldChecker>
@@ -197,18 +197,15 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val typeAliasCheckers: Set<FirTypeAliasChecker>
         get() = setOf(
-            FirTopLevelTypeAliasChecker,
+            FirAnyTypeAliasChecker,
             FirActualTypeAliasChecker,
-            FirActualTypealiasToSpecialAnnotationChecker,
-            FirDefaultArgumentsInExpectWithActualTypealiasChecker,
-            FirTypeAliasExpandsToArrayOfNothingsChecker,
         )
 
     override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>
         get() = setOf(
             FirAnonymousFunctionParametersChecker,
+            FirAnonymousFunctionTypeParametersChecker,
             FirInlinedLambdaNonSourceAnnotationsChecker,
-            FirAnonymousFunctionSyntaxChecker,
             FirSuspendAnonymousFunctionChecker,
             FirMissingDependencyClassForLambdaReceiverChecker,
         )

@@ -7,10 +7,12 @@ KtCallExpression(98,109): 'function(1)'
           receiverType = null
           returnType = kotlin.Char
           symbol = a: kotlin.Char
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,13 +25,15 @@ KtCallExpression(98,109): 'function(1)'
               receiverType = null
               returnType = kotlin.Char
               symbol = a: kotlin.Char
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Char' was expected.>
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -38,10 +42,12 @@ KtCallExpression(98,109): 'function(1)'
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -54,13 +60,15 @@ KtCallExpression(98,109): 'function(1)'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Boolean' was expected.>
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -69,10 +77,12 @@ KtCallExpression(98,109): 'function(1)'
           receiverType = null
           returnType = kotlin.String
           symbol = c: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -85,9 +95,11 @@ KtCallExpression(98,109): 'function(1)'
               receiverType = null
               returnType = kotlin.String
               symbol = c: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
     isInBestCandidates = true

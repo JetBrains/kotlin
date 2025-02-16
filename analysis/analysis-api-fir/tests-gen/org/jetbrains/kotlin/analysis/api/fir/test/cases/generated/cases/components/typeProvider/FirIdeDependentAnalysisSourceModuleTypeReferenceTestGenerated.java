@@ -94,6 +94,18 @@ public class FirIdeDependentAnalysisSourceModuleTypeReferenceTestGenerated exten
   }
 
   @Test
+  @TestMetadata("catchParameterType_error.kt")
+  public void testCatchParameterType_error() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/catchParameterType_error.kt");
+  }
+
+  @Test
+  @TestMetadata("catchParameterType_typealias.kt")
+  public void testCatchParameterType_typealias() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/catchParameterType_typealias.kt");
+  }
+
+  @Test
   @TestMetadata("functionReceiver.kt")
   public void testFunctionReceiver() {
     runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/functionReceiver.kt");

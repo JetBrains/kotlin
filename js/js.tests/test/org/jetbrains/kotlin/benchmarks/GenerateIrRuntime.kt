@@ -14,6 +14,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -105,7 +107,7 @@ class GenerateIrRuntime {
         KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
     private val configuration = buildConfiguration(environment)
     private val project = environment.project
-    private val jsPhases = getJsPhases(configuration)
+    private val jsPhases = getJsLowerings(configuration).toCompilerPhase()
 
     private val languageVersionSettings = configuration.languageVersionSettings
     private val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
@@ -125,6 +127,9 @@ class GenerateIrRuntime {
         return if (isDirectory) listFiles().flatMap { it.listAllFiles() }
         else listOf(this)
     }
+
+    private fun List<CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
+        reduce { acc, lowering -> acc.then(lowering) }
 
     private fun createPsiFileFromDir(path: String, vararg extraDirs: String): List<KtFile> {
         val dir = File(path)

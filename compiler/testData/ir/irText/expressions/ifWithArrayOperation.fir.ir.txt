@@ -1,40 +1,40 @@
 FILE fqName:<root> fileName:/ifWithArrayOperation.kt
-  FUN name:topLevelMethod visibility:public modality:FINAL <> () returnType:kotlin.Unit
+  FUN name:topLevelMethod visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:array type:kotlin.IntArray [val]
         CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
-          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+          ARG elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
             CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
-              $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-              index: CONST Int type=kotlin.Int value=0
-              value: CONST Int type=kotlin.Int value=2
+              ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+              ARG index: CONST Int type=kotlin.Int value=0
+              ARG value: CONST Int type=kotlin.Int value=2
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
             CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
-              $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-              index: CONST Int type=kotlin.Int value=0
-              value: CONST Int type=kotlin.Int value=3
+              ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+              ARG index: CONST Int type=kotlin.Int value=0
+              ARG value: CONST Int type=kotlin.Int value=3
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
             CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
-              $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-              index: CONST Int type=kotlin.Int value=0
-              value: CONST Int type=kotlin.Int value=4
+              ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+              ARG index: CONST Int type=kotlin.Int value=0
+              ARG value: CONST Int type=kotlin.Int value=4
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
             CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
-              $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-              index: CONST Int type=kotlin.Int value=0
-              value: CONST Int type=kotlin.Int value=5
+              ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+              ARG index: CONST Int type=kotlin.Int value=0
+              ARG value: CONST Int type=kotlin.Int value=5
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
@@ -45,13 +45,13 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
               VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
                 CONST Int type=kotlin.Int value=0
               CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PLUSEQ
-                $this: GET_VAR 'val tmp_0: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                index: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                  $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
-                    $this: GET_VAR 'val tmp_0: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                    index: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                  other: CONST Int type=kotlin.Int value=6
+                ARG <this>: GET_VAR 'val tmp_0: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                ARG index: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                ARG value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                  ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: GET_VAR 'val tmp_0: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                    ARG index: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                  ARG other: CONST Int type=kotlin.Int value=6
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
@@ -61,13 +61,13 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
               VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
                 CONST Int type=kotlin.Int value=0
               CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PLUSEQ
-                $this: GET_VAR 'val tmp_2: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                index: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                  $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
-                    $this: GET_VAR 'val tmp_2: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                    index: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                  other: CONST Int type=kotlin.Int value=7
+                ARG <this>: GET_VAR 'val tmp_2: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                ARG index: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                ARG value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                  ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: GET_VAR 'val tmp_2: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                    ARG index: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                  ARG other: CONST Int type=kotlin.Int value=7
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
@@ -78,13 +78,13 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
               VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
                 CONST Int type=kotlin.Int value=0
               CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PLUSEQ
-                $this: GET_VAR 'val tmp_4: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                index: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                  $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
-                    $this: GET_VAR 'val tmp_4: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                    index: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                  other: CONST Int type=kotlin.Int value=8
+                ARG <this>: GET_VAR 'val tmp_4: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                ARG index: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                ARG value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                  ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: GET_VAR 'val tmp_4: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                    ARG index: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                  ARG other: CONST Int type=kotlin.Int value=8
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=null
@@ -94,67 +94,67 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
               VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Int [val]
                 CONST Int type=kotlin.Int value=0
               CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PLUSEQ
-                $this: GET_VAR 'val tmp_6: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                index: GET_VAR 'val tmp_7: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                  $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
-                    $this: GET_VAR 'val tmp_6: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                    index: GET_VAR 'val tmp_7: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                  other: CONST Int type=kotlin.Int value=9
+                ARG <this>: GET_VAR 'val tmp_6: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                ARG index: GET_VAR 'val tmp_7: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                ARG value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                  ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: GET_VAR 'val tmp_6: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                    ARG index: GET_VAR 'val tmp_7: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                  ARG other: CONST Int type=kotlin.Int value=9
       BLOCK type=kotlin.Unit origin=WHEN
         VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlin.Int [val]
           CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-            index: CONST Int type=kotlin.Int value=0
+            ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+            ARG index: CONST Int type=kotlin.Int value=0
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_8: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-              arg1: CONST Int type=kotlin.Int value=1
+              ARG arg0: GET_VAR 'val tmp_8: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+              ARG arg1: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=null
               CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
-                $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                index: CONST Int type=kotlin.Int value=0
-                value: CONST Int type=kotlin.Int value=10
+                ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                ARG index: CONST Int type=kotlin.Int value=0
+                ARG value: CONST Int type=kotlin.Int value=10
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: BLOCK type=kotlin.Unit origin=null
               CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
-                $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                index: CONST Int type=kotlin.Int value=0
-                value: CONST Int type=kotlin.Int value=11
+                ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                ARG index: CONST Int type=kotlin.Int value=0
+                ARG value: CONST Int type=kotlin.Int value=11
       BLOCK type=kotlin.Unit origin=WHEN
         VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlin.Int [val]
           CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-            index: CONST Int type=kotlin.Int value=0
+            ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+            ARG index: CONST Int type=kotlin.Int value=0
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_9: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-              arg1: CONST Int type=kotlin.Int value=1
+              ARG arg0: GET_VAR 'val tmp_9: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+              ARG arg1: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=null
               CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
-                $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                index: CONST Int type=kotlin.Int value=0
-                value: CONST Int type=kotlin.Int value=12
+                ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                ARG index: CONST Int type=kotlin.Int value=0
+                ARG value: CONST Int type=kotlin.Int value=12
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: BLOCK type=kotlin.Unit origin=null
               CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
-                $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                index: CONST Int type=kotlin.Int value=0
-                value: CONST Int type=kotlin.Int value=13
+                ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                ARG index: CONST Int type=kotlin.Int value=0
+                ARG value: CONST Int type=kotlin.Int value=13
       BLOCK type=kotlin.Unit origin=WHEN
         VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.Int [val]
           CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-            index: CONST Int type=kotlin.Int value=0
+            ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+            ARG index: CONST Int type=kotlin.Int value=0
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-              arg1: CONST Int type=kotlin.Int value=1
+              ARG arg0: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+              ARG arg1: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=null
               BLOCK type=kotlin.Unit origin=PLUSEQ
                 VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.IntArray [val]
@@ -162,13 +162,13 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
                 VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Int [val]
                   CONST Int type=kotlin.Int value=0
                 CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PLUSEQ
-                  $this: GET_VAR 'val tmp_11: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                  index: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                  value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                    $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
-                      $this: GET_VAR 'val tmp_11: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                      index: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                    other: CONST Int type=kotlin.Int value=14
+                  ARG <this>: GET_VAR 'val tmp_11: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                  ARG index: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                  ARG value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
+                      ARG <this>: GET_VAR 'val tmp_11: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                      ARG index: GET_VAR 'val tmp_12: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                    ARG other: CONST Int type=kotlin.Int value=14
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: BLOCK type=kotlin.Unit origin=null
@@ -178,23 +178,23 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
                 VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:kotlin.Int [val]
                   CONST Int type=kotlin.Int value=0
                 CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PLUSEQ
-                  $this: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                  index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                  value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                    $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
-                      $this: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                      index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                    other: CONST Int type=kotlin.Int value=15
+                  ARG <this>: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                  ARG index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                  ARG value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
+                      ARG <this>: GET_VAR 'val tmp_13: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                      ARG index: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                    ARG other: CONST Int type=kotlin.Int value=15
       BLOCK type=kotlin.Unit origin=WHEN
         VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:kotlin.Int [val]
           CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-            index: CONST Int type=kotlin.Int value=0
+            ARG <this>: GET_VAR 'val array: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+            ARG index: CONST Int type=kotlin.Int value=0
         WHEN type=kotlin.Unit origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'val tmp_15: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-              arg1: CONST Int type=kotlin.Int value=1
+              ARG arg0: GET_VAR 'val tmp_15: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+              ARG arg1: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=null
               BLOCK type=kotlin.Unit origin=PLUSEQ
                 VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:kotlin.IntArray [val]
@@ -202,13 +202,13 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
                 VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlin.Int [val]
                   CONST Int type=kotlin.Int value=0
                 CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PLUSEQ
-                  $this: GET_VAR 'val tmp_16: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                  index: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                  value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                    $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
-                      $this: GET_VAR 'val tmp_16: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                      index: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                    other: CONST Int type=kotlin.Int value=16
+                  ARG <this>: GET_VAR 'val tmp_16: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                  ARG index: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                  ARG value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
+                      ARG <this>: GET_VAR 'val tmp_16: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                      ARG index: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                    ARG other: CONST Int type=kotlin.Int value=16
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: BLOCK type=kotlin.Unit origin=null
@@ -218,10 +218,10 @@ FILE fqName:<root> fileName:/ifWithArrayOperation.kt
                 VAR IR_TEMPORARY_VARIABLE name:tmp_19 type:kotlin.Int [val]
                   CONST Int type=kotlin.Int value=0
                 CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=PLUSEQ
-                  $this: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                  index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                  value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-                    $this: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
-                      $this: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
-                      index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
-                    other: CONST Int type=kotlin.Int value=17
+                  ARG <this>: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                  ARG index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                  ARG value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                    ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=PLUSEQ
+                      ARG <this>: GET_VAR 'val tmp_18: kotlin.IntArray declared in <root>.topLevelMethod' type=kotlin.IntArray origin=null
+                      ARG index: GET_VAR 'val tmp_19: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+                    ARG other: CONST Int type=kotlin.Int value=17

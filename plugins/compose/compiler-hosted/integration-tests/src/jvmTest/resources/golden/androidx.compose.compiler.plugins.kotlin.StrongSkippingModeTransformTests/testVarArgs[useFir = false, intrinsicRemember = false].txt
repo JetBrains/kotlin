@@ -22,6 +22,7 @@ fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
   %composer.startMovableGroup(<>, ints.size)
+  %dirty = %dirty or if (%composer.changed(ints.size)) 0b0100 else 0
   val <iterator> = ints.iterator()
   while (<iterator>.hasNext()) {
     val value = <iterator>.next()
@@ -42,7 +43,7 @@ fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Varargs(*ints, %composer, updateChangedFlags(%changed or 0b0001))
+    Varargs(ints, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
 @Composable

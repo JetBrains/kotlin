@@ -114,19 +114,19 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   }
 
   override fun copy(): ArrayMap<T> {
-    return ArrayMapImpl<T>(data = <this>.<get-data>().copyOf<Any?>())
+    return ArrayMapImpl<T>(data = copyOf<Any?>(/* <this> = <this>.<get-data>() */))
   }
 
   private fun ensureCapacity(index: Int) {
     when {
       lessOrEqual(arg0 = <this>.<get-data>().<get-size>(), arg1 = index) -> { // BLOCK
-        <this>.<set-data>(<set-?> = <this>.<get-data>().copyOf<Any?>(newSize = <this>.<get-data>().<get-size>().times(other = 2)))
+        <this>.<set-data>(<set-?> = copyOf<Any?>(/* <this> = <this>.<get-data>(), */ newSize = <this>.<get-data>().<get-size>().times(other = 2)))
       }
     }
   }
 
   fun entries(): List<Entry<T>> {
-    return <this>.<get-data>().mapIndexedNotNull<Any?, Entry<T>>(transform = local fun <anonymous>(index: Int, value: Any?): Entry<T>? {
+    return mapIndexedNotNull<Any?, Entry<T>>(/* <this> = <this>.<get-data>(), */ transform = local fun <anonymous>(index: Int, value: Any?): Entry<T>? {
       return when {
         EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value as T)
         else -> null
@@ -136,7 +136,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   }
 
   override operator fun get(index: Int): T? {
-    return <this>.<get-data>().getOrNull<Any?>(index = index) as T?
+    return getOrNull<Any?>(/* <this> = <this>.<get-data>(), */ index = index) as T?
   }
 
   override operator fun iterator(): Iterator<T> {
@@ -336,3 +336,4 @@ fun ArrayMap<*>.isEmpty(): Boolean {
 fun ArrayMap<*>.isNotEmpty(): Boolean {
   return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0).not()
 }
+

@@ -87,6 +87,7 @@ class Fir2IrDataClassMembersGenerator(
                 thisOrigin = IrDeclarationOrigin.DEFINED,
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
+                kind = IrParameterKind.DispatchReceiver,
             )
 
         fun generateHeaders(): List<FirDeclaration> {
@@ -186,16 +187,18 @@ class Fir2IrDataClassMembersGenerator(
                 isExternal = false,
                 isFakeOverride = false,
             ).apply {
-                if (otherParameterNeeded) {
-                    val irValueParameter = createSyntheticIrParameter(
-                        this, syntheticCounterpart.valueParameters.first().name, c.builtins.anyNType
-                    )
-                    this.valueParameters = listOf(irValueParameter)
-                }
                 metadata = FirMetadataSource.Function(syntheticCounterpart)
                 setParent(irClass)
                 addDeclarationToParent(this, irClass)
-                dispatchReceiverParameter = generateDispatchReceiverParameter(this)
+                parameters = buildList {
+                    this += generateDispatchReceiverParameter(this@apply)
+
+                    if (otherParameterNeeded) {
+                        this += createSyntheticIrParameter(
+                            this@apply, syntheticCounterpart.valueParameters.first().name, c.builtins.anyNType
+                        )
+                    }
+                }
             }
         }
 
@@ -211,7 +214,8 @@ class Fir2IrDataClassMembersGenerator(
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
-                isHidden = false
+                isHidden = false,
+                kind = IrParameterKind.Regular,
             ).apply {
                 parent = irFunction
             }
@@ -241,6 +245,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
         fun generateBodies(functions: List<IrSimpleFunction>) {
             val propertyParametersCount = irClass.primaryConstructor?.parameters?.size ?: 0
             val properties = irClass.properties.filter { it.backingField != null }.take(propertyParametersCount).toList()
+            val constructorParameters = irClass.primaryConstructor!!.parameters.filter { it.kind == IrParameterKind.Regular }
 
             for (irFunction in functions) {
                 when (val name = irFunction.name) {
@@ -255,7 +260,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                         require(DataClassResolver.isComponentLike(name)) { "Unknown data class member: $name" }
                         irFunction.origin = GENERATED_DATA_CLASS_MEMBER
                         val index = DataClassResolver.getComponentIndex(irFunction.name.asString())
-                        val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
+                        val valueParameter = constructorParameters[index - 1]
                         val irProperty = irDataClassMembersGenerator.getProperty(valueParameter)
                         irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
                     }

@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
@@ -21,6 +20,6 @@ abstract class Parent<T> {
 
 abstract class Intermediate : Parent<String>()
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class WithAnn : Intermediate()
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class WithAnn : Intermediate()
 
 actual class WithoutAnn : Intermediate()

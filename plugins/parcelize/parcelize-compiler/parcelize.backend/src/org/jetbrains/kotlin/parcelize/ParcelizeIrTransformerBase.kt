@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
@@ -35,7 +35,7 @@ abstract class ParcelizeIrTransformerBase(
     protected val androidSymbols: AndroidSymbols,
     protected val parcelizeAnnotations: List<FqName>,
     protected val experimentalCodeGeneration: Boolean,
-) : ParcelizeExtensionBase, IrElementVisitorVoid {
+) : IrVisitorVoid(), ParcelizeExtensionBase {
     private val irFactory: IrFactory = IrFactoryImpl
 
     protected val deferredOperations = mutableListOf<() -> Unit>()

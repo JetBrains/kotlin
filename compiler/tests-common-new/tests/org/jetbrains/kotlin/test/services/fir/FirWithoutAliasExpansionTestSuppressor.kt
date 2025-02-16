@@ -18,6 +18,9 @@ class FirWithoutAliasExpansionTestSuppressor(testServices: TestServices) : After
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
+    override val order: Order
+        get() = Order.P5
+
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE !in testServices.moduleStructure.allDirectives) return failedAssertions
 

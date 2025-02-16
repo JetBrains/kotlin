@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ContextParameters
+
 import kotlin.wasm.WasmExport
 
 <!WASM_EXPORT_ON_EXTERNAL_DECLARATION!>@WasmExport("a")<!>
@@ -64,3 +65,8 @@ fun fooUnsigned1(): UInt = 42u
 
 @WasmExport()
 fun fooUnsigned2(): UByte = 42u
+
+<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+@WasmExport()
+fun fooWithContext() {
+}

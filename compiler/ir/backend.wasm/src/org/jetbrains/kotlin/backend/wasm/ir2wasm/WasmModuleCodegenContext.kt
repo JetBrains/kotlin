@@ -154,8 +154,8 @@ class WasmFileCodegenContext(
         wasmFileFragment.mainFunctionWrappers.add(mainFunctionWrapper.getReferenceKey())
     }
 
-    fun defineTestFun(testFun: IrFunctionSymbol) {
-        wasmFileFragment.testFun.add(testFun.getReferenceKey())
+    fun addTestFunDeclarator(testFunctionDeclarator: IrFunctionSymbol) {
+        wasmFileFragment.testFunctionDeclarators.add(testFunctionDeclarator.getReferenceKey())
     }
 
     fun addEquivalentFunction(key: String, function: IrFunctionSymbol) {
@@ -176,12 +176,28 @@ class WasmFileCodegenContext(
         wasmFileFragment.jsModuleAndQualifierReferences.add(reference)
     }
 
-    fun defineTryGetAssociatedObjectFun(func: IrFunctionSymbol) {
-        wasmFileFragment.tryGetAssociatedObjectFun = func.getReferenceKey()
-    }
-
-    fun defineJsToKotlinAnyAdapterFun(jsToKotlinAnyAdapterFun: IrSimpleFunctionSymbol) {
-        wasmFileFragment.jsToKotlinAnyAdapterFun = jsToKotlinAnyAdapterFun.getReferenceKey()
+    fun defineBuiltinIdSignatures(
+        throwable: IrClassSymbol?,
+        tryGetAssociatedObject: IrFunctionSymbol?,
+        jsToKotlinAnyAdapter: IrFunctionSymbol?,
+        unitGetInstance: IrFunctionSymbol?,
+        runRootSuites: IrFunctionSymbol?,
+    ) {
+        if (throwable != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null) {
+            val originalSignatures = wasmFileFragment.builtinIdSignatures
+            wasmFileFragment.builtinIdSignatures = BuiltinIdSignatures(
+                throwable = originalSignatures?.throwable
+                    ?: throwable?.getReferenceKey(),
+                tryGetAssociatedObject = originalSignatures?.tryGetAssociatedObject
+                    ?: tryGetAssociatedObject?.getReferenceKey(),
+                jsToKotlinAnyAdapter = originalSignatures?.jsToKotlinAnyAdapter
+                    ?: jsToKotlinAnyAdapter?.getReferenceKey(),
+                unitGetInstance = originalSignatures?.unitGetInstance
+                    ?: unitGetInstance?.getReferenceKey(),
+                runRootSuites = originalSignatures?.runRootSuites
+                    ?: runRootSuites?.getReferenceKey(),
+            )
+        }
     }
 }
 

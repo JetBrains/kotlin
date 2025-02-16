@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
-import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.swiftexport.standalone.*
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import java.time.Instant
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -37,15 +39,15 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
     }
 
     override fun execute() {
-
-        val exportModules = parameters.swiftModules.zip(parameters.swiftExportSettings) { modules, settings ->
+        val exportSettings = parameters.swiftExportSettings
+        val exportModules = parameters.swiftModules.zip(exportSettings) { modules, settings ->
             modules.map { module ->
-                module.toInputModule(config(module.flattenPackage, settings))
+                module.toInputModule(createModuleConfig(module.flattenPackage, settings))
             }.toSet()
         }.get()
 
         val modules = GradleSwiftExportModules(
-            runSwiftExport(exportModules).getOrThrow().toPlainList(),
+            runSwiftExport(exportModules, createSwiftExportConfig()).getOrThrow().toPlainList(),
             Instant.now().toEpochMilli()
         )
 
@@ -53,24 +55,21 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
         parameters.swiftModulesFile.getFile().writeText(json)
     }
 
-    private fun config(flattenPackage: String?, customSettings: Map<String, String>): SwiftExportConfig {
-        val swiftExportSettings = mutableMapOf(
-            SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
-            SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
-            SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString(),
-        ).also { settings ->
-            flattenPackage?.let { settings[SwiftExportConfig.ROOT_PACKAGE] = it }
+    private fun createModuleConfig(flattenPackage: String?, settings: Map<String, String>): SwiftModuleConfig {
+        return SwiftModuleConfig(
+            bridgeModuleName = parameters.bridgeModuleName.getOrElse(SwiftModuleConfig.DEFAULT_BRIDGE_MODULE_NAME),
+            rootPackage = flattenPackage,
+            experimentalFeatures = settings
+        )
+    }
 
-            customSettings.forEach { (key, value) ->
-                settings[key] = value
-            }
-        }
-
+    private fun createSwiftExportConfig(): SwiftExportConfig {
         return SwiftExportConfig(
-            settings = swiftExportSettings,
-            logger = swiftExportLogger,
+            outputPath = parameters.outputPath.getFile().toPath(),
+            stableDeclarationsOrder = parameters.stableDeclarationsOrder.getOrElse(true),
             distribution = parameters.konanDistribution.get(),
-            outputPath = parameters.outputPath.getFile().toPath()
+            renderDocComments = parameters.renderDocComments.getOrElse(false),
+            logger = swiftExportLogger,
         )
     }
 }
@@ -88,7 +87,7 @@ internal fun Set<SwiftExportModule>.toPlainList(): List<GradleSwiftExportModule>
     return modules.toList()
 }
 
-private fun SwiftExportedModule.toInputModule(config: SwiftExportConfig): InputModule {
+private fun SwiftExportedModule.toInputModule(config: SwiftModuleConfig): InputModule {
     return InputModule(
         name = moduleName,
         path = artifact.toPath(),

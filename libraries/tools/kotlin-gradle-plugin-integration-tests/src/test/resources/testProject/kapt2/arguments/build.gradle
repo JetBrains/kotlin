@@ -31,7 +31,7 @@ kapt {
     }
 
     javacOptions {
-        option("-Xmaxerrs", 500)
+        option("-Xmaxerrs", "500")
     }
     javacOptions {
         option("-Xlint:all")

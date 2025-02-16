@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.plugin.sandbox.fir.generators.TopLevelDeclarationsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -23,7 +24,7 @@ class TransformerForTopLevelDeclarationsGenerator(context: IrPluginContext) : Ab
     }
 
     override fun generateBodyForFunction(function: IrSimpleFunction, key: GeneratedDeclarationKey?): IrBody {
-        val className = function.valueParameters.single().type.classFqName?.asString() ?: "<error>"
+        val className = function.parameters.single { it.kind == IrParameterKind.Regular }.type.classFqName?.asString() ?: "<error>"
         val const = IrConstImpl(-1, -1, irBuiltIns.stringType, IrConstKind.String, className)
         val returnExpression = IrReturnImpl(-1, -1, irBuiltIns.nothingType, function.symbol, const)
         return irFactory.createBlockBody(-1, -1, listOf(returnExpression))

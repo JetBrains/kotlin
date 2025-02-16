@@ -4,6 +4,7 @@ KtDotQualifiedExpression(53,61): 's.action'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action
           isSafeNavigation = false
@@ -22,9 +23,11 @@ KtDotQualifiedExpression(53,61): 's.action'
               receiverType = null
               returnType = kotlin.String
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type 'kotlin.Function1<kotlin.String, kotlin.Unit>?'. Use explicit '?.invoke' to make a function-like call instead.>
+    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type 'Function1<String, Unit>?'. Use explicit '?.invoke' to make a function-like call instead.>
     isInBestCandidates = true

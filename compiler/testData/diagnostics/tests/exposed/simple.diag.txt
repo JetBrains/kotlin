@@ -1,37 +1,37 @@
-/simple.kt:8:24: error: 'public' sub-interface exposes its 'private-in-file' supertype My
+/simple.kt:7:24: error: 'public' sub-interface exposes its 'private-in-file' supertype My
 public interface Your: My {
                        ^^
-/simple.kt:12:22: error: 'public' generic exposes its 'private-in-file' parameter bound type My
+/simple.kt:11:22: error: 'public' generic exposes its 'private-in-file' parameter bound type My
 public class Derived<T: My>(val x: My): Base() {
                      ^^^^^
-/simple.kt:12:29: error: 'public' function exposes its 'private-in-file' parameter type My
+/simple.kt:11:29: error: 'public' function exposes its 'private-in-file' parameter type My
 public class Derived<T: My>(val x: My): Base() {
                             ^^^^^^^^^
-/simple.kt:12:41: error: 'public' subclass exposes its 'private-in-file' supertype Base
+/simple.kt:11:41: error: 'public' subclass exposes its 'private-in-file' supertype Base
 public class Derived<T: My>(val x: My): Base() {
                                         ^^^^^^
-/simple.kt:14:17: error: 'public' function exposes its 'private-in-file' parameter type My
+/simple.kt:13:17: error: 'public' function exposes its 'private-in-file' parameter type My
     constructor(xx: My?, x: My): this(xx ?: x)
                 ^^^^^^^
-/simple.kt:14:26: error: 'public' function exposes its 'private-in-file' parameter type My
+/simple.kt:13:26: error: 'public' function exposes its 'private-in-file' parameter type My
     constructor(xx: My?, x: My): this(xx ?: x)
                          ^^^^^
-/simple.kt:16:9: error: 'public' property exposes its 'private-in-file' type Base
+/simple.kt:15:9: error: 'public' property exposes its 'private-in-file' type Base
     val y: Base? = null
         ^
-/simple.kt:18:9: error: 'public' member exposes its 'private-in-file' receiver type My
+/simple.kt:17:9: error: 'public' member exposes its 'private-in-file' receiver type My
     val My.z: Int
         ^^
-/simple.kt:21:9: error: 'public' function exposes its 'private-in-file' return type My
+/simple.kt:20:9: error: 'public' function exposes its 'private-in-file' return type My
     fun foo(m: My): My = m
         ^^^
-/simple.kt:21:13: error: 'public' function exposes its 'private-in-file' parameter type My
+/simple.kt:20:13: error: 'public' function exposes its 'private-in-file' parameter type My
     fun foo(m: My): My = m
             ^^^^^
-/simple.kt:23:9: error: 'public' member exposes its 'private-in-file' receiver type My
+/simple.kt:22:9: error: 'public' member exposes its 'private-in-file' receiver type My
     fun My.bar(): My = this
         ^^
-/simple.kt:23:12: error: 'public' function exposes its 'private-in-file' return type My
+/simple.kt:22:12: error: 'public' function exposes its 'private-in-file' return type My
     fun My.bar(): My = this
            ^^^
 

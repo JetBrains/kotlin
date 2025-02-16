@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
@@ -18,9 +20,15 @@ import java.io.File
 
 @Suppress("unused")
 object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.config", "JSConfigurationKeys") {
+    val WASM_COMPILATION by key<Boolean>("compile to WASM")
+
+    val OUTPUT_NAME by key<String>("Name of output KLib file")
+
     val TRANSITIVE_LIBRARIES by key<List<String>>("library files for transitive dependencies")
 
     val LIBRARIES by key<List<String>>("library file paths")
+
+    val FRIEND_LIBRARIES by key<List<String>>("friend library file paths")
 
     val SOURCE_MAP by key<Boolean>("generate source map")
 
@@ -44,11 +52,13 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val MODULE_KIND by key<ModuleKind>("module kind")
 
-    val INCREMENTAL_DATA_PROVIDER by key<IncrementalDataProvider>("incremental data provider")
+    val JS_INCREMENTAL_COMPILATION_ENABLED by key<Boolean>("incremental compilation enabled")
 
-    val INCREMENTAL_RESULTS_CONSUMER by key<IncrementalResultsConsumer>("incremental results consumer")
+    val INCREMENTAL_DATA_PROVIDER by key<IncrementalDataProvider>("incremental data provider", throwOnNull = false)
 
-    val INCREMENTAL_NEXT_ROUND_CHECKER by key<IncrementalNextRoundChecker>("incremental compilation next round checker")
+    val INCREMENTAL_RESULTS_CONSUMER by key<IncrementalResultsConsumer>("incremental results consumer", throwOnNull = false)
+
+    val INCREMENTAL_NEXT_ROUND_CHECKER by key<IncrementalNextRoundChecker>("incremental compilation next round checker", throwOnNull = false)
 
     val FRIEND_PATHS_DISABLED by key<Boolean>("disable support for friend paths")
 
@@ -80,7 +90,7 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val PRINT_REACHABILITY_INFO by key<Boolean>("print declarations' reachability info during performing DCE")
 
-    val DUMP_REACHABILITY_INFO_TO_FILE by key<String>("dump declarations' reachability info to file during performing DCE")
+    val DUMP_REACHABILITY_INFO_TO_FILE by key<String>("dump declarations' reachability info to file during performing DCE", throwOnNull = false)
 
     val FAKE_OVERRIDE_VALIDATOR by key<Boolean>("IR fake override validator")
 
@@ -95,4 +105,22 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val OPTIMIZE_GENERATED_JS by key<Boolean>("perform additional optimizations on the generated JS code")
 
     val USE_ES6_CLASSES by key<Boolean>("perform ES6 class usage")
+
+    val INCLUDES by key<String>("List of KLibs for this linking phase")
+    val PRODUCE_KLIB_FILE by key<Boolean>("Need to produce KLib file or not")
+    val PRODUCE_KLIB_DIR by key<Boolean>("Need to produce unpacked KLib dir or not")
+    val PER_MODULE_OUTPUT_NAME by key<String>("Custom output name to the split .js files", throwOnNull = false)
+
+    val KEEP by key<List<String>>("list of fully qualified names not to be eliminated by DCE")
+    val DCE by key<Boolean>("Perform experimental dead code elimination")
+    val DCE_RUNTIME_DIAGNOSTIC by key<String>("Enable runtime diagnostics instead of removing declarations when performing DCE")
+    val SAFE_EXTERNAL_BOOLEAN by key<Boolean>("Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'")
+    val SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC by key<String>("Enable runtime diagnostics when accessing external 'Boolean' properties")
+    val MINIMIZED_MEMBER_NAMES by key<Boolean>("Minimize the names of members")
+    val GRANULARITY by key<JsGenerationGranularity>("Granularity of JS files generation")
+    val TS_COMPILATION_STRATEGY by key<TsCompilationStrategy>("TS compilation strategy")
+    val CALL_MAIN_MODE by key<String>("Specify whether the 'main' function should be called upon execution.")
+    val IC_CACHE_DIRECTORY by key<String>("Directory for the IC cache", throwOnNull = false)
+    val IC_CACHE_READ_ONLY by key<Boolean>("IC caches are read-only")
+    val PRESERVE_IC_ORDER by key<Boolean>("Preserve IC order")
 }

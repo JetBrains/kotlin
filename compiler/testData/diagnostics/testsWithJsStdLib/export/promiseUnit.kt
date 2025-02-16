@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // ISSUE: KT-57192
 // Promise<Unit> wrongly raised NON_EXPORTABLE_TYPE
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND_K1: JS_IR
 
 @file:OptIn(ExperimentalJsExport::class)
 import kotlin.js.Promise
@@ -26,4 +26,4 @@ interface I<T> {
 fun fooIIntArgument(i: I<Int>) = i.bar()
 
 @JsExport
-fun fooIUnitArgument(i: I<Unit>) = i.bar()
+fun fooIUnitArgument(<!NON_EXPORTABLE_TYPE!>i: I<Unit><!>) = i.bar()

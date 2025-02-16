@@ -1,0 +1,47 @@
+@kotlin.Metadata
+public final class Test$DefaultImpls {
+    // source: 'bridgeInInterfaceWithProperties.kt'
+    public deprecated static @java.lang.Deprecated method getTest(@org.jetbrains.annotations.NotNull p0: Test, p1: java.lang.Object): java.lang.Object
+    public deprecated static @java.lang.Deprecated method setTest(@org.jetbrains.annotations.NotNull p0: Test, p1: java.lang.Object, p2: java.lang.Object): void
+    public final inner class Test$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Test {
+    // source: 'bridgeInInterfaceWithProperties.kt'
+    public synthetic static method access$getTest$jd(p0: Test, p1: java.lang.Object): java.lang.Object
+    public synthetic static method access$setTest$jd(p0: Test, p1: java.lang.Object, p2: java.lang.Object): void
+    public method getTest(p0: java.lang.Object): java.lang.Object
+    public method setTest(p0: java.lang.Object, p1: java.lang.Object): void
+    public final inner class Test$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class Test2$DefaultImpls {
+    // source: 'bridgeInInterfaceWithProperties.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getTest(@org.jetbrains.annotations.NotNull p0: Test2, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public deprecated static @java.lang.Deprecated method setTest(@org.jetbrains.annotations.NotNull p0: Test2, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final inner class Test2$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Test2 {
+    // source: 'bridgeInInterfaceWithProperties.kt'
+    public synthetic static method access$getTest$jd(p0: Test2, p1: java.lang.String): java.lang.String
+    public synthetic static method access$setTest$jd(p0: Test2, p1: java.lang.String, p2: java.lang.String): void
+    public @org.jetbrains.annotations.NotNull method getTest(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic bridge method getTest(p0: java.lang.Object): java.lang.Object
+    public method setTest(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public synthetic bridge method setTest(p0: java.lang.Object, p1: java.lang.Object): void
+    public final inner class Test2$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class TestClass {
+    // source: 'bridgeInInterfaceWithProperties.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getTest(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic bridge method getTest(p0: java.lang.Object): java.lang.Object
+    public method setTest(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public synthetic bridge method setTest(p0: java.lang.Object, p1: java.lang.Object): void
+}

@@ -1,14 +1,14 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR JVM
+// IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-66436
 
 // MODULE: common
 // FILE: common.kt
 package foo
 
-public expect abstract class <!NO_ACTUAL_FOR_EXPECT!>AbstractMutableList<!>() {
+public expect abstract class AbstractMutableList() {
     protected var modCount: Int
 }
 

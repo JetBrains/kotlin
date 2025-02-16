@@ -5,6 +5,7 @@ callables: 1
     annotations: []
     callableId: test/testFun_generated
     compilerVisibility: Private
+    contextParameters: []
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true

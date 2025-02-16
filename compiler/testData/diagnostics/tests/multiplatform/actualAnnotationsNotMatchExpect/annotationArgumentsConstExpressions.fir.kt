@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // MODULE: m1-common
@@ -90,7 +89,7 @@ package test
 actual fun getClassExpression() {}
 
 @ClassArgAnn(ClassForReference::class)
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun differentClassesWithSameName() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun differentClassesWithSameName() {}
 
 @StringArgAnn("1.9")
 actual fun stringConstant() {}
@@ -117,7 +116,7 @@ actual fun varargInAnnotationWithArraySpread() {}
 actual fun arrayInAnnotation() {}
 
 @ArrayArgAnn(["foo"])
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun arrayInAnnotationNotMatch() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun arrayInAnnotationNotMatch() {}
 
 @NestedAnnArg(
     text = "root",
@@ -137,4 +136,4 @@ actual fun complexNestedAnnotations() {}
                  NestedAnnArg("DIFFERENT")
     )
 )
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun complexNestedAnnotationsNotMatch() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun complexNestedAnnotationsNotMatch() {}

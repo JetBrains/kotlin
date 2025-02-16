@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.fus.internal
 
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.gradle.fus.Metric
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -15,7 +16,7 @@ private const val STATISTICS_FOLDER_NAME = "kotlin-profile"
 private const val BUILD_SESSION_SEPARATOR = "BUILD FINISHED"
 private const val PROFILE_FILE_NAME_SUFFIX = ".plugin-profile"
 
-internal fun InternalGradleBuildFusStatisticsService.writeDownFusMetrics(log: Logger) {
+internal fun <T : InternalGradleBuildFusStatisticsService.Parameter> InternalGradleBuildFusStatisticsService<T>.writeDownFusMetrics(buildId: String, log: Logger, configurationTimeMetrics: List<Metric>? = null) {
     val reportDir = File(parameters.fusStatisticsRootDirPath.get(), STATISTICS_FOLDER_NAME)
     try {
         Files.createDirectories(reportDir.toPath())
@@ -28,7 +29,10 @@ internal fun InternalGradleBuildFusStatisticsService.writeDownFusMetrics(log: Lo
 
     reportFile.outputStream().bufferedWriter().use {
         it.appendLine("Build: $buildId")
-        getAllReportedMetrics().forEach { reportedMetrics ->
+        configurationTimeMetrics?.forEach { metric ->
+            it.appendLine(metric.toString())
+        }
+        getExecutionTimeMetrics().get().forEach { reportedMetrics ->
             it.appendLine(reportedMetrics.toString())
         }
         it.appendLine(BUILD_SESSION_SEPARATOR)

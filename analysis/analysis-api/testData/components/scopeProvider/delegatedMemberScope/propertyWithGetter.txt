@@ -3,6 +3,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: null
   callableId: /A.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

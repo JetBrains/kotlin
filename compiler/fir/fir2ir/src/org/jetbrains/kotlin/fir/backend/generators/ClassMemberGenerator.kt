@@ -76,12 +76,10 @@ internal class ClassMemberGenerator(
             }
 
             allDeclarations.forEach { declaration ->
-                when {
-                    declaration is FirTypeAlias -> {
-                    }
-                    declaration is FirConstructor && declaration.isPrimary -> {
-                    }
-                    declaration is FirRegularClass && declaration.visibility == Visibilities.Local -> {
+                when (declaration) {
+                    is FirTypeAlias -> {}
+                    is FirConstructor if declaration.isPrimary -> {}
+                    is FirRegularClass if declaration.visibility == Visibilities.Local -> {
                         val irNestedClass = classifierStorage.getIrClass(declaration)
                         irNestedClass.parent = irClass
                         conversionScope.withParent(irNestedClass) {
@@ -110,7 +108,7 @@ internal class ClassMemberGenerator(
                         irFunction.putParametersInScope(firFunction)
                     }
                 }
-                val irParameters = valueParameters.drop(firFunction.contextParameters.size)
+                val irParameters = parameters.filter { it.kind == IrParameterKind.Regular }
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
                 for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
                     visitor.withAnnotationMode(enableAnnotationMode = annotationMode) {
@@ -131,6 +129,7 @@ internal class ClassMemberGenerator(
                         body.statements += irDelegatingConstructorCall
                     }
 
+                    // TODO(KT-72994) remove when context receivers are removed
                     if (containingClass is FirRegularClass && containingClass.contextParameters.isNotEmpty()) {
                         val contextReceiverFields =
                             c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, containingClass)
@@ -138,12 +137,14 @@ internal class ClassMemberGenerator(
                         val thisParameter =
                             conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
 
+                        val irContextParameters = parameters.filter { it.kind == IrParameterKind.Context }
+
                         for (index in containingClass.contextParameters.indices) {
                             require(contextReceiverFields.size > index) {
                                 "Not defined context receiver #${index} for $irClass. " +
                                         "Context receivers found: $contextReceiverFields"
                             }
-                            val irValueParameter = valueParameters[index]
+                            val irValueParameter = irContextParameters[index]
                             body.statements.add(
                                 IrSetFieldImpl(
                                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -316,7 +317,12 @@ internal class ClassMemberGenerator(
                                 if (isSetter) {
                                     IrSetFieldImpl(startOffset, endOffset, fieldSymbol, builtins.unitType).apply {
                                         setReceiver(declaration)
-                                        value = IrGetValueImpl(startOffset, endOffset, propertyType, valueParameters.first().symbol)
+                                        value = IrGetValueImpl(
+                                            startOffset,
+                                            endOffset,
+                                            propertyType,
+                                            parameters.first { it.kind == IrParameterKind.Regular }.symbol
+                                        )
                                     }
                                 } else {
                                     IrReturnImpl(
@@ -359,7 +365,6 @@ internal class ClassMemberGenerator(
 
         check(constructorSymbol is FirConstructorSymbol)
 
-        val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
@@ -408,12 +413,9 @@ internal class ClassMemberGenerator(
                         }
                     }
                 }
-                if (firDispatchReceiver != null) {
-                    it.dispatchReceiver = visitor.convertToIrExpression(firDispatchReceiver)
-                }
                 with(callGenerator) {
                     declarationStorage.enterScope(irConstructorSymbol)
-                    val result = it.applyCallArguments(this@toIrDelegatingConstructorCall)
+                    val result = it.applyReceiversAndArguments(this@toIrDelegatingConstructorCall, constructorSymbol, null)
                     declarationStorage.leaveScope(irConstructorSymbol)
                     result
                 }

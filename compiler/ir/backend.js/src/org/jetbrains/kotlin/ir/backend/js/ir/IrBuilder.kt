@@ -27,11 +27,13 @@ object JsIrBuilder {
         typeArguments: List<IrType>? = null,
         origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
         superQualifierSymbol: IrClassSymbol? = null,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
     ): IrCall {
         val owner = target.owner
         return IrCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             type ?: owner.returnType,
             target,
             superQualifierSymbol = superQualifierSymbol,
@@ -57,13 +59,18 @@ object JsIrBuilder {
         )
     }
 
-    fun buildDelegatingConstructorCall(target: IrConstructorSymbol, typeArguments: List<IrType?>? = null): IrDelegatingConstructorCall {
+    fun buildDelegatingConstructorCall(
+        target: IrConstructorSymbol,
+        typeArguments: List<IrType?>? = null,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+    ): IrDelegatingConstructorCall {
         val owner = target.owner
         val irClass = owner.parentAsClass
 
         return IrDelegatingConstructorCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             owner.returnType,
             target,
             typeArgumentsCount = irClass.typeParameters.size,
@@ -81,14 +88,16 @@ object JsIrBuilder {
         target: IrConstructorSymbol,
         typeArguments: List<IrType?>? = null,
         constructorTypeArguments: List<IrType?>? = null,
-        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
+        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
     ): IrConstructorCall {
         val owner = target.owner
         val irClass = owner.parentAsClass
 
         return IrConstructorCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             owner.returnType,
             target,
             typeArgumentsCount = irClass.typeParameters.size,

@@ -25,16 +25,12 @@ import org.jetbrains.kotlin.utils.closure
 internal fun MultiplatformAnalysisConfiguration(testServices: TestServices): MultiplatformAnalysisConfiguration {
     return if (testServices.moduleStructure.allDirectives.contains(ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE)) {
         MultiplatformCompositeAnalysisConfiguration(
-            testServices.dependencyProvider,
+            testServices.artifactsProvider,
             testServices.sourceFileProvider,
             testServices.moduleDescriptorProvider,
         )
     } else {
-        MultiplatformSeparateAnalysisConfiguration(
-            testServices.dependencyProvider,
-            testServices.sourceFileProvider,
-            testServices.moduleDescriptorProvider
-        )
+        MultiplatformSeparateAnalysisConfiguration(testServices)
     }
 }
 
@@ -53,10 +49,11 @@ internal interface MultiplatformAnalysisConfiguration {
  * This mode works similar to how actual user projects would compile platforms like 'jvm', 'native' or js targets.
  */
 internal class MultiplatformSeparateAnalysisConfiguration(
-    private val dependencyProvider: DependencyProvider,
-    private val sourceFileProvider: SourceFileProvider,
-    private val moduleDescriptorProvider: ModuleDescriptorProvider
+    private val testServices: TestServices,
 ) : MultiplatformAnalysisConfiguration {
+    private val artifactsProvider: ArtifactsProvider = testServices.artifactsProvider
+    private val sourceFileProvider: SourceFileProvider = testServices.sourceFileProvider
+    private val moduleDescriptorProvider: ModuleDescriptorProvider = testServices.moduleDescriptorProvider
 
     override fun getCompilerEnvironment(module: TestModule): TargetEnvironment {
         return CompilerEnvironment
@@ -65,7 +62,7 @@ internal class MultiplatformSeparateAnalysisConfiguration(
     override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(
             module.allDependencies - module.dependsOnDependencies.toSet(),
-            dependencyProvider, moduleDescriptorProvider
+            moduleDescriptorProvider
         )
     }
 
@@ -75,7 +72,7 @@ internal class MultiplatformSeparateAnalysisConfiguration(
 
     override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(
-            module.friendDependencies, dependencyProvider, moduleDescriptorProvider
+            module.friendDependencies, moduleDescriptorProvider
         )
     }
 
@@ -84,11 +81,11 @@ internal class MultiplatformSeparateAnalysisConfiguration(
         fun addDependsOnSources(dependencies: List<DependencyDescription>) {
             if (dependencies.isEmpty()) return
             for (dependency in dependencies) {
-                val dependencyModule = dependencyProvider.getTestModule(dependency.moduleName)
-                val artifact = if (module.frontendKind == FrontendKinds.ClassicAndFIR) {
-                    dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicAndFIR).k1Artifact
+                val dependencyModule = dependency.dependencyModule
+                val artifact = if (testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicAndFIR) {
+                    artifactsProvider.getArtifact(dependencyModule, FrontendKinds.ClassicAndFIR).k1Artifact
                 } else {
-                    dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
+                    artifactsProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
                 }
                 /*
                 We need create KtFiles again with new project because otherwise we can access to some caches using
@@ -111,7 +108,7 @@ internal class MultiplatformSeparateAnalysisConfiguration(
  * reversed depends on paths see [CompositeAnalysisModuleStructureOracle]
  */
 internal class MultiplatformCompositeAnalysisConfiguration(
-    private val dependencyProvider: DependencyProvider,
+    private val artifactsProvider: ArtifactsProvider,
     private val sourceFileProvider: SourceFileProvider,
     private val moduleDescriptorProvider: ModuleDescriptorProvider,
 ) : MultiplatformAnalysisConfiguration {
@@ -127,18 +124,18 @@ internal class MultiplatformCompositeAnalysisConfiguration(
     override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor> {
         // Transitive dependsOn descriptors should also be returned as dependencies
         val allDependsOnDependencies = module.dependsOnDependencies.closure(preserveOrder = true) { dependsOnDependency ->
-            dependencyProvider.getTestModule(dependsOnDependency.moduleName).dependsOnDependencies
+            dependsOnDependency.dependencyModule.dependsOnDependencies
         }
         val allDependencies = (module.allDependencies + allDependsOnDependencies).distinct()
-        return getDescriptors(allDependencies, dependencyProvider, moduleDescriptorProvider)
+        return getDescriptors(allDependencies, moduleDescriptorProvider)
     }
 
     override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptor> {
-        return getDescriptors(module.dependsOnDependencies, dependencyProvider, moduleDescriptorProvider)
+        return getDescriptors(module.dependsOnDependencies, moduleDescriptorProvider)
     }
 
     override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor> {
-        return getDescriptors(module.friendDependencies, dependencyProvider, moduleDescriptorProvider)
+        return getDescriptors(module.friendDependencies, moduleDescriptorProvider)
     }
 }
 
@@ -178,10 +175,9 @@ private object CompositeAnalysisModuleStructureOracle : ModuleStructureOracle {
 
 private fun getDescriptors(
     dependencies: Iterable<DependencyDescription>,
-    dependencyProvider: DependencyProvider,
     moduleDescriptorProvider: ModuleDescriptorProvider
 ): List<ModuleDescriptor> {
     return dependencies.filter { it.kind == DependencyKind.Source }
-        .map { dependencyDescription -> dependencyProvider.getTestModule(dependencyDescription.moduleName) }
+        .map { dependencyDescription -> dependencyDescription.dependencyModule }
         .map { dependencyModule -> moduleDescriptorProvider.getModuleDescriptor(dependencyModule) }
 }

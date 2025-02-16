@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-internal class KaFe10NeverRestoringSymbolPointer<T : KaSymbol> : KaSymbolPointer<T>() {
+internal class KaFe10NeverRestoringSymbolPointer<T : KaSymbol>() : KaSymbolPointer<T>() {
     @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): T? {
         return null

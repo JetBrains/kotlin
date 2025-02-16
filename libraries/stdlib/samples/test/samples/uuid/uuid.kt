@@ -6,6 +6,7 @@
 package samples.uuid
 
 import samples.*
+import kotlin.test.*
 import kotlin.uuid.*
 
 @OptIn(ExperimentalUuidApi::class)
@@ -24,7 +25,7 @@ class Uuids {
     @Sample
     fun toJavaUuid() {
         val hexString = "550e8400e29b41d4a716446655440000"
-        val kotlinUuid = Uuid.parseHex(hexString)
+        val kotlinUuid = Uuid.parse(hexString)
         val javaUuid = kotlinUuid.toJavaUuid()
 
         assertPrints(javaUuid, "550e8400-e29b-41d4-a716-446655440000")
@@ -90,6 +91,12 @@ class Uuids {
     }
 
     @Sample
+    fun toHexDashString() {
+        val uuid = Uuid.fromULongs(0x550E8400E29B41D4uL, 0xA716446655440000uL)
+        assertPrints(uuid.toHexDashString(), "550e8400-e29b-41d4-a716-446655440000")
+    }
+
+    @Sample
     fun toHexString() {
         val uuid = Uuid.fromULongs(0x550E8400E29B41D4uL, 0xA716446655440000uL)
         assertPrints(uuid.toHexString(), "550e8400e29b41d4a716446655440000")
@@ -100,6 +107,15 @@ class Uuids {
         val uuid = Uuid.fromULongs(0x550E8400E29B41D4uL, 0xA716446655440000uL)
         assertPrints(
             uuid.toByteArray().joinToString { it.toHexString() },
+            "55, 0e, 84, 00, e2, 9b, 41, d4, a7, 16, 44, 66, 55, 44, 00, 00"
+        )
+    }
+
+    @Sample
+    fun toUByteArray() {
+        val uuid = Uuid.fromULongs(0x550E8400E29B41D4uL, 0xA716446655440000uL)
+        assertPrints(
+            uuid.toUByteArray().joinToString { it.toHexString() },
             "55, 0e, 84, 00, e2, 9b, 41, d4, a7, 16, 44, 66, 55, 44, 00, 00"
         )
     }
@@ -137,8 +153,29 @@ class Uuids {
     }
 
     @Sample
+    fun fromUByteArray() {
+        val ubyteArray = ubyteArrayOf(
+            0x55u, 0x0Eu, 0x84u, 0x00u, 0xE2u, 0x9Bu, 0x41u, 0xD4u,
+            0xA7u, 0x16u, 0x44u, 0x66u, 0x55u, 0x44u, 0x00u, 0x00u
+        )
+        val uuid = Uuid.fromUByteArray(ubyteArray)
+        assertPrints(uuid, "550e8400-e29b-41d4-a716-446655440000")
+    }
+
+    @Sample
     fun parse() {
-        val uuid = Uuid.parse("550E8400-e29b-41d4-A716-446655440000") // case insensitive
+        // Parsing is case-insensitive
+        val uuid1 = Uuid.parse("550E8400-e29b-41d4-A716-446655440000") // hex-and-dash
+        val uuid2 = Uuid.parse("550e8400E29b41D4a716446655440000") // hexadecimal
+
+        assertTrue(uuid1 == uuid2)
+        assertPrints(uuid1, "550e8400-e29b-41d4-a716-446655440000")
+        assertPrints(uuid2, "550e8400-e29b-41d4-a716-446655440000")
+    }
+
+    @Sample
+    fun parseHexDash() {
+        val uuid = Uuid.parseHexDash("550E8400-e29b-41d4-A716-446655440000") // case insensitive
         assertPrints(uuid, "550e8400-e29b-41d4-a716-446655440000")
     }
 
@@ -160,6 +197,23 @@ class Uuids {
         assertPrints(uuid2 == uuid3, "false")
     }
 
+    @Sample
+    fun compareTo() {
+        val uuid1 = Uuid.parse("49d6d991-c780-4eb5-8585-5169c25af912")
+        val uuid2 = Uuid.parse("c0bac692-7208-4448-a8fe-3e3eb128db2a")
+        val uuid3 = Uuid.parse("49d6d991-aa92-4da0-917e-527c69621cb7")
+
+        assertTrue(uuid1 < uuid2)
+        assertTrue(uuid1 > uuid3)
+
+        val sortedUuids = listOf(uuid1, uuid2, uuid3).sorted()
+
+        assertPrints(sortedUuids[0], "49d6d991-aa92-4da0-917e-527c69621cb7")
+        assertPrints(sortedUuids[1], "49d6d991-c780-4eb5-8585-5169c25af912")
+        assertPrints(sortedUuids[2], "c0bac692-7208-4448-a8fe-3e3eb128db2a")
+    }
+
+    @Suppress("DEPRECATION")
     @Sample
     fun lexicalOrder() {
         val uuid1 = Uuid.parse("49d6d991-c780-4eb5-8585-5169c25af912")

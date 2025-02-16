@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
-import org.jetbrains.kotlin.fir.resolve.shouldReturnUnit
+import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
@@ -106,6 +106,13 @@ class PostponedArgumentsAnalyzer(
             }
         }
 
+        // TODO: Consider moving this part to FirCallResolver::resolveCallableReference (KT-74021)
+        // Currently it doesn't work easily because the code inside
+        // FirSyntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall for error processing assumes
+        // that the reference is not replaced
+        // (see `check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && !callableReferenceAccess.isResolved)`).
+        // But generally, it should help to get rid of `analyzed` var and replace it with
+        // getter to `ConeResolvedCallableReferenceAtom::state`.
         val callableReferenceAccess = atom.expression
         atom.analyzed = true
 
@@ -227,7 +234,8 @@ class PostponedArgumentsAnalyzer(
         val returnTypeRef = lambda.anonymousFunction.returnTypeRef.let {
             it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substituteAlreadyFixedVariables(lambda.returnType))
         }
-        val isUnitLambda = returnTypeRef.coneType.isUnitOrFlexibleUnit || lambda.anonymousFunction.shouldReturnUnit(returnArguments)
+        val isLastExpressionCoercedToUnit =
+            returnTypeRef.coneType.isUnitOrFlexibleUnit || lambda.anonymousFunction.lambdaWithExplicitEmptyReturns(returnArguments)
 
         for (atom in returnAtoms) {
             val expression = atom.expression
@@ -243,7 +251,7 @@ class PostponedArgumentsAnalyzer(
             //    }
             //  Things get even weirder if T has an upper bound incompatible with Unit.
             val haveSubsystem = c.addSubsystemFromAtom(atom)
-            if (isLastExpression && isUnitLambda) {
+            if (isLastExpression && isLastExpressionCoercedToUnit) {
                 // That "if" is necessary because otherwise we would force a lambda return type
                 // to be inferred from completed last expression.
                 // See `test1` at testData/diagnostics/tests/inference/coercionToUnit/afterBareReturn.kt
@@ -271,7 +279,8 @@ class PostponedArgumentsAnalyzer(
                     checkerSink,
                     context = resolutionContext,
                     isReceiver = false,
-                    isDispatch = false
+                    isDispatch = false,
+                    anonymousFunctionIfReturnExpression = lambda.anonymousFunction,
                 )
             }
         }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +25,7 @@ import java.io.File
 /**
  * Dumps synthetic accessors and their call sites (used only for testing and debugging).
  */
-class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass {
+class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
     private val dumpDirectory: File? = getDumpDirectoryOrNull(context.configuration)
 
     override fun lower(irModule: IrModuleFragment) {
@@ -103,7 +103,7 @@ class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass
         val body = body ?: compilationException("${id()} has no body", this)
         val expression = when (body) {
             is IrExpressionBody -> body.expression
-            is IrBlockBody -> body.statements.singleOrNull() as? IrExpression
+            is IrBlockBody -> (body.statements.singleOrNull() as? IrReturn)?.value
                 ?: compilationException("${id()} is expected to have exactly the single expression in block body", this)
             is IrSyntheticBody -> syntheticBodyIsNotSupported(this)
         }
@@ -135,7 +135,7 @@ class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass
     }
 }
 
-private class SyntheticAccessorCollector : IrElementVisitorVoid {
+private class SyntheticAccessorCollector : IrVisitorVoid() {
     val accessorSymbols = HashSet<IrFunctionSymbol>()
 
     override fun visitElement(element: IrElement) {
@@ -151,7 +151,7 @@ private class SyntheticAccessorCollector : IrElementVisitorVoid {
 private class SyntheticAccessorsDumper(
     private val accessorSymbols: Set<IrFunctionSymbol>,
     private val accessorTargetSymbols: Set<IrSymbol>
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     private val stack = ArrayList<StackFrame>()
     private val dump = StringBuilder()
 

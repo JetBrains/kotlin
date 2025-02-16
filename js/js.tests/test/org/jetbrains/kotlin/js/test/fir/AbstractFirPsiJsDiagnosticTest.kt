@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -23,7 +27,8 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -31,7 +36,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
 abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
-    protected open fun configureTestBuilder(builder: TestConfigurationBuilder) = builder.apply {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = JsPlatforms.defaultJsPlatform
@@ -76,15 +81,11 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
             )
         }
     }
-
-    final override fun TestConfigurationBuilder.configuration() {
-        configureTestBuilder(this@configuration)
-    }
 }
 
 abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
-    override fun configureTestBuilder(builder: TestConfigurationBuilder) = builder.apply {
-        super.configureTestBuilder(builder)
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
 
         facadeStep(::Fir2IrResultsConverter)
         facadeStep(::FirJsKlibSerializerFacade)
@@ -99,8 +100,28 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
     }
 }
 
+abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
+        defaultDirectives {
+            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+        }
+
+        facadeStep(::Fir2IrResultsConverter)
+        facadeStep(::JsIrInliningFacade)
+
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler
+            )
+        }
+    }
+}
+
 abstract class AbstractFirPsiJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(FirParser.LightTree)
+
+abstract class AbstractFirJsDiagnosticWithIrInlinerTest : AbstractFirJsDiagnosticWithIrInlinerTestBase(FirParser.LightTree)
 
 abstract class AbstractFirPsiJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.LightTree)

@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -67,6 +68,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: null
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -102,7 +104,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(123)
+  initializer: KaConstantInitializerValue(123)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -190,6 +192,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /AnonymousContainer.anonymousObject
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -225,7 +228,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(object : Runnable { ...)
+  initializer: KaNonConstantInitializerValue(object : Runnable { ...)
   isActual: false
   isConst: false
   isDelegatedProperty: false

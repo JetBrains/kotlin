@@ -31,6 +31,7 @@ KaValueParameterSymbol:
       deprecationStatus: null
     callableId: pack/Anno.an
     compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
@@ -66,7 +67,7 @@ KaValueParameterSymbol:
     hasBackingField: true
     hasGetter: true
     hasSetter: false
-    initializer: KtConstantInitializerValue(0)
+    initializer: KaConstantInitializerValue(0)
     isActual: false
     isConst: false
     isDelegatedProperty: false

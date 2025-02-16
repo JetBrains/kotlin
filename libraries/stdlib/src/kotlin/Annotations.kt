@@ -45,9 +45,9 @@ public annotation class Deprecated(
  * the usage will be marked as an error (as with [DeprecationLevel.ERROR]), otherwise if the API version is greater or equal
  * than [warningSince], the usage will be marked as a warning (as with [DeprecationLevel.WARNING]), otherwise the annotation is ignored.
  *
- * @property warningSince the version, since which this deprecation should be reported as a warning.
- * @property errorSince the version, since which this deprecation should be reported as a error.
- * @property hiddenSince the version, since which the annotated declaration should not be available in code.
+ * @property warningSince The version, since which this deprecation should be reported as a warning.
+ * @property errorSince The version, since which this deprecation should be reported as a error.
+ * @property hiddenSince The version, since which the annotated declaration should not be available in code.
  */
 @Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER, TYPEALIAS)
 @MustBeDocumented
@@ -62,14 +62,14 @@ public annotation class DeprecatedSinceKotlin(
  * Specifies a code fragment that can be used to replace a deprecated function, property or class. Tools such
  * as IDEs can automatically apply the replacements specified through this annotation.
  *
- * @property expression the replacement expression. The replacement expression is interpreted in the context
- *     of the symbol being used, and can reference members of enclosing classes etc.
- *     For function calls, the replacement expression may contain argument names of the deprecated function,
- *     which will be substituted with actual parameters used in the call being updated. The imports used in the file
- *     containing the deprecated function or property are NOT accessible; if the replacement expression refers
- *     on any of those imports, they need to be specified explicitly in the [imports] parameter.
- * @property imports the qualified names that need to be imported in order for the references in the
- *     replacement expression to be resolved correctly.
+ * @property expression The replacement expression. It is interpreted in the context
+ *   of the symbol being used, and can reference members of enclosing classes etc.
+ *   For function calls, the replacement expression may contain argument names of the deprecated function,
+ *   which will be substituted with actual parameters used in the call being updated. The imports used in the file
+ *   containing the deprecated function or property are NOT accessible; if the replacement expression refers
+ *   on any of those imports, they need to be specified explicitly in the [imports] parameter.
+ * @property imports The qualified names that need to be imported in order for the references in the
+ *   replacement expression to be resolved correctly.
  */
 @Target()
 @Retention(BINARY)
@@ -123,7 +123,7 @@ public annotation class ParameterName(val name: String)
 
 /**
  * Suppresses the given compilation warnings in the annotated element.
- * @property names names of the compiler diagnostics to suppress.
+ * @property names Names of the compiler diagnostics to suppress.
  */
 @Target(CLASS, ANNOTATION_CLASS, TYPE_PARAMETER, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
         CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE, TYPEALIAS)
@@ -142,7 +142,7 @@ public annotation class UnsafeVariance
  * Specifies the first version of Kotlin where a declaration has appeared.
  * Using the declaration and specifying an older API version (via the `-api-version` command line option) will result in an error.
  *
- * @property version the version in the following formats: `<major>.<minor>` or `<major>.<minor>.<patch>`, where major, minor and patch
+ * @property version The version in the following formats: `<major>.<minor>` or `<major>.<minor>.<patch>`, where major, minor and patch
  * are non-negative integer numbers without leading zeros.
  */
 @Target(CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)

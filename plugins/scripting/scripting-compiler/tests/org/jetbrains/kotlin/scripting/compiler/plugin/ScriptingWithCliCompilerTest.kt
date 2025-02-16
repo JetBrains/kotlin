@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -312,7 +313,6 @@ class ScriptingWithCliCompilerTest {
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                         K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
                         K2JVMCompilerArguments::useFirLT.cliArgument("false"),
-                        K2JVMCompilerArguments::extendedCompilerChecks.cliArgument,
                         K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                         K2JVMCompilerArguments::verbose.cliArgument,
                         "$TEST_DATA_DIR/compiler/mixedCompilation/nonScriptAccessingScript.kt",
@@ -360,6 +360,35 @@ class ScriptingWithCliCompilerTest {
             val res2 = compileSuccessfullyGetStdErr(SIMPLE_TEST_SCRIPT)
             Assert.assertTrue(res2.any { it.startsWith(loadMainKtsMessage) })
         }
+    }
+
+    @Test
+    fun testWithAllOpenViaLegacyPluginOptions() {
+        // fails on K1, see KT-74390
+        if (System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") == true) return
+
+        val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
+        runWithKotlinc(
+            arrayOf(
+                "-Xplugin=dist/kotlinc/lib/allopen-compiler-plugin.jar",
+                "-P", "${quoteForWin}plugin:org.jetbrains.kotlin.allopen:annotation=AllOpen$quoteForWin",
+                "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
+            ), listOf("OK")
+        )
+    }
+
+    @Test
+    fun testWithAllOpen() {
+        // this plugin syntax is not supported in K1
+        if (System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") == true) return
+
+        val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
+        runWithKotlinc(
+            arrayOf(
+                "-Xcompiler-plugin=${quoteForWin}dist/kotlinc/lib/allopen-compiler-plugin.jar=annotation=AllOpen$quoteForWin",
+                "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
+            ), listOf("OK")
+        )
     }
 
     private fun getMainKtsClassPath(): List<File> {

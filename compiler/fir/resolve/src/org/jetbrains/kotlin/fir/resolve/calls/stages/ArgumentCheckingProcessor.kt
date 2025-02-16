@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -44,6 +45,10 @@ internal object ArgumentCheckingProcessor {
         val context: ResolutionContext,
         val isReceiver: Boolean,
         val isDispatch: Boolean,
+        /**
+         * See [org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
+         */
+        val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
     ) {
         val session: FirSession
             get() = context.session
@@ -62,9 +67,13 @@ internal object ArgumentCheckingProcessor {
         sink: CheckerSink,
         context: ResolutionContext,
         isReceiver: Boolean,
-        isDispatch: Boolean
+        isDispatch: Boolean,
+        anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
     ) {
-        val argumentContext = ArgumentContext(candidate, candidate.csBuilder, expectedType, sink, context, isReceiver, isDispatch)
+        val argumentContext = ArgumentContext(
+            candidate, candidate.csBuilder, expectedType, sink, context, isReceiver, isDispatch,
+            anonymousFunctionIfReturnExpression,
+        )
         argumentContext.resolveArgumentExpression(atom)
     }
 
@@ -187,8 +196,7 @@ internal object ArgumentCheckingProcessor {
                 argumentType = argumentTypeForApplicabilityCheck,
             )?.let {
                 argumentTypeForApplicabilityCheck = it
-                candidate.substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
-                candidate.usesFunctionConversion = true
+                candidate.addFunctionKindConversionOfArgument(expression)
             }
         }
 
@@ -241,7 +249,8 @@ internal object ArgumentCheckingProcessor {
                 expression,
                 // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
                 // relation with nullable expected type.
-                session.typeContext.isTypeMismatchDueToNullability(argumentType, actualExpectedType)
+                session.typeContext.isTypeMismatchDueToNullability(argumentType, actualExpectedType),
+                anonymousFunctionIfReturnExpression,
             )
         }
 
@@ -377,7 +386,8 @@ internal object ArgumentCheckingProcessor {
                     reportDiagnostic(
                         ArgumentTypeMismatch(
                             expectedType, lambdaType, expression,
-                            context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType)
+                            context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType),
+                            anonymousFunctionIfReturnExpression
                         )
                     )
                 }

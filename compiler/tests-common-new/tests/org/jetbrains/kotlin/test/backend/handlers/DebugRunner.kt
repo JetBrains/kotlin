@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultDirectives
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
 import org.jetbrains.kotlin.test.utils.*
@@ -28,8 +29,8 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     }
 
     private lateinit var wholeFile: File
-    private lateinit var backend: TargetBackend
-    private lateinit var frontend: FrontendKind<*>
+    private val backend: TargetBackend = testServices.defaultsProvider.targetBackend!!
+    private val frontend: FrontendKind<*> = testServices.defaultsProvider.frontendKind
 
     abstract fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event)
 
@@ -39,9 +40,6 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         classPath: List<URL>,
         mainClassAndArguments: List<String>
     ): Process {
-        // Extract target backend, frontend, and the full test file used to extract test expectations.
-        backend = module.targetBackend ?: backend
-        frontend = module.frontendKind
         wholeFile = module.files.single { it.name == "test.kt" }.originalFile
 
         // Setup the java process to suspend waiting for debugging connection on a free port.

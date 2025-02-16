@@ -1,0 +1,47 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] contextParameters.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|one/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        context([ResolvedTo(BODY_RESOLVE)] p1: R|one/A|, [ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/Short|)
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|kotlin/Boolean| {
+            ^foo Boolean(false)
+        }
+
+        context([ResolvedTo(BODY_RESOLVE)] p1: R|one/A|, [ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/Short|)
+        public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.foo2([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|kotlin/Boolean| {
+            ^foo2 Boolean(false)
+        }
+
+        context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|)
+        public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/Boolean|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean| {
+                ^ Boolean(true)
+            }
+
+        context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|)
+        public final [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|kotlin/Long|.bar: R|kotlin/Boolean|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean| {
+                ^ Boolean(true)
+            }
+
+    }
+    context([ResolvedTo(BODY_RESOLVE)] p1: R|one/A|, [ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/Short|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|kotlin/Boolean| {
+        ^foo Boolean(false)
+    }
+    context([ResolvedTo(BODY_RESOLVE)] p1: R|one/A|, [ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/Short|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.foo2([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|kotlin/Boolean| {
+        ^foo2 Boolean(false)
+    }
+    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|)
+    public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/Boolean|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean| {
+            ^ Boolean(true)
+        }
+    context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|)
+    public final [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|kotlin/Long|.bar: R|kotlin/Boolean|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean| {
+            ^ Boolean(true)
+        }

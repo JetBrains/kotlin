@@ -1,15 +1,15 @@
 fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
-  var ch: Char? = <this>.nextChar()
+  var ch: Char? = nextChar(/* <this> = <this> */)
   while (when {
     EQEQ(arg0 = ch, arg1 = null).not() -> EQEQ(arg0 = ch, arg1 = quote).not()
     else -> false
   }) { // BLOCK
     when {
       EQEQ(arg0 = ch, arg1 = <get-BACKSLASH>()) -> { // BLOCK
-        val tmp_0: Char? = <this>.nextChar()
+        val tmp_0: Char? = nextChar(/* <this> = <this> */)
         when {
           EQEQ(arg0 = tmp_0, arg1 = null) -> null
-          else -> tmp_0.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
+          else -> let<Char, @FlexibleNullability StringBuilder?>(/* <this> = tmp_0, */ block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
             return sb.append(p0 = it)
           }
 )
@@ -17,13 +17,13 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
       } /*~> Unit */
       else -> sb.append(p0 = ch) /*~> Unit */
     }
-    ch = <this>.nextChar()
+    ch = nextChar(/* <this> = <this> */)
   }
 }
 
 private fun Reader.nextChar(): Char? {
   return { // BLOCK
-    val tmp_1: Int? = <this>.read().takeUnless<Int>(predicate = local fun <anonymous>(it: Int): Boolean {
+    val tmp_1: Int? = takeUnless<Int>(/* <this> = <this>.read(), */ predicate = local fun <anonymous>(it: Int): Boolean {
       return EQEQ(arg0 = it, arg1 = -1)
     }
 )

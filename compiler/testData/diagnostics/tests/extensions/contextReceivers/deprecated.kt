@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: Null argument in ExpressionCodegen for parameter VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A
+// DISABLE_NEXT_PHASE_SUGGESTION: Null argument in ExpressionCodegen for parameter VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A
 // LANGUAGE: +ContextReceivers
 
 class A
@@ -38,6 +38,11 @@ class Clazz {
 
 context(A)
 class Clazz2 {
+    constructor()
+}
+
+class Clazz3 {
+    context(<!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)
     constructor()
 }
 

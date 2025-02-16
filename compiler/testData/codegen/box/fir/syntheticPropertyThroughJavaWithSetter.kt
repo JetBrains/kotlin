@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM_IR
+// LANGUAGE: -ForbidSyntheticPropertiesWithoutBaseJavaGetter
 // ISSUE: KT-59550
 
 // FILE: Intermediate.java

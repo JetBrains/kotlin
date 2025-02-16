@@ -36,7 +36,7 @@ internal class KaFirSamConstructorSymbol(
     override val analysisSession: KaFirSession,
 ) : KaSamConstructorSymbol(), KaFirSymbol<FirNamedFunctionSymbol> {
     override val token: KaLifetimeToken get() = builder.token
-    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { findPsi() }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
@@ -72,7 +72,7 @@ internal class KaFirSamConstructorSymbol(
 
     override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol> = withValidityAssertion {
         val callableId = firSymbol.callableId
-        return KaFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName))
+        return KaFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName), this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

@@ -1,0 +1,27 @@
+package one
+
+/* anchor --> */class A {
+    /* anchor --> */context(/* anchor --> */p1: A/* <-- */, /* anchor --> */_: Short/* <-- */)
+    fun foo(/* anchor --> */a: Int/* <-- */, /* anchor --> */b: String/* <-- */): Boolean = false/* <-- */
+
+    /* anchor --> */context(/* anchor --> */p1: A/* <-- */, /* anchor --> */_: Short/* <-- */)
+    fun String.foo2(/* anchor --> */a: Int/* <-- */, /* anchor --> */b: String/* <-- */): Boolean = false/* <-- */
+
+    /* anchor --> */context(/* anchor --> */_: String/* <-- */, /* anchor --> */i: Int/* <-- */)
+    val bar: Boolean /* anchor --> */get() = true/* <-- *//* <-- */
+
+    /* anchor --> */context(/* anchor --> */_: String/* <-- */, /* anchor --> */i: Int/* <-- */)
+    val Long.bar: Boolean /* anchor --> */get() = true/* <-- *//* <-- */
+}/* <-- */
+
+/* anchor --> */context(/* anchor --> */p1: A/* <-- */, /* anchor --> */_: Short/* <-- */)
+fun foo(/* anchor --> */a: Int/* <-- */, /* anchor --> */b: String/* <-- */): Boolean = false/* <-- */
+
+/* anchor --> */context(/* anchor --> */p1: A/* <-- */, /* anchor --> */_: Short/* <-- */)
+fun String.foo2(/* anchor --> */a: Int/* <-- */, /* anchor --> */b: String/* <-- */): Boolean = false/* <-- */
+
+/* anchor --> */context(/* anchor --> */_: String/* <-- */, /* anchor --> */i: Int/* <-- */)
+val bar: Boolean /* anchor --> */get() = true/* <-- *//* <-- */
+
+/* anchor --> */context(/* anchor --> */_: String/* <-- */, /* anchor --> */i: Int/* <-- */)
+val Long.bar: Boolean /* anchor --> */get() = true/* <-- *//* <-- */

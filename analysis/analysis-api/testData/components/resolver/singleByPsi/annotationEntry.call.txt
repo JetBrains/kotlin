@@ -7,9 +7,11 @@ KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
           receiverType = null
           returnType = Annotation
           symbol = value: Annotation
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -22,7 +24,9 @@ KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
               receiverType = null
               returnType = Annotation
               symbol = value: Annotation
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

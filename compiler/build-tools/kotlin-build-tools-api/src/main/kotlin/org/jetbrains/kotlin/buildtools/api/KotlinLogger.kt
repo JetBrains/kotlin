@@ -10,9 +10,19 @@ package org.jetbrains.kotlin.buildtools.api
  */
 public interface KotlinLogger {
     public val isDebugEnabled: Boolean
+
     public fun error(msg: String, throwable: Throwable? = null)
-    public fun warn(msg: String)
+
+    public fun warn(msg: String) {
+        // KT-36102: @JvmOverloads isn't supported in interfaces
+        warn(msg, null)
+    }
+
+    public fun warn(msg: String, throwable: Throwable?)
+
     public fun info(msg: String)
+
     public fun debug(msg: String)
+
     public fun lifecycle(msg: String)
 }

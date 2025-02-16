@@ -4,6 +4,7 @@ KtNameReferenceExpression(110,113): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = c
           isSafeNavigation = false
@@ -14,5 +15,6 @@ KtNameReferenceExpression(110,113): 'foo'
           returnType = kotlin.Unit
           symbol = /C.foo(<dispatch receiver>: A): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /C.foo
       typeArgumentsMapping = {}

@@ -1,9 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
-
-// JVM_TARGET: 1.8
-// ^ This test causes SIGSEGV on JDK 1.6 with old back-end.
-//   Running it on JDK 1.6 (even with IGNORE_BACKEND: JVM) would still crash corresponding JVM process.
 
 fun box(): String {
     val ints = intArrayOf(1, 2, 3)

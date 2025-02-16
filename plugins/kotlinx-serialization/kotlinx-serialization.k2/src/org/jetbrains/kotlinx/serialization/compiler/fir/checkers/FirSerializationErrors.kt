@@ -62,6 +62,8 @@ object FirSerializationErrors {
     val KEEP_SERIALIZER_ANNOTATION_USELESS by error0<PsiElement>()
     val KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC by error0<PsiElement>()
 
+    val PROTOBUF_PROTO_NUM_DUPLICATED by warning2<KtAnnotationEntry, String, String>()
+
     val JSON_FORMAT_REDUNDANT_DEFAULT by warning0<PsiElement>()
     val JSON_FORMAT_REDUNDANT by warning0<PsiElement>()
 

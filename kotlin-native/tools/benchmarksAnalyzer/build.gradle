@@ -97,45 +97,41 @@ kotlin {
             }
         }
 
-        if (HostManager.hostIsMingw) {
-            mingwX64('windows') {
-                binaries.all {
-                    linkerOpts = ["-L${getMingwPath()}/lib".toString()]
-                }
-                compilations.main.cinterops {
-                    libcurl {
-                        includeDirs.headerFilterOnly "${getMingwPath()}/include"
-                    }
+        mingwX64('windows') {
+            binaries.all {
+                linkerOpts = ["-L${getMingwPath()}/lib".toString()]
+            }
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly "${getMingwPath()}/include"
                 }
             }
         }
 
-        if (HostManager.hostIsLinux) {
-            linuxX64('linux') {
-                compilations.main.cinterops {
-                    libcurl {
-                        includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
-                    }
+        linuxX64('linux') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
                 }
             }
         }
 
-        if (HostManager.hostIsMac) {
-            macosX64('macosX64') {
-                compilations.main.cinterops {
-                    libcurl {
-                        includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
-                    }
-                }
-            }
-            macosArm64('macosArm64') {
-                compilations.main.cinterops {
-                    libcurl {
-                        includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
-                    }
+        macosX64('macosX64') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
                 }
             }
         }
+
+        macosArm64('macosArm64') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                }
+            }
+        }
+
         js('js') {
             compilations.main.compileTaskProvider.configure {
                 compilerOptions.main = JsMainFunctionExecutionMode.NO_CALL

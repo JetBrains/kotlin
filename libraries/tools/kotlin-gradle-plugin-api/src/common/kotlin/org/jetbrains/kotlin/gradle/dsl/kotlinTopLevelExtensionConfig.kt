@@ -59,32 +59,19 @@ interface KotlinTopLevelExtensionConfig {
 /**
  * Different modes that can be used to set the level of issue reporting for [KotlinTopLevelExtension.explicitApi] option.
  */
-enum class ExplicitApiMode(
-    /**
-     * @suppress
-     */
-    @Deprecated("Should not be exposed in api", level = DeprecationLevel.ERROR)
-    val cliOption: String
-) {
+enum class ExplicitApiMode {
     /**
      * Reports API issues as errors.
      */
-    Strict("strict"),
+    Strict,
 
     /**
      * Reports API issues as warnings.
      */
-    Warning("warning"),
+    Warning,
 
     /**
      * Disables issues reporting.
      */
-    Disabled("disable");
-
-    /**
-     * @suppress
-     */
-    @Deprecated("Should not be exposed in api", level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    fun toCompilerArg() = "-Xexplicit-api=$cliOption"
+    Disabled;
 }

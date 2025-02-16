@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 

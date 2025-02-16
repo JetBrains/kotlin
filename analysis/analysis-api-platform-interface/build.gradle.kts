@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-native"))
     implementation(intellijCore())
     implementation(libs.opentelemetry.api)
+    implementation(libs.caffeine)
 }
 
 sourceSets {

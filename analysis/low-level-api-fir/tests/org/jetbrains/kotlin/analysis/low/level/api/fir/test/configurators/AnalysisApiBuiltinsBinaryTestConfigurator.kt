@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import java.nio.file.Path
 
 object AnalysisApiBuiltinsBinaryTestConfigurator : AnalysisApiFirBinaryTestConfigurator() {
@@ -37,7 +38,7 @@ private object KtBuiltinsBinaryTestModuleFactory : KtTestModuleFactory {
         return KtTestModule(
             TestModuleKind.LibraryBinary,
             testModule,
-            KaBuiltinsModuleImpl(testModule.targetPlatform, project),
+            KaBuiltinsModuleImpl(testModule.targetPlatform(testServices), project),
             decompiledFiles,
         )
     }

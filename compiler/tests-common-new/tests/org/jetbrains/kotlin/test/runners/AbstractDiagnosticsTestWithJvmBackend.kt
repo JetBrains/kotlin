@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -44,7 +45,7 @@ abstract class AbstractDiagnosticsTestWithConverter<R : ResultingArtifact.Fronte
     abstract val frontend: Constructor<FrontendFacade<R>>
     abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
-    override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = targetFrontend
             targetBackend = TargetBackend.JVM_IR
@@ -121,7 +122,7 @@ abstract class AbstractClassicDiagnosticsTestWithConverter : AbstractDiagnostics
         get() = ::ClassicFrontend2IrConverter
 }
 
-// TODO: Unify this runner with tiered ones (KT-73848)
+// TODO: Unify this runner with phased ones (KT-73848)
 abstract class AbstractFirDiagnosticsTestWithConverterBase(
     val parser: FirParser
 ) : AbstractDiagnosticsTestWithConverter<FirOutputArtifact>() {

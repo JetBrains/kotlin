@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
+import org.jetbrains.kotlin.backend.konan.lower.NativeFunctionReferenceLowering
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -109,8 +109,6 @@ private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberA
                 transformCall
         )
 
-private fun IrType.isCppClass(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.cppClass) ?: false
-
 internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
                                        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default): IrExpression {
     val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false, foreignExceptionMode)
@@ -182,13 +180,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
 
 private fun KotlinToCCallBuilder.addArguments(arguments: List<IrExpression?>, callee: IrFunction) {
     arguments.forEachIndexed { index, argument ->
-        val parameter = if (callee.dispatchReceiverParameter != null &&
-            (callee.dispatchReceiverParameter?.type?.isCppClass() == true)) {
-
-            if (index == 0) callee.dispatchReceiverParameter!! else callee.valueParameters[index-1]
-        } else {
-            callee.valueParameters[index]
-        }
+        val parameter = callee.valueParameters[index]
         if (parameter.isVararg) {
             require(index == arguments.lastIndex) { stubs.renderCompilerError(argument) }
             addVariadicArguments(argument)
@@ -269,7 +261,7 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
             val initializer = variable.initializer
             require(initializer is IrVararg) { stubs.renderCompilerError(initializer) }
             block(variable, initializer.elements)
-        } else if (variable is IrValueParameter && FunctionReferenceLowering.isLoweredFunctionReference(variable)) {
+        } else if (variable is IrValueParameter && NativeFunctionReferenceLowering.isLoweredFunctionReference(variable)) {
             val location = variable.parent // Parameter itself has incorrect location.
             val kind = if (this.isObjCMethod) "Objective-C methods" else "C functions"
             stubs.throwCompilerError(location, "callable references to variadic $kind are not supported")
@@ -748,15 +740,7 @@ private fun KotlinStubs.mapType(
         require(kotlinClass != null) { renderCompilerError(location) }
         val cStructType = getNamedCStructType(kotlinClass)
         require(cStructType != null) { renderCompilerError(location) }
-
-        if (type.isCppClass()) {
-            // TODO: this should probably be better abstracted in a plugin.
-            // For Skia plugin we release sk_sp on the C++ side passing just the raw pointer.
-            // So managed by value is handled as voidPtr here for now.
-            TrivialValuePassing(type, CTypes.voidPtr)
-        } else {
-            StructValuePassing(kotlinClass, cStructType)
-        }
+        StructValuePassing(kotlinClass, cStructType)
     }
 
     type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true ->

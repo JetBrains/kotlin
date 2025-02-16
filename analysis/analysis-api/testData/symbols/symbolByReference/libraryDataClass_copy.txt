@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: one/DataClass.copy
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

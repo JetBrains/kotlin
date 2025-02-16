@@ -271,6 +271,7 @@ data class KotlinWebpackConfig(
                     },
                     ${output!!.library?.let { "library: ${it.jsQuoted()}," } ?: ""}
                     ${output!!.libraryTarget?.let { "libraryTarget: ${it.jsQuoted()}," } ?: ""}
+                    ${output!!.clean?.let { "clean: $it," } ?: ""}
                     globalObject: "${output!!.globalObject}"
                 };
                 """.trimIndent()

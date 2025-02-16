@@ -1,0 +1,1 @@
+[ResolvedTo(ANNOTATION_ARGUMENTS)] @R|MyAnno|[Types](v = <strcat>(String(1), String(2))) variable: R|kotlin/String|

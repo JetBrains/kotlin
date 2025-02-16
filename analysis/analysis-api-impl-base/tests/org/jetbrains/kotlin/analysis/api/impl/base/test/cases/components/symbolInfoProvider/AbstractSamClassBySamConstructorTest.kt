@@ -39,7 +39,7 @@ abstract class AbstractSamClassBySamConstructorTest : AbstractAnalysisApiBasedTe
     }
 
     private fun KaSession.getSamConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaSamConstructorSymbol? {
-        val callExpression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtCallExpression>(mainFile)
+        val callExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtCallExpression>(mainFile)
         val constructorSymbol = callExpression?.calleeExpression?.resolveToCall()
             ?.singleFunctionCallOrNull()?.partiallyAppliedSymbol?.symbol as? KaSamConstructorSymbol
         return constructorSymbol

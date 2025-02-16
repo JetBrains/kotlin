@@ -43,7 +43,7 @@ internal class KaFirEnumEntrySymbol private constructor(
         analysisSession = session,
     )
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: findPsi() }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
@@ -85,7 +85,7 @@ internal class KaFirEnumEntrySymbol private constructor(
 
     override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaEnumEntrySymbol>()
-            ?: KaFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), name)
+            ?: KaFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), name, this)
     }
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)

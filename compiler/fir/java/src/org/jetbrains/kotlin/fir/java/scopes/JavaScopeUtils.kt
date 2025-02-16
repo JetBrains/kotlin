@@ -143,7 +143,7 @@ private fun FirCallableSymbol<*>.isFromBuiltinClass(session: FirSession): Boolea
     if (dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin?.isBuiltIns == true) return true
     if (!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) return false
     val containingFile = session.firProvider.getContainingFile(this) ?: return false
-    return containingFile.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
+    return containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
 }
 
 private fun FirNamedFunctionSymbol.firstOverriddenFunction(

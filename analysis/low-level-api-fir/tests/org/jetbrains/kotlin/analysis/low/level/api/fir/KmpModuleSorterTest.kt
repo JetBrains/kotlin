@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.KmpModuleSorter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.KmpModuleSorter
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.TestWithMockProject
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaSourceModuleImpl

@@ -88,3 +88,12 @@ fun registerExtensionsForTest(
     }
     extensionStorage.registerInProject(project)
 }
+
+/**
+ * This configuration key is used to provide a way to programmatically register compiler plugins
+ * in the [org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.registerExtensionsFromPlugins].
+ *
+ * This key is allowed to be used ONLY in tests
+ */
+val TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK: CompilerConfigurationKey<(Project) -> Unit> =
+    CompilerConfigurationKey.create("Compiler plugin registrars for tests")

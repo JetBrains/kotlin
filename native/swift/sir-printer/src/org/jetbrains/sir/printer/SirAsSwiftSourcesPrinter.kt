@@ -471,7 +471,7 @@ private val SirVisibility.swift
 
 private val SirType.swiftRender: String
     get() = when (this) {
-        is SirOptionalType -> wrappedType.swiftRender + "?"
+        is SirOptionalType -> wrappedType.swiftRender.let { if (it.any { it.isWhitespace() }) "($it)" else it } + "?"
         is SirArrayType -> "[${elementType.swiftRender}]"
         is SirDictionaryType -> "[${keyType.swiftRender}: ${valueType.swiftRender}]"
         else -> swiftName

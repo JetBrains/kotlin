@@ -93,20 +93,6 @@ class FirPCLAInferenceSession(
         return null
     }
 
-    override fun <T> runCallableReferenceResolution(candidate: Candidate, block: () -> T): T {
-        candidate.system.apply {
-            // It's necessary because otherwise when we create CS for a child, it would simplify constraints
-            // (see 3rd constructor of MutableVariableWithConstraints)
-            // and merging it back might become a problem for transaction logic because the latter literally remembers
-            // the number of constraints for each variable and then restores it back.
-            // But since the constraints are simplified in the child, their number might become even fewer, leading to incorrect behavior
-            // or runtime exceptions.
-            // See callableReferenceAsArgumentForTransaction.kt test data
-            notFixedTypeVariables.values.forEach { it.runConstraintsSimplification() }
-        }
-        return runWithSpecifiedCurrentCommonSystem(candidate.system, block)
-    }
-
     private fun <T> runWithSpecifiedCurrentCommonSystem(newSystem: NewConstraintSystemImpl, block: () -> T): T {
         val previous = currentCommonSystem
         return try {
@@ -121,13 +107,17 @@ class FirPCLAInferenceSession(
         outerCandidate.system.replaceContentWith(currentCommonSystem.currentStorage())
     }
 
+    // Currently used only from FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot
     fun integrateChildSession(
         childCalls: Collection<ConeResolutionAtom>,
         childStorage: ConstraintStorage,
         onCompletionResultsWriting: (ConeSubstitutor) -> Unit,
     ) {
         outerCandidate.postponedPCLACalls += childCalls
-        currentCommonSystem.addOtherSystem(childStorage)
+        // When a delegated property belongs to a PCLA lambda, the delegate session is guaranteed either use
+        // - either a delegate call which is always a nested PCLA call with an outer CS
+        // - or it literally uses `currentCommonSystem` (see the definition of FirDelegatedPropertyInferenceSession.parentConstraintSystem)
+        currentCommonSystem.replaceContentWith(childStorage)
         outerCandidate.onPCLACompletionResultsWritingCallbacks += onCompletionResultsWriting
     }
 
@@ -244,7 +234,7 @@ class FirPCLAInferenceSession(
                 // We should integrate even simple calls into the PCLA tree, too
                 callInfo.resolutionMode.expectedType.containsNotFixedTypeVariables() -> return false
             }
-            is ResolutionMode.WithStatus, is ResolutionMode.LambdaResolution ->
+            is ResolutionMode.WithStatus ->
                 error("$this call should not be analyzed in ${callInfo.resolutionMode}")
 
             is ResolutionMode.AssignmentLValue,

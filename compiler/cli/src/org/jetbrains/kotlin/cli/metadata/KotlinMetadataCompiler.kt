@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 
 /**
@@ -47,7 +49,7 @@ import java.io.File
  */
 class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
-    override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2MetadataCompilerPerformanceManager()
+    override val defaultPerformanceManager: PerformanceManager = K2MetadataCompilerPerformanceManager()
 
     override fun createArguments() = K2MetadataCompilerArguments()
 
@@ -68,7 +70,7 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
-        val pluginLoadResult = loadPlugins(paths, arguments, configuration)
+        val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         val commonSources = arguments.commonSources?.toSet() ?: emptySet()
@@ -112,7 +114,11 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         val mode = if (arguments.metadataKlib) "KLib" else "metadata"
 
         val sourceFiles = environment.getSourceFiles()
-        performanceManager.notifyCompilerInitialized(sourceFiles.size, environment.countLinesOfCode(sourceFiles), "$mode mode for $moduleName module")
+        performanceManager.apply {
+            targetDescription = "$mode mode for $moduleName module"
+            addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
+            notifyCompilerInitialized()
+        }
 
         if (environment.getSourceFiles().isEmpty()) {
             if (arguments.version) {
@@ -157,14 +163,14 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         }
     }
 
-    protected class K2MetadataCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Metadata compiler")
+    protected class K2MetadataCompilerPerformanceManager : PerformanceManager("Kotlin to Metadata compiler")
 }
 
 @Deprecated("Use KotlinMetadataCompiler instead", level = DeprecationLevel.HIDDEN)
 class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     private val delegate = KotlinMetadataCompiler()
 
-    override val defaultPerformanceManager: CommonCompilerPerformanceManager
+    override val defaultPerformanceManager: PerformanceManager
         get() = delegate.defaultPerformanceManager
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {

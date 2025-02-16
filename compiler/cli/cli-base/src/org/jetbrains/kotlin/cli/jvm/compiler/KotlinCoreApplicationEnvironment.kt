@@ -138,15 +138,9 @@ class KotlinCoreApplicationEnvironment private constructor(
  * write access, but don't access the Analysis API. Hence, we remember which threads have started a write action with [runWriteAction].
  */
 private class KotlinCoreUnitTestApplication(parentDisposable: Disposable) : MockApplication(parentDisposable) {
-    /**
-     * We need to remember whether write access is allowed per thread because the application can be shared between multiple concurrent test
-     * runs.
-     */
-    private val isWriteAccessAllowedInThread: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
-
     override fun isUnitTestMode(): Boolean = true
 
-    override fun isWriteAccessAllowed(): Boolean = isWriteAccessAllowedInThread.get()
+    override fun isWriteAccessAllowed(): Boolean = PlatformWriteAccessSupport.isWriteAccessAllowed()
 
     override fun runWriteAction(action: Runnable) {
         withWriteAccessAllowedInThread {
@@ -160,7 +154,23 @@ private class KotlinCoreUnitTestApplication(parentDisposable: Disposable) : Mock
     override fun <T : Any?, E : Throwable?> runWriteAction(computation: ThrowableComputable<T?, E?>): T? =
         withWriteAccessAllowedInThread { computation.compute() }
 
-    private inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A {
+    private inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A = PlatformWriteAccessSupport.withWriteAccessAllowedInThread(action)
+}
+
+/**
+ * This object is required because write access may be requested during the entire tree disposal.
+ * Thus, if at that moment the application was already disposed, the information about requested write access may be lost.
+ */
+private object PlatformWriteAccessSupport {
+    /**
+     * We need to remember whether write access is allowed per thread because the application can be shared between multiple concurrent test
+     * runs.
+     */
+    private val isWriteAccessAllowedInThread: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
+
+    fun isWriteAccessAllowed(): Boolean = isWriteAccessAllowedInThread.get()
+
+    inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A {
         isWriteAccessAllowedInThread.set(true)
         try {
             return action()

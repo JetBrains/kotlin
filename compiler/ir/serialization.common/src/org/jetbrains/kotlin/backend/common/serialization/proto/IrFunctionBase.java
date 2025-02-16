@@ -107,20 +107,23 @@ public final class IrFunctionBase extends
           }
           case 50: {
             if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-              valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter>();
+              regularParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter>();
               mutable_bitField0_ |= 0x00000040;
             }
-            valueParameter_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.PARSER, extensionRegistry));
+            regularParameter_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.PARSER, extensionRegistry));
             break;
           }
           case 56: {
-            bitField0_ |= 0x00000020;
+            bitField0_ |= 0x00000010;
             body_ = input.readInt32();
             break;
           }
-          case 64: {
-            bitField0_ |= 0x00000010;
-            contextReceiverParametersCount_ = input.readInt32();
+          case 74: {
+            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+              contextParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter>();
+              mutable_bitField0_ |= 0x00000010;
+            }
+            contextParameter_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.PARSER, extensionRegistry));
             break;
           }
         }
@@ -135,7 +138,10 @@ public final class IrFunctionBase extends
         typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
       }
       if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-        valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
+        regularParameter_ = java.util.Collections.unmodifiableList(regularParameter_);
+      }
+      if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+        contextParameter_ = java.util.Collections.unmodifiableList(contextParameter_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -243,6 +249,41 @@ public final class IrFunctionBase extends
     return dispatchReceiver_;
   }
 
+  public static final int CONTEXT_PARAMETER_FIELD_NUMBER = 9;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> contextParameter_;
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> getContextParameterList() {
+    return contextParameter_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder> 
+      getContextParameterOrBuilderList() {
+    return contextParameter_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  public int getContextParameterCount() {
+    return contextParameter_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getContextParameter(int index) {
+    return contextParameter_.get(index);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getContextParameterOrBuilder(
+      int index) {
+    return contextParameter_.get(index);
+  }
+
   public static final int EXTENSION_RECEIVER_FIELD_NUMBER = 5;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extensionReceiver_;
   /**
@@ -258,66 +299,59 @@ public final class IrFunctionBase extends
     return extensionReceiver_;
   }
 
-  public static final int CONTEXT_RECEIVER_PARAMETERS_COUNT_FIELD_NUMBER = 8;
-  private int contextReceiverParametersCount_;
+  public static final int REGULAR_PARAMETER_FIELD_NUMBER = 6;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> regularParameter_;
   /**
-   * <code>optional int32 context_receiver_parameters_count = 8;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
-  public boolean hasContextReceiverParametersCount() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> getRegularParameterList() {
+    return regularParameter_;
   }
   /**
-   * <code>optional int32 context_receiver_parameters_count = 8;</code>
-   */
-  public int getContextReceiverParametersCount() {
-    return contextReceiverParametersCount_;
-  }
-
-  public static final int VALUE_PARAMETER_FIELD_NUMBER = 6;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> valueParameter_;
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
-   */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> getValueParameterList() {
-    return valueParameter_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
   public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder> 
-      getValueParameterOrBuilderList() {
-    return valueParameter_;
+      getRegularParameterOrBuilderList() {
+    return regularParameter_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
-  public int getValueParameterCount() {
-    return valueParameter_.size();
+  public int getRegularParameterCount() {
+    return regularParameter_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getValueParameter(int index) {
-    return valueParameter_.get(index);
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getRegularParameter(int index) {
+    return regularParameter_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getValueParameterOrBuilder(
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getRegularParameterOrBuilder(
       int index) {
-    return valueParameter_.get(index);
+    return regularParameter_.get(index);
   }
 
   public static final int BODY_FIELD_NUMBER = 7;
   private int body_;
   /**
    * <code>optional int32 body = 7;</code>
+   *
+   * <pre>
+   *optional int32 context_receiver_parameters_count = 8;
+   * </pre>
    */
   public boolean hasBody() {
-    return ((bitField0_ & 0x00000020) == 0x00000020);
+    return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
    * <code>optional int32 body = 7;</code>
+   *
+   * <pre>
+   *optional int32 context_receiver_parameters_count = 8;
+   * </pre>
    */
   public int getBody() {
     return body_;
@@ -328,9 +362,9 @@ public final class IrFunctionBase extends
     nameType_ = 0L;
     typeParameter_ = java.util.Collections.emptyList();
     dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
+    contextParameter_ = java.util.Collections.emptyList();
     extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
-    contextReceiverParametersCount_ = 0;
-    valueParameter_ = java.util.Collections.emptyList();
+    regularParameter_ = java.util.Collections.emptyList();
     body_ = 0;
   }
   private byte memoizedIsInitialized = -1;
@@ -363,14 +397,20 @@ public final class IrFunctionBase extends
         return false;
       }
     }
+    for (int i = 0; i < getContextParameterCount(); i++) {
+      if (!getContextParameter(i).isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
     if (hasExtensionReceiver()) {
       if (!getExtensionReceiver().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
     }
-    for (int i = 0; i < getValueParameterCount(); i++) {
-      if (!getValueParameter(i).isInitialized()) {
+    for (int i = 0; i < getRegularParameterCount(); i++) {
+      if (!getRegularParameter(i).isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -397,14 +437,14 @@ public final class IrFunctionBase extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeMessage(5, extensionReceiver_);
     }
-    for (int i = 0; i < valueParameter_.size(); i++) {
-      output.writeMessage(6, valueParameter_.get(i));
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeInt32(7, body_);
+    for (int i = 0; i < regularParameter_.size(); i++) {
+      output.writeMessage(6, regularParameter_.get(i));
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt32(8, contextReceiverParametersCount_);
+      output.writeInt32(7, body_);
+    }
+    for (int i = 0; i < contextParameter_.size(); i++) {
+      output.writeMessage(9, contextParameter_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -435,17 +475,17 @@ public final class IrFunctionBase extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(5, extensionReceiver_);
     }
-    for (int i = 0; i < valueParameter_.size(); i++) {
+    for (int i = 0; i < regularParameter_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(6, valueParameter_.get(i));
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(7, body_);
+        .computeMessageSize(6, regularParameter_.get(i));
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(8, contextReceiverParametersCount_);
+        .computeInt32Size(7, body_);
+    }
+    for (int i = 0; i < contextParameter_.size(); i++) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(9, contextParameter_.get(i));
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -549,11 +589,11 @@ public final class IrFunctionBase extends
       bitField0_ = (bitField0_ & ~0x00000004);
       dispatchReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000008);
-      extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
+      contextParameter_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
-      contextReceiverParametersCount_ = 0;
+      extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000020);
-      valueParameter_ = java.util.Collections.emptyList();
+      regularParameter_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000040);
       body_ = 0;
       bitField0_ = (bitField0_ & ~0x00000080);
@@ -597,21 +637,22 @@ public final class IrFunctionBase extends
         to_bitField0_ |= 0x00000004;
       }
       result.dispatchReceiver_ = dispatchReceiver_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        contextParameter_ = java.util.Collections.unmodifiableList(contextParameter_);
+        bitField0_ = (bitField0_ & ~0x00000010);
+      }
+      result.contextParameter_ = contextParameter_;
+      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
         to_bitField0_ |= 0x00000008;
       }
       result.extensionReceiver_ = extensionReceiver_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000010;
-      }
-      result.contextReceiverParametersCount_ = contextReceiverParametersCount_;
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
+        regularParameter_ = java.util.Collections.unmodifiableList(regularParameter_);
         bitField0_ = (bitField0_ & ~0x00000040);
       }
-      result.valueParameter_ = valueParameter_;
+      result.regularParameter_ = regularParameter_;
       if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-        to_bitField0_ |= 0x00000020;
+        to_bitField0_ |= 0x00000010;
       }
       result.body_ = body_;
       result.bitField0_ = to_bitField0_;
@@ -639,19 +680,26 @@ public final class IrFunctionBase extends
       if (other.hasDispatchReceiver()) {
         mergeDispatchReceiver(other.getDispatchReceiver());
       }
+      if (!other.contextParameter_.isEmpty()) {
+        if (contextParameter_.isEmpty()) {
+          contextParameter_ = other.contextParameter_;
+          bitField0_ = (bitField0_ & ~0x00000010);
+        } else {
+          ensureContextParameterIsMutable();
+          contextParameter_.addAll(other.contextParameter_);
+        }
+        
+      }
       if (other.hasExtensionReceiver()) {
         mergeExtensionReceiver(other.getExtensionReceiver());
       }
-      if (other.hasContextReceiverParametersCount()) {
-        setContextReceiverParametersCount(other.getContextReceiverParametersCount());
-      }
-      if (!other.valueParameter_.isEmpty()) {
-        if (valueParameter_.isEmpty()) {
-          valueParameter_ = other.valueParameter_;
+      if (!other.regularParameter_.isEmpty()) {
+        if (regularParameter_.isEmpty()) {
+          regularParameter_ = other.regularParameter_;
           bitField0_ = (bitField0_ & ~0x00000040);
         } else {
-          ensureValueParameterIsMutable();
-          valueParameter_.addAll(other.valueParameter_);
+          ensureRegularParameterIsMutable();
+          regularParameter_.addAll(other.regularParameter_);
         }
         
       }
@@ -688,14 +736,20 @@ public final class IrFunctionBase extends
           return false;
         }
       }
+      for (int i = 0; i < getContextParameterCount(); i++) {
+        if (!getContextParameter(i).isInitialized()) {
+          
+          return false;
+        }
+      }
       if (hasExtensionReceiver()) {
         if (!getExtensionReceiver().isInitialized()) {
           
           return false;
         }
       }
-      for (int i = 0; i < getValueParameterCount(); i++) {
-        if (!getValueParameter(i).isInitialized()) {
+      for (int i = 0; i < getRegularParameterCount(); i++) {
+        if (!getRegularParameter(i).isInitialized()) {
           
           return false;
         }
@@ -999,12 +1053,137 @@ public final class IrFunctionBase extends
       return this;
     }
 
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> contextParameter_ =
+      java.util.Collections.emptyList();
+    private void ensureContextParameterIsMutable() {
+      if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+        contextParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter>(contextParameter_);
+        bitField0_ |= 0x00000010;
+       }
+    }
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> getContextParameterList() {
+      return java.util.Collections.unmodifiableList(contextParameter_);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public int getContextParameterCount() {
+      return contextParameter_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getContextParameter(int index) {
+      return contextParameter_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder setContextParameter(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureContextParameterIsMutable();
+      contextParameter_.set(index, value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder setContextParameter(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
+      ensureContextParameterIsMutable();
+      contextParameter_.set(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder addContextParameter(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureContextParameterIsMutable();
+      contextParameter_.add(value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder addContextParameter(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureContextParameterIsMutable();
+      contextParameter_.add(index, value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder addContextParameter(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
+      ensureContextParameterIsMutable();
+      contextParameter_.add(builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder addContextParameter(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
+      ensureContextParameterIsMutable();
+      contextParameter_.add(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder addAllContextParameter(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> values) {
+      ensureContextParameterIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, contextParameter_);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder clearContextParameter() {
+      contextParameter_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000010);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+     */
+    public Builder removeContextParameter(int index) {
+      ensureContextParameterIsMutable();
+      contextParameter_.remove(index);
+
+      return this;
+    }
+
     private org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 5;</code>
      */
     public boolean hasExtensionReceiver() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000020) == 0x00000020);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 5;</code>
@@ -1021,7 +1200,7 @@ public final class IrFunctionBase extends
       }
       extensionReceiver_ = value;
 
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       return this;
     }
     /**
@@ -1031,14 +1210,14 @@ public final class IrFunctionBase extends
         org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
       extensionReceiver_ = builderForValue.build();
 
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       return this;
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 5;</code>
      */
     public Builder mergeExtensionReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
-      if (((bitField0_ & 0x00000010) == 0x00000010) &&
+      if (((bitField0_ & 0x00000020) == 0x00000020) &&
           extensionReceiver_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance()) {
         extensionReceiver_ =
           org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.newBuilder(extensionReceiver_).mergeFrom(value).buildPartial();
@@ -1046,7 +1225,7 @@ public final class IrFunctionBase extends
         extensionReceiver_ = value;
       }
 
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       return this;
     }
     /**
@@ -1055,163 +1234,131 @@ public final class IrFunctionBase extends
     public Builder clearExtensionReceiver() {
       extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
 
-      bitField0_ = (bitField0_ & ~0x00000010);
-      return this;
-    }
-
-    private int contextReceiverParametersCount_ ;
-    /**
-     * <code>optional int32 context_receiver_parameters_count = 8;</code>
-     */
-    public boolean hasContextReceiverParametersCount() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>optional int32 context_receiver_parameters_count = 8;</code>
-     */
-    public int getContextReceiverParametersCount() {
-      return contextReceiverParametersCount_;
-    }
-    /**
-     * <code>optional int32 context_receiver_parameters_count = 8;</code>
-     */
-    public Builder setContextReceiverParametersCount(int value) {
-      bitField0_ |= 0x00000020;
-      contextReceiverParametersCount_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional int32 context_receiver_parameters_count = 8;</code>
-     */
-    public Builder clearContextReceiverParametersCount() {
       bitField0_ = (bitField0_ & ~0x00000020);
-      contextReceiverParametersCount_ = 0;
-      
       return this;
     }
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> valueParameter_ =
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> regularParameter_ =
       java.util.Collections.emptyList();
-    private void ensureValueParameterIsMutable() {
+    private void ensureRegularParameterIsMutable() {
       if (!((bitField0_ & 0x00000040) == 0x00000040)) {
-        valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter>(valueParameter_);
+        regularParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter>(regularParameter_);
         bitField0_ |= 0x00000040;
        }
     }
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> getValueParameterList() {
-      return java.util.Collections.unmodifiableList(valueParameter_);
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> getRegularParameterList() {
+      return java.util.Collections.unmodifiableList(regularParameter_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public int getValueParameterCount() {
-      return valueParameter_.size();
+    public int getRegularParameterCount() {
+      return regularParameter_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getValueParameter(int index) {
-      return valueParameter_.get(index);
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getRegularParameter(int index) {
+      return regularParameter_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder setValueParameter(
+    public Builder setRegularParameter(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
       if (value == null) {
         throw new NullPointerException();
       }
-      ensureValueParameterIsMutable();
-      valueParameter_.set(index, value);
+      ensureRegularParameterIsMutable();
+      regularParameter_.set(index, value);
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder setValueParameter(
+    public Builder setRegularParameter(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
-      ensureValueParameterIsMutable();
-      valueParameter_.set(index, builderForValue.build());
+      ensureRegularParameterIsMutable();
+      regularParameter_.set(index, builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder addValueParameter(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
+    public Builder addRegularParameter(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
       if (value == null) {
         throw new NullPointerException();
       }
-      ensureValueParameterIsMutable();
-      valueParameter_.add(value);
+      ensureRegularParameterIsMutable();
+      regularParameter_.add(value);
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder addValueParameter(
+    public Builder addRegularParameter(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
       if (value == null) {
         throw new NullPointerException();
       }
-      ensureValueParameterIsMutable();
-      valueParameter_.add(index, value);
+      ensureRegularParameterIsMutable();
+      regularParameter_.add(index, value);
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder addValueParameter(
+    public Builder addRegularParameter(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
-      ensureValueParameterIsMutable();
-      valueParameter_.add(builderForValue.build());
+      ensureRegularParameterIsMutable();
+      regularParameter_.add(builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder addValueParameter(
+    public Builder addRegularParameter(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
-      ensureValueParameterIsMutable();
-      valueParameter_.add(index, builderForValue.build());
+      ensureRegularParameterIsMutable();
+      regularParameter_.add(index, builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder addAllValueParameter(
+    public Builder addAllRegularParameter(
         java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> values) {
-      ensureValueParameterIsMutable();
+      ensureRegularParameterIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-          values, valueParameter_);
+          values, regularParameter_);
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder clearValueParameter() {
-      valueParameter_ = java.util.Collections.emptyList();
+    public Builder clearRegularParameter() {
+      regularParameter_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000040);
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
      */
-    public Builder removeValueParameter(int index) {
-      ensureValueParameterIsMutable();
-      valueParameter_.remove(index);
+    public Builder removeRegularParameter(int index) {
+      ensureRegularParameterIsMutable();
+      regularParameter_.remove(index);
 
       return this;
     }
@@ -1219,18 +1366,30 @@ public final class IrFunctionBase extends
     private int body_ ;
     /**
      * <code>optional int32 body = 7;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
      */
     public boolean hasBody() {
       return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
      * <code>optional int32 body = 7;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
      */
     public int getBody() {
       return body_;
     }
     /**
      * <code>optional int32 body = 7;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
      */
     public Builder setBody(int value) {
       bitField0_ |= 0x00000080;
@@ -1240,6 +1399,10 @@ public final class IrFunctionBase extends
     }
     /**
      * <code>optional int32 body = 7;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
      */
     public Builder clearBody() {
       bitField0_ = (bitField0_ & ~0x00000080);

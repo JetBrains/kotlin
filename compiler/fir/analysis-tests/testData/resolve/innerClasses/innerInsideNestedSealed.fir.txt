@@ -1,0 +1,28 @@
+FILE: innerInsideNestedSealed.kt
+    public final class Graph : R|kotlin/Any| {
+        public constructor(): R|Graph| {
+            super<R|kotlin/Any|>()
+        }
+
+        public sealed class Node : R|kotlin/Any| {
+            protected constructor(): R|Graph.Node| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final inner class Start : R|Graph.Node| {
+                public Graph.Node.constructor(): R|Graph.Node.Start| {
+                    super<R|Graph.Node|>()
+                }
+
+            }
+
+        }
+
+        public final inner class Node : R|kotlin/Any| {
+            public Graph.constructor(): R|Graph.Node| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

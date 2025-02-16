@@ -59,5 +59,5 @@ javadocJar()
 testsJar()
 
 tasks.withType<KotlinJvmCompile> {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
+    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
 }

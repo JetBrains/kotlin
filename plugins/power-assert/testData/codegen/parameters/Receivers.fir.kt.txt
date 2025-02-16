@@ -26,134 +26,103 @@ data object Asserter {
 
   fun dispatchAssert(condition: Boolean, msg: Any? = null) {
     when {
-      condition.not() -> throw AssertionError(p0 = msg.toString())
+      condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
     }
   }
 
   fun Asserter.memberExtensionAssert(condition: Boolean, msg: Any? = null) {
     when {
-      condition.not() -> throw AssertionError(p0 = msg.toString())
+      condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
     }
   }
 
 }
 
 fun box(): String {
-  return listOf<Pair<String, Function0<String>>>(elements = ["test1: ".to<String, Function0<String>>(that = local fun <anonymous>(): String {
-    return test1()
+  return runAll(tests = [to<String, Function0<Unit>>(/* <this> = "test1", */ that = local fun <anonymous>() {
+    test1()
   }
-), "test2: ".to<String, Function0<String>>(that = local fun <anonymous>(): String {
-    return test2()
+), to<String, Function0<Unit>>(/* <this> = "test2", */ that = local fun <anonymous>() {
+    test2()
   }
-), "test3: ".to<String, Function0<String>>(that = local fun <anonymous>(): String {
-    return test3()
+), to<String, Function0<Unit>>(/* <this> = "test3", */ that = local fun <anonymous>() {
+    test3()
   }
-), "test4: ".to<String, Function0<String>>(that = local fun <anonymous>(): String {
-    return test4()
+), to<String, Function0<Unit>>(/* <this> = "test4", */ that = local fun <anonymous>() {
+    test4()
   }
-), "test5: ".to<String, Function0<String>>(that = local fun <anonymous>(): String {
-    return test5()
+), to<String, Function0<Unit>>(/* <this> = "test5", */ that = local fun <anonymous>() {
+    test5()
   }
-), "test6: ".to<String, Function0<String>>(that = local fun <anonymous>(): String {
-    return test6()
+), to<String, Function0<Unit>>(/* <this> = "test6", */ that = local fun <anonymous>() {
+    test6()
   }
-)]).joinToString<Pair<String, Function0<String>>>(separator = "", transform = local fun <anonymous>(<destruct>: Pair<String, Function0<String>>): CharSequence {
-    val name: String = <destruct>.component1()
-    val test: Function0<String> = <destruct>.component2()
-    return name.plus(other = test.invoke())
-  }
-)
+)])
 }
 
 fun Asserter.extensionAssert(condition: Boolean, msg: Any? = null) {
   when {
-    condition.not() -> throw AssertionError(p0 = msg.toString())
+    condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
   }
 }
 
-fun test1(): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
+fun test1() {
+  { // BLOCK
+    val tmp_1: Int = "test".<get-length>()
+    val tmp_2: Boolean = EQEQ(arg0 = tmp_1, arg1 = 5)
+    Asserter.dispatchAssert(condition = tmp_2, msg = "\nAsserter.dispatchAssert(\"test\".length == 5)" + "\n                               |      |" + "\n                               |      " + tmp_2 + "\n                               " + tmp_1 + "\n")
+  }
+}
+
+fun test2() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_1: Asserter = Asserter
-      { // BLOCK
-        val tmp_2: Int = "test".<get-length>()
-        val tmp_3: Boolean = EQEQ(arg0 = tmp_2, arg1 = 5)
-        tmp_1.dispatchAssert(condition = tmp_3, msg = "\nAsserter.dispatchAssert(\"test\".length == 5)" + "\n|                              |      |" + "\n|                              |      " + tmp_3 + "\n|                              " + tmp_2 + "\n" + tmp_1 + "\n")
-      }
+      val tmp_3: Int = "test".<get-length>()
+      val tmp_4: Boolean = EQEQ(arg0 = tmp_3, arg1 = 5)
+      $this$with.dispatchAssert(condition = tmp_4, msg = "\ndispatchAssert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_4 + "\n                      " + tmp_3 + "\n")
     }
   }
 )
 }
 
-fun test2(): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
-      { // BLOCK
-        val tmp_4: Int = "test".<get-length>()
-        val tmp_5: Boolean = EQEQ(arg0 = tmp_4, arg1 = 5)
-        $this$with.dispatchAssert(condition = tmp_5, msg = "\ndispatchAssert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_5 + "\n                      " + tmp_4 + "\n")
-      }
-    }
-)
+fun test3() {
+  { // BLOCK
+    val tmp_5: Int = "test".<get-length>()
+    val tmp_6: Boolean = EQEQ(arg0 = tmp_5, arg1 = 5)
+    extensionAssert(/* <this> = Asserter, */ condition = tmp_6, msg = "\nAsserter.extensionAssert(\"test\".length == 5)" + "\n                                |      |" + "\n                                |      " + tmp_6 + "\n                                " + tmp_5 + "\n")
   }
-)
 }
 
-fun test3(): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
+fun test4() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_6: Asserter = Asserter
-      { // BLOCK
-        val tmp_7: Int = "test".<get-length>()
-        val tmp_8: Boolean = EQEQ(arg0 = tmp_7, arg1 = 5)
-        tmp_6.extensionAssert(condition = tmp_8, msg = "\nAsserter.extensionAssert(\"test\".length == 5)" + "\n|                               |      |" + "\n|                               |      " + tmp_8 + "\n|                               " + tmp_7 + "\n" + tmp_6 + "\n")
-      }
+      val tmp_7: Int = "test".<get-length>()
+      val tmp_8: Boolean = EQEQ(arg0 = tmp_7, arg1 = 5)
+      extensionAssert(/* <this> = $this$with, */ condition = tmp_8, msg = "\nextensionAssert(\"test\".length == 5)" + "\n                       |      |" + "\n                       |      " + tmp_8 + "\n                       " + tmp_7 + "\n")
     }
   }
 )
 }
 
-fun test4(): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
-      { // BLOCK
-        val tmp_9: Int = "test".<get-length>()
-        val tmp_10: Boolean = EQEQ(arg0 = tmp_9, arg1 = 5)
-        $this$with.extensionAssert(condition = tmp_10, msg = "\nextensionAssert(\"test\".length == 5)" + "\n                       |      |" + "\n                       |      " + tmp_10 + "\n                       " + tmp_9 + "\n")
-      }
+fun test5() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp_9: Int = "test".<get-length>()
+      val tmp_10: Boolean = EQEQ(arg0 = tmp_9, arg1 = 5)
+      $this$with.memberExtensionAssert(/* <this> = Asserter, */ condition = tmp_10, msg = "\nAsserter.memberExtensionAssert(\"test\".length == 5)" + "\n                                      |      |" + "\n                                      |      " + tmp_10 + "\n                                      " + tmp_9 + "\n")
     }
-)
   }
 )
 }
 
-fun test5(): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
-      { // BLOCK
-        val tmp_11: Asserter = Asserter
-        { // BLOCK
-          val tmp_12: Int = "test".<get-length>()
-          val tmp_13: Boolean = EQEQ(arg0 = tmp_12, arg1 = 5)
-          ($this$with, tmp_11).memberExtensionAssert(condition = tmp_13, msg = "\nAsserter.memberExtensionAssert(\"test\".length == 5)" + "\n|                                     |      |" + "\n|                                     |      " + tmp_13 + "\n|                                     " + tmp_12 + "\n" + tmp_11 + "\n")
-        }
-      }
+fun test6() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp_11: Int = "test".<get-length>()
+      val tmp_12: Boolean = EQEQ(arg0 = tmp_11, arg1 = 5)
+      $this$with.memberExtensionAssert(/* <this> = $this$with, */ condition = tmp_12, msg = "\nmemberExtensionAssert(\"test\".length == 5)" + "\n                             |      |" + "\n                             |      " + tmp_12 + "\n                             " + tmp_11 + "\n")
     }
-)
   }
 )
 }
 
-fun test6(): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
-      { // BLOCK
-        val tmp_14: Int = "test".<get-length>()
-        val tmp_15: Boolean = EQEQ(arg0 = tmp_14, arg1 = 5)
-        ($this$with, $this$with).memberExtensionAssert(condition = tmp_15, msg = "\nmemberExtensionAssert(\"test\".length == 5)" + "\n                             |      |" + "\n                             |      " + tmp_15 + "\n                             " + tmp_14 + "\n")
-      }
-    }
-)
-  }
-)
-}

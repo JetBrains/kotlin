@@ -60,7 +60,7 @@ internal class KaFirNamedClassSymbol private constructor(
         analysisSession = session,
     )
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: findPsi() }
 
     override val name: Name
         get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
@@ -132,7 +132,7 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion {
-            if (backingPsi?.contextReceivers?.isEmpty() == true)
+            if (backingPsi != null && backingPsi.contextReceiverList == null)
                 emptyList()
             else
                 firSymbol.createContextReceivers(builder)

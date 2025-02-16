@@ -1,0 +1,19 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm64, linuxX64, tvOsX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <org.example:bcv-klib-test>
+final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
+    constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+
+    final val value // org.example/ShardedClass.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+
+    final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
+
+    // Targets: [linuxX64]
+    final fun addNarrow(kotlin/Int): kotlin/Int // org.example/ShardedClass.addNarrow|addNarrow(kotlin.Int){}[0]
+}

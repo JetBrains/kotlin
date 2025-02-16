@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import java.io.FileNotFoundException
 
+internal const val COMPOSE_PLUGIN_ID = "androidx.compose.compiler.plugins.kotlin"
+
 object ComposeConfiguration {
     val LIVE_LITERALS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable Live Literals code generation")
@@ -41,7 +43,7 @@ object ComposeConfiguration {
         CompilerConfigurationKey<Boolean>(
             "Enable Live Literals code generation (with per-file enabled flags)"
         )
-    val GENERATE_FUNCTION_KEY_META_CLASSES_KEY =
+    val GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY =
         CompilerConfigurationKey<Boolean>(
             "Generate function key meta classes"
         )
@@ -85,7 +87,9 @@ object ComposeConfiguration {
 @OptIn(ExperimentalCompilerApi::class)
 class ComposeCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val PLUGIN_ID = "androidx.compose.compiler.plugins.kotlin"
+        // NOTE: this property is public and is used by IDE plugins and other compiler plugins.
+        val PLUGIN_ID = COMPOSE_PLUGIN_ID
+
         val LIVE_LITERALS_ENABLED_OPTION = CliOption(
             "liveLiterals",
             "<true|false>",
@@ -104,9 +108,18 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             "generateFunctionKeyMetaClasses",
             "<true|false>",
             "Generate function key meta classes with annotations indicating the " +
-                    "functions and their group keys. Generally used for tooling.",
+                    "functions and their group keys. Generally used for tooling. " +
+                    "Deprecated. Use 'generateFunctionKeyMetaAnnotation' instead.",
             required = false,
             allowMultipleOccurrences = false
+        )
+        val GENERATE_FUNCTION_KEY_META_ANNOTATION_OPTION = CliOption(
+            "generateFunctionKeyMetaAnnotations",
+            "<true|false>",
+            "Generate function key meta annotations indicating the " +
+                    "functions and their group keys. Generally used for tooling.",
+            required = false,
+            allowMultipleOccurrences = true
         )
         val SOURCE_INFORMATION_ENABLED_OPTION = CliOption(
             "sourceInformation",
@@ -214,6 +227,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         LIVE_LITERALS_ENABLED_OPTION,
         LIVE_LITERALS_V2_ENABLED_OPTION,
         GENERATE_FUNCTION_KEY_META_CLASSES_OPTION,
+        GENERATE_FUNCTION_KEY_META_ANNOTATION_OPTION,
         SOURCE_INFORMATION_ENABLED_OPTION,
         METRICS_DESTINATION_OPTION,
         REPORTS_DESTINATION_OPTION,
@@ -242,9 +256,22 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY,
             value == "true"
         )
-        GENERATE_FUNCTION_KEY_META_CLASSES_OPTION -> configuration.put(
-            ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY,
-            value == "true"
+        GENERATE_FUNCTION_KEY_META_CLASSES_OPTION -> {
+            configuration.messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "${GENERATE_FUNCTION_KEY_META_CLASSES_OPTION.optionName} is deprecated. It was replaced by emitting annotations on " +
+                        "functions instead. Use ${GENERATE_FUNCTION_KEY_META_ANNOTATION_OPTION.optionName} instead."
+            )
+            configuration.put(
+                ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
+                configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) == true ||
+                        value == "true"
+            )
+        }
+        GENERATE_FUNCTION_KEY_META_ANNOTATION_OPTION -> configuration.put(
+            ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
+            configuration.get(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY) == true ||
+                    value == "true"
         )
         SOURCE_INFORMATION_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
@@ -497,7 +524,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
 }
 
 fun featureFlagName() =
-    "plugin:${ComposeCommandLineProcessor.PLUGIN_ID}:${
+    "plugin:${COMPOSE_PLUGIN_ID}:${
         ComposeCommandLineProcessor.FEATURE_FLAG_OPTION.optionName
     }"
 
@@ -590,6 +617,9 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             StorageComponentContainerContributor.registerExtension(
                 ComposableTargetChecker()
             )
+            StorageComponentContainerContributor.registerExtension(
+                ComposableAnnotationChecker()
+            )
             DiagnosticSuppressor.registerExtension(ComposeDiagnosticSuppressor())
             @Suppress("OPT_IN_USAGE_ERROR")
             TypeResolutionInterceptor.registerExtension(
@@ -624,8 +654,8 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             val liveLiteralsV2Enabled = configuration.getBoolean(
                 ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY,
             )
-            val generateFunctionKeyMetaClasses = configuration.getBoolean(
-                ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY,
+            val generateFunctionKeyMetaAnnotations = configuration.getBoolean(
+                ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY,
             )
             val sourceInformationEnabled = configuration.getBoolean(
                 ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
@@ -711,7 +741,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             return ComposeIrGenerationExtension(
                 liveLiteralsEnabled = liveLiteralsEnabled,
                 liveLiteralsV2Enabled = liveLiteralsV2Enabled,
-                generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
+                generateFunctionKeyMetaAnnotations = generateFunctionKeyMetaAnnotations,
                 sourceInformationEnabled = sourceInformationEnabled,
                 traceMarkersEnabled = traceMarkersEnabled,
                 metricsDestination = metricsDestination,

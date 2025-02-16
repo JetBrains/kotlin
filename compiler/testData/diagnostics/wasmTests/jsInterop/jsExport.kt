@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalJsExport
+// LANGUAGE: +ContextParameters
 
 @JsExport
 fun foo1() {
@@ -30,3 +30,8 @@ fun fooUnsigned1(): UInt = 42u
 
 @JsExport
 fun fooUnsigned2(): UByte = 42u
+
+<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+@JsExport
+fun fooWithContext() {
+}

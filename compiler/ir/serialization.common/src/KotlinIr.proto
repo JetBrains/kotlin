@@ -150,16 +150,26 @@ message IrReturnableBlock {
 }
 
 message IrInlinedFunctionBlock {
-  optional int64 inline_function_symbol = 1;
-  required FileEntry file_entry = 2;
+  optional int64 inlined_function_symbol = 1;
+  required FileEntry inlined_function_file_entry = 2;
   required IrBlock base = 3;
+  required int32 inlined_function_start_offset = 4;
+  required int32 inlined_function_end_offset = 5;
 }
 
 message MemberAccessCommon {
+  // Value argument serialization scheme after 2.2.0
+  repeated NullableIrExpression argument = 6;
+
+  // Value argument serialization scheme before 2.2.0
   optional IrExpression dispatch_receiver = 1;
   optional IrExpression extension_receiver = 2;
-  repeated NullableIrExpression value_argument = 3;
+  repeated NullableIrExpression regular_argument = 3;
+
   repeated int32 type_argument = 4 [packed=true];
+
+  // Previously used fields:
+  //repeated NullableIrExpression context_argument = 5;
 }
 
 message IrCall {
@@ -198,6 +208,23 @@ message IrPropertyReference {
   optional int32 origin_name = 4;
   required MemberAccessCommon member_access = 5;
   required int64 symbol = 6;
+}
+
+message IrRichFunctionReference {
+  repeated IrExpression bound_values = 1;
+  optional int64 reflection_target_symbol = 2;
+  required int64 overridden_function_symbol = 3;
+  required IrFunction invoke_function = 4;
+  optional int64 flags = 5 [default = 0];
+  optional int32 origin_name = 6;
+}
+
+message IrRichPropertyReference {
+  repeated IrExpression bound_values = 1;
+  optional int64 reflection_target_symbol = 2;
+  required IrFunction getter_function = 3;
+  optional IrFunction setter_function = 4;
+  optional int32 origin_name = 5;
 }
 
 message IrComposite {
@@ -453,6 +480,8 @@ message IrOperation {
     // Operations again
     IrReturnableBlock returnable_block = 36;
     IrInlinedFunctionBlock inlined_function_block = 37;
+    IrRichFunctionReference rich_function_reference = 38;
+    IrRichPropertyReference rich_property_reference = 39;
   }
 }
 
@@ -496,10 +525,11 @@ message IrFunctionBase {
   required int64 name_type = 2;
   repeated IrTypeParameter type_parameter = 3;
   optional IrValueParameter dispatch_receiver = 4;
+  repeated IrValueParameter context_parameter = 9;
   optional IrValueParameter extension_receiver = 5;
-  optional int32 context_receiver_parameters_count = 8;
-  repeated IrValueParameter value_parameter = 6;
+  repeated IrValueParameter regular_parameter = 6;
   optional int32 body = 7;
+  //optional int32 context_receiver_parameters_count = 8;
 }
 
 message IrFunction {
@@ -571,10 +601,6 @@ message IrTypeAlias {
   repeated IrTypeParameter type_parameter = 3;
 }
 
-message IrErrorDeclaration {
-  required int64 coordinates = 1;
-}
-
 message IrEnumEntry {
   required IrDeclarationBase base = 1;
   required int32 name = 2;
@@ -604,7 +630,9 @@ message IrDeclaration {
     IrValueParameter ir_value_parameter = 10;
     IrLocalDelegatedProperty ir_local_delegated_property = 11;
     IrTypeAlias ir_type_alias = 12;
-    IrErrorDeclaration ir_error_declaration = 13;
+
+    // WARNING: Don't occupy index 13 which was previously used for storing IrErrorDeclaration.
+    // IrErrorDeclaration ir_error_declaration = 13;
   }
 }
 

@@ -1,0 +1,19 @@
+# mkdir
+output/stubs
+output/classes
+output/sources
+
+# kapt
+-language-version 1.9
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=.
+-d output/classes
+Test.kt
+
+# check-file-is-absent
+output/classes/test/Test.class
+
+# after

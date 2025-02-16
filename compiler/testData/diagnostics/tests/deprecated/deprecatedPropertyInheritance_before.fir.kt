@@ -74,7 +74,7 @@ class EDH: ErrorDeprecated(), HiddenDeprecated {
 }
 
 class NED: ErrorDeprecated(), NoDeprecation {
-    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
+    override var p: Int
         get() = 3
         set(value) {
         }

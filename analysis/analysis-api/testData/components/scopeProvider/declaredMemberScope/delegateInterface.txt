@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /I.p
   compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -61,7 +62,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(private val p: A)
+  initializer: KaNonConstantInitializerValue(private val p: A)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -152,6 +153,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /I.p
         compilerVisibility: Private
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -187,7 +189,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(private val p: A)
+        initializer: KaNonConstantInitializerValue(private val p: A)
         isActual: false
         isConst: false
         isDelegatedProperty: false

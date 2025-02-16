@@ -162,9 +162,16 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
-            accessor.body = context.irFactory.createExpressionBody(
+            accessor.body = context.irFactory.createBlockBody(
                 accessor.startOffset, accessor.startOffset,
-                createSimpleFunctionCall(accessor, source.symbol, superQualifierSymbol)
+                listOf(
+                    IrReturnImpl(
+                        accessor.startOffset, accessor.endOffset,
+                        context.irBuiltIns.nothingType,
+                        accessor.symbol,
+                        createSimpleFunctionCall(accessor, source.symbol, superQualifierSymbol)
+                    )
+                )
             )
         }
     }
@@ -223,14 +230,19 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         val maybeDispatchReceiver =
             if (targetField.isStatic) null
             else IrGetValueImpl(accessor.startOffset, accessor.endOffset, accessor.parameters[0].symbol)
-        return context.irFactory.createExpressionBody(
+        val irGetField = IrGetFieldImpl(
             accessor.startOffset, accessor.endOffset,
-            IrGetFieldImpl(
-                accessor.startOffset, accessor.endOffset,
-                targetField.symbol,
-                targetField.type,
-                maybeDispatchReceiver,
-                superQualifierSymbol = superQualifierSymbol
+            targetField.symbol,
+            targetField.type,
+            maybeDispatchReceiver,
+            superQualifierSymbol = superQualifierSymbol
+        )
+        return context.irFactory.createBlockBody(
+            accessor.startOffset, accessor.endOffset,
+            listOf(
+                IrReturnImpl(
+                    accessor.startOffset, accessor.endOffset, context.irBuiltIns.nothingType, accessor.symbol, irGetField
+                )
             )
         )
     }
@@ -284,15 +296,20 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             accessor.startOffset, accessor.endOffset,
             accessor.parameters[if (targetField.isStatic) 0 else 1].symbol
         )
-        return context.irFactory.createExpressionBody(
+        val irSetField = IrSetFieldImpl(
             accessor.startOffset, accessor.endOffset,
-            IrSetFieldImpl(
-                accessor.startOffset, accessor.endOffset,
-                targetField.symbol,
-                maybeDispatchReceiver,
-                value,
-                context.irBuiltIns.unitType,
-                superQualifierSymbol = superQualifierSymbol
+            targetField.symbol,
+            maybeDispatchReceiver,
+            value,
+            context.irBuiltIns.unitType,
+            superQualifierSymbol = superQualifierSymbol
+        )
+        return context.irFactory.createBlockBody(
+            accessor.startOffset, accessor.endOffset,
+            listOf(
+                IrReturnImpl(
+                    accessor.startOffset, accessor.endOffset, context.irBuiltIns.nothingType, accessor.symbol, irSetField
+                )
             )
         )
     }

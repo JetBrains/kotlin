@@ -5,7 +5,7 @@
 
 // MODULE: common
 // FILE: common.kt
-expect open class <!NO_ACTUAL_FOR_EXPECT!>AbstractMutableList<!> {
+expect open class AbstractMutableList {
     var modCount: Int
 }
 

@@ -42,7 +42,8 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
         set(value) = options.main.set(value.mainCompilerOption)
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in Kotlin 2.2.
+     * This option does nothing and is left for compatibility with the legacy backend.
+     * It is deprecated and will be removed in Kotlin 2.2.
      *
      * Default value: false
      */
@@ -76,7 +77,8 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
         set(value) = options.moduleName.set(value)
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in Kotlin 2.2.
+     * This option does nothing and is left for compatibility with the legacy backend.
+     * It is deprecated and will be removed in Kotlin 2.2.
      *
      * Default value: false
      */
@@ -145,7 +147,8 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
         set(value) = options.target.set(value)
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in a future release.
+     * This option does nothing and is left for compatibility with the legacy backend.
+     * It is deprecated and will be removed in a future release.
      *
      * Default value: false
      */

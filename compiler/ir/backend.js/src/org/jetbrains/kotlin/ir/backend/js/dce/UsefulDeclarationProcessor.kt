@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
 import org.jetbrains.kotlin.ir.backend.js.utils.isAssociatedObjectAnnotatedAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import java.io.File
 import java.util.*
 
@@ -32,7 +33,7 @@ abstract class UsefulDeclarationProcessor(
     protected abstract fun isExported(declaration: IrDeclaration): Boolean
     protected abstract val bodyVisitor: BodyVisitorBase
 
-    protected abstract inner class BodyVisitorBase : IrElementVisitor<Unit, IrDeclaration> {
+    protected abstract inner class BodyVisitorBase : IrVisitor<Unit, IrDeclaration>() {
         override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclaration) {
             visitDeclarationReference(expression, data)
             expression.symbol.owner.enqueue(data, "variable access")
@@ -54,7 +55,7 @@ abstract class UsefulDeclarationProcessor(
 
         override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: IrDeclaration) {
             super.visitInlinedFunctionBlock(inlinedBlock, data)
-            inlinedBlock.inlineFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
+            inlinedBlock.inlinedFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
         }
 
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
@@ -145,7 +146,7 @@ abstract class UsefulDeclarationProcessor(
         processSuperTypes(irClass)
 
         if (irClass.isObject && isExported(irClass)) {
-            context.mapping.objectToGetInstanceFunction[irClass]
+            irClass.objectGetInstanceFunction
                 ?.enqueue(irClass, "Exported object getInstance function")
         }
 

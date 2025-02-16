@@ -151,6 +151,7 @@ KtCallExpression(246,258): 'MyDelegate()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -158,6 +159,7 @@ KtCallExpression(246,258): 'MyDelegate()'
           returnType = myPack.MyDelegate<T>
           symbol = <constructor>(): myPack.MyDelegate<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (T)
@@ -170,6 +172,7 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -177,6 +180,7 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
           returnType = myPack.MyDelegate<T>
           symbol = <constructor>(): myPack.MyDelegate<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (T)
@@ -330,6 +334,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -337,6 +342,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
           returnType = myPack.ResourceID<kotlin.Int>
           symbol = <constructor>(): myPack.ResourceID<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
@@ -349,6 +355,7 @@ KtNameReferenceExpression(446,456): 'ResourceID'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -356,6 +363,7 @@ KtNameReferenceExpression(446,456): 'ResourceID'
           returnType = myPack.ResourceID<kotlin.Int>
           symbol = <constructor>(): myPack.ResourceID<T>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)

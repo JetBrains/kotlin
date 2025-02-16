@@ -1,0 +1,36 @@
+FILE: withCallInPlaceContract.kt
+    public final fun <R> materialize(): R|R| {
+        ^materialize Null(null)!!
+    }
+    context(block: R|() -> R|)
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun <R> myRun(): R|R|
+        [R|Contract description]
+         <
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|R|>(R|<local>/block|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun test(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Any| = R|/materialize|<R|kotlin/Any|>()
+        when () {
+            (R|<local>/x| !is R|kotlin/String|) ->  {
+                ^test Unit
+            }
+        }
+
+        R|kotlin/with|<R|() -> kotlin/Unit|, R|kotlin/Unit|>(with@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/x|.<Unresolved name: length>#
+            R|<local>/x| = Int(10)
+        }
+        , <L> = with@fun R|() -> kotlin/Unit|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/myRun|<R|kotlin/Unit|>()
+        }
+        )
+    }

@@ -211,6 +211,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
   }
 
   @Test
+  @TestMetadata("contextParametersOnClass.kt")
+  public void testContextParametersOnClass() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/contextParametersOnClass.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersOnSecondaryConstructor.kt")
+  public void testContextParametersOnSecondaryConstructor() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/contextParametersOnSecondaryConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("contextParametersProperty.kt")
   public void testContextParametersProperty() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/contextParametersProperty.kt");
@@ -1252,6 +1264,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public void testDeprecatedDanglingAnnotationWithNestedDeclarations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/deprecatedDanglingAnnotationWithNestedDeclarations.kt");
     }
+
+    @Test
+    @TestMetadata("parameterNoType.kt")
+    public void testParameterNoType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/parameterNoType.kt");
+    }
   }
 
   @Nested
@@ -1372,6 +1390,30 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("javaFunctionWithImplicitType.kt")
+    public void testJavaFunctionWithImplicitType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaFunctionWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFunctionWithImplicitTypeAndAnnotations.kt")
+    public void testJavaFunctionWithImplicitTypeAndAnnotations() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaFunctionWithImplicitTypeAndAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFunctionWithImplicitTypeAndAnnotationsAndSubstitutedType.kt")
+    public void testJavaFunctionWithImplicitTypeAndAnnotationsAndSubstitutedType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaFunctionWithImplicitTypeAndAnnotationsAndSubstitutedType.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFunctionWithImplicitTypeAndAnnotationsAsBase.kt")
+    public void testJavaFunctionWithImplicitTypeAndAnnotationsAsBase() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/javaFunctionWithImplicitTypeAndAnnotationsAsBase.kt");
+    }
+
+    @Test
     @TestMetadata("multiLevelClasspathSubstitution.kt")
     public void testMultiLevelClasspathSubstitution() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/multiLevelClasspathSubstitution.kt");
@@ -1475,6 +1517,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("integerLiteralCall.kt")
     public void testIntegerLiteralCall() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/integerLiteralCall.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmBuiltinAnnotation.kt")
+    public void testJvmBuiltinAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/jvmBuiltinAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("mappedTypeResolution.kt")
+    public void testMappedTypeResolution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/mappedTypeResolution.kt");
     }
   }
 

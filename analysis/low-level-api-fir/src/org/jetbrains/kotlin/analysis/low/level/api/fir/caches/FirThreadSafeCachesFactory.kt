@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPutWithNullableValue
+import org.jetbrains.kotlin.analysis.api.platform.caches.nullValueToNull
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
@@ -90,9 +92,12 @@ private class FirCaffeineCache<K : Any, V, CONTEXT>(
     private val cache: Cache<K, Any>,
     private val createValue: (K, CONTEXT) -> V,
 ) : FirCache<K, V, CONTEXT>() {
-    override fun getValue(key: K, context: CONTEXT): V {
-        @Suppress("UNCHECKED_CAST")
-        return cache.get(key) { k -> createValue(k, context) ?: NullValue }?.nullValueToNull() as V
+
+    /**
+     * [Cache.get] cannot be used here as [createValue] may access the map recursively.
+     */
+    override fun getValue(key: K, context: CONTEXT): V = cache.getOrPutWithNullableValue(key) {
+        createValue(it, context)
     }
 
     override fun getValueIfComputed(key: K): V? = cache.getIfPresent(key)?.nullValueToNull()

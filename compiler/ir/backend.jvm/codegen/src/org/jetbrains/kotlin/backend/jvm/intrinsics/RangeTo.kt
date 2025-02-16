@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
@@ -36,11 +35,11 @@ object RangeTo : IntrinsicMethod() {
                 codegen: ExpressionCodegen,
                 data: BlockInfo,
                 expression: IrFunctionAccessExpression,
-            ): StackValue {
+            ) {
                 with(codegen) { expression.markLineNumber(startOffset = true) }
                 v.anew(signature.returnType)
                 v.dup()
-                return super.invoke(v, codegen, data, expression)
+                super.invoke(v, codegen, data, expression)
             }
         }
     }

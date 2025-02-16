@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalClasses
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.*
@@ -22,7 +23,7 @@ class JsInventNamesForLocalClasses(private val context: JsIrBackendContext) : In
         return NameBuilder(currentName = customEnclosingName, isLocal = true, processingInlinedFunction = data.processingInlinedFunction)
     }
 
-    override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
+    override fun putLocalClassName(declaration: IrElement, localClassName: String) {
         if (declaration is IrClass) {
             context.localClassNames[declaration] = localClassName
         }

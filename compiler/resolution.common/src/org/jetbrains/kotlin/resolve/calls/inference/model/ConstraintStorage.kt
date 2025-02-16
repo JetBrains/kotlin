@@ -118,13 +118,19 @@ enum class ConstraintKind {
 
 class Constraint(
     val kind: ConstraintKind,
-    val type: KotlinTypeMarker, // flexible types here is allowed
+    val type: KotlinTypeMarker, // flexible types are allowed here
     val position: IncorporationConstraintPosition,
     val typeHashCode: Int = type.hashCode(),
+    // Collection of all \alpha variables which led to the creation of this constraint via
+    // incorporation of a form "\alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>".
+    // (see `org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator.insideOtherConstraint`)
+    //
+    // For all cases of incorporation, it's a union of `derivedFrom` for the original constraints.
+    // This property is used to avoid infinitely recursive constraint creation.
     val derivedFrom: Set<TypeVariableMarker>,
     // This value is true for constraints of the form `Nothing? <: Tv`
-    // that have been created during incorporation phase of the constraint of the form `Kv? <: Tv` (where `Kv` another type variable).
-    // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that variable is ready for completion).
+    // that has been created during the incorporation phase for the constraint of the form `Kv? <: Tv` (where `Kv` is another type variable).
+    // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that the variable is ready for completion).
     // And also, there is additional logic in K1 that doesn't allow to fix variable into `Nothing?` if we had only that kind of lower constraints
     val isNullabilityConstraint: Boolean,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null

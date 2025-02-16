@@ -12,7 +12,7 @@
 
 fun foo(x: Int) {
     r {
-        <!ARGUMENT_TYPE_MISMATCH!>when (x) {
+        <!RETURN_TYPE_MISMATCH!>when (x) {
             2 -> 0
         }<!>
     }

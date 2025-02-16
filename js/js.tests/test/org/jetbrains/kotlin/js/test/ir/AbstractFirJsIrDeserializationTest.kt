@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -24,6 +27,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * Base class for IR deserialization tests, configured with FIR frontend.
@@ -31,6 +35,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 abstract class AbstractFirJsIrDeserializationTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
+    private val useIrInlinerAtFirstCompilationPhase: Boolean
 ) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact>(FrontendKinds.FIR, TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
@@ -44,20 +49,36 @@ abstract class AbstractFirJsIrDeserializationTest(
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithSeparatedDeserialization
 
-    override fun TestConfigurationBuilder.configuration() {
-        defaultDirectives {
-            +JsEnvironmentConfigurationDirectives.PER_MODULE
-            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-            FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
+    override val customIgnoreDirective: ValueDirective<TargetBackend>?
+        get() = IGNORE_IR_DESERIALIZATION_TEST
+
+    override val enableBoxHandlers: Boolean
+        get() = false
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                runIf(useIrInlinerAtFirstCompilationPhase) { LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}" }
+                +JsEnvironmentConfigurationDirectives.PER_MODULE
+                +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+                FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
+            }
+            useAfterAnalysisCheckers(
+                ::FirMetaInfoDiffSuppressor
+            )
         }
-        useAfterAnalysisCheckers(
-            ::FirMetaInfoDiffSuppressor
-        )
-        commonConfigurationForJsBlackBoxCodegenTest(IGNORE_IR_DESERIALIZATION_TEST)
     }
 }
 
 open class AbstractFirJsIrDeserializationCodegenBoxTest : AbstractFirJsIrDeserializationTest(
     pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "irDeserialization/codegenBox/"
+    testGroupOutputDirPrefix = "irDeserialization/codegenBox/",
+    useIrInlinerAtFirstCompilationPhase = false,
+)
+
+open class AbstractFirJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsIrDeserializationTest(
+    pathToTestDir = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix = "irDeserialization/codegenBoxWithInlinedFunInKlib/",
+    useIrInlinerAtFirstCompilationPhase = true,
 )

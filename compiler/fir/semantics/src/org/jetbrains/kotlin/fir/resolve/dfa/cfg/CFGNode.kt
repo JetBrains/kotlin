@@ -597,8 +597,12 @@ class FinallyBlockEnterNode(owner: ControlFlowGraph, override val fir: FirTryExp
         return visitor.visitFinallyBlockEnterNode(this, data)
     }
 }
-class FinallyBlockExitNode(owner: ControlFlowGraph, override val fir: FirTryExpression, level: Int) : CFGNode<FirTryExpression>(owner, level),
-    ExitNodeMarker {
+class FinallyBlockExitNode(
+    owner: ControlFlowGraph,
+    override val fir: FirTryExpression,
+    val enterNode: FinallyBlockEnterNode,
+    level: Int,
+) : CFGNode<FirTryExpression>(owner, level), ExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFinallyBlockExitNode(this, data)
     }

@@ -36,20 +36,57 @@ fun Task.assertNoCircularTaskDependencies() {
         val dependants: List<Task>,
     )
 
-    val visited = mutableSetOf<Task>()
-    val queue = ArrayDeque(taskDependencies.getDependencies(this).map { TaskAndDependants(it, listOf(this)) })
+    val visited = hashMapOf<String, List<String>>()
+    val queue = ArrayDeque(
+        taskDependencies.getDependencies(this).map { TaskAndDependants(it, listOf(this)) }
+    )
 
     while (queue.isNotEmpty()) {
-        val (task, dependants) = queue.removeFirst()
-        if (task in visited) {
-            val dependencyChain = dependants.joinToString(" -> ") { it.name }
-            fail("Task $name has circular dependency: $dependencyChain")
-        }
-        visited.add(task)
+        val (task, taskDependencies) = queue.removeFirst()
+        visited.put(task.path, taskDependencies.map { it.path })
 
-        val dependencies = task.taskDependencies.getDependencies(null)
-        queue.addAll(dependencies.map { TaskAndDependants(it, dependants + task) })
+        val dependencies = task.taskDependencies.getDependencies(task)
+        queue.addAll(dependencies.map { TaskAndDependants(it, taskDependencies + task) })
     }
+
+    val taskWithCircularDependecy = visited.hasCycle()
+    if (taskWithCircularDependecy != null) fail("Task $name has circular dependency on $taskWithCircularDependecy")
+}
+
+// Uses Depth-First Search algorithm to detect circular dependencies in the directed tasks graph
+private fun HashMap<String, List<String>>.hasCycle(): String? {
+    val visited = hashSetOf<String>()
+    val inStack = hashSetOf<String>() // Tracks nodes in the current path (DFS stack)
+
+    for (node in keys) {
+        val failedNode = dfs(node, visited, inStack)
+        if (failedNode != null) return failedNode // Cycle detected
+    }
+
+    return null // No cycle found
+}
+
+private fun HashMap<String, List<String>>.dfs(
+    node: String,
+    visited: MutableSet<String>,
+    inStack: MutableSet<String>,
+): String? {
+    if (inStack.contains(node)) return node // Cycle detected
+    if (visited.contains(node)) return null // Node already processed, no cycle here
+
+    // Mark the current node as visited and add to inStack
+    visited.add(node)
+    inStack.add(node)
+
+    // Recursively visit neighbors
+    for (neighbor in getOrDefault(node, emptyList<String>())) {
+        val failedNode = dfs(neighbor, visited, inStack)
+        if (failedNode != null) return failedNode
+    }
+
+    // Remove node from current stack (backtrack)
+    inStack.remove(node)
+    return null
 }
 
 
@@ -70,6 +107,12 @@ fun Project.assertContainsNoTaskWithName(taskName: String) {
     if (taskName in tasks.names) {
         fail("Expected *no* task with name $taskName in project ${this.path}")
     }
+}
+
+inline fun <reified T : Task> Project.assertContainsTaskInstance(taskName: String): T {
+    assertContainsTaskWithName(taskName)
+    val task = tasks.getByName(taskName)
+    return assertIsInstance<T>(task)
 }
 
 fun Project.assertContainsDependencies(configurationName: String, vararg dependencyNotations: Any, exhaustive: Boolean = false) {

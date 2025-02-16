@@ -1,0 +1,22 @@
+/J.kt:(385,407): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInteger' instead.
+
+/J.kt:(500,524): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLong' instead.
+
+/J.kt:(618,644): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Char' does not have a consistent identity.
+
+/J.kt:(768,793): warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicIntegerArray' instead.
+
+/J.kt:(895,922): warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLongArray' instead.
+
+/J.kt:(1030,1062): warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Boolean' does not have a consistent identity.
+/K.kt:(337,361): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/K.kt:(450,476): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLong' instead.
+
+/K.kt:(569,598): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Boolean' does not have a consistent identity. Consider using 'AtomicBoolean' instead.
+
+/K.kt:(712,741): warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicIntArray' instead.
+
+/K.kt:(831,862): warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLongArray' instead.
+
+/K.kt:(956,990): warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Boolean' does not have a consistent identity.

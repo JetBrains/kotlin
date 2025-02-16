@@ -276,10 +276,20 @@ public interface KaDanglingFileModule : KaModule {
     /**
      * The dangling file.
      */
+    @Deprecated(
+        "Use 'files' instead.",
+        ReplaceWith("files.single()", imports = ["kotlin.collections.single"])
+    )
     public val file: KtFile
+        get() = files.first()
 
     /**
-     * The module against which the [file] is analyzed.
+     * All dangling files analyzed together, as a single module.
+     */
+    public val files: List<KtFile>
+
+    /**
+     * The module against which [files] are analyzed.
      */
     public val contextModule: KaModule
 
@@ -289,7 +299,7 @@ public interface KaDanglingFileModule : KaModule {
     public val resolutionMode: KaDanglingFileResolutionMode
 
     /**
-     * Whether the [file] is a code fragment.
+     * Whether at least one of the [files] is a code fragment.
      *
      * This is useful to recognize code fragments when their PSI was collected.
      */
@@ -305,7 +315,7 @@ public interface KaDanglingFileModule : KaModule {
  * longer time.
  */
 public val KaDanglingFileModule.isStable: Boolean
-    get() = file.isPhysical && file.viewProvider.isEventSystemEnabled
+    get() = files.all { it.isPhysical && it.viewProvider.isEventSystemEnabled }
 
 /**
  * A module which represents a source file living outside the project's content root. For example, test data files, or the source files of

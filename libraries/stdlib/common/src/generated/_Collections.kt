@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -991,7 +991,7 @@ public fun <T> Iterable<T>.reversed(): List<T> {
 /**
  * Randomly shuffles elements in this list in-place using the specified [random] instance as the source of randomness.
  * 
- * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
  */
 @SinceKotlin("1.3")
 public fun <T> MutableList<T>.shuffle(random: Random): Unit {
@@ -1004,7 +1004,8 @@ public fun <T> MutableList<T>.shuffle(random: Random): Unit {
 /**
  * Sorts elements in the list in-place according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
  */
 public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
@@ -1013,7 +1014,8 @@ public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selec
 /**
  * Sorts elements in the list in-place descending according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
  */
 public inline fun <T, R : Comparable<R>> MutableList<T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))
@@ -1045,7 +1047,8 @@ public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
 /**
  * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
  * 
  * @sample samples.collections.Collections.Sorting.sortedBy
  */
@@ -1056,7 +1059,10 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(crossinline select
 /**
  * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
+ * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedByDescending
  */
 public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
     return sortedWith(compareByDescending(selector))
@@ -1943,11 +1949,18 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the collection is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -1970,9 +1983,16 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.maxByOrNull(selector: (T) -> R): T? {
@@ -2353,11 +2373,18 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the collection is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -2380,9 +2407,16 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.minByOrNull(selector: (T) -> R): T? {

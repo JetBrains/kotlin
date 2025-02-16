@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 // FILE: 1.kt
 
 @file:OptIn(ExperimentalTypeInference::class)

@@ -4,6 +4,7 @@
 import kotlin.concurrent.AtomicInt
 import kotlin.native.concurrent.*
 import kotlin.native.identityHashCode
+import kotlin.native.internal.NativePtr
 import kotlin.native.internal.isPermanent
 import kotlin.native.internal.ref.*
 import kotlin.native.runtime.GC
@@ -17,10 +18,19 @@ fun createLocal() : Ref {
     return obj.identityHashCode() to createRetainedExternalRCRef(obj)
 }
 
+fun createLocalUnretained() : Ref {
+    val obj = Any()
+    return obj.identityHashCode() to createUnretainedExternalRCRef(obj)
+}
+
 val globalObj = Any()
 
 fun createGlobal() : Ref {
     return globalObj.identityHashCode() to createRetainedExternalRCRef(globalObj)
+}
+
+fun createGlobalUnretained() : Ref {
+    return globalObj.identityHashCode() to createUnretainedExternalRCRef(globalObj)
 }
 
 object Singleton {
@@ -32,11 +42,35 @@ fun createSingleton() : Ref {
     return Singleton.identityHashCode() to createRetainedExternalRCRef(Singleton)
 }
 
+fun createSingletonUnretained() : Ref {
+    assertFalse(Singleton.isPermanent())
+    return Singleton.identityHashCode() to createUnretainedExternalRCRef(Singleton)
+}
+
 object Permanent
 
 fun createPermanent() : Ref {
     assertTrue(Permanent.isPermanent())
     return Permanent.identityHashCode() to createRetainedExternalRCRef(Permanent)
+}
+
+fun createPermanentUnretained() : Ref {
+    assertTrue(Permanent.isPermanent())
+    return Permanent.identityHashCode() to createUnretainedExternalRCRef(Permanent)
+}
+
+fun createNull(): Ref {
+    return null.identityHashCode() to createRetainedExternalRCRef(null)
+}
+
+fun createNullUnretained(): Ref {
+    return null.identityHashCode() to createUnretainedExternalRCRef(null)
+}
+
+@Test fun nullExternalRCRef() {
+    assertTrue(createRetainedExternalRCRef(null) == NativePtr.NULL)
+    assertTrue(createUnretainedExternalRCRef(null) == NativePtr.NULL)
+    assertNull(dereferenceExternalRCRef(NativePtr.NULL))
 }
 
 inline fun createAndDisposeTest(create: () -> Ref) {
@@ -65,52 +99,59 @@ inline fun createAndDisposeTest(create: () -> Ref) {
     createAndDisposeTest(::createPermanent)
 }
 
+@Test fun createAndDisposeNull() {
+    createAndDisposeTest(::createNull)
+}
+
 inline fun weakTestSuccess(create: () -> Ref) {
     val ref = create()
-    releaseExternalRCRef(ref.second)
     GC.collect()
-    assertFalse(tryRetainExternalRCRef(ref.second))
+    assertNull(dereferenceExternalRCRefOrNull(ref.second))
     disposeExternalRCRef(ref.second)
 }
 
 inline fun weakTestFailure(create: () -> Ref) {
     val ref = create()
-    releaseExternalRCRef(ref.second)
     GC.collect()
-    assertTrue(tryRetainExternalRCRef(ref.second))
+    assertEquals(ref.first, dereferenceExternalRCRefOrNull(ref.second).identityHashCode())
     assertEquals(ref.first, dereferenceExternalRCRef(ref.second).identityHashCode())
-    releaseExternalRCRef(ref.second)
     disposeExternalRCRef(ref.second)
 }
 
 @Test fun weakLocal() {
-    weakTestSuccess(::createLocal)
+    weakTestSuccess(::createLocalUnretained)
 }
 
 @Test fun weakGlobal() {
-    weakTestFailure(::createGlobal)
+    weakTestFailure(::createGlobalUnretained)
 }
 
 @Test fun weakSingleton() {
-    weakTestFailure(::createSingleton)
+    weakTestFailure(::createSingletonUnretained)
 }
 
 @Test fun weakPermanent() {
-    weakTestFailure(::createPermanent)
+    weakTestFailure(::createPermanentUnretained)
 }
 
-inline fun weakResurrectTest(create: () -> Ref) {
+@Test fun weakNull() {
+    weakTestSuccess(::createNullUnretained)
+}
+
+inline fun weakResurrectTest(create: () -> Ref, doRetainRelease: Boolean) {
     val ref = create()
     val state = AtomicInt(0)
     withWorker {
         releaseExternalRCRef(ref.second)
-        val future = execute(TransferMode.SAFE, { ref to state }) { (ref, state) ->
+        val future = execute(TransferMode.SAFE, { Triple(ref, state, doRetainRelease) }) { (ref, state, doRetainRelease) ->
             state.value = 1
             while (state.value == 1) {
-                val success = tryRetainExternalRCRef(ref.second)
-                if (success) {
+                val result = dereferenceExternalRCRefOrNull(ref.second)
+                if (result != null) {
+                    if (doRetainRelease) retainExternalRCRef(ref.second)
+                    assertEquals(ref.first, result.identityHashCode())
                     assertEquals(ref.first, dereferenceExternalRCRef(ref.second).identityHashCode())
-                    releaseExternalRCRef(ref.second)
+                    if (doRetainRelease) releaseExternalRCRef(ref.second)
                 }
             }
             Unit
@@ -126,17 +167,41 @@ inline fun weakResurrectTest(create: () -> Ref) {
 }
 
 @Test fun weakResurrectLocal() {
-    weakResurrectTest(::createLocal)
+    weakResurrectTest(::createLocal, false)
 }
 
 @Test fun weakResurrectGlobal() {
-    weakResurrectTest(::createGlobal)
+    weakResurrectTest(::createGlobal, false)
 }
 
 @Test fun weakResurrectSingleton() {
-    weakResurrectTest(::createSingleton)
+    weakResurrectTest(::createSingleton, false)
 }
 
 @Test fun weakResurrectPermanent() {
-    weakResurrectTest(::createPermanent)
+    weakResurrectTest(::createPermanent, false)
+}
+
+@Test fun weakResurrectNull() {
+    weakResurrectTest(::createNull, false)
+}
+
+@Test fun weakResurrectLocalWithRetainRelease() {
+    weakResurrectTest(::createLocal, true)
+}
+
+@Test fun weakResurrectGlobalWithRetainRelease() {
+    weakResurrectTest(::createGlobal, true)
+}
+
+@Test fun weakResurrectSingletonWithRetainRelease() {
+    weakResurrectTest(::createSingleton, true)
+}
+
+@Test fun weakResurrectPermanentWithRetainRelease() {
+    weakResurrectTest(::createPermanent, true)
+}
+
+@Test fun weakResurrectNullWithRetainRelease() {
+    weakResurrectTest(::createNull, true)
 }

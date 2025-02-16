@@ -61,7 +61,7 @@ interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
 
     /**
      * When we build [KotlinClassStub] for source stubs, this function always returns `false`. For binary stubs, it returns whether
-     * the binary class was compiled with `-Xjvm-default={all|all-compatibility}` option or not.
+     * the binary class was compiled with `-jvm-default={enable|no-compatibility}` option or not.
      */
     fun isClsStubCompiledToJvmDefaultImplementation(): Boolean
 }

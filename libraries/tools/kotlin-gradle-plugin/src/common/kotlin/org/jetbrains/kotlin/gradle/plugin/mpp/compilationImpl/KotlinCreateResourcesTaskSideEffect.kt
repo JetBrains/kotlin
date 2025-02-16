@@ -19,7 +19,7 @@ internal val KotlinCreateResourcesTaskSideEffect = KotlinCompilationSideEffect {
             resourcesTask.from(resourceSet)
             resourcesTask.into(resourcesDestinationDir)
         }
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         compilation.output.resourcesDirProvider = resourcesTask.map { resourcesDestinationDir }
     }
 }

@@ -34,11 +34,6 @@ dependencies {
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:cli"))
-    testApi(projectTests(":compiler:tests-common"))
-    testImplementation(libs.junit4)
 }
 
 sourceSets {
@@ -46,15 +41,8 @@ sourceSets {
         projectDefault()
         java.srcDirs("../builtins-serializer/src")
     }
-    "test" { }
 }
 
 allprojects {
     optInToExperimentalCompilerApi()
-}
-
-testsJar {}
-
-projectTest {
-    workingDir = rootDir
 }

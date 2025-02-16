@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -138,21 +136,6 @@ open class IrFactory(
             name = name,
             factory = this
         ).declarationCreated()
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun createErrorDeclaration(
-        startOffset: Int,
-        endOffset: Int,
-        descriptor: DeclarationDescriptor? = null,
-    ): IrErrorDeclaration =
-        IrErrorDeclarationImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            factory = this,
-            origin = IrDeclarationOrigin.DEFINED,
-        ).declarationCreated().apply {
-            this.descriptor = descriptor ?: this.toIrBasedDescriptor()
-        }
 
     fun createField(
         startOffset: Int,

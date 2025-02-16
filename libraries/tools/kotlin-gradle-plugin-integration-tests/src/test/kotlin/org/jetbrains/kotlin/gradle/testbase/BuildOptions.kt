@@ -30,6 +30,7 @@ data class BuildOptions(
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,
+    val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.AUTO,
     val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.DISABLED,
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
@@ -45,6 +46,7 @@ data class BuildOptions(
     val jsOptions: JsOptions? = JsOptions(),
     val buildReport: List<BuildReportType> = emptyList(),
     val usePreciseJavaTracking: Boolean? = null,
+    val useFirJvmRunner: Boolean? = null,
     val languageVersion: String? = null,
     val languageApiVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
@@ -52,6 +54,7 @@ data class BuildOptions(
     val usePreciseOutputsBackup: Boolean? = null,
     val keepIncrementalCompilationCachesInMemory: Boolean? = null,
     val enableUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
     val useParsableDiagnosticsFormatting: Boolean = true,
     val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
@@ -63,6 +66,7 @@ data class BuildOptions(
     val compilerArgumentsLogLevel: String? = "info",
     val kmpIsolatedProjectsSupport: KmpIsolatedProjectsSupport? = null,
     val fileLeaksReportFile: File? = null,
+    val continueAfterFailure: Boolean = false,
     /**
      * Override the directory to store flag files indicating "daemon process is alive" controlled by Kotlin Daemon.
      *
@@ -190,6 +194,10 @@ data class BuildOptions(
             arguments.add("--no-parallel")
         }
 
+        if (continueAfterFailure) {
+            arguments.add("--continue")
+        }
+
         if (incremental != null) {
             arguments.add("-Pkotlin.incremental=$incremental")
         }
@@ -235,6 +243,10 @@ data class BuildOptions(
             arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
         }
 
+        if (useFirJvmRunner != null) {
+            arguments.add("-Pkotlin.incremental.jvm.fir=$useFirJvmRunner")
+        }
+
         if (statisticsForceValidation) {
             arguments.add("-Pkotlin_performance_profile_force_validation=true")
         }
@@ -257,6 +269,10 @@ data class BuildOptions(
             arguments.add("-Pkotlin.internal.incremental.enableUnsafeOptimizationsForMultiplatform=$enableUnsafeIncrementalCompilationForMultiplatform")
         }
 
+        if (enableMonotonousIncrementalCompileSetExpansion != null) {
+            arguments.add("-Pkotlin.internal.incremental.enableMonotonousCompileSetExpansion=$enableMonotonousIncrementalCompileSetExpansion")
+        }
+
         arguments.add("-Pkotlin.daemon.useFallbackStrategy=$useDaemonFallbackStrategy")
 
         if (useParsableDiagnosticsFormatting) {
@@ -273,6 +289,10 @@ data class BuildOptions(
 
         if (showDiagnosticsStacktrace != null) {
             arguments.add("-Pkotlin.internal.diagnostics.showStacktrace=$showDiagnosticsStacktrace")
+        }
+
+        if (ignoreWarningModeSeverityOverride != null) {
+            arguments.add("-Pkotlin.internal.diagnostics.ignoreWarningMode=$ignoreWarningModeSeverityOverride")
         }
 
         if (stacktraceMode != null) {

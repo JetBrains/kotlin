@@ -1,10 +1,11 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-69463
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // FILE: common.kt
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Foo<!> {
+expect interface Foo {
     fun test(a: Int = 7)
 }
 

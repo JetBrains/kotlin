@@ -5,6 +5,7 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
         kind = PLUS_ASSIGN
         operand = MyClass()
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable[0]
             isSafeNavigation = false
@@ -20,10 +21,13 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
                 receiverType = null
                 returnType = MyClass
                 symbol = v: MyClass
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /MyClass.plus
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false
@@ -39,13 +43,16 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.get
       indexArguments = [
         0
       ]
       setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false
@@ -61,12 +68,15 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = v
               receiverType = null
               returnType = MyClass
               symbol = v: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.set

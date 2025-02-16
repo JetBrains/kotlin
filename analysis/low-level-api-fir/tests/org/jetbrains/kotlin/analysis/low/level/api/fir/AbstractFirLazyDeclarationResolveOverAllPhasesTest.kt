@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.Directives.PRE_RESOLVED_PHASE
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.OutputRenderingMode.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestServices
@@ -55,13 +56,13 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         val resultBuilder = StringBuilder()
         val renderer = lazyResolveRenderer(resultBuilder)
 
-        resolveWithCaches(ktFile) { firResolveSession ->
+        withResolveSession(ktFile) { firResolveSession ->
             checkSession(firResolveSession)
             val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
 
-            val preresolvedElementCarets = testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<KtDeclaration>(
+            val preresolvedElementCarets = testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtDeclaration>(
                 files = allKtFiles,
-                caretTag = "preresolved",
+                qualifier = "preresolved",
             )
 
             val phase = testServices.moduleStructure.allDirectives.singleOrZeroValue(PRE_RESOLVED_PHASE)
@@ -109,7 +110,9 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             }
         }
 
-        resolveWithClearCaches(ktFile) { llSession ->
+        clearCaches(ktFile.project)
+
+        withResolveSession(ktFile) { llSession ->
             checkSession(llSession)
             val firFile = llSession.getOrBuildFirFile(ktFile)
             firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
@@ -127,10 +130,8 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         )
     }
 
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        builder.useDirectives(Directives)
-    }
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(Directives)
 
     private object Directives : SimpleDirectivesContainer() {
         val PRE_RESOLVED_PHASE by enumDirective<FirResolvePhase>("Describes which phase should have pre-resolved element")

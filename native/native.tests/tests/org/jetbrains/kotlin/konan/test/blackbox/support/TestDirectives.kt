@@ -259,6 +259,7 @@ open class TestCompilerArgs(
     val compilerArgs: List<String>,
     val cinteropArgs: List<String> = emptyList(),
     val assertionsMode: AssertionsMode = AssertionsMode.DEFAULT,
+    val objcArc: Boolean = true,
 ) {
     constructor(vararg compilerArgs: String) : this(compilerArgs.asList())
 

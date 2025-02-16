@@ -19,13 +19,16 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructedClassType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.utils.toSmartList
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext>() {
 
     override fun visitFunction(declaration: IrFunction, data: JsGenerationContext): JsStatement {
         irError("All functions must be already lowered") {
@@ -39,9 +42,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitReturnableBlock(expression: IrReturnableBlock, context: JsGenerationContext): JsStatement {
         val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
-        val newContext = inlinedBlock?.inlineFunctionSymbol?.owner?.let {
-            context.newInlineFunction(inlinedBlock.fileEntry, it)
-        } ?: context
+        val newContext = if (inlinedBlock != null) {
+            context.newInlineFunction(inlinedBlock.inlinedFunctionFileEntry, inlinedBlock.inlinedFunctionSymbol?.owner)
+        } else {
+            context
+        }
 
         val container = inlinedBlock?.statements ?: expression.statements
         val statements = container.map { it.accept(this, newContext) }.toSmartList()
@@ -62,9 +67,9 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(inlinedBlock: IrInlinedFunctionBlock?): List<JsStatement> {
-        val inlineFunction = inlinedBlock?.inlineFunctionSymbol?.owner ?: return this
-        val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
-        val owner = correspondingProperty?.owner ?: inlineFunction
+        val inlinedFunction = inlinedBlock?.inlinedFunctionSymbol?.owner ?: return this
+        val correspondingProperty = (inlinedFunction as? IrSimpleFunction)?.correspondingPropertySymbol
+        val owner = correspondingProperty?.owner ?: inlinedFunction
         val funName = owner.fqNameWhenAvailable ?: owner.name
         return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
     }

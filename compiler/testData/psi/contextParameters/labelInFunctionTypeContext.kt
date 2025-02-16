@@ -1,0 +1,1 @@
+fun foo(f: context(label@String) () -> Unit) {}

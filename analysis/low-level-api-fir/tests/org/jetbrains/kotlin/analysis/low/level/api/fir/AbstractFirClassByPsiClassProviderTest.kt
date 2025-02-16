@@ -18,11 +18,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import kotlin.collections.any
-import kotlin.collections.flatMap
-import kotlin.collections.single
-import kotlin.collections.toList
-import kotlin.text.endsWith
 
 abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBasedTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
@@ -31,10 +26,10 @@ abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBased
         val mainKtModule = mainModule.ktModule
         val psiClassUnderCaret = when (mainKtModule) {
             is KaSourceModule -> {
-                testServices.expressionMarkerProvider.getElementsOfTypeAtCarets<PsiClass>(testServices).single().first
+                testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<PsiClass>(testServices).single().first
             }
             is KaLibraryModule -> {
-                mainModule.files
+                mainModule.psiFiles
                     .filterIsInstance<PsiJavaFile>()
                     .flatMap { it.classes.toList() }
                     .flatMap { it.withAllNestedClasses() }
@@ -44,9 +39,12 @@ abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBased
                 error("Unexpected module kind ${mainKtModule::class.simpleName}")
             }
         }
-        val resolveSession = LLFirResolveSessionService.getInstance(mainKtModule.project).getFirResolveSessionNoCaching(mainKtModule)
-        val firClass = resolveSession.useSiteFirSession.firClassByPsiClassProvider.getFirClass(psiClassUnderCaret)
-        val rendered = firClass.fir.render()
+
+        val rendered = withResolveSession(mainKtModule) { resolveSession ->
+            val firClassSymbol = resolveSession.useSiteFirSession.firClassByPsiClassProvider.getFirClass(psiClassUnderCaret)
+            firClassSymbol.fir.render()
+        }
+
         testServices.assertions.assertEqualsToTestDataFileSibling(rendered)
     }
 

@@ -88,7 +88,7 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
 
         return when (expr) {
             is IrContainerExpression ->
-                expr.statements.isNotEmpty() && expr !is IrReturnableBlock && shouldVoidify(expr.statements.last())
+                expr.statements.isNotEmpty() && shouldVoidify(expr.statements.last())
 
             is IrWhen, is IrTry ->
                 true
@@ -144,7 +144,7 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
             expr.startOffset, expr.endOffset, symbols.voidType, symbols.findVoidConsumer(expr.type),
             typeArgumentsCount = 0,
         ).apply {
-            putValueArgument(0, expr)
+            arguments[0] = expr
         }
     }
 }

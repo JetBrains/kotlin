@@ -53,7 +53,7 @@ internal fun getCoordinatesFromPublicationDelegateAndProject(
     project: Project,
     target: KotlinTarget?,
 ): ModuleVersionIdentifier {
-    val moduleName = publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.toLowerCase())
+    val moduleName = publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.lowercase())
     val moduleGroup = publication?.groupId ?: project.group.toString()
     val moduleVersion = publication?.version ?: project.version.toString()
     return getCoordinatesFromGroupNameAndVersion(moduleGroup, moduleName, moduleVersion)

@@ -48,6 +48,7 @@ val prepareCommonSources by tasks.registering(Sync::class) {
         include("Function.kt")
         include("annotation/Annotations.kt")
         include("internal/AnnotationsBuiltin.kt")
+        include("concurrent/atomics/ExperimentalAtomicApi.kt")
     }
     from(kotlinJvm) {
         include("ArrayIntrinsics.kt")

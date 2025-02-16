@@ -17,7 +17,7 @@ namespace kotlin::alloc {
 
 SingleObjectPage* SingleObjectPage::Create(uint64_t cellCount) noexcept {
     CustomAllocInfo("SingleObjectPage::Create(%" PRIu64 ")", cellCount);
-    RuntimeAssert(cellCount > NextFitPage::maxBlockSize(), "blockSize too small for SingleObjectPage");
+    RuntimeAssert(!compiler::pagedAllocator() || cellCount > NextFitPage::maxBlockSize(), "blockSize too small for SingleObjectPage");
     auto objectSize = AllocationSize::cells(cellCount);
     return new (SafeAlloc(pageSize(objectSize).inBytes())) SingleObjectPage(objectSize);
 }
@@ -27,33 +27,12 @@ SingleObjectPage::SingleObjectPage(AllocationSize objectSize) noexcept {
     heap.allocatedSizeTracker().recordDifferenceAndNotifyScheduler(static_cast<ptrdiff_t>(objectSize.inBytes()));
 }
 
-void SingleObjectPage::Destroy() noexcept {
-    auto* object = reinterpret_cast<CustomHeapObject*>(data_)->object();
-    auto objectSize = AllocationSize::bytesAtLeast(CustomAllocator::GetAllocatedHeapSize(object));
-
-    auto& heap = mm::GlobalData::Instance().allocator().impl().heap();
-    heap.allocatedSizeTracker().recordDifference(-static_cast<ptrdiff_t>(objectSize.inBytes()));
-
-    Free(this, pageSize(objectSize).inBytes());
-}
-
 uint8_t* SingleObjectPage::Data() noexcept {
     return data_;
 }
 
 uint8_t* SingleObjectPage::Allocate() noexcept {
     return Data();
-}
-
-bool SingleObjectPage::SweepAndDestroy(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
-    CustomAllocDebug("SingleObjectPage@%p::SweepAndDestroy()", this);
-    if (SweepObject(Data(), finalizerQueue, sweepHandle)) {
-        return true;
-    }
-
-    Destroy();
-
-    return false;
 }
 
 AllocationSize SingleObjectPage::pageSize(AllocationSize objectSize) noexcept {
@@ -66,6 +45,13 @@ std::vector<uint8_t*> SingleObjectPage::GetAllocatedBlocks() noexcept {
         allocated.push_back(block);
     });
     return allocated;
+}
+
+void SingleObjectPage::destroyImpl(AllocationSize objectSize) noexcept {
+    auto& heap = mm::GlobalData::Instance().allocator().impl().heap();
+    heap.allocatedSizeTracker().recordDifference(-static_cast<ptrdiff_t>(objectSize.inBytes()));
+
+    Free(this, pageSize(objectSize).inBytes());
 }
 
 } // namespace kotlin::alloc

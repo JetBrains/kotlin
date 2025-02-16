@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.stages
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorSubstitutor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -159,6 +160,20 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     type.lowerBound.withNullability(nullable = false, session.typeContext),
                     type.upperBound.withNullability(nullable = true, session.typeContext)
                 )
+            }.run {
+                if (session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
+                    return@run this
+                }
+                if (!type.isMarkedNullable) {
+                    return@run this
+                }
+                withAttributes(
+                    attributes.add(
+                        ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
+                            type, LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
+                        )
+                    )
+                )
             }
         } else {
             type
@@ -166,7 +181,10 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     }
 
     private fun FirTypeParameterRef.shouldBeFlexible(context: ConeTypeContext): Boolean {
-        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) {
+        val languageVersionSettings = context.session.languageVersionSettings
+        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible) ||
+            languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)
+        ) {
             return false
         }
         return symbol.resolvedBounds.any {
@@ -190,7 +208,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
 
     val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, session)
         .let {
-            val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorSubstitutor
+            val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorInfo?.substitutor
             if (typeAliasConstructorSubstitutor != null) {
                 ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
             } else {

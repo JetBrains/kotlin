@@ -1,0 +1,73 @@
+Module: separate
+FILE fqName:<root> fileName:/KClass.kt
+  CLASS CLASS name:KClass modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KClass
+    PROPERTY name:publicProp visibility:public modality:OPEN [lateinit,var]
+      FIELD PROPERTY_BACKING_FIELD name:publicProp type:kotlin.String visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-publicProp> visibility:public modality:OPEN returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KClass
+        correspondingProperty: PROPERTY name:publicProp visibility:public modality:OPEN [lateinit,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-publicProp> (): kotlin.String declared in <root>.KClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicProp type:kotlin.String visibility:private' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.KClass declared in <root>.KClass.<get-publicProp>' type=<root>.KClass origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-publicProp> visibility:public modality:OPEN returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KClass
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:publicProp visibility:public modality:OPEN [lateinit,var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicProp type:kotlin.String visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.KClass declared in <root>.KClass.<set-publicProp>' type=<root>.KClass origin=null
+            value: GET_VAR '<set-?>: kotlin.String declared in <root>.KClass.<set-publicProp>' type=kotlin.String origin=null
+    PROPERTY name:protectedProp visibility:protected modality:FINAL [lateinit,var]
+      FIELD PROPERTY_BACKING_FIELD name:protectedProp type:kotlin.String visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-protectedProp> visibility:protected modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KClass
+        correspondingProperty: PROPERTY name:protectedProp visibility:protected modality:FINAL [lateinit,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='protected final fun <get-protectedProp> (): kotlin.String declared in <root>.KClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:protectedProp type:kotlin.String visibility:private' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.KClass declared in <root>.KClass.<get-protectedProp>' type=<root>.KClass origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-protectedProp> visibility:protected modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KClass
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:protectedProp visibility:protected modality:FINAL [lateinit,var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:protectedProp type:kotlin.String visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.KClass declared in <root>.KClass.<set-protectedProp>' type=<root>.KClass origin=null
+            value: GET_VAR '<set-?>: kotlin.String declared in <root>.KClass.<set-protectedProp>' type=kotlin.String origin=null
+    PROPERTY name:privateProp visibility:private modality:FINAL [lateinit,var]
+      FIELD PROPERTY_BACKING_FIELD name:privateProp type:kotlin.String visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-privateProp> visibility:private modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KClass
+        correspondingProperty: PROPERTY name:privateProp visibility:private modality:FINAL [lateinit,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-privateProp> (): kotlin.String declared in <root>.KClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privateProp type:kotlin.String visibility:private' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.KClass declared in <root>.KClass.<get-privateProp>' type=<root>.KClass origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-privateProp> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KClass
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:privateProp visibility:private modality:FINAL [lateinit,var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privateProp type:kotlin.String visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.KClass declared in <root>.KClass.<set-privateProp>' type=<root>.KClass origin=null
+            value: GET_VAR '<set-?>: kotlin.String declared in <root>.KClass.<set-privateProp>' type=kotlin.String origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.KClass [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KClass modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+Module: main

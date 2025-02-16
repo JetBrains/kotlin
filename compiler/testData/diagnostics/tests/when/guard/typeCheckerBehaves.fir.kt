@@ -30,7 +30,7 @@ fun capturedTypesBoundedByBoolean(x: Any, outProjectedBox: InvariantBox<out Bool
 }
 
 fun <T:<!FINAL_UPPER_BOUND!>Boolean<!>> typeVariablesBoundedByBoolean(x: T) {
-    when (x) {
+    <!NO_ELSE_IN_WHEN!>when<!> (x) {
         is Boolean if x -> 250
         is String if x -> 270
         is BooleanAlias if x -> 20

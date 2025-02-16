@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
+import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -258,8 +258,11 @@ class FirSamResolver(
             newTypeParameters = typeAliasSymbol.fir.typeParameters,
             markAsOverride = true
         ).also {
-            it.originalConstructorIfTypeAlias = samConstructorForClass
-            it.typeAliasForConstructor = typeAliasSymbol
+            it.typeAliasConstructorInfo = TypeAliasConstructorInfo(
+                samConstructorForClass,
+                typeAliasSymbol,
+                substitutor = null,
+            )
         }.symbol
     }
 

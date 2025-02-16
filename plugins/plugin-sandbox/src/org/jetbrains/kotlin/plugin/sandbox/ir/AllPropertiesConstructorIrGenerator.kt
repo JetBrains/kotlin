@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -18,9 +19,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import java.util.Comparator
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
 
 /*
  * For classes annotated with @AllPropertiesConstructor and with no-arg constructor generates
@@ -28,7 +30,7 @@ import java.util.Comparator
  *
  * Parent class should be Any or class, annotated with @AllPropertiesConstructor
  */
-class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElementVisitorVoid {
+class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val ANNOTATION_FQN = "AllPropertiesConstructor".fqn()
     }
@@ -39,36 +41,78 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
 
     override fun visitClass(declaration: IrClass) {
         if (declaration.hasAnnotation()) {
-            declaration.declarations += getOrGenerateConstructorIfNeeded(declaration)
+            declaration.declarations += getOrGenerateMembersIfNeeded(declaration)
         }
         visitElement(declaration)
     }
 
-    private val generatedConstructors = mutableMapOf<IrClass, IrConstructor>()
+    private val generatedConstructors = mutableMapOf<IrClass, List<IrFunction>>()
 
-    private fun getOrGenerateConstructorIfNeeded(klass: IrClass): IrConstructor = generatedConstructors.getOrPut(klass) {
-        val superClass = klass.superTypes.mapNotNull(IrType::getClass).singleOrNull { it.kind == ClassKind.CLASS } ?: context.irBuiltIns.anyClass.owner
+    private fun getOrGenerateMembersIfNeeded(klass: IrClass): List<IrFunction> = generatedConstructors.getOrPut(klass) {
+        buildList {
+            this += buildConstructor(klass)
 
-        val properties = klass.properties.toList().sortedWith(Comparator.comparing { if (it.origin == IrDeclarationOrigin.FAKE_OVERRIDE) 0 else 1 })
+            if (klass.declarations.none { it is IrFunction && it.name == Name.identifier("hasExtension") }) {
+                this += context.irFactory.buildFun {
+                    startOffset = SYNTHETIC_OFFSET
+                    endOffset = SYNTHETIC_OFFSET
+                    name = Name.identifier("hasExtension")
+                    returnType = context.irBuiltIns.unitType
+                }.apply {
+                    parent = klass
+                    parameters += createDispatchReceiverParameterWithClassParent()
+                    parameters += createExtensionReceiver(context.irBuiltIns.stringType)
+                    body = context.irFactory.createBlockBody(startOffset, endOffset, emptyList())
+                    context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(this)
+                }
+            }
+            if (klass.declarations.none { it is IrFunction && it.name == Name.identifier("hasContext") }) {
+                this += context.irFactory.buildFun {
+                    startOffset = SYNTHETIC_OFFSET
+                    endOffset = SYNTHETIC_OFFSET
+                    name = Name.identifier("hasContext")
+                    returnType = context.irBuiltIns.unitType
+                }.apply {
+                    parent = klass
+                    parameters += createDispatchReceiverParameterWithClassParent()
+                    parameters += buildValueParameter(this) {
+                        kind = IrParameterKind.Context
+                        name = Name.identifier("c")
+                        type = context.irBuiltIns.stringType
+                    }
+                    body = context.irFactory.createBlockBody(startOffset, endOffset, emptyList())
+                    context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(this)
+                }
+            }
+        }
+    }
+
+    private fun buildConstructor(klass: IrClass): IrConstructor {
+        val superClass =
+            klass.superTypes.mapNotNull(IrType::getClass).singleOrNull { it.kind == ClassKind.CLASS } ?: context.irBuiltIns.anyClass.owner
+
+        val properties =
+            klass.properties.toList().sortedWith(Comparator.comparing { if (it.origin == IrDeclarationOrigin.FAKE_OVERRIDE) 0 else 1 })
         val overriddenProperties = properties.takeWhile { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
         val superConstructor = when {
-            superClass.defaultType.isAny() -> superClass.constructors.singleOrNull { it.valueParameters.isEmpty() }
+            superClass.defaultType.isAny() -> superClass.constructors.singleOrNull { c -> c.parameters.none { it.kind == IrParameterKind.Regular } }
             else -> {
                 require(superClass.hasAnnotation())
-                superClass.constructors.singleOrNull { it.valueParameters.isNotEmpty() }
+                superClass.constructors.singleOrNull { c -> c.parameters.any { it.kind == IrParameterKind.Regular } }
             }
         } ?: error("All properies constructor not found")
 
-        context.irFactory.buildConstructor {
+        return context.irFactory.buildConstructor {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             returnType = klass.defaultType
         }.also { ctor ->
             ctor.parent = klass
-            ctor.valueParameters = properties.map { property ->
+            ctor.parameters = properties.map { property ->
                 buildValueParameter(ctor) {
                     type = property.getter!!.returnType
                     name = property.name
+                    kind = IrParameterKind.Regular
                 }
             }
             ctor.body = context.irFactory.createBlockBody(
@@ -78,12 +122,11 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
                         ctor.startOffset, ctor.endOffset, context.irBuiltIns.unitType,
                         superConstructor.symbol, 0,
                     ).apply {
-                        ctor.valueParameters.take(overriddenProperties.size).forEachIndexed { index, parameter ->
-                            putValueArgument(
-                                index,
-                                IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, parameter.symbol)
-                            )
-                        }
+                        ctor.parameters.filter { it.kind == IrParameterKind.Regular }
+                            .take(overriddenProperties.size)
+                            .forEachIndexed { index, parameter ->
+                                arguments[index] = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, parameter.symbol)
+                            }
                     }
                 )
             )

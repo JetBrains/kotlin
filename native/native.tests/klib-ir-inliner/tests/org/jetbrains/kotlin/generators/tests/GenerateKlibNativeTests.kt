@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
@@ -36,20 +37,28 @@ fun main() {
     generateTestGroupSuiteWithJUnit5 {
         // irText tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/ir/irText") {
-            testClass<AbstractClassicNativeIrTextTest> {
+            testClass<AbstractClassicNativeIrTextTest>(
+                annotations = listOf(*frontendClassic()),
+            ) {
                 model(excludeDirs = listOf("declarations/multiplatform/k2"))
             }
-            testClass<AbstractFirLightTreeNativeIrTextTest> {
+            testClass<AbstractFirLightTreeNativeIrTextTest>(
+                annotations = listOf(*frontendClassic()),
+            ) {
                 model(excludeDirs = listOf("declarations/multiplatform/k1"))
             }
-            testClass<AbstractFirPsiNativeIrTextTest> {
+            testClass<AbstractFirPsiNativeIrTextTest>(
+                annotations = listOf(*frontendClassic()),
+            ) {
                 model(excludeDirs = listOf("declarations/multiplatform/k1"))
             }
         }
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData/diagnostics") {
-            testClass<AbstractDiagnosticsNativeTest> {
+            testClass<AbstractDiagnosticsNativeTest>(
+                annotations = listOf(*frontendClassic()),
+            ) {
                 model(
                     "nativeTests",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
@@ -105,15 +114,18 @@ fun main() {
                  * - The tests that fail are "failed" (red).
                  * - Successful tests (with really processed inline functions) are "successful" (green).
                  */
-                model("codegen/box", skipTestAllFilesCheck = true, excludeDirs = k1BoxTestDir)
-                model("codegen/boxInline", skipTestAllFilesCheck = true)
+                model("codegen/box", skipTestAllFilesCheck = true, excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
+                model("codegen/boxInline", skipTestAllFilesCheck = true, nativeTestInNonNativeTestInfra = true)
             }
         }
 
         // Dump KLIB metadata tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-metadata") {
             testClass<AbstractNativeKlibDumpMetadataTest>(
-                suiteTestClassName = "NativeKlibDumpMetadataTestGenerated"
+                suiteTestClassName = "NativeKlibDumpMetadataTestGenerated",
+                annotations = listOf(
+                    *frontendClassic()
+                )
             ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -131,6 +143,9 @@ fun main() {
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-ir") {
             testClass<AbstractNativeKlibDumpIrTest>(
                 suiteTestClassName = "NativeKlibDumpIrTestGenerated",
+                annotations = listOf(
+                    *frontendClassic()
+                )
             ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -148,6 +163,9 @@ fun main() {
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-signatures") {
             testClass<AbstractNativeKlibDumpIrSignaturesTest>(
                 suiteTestClassName = "NativeKlibDumpIrSignaturesTestGenerated",
+                annotations = listOf(
+                    *frontendClassic()
+                )
             ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -165,6 +183,9 @@ fun main() {
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-signatures") {
             testClass<AbstractNativeKlibDumpMetadataSignaturesTest>(
                 suiteTestClassName = "NativeKlibDumpMetadataSignaturesTestGenerated",
+                annotations = listOf(
+                    *frontendClassic()
+                )
             ) {
                 model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
             }
@@ -182,6 +203,7 @@ fun main() {
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/header-klibs/comparison") {
             testClass<AbstractNativeHeaderKlibComparisonTest>(
                 suiteTestClassName = "NativeHeaderKlibComparisonTestGenerated",
+                annotations = listOf(*frontendClassic()),
             ) {
                 model(extension = null, recursive = false)
             }
@@ -197,6 +219,7 @@ fun main() {
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/header-klibs/compilation") {
             testClass<AbstractNativeHeaderKlibCompilationTest>(
                 suiteTestClassName = "NativeHeaderKlibCompilationTestGenerated",
+                annotations = listOf(*frontendClassic()),
             ) {
                 model(extension = null, recursive = false)
             }
@@ -211,7 +234,10 @@ fun main() {
         // KLIB evolution tests.
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/evolution") {
             testClass<AbstractNativeKlibEvolutionTest>(
-                suiteTestClassName = "NativeKlibEvolutionTestGenerated"
+                suiteTestClassName = "NativeKlibEvolutionTestGenerated",
+                annotations = listOf(
+                    *frontendClassic()
+                ),
             ) {
                 model(recursive = false)
             }
@@ -239,8 +265,8 @@ fun main() {
                 model("boxInline", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
             }
             testClass<AbstractFirNativeSerializationTest> {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxInline", excludeDirs = k1BoxTestDir)
+                model("box", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
+                model("boxInline", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
             }
         }
 
@@ -282,7 +308,10 @@ fun main() {
     generateTestGroupSuiteWithJUnit5 {
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/dump-abi/content") {
             testClass<AbstractClassicNativeLibraryAbiReaderTest>(
-                suiteTestClassName = "ClassicNativeLibraryAbiReaderTestGenerated"
+                suiteTestClassName = "ClassicNativeLibraryAbiReaderTestGenerated",
+                annotations = listOf(
+                    *frontendClassic()
+                ),
             ) {
                 model()
             }
@@ -299,8 +328,11 @@ fun main() {
 }
 
 fun frontendFir() = arrayOf(
-    annotation(Tag::class.java, "frontend-fir"),
     annotation(FirPipeline::class.java)
+)
+
+fun frontendClassic() = arrayOf(
+    annotation(ClassicPipeline::class.java)
 )
 
 private fun klib() = annotation(Tag::class.java, "klib")

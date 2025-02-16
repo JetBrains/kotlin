@@ -7,9 +7,11 @@ KtAnnotationEntry(90,110): '@Annotation(Color.R)'
           receiverType = null
           returnType = Color
           symbol = color: Color
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -22,7 +24,9 @@ KtAnnotationEntry(90,110): '@Annotation(Color.R)'
               receiverType = null
               returnType = Color
               symbol = color: Color
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

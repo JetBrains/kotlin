@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidParenthesizedLhsInAssignments
 // ISSUE: KT-68834
 // IGNORE_BACKEND_K1: ANY
 

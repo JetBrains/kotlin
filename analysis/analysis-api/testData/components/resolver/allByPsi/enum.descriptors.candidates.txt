@@ -49,10 +49,12 @@ KtSuperTypeCallEntry(54,57): '(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -65,8 +67,10 @@ KtSuperTypeCallEntry(54,57): '(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -80,10 +84,12 @@ KtConstructorCalleeExpression(54,54): ''
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -96,8 +102,10 @@ KtConstructorCalleeExpression(54,54): ''
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -117,10 +125,12 @@ KtEnumEntrySuperclassReferenceExpression(54,54): ''
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -133,8 +143,10 @@ KtEnumEntrySuperclassReferenceExpression(54,54): ''
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -163,10 +175,12 @@ KtSuperTypeCallEntry(76,79): '(2)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -179,8 +193,10 @@ KtSuperTypeCallEntry(76,79): '(2)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -194,10 +210,12 @@ KtConstructorCalleeExpression(76,76): ''
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -210,8 +228,10 @@ KtConstructorCalleeExpression(76,76): ''
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -231,10 +251,12 @@ KtEnumEntrySuperclassReferenceExpression(76,76): ''
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -247,8 +269,10 @@ KtEnumEntrySuperclassReferenceExpression(76,76): ''
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -278,6 +302,7 @@ KtNameReferenceExpression(114,115): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /EnumWithConstructor.EntryWithBody
           type = EnumWithConstructor.EntryWithBody
@@ -287,6 +312,7 @@ KtNameReferenceExpression(114,115): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = val i: kotlin.Int
+          contextParameters = []
           callableId = /EnumWithConstructor.i
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -325,6 +351,7 @@ KtDotQualifiedExpression(234,244): 'this.baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -335,6 +362,7 @@ KtDotQualifiedExpression(234,244): 'this.baz()'
           returnType = kotlin.Unit
           symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -351,6 +379,7 @@ KtCallExpression(239,244): 'baz()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -361,6 +390,7 @@ KtCallExpression(239,244): 'baz()'
           returnType = kotlin.Unit
           symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -371,6 +401,7 @@ KtNameReferenceExpression(239,242): 'baz'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = this
           isSafeNavigation = false
@@ -381,6 +412,7 @@ KtNameReferenceExpression(239,242): 'baz'
           returnType = kotlin.Unit
           symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -413,6 +445,7 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = with
           isSafeNavigation = false
@@ -423,6 +456,7 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
           receiverType = null
           returnType = kotlin.Int
           symbol = val ordinal: kotlin.Int
+          contextParameters = []
           callableId = kotlin/Enum.ordinal
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -434,6 +468,7 @@ KtNameReferenceExpression(307,311): 'with'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -446,14 +481,17 @@ KtNameReferenceExpression(307,311): 'with'
               receiverType = null
               returnType = ERROR_TYPE
               symbol = receiver: T
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = block
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, ERROR_TYPE>
               symbol = block: kotlin.Function1<T, R>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/with
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
@@ -461,10 +499,11 @@ KtNameReferenceExpression(307,311): 'with'
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'receiver'>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -472,6 +511,7 @@ KtNameReferenceExpression(307,311): 'with'
           receiverType = null
           returnType = EnumWithConstructor
           symbol = with: EnumWithConstructor
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -481,6 +521,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = with
           isSafeNavigation = false
@@ -491,6 +532,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
           receiverType = null
           returnType = kotlin.Int
           symbol = val ordinal: kotlin.Int
+          contextParameters = []
           callableId = kotlin/Enum.ordinal
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -509,6 +551,7 @@ KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor.Entry
           isSafeNavigation = false
@@ -519,6 +562,7 @@ KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/Enum.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -537,6 +581,7 @@ KtNameReferenceExpression(381,385): 'name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor.Entry
           isSafeNavigation = false
@@ -547,6 +592,7 @@ KtNameReferenceExpression(381,385): 'name'
           receiverType = null
           returnType = kotlin.String
           symbol = val name: kotlin.String
+          contextParameters = []
           callableId = kotlin/Enum.name
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -565,6 +611,7 @@ KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor.EntryWithBody
           isSafeNavigation = false
@@ -575,6 +622,7 @@ KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
           receiverType = null
           returnType = kotlin.Int
           symbol = val i: kotlin.Int
+          contextParameters = []
           callableId = /EnumWithConstructor.i
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -593,6 +641,7 @@ KtNameReferenceExpression(462,463): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = EnumWithConstructor.EntryWithBody
           isSafeNavigation = false
@@ -603,6 +652,7 @@ KtNameReferenceExpression(462,463): 'i'
           receiverType = null
           returnType = kotlin.Int
           symbol = val i: kotlin.Int
+          contextParameters = []
           callableId = /EnumWithConstructor.i
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -612,6 +662,7 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -619,6 +670,7 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
           receiverType = null
           returnType = kotlin.enums.EnumEntries<EnumWithoutConstructor>
           symbol = val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+          contextParameters = []
           callableId = /EnumWithoutConstructor.entries
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -631,6 +683,7 @@ KtNameReferenceExpression(492,499): 'entries'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -638,6 +691,7 @@ KtNameReferenceExpression(492,499): 'entries'
           receiverType = null
           returnType = kotlin.enums.EnumEntries<EnumWithoutConstructor>
           symbol = val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+          contextParameters = []
           callableId = /EnumWithoutConstructor.entries
       simpleAccess = Read
       typeArgumentsMapping = {}

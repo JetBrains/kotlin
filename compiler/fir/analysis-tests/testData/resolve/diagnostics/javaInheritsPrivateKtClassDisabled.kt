@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DISABLE_NEXT_TIER_SUGGESTION: java.lang.IllegalStateException: No override for FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [operator] in CLASS CLASS name:K2 modality:OPEN visibility:private superTypes:[<root>.K1]
+// DISABLE_NEXT_PHASE_SUGGESTION: java.lang.IllegalStateException: No override for FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [operator] in CLASS CLASS name:K2 modality:OPEN visibility:private superTypes:[<root>.K1]
 // ISSUE: KT-66328
 // LANGUAGE: -ProhibitJavaClassInheritingPrivateKotlinClass
 // FILE: J1.java

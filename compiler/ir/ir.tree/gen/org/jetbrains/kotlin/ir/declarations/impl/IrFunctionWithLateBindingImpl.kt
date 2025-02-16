@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -42,6 +43,8 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var isOperator: Boolean,
     override var isInfix: Boolean,
 ) : IrFunctionWithLateBinding() {
+    override var attributeOwnerId: IrElement = this
+
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
@@ -54,10 +57,6 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override lateinit var returnType: IrType
 
     override var body: IrBody? = null
-
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor

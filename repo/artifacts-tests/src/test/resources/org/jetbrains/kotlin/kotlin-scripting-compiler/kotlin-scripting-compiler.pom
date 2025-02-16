@@ -56,5 +56,11 @@
       <version>3.24.1</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-power-assert-compiler-plugin</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 </project>

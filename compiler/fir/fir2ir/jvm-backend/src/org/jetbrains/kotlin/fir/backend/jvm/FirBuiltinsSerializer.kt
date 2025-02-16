@@ -7,18 +7,15 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.packageFqName
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
@@ -109,7 +106,8 @@ class FirBuiltInsSerializer(val session: FirSession, val scopeSession: ScopeSess
                     serializeClasses(nestedClasses, nestedSerializer)
                 }
 
-                val classProto = parentSerializer.classProto(klass)
+                val file = session.firProvider.getFirClassifierContainerFile(klass.symbol)
+                val classProto = parentSerializer.classProto(klass, file)
                 proto.addClass_(classProto.build())
             }
         }

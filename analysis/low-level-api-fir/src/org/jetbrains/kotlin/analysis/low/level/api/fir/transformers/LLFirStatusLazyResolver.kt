@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
@@ -24,7 +26,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.SmartSet
 
 internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
@@ -246,6 +251,25 @@ private class LLFirStatusTargetResolver(
 
             resolver.resolveDesignation()
             return true
+        }
+
+        override fun additionalSuperTypes(regularClass: FirClass): List<FirTypeRef> {
+            // Stdlib classes may be mapped to Java classes which may have a different supertype set.
+            // E.g., a 'kotlin.collections.Collection' is immutable, while 'java.util.Collection' is mutable (it implements 'MutableIterable').
+            // The logic here is only applicable to the Kotlin project where stdlib comes in sources.
+            val shouldResolveJavaSupertypeCallables = regularClass is FirRegularClass
+                    && regularClass.origin.isLazyResolvable
+                    && regularClass.classId.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
+                    && regularClass.moduleData.platform.isJvm()
+
+            if (!shouldResolveJavaSupertypeCallables) {
+                return emptyList()
+            }
+
+            val fqName = regularClass.classId.asSingleFqName().toUnsafe()
+            val javaClassFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName) ?: return emptyList()
+            val javaSymbol = javaClassFqName.toSymbol(resolveTargetSession) as? FirClassSymbol ?: return emptyList()
+            return javaSymbol.resolvedSuperTypeRefs
         }
     }
 }

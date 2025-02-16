@@ -24,7 +24,7 @@ fun test4(): String {
 }
 
 fun String.test5(): String {
-  return <this>.<get-okext>()
+  return <get-okext>(/* <this> = <this> */)
 }
 
 val ok3: String

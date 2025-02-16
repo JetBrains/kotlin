@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -62,6 +62,8 @@ sealed class FirDeclarationOrigin(
         object ParameterFromBaseClass : ScriptCustomization(FirScriptCustomizationKind.PARAMETER_FROM_BASE_CLASS)
     }
 
+    object FromOtherReplSnippet : FirDeclarationOrigin(fromSource = false)
+
     class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
 
     override fun toString(): String {
@@ -86,6 +88,11 @@ val FirDeclarationOrigin.isLazyResolvable: Boolean
         is FirDeclarationOrigin.WrappedIntegerOperator,
         is FirDeclarationOrigin.IntersectionOverride,
         is FirDeclarationOrigin.ScriptCustomization,
-        -> true
+
+            // Synthetic Java declarations (like fake overrides) might have an implicit return type,
+            // so lazy resolution is required to calculate it
+        is FirDeclarationOrigin.Enhancement,
+            -> true
+
         else -> false
     }

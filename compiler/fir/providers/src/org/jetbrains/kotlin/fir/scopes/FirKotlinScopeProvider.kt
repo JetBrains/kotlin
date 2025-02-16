@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.*
@@ -86,6 +87,17 @@ class FirKotlinScopeProvider(
                 scopes,
                 declaredMemberScopeWithPossiblySynthesizedMembers,
             )
+        }
+    }
+
+    @OptIn(FirImplementationDetail::class)
+    override fun getTypealiasConstructorScope(
+        typeAlias: FirTypeAlias,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirScope {
+        return scopeSession.getOrBuild(useSiteSession to typeAlias.symbol, TYPEALIAS_CONSTRUCTOR) {
+            TypeAliasConstructorsSubstitutingScope.initialize(typeAlias.symbol, useSiteSession, scopeSession)
         }
     }
 
@@ -231,6 +243,13 @@ fun FirClass.scopeForClass(
     memberRequiredPhase = memberRequiredPhase,
 )
 
+fun FirTypeAlias.scopeForTypeAlias(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+): FirScope {
+    return scopeProvider.getTypealiasConstructorScope(this, useSiteSession, scopeSession)
+}
+
 fun ConeKotlinType.scopeForSupertype(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
@@ -306,5 +325,7 @@ private fun FirClass.scopeForClassImpl(
         )
     }
 }
+
+private val TYPEALIAS_CONSTRUCTOR: ScopeSessionKey<Pair<FirSession, FirTypeAliasSymbol>, FirScope> = scopeSessionKey()
 
 val FirSession.kotlinScopeProvider: FirKotlinScopeProvider by FirSession.sessionComponentAccessor()

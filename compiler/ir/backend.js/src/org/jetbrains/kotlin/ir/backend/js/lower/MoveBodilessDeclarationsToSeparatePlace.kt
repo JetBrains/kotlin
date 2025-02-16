@@ -79,7 +79,7 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
             }
         }
 
-        if (irFile.getJsModule() != null || irFile.getJsQualifier() != null) {
+        if (declaration.isEffectivelyExternal() && (irFile.getJsModule() != null || irFile.getJsQualifier() != null)) {
             externalPackageFragment.declarations += declaration
             declaration.parent = externalPackageFragment
 

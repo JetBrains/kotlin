@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -38,7 +37,13 @@ fun writeKotlinMetadata(
         av.visit("bv", JvmBytecodeBinaryVersion.INSTANCE.toArray())
     }
     av.visit(JvmAnnotationNames.KIND_FIELD_NAME, kind.id)
-    var flags = extraFlags or generateLanguageVersionSettingsBasedMetadataFlags(config.languageVersionSettings)
+    var flags = extraFlags
+    if (config.languageVersionSettings.isPreRelease()) {
+        flags = flags or JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG
+    }
+    if (config.languageVersionSettings.getFlag(JvmAnalysisFlags.strictMetadataVersionSemantics)) {
+        flags = flags or JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG
+    }
     if (publicAbi) {
         flags = flags or JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG
     }
@@ -47,15 +52,4 @@ fun writeKotlinMetadata(
     }
     action(av)
     av.visitEnd()
-}
-
-fun generateLanguageVersionSettingsBasedMetadataFlags(languageVersionSettings: LanguageVersionSettings): Int {
-    var flags = 0
-    if (languageVersionSettings.isPreRelease()) {
-        flags = flags or JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG
-    }
-    if (languageVersionSettings.getFlag(JvmAnalysisFlags.strictMetadataVersionSemantics)) {
-        flags = flags or JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG
-    }
-    return flags
 }

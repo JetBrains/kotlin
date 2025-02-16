@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationArchiveTasks
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +26,7 @@ class KotlinCompilationArchiveTasksTest {
     }
 
     private val Project.kotlinCompilationsArchiveTasks: KotlinCompilationArchiveTasks
-        get() = extensions.getByName("kotlinCompilationsArchiveTasks") as KotlinCompilationArchiveTasks
+        get() = extensions.extraProperties.get("kotlinCompilationsArchiveTasks") as KotlinCompilationArchiveTasks
 
     val testProject: Project = buildProject {
         enableKotlinCompilationArchiveTasksCreation()
@@ -68,24 +70,30 @@ class KotlinCompilationArchiveTasksTest {
     @Test
     fun `main and test compilations should not have archive task`() {
         testProject.multiplatformExtension.targets.flatMap { it.compilations }.forEach { compilation ->
-            if (compilation.internal.archiveTaskName != null)
-                fail("Archive tasks should not be created for default compilations, but $compilation has it")
+            val archiveTaskName = compilation.internal.archiveTaskName
+            if (archiveTaskName != null && compilation.isTest())
+                fail("Archive tasks should not be created for default test compilations, but $compilation has $archiveTaskName")
+
+            if (archiveTaskName == null && compilation.isMain())
+                fail("Archive tasks should be created for default main compilations, but $compilation hasn't it")
         }
     }
 
     @Test
     fun `archive tasks should not be created for custom compilation when feature flag is not set`() {
+        val customCompilationName = "custom"
         val project = buildProject {
             enableKotlinCompilationArchiveTasksCreation(enabled = false)
             applyMultiplatformPlugin()
             kotlin {
-                jvm().compilations.create("custom")
-                linuxX64().compilations.create("custom")
+                jvm().compilations.create(customCompilationName)
+                linuxX64().compilations.create(customCompilationName)
             }
         }
         project.multiplatformExtension.targets.flatMap { it.compilations }.forEach { compilation ->
-            if (compilation.internal.archiveTaskName != null)
-                fail("Archive tasks should not be created")
+            val archiveTaskName = compilation.internal.archiveTaskName
+            if (archiveTaskName != null && archiveTaskName.contains(customCompilationName, ignoreCase = true))
+                fail("Archive tasks should not be created, but `$archiveTaskName` was created for $compilation")
         }
     }
 

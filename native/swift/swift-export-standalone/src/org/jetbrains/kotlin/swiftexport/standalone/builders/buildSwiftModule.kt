@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.*
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
@@ -32,54 +34,48 @@ internal class SwiftModuleBuildResults(
     val packages: Set<FqName>,
 )
 
-internal fun ModuleWithScopeProvider.initializeSirModule(
+internal fun KaSession.initializeSirModule(
+    moduleWithScope: ModuleWithScopeProvider,
     config: SwiftExportConfig,
+    moduleConfig: SwiftModuleConfig,
     moduleProvider: SirModuleProvider,
 ): SwiftModuleBuildResults {
-    val moduleForPackageEnums = when (config.multipleModulesHandlingStrategy) {
-        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> buildModule { name = config.moduleForPackagesName }
-        MultipleModulesHandlingStrategy.IntoSingleModule -> with(moduleProvider) { mainModule.sirModule() }
-    }
+    val moduleForPackageEnums = buildModule { name = config.moduleForPackagesName }
     val sirSession = StandaloneSirSession(
-        useSiteModule = useSiteModule,
-        moduleToTranslate = mainModule,
+        useSiteModule = moduleWithScope.useSiteModule,
+        moduleToTranslate = moduleWithScope.mainModule,
         errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
         unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
         moduleForPackageEnums = moduleForPackageEnums,
-        unsupportedDeclarationReporter = config.unsupportedDeclarationReporter,
+        unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
         moduleProvider = moduleProvider,
-        targetPackageFqName = config.targetPackageFqName,
+        targetPackageFqName = moduleConfig.targetPackageFqName,
     )
 
     // this lines produce critical side effect
     // This will traverse every top level declaration of a given provider
     // This in turn inits every root declaration that will be consumed down the pipe by swift export
-    traverseTopLevelDeclarationsInScopes(sirSession, scopeProvider)
+    traverseTopLevelDeclarationsInScopes(sirSession, moduleWithScope.scopeProvider)
 
     return with(moduleProvider) {
         SwiftModuleBuildResults(
-            module = mainModule.sirModule(),
-            packages = if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.OneToOneModuleMapping)
-                sirSession.enumGenerator.collectedPackages
-            else
-                emptySet()
+            module = moduleWithScope.mainModule.sirModule(),
+            packages = sirSession.enumGenerator.collectedPackages,
         )
     }
 }
 
-private fun traverseTopLevelDeclarationsInScopes(
+private fun KaSession.traverseTopLevelDeclarationsInScopes(
     sirSession: StandaloneSirSession,
     scopeProvider: KaSession.() -> List<KaScope>,
 ) {
     with(sirSession) {
-        analyze(useSiteModule) {
-            scopeProvider().flatMap { scope ->
-                scope.extractDeclarations(useSiteSession)
-            }.forEach { topLevelDeclaration ->
-                val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
-                    ?: error("top level declaration can contain only module or extension to package as a parent")
-                parent.addChild { topLevelDeclaration }
-            }
+        scopeProvider().flatMap { scope ->
+            scope.extractDeclarations(useSiteSession)
+        }.forEach { topLevelDeclaration ->
+            val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
+                ?: error("top level declaration can contain only module or extension to package as a parent")
+            parent.addChild { topLevelDeclaration }
         }
     }
 }
@@ -100,6 +96,7 @@ internal data class ModuleWithScopeProvider(
 
 internal fun createModuleWithScopeProviderFromBinary(
     input: InputModule,
+    stdLibPath: String,
     dependencies: Set<InputModule>,
 ): ModuleWithScopeProvider {
     lateinit var binaryModule: KaLibraryModule
@@ -110,7 +107,7 @@ internal fun createModuleWithScopeProviderFromBinary(
 
             val stdlib = addModule(
                 buildKtLibraryModule {
-                    addBinaryRoot(Path(input.config.distribution.stdlib))
+                    addBinaryRoot(Path(stdLibPath))
                     platform = NativePlatforms.unspecifiedNativePlatform
                     libraryName = "stdlib"
                 }

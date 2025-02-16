@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirErrorCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 internal object CheckCallableReferenceExpectedType : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         callInfo as CallableReferenceInfo
-        val outerCsBuilder = callInfo.outerCSBuilder ?: return
         val expectedType = callInfo.expectedType
         if (candidate.symbol !is FirCallableSymbol<*>) return
 
@@ -64,7 +63,6 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
             // expected/actual type is a reflection type.
             forceReflectionType = isExpectedTypeReflectionType
         )
-        val resultingType = candidate.substitutor.substituteOrSelf(rawResultingType)
 
         if (callableReferenceAdaptation != null) {
             if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) {
@@ -76,34 +74,23 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
             }
         }
 
+        val resultingType = candidate.substitutor.substituteOrSelf(rawResultingType)
+
         candidate.initializeCallableReferenceAdaptation(
             callableReferenceAdaptation,
             resultingType,
-        ) {
-            addOtherSystem(candidate.system.currentStorage())
+        )
 
-            // Callable references are either arguments to a call or are wrapped in a synthetic call for resolution.
-            val position = ConeArgumentConstraintPosition(callInfo.callSite)
-
-            if (expectedType != null && !resultingType.contains {
-                    it is ConeTypeVariableType && it.typeConstructor !in outerCsBuilder.currentStorage().allTypeVariables
-                }
-            ) {
-                addSubtypeConstraint(resultingType, expectedType, position)
-            }
+        // For error candidates, we don't create a proper CS (with type variables from the containing call candidate).
+        // Thus, for them, we just don't add a subtype constraint, which otherwise might fail
+        // with an exception about a non-existing type variable.
+        if (expectedType != null && candidate.symbol !is FirErrorCallableSymbol<*>) {
+            candidate.system.addSubtypeConstraint(
+                resultingType, expectedType, ConeArgumentConstraintPosition(callInfo.callSite)
+            )
         }
 
-        var isApplicable = true
-
-        outerCsBuilder.runTransaction {
-            candidate.outerConstraintBuilderEffect!!(this)
-
-            isApplicable = !hasContradiction
-
-            false
-        }
-
-        if (!isApplicable) {
+        if (candidate.system.hasContradiction) {
             sink.yieldDiagnostic(InapplicableCandidate)
         }
     }

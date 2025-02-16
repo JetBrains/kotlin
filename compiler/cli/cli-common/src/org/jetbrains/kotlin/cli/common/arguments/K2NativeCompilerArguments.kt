@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageVersion
 
 class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
     // First go the options interesting to the general public.
@@ -164,6 +165,12 @@ By default caches will be placed into the kotlin-native system cache directory."
         delimiter = Argument.Delimiters.none
     )
     var autoCacheableFrom: Array<String>? = null
+
+    @Argument(
+        value = "-Xexplicit-caches-only",
+        description = """Do not build caches for libraries if they are not listed as cacheable.""",
+    )
+    var explicitCachesOnly: Boolean = false
 
     @Argument(
         value = "-Xauto-cache-dir",
@@ -485,17 +492,6 @@ The default value is 1."""
                 it[AnalysisFlags.metadataCompilation] = true
             }
         }
-
-    override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        if (languageVersionSettings.languageVersion < LanguageVersion.KOTLIN_1_4
-            || languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_4
-        ) {
-            collector.report(
-                severity = CompilerMessageSeverity.ERROR,
-                message = "Native backend cannot be used with language or API version below 1.4"
-            )
-        }
-    }
 
     override fun copyOf(): Freezable = copyK2NativeCompilerArguments(this, K2NativeCompilerArguments())
 

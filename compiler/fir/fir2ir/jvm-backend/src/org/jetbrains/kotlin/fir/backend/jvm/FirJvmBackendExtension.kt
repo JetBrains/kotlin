@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
@@ -101,7 +102,8 @@ class FirJvmBackendExtension(
                 typeApproximator,
                 context.config.languageVersionSettings
             )
-            return serializer.classProto(fir).build()
+            val file = session.firProvider.getFirClassifierContainerFileIfAny(fir.symbol)
+            return serializer.classProto(fir, file).build()
         }
     }
 

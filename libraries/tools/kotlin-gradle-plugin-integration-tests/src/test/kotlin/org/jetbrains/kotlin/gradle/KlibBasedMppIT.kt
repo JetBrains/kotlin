@@ -36,6 +36,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
 
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testBuildWithProjectDependency(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -54,6 +55,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
 
     @DisplayName("KT-36674: Could be compiled with empty source set")
     @GradleTest
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testPublishingAndConsumptionWithEmptySourceSet(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -72,6 +74,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
 
     @DisplayName("Compiles with common sources in transitive dependencies")
     @GradleTest
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testCommonSourceSetsInTransitiveDependencies(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -181,9 +184,10 @@ open class KlibBasedMppIT : KGPBaseTest() {
     )
     @DisplayName("Works with host specific dependencies")
     @GradleTest
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testHostSpecificBuildWithPublishedDependency(
         gradleVersion: GradleVersion,
-        @TempDir localRepo: Path
+        @TempDir localRepo: Path,
     ) {
         testBuildWithDependency(gradleVersion, localRepo) {
             publishProjectDepAndAddDependency(validateHostSpecificPublication = true, localRepo)
@@ -194,7 +198,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinNativeImplPublishedDeps(
         gradleVersion: GradleVersion,
-        @TempDir localRepo: Path
+        @TempDir localRepo: Path,
     ) {
         testKotlinNativeImplementationDependencies(gradleVersion, localRepo) {
             build(":$transitiveDepModuleName:publish", ":$dependencyModuleName:publish")
@@ -304,7 +308,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
     private fun testBuildWithDependency(
         gradleVersion: GradleVersion,
         localRepo: Path,
-        configureDependency: TestProject.() -> Unit
+        configureDependency: TestProject.() -> Unit,
     ) {
         project("common-klib-lib-and-app", gradleVersion, localRepoDir = localRepo) {
             includeOtherProjectAsSubmodule(

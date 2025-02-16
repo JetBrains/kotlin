@@ -7,13 +7,17 @@
 
 #include "Allocator.hpp"
 
+#include <optional>
+
 #include "ExtraObjectDataFactory.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
+#include "GCStatistics.hpp"
 #include "GlobalData.hpp"
 #include "ObjectFactory.hpp"
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectFactorySweep.hpp"
+#include "SegregatedFinalizerProcessor.hpp"
 #include "Logging.hpp"
 
 namespace kotlin::alloc {
@@ -37,16 +41,32 @@ using FinalizerQueueSingle = ObjectFactoryImpl::FinalizerQueue;
 using FinalizerQueue = SegregatedFinalizerQueue<FinalizerQueueSingle>;
 using FinalizerQueueTraits = ObjectFactoryImpl::FinalizerQueueTraits;
 
+// Taking the locks before the pause is completed. So that any destroying thread
+// would not publish into the global state at an unexpected time.
+struct SweepState : private MoveOnly {
+    SweepState(ObjectFactoryImpl& objectFactory, ExtraObjectDataFactory& extraObjectDataFactory) noexcept;
+
+    ExtraObjectDataFactory::Iterable extraObjectFactoryIterable_;
+    ObjectFactoryImpl::Iterable objectFactoryIterable_;
+};
+
 class Allocator::Impl : private Pinned {
 public:
-    Impl() noexcept = default;
+    Impl() noexcept : finalizerProcessor_([](int64_t epoch) noexcept { mm::GlobalData::Instance().gc().onEpochFinalized(epoch); }) {}
 
     ObjectFactoryImpl& objectFactory() noexcept { return objectFactory_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+    std::optional<SweepState>& sweepState() noexcept { return sweepState_; }
+    FinalizerQueue& pendingFinalizers() noexcept { return pendingFinalizers_; }
+    SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits>& finalizerProcessor() noexcept { return finalizerProcessor_; }
 
 private:
     ObjectFactoryImpl objectFactory_;
     ExtraObjectDataFactory extraObjectDataFactory_;
+    std::optional<SweepState> sweepState_;
+    // Preallocated place for finalizers for avoiding memory allocation during GC.
+    FinalizerQueue pendingFinalizers_;
+    SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits> finalizerProcessor_;
 };
 
 class Allocator::ThreadData::Impl : private Pinned {

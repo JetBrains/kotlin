@@ -1,4 +1,5 @@
-[RedundantDependsOnEdgesFound | WARNING] Redundant dependsOn edges between Kotlin Source Sets found.
+[RedundantDependsOnEdgesFound | WARNING] Redundant dependsOn Kotlin Source Sets found
+Redundant dependsOn edges between Kotlin Source Sets found.
 Please remove the following dependsOn invocations from your build scripts:
  * x64Main.dependsOn(commonMain)
  * linuxX64Main.dependsOn(x64Main)

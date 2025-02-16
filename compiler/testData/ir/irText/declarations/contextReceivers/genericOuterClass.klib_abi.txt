@@ -5,10 +5,10 @@
 
 // Library unique name: <main>
 final class <#A: kotlin/Any?> /A { // /A|null[0]
-    constructor context(#A) <init>() // /A.<init>|<init>!1:0(){}[0]
+    constructor (context(#A)).<init>() // /A.<init>|<init>(1:0)(){}[0]
 }
 final class <#A: kotlin/Any?> /B { // /B|null[0]
-    constructor context(kotlin.collections/Collection<#A>) <init>() // /B.<init>|<init>!kotlin.collections.Collection<1:0>(){}[0]
+    constructor (context(kotlin.collections/Collection<#A>)).<init>() // /B.<init>|<init>(kotlin.collections.Collection<1:0>)(){}[0]
 }
 final fun (kotlin.collections/Collection<kotlin/Int>)./bar() // /bar|bar@kotlin.collections.Collection<kotlin.Int>(){}[0]
 final fun (kotlin/Int)./foo() // /foo|foo@kotlin.Int(){}[0]

@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.cli.pipeline
 
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
-import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 class PipelineContext(
     val messageCollector: MessageCollector,
     val diagnosticCollector: BaseDiagnosticsCollector,
-    val performanceManager: CommonCompilerPerformanceManager,
+    val performanceManager: PerformanceManager,
     val renderDiagnosticInternalName: Boolean,
     val kaptMode: Boolean
 ) : LoggingContext {
@@ -59,7 +59,7 @@ abstract class PipelinePhase<I : PipelineArtifact, O : PipelineArtifact>(
     name: String,
     preActions: Set<Action<I, PipelineContext>> = emptySet(),
     postActions: Set<Action<O, PipelineContext>> = emptySet(),
-) : SimpleNamedCompilerPhase<PipelineContext, I, O>(
+) : NamedCompilerPhase<PipelineContext, I, O>(
     name = name,
     preactions = preActions,
     postactions = postActions.mapTo(mutableSetOf()) { it.toPostAction() }
@@ -71,8 +71,8 @@ abstract class PipelinePhase<I : PipelineArtifact, O : PipelineArtifact>(
     abstract fun executePhase(input: I): O?
 
     override fun outputIfNotEnabled(
-        phaseConfig: PhaseConfigurationService,
-        phaserState: PhaserState<I>,
+        phaseConfig: PhaseConfig,
+        phaserState: PhaserState,
         context: PipelineContext,
         input: I,
     ): O {

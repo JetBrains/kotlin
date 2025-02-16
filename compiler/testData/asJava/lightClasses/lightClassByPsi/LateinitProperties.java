@@ -24,10 +24,6 @@ public abstract class AbstractKotlinClass /* AbstractKotlinClass*/ {
 }
 
 public static final class Companion /* AbstractKotlinClass.Companion*/ {
-  @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
-  public static void getCompanionLateinitStaticVariable$annotations();//  getCompanionLateinitStaticVariable$annotations()
-
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
 
@@ -71,10 +67,6 @@ public final class KotlinClass /* KotlinClass*/ {
 }
 
 public static final class Companion /* KotlinClass.Companion*/ {
-  @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
-  public static void getCompanionLateinitStaticVariable$annotations();//  getCompanionLateinitStaticVariable$annotations()
-
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
 

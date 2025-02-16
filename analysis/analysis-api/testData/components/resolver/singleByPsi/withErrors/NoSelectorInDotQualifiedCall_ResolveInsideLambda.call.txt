@@ -5,6 +5,7 @@ KtNameReferenceExpression(159,163): 'test'
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:
@@ -12,12 +13,14 @@ KtNameReferenceExpression(159,163): 'test'
             returnType = kotlin.Unit
             symbol = testing/test(): kotlin.Unit
             valueParameters = []
+            contextParameters = []
             callableId = testing/test
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = null
           signature = KaFunctionSignature:
@@ -25,6 +28,7 @@ KtNameReferenceExpression(159,163): 'test'
             returnType = kotlin.Unit
             symbol = testing/test(): kotlin.Unit
             valueParameters = []
+            contextParameters = []
             callableId = testing/test
         typeArgumentsMapping = {}
     ]

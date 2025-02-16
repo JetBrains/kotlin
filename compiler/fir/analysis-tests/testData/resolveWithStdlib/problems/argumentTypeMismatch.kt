@@ -10,5 +10,5 @@ public class Sample {
 // FILE: test.kt
 
 fun main() {
-    Sample.foo(<!ARGUMENT_TYPE_MISMATCH("kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<kotlin.String!>!>!; kotlin.String")!>"123"<!>)
+    Sample.foo(<!ARGUMENT_TYPE_MISMATCH("String; (Mutable)List<(Mutable)List<String!>!>!")!>"123"<!>)
 }

@@ -1,0 +1,110 @@
+KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1L -> (KaVariableSignature:
+          name = rp1
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = rp1: kotlin.Long
+          contextParameters = []
+          callableId = null),
+        "str" -> (KaVariableSignature:
+          name = rp2
+          receiverType = null
+          returnType = kotlin.String
+          symbol = rp2: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/Long
+              visibility: PUBLIC
+            type = kotlin.Long,
+          KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/Boolean
+              visibility: PUBLIC
+            type = kotlin.Boolean
+        ]
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Another.foo(<dispatch receiver>: Another, rp1: kotlin.Long, rp2: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = rp1
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = rp1: kotlin.Long
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = rp2
+              receiverType = null
+              returnType = kotlin.String
+              symbol = rp2: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = [
+            KaVariableSignature:
+              name = cp1
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = cp1: kotlin.Long
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = cp2
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = cp2: kotlin.Boolean
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /Another.foo
+      typeArgumentsMapping = {}

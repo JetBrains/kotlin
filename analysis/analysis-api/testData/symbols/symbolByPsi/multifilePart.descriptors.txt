@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -39,6 +40,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -79,7 +81,7 @@ KaNamedFunctionSymbol:
       type: kotlin/String
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -123,6 +125,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /x
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -154,7 +157,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(42)
+  initializer: KaConstantInitializerValue(42)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -215,6 +218,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /y
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -253,7 +257,7 @@ KaKotlinPropertySymbol:
         type: kotlin/Int
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
-      getContainingJvmClassName: null
+      getContainingJvmClassName: NotMultiFilePartKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -306,7 +310,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Int
     visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
-    getContainingJvmClassName: null
+    getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

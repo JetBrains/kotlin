@@ -1,18 +1,18 @@
-digraph implicitResolveWithJump_kts {
+digraph implicitResolveWithJump_fir_kts {
     graph [nodesep=3]
     node [shape=box penwidth=2]
     edge [penwidth=2]
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter file implicitResolveWithJump.kts [1]" style="filled" fillcolor=red];
-        1 [label="Exit file implicitResolveWithJump.kts [1]" style="filled" fillcolor=red];
+        0 [label="Enter file implicitResolveWithJump.fir.kts [1]" style="filled" fillcolor=red];
+        1 [label="Exit file implicitResolveWithJump.fir.kts [1]" style="filled" fillcolor=red];
     }
     0 -> {1} [color=green];
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter class <script-implicitResolveWithJump.kts> [2]" style="filled" fillcolor=red];
+        2 [label="Enter class <script-implicitResolveWithJump.fir.kts> [2]" style="filled" fillcolor=red];
         subgraph cluster_2 {
             color=blue
             3 [label="Enter property [3]" style="filled" fillcolor=red];
@@ -29,7 +29,7 @@ digraph implicitResolveWithJump_kts {
             11 [label="Function call exit: Q|A|.R|/A.a|.R|kotlin/String.plus|(...) [3]" style="filled" fillcolor=yellow];
             12 [label="Exit property [3]" style="filled" fillcolor=red];
         }
-        13 [label="Exit class <script-implicitResolveWithJump.kts> [2]" style="filled" fillcolor=red];
+        13 [label="Exit class <script-implicitResolveWithJump.fir.kts> [2]" style="filled" fillcolor=red];
     }
     2 -> {3} [color=green];
     2 -> {13} [style=dotted];

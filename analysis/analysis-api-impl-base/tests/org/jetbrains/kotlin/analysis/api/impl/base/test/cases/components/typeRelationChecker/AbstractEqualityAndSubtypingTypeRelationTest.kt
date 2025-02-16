@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -28,6 +29,9 @@ abstract class AbstractEqualityAndSubtypingTypeRelationTest : AbstractTypeRelati
         testServices: TestServices,
     )
 
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(EqualityAndSubtypingTestDirectives)
+
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
@@ -36,8 +40,8 @@ abstract class AbstractEqualityAndSubtypingTypeRelationTest : AbstractTypeRelati
     }
 
     override fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
-        val type1 = getTypeAtMarker(mainFile, testServices, caretTag = "type1")
-        val type2 = getTypeAtMarker(mainFile, testServices, caretTag = "type2")
+        val type1 = getTypeAtMarker(mainFile, testServices, qualifier = "type1")
+        val type2 = getTypeAtMarker(mainFile, testServices, qualifier = "type2")
 
         checkTypes(expectedResult, type1, type2, testServices)
     }

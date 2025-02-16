@@ -57,6 +57,10 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Apache 2 ([license/third_party/gwt_license.txt][gwt])
       - Origin: Derived from GWT, (C) 2007-08 Google Inc.
 
+ - Path: libraries/stdlib/src/kotlin/time
+      - License: 3-clause BSD license ([license/third_party/threetenbp_license.txt][threetenbp])
+      - Origin: Copyright (c) 2007-present, Stephen Colebourne & Michael Nascimento Santos
+
  - Path: libraries/stdlib/js/src/kotlin/UnsignedJs.kt
       - License: Apache 2 ([license/third_party/guava_license.txt][guava])
       - Origin: Derived from Guava's UnsignedLongs, (C) 2011 The Guava Authors
@@ -141,6 +145,10 @@ the Kotlin IntelliJ IDEA plugin:
    - License: Boost Software License 1.0 ([license/third_party/boost_LICENSE.txt][boost])
    - Origin: Derived from boost hash functions, Copyright 2005-2014 Daniel James
 
+ - Path: prepare/compiler/
+    - License: Apache 2 ([license/third_party/opentelemetry_license.txt][opentelemetry])
+    - Origin: Copyright The OpenTelemetry Authors
+
 ## Kotlin Test Data
 
 The following source code is used for testing the Kotlin compiler and/or plugin and is not incorporated into
@@ -223,6 +231,10 @@ any distributions of the compiler, libraries or plugin:
 The following source code is used for testing the Kotlin tools and/or libraries and is not incorporated into
 any distributions of the tools or libraries:
 
+ - Path: libraries/stdlib/test/time
+      - License: 3-clause BSD license ([license/third_party/threetenbp_license.txt][threetenbp])
+      - Origin: Copyright (c) 2007-present, Stephen Colebourne & Michael Nascimento Santos
+
  - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt
       - License: Apache 2 ([license/third_party/gradle_license.txt][gradle])
       - Origin: Gradle, Copyright 2002-2017 Gradle, Inc.
@@ -286,3 +298,5 @@ any distributions of the compiler, libraries or plugin:
 [rxjava]: third_party/testdata/rxjava_license.txt
 [spring]: third_party/testdata/spring_license.txt
 [sun]: third_party/sun_license.txt
+[threetenbp]: third_party/threetenbp_license.txt
+[opentelemetry]: third_party/opentelemetry_license.txt

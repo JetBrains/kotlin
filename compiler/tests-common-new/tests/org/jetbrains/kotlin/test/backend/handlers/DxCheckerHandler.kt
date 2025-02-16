@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.D8Checker
-import org.jetbrains.kotlin.codegen.getClassFiles
-import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
@@ -16,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
 class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -26,19 +25,15 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
         try {
             D8Checker.check(info.classFileFactory)
         } catch (e: Throwable) {
-            if (!GeneratorsFileUtil.isTeamCityBuild &&
+            if (!testServices.assertions.isTeamCityBuild &&
                 !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
             ) {
                 try {
-                    info.classFileFactory.getClassFiles().forEach {
-                        println(" * ${it.relativePath}")
-                    }
                     println(info.classFileFactory.createText())
-                } catch (_: Throwable) {
-                    // In FIR we have factory which can't print bytecode
-                    //   and it throws exception otherwise. So we need
-                    //   ignore that exception to report original one
-                    // TODO: fix original problem
+                } catch (e1: Throwable) {
+                    System.err.println("Exception thrown while trying to generate text:")
+                    e1.printStackTrace()
+                    System.err.println("---")
                 }
             }
             throw e

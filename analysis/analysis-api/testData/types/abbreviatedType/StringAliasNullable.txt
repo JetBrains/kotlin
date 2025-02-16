@@ -5,7 +5,7 @@ KaUsualClassType:
     classId: expansion/StringAlias
     nullability: NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: StringAlias
         symbol: KaTypeAliasSymbol(expansion/StringAlias)
         typeArguments: []
@@ -16,7 +16,7 @@ KaUsualClassType:
   classId: kotlin/String
   nullability: NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: String
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []

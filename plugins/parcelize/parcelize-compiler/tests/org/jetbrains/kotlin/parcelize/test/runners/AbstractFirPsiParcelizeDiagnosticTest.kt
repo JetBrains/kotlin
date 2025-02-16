@@ -9,18 +9,16 @@ import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_P
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
 abstract class AbstractFirParcelizeDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
-    override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         baseFirDiagnosticTestConfiguration()
         enableLazyResolvePhaseChecking()
 

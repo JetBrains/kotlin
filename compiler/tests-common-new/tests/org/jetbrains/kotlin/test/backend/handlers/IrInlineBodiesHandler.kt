@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedJvmOutputArtifact
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 
 class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     val declaredInlineFunctions = hashSetOf<IrSimpleFunction>()
@@ -27,16 +29,21 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun processModule(module: TestModule, info: IrBackendInput) {
         info.irModuleFragment.acceptChildrenVoid(InlineFunctionsCollector())
-        info.irModuleFragment.acceptChildrenVoid(InlineCallBodiesCheck(firEnabled = module.frontendKind == FrontendKinds.FIR))
+        info.irModuleFragment.acceptChildrenVoid(InlineCallBodiesCheck(firEnabled = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR))
 
-        assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.descriptorExtension.allUnboundSymbols.isEmpty())
+        val symbolTable = when (info) {
+            is IrBackendInput.JvmIrBackendInput -> info.backendInput.symbolTable
+            is Fir2IrCliBasedJvmOutputArtifact -> info.cliArtifact.result.symbolTable
+            else -> error("Unknown backend input kind: ${info::class.simpleName}")
+        }
+        assertions.assertTrue(symbolTable.descriptorExtension.allUnboundSymbols.isEmpty())
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         assertions.assertTrue(declaredInlineFunctions.isNotEmpty())
     }
 
-    inner class InlineFunctionsCollector : IrElementVisitorVoid {
+    inner class InlineFunctionsCollector : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -47,7 +54,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
         }
     }
 
-    inner class InlineCallBodiesCheck(val firEnabled: Boolean) : IrElementVisitorVoid {
+    inner class InlineCallBodiesCheck(val firEnabled: Boolean) : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

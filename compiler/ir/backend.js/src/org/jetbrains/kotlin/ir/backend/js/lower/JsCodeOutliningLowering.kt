@@ -17,9 +17,12 @@ import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.FunctionWithJsFuncAnnotationInliner
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irCallConstructor
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -28,7 +31,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -38,6 +41,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
@@ -130,7 +134,7 @@ class JsCodeOutliningLowering(
 
 private fun IrElement.containsCallsTo(symbol: IrFunctionSymbol): Boolean {
     var result = false
-    acceptChildrenVoid(object : IrElementVisitorVoid {
+    acceptChildrenVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             if (result) return
             element.acceptChildrenVoid(this)
@@ -161,7 +165,7 @@ private class JsCodeOutlineTransformer(
 
     init {
         if (container is IrFunction) {
-            container.valueParameters.forEach {
+            container.parameters.forEach {
                 registerValueDeclaration(it)
             }
         }
@@ -219,7 +223,7 @@ private class JsCodeOutlineTransformer(
         if (expression.symbol != intrinsics.jsCode)
             return null
 
-        val jsCodeArg = expression.getValueArgument(0) ?: compilationException("Expected js code string", expression)
+        val jsCodeArg = expression.arguments[0] ?: compilationException("Expected js code string", expression)
         val jsStatements = translateJsCodeIntoStatementList(jsCodeArg, container) ?: return null
 
         // Collect used Kotlin local variables and parameters.
@@ -238,14 +242,12 @@ private class JsCodeOutlineTransformer(
         // Building JS Ast function
         val newFun = createJsFunction(jsStatements, kotlinLocalsUsedInJs)
         val (jsFunCode, sourceMap) = printJsCodeWithDebugInfo(newFun)
-        annotation.putValueArgument(0, jsFunCode.toIrConst(loweringContext.irBuiltIns.stringType))
-        annotation.putValueArgument(1, sourceMap.toIrConst(loweringContext.irBuiltIns.stringType))
+        annotation.arguments[0] = jsFunCode.toIrConst(loweringContext.irBuiltIns.stringType)
+        annotation.arguments[1] = sourceMap.toIrConst(loweringContext.irBuiltIns.stringType)
 
         return with(loweringContext.createIrBuilder(container.symbol)) {
             irCall(outlinedFunction).apply {
-                kotlinLocalsUsedInJs.values.forEachIndexed { index, local ->
-                    putValueArgument(index, irGet(local))
-                }
+                arguments.assignFrom(kotlinLocalsUsedInJs.values, ::irGet)
             }
         }
     }

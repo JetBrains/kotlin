@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -50,4 +51,6 @@ class IrLazyEnumEntryImpl(
     override var correspondingClass: IrClass? = null
 
     override var initializerExpression: IrExpressionBody? = null
+
+    override var attributeOwnerId: IrElement = this
 }

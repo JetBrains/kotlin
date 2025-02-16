@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.codegen.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 
 abstract class AbstractFirWasmTest(
     targetPlatform: TargetPlatform,
@@ -128,11 +129,15 @@ open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner
 
-    override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForWasmBlackBoxCodegenTest()
-        defaultDirectives {
-            +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
-            +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
+            defaultDirectives {
+                +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+                +WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
+                +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
+            }
         }
     }
 }
@@ -149,6 +154,13 @@ open class AbstractFirWasmWasiTest(
 
     override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
         get() = ::WasmWasiBoxTestHelperSourceProvider
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
+        }
+    }
 }
 
 open class AbstractFirWasmWasiCodegenBoxTest : AbstractFirWasmWasiTest(

@@ -1,0 +1,12 @@
+> b bar
+> r
+> bt
+* thread #1, [..], stop reason = breakpoint 1.1
+  * frame #0: [..]`kfun:#bar(){}kotlin.Int at main.kt:8:1
+    frame #1: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] <inlined-lambda> at main.kt:12:9
+    frame #2: [..]`kfun:#main(kotlin.Array<kotlin.String>){} [inlined] kfun:#foo(kotlin.Function0<kotlin.Unit>){} at main.kt:5:12
+    frame #3: [..]`kfun:#main(args=[]){} at main.kt:11:5
+    frame #4: [..]`Konan_start(args=[..]) at [..]
+    frame #5: [..]
+    frame #6: [..]
+> q

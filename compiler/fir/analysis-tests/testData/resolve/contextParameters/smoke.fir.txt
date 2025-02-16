@@ -1,6 +1,7 @@
 FILE: smoke.kt
     context(s: R|kotlin/String|)
     public final class C : R|kotlin/Any| {
+        context(s: R|kotlin/String|, s: R|kotlin/String|)
         public constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

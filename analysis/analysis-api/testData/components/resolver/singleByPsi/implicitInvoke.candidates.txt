@@ -7,10 +7,12 @@ KtCallExpression(110,117): 'x(true)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = x
@@ -26,13 +28,15 @@ KtCallExpression(110,117): 'x(true)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Boolean', but 'Int' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -41,10 +45,12 @@ KtCallExpression(110,117): 'x(true)'
           receiverType = null
           returnType = kotlin.Char
           symbol = c: kotlin.Char
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -57,13 +63,15 @@ KtCallExpression(110,117): 'x(true)'
               receiverType = null
               returnType = kotlin.Char
               symbol = c: kotlin.Char
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /x
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Boolean', but 'Char' was expected.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -72,10 +80,12 @@ KtCallExpression(110,117): 'x(true)'
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -88,8 +98,10 @@ KtCallExpression(110,117): 'x(true)'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

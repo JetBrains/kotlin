@@ -26,7 +26,7 @@ class BlackBoxInlinerCodegenSuppressor(testServices: TestServices) : AfterAnalys
         get() = listOf(CodegenTestDirectives)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val targetFrontend = testServices.defaultsProvider.defaultFrontend
+        val targetFrontend = testServices.defaultsProvider.frontendKind
 
         val commonResult = suppressForTargetFrontend(failedAssertions, CodegenTestDirectives.IGNORE_INLINER)
         if (commonResult != null) return commonResult

@@ -6,7 +6,7 @@ KaUsualClassType:
   classId: Foo
   nullability: NON_NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: Foo
       symbol: KaNamedClassSymbol(Foo)
       typeArguments: [
@@ -16,7 +16,7 @@ KaUsualClassType:
           classId: First
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: First
               symbol: KaNamedClassSymbol(First)
               typeArguments: []
@@ -29,7 +29,7 @@ KaUsualClassType:
           classId: Second
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: Second
               symbol: KaNamedClassSymbol(Second)
               typeArguments: []
@@ -42,7 +42,7 @@ KaUsualClassType:
           classId: Third
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: Third
               symbol: KaNamedClassSymbol(Third)
               typeArguments: []
@@ -59,7 +59,7 @@ KaUsualClassType:
       classId: First
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: First
           symbol: KaNamedClassSymbol(First)
           typeArguments: []
@@ -72,7 +72,7 @@ KaUsualClassType:
       classId: Second
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: Second
           symbol: KaNamedClassSymbol(Second)
           typeArguments: []
@@ -85,7 +85,7 @@ KaUsualClassType:
       classId: Third
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: Third
           symbol: KaNamedClassSymbol(Third)
           typeArguments: []

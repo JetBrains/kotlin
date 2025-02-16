@@ -1,7 +1,7 @@
 @0:0..8:0 FILE fqName:<root> fileName:/kt63779.kt
   @2:0..7:1 FUN name:topLevelMethod visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Unit
-    @2:19..25 VALUE_PARAMETER name:x index:0 type:kotlin.Int
-    @2:27..33 VALUE_PARAMETER name:y index:1 type:kotlin.Int
+    @2:19..25 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+    @2:27..33 VALUE_PARAMETER kind:Regular name:y index:1 type:kotlin.Int
     @2:35..7:1 BLOCK_BODY
       @3:4..6:5 WHEN type=kotlin.Unit origin=IF
         @3:7..4:5 BRANCH

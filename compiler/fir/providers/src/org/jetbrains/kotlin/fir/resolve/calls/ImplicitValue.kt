@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -35,11 +36,11 @@ import org.jetbrains.kotlin.types.SmartcastStability
  *
  * See the KDoc of [ReceiverValue] for further details.
  */
-sealed class ImplicitValue(
+sealed class ImplicitValue<S>(
     type: ConeKotlinType,
-    protected val mutable: Boolean
-) {
-    abstract val boundSymbol: FirBasedSymbol<*>
+    protected val mutable: Boolean,
+) where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
+    abstract val boundSymbol: S
 
     var type: ConeKotlinType = type
         private set
@@ -121,14 +122,14 @@ sealed class ImplicitValue(
         cachedCurrentExpression = null
     }
 
-    abstract fun createSnapshot(keepMutable: Boolean): ImplicitValue
+    abstract fun createSnapshot(keepMutable: Boolean): ImplicitValue<S>
 }
 
 class ImplicitContextParameterValue(
     override val boundSymbol: FirValueParameterSymbol,
     type: ConeKotlinType,
     mutable: Boolean = true,
-) : ImplicitValue(type, mutable) {
+) : ImplicitValue<FirValueParameterSymbol>(type, mutable) {
     override fun computeOriginalExpression(): FirExpression = buildPropertyAccessExpression {
         source = boundSymbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
         calleeReference = buildResolvedNamedReference {

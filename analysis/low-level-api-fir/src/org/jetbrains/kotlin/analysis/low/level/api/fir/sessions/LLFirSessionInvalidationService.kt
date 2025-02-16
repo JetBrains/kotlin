@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationListener
@@ -20,11 +21,13 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleState
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalScriptModuleStateModificationListener
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 
 /**
  * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics]
@@ -38,12 +41,19 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 class LLFirSessionInvalidationService(private val project: Project) {
     internal class LLKotlinModuleStateModificationListener(val project: Project) : KotlinModuleStateModificationListener {
         override fun onModification(module: KaModule, modificationKind: KotlinModuleStateModificationKind) {
-            getInstance(project).invalidate(module)
+            val sessionInvalidationService = getInstance(project)
+            if (module is KaBuiltinsModule) {
+                // Modification of builtins might affect any session, so all sessions need to be invalidated.
+                sessionInvalidationService.invalidateAll(includeLibraryModules = true)
+            } else {
+                sessionInvalidationService.invalidate(module)
+            }
         }
     }
 
     internal class LLKotlinModuleOutOfBlockModificationListener(val project: Project) : KotlinModuleOutOfBlockModificationListener {
         override fun onModification(module: KaModule) {
+            // We do not need to handle `KaBuiltinsModule` here because builtins cannot be affected by out-of-block modification.
             getInstance(project).invalidate(module)
         }
     }
@@ -58,6 +68,13 @@ class LLFirSessionInvalidationService(private val project: Project) {
         KotlinGlobalSourceModuleStateModificationListener {
         override fun onModification() {
             getInstance(project).invalidateAll(includeLibraryModules = false)
+        }
+    }
+
+    internal class LLKotlinGlobalScriptModuleStateModificationListener(val project: Project) :
+        KotlinGlobalScriptModuleStateModificationListener {
+        override fun onModification() {
+            getInstance(project).invalidateScriptSessions()
         }
     }
 
@@ -80,14 +97,8 @@ class LLFirSessionInvalidationService(private val project: Project) {
         }
     }
 
-    internal class LLKotlinGlobalScriptModuleStateModificationListener(val project: Project) :
-        KotlinGlobalScriptModuleStateModificationListener {
-        override fun onModification() {
-            getInstance(project).invalidateScriptSessions()
-        }
-    }
-
-    private val sessionCache: LLFirSessionCache by lazy {
+    @KaCachedService
+    private val sessionCache: LLFirSessionCache by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LLFirSessionCache.getInstance(project)
     }
 
@@ -96,6 +107,9 @@ class LLFirSessionInvalidationService(private val project: Project) {
 
     /**
      * Invalidates the session(s) associated with [module].
+     *
+     * We do not need to handle [KaBuiltinsModule] and invalidate [LLFirBuiltinsSessionFactory] here because we invoke [invalidateAll] when
+     * a builtins module receives a targeted modification event.
      *
      * Per the contract of [LLFirSessionInvalidationService], [invalidate] may only be called from a write action.
      */
@@ -133,19 +147,23 @@ class LLFirSessionInvalidationService(private val project: Project) {
     private fun invalidateScriptSessions() = sessionCache.removeAllScriptSessions()
 
     /**
-     * Invalidates all cached sessions. If [includeLibraryModules] is `true`, also invalidates sessions for libraries.
+     * Invalidates all cached sessions. If [includeLibraryModules] is `true`, also invalidates sessions for libraries and builtins.
      *
-     * The method must be called in a write action, or in the case if the caller can guarantee no other threads can perform invalidation or
-     * code analysis until the invalidation is complete.
+     * The method must be called in a write action, or alternatively when the caller can guarantee that no other threads can perform
+     * invalidation or code analysis until the invalidation is complete.
      */
     fun invalidateAll(includeLibraryModules: Boolean) = performInvalidation {
-        // When anchor modules are configured and `includeLibraryModules` is `false`, we get a situation where the anchor module session
-        // will be invalidated (because it is a source session), while its library dependents won't be invalidated. But such library
-        // sessions also need to be invalidated because they depend on the anchor module.
-        //
-        // Invalidating anchor modules before all source sessions has the advantage that `invalidate`'s session existence check will work,
-        // so we do not have to invalidate dependent sessions if the anchor module does not exist in the first place.
-        if (!includeLibraryModules) {
+        if (includeLibraryModules) {
+            // Builtins modules and sessions are not part of `LLFirSessionCache`, so they need to be invalidated separately. This can be
+            // triggered either by a global module state modification, or a local module state modification of the builtins module itself.
+            LLFirBuiltinsSessionFactory.getInstance(project).invalidateAll()
+        } else {
+            // When anchor modules are configured and `includeLibraryModules` is `false`, we get a situation where the anchor module session
+            // will be invalidated (because it is a source session), while its library dependents won't be invalidated. But such library
+            // sessions also need to be invalidated because they depend on the anchor module.
+            //
+            // Invalidating anchor modules before all source sessions has the advantage that `invalidate`'s session existence check will
+            // work, so we do not have to invalidate dependent sessions if the anchor module does not exist in the first place.
             val anchorModules = KotlinAnchorModuleProvider.getInstance(project)?.getAllAnchorModulesIfComputed()
             anchorModules?.forEach(::invalidate)
         }

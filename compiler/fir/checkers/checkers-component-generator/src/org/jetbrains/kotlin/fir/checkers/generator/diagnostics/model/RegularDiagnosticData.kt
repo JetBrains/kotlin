@@ -43,6 +43,7 @@ data class DiagnosticParameter(
 
 enum class PositioningStrategy {
     DEFAULT,
+    SYNTAX_ERROR,
     VAL_OR_VAR_NODE,
     SECONDARY_CONSTRUCTOR_DELEGATION_CALL,
     DECLARATION_NAME,

@@ -93,11 +93,10 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             if (reportProblems) {
                 try {
                     println(classFileFactory.createText())
-                } catch (_: Throwable) {
-                    // In FIR we have factory which can't print bytecode
-                    //   and it throws exception otherwise. So we need
-                    //   ignore that exception to report original one
-                    // TODO: fix original problem
+                } catch (e1: Throwable) {
+                    System.err.println("Exception thrown while trying to generate text:")
+                    e1.printStackTrace()
+                    System.err.println("---")
                 }
             }
             throw e
@@ -311,7 +310,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 }
 
-internal fun generatedTestClassLoader(
+fun generatedTestClassLoader(
     testServices: TestServices,
     module: TestModule,
     classFileFactory: ClassFileFactory,
@@ -337,7 +336,7 @@ internal fun generatedTestClassLoader(
     }
 }
 
-private fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: TestModule): MutableList<File> {
+fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: TestModule): MutableList<File> {
     val visited = mutableSetOf<TestModule>()
     val result = mutableListOf<File>()
 
@@ -353,7 +352,7 @@ private fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: 
 
         for (dependency in module.allDependencies) {
             if (dependency.kind == DependencyKind.Binary) {
-                computeClasspath(testServices.dependencyProvider.getTestModule(dependency.moduleName), false)
+                computeClasspath(dependency.dependencyModule, isRoot = false)
             }
         }
     }

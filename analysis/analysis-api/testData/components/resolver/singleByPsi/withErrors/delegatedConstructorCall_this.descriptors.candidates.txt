@@ -7,10 +7,12 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
           receiverType = null
           returnType = kotlin.Int
           symbol = p1: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,12 +25,14 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
@@ -37,10 +41,12 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -53,8 +59,10 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>

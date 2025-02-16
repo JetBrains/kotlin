@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -33,6 +34,8 @@ class IrClassImpl @IrImplementationDetail constructor(
     override var modality: Modality,
     override val source: SourceElement,
 ) : IrClass() {
+    override var attributeOwnerId: IrElement = this
+
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var isExternal: Boolean = false
@@ -41,10 +44,6 @@ class IrClassImpl @IrImplementationDetail constructor(
 
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> = ArrayList()
-
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
 
     override var metadata: MetadataSource? = null
 

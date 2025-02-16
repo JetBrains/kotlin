@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
+import org.jetbrains.kotlin.contracts.description.KtErroneousContractElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
@@ -207,9 +209,14 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
             }
     }
 
-    class NotAParameterReference(val element: ConeContractDescriptionElement) : ConeContractDescriptionError() {
+    class NotAParameterReference(
+        val element: KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>,
+    ) : ConeContractDescriptionError() {
         override val reason: String
-            get() = "'$element' is not a parameter or receiver reference"
+            get() = when (element) {
+                is KtErroneousContractElement -> element.diagnostic.reason
+                else -> "element is not a parameter or receiver reference"
+            }
     }
 
     class IllegalParameter(val symbol: FirCallableSymbol<*>, override val reason: String) : ConeContractDescriptionError()

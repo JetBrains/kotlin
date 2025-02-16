@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: Ignoring an implementation of the method `void MemberScope$TestBasic.<init>()` because it has multiple definitions
+// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_DEXING
 // DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS, -MISPLACED_TYPE_PARAMETER_CONSTRAINTS
 
 class MemberScope {

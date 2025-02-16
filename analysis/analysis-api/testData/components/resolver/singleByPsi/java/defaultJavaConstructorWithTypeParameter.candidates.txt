@@ -4,15 +4,17 @@ KtNameReferenceExpression(60,69): 'JavaClass'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = JavaClass<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!>
+          returnType = JavaClass<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin.Int!>
           symbol = <constructor>(): JavaClass<TT>
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
-        TT -> (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!)
+        TT -> (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin.Int!)
       }
     isInBestCandidates = true

@@ -1,8 +1,6 @@
-// DONT_TARGET_EXACT_BACKEND: JVM
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // ^ @AssociatedObjectKey is not available in Kotlin/JVM
 
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ISSUE: KT-70132
 
 // MODULE: lib1
@@ -28,11 +26,13 @@ annotation class Annotation2(val kClass: KClass<out Any>)
 import kotlin.reflect.*
 
 @Annotation1(Outer.Inner1.Companion::class)
+@Annotation2(Outer.Inner2.Companion::class)
 class Outer {
     class Inner1 {
         companion object {}
     }
 
+    @Annotation1(Outer.Inner1.Companion::class)
     @Annotation2(Outer.Inner2.Companion::class)
     class Inner2 {
         companion object {}
@@ -41,6 +41,8 @@ class Outer {
 
 fun box(): String {
     if (Outer::class.findAssociatedObject<Annotation1>() != Outer.Inner1.Companion) return "fail1"
-    if (Outer.Inner2::class.findAssociatedObject<Annotation2>() != Outer.Inner2.Companion) return "fail2"
+    if (Outer::class.findAssociatedObject<Annotation2>() != Outer.Inner2.Companion) return "fail2"
+    if (Outer.Inner2::class.findAssociatedObject<Annotation1>() != Outer.Inner1.Companion) return "fail3"
+    if (Outer.Inner2::class.findAssociatedObject<Annotation2>() != Outer.Inner2.Companion) return "fail4"
     return "OK"
 }

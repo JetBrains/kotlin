@@ -9,7 +9,7 @@ interface I1 {
 class C1 : I1 {
     override fun foo(): Nothing = TODO()
 }
-// CHECK-LABEL: define i32 @"kfun:C1#$<bridge-DNN>foo(){}kotlin.Nothing(){}kotlin.Int
+// CHECK-LABEL: define i32 @"kfun:C1#$<bridge-DN>foo(){}kotlin.Nothing(){}kotlin.Int
 // CHECK-LABEL: epilogue:
 
 open class Foo2<T>(val x: T)
@@ -19,7 +19,7 @@ interface I2 {
 }
 
 class Bar2 : Foo2<Unit>(Unit), I2
-// CHECK-LABEL: define void @"kfun:Bar2#$<bridge-DNN><get-x>(){}(){}
+// CHECK-LABEL: define void @"kfun:Bar2#$<bridge-DN><get-x>(){}(){}
 // CHECK-LABEL: epilogue:
 
 fun getX2(i: I2) = i.x
@@ -33,7 +33,7 @@ open class Foo3<T : Int> {
 }
 
 class Bar3 : Foo3<Nothing>(), I3
-// CHECK-LABEL: define void @"kfun:Bar3#$<bridge-DNN>foo(){}kotlin.Nothing(){}kotlin.Nothing
+// CHECK-LABEL: define void @"kfun:Bar3#$<bridge-DN>foo(){}kotlin.Nothing(){}kotlin.Nothing
 // CHECK-LABEL: epilogue:
 
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"

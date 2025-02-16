@@ -89,7 +89,7 @@ private fun JvmIrBuilder.lowerInlineClassArgument(expression: IrExpression): IrE
     if (InlineClassAbi.unboxType(expression.type) == null)
         return null
     val toStringFunction = expression.type.classOrNull?.owner?.toStringFunction
-        ?.let { (it as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: it }
+        ?.let { it.attributeOwnerId as? IrFunction ?: it }
         ?: return null
     val toStringReplacement = backendContext.inlineClassReplacements.getReplacementFunction(toStringFunction)
         ?: return null

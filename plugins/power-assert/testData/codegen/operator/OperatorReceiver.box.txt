@@ -1,7 +1,6 @@
 test1: ---
 assert(dispatch + dispatch == Failure)
-       |        | |        |  |
-       |        | |        |  Failure
+       |        | |        |
        |        | |        false
        |        | Dispatch(n=1)
        |        Dispatch(n=2)
@@ -9,8 +8,7 @@ assert(dispatch + dispatch == Failure)
 ---
 test2: ---
 assert(extension + extension == Failure)
-       |         | |         |  |
-       |         | |         |  Failure
+       |         | |         |
        |         | |         false
        |         | Extension(n=1)
        |         Extension(n=2)
@@ -18,17 +16,15 @@ assert(extension + extension == Failure)
 ---
 test3: ---
 assert(extension - extension == Failure)
-       |           |         |  |
-       |           |         |  Failure
-       |           |         false
-       |           Extension(n=1)
-       Extension(n=0)
+       |         | |         |
+       |         | |         false
+       |         | Extension(n=1)
+       |         Extension(n=0)
        Extension(n=1)
 ---
 test4: ---
 assert(dispatch - dispatch == Failure)
-       |        | |        |  |
-       |        | |        |  Failure
+       |        | |        |
        |        | |        false
        |        | Dispatch(n=1)
        |        Dispatch(n=0)
@@ -36,8 +32,7 @@ assert(dispatch - dispatch == Failure)
 ---
 test5: ---
 assert(extension - extension == Failure)
-       |         | |         |  |
-       |         | |         |  Failure
+       |         | |         |
        |         | |         false
        |         | Extension(n=1)
        |         Extension(n=2)
@@ -45,11 +40,10 @@ assert(extension - extension == Failure)
 ---
 test6: ---
 assert(extension * extension == Failure)
-       |           |         |  |
-       |           |         |  Failure
-       |           |         false
-       |           Extension(n=1)
-       Extension(n=1)
+       |         | |         |
+       |         | |         false
+       |         | Extension(n=1)
+       |         Extension(n=1)
        Extension(n=1)
 ---
 test7: ---
@@ -68,36 +62,35 @@ assert(dispatch in extension)
 ---
 test9: ---
 assert(extension in extension)
-       |            |
-       |            Extension(n=1)
-       false
+       |         |  |
+       |         |  Extension(n=1)
+       |         false
        Extension(n=1)
 ---
 test10: ---
 assert(context in dispatch)
-       |          |
-       |          Dispatch(n=1)
-       false
+       |       |  |
+       |       |  Dispatch(n=1)
+       |       false
        Context(n=1)
 ---
 test11: ---
 assert(dispatch in extension)
-       |           |
-       |           Extension(n=1)
-       false
+       |        |  |
+       |        |  Extension(n=1)
+       |        false
        Dispatch(n=1)
 ---
 test12: ---
 assert(context in extension)
-       |          |
-       |          Extension(n=1)
-       false
+       |       |  |
+       |       |  Extension(n=1)
+       |       false
        Context(n=1)
 ---
 test13: ---
 assert(dispatch.plus(dispatch) == Failure)
-       |        |    |         |  |
-       |        |    |         |  Failure
+       |        |    |         |
        |        |    |         false
        |        |    Dispatch(n=1)
        |        Dispatch(n=2)
@@ -105,8 +98,7 @@ assert(dispatch.plus(dispatch) == Failure)
 ---
 test14: ---
 assert(extension.plus(extension) == Failure)
-       |         |    |          |  |
-       |         |    |          |  Failure
+       |         |    |          |
        |         |    |          false
        |         |    Extension(n=1)
        |         Extension(n=2)
@@ -114,8 +106,7 @@ assert(extension.plus(extension) == Failure)
 ---
 test15: ---
 assert(extension.minus(extension) == Failure)
-       |         |     |          |  |
-       |         |     |          |  Failure
+       |         |     |          |
        |         |     |          false
        |         |     Extension(n=1)
        |         Extension(n=0)
@@ -123,8 +114,7 @@ assert(extension.minus(extension) == Failure)
 ---
 test16: ---
 assert(dispatch.minus(dispatch) == Failure)
-       |        |     |         |  |
-       |        |     |         |  Failure
+       |        |     |         |
        |        |     |         false
        |        |     Dispatch(n=1)
        |        Dispatch(n=0)
@@ -132,8 +122,7 @@ assert(dispatch.minus(dispatch) == Failure)
 ---
 test17: ---
 assert(extension.minus(extension) == Failure)
-       |         |     |          |  |
-       |         |     |          |  Failure
+       |         |     |          |
        |         |     |          false
        |         |     Extension(n=1)
        |         Extension(n=2)
@@ -141,8 +130,7 @@ assert(extension.minus(extension) == Failure)
 ---
 test18: ---
 assert(extension.times(extension) == Failure)
-       |         |     |          |  |
-       |         |     |          |  Failure
+       |         |     |          |
        |         |     |          false
        |         |     Extension(n=1)
        |         Extension(n=1)

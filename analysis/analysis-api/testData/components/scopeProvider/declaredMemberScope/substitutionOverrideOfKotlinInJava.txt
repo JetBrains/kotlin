@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /JavaC.func
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false

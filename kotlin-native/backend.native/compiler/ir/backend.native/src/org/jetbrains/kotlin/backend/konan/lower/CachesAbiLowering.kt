@@ -112,7 +112,7 @@ internal class CachesAbiSupport(mapping: Mapping, private val irFactory: IrFacto
 /**
  * Adds accessors to private entities.
  */
-internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, IrElementVisitor<Unit, MutableList<IrFunction>> {
+internal class ExportCachesAbiVisitor(val context: Context) : IrVisitor<Unit, MutableList<IrFunction>>(), FileLoweringPass {
     private val cachesAbiSupport = context.cachesAbiSupport
 
     override fun lower(irFile: IrFile) {

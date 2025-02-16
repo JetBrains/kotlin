@@ -29,7 +29,6 @@ kotlinArtifacts {
         modes(DEBUG, RELEASE)
         target = iosArm64
         it.static = false
-        embedBitcode = EmbedBitcodeMode.MARKER
         kotlinOptions {
             verbose = true
         }
@@ -37,7 +36,6 @@ kotlinArtifacts {
     }
     it.native.FatFramework("groofatframe") {
         targets(iosX64, iosSimulatorArm64)
-        embedBitcode = EmbedBitcodeMode.DISABLE
         kotlinOptions {
             suppressWarnings = true
         }

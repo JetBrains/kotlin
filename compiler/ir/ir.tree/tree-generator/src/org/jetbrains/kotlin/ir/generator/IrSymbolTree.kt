@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.generator.IrTree.getField
 import org.jetbrains.kotlin.ir.generator.IrTree.getValue
 import org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedProperty
 import org.jetbrains.kotlin.ir.generator.IrTree.property
+import org.jetbrains.kotlin.ir.generator.IrTree.replSnippet
 import org.jetbrains.kotlin.ir.generator.IrTree.`return`
 import org.jetbrains.kotlin.ir.generator.IrTree.returnTarget
 import org.jetbrains.kotlin.ir.generator.IrTree.returnableBlock
@@ -128,6 +129,11 @@ object IrSymbolTree : AbstractIrSymbolTreeBuilder() {
     val scriptSymbol by element {
         parent(classifierSymbol)
         bindableSymbolParent("ScriptDescriptor", script)
+    }
+
+    val replSnippetSymbol by element {
+        parent(type<TypeConstructorMarker>())
+        bindableSymbolParent("Nothing", replSnippet)
     }
 
     val typeParameterSymbol by element {

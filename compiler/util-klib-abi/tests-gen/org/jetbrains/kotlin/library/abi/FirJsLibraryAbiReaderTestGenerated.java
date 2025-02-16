@@ -109,6 +109,12 @@ public class FirJsLibraryAbiReaderTestGenerated extends AbstractFirJsLibraryAbiR
   }
 
   @Test
+  @TestMetadata("properties_with_context_parameters.kt")
+  public void testProperties_with_context_parameters() {
+    runTest("compiler/testData/klib/dump-abi/content/properties_with_context_parameters.kt");
+  }
+
+  @Test
   @TestMetadata("root_package.kt")
   public void testRoot_package() {
     runTest("compiler/testData/klib/dump-abi/content/root_package.kt");
@@ -136,12 +142,6 @@ public class FirJsLibraryAbiReaderTestGenerated extends AbstractFirJsLibraryAbiR
   @TestMetadata("value_parameters.kt")
   public void testValue_parameters() {
     runTest("compiler/testData/klib/dump-abi/content/value_parameters.kt");
-  }
-
-  @Test
-  @TestMetadata("value_parameters_with_context_parameters.kt")
-  public void testValue_parameters_with_context_parameters() {
-    runTest("compiler/testData/klib/dump-abi/content/value_parameters_with_context_parameters.kt");
   }
 
   @Test

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.cli.pipeline
 
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
+import org.jetbrains.kotlin.util.PerformanceManager
 
 abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext> {
     object CheckMessageCollector : CheckCompilationErrors() {
@@ -46,27 +46,27 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
 
 object PerformanceNotifications {
     // frontend
-    object AnalysisStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyAnalysisStarted)
-    object AnalysisFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyAnalysisFinished)
+    object AnalysisStarted : AbstractNotification(PerformanceManager::notifyAnalysisStarted)
+    object AnalysisFinished : AbstractNotification(PerformanceManager::notifyAnalysisFinished)
 
     // fir2ir
-    object IrTranslationStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyIRTranslationStarted)
-    object IrTranslationFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyIRTranslationFinished)
+    object IrTranslationStarted : AbstractNotification(PerformanceManager::notifyIRTranslationStarted)
+    object IrTranslationFinished : AbstractNotification(PerformanceManager::notifyIRTranslationFinished)
 
     // backend lowerings
-    object IrLoweringStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyIRLoweringStarted)
-    object IrLoweringFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyIRLoweringFinished)
+    object IrLoweringStarted : AbstractNotification(PerformanceManager::notifyIRLoweringStarted)
+    object IrLoweringFinished : AbstractNotification(PerformanceManager::notifyIRLoweringFinished)
 
     // backend codegen
-    object IrGenerationStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyIRGenerationStarted)
-    object IrGenerationFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyIRGenerationFinished)
+    object IrGenerationStarted : AbstractNotification(PerformanceManager::notifyIRGenerationStarted)
+    object IrGenerationFinished : AbstractNotification(PerformanceManager::notifyIRGenerationFinished)
 
     // whole backend
-    object GenerationStarted : AbstractNotification(CommonCompilerPerformanceManager::notifyGenerationStarted)
-    object GenerationFinished : AbstractNotification(CommonCompilerPerformanceManager::notifyGenerationFinished)
+    object GenerationStarted : AbstractNotification(PerformanceManager::notifyGenerationStarted)
+    object GenerationFinished : AbstractNotification(PerformanceManager::notifyGenerationFinished)
 
     sealed class AbstractNotification(
-        val notify: CommonCompilerPerformanceManager.() -> Unit
+        val notify: PerformanceManager.() -> Unit
     ) : Action<PipelineArtifact, PipelineContext> {
         override fun invoke(
             state: ActionState,

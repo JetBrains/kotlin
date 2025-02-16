@@ -1,0 +1,4 @@
+KtNameReferenceExpression(181,190): 'funMember'
+  KtSimpleNameReference:
+    (in Base) context(a@A)
+    fun funMember()

@@ -42,8 +42,8 @@ class FirJsKlibSerializerFacade(
 
     constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
+    override fun shouldTransform(module: TestModule): Boolean {
+        return testServices.defaultsProvider.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {

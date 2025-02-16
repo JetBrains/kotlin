@@ -8,11 +8,11 @@ import kotlin.reflect.KProperty
 
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
-expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MySharedImmutable<!>()
+expect annotation class MySharedImmutable()
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyThreadLocal<!>()
+expect annotation class MyThreadLocal()
 
 fun println(value: Int) {}
 fun println(value: String) {}

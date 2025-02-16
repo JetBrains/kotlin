@@ -516,30 +516,6 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     public void testAllFilesPresentInReflection() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"), null, TargetBackend.WASM, true);
     }
-
-    @Test
-    @TestMetadata("findAssociatedObject.kt")
-    public void testFindAssociatedObject() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectAndDCE.kt")
-    public void testFindAssociatedObjectAndDCE() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectAndDCE.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
-    public void testFindAssociatedObjectInSeparatedFile() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
-    }
-
-    @Test
-    @TestMetadata("findAssociatedObjectLazyness.kt")
-    public void testFindAssociatedObjectLazyness() {
-      runTest("js/js.translator/testData/box/reflection/findAssociatedObjectLazyness.kt");
-    }
   }
 
   @Nested

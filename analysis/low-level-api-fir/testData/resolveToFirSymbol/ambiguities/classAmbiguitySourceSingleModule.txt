@@ -1,0 +1,35 @@
+KtClass 'A' in 'main.kt' (17,1):
+  public final class A : R|kotlin/Any| {
+      public constructor(): R|test/A| {
+          super<R|kotlin/Any|>()
+      }
+
+      public final val three: R|kotlin/Int| = Int(3)
+          public get(): R|kotlin/Int|
+
+  }
+
+
+KtClass 'A' in 'main.kt' (5,1):
+  public final class A : R|kotlin/Any| {
+      public constructor(): R|test/A| {
+          super<R|kotlin/Any|>()
+      }
+
+      public final val one: R|kotlin/Int| = Int(1)
+          public get(): R|kotlin/Int|
+
+  }
+
+
+KtClass 'A' in 'main.kt' (9,1):
+  public final class A : R|kotlin/Any| {
+      public constructor(): R|test/A| {
+          super<R|kotlin/Any|>()
+      }
+
+      public final val two: R|kotlin/Int| = Int(2)
+          public get(): R|kotlin/Int|
+
+  }
+

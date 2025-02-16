@@ -11,13 +11,17 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.BytecodeListingHandler
 import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrInlineBodiesHandler
+import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
+import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
+import org.jetbrains.kotlin.test.configuration.useInlineHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
@@ -27,8 +31,8 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -42,10 +46,11 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<R : ResultingArt
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
     open val directiveToSuppressTest: ValueDirective<TargetBackend> = IGNORE_BACKEND_MULTI_MODULE
 
-    override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter)
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        commonConfigurationForJvmTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
         useInlineHandlers()
         configureCommonHandlersForBoxTest()
         useModuleStructureTransformers(
@@ -70,6 +75,9 @@ open class AbstractIrCompileKotlinAgainstInlineKotlinTest(targetBackend: TargetB
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::JvmIrBackendFacade
 }
 
 private fun TestConfigurationBuilder.configureForSerialization() {
@@ -96,10 +104,13 @@ open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestBase(val pars
     AbstractCompileKotlinAgainstInlineKotlinTestBase<FirOutputArtifact>(FrontendKinds.FIR, TargetBackend.JVM_IR_SERIALIZE) {
 
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
+        get() = ::FirCliJvmFacade
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter
+        get() = ::Fir2IrCliJvmFacade
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+        get() = ::BackendCliJvmFacade
 
     override val directiveToSuppressTest = IGNORE_BACKEND_K2_MULTI_MODULE
 

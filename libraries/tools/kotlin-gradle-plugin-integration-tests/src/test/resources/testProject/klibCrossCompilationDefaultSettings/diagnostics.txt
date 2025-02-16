@@ -1,7 +1,18 @@
 > Configure project :
-w: [DisabledKotlinNativeTargets | WARNING] The following Kotlin/Native targets cannot be built on this machine and are disabled:
+w: [DisabledKotlinNativeTargets | WARNING] Disabled Kotlin/Native Targets
+The following Kotlin/Native targets cannot be built on this machine and are disabled:
 iosArm64
 To hide this message, add 'kotlin.native.ignoreDisabledTargets=true' to the Gradle properties.
+#diagnostic-end
+
+w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] Usage of Internal Kotlin Gradle Plugin Properties Detected
+ATTENTION! This build uses the following Kotlin Gradle Plugin properties:
+
+kotlin.internal.diagnostics.ignoreWarningMode
+
+Internal properties are not recommended for production use.
+Stability and future compatibility of the build is not guaranteed.
+Please consider using the public API instead of internal properties.
 #diagnostic-end
 
 

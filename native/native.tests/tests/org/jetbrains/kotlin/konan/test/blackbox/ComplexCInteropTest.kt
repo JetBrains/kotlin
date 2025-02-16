@@ -16,29 +16,28 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@ClassicPipeline()
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicComplexCInteropTest : ComplexCInteropTestBase()
 
 @FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 class FirComplexCInteropTest : ComplexCInteropTestBase()
 
@@ -521,5 +520,30 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         } finally {
             process.destroyForcibly()
         }
+    }
+
+    @Test
+    @TestMetadata("initWithExternalRCRef_leak")
+    fun testInitWithExternalRCRefLeak() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        Assumptions.assumeFalse(targets.areDifferentTargets())
+
+        val srcDir = interopDir.resolve("swift/initWithExternalRCRef_leak")
+
+        val (testCase, compilationResult) = compileDefAndKtToExecutable(
+            testName = "initWithExtgernalRCRef_leak",
+            defFile = srcDir.resolve("cinterop.def"),
+            ktFiles = listOf(srcDir.resolve("main.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                compilerArgs = listOf(
+                    "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+                    "-Xbinary=swiftExport=true",
+                ),
+                cinteropArgs = listOf("-Xcompile-source", srcDir.resolve("cinterop.m").path),
+                objcArc = false
+            ),
+            extras = TestCase.NoTestRunnerExtras(),
+        )
+        runExecutableAndVerify(testCase, TestExecutable.fromCompilationResult(testCase, compilationResult))
     }
 }

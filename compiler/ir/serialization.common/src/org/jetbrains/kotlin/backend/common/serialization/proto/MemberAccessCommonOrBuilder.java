@@ -8,11 +8,45 @@ public interface MemberAccessCommonOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> 
+      getArgumentList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getArgument(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   */
+  int getArgumentCount();
+
+  /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme before 2.2.0
+   * </pre>
    */
   boolean hasDispatchReceiver();
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+   *
+   * <pre>
+   * Value argument serialization scheme before 2.2.0
+   * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getDispatchReceiver();
 
@@ -26,18 +60,18 @@ public interface MemberAccessCommonOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getExtensionReceiver();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value_argument = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression> 
-      getValueArgumentList();
+      getRegularArgumentList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value_argument = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getValueArgument(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression getRegularArgument(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression value_argument = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
    */
-  int getValueArgumentCount();
+  int getRegularArgumentCount();
 
   /**
    * <code>repeated int32 type_argument = 4 [packed = true];</code>

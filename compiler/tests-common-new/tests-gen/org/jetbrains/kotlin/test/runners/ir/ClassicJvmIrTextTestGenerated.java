@@ -881,6 +881,28 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Nested
+    @TestMetadata("compiler/testData/ir/irText/declarations/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextParameters {
+      @Test
+      public void testAllFilesPresentInContextParameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("contextWithAnnotation.kt")
+      public void testContextWithAnnotation() {
+        runTest("compiler/testData/ir/irText/declarations/contextParameters/contextWithAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("contextWithJavaAnnotation.kt")
+      public void testContextWithJavaAnnotation() {
+        runTest("compiler/testData/ir/irText/declarations/contextParameters/contextWithJavaAnnotation.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")
     public class ContextReceivers {
@@ -3893,6 +3915,36 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
       @TestMetadata("intersectionWithSeparateModule.kt")
       public void testIntersectionWithSeparateModule() {
         runTest("compiler/testData/ir/irText/fakeOverrides/visibility/intersectionWithSeparateModule.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesFakeOverrideJKK.kt")
+      public void testLateinitPropertiesFakeOverrideJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesFakeOverrideJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJJK.kt")
+      public void testLateinitPropertiesJJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJJK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJK.kt")
+      public void testLateinitPropertiesJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJKK.kt")
+      public void testLateinitPropertiesJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesSeparateModule.kt")
+      public void testLateinitPropertiesSeparateModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesSeparateModule.kt");
       }
 
       @Test

@@ -125,9 +125,9 @@ class FirMetadataSerializer(
     private val actualizedExpectDeclarations: Set<FirDeclaration>?
 ) : MetadataSerializer {
 
-    override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
+    override fun serialize(metadata: MetadataSource, containingFile: MetadataSource.File?): Pair<MessageLite, JvmStringTable>? {
         val message = when (metadata) {
-            is FirMetadataSource.Class -> serializer!!.classProto(metadata.fir).build()
+            is FirMetadataSource.Class -> serializer!!.classProto(metadata.fir, (containingFile as FirMetadataSource.File?)?.fir).build()
             is FirMetadataSource.File -> serializer!!.packagePartProto(metadata.fir, actualizedExpectDeclarations).build()
             is FirMetadataSource.Function -> {
                 val withTypeParameters = metadata.fir.copyToFreeAnonymousFunction(approximator)
@@ -137,6 +137,7 @@ class FirMetadataSerializer(
                 serializer!!.functionProto(withTypeParameters)?.build()
             }
             is FirMetadataSource.Script -> serializer!!.scriptProto(metadata.fir).build()
+            is FirMetadataSource.ReplSnippet -> serializer!!.snippetProto(metadata.fir).build()
             else -> null
         } ?: return null
         return message to serializer!!.stringTable as JvmStringTable
@@ -208,6 +209,13 @@ internal fun makeElementSerializer(
             languageVersionSettings,
         )
         is FirMetadataSource.Script -> FirElementSerializer.createForScript(
+            session, scopeSession,
+            metadata.fir,
+            serializerExtension,
+            approximator,
+            languageVersionSettings
+        )
+        is FirMetadataSource.ReplSnippet -> FirElementSerializer.createForSnippet(
             session, scopeSession,
             metadata.fir,
             serializerExtension,

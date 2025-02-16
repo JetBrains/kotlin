@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.headerklib;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/header-klibs/compilation")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeHeaderKlibCompilationTestGenerated extends AbstractNativeHeaderKlibCompilationTest {
   @Test

@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : Outer.0.kt -> Outer.kt
+    added file: Outer.kt
+STEP 1:
+    dependencies: lib1
+    modifications:
+        U : Outer.1.kt -> Outer.kt
+    modified ir: Outer.kt
+STEP 2:
+    dependencies: lib1

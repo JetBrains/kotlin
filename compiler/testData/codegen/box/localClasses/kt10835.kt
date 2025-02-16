@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 class X(val x: String) {
     open inner class Y {
         fun foo() = x

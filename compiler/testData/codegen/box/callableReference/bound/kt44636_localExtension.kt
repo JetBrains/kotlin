@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 inline fun g(h: () -> String): String = h()
 
 fun box(): String {

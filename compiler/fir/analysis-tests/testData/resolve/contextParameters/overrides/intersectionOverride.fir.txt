@@ -1,0 +1,93 @@
+FILE: intersectionOverride.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface First : R|kotlin/Any| {
+        context(a: R|A|)
+        public abstract fun foo(): R|kotlin/Unit|
+
+        context(a: R|A|)
+        public abstract val b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface Second : R|kotlin/Any| {
+        context(a: R|kotlin/Any|)
+        public abstract fun foo(): R|kotlin/Unit|
+
+        context(a: R|kotlin/Any|)
+        public abstract val b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface Third : R|kotlin/Any| {
+        context(a: R|A|)
+        public abstract fun foo(): R|kotlin/Unit|
+
+        context(a: R|A|)
+        public abstract val b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface IntersectionInterface : R|First|, R|Second| {
+    }
+    public abstract interface IntersectionInterfaceWithSameContext : R|First|, R|Third| {
+    }
+    public final class IntersectionClass : R|First|, R|Second| {
+        public constructor(): R|IntersectionClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|kotlin/Any|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+        context(a: R|kotlin/Any|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+    }
+    public final class IntersectionClassWithSameContext : R|First|, R|Third| {
+        public constructor(): R|IntersectionClassWithSameContext| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+    }
+    public final fun usage(a: R|IntersectionInterface|, b: R|IntersectionInterfaceWithSameContext|): R|kotlin/Unit| {
+        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a|.<Ambiguity: foo, [/First.foo, /Second.foo]>#()
+            R|<local>/a|.<Ambiguity: b, [/First.b, /Second.b]>#
+            R|/IntersectionClass.IntersectionClass|().<Ambiguity: foo, [/IntersectionClass.foo, /IntersectionClass.foo]>#()
+            R|/IntersectionClass.IntersectionClass|().<Ambiguity: b, [/IntersectionClass.b, /IntersectionClass.b]>#
+            R|<local>/b|.R|/First.foo|()
+            R|<local>/b|.R|/First.b|
+            R|/IntersectionClassWithSameContext.IntersectionClassWithSameContext|().R|/IntersectionClassWithSameContext.foo|()
+            R|/IntersectionClassWithSameContext.IntersectionClassWithSameContext|().R|/IntersectionClassWithSameContext.b|
+        }
+        )
+    }

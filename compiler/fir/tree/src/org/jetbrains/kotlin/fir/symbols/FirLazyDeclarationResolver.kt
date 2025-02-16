@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.util.PrivateForInline
 
 /**
  * A component to lazy resolve [FirBasedSymbol] to the required phase.
@@ -22,23 +23,54 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
  * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
  */
 abstract class FirLazyDeclarationResolver : FirSessionComponent {
-    var lazyResolveContractChecksEnabled: Boolean = true
+    @PrivateForInline
+    @Suppress("PropertyName")
+    val _lazyResolveContractChecksEnabled: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
+
+    @OptIn(PrivateForInline::class)
+    val lazyResolveContractChecksEnabled: Boolean
+        get() = _lazyResolveContractChecksEnabled.get()
+
+
+    @PrivateForInline
+    @Suppress("PropertyName")
+    val _lazyResolveIsAllowed: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
 
     abstract fun startResolvingPhase(phase: FirResolvePhase)
 
     abstract fun finishResolvingPhase(phase: FirResolvePhase)
 
+    @OptIn(PrivateForInline::class)
     fun disableLazyResolveContractChecks() {
-        lazyResolveContractChecksEnabled = false
+        _lazyResolveContractChecksEnabled.set(false)
     }
 
+    @OptIn(PrivateForInline::class)
     inline fun <T> disableLazyResolveContractChecksInside(action: () -> T): T {
-        val current = lazyResolveContractChecksEnabled
-        lazyResolveContractChecksEnabled = false
+        val current = _lazyResolveContractChecksEnabled.get()
+        _lazyResolveContractChecksEnabled.set(false)
         try {
             return action()
         } finally {
-            lazyResolveContractChecksEnabled = current
+            _lazyResolveContractChecksEnabled.set(current)
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> forbidLazyResolveInside(action: () -> T): T {
+        val current = _lazyResolveIsAllowed.get()
+        _lazyResolveIsAllowed.set(false)
+        try {
+            return action()
+        } finally {
+            _lazyResolveIsAllowed.set(current)
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    protected fun assertLazyResolveAllowed() {
+        if (!_lazyResolveIsAllowed.get()) {
+            throw FirLazyResolveForbiddenException()
         }
     }
 
@@ -57,6 +89,8 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
      */
     abstract fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase)
 }
+
+class FirLazyResolveForbiddenException() : IllegalStateException("Lazy resolve is forbidden")
 
 class FirLazyResolveContractViolationException(
     currentPhase: FirResolvePhase,

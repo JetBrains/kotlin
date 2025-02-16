@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-64474, KT-66751
 // MODULE: a
 // FILE: a.kt
@@ -31,27 +30,27 @@ fun withBoxedGenericReceiver(arg: Box<Generic<*>>.() -> Unit) {}
 // FILE: c.kt
 
 fun test() {
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>()
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>()
 
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedConcrete<!>(<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>())
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedGeneric<!>(<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>())
+    <!MISSING_DEPENDENCY_CLASS!>consumeBoxedConcrete<!>(<!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>())
+    <!MISSING_DEPENDENCY_CLASS!>consumeBoxedGeneric<!>(<!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>())
 
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>().<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>useBoxedConcreteAsExtensionReceiver<!>()
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>().<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>useBoxedGenericAsExtensionReceiver<!>()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>().<!MISSING_DEPENDENCY_CLASS!>useBoxedConcreteAsExtensionReceiver<!>()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>().<!MISSING_DEPENDENCY_CLASS!>useBoxedGenericAsExtensionReceiver<!>()
 
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedConcreteParameter<!> { arg -> }
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedGenericParameter<!> { arg -> }
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedConcreteParameter<!> { arg -> }
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedGenericParameter<!> { arg -> }
 
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedConcreteParameter<!>(fun(arg) {})
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedGenericParameter<!>(fun(arg) {})
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedConcreteParameter<!>(fun(arg) {})
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedGenericParameter<!>(fun(arg) {})
 
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedConcreteReceiver<!> {}
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedGenericReceiver<!> {}
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedConcreteReceiver<!> {}
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedGenericReceiver<!> {}
 
-    ::<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>
-    ::<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>
+    ::<!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>
+    ::<!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>
 
-    ::<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedConcrete<!>
-    ::<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedGeneric<!>
+    ::<!MISSING_DEPENDENCY_CLASS!>consumeBoxedConcrete<!>
+    ::<!MISSING_DEPENDENCY_CLASS!>consumeBoxedGeneric<!>
 }

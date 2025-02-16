@@ -91,6 +91,52 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ContextParameters {
+    @Test
+    public void testAllFilesPresentInContextParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("extensionAndContextParameters.kt")
+    public void testExtensionAndContextParameters() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/extensionAndContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionContextValueJava.kt")
+    public void testIntersectionContextValueJava() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/intersectionContextValueJava.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionExtensionValueContext.kt")
+    public void testIntersectionExtensionValueContext() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/intersectionExtensionValueContext.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionExtensionValueContextJava.kt")
+    public void testIntersectionExtensionValueContextJava() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/intersectionExtensionValueContextJava.kt");
+    }
+
+    @Test
+    @TestMetadata("valueAndContextParameter.kt")
+    public void testValueAndContextParameter() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/valueAndContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("valueAndContextParametersWithJava.kt")
+    public void testValueAndContextParametersWithJava() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/valueAndContextParametersWithJava.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextReceivers {
@@ -258,6 +304,28 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
       @TestMetadata("trait.kt")
       public void testTrait() {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/trait.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/commonAtomicTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CommonAtomicTypes {
+      @Test
+      public void testAllFilesPresentInCommonAtomicTypes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/commonAtomicTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("intersectionWithExplicitOverride.kt")
+      public void testIntersectionWithExplicitOverride() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/commonAtomicTypes/intersectionWithExplicitOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("KJKHierarchy.kt")
+      public void testKJKHierarchy() {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/commonAtomicTypes/KJKHierarchy.kt");
       }
     }
 

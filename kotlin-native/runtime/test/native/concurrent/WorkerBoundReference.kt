@@ -3,14 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalAtomicApi::class)
 @file:Suppress("DEPRECATION_ERROR") // Freezing API
 
 package test.native.concurrent
 
-import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.native.concurrent.*
-import kotlin.concurrent.*
 import kotlin.native.concurrent.WorkerBoundReference
 import kotlin.test.*
 

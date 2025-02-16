@@ -180,36 +180,56 @@ class WorkerTest {
     }
 
     @Test
-    @Ignore // flaky test
-    fun executeAfterCancelled() {
+    fun terminateDuringExecute() {
         val worker = Worker.start()
 
         val stage = AtomicInt(0)
 
-        val future = worker.execute(TransferMode.SAFE, { stage }) { stage ->
-            // Wait until termination request is definitely in the job queue.
-            while (stage.value == 0) {}
+        val duringTerminationFuture = worker.execute(TransferMode.SAFE, { stage }) { stage ->
+            // Signal, that the first job is started
+            stage.value = 1
+            // Wait for the termination request
+            while (stage.value != 2) {}
             // Here we processed termination request.
             assertEquals(false, Worker.current.processQueue())
-            // Now wait until the worker is fully terminated
-            while (stage.value == 1) {}
+            // The job will complete successfully
+            42
         }
 
-        worker.executeAfter(1_000_000_000L) { error("FAILURE") }
+        // Wait until we start executing the first job, so no other queued jobs start working
+        while (stage.value != 1) {}
 
-        // Request worker to terminate.
+        // Pass `stage` to make sure there's some non-trivial state attached to these jobs
+        val afterTerminationFuture = worker.execute(TransferMode.SAFE, { stage }) { stage ->
+            assertEquals(2, stage.value)
+            error("FAILURE")
+        }
+        worker.executeAfter(0L) {
+            assertEquals(2, stage.value)
+            error("FAILURE")
+        }
+        worker.executeAfter(1_000_000_000L) {
+            assertEquals(2, stage.value)
+            error("FAILURE")
+        }
+
+        // Request worker to terminate, and move that job to the beginning of the queue.
+        // The first job will then process this job in `processQueue`
         val terminationRequest = worker.requestTermination(processScheduledJobs = false)
-        // Allow `execute` above to `processQueue`.
-        stage.value = 1
-        // Now wait until `processQueue` processes termination request.
-        terminationRequest.result
-        // And now wait for the worker to complete termination, cleaning up after itself.
-        waitWorkerTermination(worker)
-        // And finally allow `execute` to complete.
+        // Allow the first job to process the termination request.
         stage.value = 2
 
-        // `future` is bound to terminated `worker` and so it's not available anymore.
-        assertFailsWith<IllegalStateException> { future.result }
+        // Now wait until `processQueue` processes termination request.
+        terminationRequest.result
+
+        // And now wait for the worker to complete termination, cleaning up after itself.
+        // Worker would have finished the first job and cancelled all others.
+        waitWorkerTermination(worker)
+
+        assertEquals(42, duringTerminationFuture.result)
+        // This job was cancelled, because termination job got executed before it.
+        val exception = assertFailsWith<IllegalStateException> { afterTerminationFuture.result }
+        assertEquals("Future is cancelled", exception.message)
     }
 
     @Test

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.util.PerformanceManager;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
@@ -121,6 +122,8 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         if (additionalTestConfig.exists()) {
             doTestAdditionalChecks(additionalTestConfig, fileName);
         }
+
+        doComparePerformanceLogs(fileName, compiler);
     }
 
     private void doTestAdditionalChecks(@NotNull File testConfigFile, @NotNull String argsFilePath) {
@@ -190,6 +193,33 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             diagnostics.add(0, diagnostics.size() + " problem(s) found:");
             Assert.fail(StringsKt.join(diagnostics, "\n"));
         }
+    }
+
+    private static void doComparePerformanceLogs(@NotNull String fileName, @NotNull CLICompiler<?> compiler) {
+        @NotNull PerformanceManager perfManager = compiler.getDefaultPerformanceManager();
+        if (!perfManager.isEnabled()) return;
+
+        File expectedPerfLogFile = new File(fileName.replaceFirst("\\.args$", ".perf.log"));
+        @NotNull String actualPerfReport = perfManager.createPerformanceReport();
+
+        NumberAgnosticSanitizer sanitizer = new NumberAgnosticSanitizer(actualPerfReport);
+
+        String expectedText =
+                KotlinTestUtils.tryLoadExpectedFile(expectedPerfLogFile, sanitizer::generateExpectedTextBasedOnActualNumbers);
+        String expectedSanitizedText = KotlinTestUtils.applyDefaultAndCustomSanitizer(expectedText, s -> s);
+
+        String sanitizedActualBasedOnExpectPlaceholders =
+                KotlinTestUtils.applyDefaultAndCustomSanitizer(
+                        sanitizer.generatedSanitizedActualTextBasedOnExpectPlaceholders(expectedSanitizedText), s -> s);
+
+        KotlinTestUtils.FileComparisonResult comparisonResult = new KotlinTestUtils.FileComparisonResult(
+                expectedPerfLogFile,
+                expectedText,
+                expectedSanitizedText,
+                sanitizedActualBasedOnExpectPlaceholders
+        );
+
+        KotlinTestUtils.failIfNotEqual(KotlinTestUtils.ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT, comparisonResult);
     }
 
     @NotNull

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.withOSVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
@@ -103,7 +104,16 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             if (cacheMode.useStaticCacheForDistributionLibraries && tryPassSystemCacheDirectory) {
                 // Instead of directly passing system cache directory (which depends on a lot of different compiler options),
                 // just pass auto cacheable directory which will force the compiler to select and use proper system cache directory.
-                add("-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}")
+                when (targets.testTarget) {
+                    // MinGW platform libraries are not cacheable due to historical reasons, so we cache only stdlib.
+                    KonanTarget.MINGW_X64 -> add(
+                        listOf(
+                            "-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}/common",
+                            "-Xexplicit-caches-only"
+                        )
+                    )
+                    else -> add("-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}")
+                }
                 add("-Xbackend-threads=1") // The tests are run in parallel already, don't add more here.
             }
             add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
@@ -266,6 +276,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
+        allocator.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         applyK2MPPArgs(this)
     }
 
@@ -473,7 +484,11 @@ internal class CInteropCompilation(
                 add(it.absolutePath)
             }
             add("-Xsource-compiler-option")
-            add("-fobjc-arc")
+            if (freeCompilerArgs.objcArc) {
+                add("-fobjc-arc")
+            } else {
+                add("-fno-objc-arc")
+            }
             add("-Xsource-compiler-option")
             add("-DNS_FORMAT_ARGUMENT(A)=")
             add("-compiler-option")
@@ -819,8 +834,6 @@ internal class TestBundleCompilation(
         add(
             "-produce", "test_bundle",
             "-linker-option", "-F" + settings.get<XCTestRunner>().frameworksPath,
-            // FIXME: KT-70202: new linker fails with SIGBUS
-            "-linker-option", "-ld_classic",
             "-output", expectedArtifact.bundleDir.path,
             "-Xbinary=bundleId=com.jetbrains.kotlin.${expectedArtifact.bundleDir.nameWithoutExtension}"
         )

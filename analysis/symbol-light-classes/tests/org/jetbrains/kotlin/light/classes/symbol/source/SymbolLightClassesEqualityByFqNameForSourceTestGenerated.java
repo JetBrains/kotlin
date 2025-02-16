@@ -157,9 +157,21 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/contextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("DataClassWithCustomImplementedMembers.kt")
   public void testDataClassWithCustomImplementedMembers() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DataClassWithCustomImplementedMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("dataClassWithValueClass.kt")
+  public void testDataClassWithValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/dataClassWithValueClass.kt");
   }
 
   @Test
@@ -421,9 +433,33 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("valueClassAsContextParameter.kt")
+  public void testValueClassAsContextParameter() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassAsContextParameter.kt");
+  }
+
+  @Test
   @TestMetadata("ValueClassInParametersWithJvmName.kt")
   public void testValueClassInParametersWithJvmName() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassInsideDefaultImpl.kt")
+  public void testValueClassInsideDefaultImpl() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideDefaultImpl.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassInsideDelegatedClass.kt")
+  public void testValueClassInsideDelegatedClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideDelegatedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassInsideStaticMembers.kt")
+  public void testValueClassInsideStaticMembers() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassInsideStaticMembers.kt");
   }
 
   @Test
@@ -466,6 +502,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   @TestMetadata("VarArgs.kt")
   public void testVarArgs() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
+  }
+
+  @Test
+  @TestMetadata("varargAndValueClass.kt")
+  public void testVarargAndValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/varargAndValueClass.kt");
   }
 
   @Test
@@ -726,6 +768,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/contextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedProperty.kt")
     public void testDelegatedProperty() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/DelegatedProperty.kt");
@@ -771,6 +819,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
     @TestMetadata("SingleJvmClassName.kt")
     public void testSingleJvmClassName() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/SingleJvmClassName.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassAsContextParameter.kt")
+    public void testValueClassAsContextParameter() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/valueClassAsContextParameter.kt");
     }
 
     @Test

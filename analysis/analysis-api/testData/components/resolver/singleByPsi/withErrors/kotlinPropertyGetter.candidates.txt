@@ -2,6 +2,7 @@ KtNameReferenceExpression(51,54): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = ktClass
           isSafeNavigation = false
@@ -12,6 +13,7 @@ KtNameReferenceExpression(51,54): 'foo'
           receiverType = null
           returnType = kotlin.Int
           symbol = val foo: kotlin.Int
+          contextParameters = []
           callableId = /KtClass.foo
       simpleAccess = Read
       typeArgumentsMapping = {}

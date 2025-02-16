@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.generateTestCaseWithSingleModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
@@ -33,6 +34,7 @@ import kotlin.time.Duration.Companion.minutes
 
 @Tag("driver")
 @TestDataPath("\$PROJECT_ROOT")
+@FirPipeline
 class KonanDriverTest : AbstractNativeSimpleTest() {
     private val konanHome get() = testRunSettings.get<KotlinNativeHome>().dir
     private val buildDir get() = testRunSettings.get<Binaries>().testBinariesDir
@@ -96,7 +98,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     @Test
     fun testDriverProducesRunnableBinaries() {
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
-            testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
 
@@ -126,7 +127,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     @Test
     fun testDriverVersion() {
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
-                                        testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
         // No need to test with different GC schedulers
@@ -272,7 +272,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     @Test
     fun testSplitCompilationPipelineWithKlibResolverFlags() {
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
-                                        testRunSettings.get<CacheMode>() == CacheMode.WithoutCache &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
 

@@ -1,12 +1,10 @@
 // LL_FIR_DIVERGENCE
 // Not a real LL divergence, it's just tiered runners reporting errors from `BACKEND`
 // LL_FIR_DIVERGENCE
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // Test for ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT diagnostic when annotations arguments are lazily resolved.
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 @Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
 annotation class Ann(val s: String = "default")
 
@@ -24,7 +22,6 @@ expect fun withEmptyArguments_negative()
 expect fun withEmptyArguments_positive()
 
 // MODULE: main()()(common)
-// TARGET_PLATFORM: JVM
 actual fun onType_negative(): @Ann("") Any = Any()
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onType_positive<!>(): @Ann("incorrect") Any = Any()
 

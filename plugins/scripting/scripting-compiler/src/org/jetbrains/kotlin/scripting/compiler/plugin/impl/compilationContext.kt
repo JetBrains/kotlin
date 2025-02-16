@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginR
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
@@ -67,19 +67,27 @@ fun createIsolatedCompilationContext(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    disposable: Disposable
+    parentDisposable: Disposable,
+    configureCompiler: CompilerConfiguration.() -> Unit = {}
 ): SharedScriptCompilationContext {
     val ignoredOptionsReportingState = IgnoredOptionsReportingState()
 
     val (initialScriptCompilationConfiguration, kotlinCompilerConfiguration) =
-        createInitialConfigurations(baseScriptCompilationConfiguration, hostConfiguration, messageCollector, ignoredOptionsReportingState)
+        createInitialConfigurations(
+            baseScriptCompilationConfiguration,
+            hostConfiguration,
+            messageCollector,
+            ignoredOptionsReportingState,
+            parentDisposable,
+        )
+    kotlinCompilerConfiguration.configureCompiler()
     val environment =
         KotlinCoreEnvironment.createForProduction(
-            disposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+            parentDisposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
     return SharedScriptCompilationContext(
-        disposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState
+        parentDisposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState
     ).applyConfigure()
 }
 
@@ -139,11 +147,12 @@ internal fun createInitialConfigurations(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    ignoredOptionsReportingState: IgnoredOptionsReportingState
+    ignoredOptionsReportingState: IgnoredOptionsReportingState,
+    parentDisposable: Disposable,
 ): Pair<ScriptCompilationConfiguration, CompilerConfiguration> {
     val kotlinCompilerConfiguration =
         createInitialCompilerConfiguration(
-            scriptCompilationConfiguration, hostConfiguration, messageCollector, ignoredOptionsReportingState
+            scriptCompilationConfiguration, hostConfiguration, messageCollector, ignoredOptionsReportingState, parentDisposable,
         )
 
     System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.takeIf { it.isNotBlank() }?.split(' ')?.let {
@@ -163,7 +172,7 @@ internal fun createInitialConfigurations(
     return Pair(initialScriptCompilationConfiguration, kotlinCompilerConfiguration)
 }
 
-private fun CompilerConfiguration.updateWithCompilerOptions(
+internal fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
     messageCollector: ScriptDiagnosticsMessageCollector,
     ignoredOptionsReportingState: IgnoredOptionsReportingState,
@@ -224,7 +233,8 @@ private fun createInitialCompilerConfiguration(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     messageCollector: MessageCollector,
-    reportingState: IgnoredOptionsReportingState
+    reportingState: IgnoredOptionsReportingState,
+    parentDisposable: Disposable,
 ): CompilerConfiguration {
 
     val baseArguments = makeScriptCompilerArguments(
@@ -313,7 +323,7 @@ private fun createInitialCompilerConfiguration(
 
         checkPluginsArguments(messageCollector, false, pluginClasspaths, pluginOptions, pluginConfigurations)
         if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {
-            PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, this)
+            PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, this, parentDisposable)
         } else {
             loadPluginsFromClassloader(CompilerConfiguration::class.java.classLoader)
         }

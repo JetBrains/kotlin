@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.abi.impl.AbiSignatureVersions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.util.*
 
 /**
  * This test checks that all [KotlinIrSignatureVersion]s known to the current version of the compiler are supported

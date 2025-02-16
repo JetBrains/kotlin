@@ -16,8 +16,8 @@ import kotlin.concurrent.*
  * An [Int] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
-@Deprecated("Use kotlin.concurrent.AtomicInt instead.", ReplaceWith("kotlin.concurrent.AtomicInt"), DeprecationLevel.ERROR)
-public class AtomicInt(public @Volatile var value: Int) {
+@Deprecated("Use kotlin.concurrent.atomics.AtomicInt instead.", ReplaceWith("kotlin.concurrent.atomics.AtomicInt"), DeprecationLevel.ERROR)
+public class AtomicInt(@Volatile public var value: Int) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
@@ -95,8 +95,8 @@ public class AtomicInt(public @Volatile var value: Int) {
  * A [Long] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
-@Deprecated("Use kotlin.concurrent.AtomicLong instead.", ReplaceWith("kotlin.concurrent.AtomicLong"), DeprecationLevel.ERROR)
-public class AtomicLong(public @Volatile var value: Long = 0L)  {
+@Deprecated("Use kotlin.concurrent.atomics.AtomicLong instead.", ReplaceWith("kotlin.concurrent.atomics.AtomicLong"), DeprecationLevel.ERROR)
+public class AtomicLong(@Volatile public var value: Long = 0L)  {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
@@ -179,8 +179,8 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
 /**
  * An object reference that is always updated atomically.
  */
-@Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"), DeprecationLevel.ERROR)
-public class AtomicReference<T>(public @Volatile var value: T) {
+@Deprecated("Use kotlin.concurrent.atomics.AtomicReference instead.", ReplaceWith("kotlin.concurrent.atomics.AtomicReference"), DeprecationLevel.ERROR)
+public class AtomicReference<T>(@Volatile public var value: T) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
@@ -220,8 +220,8 @@ public class AtomicReference<T>(public @Volatile var value: T) {
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
  * and [compareAndSet], [compareAndSwap] operations perform comparison by value.
  */
-@Deprecated("Use kotlin.concurrent.AtomicNativePtr instead.", ReplaceWith("kotlin.concurrent.AtomicNativePtr"), DeprecationLevel.ERROR)
-public class AtomicNativePtr(public @Volatile var value: NativePtr) {
+@Deprecated("Use kotlin.concurrent.atomics.AtomicNativePtr instead.", ReplaceWith("kotlin.concurrent.atomics.AtomicNativePtr"), DeprecationLevel.ERROR)
+public class AtomicNativePtr(@Volatile public var value: NativePtr) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
@@ -276,8 +276,8 @@ private fun debugString(value: Any?): String {
 /**
  * This class was useful only with legacy memory manager. Please use [AtomicReference] instead.
  */
-@Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"), DeprecationLevel.ERROR)
-public class FreezableAtomicReference<T>(public @Volatile var value: T) {
+@Deprecated("Use kotlin.concurrent.atomics.AtomicReference instead.", ReplaceWith("kotlin.concurrent.atomics.AtomicReference"), DeprecationLevel.ERROR)
+public class FreezableAtomicReference<T>(@Volatile public var value: T) {
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]

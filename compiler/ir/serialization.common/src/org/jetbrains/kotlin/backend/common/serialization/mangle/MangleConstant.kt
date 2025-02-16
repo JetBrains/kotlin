@@ -19,7 +19,6 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val ENHANCED_NULLABILITY_MARK = "{EnhancedNullability}"
         const val DYNAMIC_MARK = "<dynamic>"
         const val ERROR_MARK = "<ERROR CLASS>"
-        const val ERROR_DECLARATION = "<ERROR DECLARATION>"
         const val STATIC_MEMBER_MARK = "#static"
         const val SUSPEND_FUNCTION_MARK = "#suspend"
         const val TYPE_PARAMETER_MARKER_NAME = "<TP>"
@@ -35,7 +34,6 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
 
         const val PLATFORM_FUNCTION_MARKER = '%'
 
-        const val CONTEXT_RECEIVER_PREFIX = '!'
         const val EXTENSION_RECEIVER_PREFIX = '@'
         const val FUNCTION_NAME_PREFIX = '#'
         const val TYPE_PARAM_INDEX_PREFIX = '@'

@@ -1,8 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
 import java.time.Duration
 
@@ -23,7 +22,23 @@ kotlin {
             "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             "kotlin.io.path.ExperimentalPathApi",
         )
+        freeCompilerArgs.add(
+            // Avoid having to use JvmSerializableLambda in build script injections
+            "-Xlambdas=class"
+        )
     }
+}
+
+tasks.withType(AbstractKotlinCompile::class.java).configureEach {
+    friendPaths.from(
+        configurations.testCompileClasspath.map { configuration ->
+            configuration.incoming.artifacts.artifacts.filter { artifact ->
+                (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":kotlin-gradle-plugin"
+            }.also { assert(it.isNotEmpty()) }.map { artifact ->
+                artifact.file
+            }
+        }
+    )
 }
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
@@ -80,7 +95,7 @@ dependencies {
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(kotlinGradlePluginTest)
     testImplementation(project(":kotlin-gradle-subplugin-example"))
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(project(":kotlin-util-klib"))
 
     testImplementation(project(":native:kotlin-native-utils"))
@@ -225,6 +240,7 @@ val maxParallelTestForks =
 
 // Must be in sync with TestVersions.kt KTI-1612
 val gradleVersions = listOf(
+    "7.0", // check org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion
     "7.6.3",
     "8.0.2",
     "8.1.1",
@@ -242,7 +258,6 @@ val gradleVersions = listOf(
 
 if (project.kotlinBuildProperties.isTeamcityBuild) {
     val junitTags = listOf("JvmKGP", "DaemonsKGP", "JsKGP", "NativeKGP", "MppKGP", "AndroidKGP", "OtherKGP")
-    val requiresKotlinNative = listOf("NativeKGP", "MppKGP", "OtherKGP")
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
     junitTags.forEach { junitTag ->
@@ -255,9 +270,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
 
                 systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-                if (junitTag in requiresKotlinNative) {
-                    applyKotlinNativeFromCurrentBranchIfNeeded()
-                }
+                applyKotlinNativeFromCurrentBranchIfNeeded()
 
                 useJUnitPlatform {
                     includeTags(junitTag)
@@ -403,6 +416,11 @@ fun configureJvmTarget8() {
 
 configureJvmTarget8()
 
+val mergedTestClassesClasspathTask = tasks.register<Copy>("testClassesCopy") {
+    from(kotlin.target.compilations.getByName("test").output.classesDirs)
+    into(layout.buildDirectory.dir("testClassesCopy"))
+}
+
 tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
@@ -429,6 +447,9 @@ tasks.withType<Test>().configureEach {
         "--add-opens", "java.base/java.net=ALL-UNNAMED",
     )
 
+    // Keep in sync with the default value for [enableGradleDaemonMemoryLimitInMb] in testDsl.kt for runs withDebug to not OOM
+    maxHeapSize = "1024m"
+
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
     dependsOn(":gradle:android-test-fixes:install")
@@ -443,9 +464,10 @@ tasks.withType<Test>().configureEach {
     systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
-    // Add debugTargetProcessWhenDebuggingKGP-IT=true to local.properties to run IT withDebug when debugging the tests in IDE
-    if (kotlinBuildProperties.getBoolean("debugTargetProcessWhenDebuggingKGP-IT", false)) {
-        systemProperty("debugTargetProcessWhenDebuggingKGP-IT", true)
+    // Add kotlin.gradle.autoDebugIT=false to local.properties to opt out of implicit withDebug when debugging the tests in IDE
+    val autoDebugIT = kotlinBuildProperties.getBoolean("kotlin.gradle.autoDebugIT", true)
+    if (autoDebugIT) {
+        systemProperty("kotlin.gradle.autoDebugIT", autoDebugIT)
     }
 
     val installCocoapods = project.findProperty("installCocoapods") as String?
@@ -462,14 +484,10 @@ tasks.withType<Test>().configureEach {
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
-    val compileTestDestination = kotlin.target
-        .compilations[KotlinCompilation.TEST_COMPILATION_NAME]
-        .compileTaskProvider
-        .flatMap { task ->
-            (task as KotlinJvmCompile).destinationDirectory
-        }
+    val mergedTestClassesDirectory = files(mergedTestClassesClasspathTask)
+    inputs.files(mergedTestClassesDirectory)
     doFirst {
-        systemProperty("buildGradleKtsInjectionsClasspath", compileTestDestination.get().asFile.absolutePath)
+        systemProperty("buildScriptInjectionsClasspath", mergedTestClassesDirectory.single())
     }
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase

@@ -13,6 +13,7 @@ public final class home/MainKt$test$b$1 {
     enclosing method home/MainKt.test()V
     inner (anonymous) class home/MainKt$test$b$1
     method <init>(): void
+    public method defaultFun(): void
     public method withoutBody(): void
 }
 

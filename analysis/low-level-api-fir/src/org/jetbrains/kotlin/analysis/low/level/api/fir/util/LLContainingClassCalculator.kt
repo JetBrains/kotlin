@@ -97,6 +97,7 @@ internal object LLContainingClassCalculator {
                     val containingClass = when (val psi = source.psi) {
                         is KtClassOrObject -> psi
                         is KtParameter -> psi.containingClassOrObject // component() functions point to 'KtParameter's
+                        is KtPrimaryConstructor -> psi.containingClassOrObject // copy() functions point to either KtClass or KtPrimaryConstructor
                         else -> null
                     }
                     return computeContainingClass(symbol, containingClass)
@@ -137,7 +138,8 @@ internal object LLContainingClassCalculator {
         is FirValueParameterSymbol, is FirAnonymousFunctionSymbol -> false
         is FirPropertySymbol -> !symbol.isLocal
         is FirNamedFunctionSymbol -> !symbol.isLocal
-        is FirCallableSymbol, is FirClassLikeSymbol, is FirDanglingModifierSymbol -> true
+        is FirClassLikeSymbol -> symbol.classId.isNestedClass
+        is FirCallableSymbol, is FirDanglingModifierSymbol -> true
         else -> false
     }
 

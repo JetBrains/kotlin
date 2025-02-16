@@ -2,6 +2,7 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -30,6 +31,7 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
           receiverType = Bar
           returnType = kotlin.String
           symbol = val foo: kotlin.String
+          contextParameters = []
           callableId = /Foo.foo
       simpleAccess = Read
       typeArgumentsMapping = {}

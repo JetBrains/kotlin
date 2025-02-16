@@ -1,7 +1,3 @@
-// IGNORE_BACKEND: JVM
-
-// JVM_IR it this case has an approximated type 'KFun<out Any>', which has a projected top-level argument.
-
 fun <T> intersect(x: T, y: T): T = x
 
 interface I1

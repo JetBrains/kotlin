@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
-import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
+import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.js.test.utils.createTestPhaseConfig
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 class JsIrInliningFacade(
     testServices: TestServices,
 ) : IrInliningFacade<IrBackendInput>(testServices, BackendKinds.IrBackend, BackendKinds.IrBackend) {
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
+    override fun shouldTransform(module: TestModule): Boolean {
         return module.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
     }
 
@@ -33,17 +33,19 @@ class JsIrInliningFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val phases = JsPreSerializationLoweringPhasesProvider.lowerings(configuration)
         val phaseConfig = createTestPhaseConfig(testServices, module)
 
         val transformedModule = PhaseEngine(
             phaseConfig,
             PhaserState(),
-            JsPreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration)
+            JsPreSerializationLoweringContext(
+                inputArtifact.irPluginContext.irBuiltIns,
+                configuration,
+                inputArtifact.diagnosticReporter,
+            ),
         ).runPreSerializationLoweringPhases(
+            jsLoweringsOfTheFirstPhase,
             inputArtifact.irModuleFragment,
-            JsPreSerializationLoweringPhasesProvider,
-            configuration
         )
 
         // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend

@@ -3,9 +3,9 @@
 
 // MODULE: common
 // FILE: common.kt
-@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+<!OPT_IN_WITHOUT_ARGUMENTS!>@file:OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalObjCRefinement<!>::class<!>)<!>
 
-expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyObjcName<!>(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
+expect annotation class MyObjcName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
 
 @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyObjcName<!>("ObjCClass", "SwiftClass")
 open class KotlinClass {

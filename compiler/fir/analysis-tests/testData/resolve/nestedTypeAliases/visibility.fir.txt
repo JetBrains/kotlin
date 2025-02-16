@@ -1,0 +1,97 @@
+FILE: visibility.kt
+    public final class Class : R|kotlin/Any| {
+        public constructor(): R|Class| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    private final class PrivateClass : R|kotlin/Any| {
+        public constructor(): R|PrivateClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class OuterClass : R|kotlin/Any| {
+        public constructor(): R|OuterClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class InnerClass : R|kotlin/Any| {
+            public OuterClass.constructor(): R|OuterClass.InnerClass| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        private final inner class InnerPrivateClass : R|kotlin/Any| {
+            public OuterClass.constructor(): R|OuterClass.InnerPrivateClass| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        private final typealias PrivateTAInner = R|OuterClass.InnerClass|
+
+        protected final typealias ProtectedTAInner = R|OuterClass.InnerClass|
+
+        public final typealias PublicTAInner = R|OuterClass.InnerClass|
+
+        private final typealias PrivateTA = R|Class|
+
+        protected final typealias ProtectedTA = R|Class|
+
+        public final typealias PublicTA = R|Class|
+
+        private final typealias PrivateTAPrivateInner = R|OuterClass.InnerPrivateClass|
+
+        protected final typealias ProtectedTAPrivateInner = R|OuterClass.InnerPrivateClass|
+
+        public final typealias PublicTAPrivateInner = R|OuterClass.InnerPrivateClass|
+
+        private final typealias PrivateTAPrivateClass = R|PrivateClass|
+
+        protected final typealias ProtectedTAPrivateClass = R|PrivateClass|
+
+        public final typealias PublicTAPrivateClass = R|PrivateClass|
+
+        public final fun testPrivate(): R|kotlin/Unit| {
+            this@R|/OuterClass|.R|/OuterClass.InnerClass.InnerClass|()
+            this@R|/OuterClass|.R|/OuterClass.InnerClass.InnerClass|()
+            this@R|/OuterClass|.R|/OuterClass.InnerClass.InnerClass|()
+            R|/Class.Class|()
+            R|/Class.Class|()
+            R|/Class.Class|()
+            this@R|/OuterClass|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass|()
+            this@R|/OuterClass|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass|()
+            this@R|/OuterClass|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass|()
+        }
+
+    }
+    public final class OuterClassInheritor : R|OuterClass| {
+        public constructor(): R|OuterClassInheritor| {
+            super<R|OuterClass|>()
+        }
+
+        public final fun testProtected(): R|kotlin/Unit| {
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: OuterClass.PrivateTAInner is invisible>#|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerClass.InnerClass|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerClass.InnerClass|()
+            R|/Class.Class<HIDDEN: OuterClass.PrivateTA is invisible>#|()
+            R|/Class.Class|()
+            R|/Class.Class|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.PrivateTAPrivateInner is invisible>#|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.InnerPrivateClass is invisible>#|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.InnerPrivateClass is invisible>#|()
+        }
+
+    }
+    public final fun testPublic(): R|kotlin/Unit| {
+        lval outerClass: R|OuterClass| = R|/OuterClass.OuterClass|()
+        R|<local>/outerClass|.<Unresolved name: PrivateTAInner>#()
+        R|<local>/outerClass|.<Unresolved name: ProtectedTAInner>#()
+        R|<local>/outerClass|.<Unresolved name: PublicTAInner>#()
+        R|<local>/outerClass|.<Unresolved name: PrivateTAPrivateInner>#()
+        Q|OuterClass|.R|/Class.Class<HIDDEN: OuterClass.PrivateTA is invisible>#|()
+        Q|OuterClass|.R|/Class.Class<HIDDEN: OuterClass.ProtectedTA is invisible>#|()
+        Q|OuterClass|.R|/Class.Class|()
+    }

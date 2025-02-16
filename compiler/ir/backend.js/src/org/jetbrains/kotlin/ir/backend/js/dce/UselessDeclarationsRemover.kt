@@ -5,20 +5,22 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
+import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
+import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
@@ -30,7 +32,7 @@ class UselessDeclarationsRemover(
     private val usefulDeclarations: Set<IrDeclaration>,
     private val context: JsIrBackendContext,
     private val dceRuntimeDiagnostic: RuntimeDiagnostic?,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     private val savedTypesCache = hashMapOf<IrClassSymbol, Set<IrClassSymbol>>()
 
     override fun visitElement(element: IrElement) {

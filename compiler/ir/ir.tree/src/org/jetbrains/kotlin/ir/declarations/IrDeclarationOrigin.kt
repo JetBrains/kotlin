@@ -49,6 +49,8 @@ interface IrDeclarationOrigin {
         val SCRIPT_IMPLICIT_RECEIVER by IrDeclarationOriginImpl
         val SCRIPT_PROVIDED_PROPERTY by IrDeclarationOriginImpl
         val SCRIPT_RESULT_PROPERTY by IrDeclarationOriginImpl
+        val REPL_SNIPPET_CLASS by IrDeclarationOriginImpl
+        val REPL_FROM_OTHER_SNIPPET by IrDeclarationOriginImpl
         val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl
         val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl
         val GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl
@@ -107,6 +109,8 @@ interface IrDeclarationOrigin {
          * in the middle of code compile of `KaCompilerFacility`.
          */
         val FILLED_FOR_UNBOUND_SYMBOL by IrDeclarationOriginImpl
+
+        val INLINE_LAMBDA by IrDeclarationOriginImpl
     }
 
     /**

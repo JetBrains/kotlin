@@ -40,7 +40,7 @@ void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadA
 
 ObjHeader* weakRefReadBarrier(std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 
-class SpecialRefReleaseGuard::Impl : MoveOnly {
+class ExternalRCRefReleaseGuard::Impl : MoveOnly {
 public:
     explicit Impl(mm::DirectRefAccessor ref) noexcept;
     Impl(Impl&& other) = default;

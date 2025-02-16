@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.config.syntheticAccessorsWithNarrowedVisibility
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -34,14 +36,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * - It's not designed to work with the JVM backend because the visibility rules on JVM are stricter.
  * - By the point it's executed, all _private_ inline functions have already been inlined.
  */
-class SyntheticAccessorLowering(private val context: LoweringContext) : FileLoweringPass {
+@PhaseDescription("SyntheticAccessorLowering")
+class SyntheticAccessorLowering(private val context: LoweringContext, isExecutedOnFirstPhase: Boolean = false) : FileLoweringPass {
     /**
      * Whether the visibility of a generated accessor should be narrowed from _public_ to _internal_ if an accessor is only used
      * in _internal_ inline functions and therefore is not a part of public ABI.
      * This "narrowing" is supposed to be used only during the first phase of compilation.
      */
     private val narrowAccessorVisibilities =
-        context.configuration.getBoolean(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
+        context.configuration.syntheticAccessorsWithNarrowedVisibility || isExecutedOnFirstPhase
 
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
@@ -157,7 +160,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext) : FileLowe
         val generatedAccessors = currentFile::generatedAccessors.getOrSetIfNull(::GeneratedAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
-            val newData = data ?: runIf(declaration.isInline && !declaration.isConsideredAsPrivateForInlining()) {
+            val newData = data ?: runIf(declaration.isInline && !declaration.symbol.isConsideredAsPrivateForInlining()) {
                 // By the time this lowering is executed, there must be no private inline functions; however,
                 // there are exceptions, for example, `suspendCoroutineUninterceptedOrReturn` which are somewhat magical.
                 // If we encounter one, ignore it.

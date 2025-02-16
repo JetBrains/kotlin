@@ -15,16 +15,16 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
         }
 
         val extraArgs: Map<ExtraOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
-                ?.entries
-                ?.mapNotNull { (option, values) ->
-                    val knownOption = ExtraOption.parseOrNull(option)
-                    if (knownOption == null) {
-                        output.logWarning("Unrecognized command-line argument: $option")
-                        return@mapNotNull null
-                    }
-                    knownOption to values
-                }?.toMap()
-                ?: return null
+            ?.entries
+            ?.mapNotNull { (option, values) ->
+                val knownOption = ExtraOption.parseOrNull(option)
+                if (knownOption == null) {
+                    output.logWarning("Unrecognized command-line argument: $option")
+                    return@mapNotNull null
+                }
+                knownOption to values
+            }?.toMap()
+            ?: return null
 
         val signatureVersion = extraArgs[ExtraOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
             rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion) ?: run {
@@ -67,7 +67,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
 
     private fun printUsage() {
         output.stderr.appendLine(
-                """
+            """
                 Usage: klib <command> <library path> [<option>]
 
                 where the commands are:

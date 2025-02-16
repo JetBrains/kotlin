@@ -33,7 +33,7 @@ class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) :
                     return super.visitCall(expression)
                 }
 
-                return when (val extensionReceiver = expression.extensionReceiver) {
+                return when (val extensionReceiver = expression.arguments[0]) {
                     is IrClassReference -> extensionReceiver.generateDirectValueUsage() ?: super.visitCall(expression)
                     is IrGetClass -> extensionReceiver.generateDirectConstructorUsage()
                     else -> super.visitCall(expression)
@@ -49,15 +49,7 @@ class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) :
                 irBuiltIns.nothingClass -> null
                 irBuiltIns.anyClass ->
                     JsIrBuilder.buildCall(intrinsics.jsCode).apply {
-                        putValueArgument(
-                            0,
-                            IrConstImpl.string(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                irBuiltIns.stringType,
-                         "Object"
-                            )
-                        )
+                        arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, "Object")
                     }
 
                 else -> classSymbol.owner.jsConstructorReference(backendContext)

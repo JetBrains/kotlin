@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest() {
-    protected open fun configureTestBuilder(builder: TestConfigurationBuilder) = builder.apply {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JsPlatforms.defaultJsPlatform
@@ -66,15 +66,11 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest(
             )
         }
     }
-
-    final override fun TestConfigurationBuilder.configuration() {
-        configureTestBuilder(this@configuration)
-    }
 }
 
 abstract class AbstractDiagnosticsTestWithJsStdLibWithBackend : AbstractDiagnosticsTestWithJsStdLib() {
-    override fun configureTestBuilder(builder: TestConfigurationBuilder) = builder.apply {
-        super.configureTestBuilder(builder)
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
 
         psi2IrStep()
         facadeStep { JsKlibSerializerFacade(it, true) }

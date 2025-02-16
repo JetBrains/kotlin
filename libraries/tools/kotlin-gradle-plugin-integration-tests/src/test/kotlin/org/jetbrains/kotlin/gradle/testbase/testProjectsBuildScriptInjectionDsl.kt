@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.util.GradleVersion
+import java.io.File
 
 fun KGPBaseTest.kotlinAndroidLibraryProject(
     gradleVersion: GradleVersion,
@@ -24,17 +25,18 @@ fun KGPBaseTest.kotlinAndroidLibraryProject(
     }
 }
 
-fun GradleBuildScriptInjectionContext.applyMavenPublishPlugin(): PublishingExtension {
+fun GradleProjectBuildScriptInjectionContext.applyMavenPublishPlugin(localRepoDir: File? = null): PublishingExtension {
     project.plugins.apply("maven-publish")
     publishing.repositories.apply {
         maven { maven ->
-            maven.setUrl(project.layout.projectDirectory.dir("repo"))
+            if (localRepoDir != null) maven.setUrl(localRepoDir)
+            else maven.setUrl(project.layout.projectDirectory.dir("repo"))
         }
     }
     return publishing
 }
 
-fun GradleBuildScriptInjectionContext.applyDefaultAndroidLibraryConfiguration() {
+fun GradleProjectBuildScriptInjectionContext.applyDefaultAndroidLibraryConfiguration() {
     androidLibrary.apply {
         compileSdk = 31
         defaultConfig {

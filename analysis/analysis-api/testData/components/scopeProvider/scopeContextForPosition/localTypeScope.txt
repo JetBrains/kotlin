@@ -66,6 +66,7 @@ scopes:
           visibility: PRIVATE
         callableId: null
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -93,7 +94,7 @@ scopes:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtConstantInitializerValue(2)
+        initializer: KaConstantInitializerValue(2)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -121,6 +122,7 @@ scopes:
         annotations: []
         callableId: null
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -152,6 +154,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.equals
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -209,6 +212,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.hashCode
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -240,6 +244,7 @@ scopes:
         annotations: []
         callableId: kotlin/Any.toString
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -386,6 +391,7 @@ scopes:
         annotations: []
         callableId: /z
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

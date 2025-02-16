@@ -6,35 +6,24 @@
 #pragma once
 
 #include "GC.hpp"
+#include "GCState.hpp"
+#include "GCThread.hpp"
 
-#include "SameThreadMarkAndSweep.hpp"
+namespace kotlin::gc {
 
-namespace kotlin {
-namespace gc {
-
+// Stop-the-world mark & sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
 class GC::Impl : private Pinned {
 public:
-    explicit Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept : gc_(allocator, gcScheduler) {}
+    Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept : gcThread_(state_, allocator, gcScheduler) {}
 
-    SameThreadMarkAndSweep& gc() noexcept { return gc_; }
-
-private:
-    SameThreadMarkAndSweep gc_;
+    GCStateHolder state_;
+    internal::GCThread gcThread_;
 };
 
-class GC::ThreadData::Impl : private Pinned {
-public:
-    Impl(GC& gc, mm::ThreadData& threadData) noexcept : gc_(gc.impl_->gc(), threadData) {}
-
-    SameThreadMarkAndSweep::ThreadData& gc() noexcept { return gc_; }
-
-private:
-    SameThreadMarkAndSweep::ThreadData gc_;
-};
+class GC::ThreadData::Impl {};
 
 namespace barriers {
-class SpecialRefReleaseGuard::Impl {};
-}
+class ExternalRCRefReleaseGuard::Impl {};
+} // namespace barriers
 
-} // namespace gc
-} // namespace kotlin
+} // namespace kotlin::gc

@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/SafeLetWithReturn.kt
-  FUN name:bar visibility:public modality:FINAL <> (s:kotlin.String?, t:kotlin.String?) returnType:kotlin.String
-    VALUE_PARAMETER name:s index:0 type:kotlin.String?
-    VALUE_PARAMETER name:t index:1 type:kotlin.String?
+  FUN name:bar visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER kind:Regular name:s index:0 type:kotlin.String?
+    VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.String?
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Nothing? origin=SAFE_CALL
@@ -10,18 +10,18 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
           WHEN type=kotlin.Nothing? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.bar' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
+                ARG arg0: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.bar' type=kotlin.String? origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing? origin=null
-                <T>: kotlin.String
-                <R>: kotlin.Nothing?
-                $receiver: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.bar' type=kotlin.String? origin=null
-                block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Nothing?> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Nothing?
-                    VALUE_PARAMETER name:it index:0 type:kotlin.String
+              then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing? origin=null
+                TYPE_ARG T: kotlin.String
+                TYPE_ARG R: kotlin.Nothing?
+                ARG <this>: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.bar' type=kotlin.String? origin=null
+                ARG block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Nothing?> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing?
+                    VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
                     BLOCK_BODY
                       RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.Nothing? declared in <root>.bar'
                         BLOCK type=kotlin.Nothing? origin=SAFE_CALL
@@ -30,25 +30,25 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
                           WHEN type=kotlin.Nothing? origin=null
                             BRANCH
                               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                                arg0: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.bar.<anonymous>' type=kotlin.String? origin=null
-                                arg1: CONST Null type=kotlin.Nothing? value=null
+                                ARG arg0: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.bar.<anonymous>' type=kotlin.String? origin=null
+                                ARG arg1: CONST Null type=kotlin.Nothing? value=null
                               then: CONST Null type=kotlin.Nothing? value=null
                             BRANCH
                               if: CONST Boolean type=kotlin.Boolean value=true
-                              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
-                                <T>: kotlin.String
-                                <R>: kotlin.Nothing
-                                $receiver: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.bar.<anonymous>' type=kotlin.String? origin=null
-                                block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Nothing> origin=LAMBDA
-                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Nothing
-                                    VALUE_PARAMETER name:it index:0 type:kotlin.String
+                              then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
+                                TYPE_ARG T: kotlin.String
+                                TYPE_ARG R: kotlin.Nothing
+                                ARG <this>: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.bar.<anonymous>' type=kotlin.String? origin=null
+                                ARG block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Nothing> origin=LAMBDA
+                                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
+                                    VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
                                     BLOCK_BODY
                                       RETURN type=kotlin.Nothing from='public final fun bar (s: kotlin.String?, t: kotlin.String?): kotlin.String declared in <root>'
                                         GET_VAR 'it: kotlin.String declared in <root>.bar.<anonymous>.<anonymous>' type=kotlin.String origin=null
       RETURN type=kotlin.Nothing from='public final fun bar (s: kotlin.String?, t: kotlin.String?): kotlin.String declared in <root>'
         CONST String type=kotlin.String value=""
-  FUN name:foo visibility:public modality:FINAL <> (s:kotlin.String?) returnType:kotlin.String
-    VALUE_PARAMETER name:s index:0 type:kotlin.String?
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER kind:Regular name:s index:0 type:kotlin.String?
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Nothing? origin=SAFE_CALL
@@ -57,27 +57,27 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
           WHEN type=kotlin.Nothing? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_2: kotlin.String? declared in <root>.foo' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
+                ARG arg0: GET_VAR 'val tmp_2: kotlin.String? declared in <root>.foo' type=kotlin.String? origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
-                <T>: kotlin.String
-                <R>: kotlin.Nothing
-                $receiver: GET_VAR 'val tmp_2: kotlin.String? declared in <root>.foo' type=kotlin.String? origin=null
-                block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Nothing> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Nothing
-                    VALUE_PARAMETER name:it index:0 type:kotlin.String
+              then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
+                TYPE_ARG T: kotlin.String
+                TYPE_ARG R: kotlin.Nothing
+                ARG <this>: GET_VAR 'val tmp_2: kotlin.String? declared in <root>.foo' type=kotlin.String? origin=null
+                ARG block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Nothing> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
+                    VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
                     BLOCK_BODY
                       RETURN type=kotlin.Nothing from='public final fun foo (s: kotlin.String?): kotlin.String declared in <root>'
                         GET_VAR 'it: kotlin.String declared in <root>.foo.<anonymous>' type=kotlin.String origin=null
       RETURN type=kotlin.Nothing from='public final fun foo (s: kotlin.String?): kotlin.String declared in <root>'
         CONST String type=kotlin.String value=""
   PROPERTY name:baz visibility:public modality:FINAL [val]
-    FUN name:<get-baz> visibility:public modality:FINAL <> ($receiver:kotlin.String?) returnType:kotlin.String
+    FUN name:<get-baz> visibility:public modality:FINAL returnType:kotlin.String
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.String?
       correspondingProperty: PROPERTY name:baz visibility:public modality:FINAL [val]
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String?
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           BLOCK type=kotlin.Nothing? origin=SAFE_CALL
@@ -86,20 +86,20 @@ FILE fqName:<root> fileName:/SafeLetWithReturn.kt
             WHEN type=kotlin.Nothing? origin=null
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp_3: kotlin.String? declared in <root>.<get-baz>' type=kotlin.String? origin=null
-                  arg1: CONST Null type=kotlin.Nothing? value=null
+                  ARG arg0: GET_VAR 'val tmp_3: kotlin.String? declared in <root>.<get-baz>' type=kotlin.String? origin=null
+                  ARG arg1: CONST Null type=kotlin.Nothing? value=null
                 then: CONST Null type=kotlin.Nothing? value=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
-                then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
-                  <T>: kotlin.String
-                  <R>: kotlin.Nothing
-                  $receiver: GET_VAR 'val tmp_3: kotlin.String? declared in <root>.<get-baz>' type=kotlin.String? origin=null
-                  block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Nothing> origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Nothing
-                      VALUE_PARAMETER name:it index:0 type:kotlin.String
+                then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
+                  TYPE_ARG T: kotlin.String
+                  TYPE_ARG R: kotlin.Nothing
+                  ARG <this>: GET_VAR 'val tmp_3: kotlin.String? declared in <root>.<get-baz>' type=kotlin.String? origin=null
+                  ARG block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Nothing> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
+                      VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='public final fun <get-baz> (): kotlin.String declared in <root>'
+                        RETURN type=kotlin.Nothing from='public final fun <get-baz> (<this>: kotlin.String?): kotlin.String declared in <root>'
                           GET_VAR 'it: kotlin.String declared in <root>.<get-baz>.<anonymous>' type=kotlin.String origin=null
-        RETURN type=kotlin.Nothing from='public final fun <get-baz> (): kotlin.String declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-baz> (<this>: kotlin.String?): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""

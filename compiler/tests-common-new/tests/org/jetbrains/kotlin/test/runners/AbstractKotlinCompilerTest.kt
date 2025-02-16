@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.test.runners
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
-import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -45,6 +45,7 @@ abstract class AbstractKotlinCompilerTest {
         val defaultConfiguration: TestConfigurationBuilder.() -> Unit = {
             assertions = JUnit5Assertions
             useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+            useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
             useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
             useDirectives(*defaultDirectiveContainers.toTypedArray())
             configureDebugFlags()
@@ -56,11 +57,12 @@ abstract class AbstractKotlinCompilerTest {
         defaultConfiguration()
         useAdditionalService { createApplicationDisposableProvider() }
         useAdditionalService { createKotlinStandardLibrariesPathProvider() }
-        configure(this)
+        testInfo = this@AbstractKotlinCompilerTest.testInfo
+        @OptIn(TestInfrastructureInternals::class)
+        configureInternal(this)
         useAfterAnalysisCheckers(::IrValidationErrorChecker)
     }
 
-    abstract fun TestConfigurationBuilder.configuration()
     private lateinit var testInfo: KotlinTestInfo
 
     open fun createApplicationDisposableProvider(): ApplicationDisposableProvider {
@@ -80,11 +82,27 @@ abstract class AbstractKotlinCompilerTest {
         this.testInfo = testInfo
     }
 
-    open fun configure(builder: TestConfigurationBuilder) {
-        with(builder) {
-            testInfo = this@AbstractKotlinCompilerTest.testInfo
-        }
-        builder.configuration()
+    /**
+     * This is the main method to declare the test configuration.
+     * [TestConfigurationBuilder] allows to
+     * - declare the list of steps, which will be applied to the testdata, including facade steps (which convert artifacts) and
+     *   handlers steps with handlers which are applied to the artifacts from the previous facade step
+     * - configure handler steps, if they were already registered before
+     * - enable some test directives by default
+     * - and many more, see the API of the [TestConfigurationBuilder]
+     *
+     * If you inherit your test runner which already has an implemented [configure] method, then you ALWAYS need to call
+     * `super.configure(builder)` before expanding the test configuration.
+     */
+    abstract fun configure(builder: TestConfigurationBuilder)
+
+    /**
+     * This is the implementation-detail method needed exclusively for [AbstractKotlinCompilerWithTargetBackendTest].
+     * Please don't use it in other tests
+     */
+    @TestInfrastructureInternals
+    protected open fun configureInternal(builder: TestConfigurationBuilder) {
+        configure(builder)
     }
 
     open fun runTest(@TestDataFile filePath: String) {

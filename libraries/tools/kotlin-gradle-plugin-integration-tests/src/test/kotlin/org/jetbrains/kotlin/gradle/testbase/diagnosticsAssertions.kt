@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-fun BuildResult.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
+internal fun BuildResult.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     output.assertHasDiagnostic(diagnosticFactory, withSubstring)
 }
 
-fun BuildResult.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
+internal fun BuildResult.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     output.assertNoDiagnostic(diagnosticFactory, withSubstring)
 }
 
-fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
+internal fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     val diagnosticsMessages = extractRenderedDiagnostics(diagnosticFactory, this)
     assertTrue(diagnosticsMessages.isNotEmpty(), "Diagnostic with id=${diagnosticFactory.id} not found. Full text output:\n\n" + this)
     if (withSubstring != null) {
@@ -35,7 +35,7 @@ fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, with
     }
 }
 
-fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
+internal fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     val diagnosticMessages = extractRenderedDiagnostics(diagnosticFactory, this)
     if (withSubstring != null) {
         val matchedWithSubstring = diagnosticMessages.find { withSubstring in it }
@@ -217,4 +217,4 @@ private fun extractNextDiagnosticAndIndex(
 private const val CONFIGURE_PROJECT_PREFIX = "> Configure project"
 private const val TASK_EXECUTION_PREFIX = "> Task"
 private val DIAGNOSTIC_STACKTRACE_REGEX = Regex("""$KOTLIN_DIAGNOSTIC_STACKTRACE_START[^#]*$KOTLIN_DIAGNOSTIC_STACKTRACE_END_SEPARATOR""")
-private val DIAGNOSTIC_STACKTRACE_REPLACEMENT_STUB = """    <... stackframes are omitted for test stability ...>"""
+private const val DIAGNOSTIC_STACKTRACE_REPLACEMENT_STUB = """    <... stackframes are omitted for test stability ...>"""

@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -62,8 +63,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val COMMON_IR = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir", 4)
-    private val REFLECT_IR = FlavorConfig(TargetBackend.ANDROID_IR, "reflect_ir", 1)
+    private val commonFlavor = FlavorConfig(TargetBackend.ANDROID, "common", 4)
+    private val reflectFlavor = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
 
     class FlavorConfig(private val backend: TargetBackend, private val prefix: String, val limit: Int) {
 
@@ -158,7 +159,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             File("compiler/testData/codegen/boxInline")
         )
 
-        generateTestMethodsForDirectories(COMMON_IR, REFLECT_IR, *folders)
+        generateTestMethodsForDirectories(commonFlavor, reflectFlavor, *folders)
 
         pendingUnitTestGenerators.values.forEach { it.generate() }
     }
@@ -221,7 +222,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             } finally {
                 rawFiles.clear()
                 unitTestDescriptions.clear()
-                Disposer.dispose(disposable)
+                disposeRootInWriteAction(disposable)
             }
         }
 
@@ -341,7 +342,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     val module = moduleStructure.modules.singleOrNull() ?: continue
                     if (module.files.any { it.isJavaFile || it.isKtsFile }) continue
                     if (module.files.isEmpty()) continue
-                    services.registerDependencyProvider(DependencyProviderImpl(services, moduleStructure.modules))
+                    services.registerArtifactsProvider(ArtifactsProvider(services, moduleStructure.modules))
 
                     val keyConfiguration = CompilerConfiguration()
                     val configuratorForFlags = JvmEnvironmentConfigurator(services)
@@ -356,11 +357,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     keyConfiguration.languageVersionSettings = module.languageVersionSettings
                     keyConfiguration.put(
                         CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
-                        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module),
+                        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, services),
                     )
                     keyConfiguration.put(
                         CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
-                        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module),
+                        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, services),
                     )
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
@@ -393,7 +394,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun TestConfigurationBuilder.configure() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
-            targetBackend = TargetBackend.ANDROID_IR
+            targetBackend = TargetBackend.ANDROID
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
@@ -411,6 +412,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         assertions = JUnit5Assertions
         useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+        useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
         useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
         useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
         useSourcePreprocessor(*AbstractKotlinCompilerTest.defaultPreprocessors.toTypedArray())

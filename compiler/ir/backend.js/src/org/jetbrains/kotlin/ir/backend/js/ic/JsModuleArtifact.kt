@@ -56,11 +56,14 @@ class JsModuleArtifact(
     val moduleSafeName = moduleName.safeModuleName
     val moduleExternalName = externalModuleName ?: moduleSafeName
 
-    fun loadJsIrModule(reexportedInModuleWithName: String? = null): JsIrModule {
+    fun loadJsIrModule(
+        reexportedInModuleWithName: String? = null,
+        importedWithEffectInModuleWithName: String? = null
+    ): JsIrModule {
         val fragments = fileArtifacts.sortedBy { it.srcFilePath }.flatMap {
             val fragments = it.loadIrFragments()
             listOfNotNull(fragments?.mainFragment, fragments?.exportFragment)
         }
-        return JsIrModule(moduleSafeName, moduleExternalName, fragments, reexportedInModuleWithName)
+        return JsIrModule(moduleSafeName, moduleExternalName, fragments, reexportedInModuleWithName, importedWithEffectInModuleWithName)
     }
 }

@@ -32,6 +32,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /prop
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -66,7 +67,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: KtConstantInitializerValue(1)
+  initializer: KaConstantInitializerValue(1)
   isActual: false
   isConst: false
   isDelegatedProperty: false

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.setSize
 
 internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectActualMap) : SymbolRemapper {
     override fun getDeclaredClass(symbol: IrClassSymbol) = symbol
@@ -22,6 +24,8 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectAct
     override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol) = symbol
 
     override fun getDeclaredScript(symbol: IrScriptSymbol) = symbol
+
+    override fun getDeclaredReplSnippet(symbol: IrReplSnippetSymbol): IrReplSnippetSymbol = symbol
 
     override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol) = symbol
 
@@ -96,7 +100,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
 
     // We shouldn't touch attributes, because Fir2Ir wouldn't set them to anything meaningful anyway.
     // So it would be better to have them as is, i.e. referring to `this`, not some random node removed from the tree
-    override fun <D : IrAttributeContainer> D.processAttributes(other: IrAttributeContainer?): D = this
+    override fun <D : IrElement> D.processAttributes(other: IrElement) {}
 
     override fun visitModuleFragment(declaration: IrModuleFragment) =
         declaration.also { it.transformChildren(this, null) }
@@ -223,6 +227,14 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
-        }.processAttributes(expression)
+            processAttributes(expression)
+
+            // This is a hack to allow actualizing annotation constructors without parameters with constructors with default arguments.
+            // Without it, attempting to call such a constructor in common code will result in either a backend exception or in linkage error.
+            // See KT-67488 for details.
+            if (constructorSymbol.isBound) {
+                arguments.setSize(constructorSymbol.owner.parameters.size)
+            }
+        }
     }
 }

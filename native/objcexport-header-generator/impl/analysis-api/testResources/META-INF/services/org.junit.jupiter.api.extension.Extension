@@ -3,6 +3,5 @@
 # Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 #
 org.jetbrains.kotlin.objcexport.testUtils.AnalysisApiHeaderGeneratorExtension
-org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysisExtension
 org.jetbrains.kotlin.objcexport.testUtils.AnalysisApiBaseDeclarationsGeneratorExtension
 org.jetbrains.kotlin.objcexport.testUtils.TodoAnalysisApiTestExecutionExceptionHandler

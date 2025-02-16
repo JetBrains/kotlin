@@ -11,6 +11,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
@@ -20,6 +21,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -30,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.await
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext.PublishOnlyIf
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.utils.*
@@ -40,6 +41,7 @@ abstract class KotlinSoftwareComponent(
     private val project: Project,
     private val name: String,
     protected val kotlinTargets: Iterable<KotlinTarget>,
+    private val includeExtraUsagesFrom: SoftwareComponentInternal,
 ) : SoftwareComponentInternal, ComponentWithVariants {
 
     override fun getName(): String = name
@@ -73,7 +75,7 @@ abstract class KotlinSoftwareComponent(
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
+                allMetadataArtifact.classifier = ""
             }
 
             this += DefaultKotlinUsageContext(
@@ -83,18 +85,6 @@ abstract class KotlinSoftwareComponent(
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
 
-            if (project.isCompatibilityMetadataVariantEnabled) {
-                // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
-                // publish the old metadata artifact:
-                this += run {
-                    DefaultKotlinUsageContext(
-                        metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                        KotlinUsageContext.MavenScope.COMPILE,
-                        /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
-                        COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-                    )
-                }
-            }
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
             if (metadataTarget.isSourcesPublishable) {
@@ -111,7 +101,7 @@ abstract class KotlinSoftwareComponent(
 
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages.getOrThrow().publishableUsages()
+        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages
     }
 
     private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
@@ -138,8 +128,14 @@ abstract class KotlinSoftwareComponent(
     val publicationDelegate: MavenPublication? get() = project.kotlinMultiplatformRootPublication.lenient.getOrNull()
 }
 
-class KotlinSoftwareComponentWithCoordinatesAndPublication(project: Project, name: String, kotlinTargets: Iterable<KotlinTarget>) :
-    KotlinSoftwareComponent(project, name, kotlinTargets), ComponentWithCoordinates {
+class KotlinSoftwareComponentWithCoordinatesAndPublication
+@InternalKotlinGradlePluginApi
+constructor(
+    project: Project,
+    name: String,
+    kotlinTargets: Iterable<KotlinTarget>,
+    includeExtraUsagesFrom: AdhocComponentWithVariants,
+) : KotlinSoftwareComponent(project, name, kotlinTargets, includeExtraUsagesFrom as SoftwareComponentInternal), ComponentWithCoordinates {
 
     override fun getCoordinates(): ModuleVersionIdentifier = getCoordinatesFromPublicationDelegateAndProject(
         publicationDelegate, kotlinTargets.first().project, null

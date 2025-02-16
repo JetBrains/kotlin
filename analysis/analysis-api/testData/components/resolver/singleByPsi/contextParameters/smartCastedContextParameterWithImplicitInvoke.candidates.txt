@@ -1,0 +1,33 @@
+KtCallExpression(136,139): 's()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = [
+          KaImplicitReceiverValue:
+            symbol = p: T
+            type = it(A & T & Any)
+        ]
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = kotlin.String
+        signature = KaFunctionSignature:
+          receiverType = kotlin.String
+          returnType = kotlin.Unit
+          symbol = /invoke(<extension receiver>: kotlin.String): kotlin.Unit
+          valueParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = <unused var>
+              receiverType = null
+              returnType = A
+              symbol = <unused var>: A
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /invoke
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

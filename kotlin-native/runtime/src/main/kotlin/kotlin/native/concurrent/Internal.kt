@@ -11,6 +11,7 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.native.internal.*
+import kotlin.native.internal.ref.*
 
 // Implementation details.
 
@@ -18,10 +19,19 @@ import kotlin.native.internal.*
 @ObsoleteWorkersApi
 external internal fun stateOfFuture(id: Int): Int
 
-@GCUnsafeCall("Kotlin_Worker_consumeFuture")
 @PublishedApi
 @ObsoleteWorkersApi
-external internal fun consumeFuture(id: Int): Any?
+internal fun consumeFuture(id: Int): Any? {
+    val ref = consumeFutureImpl(id)
+    val result = dereferenceExternalRCRef(ref)
+    releaseExternalRCRef(ref)
+    disposeExternalRCRef(ref)
+    return result
+}
+
+@GCUnsafeCall("Kotlin_Worker_consumeFuture")
+@ObsoleteWorkersApi
+external private fun consumeFutureImpl(id: Int): ExternalRCRef
 
 @GCUnsafeCall("Kotlin_Worker_waitForAnyFuture")
 @ObsoleteWorkersApi
@@ -34,12 +44,14 @@ external internal fun versionToken(): Int
 @ExportForCompiler
 @ObsoleteWorkersApi
 internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any?,
-                         job: CPointer<CFunction<*>>): Future<Any?> =
-        Future<Any?>(executeInternal(worker.id, mode.value, producer, job))
+                         job: CPointer<CFunction<*>>): Future<Any?> {
+    val jobArgument = createRetainedExternalRCRef(producer())
+    return Future<Any?>(executeInternal(worker.id, jobArgument, job))
+}
 
 @GCUnsafeCall("Kotlin_Worker_startInternal")
 @ObsoleteWorkersApi
-external internal fun startInternal(errorReporting: Boolean, name: String?): Int
+external internal fun startInternal(errorReporting: Boolean, name: ExternalRCRef): Int
 
 @GCUnsafeCall("Kotlin_Worker_currentInternal")
 @ObsoleteWorkersApi
@@ -52,11 +64,11 @@ external internal fun requestTerminationInternal(id: Int, processScheduledJobs: 
 @GCUnsafeCall("Kotlin_Worker_executeInternal")
 @ObsoleteWorkersApi
 external internal fun executeInternal(
-        id: Int, mode: Int, producer: () -> Any?, job: CPointer<CFunction<*>>): Int
+        id: Int, jobArgument: ExternalRCRef, job: CPointer<CFunction<*>>): Int
 
 @GCUnsafeCall("Kotlin_Worker_executeAfterInternal")
 @ObsoleteWorkersApi
-external internal fun executeAfterInternal(id: Int, operation: () -> Unit, afterMicroseconds: Long): Unit
+external internal fun executeAfterInternal(id: Int, operation: ExternalRCRef, afterMicroseconds: Long): Unit
 
 @GCUnsafeCall("Kotlin_Worker_processQueueInternal")
 @ObsoleteWorkersApi
@@ -68,7 +80,7 @@ external internal fun parkInternal(id: Int, timeoutMicroseconds: Long, process: 
 
 @GCUnsafeCall("Kotlin_Worker_getNameInternal")
 @ObsoleteWorkersApi
-external internal fun getWorkerNameInternal(id: Int): String?
+external internal fun getWorkerNameInternal(id: Int): ExternalRCRef
 
 @ExportForCppRuntime
 @ObsoleteWorkersApi
@@ -92,17 +104,42 @@ internal fun ThrowWorkerUnsupported(): Unit =
 
 @ExportForCppRuntime
 @ObsoleteWorkersApi
-internal fun WorkerLaunchpad(function: () -> Any?) = function()
+internal fun WorkerExecuteLaunchpad(job: CPointer<CFunction<*>>, jobArgument: ExternalRCRef): ExternalRCRef {
+    val arg = dereferenceExternalRCRef(jobArgument)
+    releaseExternalRCRef(jobArgument)
+    disposeExternalRCRef(jobArgument)
+    val result = invokeCFunction(job, arg)
+    return createRetainedExternalRCRef(result)
+}
+
+@ExportForCppRuntime
+@ObsoleteWorkersApi
+internal fun WorkerExecuteAfterLaunchpad(job: ExternalRCRef) {
+    @Suppress("UNCHECKED_CAST")
+    val func = dereferenceExternalRCRef(job) as () -> Unit
+    releaseExternalRCRef(job)
+    disposeExternalRCRef(job)
+    func()
+}
+
+@GCUnsafeCall("Kotlin_Worker_invokeCFunction")
+@ObsoleteWorkersApi
+external private fun invokeCFunction(job: CPointer<CFunction<*>>, jobArgument: Any?): Any?
 
 @PublishedApi
-@GCUnsafeCall("Kotlin_Worker_detachObjectGraphInternal")
 @ObsoleteWorkersApi
-external internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr
+internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr {
+    return createRetainedExternalRCRef(producer())
+}
 
 @PublishedApi
-@GCUnsafeCall("Kotlin_Worker_attachObjectGraphInternal")
 @ObsoleteWorkersApi
-external internal fun attachObjectGraphInternal(stable: NativePtr): Any?
+internal fun attachObjectGraphInternal(stable: NativePtr): Any? {
+    val result = dereferenceExternalRCRef(stable)
+    releaseExternalRCRef(stable)
+    disposeExternalRCRef(stable)
+    return result
+}
 
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_Worker_waitTermination")

@@ -7,10 +7,12 @@ KtNameReferenceExpression(166,171): 'check'
           receiverType = null
           returnType = {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
           symbol = list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtNameReferenceExpression(166,171): 'check'
               receiverType = null
               returnType = {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
               symbol = list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = library4/MyInterface.check
       typeArgumentsMapping = {}
     isInBestCandidates = true

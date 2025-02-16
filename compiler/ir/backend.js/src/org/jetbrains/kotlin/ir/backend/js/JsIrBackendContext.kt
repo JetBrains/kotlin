@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfills
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -59,7 +59,7 @@ import java.util.*
 class JsIrBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
-    val symbolTable: SymbolTable,
+    override val symbolTable: SymbolTable,
     val additionalExportedDeclarationNames: Set<FqName>,
     keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
@@ -72,6 +72,9 @@ class JsIrBackendContext(
     val incrementalCacheEnabled: Boolean = false,
 ) : JsCommonBackendContext {
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
+
+    override val allowExternalInlining: Boolean
+        get() = true
 
     val polyfills = JsPolyfills()
     val globalIrInterner = IrInterningService()
@@ -109,7 +112,7 @@ class JsIrBackendContext(
     val packageLevelJsModules = hashSetOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
-    override val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
+    val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 
@@ -132,6 +135,8 @@ class JsIrBackendContext(
 
     override val internalPackageFqn = JsStandardClassIds.BASE_JS_PACKAGE
 
+    override val sharedVariablesManager = JsSharedVariablesManager(this.irBuiltIns, this.dynamicType, this.intrinsics)
+
     private val operatorMap = referenceOperators()
 
     private fun primitivesWithImplicitCompanionObject(): List<Name> {
@@ -147,7 +152,9 @@ class JsIrBackendContext(
             if (rhsType == null)
                 candidates.singleOrNull()
             else
-                candidates.singleOrNull { it.owner.valueParameters[0].type.classifierOrNull == rhsType.classifier }
+                candidates.singleOrNull { candidate ->
+                    candidate.owner.parameters.first { it.kind == IrParameterKind.Regular }.type.classifierOrNull == rhsType.classifier
+                }
         }
 
     override val jsPromiseSymbol: IrClassSymbol?
@@ -205,7 +212,9 @@ class JsIrBackendContext(
     val throwableConstructors by lazy(LazyThreadSafetyMode.NONE) {
         throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }
     }
-    val defaultThrowableCtor by lazy(LazyThreadSafetyMode.NONE) { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
+    val defaultThrowableCtor by lazy(LazyThreadSafetyMode.NONE) {
+        throwableConstructors.single { !it.owner.isPrimary && it.owner.parameters.isEmpty() }
+    }
 
     val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef")).single().let {
         symbolTable.descriptorExtension.referenceSimpleFunction(it)
@@ -250,7 +259,7 @@ class JsIrBackendContext(
     private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId: ClassId): Pair<IrConstructorCall, JsFunction>? {
         val annotation = declaration.getAnnotation(annotationClassId.asSingleFqName())
             ?: return null
-        val jsCode = annotation.getValueArgument(0)
+        val jsCode = annotation.arguments[0]
             ?: compilationException("@${annotationClassId.shortClassName} annotation must contain the JS code argument", annotation)
         val statements = translateJsCodeIntoStatementList(jsCode, declaration)
             ?: compilationException("Could not parse JS code", annotation)
@@ -270,7 +279,7 @@ class JsIrBackendContext(
 
         parseJsFromAnnotation(originalSymbol.owner, JsStandardClassIds.Annotations.JsOutlinedFunction)
             ?.let { (annotation, parsedJsFunction) ->
-                val sourceMap = (annotation.getValueArgument(1) as? IrConst)?.value as? String
+                val sourceMap = (annotation.arguments[1] as? IrConst)?.value as? String
                 val parsedSourceMap = sourceMap?.let { parseSourceMap(it, originalSymbol.owner.fileOrNull, annotation) }
                 if (parsedSourceMap != null) {
                     val remapper = SourceMapLocationRemapper(parsedSourceMap)
@@ -314,4 +323,6 @@ class JsIrBackendContext(
         irBuiltIns,
         configuration.messageCollector
     )
+
+    internal var nextAssociatedObjectKey = 0
 }

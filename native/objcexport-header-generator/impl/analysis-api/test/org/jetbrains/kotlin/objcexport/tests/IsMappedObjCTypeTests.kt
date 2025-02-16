@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.objcexport.isMappedObjCType
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertFalse

@@ -834,6 +834,11 @@ public class IncrementalK1JsKlibCompilerRunnerTestGenerated extends AbstractIncr
       runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/methodRemoved/");
     }
 
+    @TestMetadata("outerClassVisibilityChanged")
+    public void testOuterClassVisibilityChanged() {
+      runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/outerClassVisibilityChanged/");
+    }
+
     @TestMetadata("overrideExplicit")
     public void testOverrideExplicit() {
       runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/overrideExplicit/");

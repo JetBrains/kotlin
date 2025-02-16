@@ -10,7 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -25,7 +25,5 @@ class IrGetValueImpl internal constructor(
     override var symbol: IrValueSymbol,
     override var origin: IrStatementOrigin?,
 ) : IrGetValue() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
+    override var attributeOwnerId: IrElement = this
 }

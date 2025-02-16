@@ -1,0 +1,15 @@
+FILE: annotationOnContextParameters.kt
+    context(@Ann() a: @Ann() String)
+    public? final? fun annotationOnContext(): R|kotlin/Unit| { LAZY_BLOCK }
+    context(@AnnotationWithConstructor(LAZY_EXPRESSION) a: @AnnotationWithConstructor(LAZY_EXPRESSION) String)
+    public? final? fun annotationWithConstructor(): R|kotlin/Unit| { LAZY_BLOCK }
+    context(@Ann() a: @Ann() String)
+    public? final? val annotationOnContextProperty: String
+        public? get(): String { LAZY_BLOCK }
+    context(@AnnotationWithConstructor(LAZY_EXPRESSION) a: @AnnotationWithConstructor(LAZY_EXPRESSION) String)
+    public? final? val annotationWithConstructorProperty: String
+        public? get(): String { LAZY_BLOCK }
+    public? final? fun functionType(f: context(@Ann() String)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun functionTypeWithConstructor(f: context(@AnnotationWithConstructor(LAZY_EXPRESSION) String)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun functionTypeNamed(f: context(@Ann() String)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun functionTypeNamedWithConstructor(f: context(@AnnotationWithConstructor(LAZY_EXPRESSION) String)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }

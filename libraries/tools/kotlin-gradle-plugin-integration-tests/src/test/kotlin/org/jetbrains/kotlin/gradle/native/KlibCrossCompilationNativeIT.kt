@@ -18,6 +18,10 @@ import java.nio.file.Path
 @DisplayName("Tests for checking klib cross-compilation in KGP")
 @NativeGradlePluginTests
 class KlibCrossCompilationNativeIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            ignoreWarningModeSeverityOverride = true
+        )
 
     @GradleTest
     @TestMetadata("klibCrossCompilationDefaultSettings")
@@ -66,7 +70,8 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                     "> Configure project :",
                     """
                     |> Configure project :
-                    |w: [OldNativeVersionDiagnostic | WARNING] '2.0.20' Kotlin/Native is being used with an newer '${buildOptions.kotlinVersion}' Kotlin.
+                    |w: [OldNativeVersionDiagnostic | WARNING] Kotlin/Native and Kotlin Versions Incompatible
+                    |'2.0.20' Kotlin/Native is being used with an newer '${buildOptions.kotlinVersion}' Kotlin.
                     |Please adjust versions to avoid incompatibilities.
                     |#diagnostic-end
                     |    

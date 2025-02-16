@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 sealed class ExhaustivenessStatus {
 
@@ -27,9 +28,10 @@ sealed class ExhaustivenessStatus {
      */
     data object ExhaustiveAsNothing : ExhaustivenessStatus()
 
-    class NotExhaustive(val reasons: List<WhenMissingCase>) : ExhaustivenessStatus() {
+    class NotExhaustive(val reasons: List<WhenMissingCase>, val subjectType: ConeKotlinType?) : ExhaustivenessStatus() {
         companion object {
-            val NO_ELSE_BRANCH: NotExhaustive = NotExhaustive(listOf(WhenMissingCase.Unknown))
+            val NO_ELSE_BRANCH_REASONS: List<WhenMissingCase> = listOf(WhenMissingCase.Unknown)
+            fun noElseBranch(subjectType: ConeKotlinType?): NotExhaustive = NotExhaustive(NO_ELSE_BRANCH_REASONS, subjectType)
         }
     }
 }

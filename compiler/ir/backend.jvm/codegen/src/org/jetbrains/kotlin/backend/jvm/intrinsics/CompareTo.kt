@@ -20,17 +20,16 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
-import org.jetbrains.kotlin.ir.util.receiverAndArgs
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
-import org.jetbrains.kotlin.codegen.BranchedValue
-import org.jetbrains.kotlin.codegen.NumberCompare
-import org.jetbrains.kotlin.codegen.ObjectCompare
+import org.jetbrains.kotlin.codegen.NumberComparisonUtils
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.util.receiverAndArgs
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
@@ -93,20 +92,20 @@ class BooleanComparison(
     val b: MaterialValue
 ) : BooleanValue(a.codegen) {
     override fun jumpIfFalse(target: Label) {
-        // TODO 1. get rid of the dependency; 2. take `b.type` into account.
+        // TODO: take `b.type` into account.
         val opcode = if (a.type.sort == Type.OBJECT)
-            ObjectCompare.getObjectCompareOpcode(op)
+            getObjectCompareOpcode(op)
         else
-            NumberCompare.patchOpcode(NumberCompare.getNumberCompareOpcode(op), mv, op, a.type)
+            NumberComparisonUtils.patchOpcode(NumberComparisonUtils.getNumberCompareOpcode(op), mv, op, a.type)
         markLineNumber(expression)
         mv.visitJumpInsn(opcode, target)
     }
 
     override fun jumpIfTrue(target: Label) {
         val opcode = if (a.type.sort == Type.OBJECT)
-            BranchedValue.negatedOperations[ObjectCompare.getObjectCompareOpcode(op)]!!
+            NumberComparisonUtils.negatedOperations[getObjectCompareOpcode(op)]!!
         else
-            NumberCompare.patchOpcode(BranchedValue.negatedOperations[NumberCompare.getNumberCompareOpcode(op)]!!, mv, op, a.type)
+            NumberComparisonUtils.patchOpcode(NumberComparisonUtils.negatedOperations[NumberComparisonUtils.getNumberCompareOpcode(op)]!!, mv, op, a.type)
         markLineNumber(expression)
         mv.visitJumpInsn(opcode, target)
     }
@@ -116,6 +115,13 @@ class BooleanComparison(
         b.discard()
         a.discard()
     }
+
+    private fun getObjectCompareOpcode(opToken: IElementType): Int = when (opToken) {
+        // "==" and "!=" are here because enum values are compared using reference equality.
+        KtTokens.EQEQEQ, KtTokens.EQEQ -> Opcodes.IF_ACMPNE
+        KtTokens.EXCLEQEQEQ, KtTokens.EXCLEQ -> Opcodes.IF_ACMPEQ
+        else -> throw UnsupportedOperationException("Don't know how to generate this condJump: $opToken")
+    }
 }
 
 class NonIEEE754FloatComparison(
@@ -124,7 +130,7 @@ class NonIEEE754FloatComparison(
     private val a: MaterialValue,
     private val b: MaterialValue
 ) : BooleanValue(a.codegen) {
-    private val numberCompareOpcode = NumberCompare.getNumberCompareOpcode(op)
+    private val numberCompareOpcode = NumberComparisonUtils.getNumberCompareOpcode(op)
 
     private fun invokeStaticComparison(type: Type) {
         when (type) {
@@ -143,7 +149,7 @@ class NonIEEE754FloatComparison(
     override fun jumpIfTrue(target: Label) {
         markLineNumber(expression)
         invokeStaticComparison(a.type)
-        mv.visitJumpInsn(BranchedValue.negatedOperations[numberCompareOpcode]!!, target)
+        mv.visitJumpInsn(NumberComparisonUtils.negatedOperations[numberCompareOpcode]!!, target)
     }
 
     override fun discard() {

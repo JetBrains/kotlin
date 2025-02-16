@@ -1,0 +1,103 @@
+<caret_1>:
+  KtNameReferenceExpression(64,73): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Local
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: JavaClass
+              visibility: LOCAL
+            type = JavaClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_2>:
+  KtNameReferenceExpression(82,91): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Local
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: JavaClass
+              visibility: LOCAL
+            type = JavaClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /JavaClass.something
+        simpleAccess = Write:
+          value = 1
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_3>:
+  KtNameReferenceExpression(112,121): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = javaClass
+            isSafeNavigation = false
+            type = JavaClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /JavaClass.something
+        simpleAccess = Write:
+          value = 1
+        typeArgumentsMapping = {}
+      isInBestCandidates = true

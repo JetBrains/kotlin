@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.*
@@ -60,16 +62,19 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
+import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedJvmOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import java.io.File
 
 class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
@@ -161,60 +166,17 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                         )
                     }
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
-                collectSyntaxDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments)
                 val session = info.partsForDependsOnModules.last().session
-                collectDebugInfoDiagnostics(currentModule, file, firFile, session, lightTreeEnabled, lightTreeComparingModeEnabled)
+                collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
                 fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics.map { it.diagnostic }, file)
             }
         }
-    }
-
-    @OptIn(InternalDiagnosticFactoryMethod::class)
-    private fun collectSyntaxDiagnostics(
-        module: TestModule,
-        testFile: TestFile,
-        firFile: FirFile,
-        lightTreeEnabled: Boolean,
-        lightTreeComparingModeEnabled: Boolean,
-        forceRenderArguments: Boolean,
-    ) {
-        val metaInfos = if (firFile.psi != null) {
-            AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
-                FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), it.errorDescription, positioningStrategy = null)
-                    .toMetaInfos(
-                        module,
-                        testFile,
-                        globalMetadataInfoHandler = globalMetadataInfoHandler,
-                        lightTreeEnabled,
-                        lightTreeComparingModeEnabled,
-                        forceRenderArguments,
-                    )
-            }
-        } else {
-            testServices.lightTreeSyntaxDiagnosticsReporterHolder
-                ?.reporter
-                ?.diagnosticsByFilePath
-                ?.get("/${testFile.toLightTreeShortName()}")
-                ?.flatMap {
-                    it.toMetaInfos(
-                        module,
-                        testFile,
-                        globalMetadataInfoHandler = globalMetadataInfoHandler,
-                        lightTreeEnabled,
-                        lightTreeComparingModeEnabled,
-                        forceRenderArguments,
-                    )
-                }.orEmpty()
-        }
-
-        globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
     }
 
     private fun collectDebugInfoDiagnostics(
         module: TestModule,
         testFile: TestFile,
         firFile: FirFile,
-        session: FirSession,
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean
     ) {
@@ -405,7 +367,6 @@ fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
             diagnostic.severity
         )
     ) return@flatMap emptyList()
-    if (!diagnostic.isValid) return@flatMap emptyList()
     diagnostic.toMetaInfos(
         module,
         file,
@@ -610,7 +571,7 @@ fun KtDiagnostic.toMetaInfos(
         metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
     }
     if (file !in module.files) {
-        val targetPlatform = module.targetPlatform
+        val targetPlatform = module.targetPlatform(globalMetadataInfoHandler.testServices)
         metaInfo.attributes += when {
             targetPlatform.isJvm() -> "JVM"
             targetPlatform.isJs() -> "JS"
@@ -651,6 +612,8 @@ enum class KmpCompilationMode {
 }
 
 open class FirDiagnosticCollectorService(val testServices: TestServices) : TestService {
+    val reporterForLTSyntaxErrors = SimpleDiagnosticsCollector(BaseDiagnosticsCollector.RawReporter.DO_NOTHING)
+
     private val cache: MutableMap<FirOutputArtifact, DiagnosticsMap> = mutableMapOf()
 
     open fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
@@ -676,39 +639,59 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module)
             val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-            result += platformPart.session.runCheckers(
-                platformPart.firAnalyzerFacade.scopeSession,
-                allFiles,
-                DiagnosticReporterFactory.createPendingReporter(messageCollector),
-                mppCheckerKind = MppCheckerKind.Platform
-            ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }
+            when (info) {
+                is FirCliBasedJvmOutputArtifact -> {
+                    val diagnosticsCollector = info.cliArtifact.diagnosticCollector
+                    val diagnosticsPerFirFile = buildMap {
+                        for ((filePath, diagnostics) in diagnosticsCollector.diagnosticsByFilePath) {
+                            if (filePath == null) continue
+                            val firFile = allFiles.first { it.sourceFile?.path == filePath }
+                            put(firFile, diagnostics)
+                        }
+                    }
+                    result += diagnosticsPerFirFile.convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                }
+                else -> {
+                    result += platformPart.session.runCheckers(
+                        platformPart.scopeSession,
+                        allFiles,
+                        DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                        mppCheckerKind = MppCheckerKind.Platform
+                    ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
 
-            for (part in info.partsForDependsOnModules) {
-                result += part.session.runCheckers(
-                    part.firAnalyzerFacade.scopeSession,
-                    part.firFiles.values,
-                    DiagnosticReporterFactory.createPendingReporter(messageCollector),
-                    mppCheckerKind = MppCheckerKind.Common
-                ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }
+                    for (part in info.partsForDependsOnModules) {
+                        result += part.session.runCheckers(
+                            part.scopeSession,
+                            part.firFiles.values,
+                            DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                            mppCheckerKind = MppCheckerKind.Common
+                        ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                    }
+
+
+                    for (part in info.partsForDependsOnModules) {
+                        collectSyntaxDiagnostics(part, result)
+                    }
+                }
             }
 
             for (part in info.partsForDependsOnModules.dropLast(1)) {
                 part.session.turnOnMetadataCompilationAnalysisFlag {
                     result += part.session.runCheckers(
-                        part.firAnalyzerFacade.scopeSession,
+                        part.scopeSession,
                         part.firFiles.values,
                         DiagnosticReporterFactory.createPendingReporter(messageCollector),
                         mppCheckerKind = MppCheckerKind.Platform
-                    ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.METADATA) } }
+                    ).convertToTestDiagnostics(KmpCompilationMode.METADATA)
                 }
             }
 
             val lostDiagnostics = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
             for (file in allFiles) {
                 val diagnostics = result[file]
-                if (diagnostics.none { it.diagnostic.severity == Severity.ERROR } && !hasSyntaxDiagnostics(file)) {
+                if (diagnostics.none { it.diagnostic.severity == Severity.ERROR }) {
                     platformPart.session.collectLostDiagnosticsOnFile(
-                        platformPart.firAnalyzerFacade.scopeSession,
+                        platformPart.scopeSession,
                         file,
                         DiagnosticReporterFactory.createPendingReporter(messageCollector)
                     ).forEach { lostDiagnostics.put(file, DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM)) }
@@ -722,10 +705,37 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         return result
     }
 
-    private fun hasSyntaxDiagnostics(firFile: FirFile): Boolean {
-        return firFile.psi?.let {
-            AnalyzingUtils.getSyntaxErrorRanges(it).isNotEmpty()
-        } ?: (testServices.lightTreeSyntaxDiagnosticsReporterHolder?.reporter?.diagnosticsByFilePath?.isNotEmpty() == true)
+    private fun Map<FirFile, List<KtDiagnostic>>.convertToTestDiagnostics(
+        mode: KmpCompilationMode
+    ): Map<FirFile, List<DiagnosticWithKmpCompilationMode>> {
+        return mapValues { entry -> entry.value.mapNotNull {
+                runIf(it.isValid) {
+                    DiagnosticWithKmpCompilationMode(it, mode)
+                }
+            }
+        }
+    }
+
+    protected fun collectSyntaxDiagnostics(
+        part: FirOutputPartForDependsOnModule,
+        destination: ListMultimap<FirFile, DiagnosticWithKmpCompilationMode>,
+    ) {
+        for ((testFile, firFile) in part.firFiles) {
+            val syntaxErrors = if (firFile.psi != null) {
+                AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
+                    @OptIn(InternalDiagnosticFactoryMethod::class)
+                    FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), it.errorDescription, positioningStrategy = null)
+                }
+            } else {
+                reporterForLTSyntaxErrors
+                    .diagnosticsByFilePath["/${testFile.toLightTreeShortName()}"]
+                    .orEmpty()
+            }
+            destination.putAll(
+                firFile,
+                syntaxErrors.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) }
+            )
+        }
     }
 }
 

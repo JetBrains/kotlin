@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // FULL_JDK
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // API_VERSION: 2.1
 
 import kotlin.coroutines.*

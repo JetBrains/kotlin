@@ -22,7 +22,7 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
     private fun runJsCode() {
         val globalDirectives = testServices.moduleStructure.allDirectives
         val dontRunGeneratedCode = globalDirectives[JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE]
-            .contains(testServices.defaultsProvider.defaultTargetBackend?.name)
+            .contains(testServices.defaultsProvider.targetBackend?.name)
 
         if (dontRunGeneratedCode) return
 

@@ -70,16 +70,16 @@ MODULE main
 				+ 3 1.kt
 				test/_1Kt
 				*L
-				1#1,25:1
-				17#2:26
-				18#2:29
-				29#3,2:27
+				1#1,32:1
+				17#2:33
+				18#2:36
+				29#3,2:34
 				*S KotlinDebug
 				*F
 				+ 1 1.kt
 				test/OutputWorkScreenView
 				*L
-				17#1:27,2
+				17#1:34,2
 				*E
 				 } )
 			K2
@@ -95,15 +95,15 @@ MODULE main
 				+ 3 1.kt
 				test/_1Kt
 				*L
-				1#1,25:1
-				17#2:26
-				18#2:29
-				29#3,2:27
+				1#1,32:1
+				17#2:33
+				18#2:36
+				29#3,2:34
 				*S KotlinDebug
 				*F
 				+ 1 1.kt
 				test/OutputWorkScreenView
 				*L
-				17#1:27,2
+				17#1:34,2
 				*E
 				 } )

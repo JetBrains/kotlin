@@ -5,8 +5,10 @@
 
 #include "AllocatorImpl.hpp"
 
+#include "Allocator.hpp"
 #include "GCApi.hpp"
 #include "Heap.hpp"
+#include "ThreadData.hpp"
 
 using namespace kotlin;
 
@@ -24,7 +26,7 @@ PERFORMANCE_INLINE ArrayHeader* alloc::Allocator::ThreadData::allocateArray(cons
 
 PERFORMANCE_INLINE mm::ExtraObjectData& alloc::Allocator::ThreadData::allocateExtraObjectData(
         ObjHeader* object, const TypeInfo* typeInfo) noexcept {
-    return impl_->alloc().CreateExtraObjectDataForObject(object, typeInfo);
+    return *impl_->alloc().CreateExtraObjectDataForObject(object, typeInfo);
 }
 
 ALWAYS_INLINE void alloc::Allocator::ThreadData::destroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
@@ -48,7 +50,9 @@ void alloc::Allocator::prepareForGC() noexcept {
 }
 
 void alloc::Allocator::clearForTests() noexcept {
+    stopFinalizerThreadIfRunning();
     impl_->heap().ClearForTests();
+    impl_->pendingFinalizers() = FinalizerQueue();
 }
 
 void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
@@ -57,6 +61,45 @@ void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> 
 
 void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
     impl_->heap().TraverseAllocatedExtraObjects(fn);
+}
+
+void alloc::Allocator::startFinalizerThreadIfNeeded() noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
+    impl_->finalizerProcessor().startThreadIfNeeded();
+}
+
+void alloc::Allocator::stopFinalizerThreadIfRunning() noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
+    impl_->finalizerProcessor().stopThread();
+}
+
+bool alloc::Allocator::finalizersThreadIsRunning() noexcept {
+    return impl_->finalizerProcessor().isThreadRunning();
+}
+
+void alloc::Allocator::configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept {
+    impl_->finalizerProcessor().configureMainThread(std::move(f));
+}
+
+bool alloc::Allocator::mainThreadFinalizerProcessorAvailable() noexcept {
+    return impl_->finalizerProcessor().mainThreadAvailable();
+}
+
+void alloc::Allocator::sweep(gc::GCHandle gcHandle) noexcept {
+    // also sweeps extraObjects
+    auto finalizerQueue = impl_->heap().Sweep(gcHandle);
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        finalizerQueue.mergeFrom(thread.allocator().impl().alloc().ExtractFinalizerQueue());
+    }
+    finalizerQueue.mergeFrom(impl_->heap().ExtractFinalizerQueue());
+    RuntimeAssert(impl_->pendingFinalizers().size() == 0, "pendingFinalizers_ were not empty");
+    impl_->pendingFinalizers() = std::move(finalizerQueue);
+}
+
+void alloc::Allocator::scheduleFinalization(gc::GCHandle gcHandle) noexcept {
+    auto queue = std::move(impl_->pendingFinalizers());
+    gcHandle.finalizersScheduled(queue.size());
+    impl_->finalizerProcessor().schedule(std::move(queue), gcHandle.getEpoch());
 }
 
 void alloc::initObjectPool() noexcept {}

@@ -182,6 +182,7 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
             JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
             JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
             JSConfigurationKeys.MODULE_KIND,
+            JSConfigurationKeys.GRANULARITY
         )
         hashCalculator.updateConfigKeys(config, enumKeys) { value: Enum<*> ->
             hashCalculator.update(value.ordinal)

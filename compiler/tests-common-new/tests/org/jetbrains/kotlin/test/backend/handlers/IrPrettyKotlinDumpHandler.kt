@@ -62,12 +62,13 @@ class IrPrettyKotlinDumpHandler(
                 printExpectDeclarations = module.languageVersionSettings.languageVersion.usesK2,
                 inferElseBranches = true,
             ),
+            testServices,
         )
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
-        val extension = computeDumpExtension(moduleStructure.modules.first(), DUMP_EXTENSION)
+        val extension = computeDumpExtension(testServices, DUMP_EXTENSION)
         val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(extension)
 
         if (dumper.isEmpty()) {
@@ -84,11 +85,12 @@ internal fun dumpModuleKotlinLike(
     info: IrBackendInput,
     multiModuleInfoDumper: MultiModuleInfoDumper,
     options: KotlinLikeDumpOptions,
+    testServices: TestServices
 ) {
     val irFiles = info.irModuleFragment.files
     val builder = multiModuleInfoDumper.builderForModule(module.name)
-    val filteredIrFiles = irFiles.groupWithTestFiles(module, ordered = true).filterNot { (testFile, _) ->
-        testFile?.let { EXTERNAL_FILE in it.directives || it.isAdditional } ?: false
+    val filteredIrFiles = irFiles.groupWithTestFiles(testServices, ordered = true).filterNot { (moduleAndFile, _) ->
+        moduleAndFile?.second?.let { EXTERNAL_FILE in it.directives || it.isAdditional } ?: false
     }.map { it.second }
     val printFileName = filteredIrFiles.size > 1 || allModules.size > 1
     val modifiedOptions = options.copy(printFileName = printFileName)

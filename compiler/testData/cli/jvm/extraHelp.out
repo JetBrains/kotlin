@@ -58,26 +58,10 @@ where advanced options include:
                              * strict (experimental; treat like other supported nullability annotations)
                              * warn (report a warning)
   -Xjvm-default={all|all-compatibility|disable}
-                             Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
-                             -Xjvm-default=all                Generate JVM default methods for all interface declarations with bodies in the module.
-                                                              Do not generate 'DefaultImpls' stubs for interface declarations with bodies. If an interface inherits a method with a
-                                                              body from an interface compiled in 'disable' mode and doesn't override it, then a 'DefaultImpls' stub will be
-                                                              generated for it.
-                                                              This BREAKS BINARY COMPATIBILITY if some client code relies on the presence of 'DefaultImpls' classes.
-                                                              Note that if interface delegation is used, all interface methods are delegated.
-                             -Xjvm-default=all-compatibility  Like 'all', but additionally generate compatibility stubs in the 'DefaultImpls' classes.
-                                                              Compatibility stubs can help library and runtime authors maintain backward binary compatibility
-                                                              for existing clients compiled against previous library versions.
-                                                              'all' and 'all-compatibility' modes change the library ABI surface that will be used by clients after
-                                                              the recompilation of the library. Because of this, clients might be incompatible with previous library
-                                                              versions. This usually means that proper library versioning is required, for example with major version increases in SemVer.
-                                                              In subtypes of Kotlin interfaces compiled in 'all' or 'all-compatibility' mode, 'DefaultImpls'
-                                                              compatibility stubs will invoke the default method of the interface with standard JVM runtime resolution semantics.
-                                                              Perform additional compatibility checks for classes inheriting generic interfaces where in some cases an
-                                                              additional implicit method with specialized signatures was generated in 'disable' mode.
-                                                              Unlike in 'disable' mode, the compiler will report an error if such a method is not overridden explicitly
-                                                              and the class is not annotated with '@JvmDefaultWithoutCompatibility' (see KT-39603 for more details).
-                             -Xjvm-default=disable            Default behavior. Do not generate JVM default methods.
+                             This option is deprecated. Migrate to -jvm-default as follows:
+                             -Xjvm-default=disable            -> -jvm-default=disable
+                             -Xjvm-default=all-compatibility  -> -jvm-default=enable
+                             -Xjvm-default=all                -> -jvm-default=no-compatibility
   -Xklib=<path>              Paths to cross-platform libraries in the .klib format.
   -Xlambdas={class|indy}     Select the code generation scheme for lambdas.
                              -Xlambdas=indy                  Generate lambdas using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
@@ -103,8 +87,6 @@ where advanced options include:
                              * ignore
                              * strict
                              * warn (report a warning)
-  -Xuse-old-innerclasses-logic Use the old logic for the generation of 'InnerClasses' attributes.
-                             This option is deprecated and will be deleted in future versions.
   -Xoutput-builtins-metadata Output builtins metadata as .kotlin_builtins files
   -Xprofile=<profilerPath:command:outputDir>
                              Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
@@ -146,7 +128,6 @@ where advanced options include:
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
   -Xuse-javac                Use javac for Java source and class file analysis.
   -Xuse-k2-kapt              Enable the experimental support for K2 KAPT.
-  -Xuse-old-backend          Use the old JVM backend.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
   -Xuse-14-inline-classes-mangling-scheme
@@ -163,9 +144,8 @@ where advanced options include:
                              -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
                              default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
+  -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
-  -Xcheck-sticky-phase-conditions
-                             Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
   -Xconsistent-data-class-copy-visibility
@@ -188,8 +168,6 @@ where advanced options include:
   -Xexplicit-api={strict|warning|disable}
                              Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
                              Use the 'warning' level to issue warnings instead of errors.
-  -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
-                             Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
@@ -208,6 +186,7 @@ where advanced options include:
   -Xmetadata-version         Change the metadata version of the generated binary files.
   -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
   -Xmulti-platform           Enable language support for multiplatform projects.
+  -Xnested-type-aliases      Enable experimental language support for nested type aliases.
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.

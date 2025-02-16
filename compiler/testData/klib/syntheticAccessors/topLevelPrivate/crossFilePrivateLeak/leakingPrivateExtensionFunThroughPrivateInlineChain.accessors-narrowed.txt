@@ -4,14 +4,14 @@
 
 /* TARGET declaration */ private fun A.privateExtension(): String
 private inline fun A.privateInlineExtension1(): String
-    /* TARGET use-site */ <this>.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = <this> */)
 private inline fun A.privateInlineExtension2(): String
-    /* TARGET use-site */ this.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
 private inline fun A.privateInlineExtension3(): String
-    /* TARGET use-site */ this.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
 private inline fun A.privateInlineExtension4(): String
-    /* TARGET use-site */ this.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = this */)
 internal inline fun A.internalInlineExtension(): String
     /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = this)
 /* ACCESSOR declaration */ internal fun access$privateExtension$tBKt($receiver: A): String
-    /* TARGET use-site */ $receiver.privateExtension()
+    /* TARGET use-site */ privateExtension(/* <this> = $receiver */)

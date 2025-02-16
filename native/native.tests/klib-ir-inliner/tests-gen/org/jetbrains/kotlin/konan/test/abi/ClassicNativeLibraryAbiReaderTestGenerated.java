@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.abi;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/dump-abi/content")
 @TestDataPath("$PROJECT_ROOT")
+@ClassicPipeline()
 public class ClassicNativeLibraryAbiReaderTestGenerated extends AbstractClassicNativeLibraryAbiReaderTest {
   @Test
   public void testAllFilesPresentInContent() {
@@ -109,6 +111,12 @@ public class ClassicNativeLibraryAbiReaderTestGenerated extends AbstractClassicN
   }
 
   @Test
+  @TestMetadata("properties_with_context_parameters.kt")
+  public void testProperties_with_context_parameters() {
+    runTest("compiler/testData/klib/dump-abi/content/properties_with_context_parameters.kt");
+  }
+
+  @Test
   @TestMetadata("root_package.kt")
   public void testRoot_package() {
     runTest("compiler/testData/klib/dump-abi/content/root_package.kt");
@@ -130,12 +138,6 @@ public class ClassicNativeLibraryAbiReaderTestGenerated extends AbstractClassicN
   @TestMetadata("value_parameters.kt")
   public void testValue_parameters() {
     runTest("compiler/testData/klib/dump-abi/content/value_parameters.kt");
-  }
-
-  @Test
-  @TestMetadata("value_parameters_with_context_parameters.kt")
-  public void testValue_parameters_with_context_parameters() {
-    runTest("compiler/testData/klib/dump-abi/content/value_parameters_with_context_parameters.kt");
   }
 
   @Test

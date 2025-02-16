@@ -46,49 +46,4 @@ class DefaultHierarchySetupDiagnosticTest {
             project.checkDiagnostics("KotlinDefaultHierarchyFallbackIllegalTargetNames")
         }
     }
-
-    @Test
-    fun `test - warning - ios shortcut`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
-
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = multiplatformExtension
-            @Suppress("DEPRECATION")
-            kotlin.ios()
-
-            project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
-                project.checkDiagnostics("KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected-ios")
-            }
-        }
-    }
-
-    @Test
-    fun `test - warning - watchos shortcut`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
-
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = multiplatformExtension
-            @Suppress("DEPRECATION")
-            kotlin.watchos()
-
-            project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
-                project.checkDiagnostics("KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected-watchos")
-            }
-        }
-    }
-
-    @Test
-    fun `test - warning - tvos shortcut`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
-
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = multiplatformExtension
-            @Suppress("DEPRECATION")
-            kotlin.tvos()
-
-            project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
-                project.checkDiagnostics("KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected-tvos")
-            }
-        }
-    }
 }

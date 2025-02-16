@@ -120,6 +120,9 @@ class NativeForwardDeclarationsSymbolProvider(
     }
 }
 
+fun ClassId.mayBeForwardDeclarationClassId(): Boolean =
+    packageFqName in NativeForwardDeclarationKind.packageFqNameToKind
+
 fun createSyntheticForwardDeclarationClass(
     classId: ClassId,
     firModuleData: FirModuleData,

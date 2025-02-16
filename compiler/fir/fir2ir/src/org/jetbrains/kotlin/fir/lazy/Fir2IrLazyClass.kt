@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
@@ -79,15 +80,7 @@ class Fir2IrLazyClass(
         get() = if (fir.classKind.isAnnotationClass) Modality.OPEN else fir.symbol.resolvedStatus.modality
         set(_) = mutationNotSupported()
 
-    override var attributeOwnerId: IrAttributeContainer
-        get() = this
-        set(_) = mutationNotSupported()
-
-    override var originalBeforeInline: IrAttributeContainer?
-        get() = null
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+    override var attributeOwnerId: IrElement = this
 
     override var kind: ClassKind
         get() = fir.classKind

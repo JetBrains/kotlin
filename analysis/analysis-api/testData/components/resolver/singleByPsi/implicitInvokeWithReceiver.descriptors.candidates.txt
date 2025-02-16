@@ -7,10 +7,12 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = a
           isSafeNavigation = false
@@ -26,13 +28,15 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /A.x
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Boolean>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -41,10 +45,12 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = x
@@ -60,8 +66,10 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true

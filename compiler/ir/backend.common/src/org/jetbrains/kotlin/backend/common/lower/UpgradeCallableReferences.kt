@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -19,12 +20,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@PhaseDescription("UpgradeCallableReferences")
 open class UpgradeCallableReferences(
     val context: LoweringContext,
     val upgradeFunctionReferencesAndLambdas: Boolean = true,
@@ -60,7 +62,7 @@ open class UpgradeCallableReferences(
         val samType: IrType
     )
 
-    private inner class UpgradeTransformer : IrElementTransformer<IrDeclarationParent> {
+    private inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
         private fun IrClass?.isRestrictedSuspension(): Boolean {
             if (this == null) return false
             return hasAnnotation(StandardClassIds.Annotations.RestrictsSuspension) ||
@@ -94,7 +96,9 @@ open class UpgradeCallableReferences(
                 invokeFunction = expression.function,
                 origin = expression.origin,
                 isRestrictedSuspension = isRestrictedSuspension,
-            ).copyAttributes(expression)
+            ).apply {
+                copyAttributes(expression)
+            }
         }
 
         override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
@@ -186,7 +190,7 @@ open class UpgradeCallableReferences(
                 return argument.apply {
                     type = expression.typeOperand
                     overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.typeOperand)
-                }
+                }.copyWithOffsets(expression.startOffset, expression.endOffset)
             }
             return super.visitTypeOperator(expression, data)
         }
@@ -298,7 +302,7 @@ open class UpgradeCallableReferences(
                         this.type = type
                     }
                 }
-                this.body = context.createIrBuilder(symbol).run {
+                this.body = context.createIrBuilder(symbol).at(this@buildWrapperFunction).run {
                     irBlockBody {
                         body(parameters)
                     }
@@ -350,10 +354,10 @@ open class UpgradeCallableReferences(
             ) { parameters ->
                 // Unfortunately, some plugins sometimes generate the wrong number of arguments in references
                 // we already have such klib, so need to handle it. We just ignore extra type parameters
-                val cleanedTypeArgumentCount = minOf(typeArgumentsCount, referencedFunction.typeParameters.size)
+                val cleanedTypeArgumentCount = minOf(typeArguments.size, referencedFunction.typeParameters.size)
                 val exprToReturn = irCallWithSubstitutedType(
                     referencedFunction.symbol,
-                    typeArguments = (0 until cleanedTypeArgumentCount).map { getTypeArgument(it) ?: context.irBuiltIns.anyNType },
+                    typeArguments = (0 until cleanedTypeArgumentCount).map { typeArguments[it] ?: context.irBuiltIns.anyNType },
                 ).apply {
                     val bound = captured.map { it.first }.toSet()
                     val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }

@@ -111,16 +111,27 @@ fun Test(%composer: Composer?, %changed: Int) {
         @Composable
         @ComposableTarget(applier = "UI")
         override fun call(%composer: Composer?, %changed: Int) {
-          %composer.startReplaceGroup(<>)
+          %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(call)<Text("...>:Test.kt")
-          if (isTraceInProgress()) {
-            traceEventStart(<>, %changed, -1, <>)
+          val %dirty = %changed
+          if (%changed and 0b0110 == 0) {
+            %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
           }
-          Text("Test", %composer, 0b0110)
-          if (isTraceInProgress()) {
-            traceEventEnd()
+          if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
+            Text("Test", %composer, 0b0110)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
           }
-          %composer.endReplaceGroup()
+          val tmp0_rcvr = <this>
+          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+            tmp0_rcvr.call(%composer, updateChangedFlags(%changed or 0b0001))
+          }
         }
       }
       <no name provided>()
@@ -130,16 +141,27 @@ fun Test(%composer: Composer?, %changed: Int) {
         @Composable
         @ComposableTarget(applier = "UI")
         override fun call(%composer: Composer?, %changed: Int) {
-          %composer.startReplaceGroup(<>)
+          %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(call)<Text("...>:Test.kt")
-          if (isTraceInProgress()) {
-            traceEventStart(<>, %changed, -1, <>)
+          val %dirty = %changed
+          if (%changed and 0b0110 == 0) {
+            %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
           }
-          Text("Test", %composer, 0b0110)
-          if (isTraceInProgress()) {
-            traceEventEnd()
+          if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
+            Text("Test", %composer, 0b0110)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
           }
-          %composer.endReplaceGroup()
+          val tmp0_rcvr = <this>
+          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+            tmp0_rcvr.call(%composer, updateChangedFlags(%changed or 0b0001))
+          }
         }
       }
       <no name provided>()

@@ -1,3 +1,3 @@
-/kt49661.fir.kt:(272,273): warning: Type argument for reified type parameter 'T' was inferred to the intersection of ['Foo' & 'kotlin.Int']. Reification of an intersection type results in the common supertype being used. This may lead to subtle issues and an explicit type argument is encouraged. This will become an error in a future release.
+/kt49661.fir.kt:(272,273): warning: Type argument for reified type parameter 'T' was inferred to the intersection of ['Foo' & 'Int']. Reification of an intersection type results in the common supertype being used. This may lead to subtle issues and an explicit type argument is encouraged. This will become an error in a future release.
 
-/kt49661.fir.kt:(272,273): warning: Type argument for type parameter 'T' cannot be inferred because it has incompatible upper bounds: Foo, kotlin.Int (multiple incompatible classes). This will become an error in a future release.
+/kt49661.fir.kt:(272,273): warning: Type argument for type parameter 'T' cannot be inferred because it has incompatible upper bounds: Foo, Int (multiple incompatible classes). This will become an error in a future release.

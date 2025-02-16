@@ -130,13 +130,11 @@ object GenerationUtils {
             jvmBackendClassResolver = FirJvmBackendClassResolver(components),
             diagnosticReporter = diagnosticReporter,
         )
-
-        JvmIrCodegenFactory(configuration).generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, components.irProviders,
+        val backendInput = JvmIrCodegenFactory.BackendInput(
+            moduleFragment, pluginContext.irBuiltIns, symbolTable, components.irProviders,
             fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
-        ) {}
-
-        generationState.factory.done()
+        )
+        JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
         return generationState
     }
 
@@ -169,15 +167,10 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory,
         analysisResult: AnalysisResult,
     ): GenerationState {
-        val generationState = GenerationState(project, analysisResult.moduleDescriptor, configuration, classBuilderFactory)
+        val state = GenerationState(project, analysisResult.moduleDescriptor, configuration, classBuilderFactory)
         if (analysisResult.shouldGenerateCode) {
-            KotlinCodegenFacade.compileCorrectFiles(
-                files,
-                generationState,
-                analysisResult.bindingContext,
-                JvmIrCodegenFactory(configuration),
-            )
+            JvmIrCodegenFactory(configuration).convertAndGenerate(files, state, analysisResult.bindingContext)
         }
-        return generationState
+        return state
     }
 }

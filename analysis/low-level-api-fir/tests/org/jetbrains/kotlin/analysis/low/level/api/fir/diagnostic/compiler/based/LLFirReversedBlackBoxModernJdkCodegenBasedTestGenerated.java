@@ -388,21 +388,27 @@ public class LLFirReversedBlackBoxModernJdkCodegenBasedTestGenerated extends Abs
       }
 
       @Test
-      @TestMetadata("propertiesOverrides.kt")
-      public void testPropertiesOverrides() {
-        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverrides.kt");
+      @TestMetadata("propertiesOverridesDisableJvmDefault.kt")
+      public void testPropertiesOverridesDisableJvmDefault() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesDisableJvmDefault.kt");
       }
 
       @Test
-      @TestMetadata("propertiesOverridesAllCompatibilityJvmDefault.kt")
-      public void testPropertiesOverridesAllCompatibilityJvmDefault() {
-        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesAllCompatibilityJvmDefault.kt");
+      @TestMetadata("propertiesOverridesEnableJvmDefault.kt")
+      public void testPropertiesOverridesEnableJvmDefault() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesEnableJvmDefault.kt");
       }
 
       @Test
-      @TestMetadata("propertiesOverridesAllJvmDefault.kt")
-      public void testPropertiesOverridesAllJvmDefault() {
-        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesAllJvmDefault.kt");
+      @TestMetadata("propertiesOverridesNoCompatibilityJvmDefault.kt")
+      public void testPropertiesOverridesNoCompatibilityJvmDefault() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesNoCompatibilityJvmDefault.kt");
+      }
+
+      @Test
+      @TestMetadata("recordAnnotation.kt")
+      public void testRecordAnnotation() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordAnnotation.kt");
       }
 
       @Test

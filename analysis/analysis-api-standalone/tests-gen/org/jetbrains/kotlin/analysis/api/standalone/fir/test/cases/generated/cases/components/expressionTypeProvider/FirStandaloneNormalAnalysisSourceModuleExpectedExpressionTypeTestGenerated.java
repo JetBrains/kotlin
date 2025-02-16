@@ -112,6 +112,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
   }
 
   @Test
+  @TestMetadata("delegatedSuperEntry.kt")
+  public void testDelegatedSuperEntry() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/delegatedSuperEntry.kt");
+  }
+
+  @Test
   @TestMetadata("elvisExpressionLeftOperand.kt")
   public void testElvisExpressionLeftOperand() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionLeftOperand.kt");

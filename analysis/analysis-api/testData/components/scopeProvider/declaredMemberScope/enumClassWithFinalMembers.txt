@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: test/E.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -61,7 +62,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(5)
+  initializer: KaConstantInitializerValue(5)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -102,6 +103,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: test/E.bar
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

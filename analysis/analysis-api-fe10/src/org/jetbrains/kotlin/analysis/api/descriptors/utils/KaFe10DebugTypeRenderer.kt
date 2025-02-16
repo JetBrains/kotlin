@@ -86,7 +86,7 @@ internal class KaFe10DebugTypeRenderer {
     }
 
     private fun Fe10AnalysisContext.renderTypeAnnotationDebug(annotation: AnnotationDescriptor, printer: PrettyPrinter) {
-        val namedValues = annotation.getKtNamedAnnotationArguments(this@Fe10AnalysisContext)
+        val namedValues = annotation.getKtNamedAnnotationArguments(this@renderTypeAnnotationDebug)
         renderAnnotationDebug(annotation.annotationClass?.classId, namedValues, printer)
     }
 

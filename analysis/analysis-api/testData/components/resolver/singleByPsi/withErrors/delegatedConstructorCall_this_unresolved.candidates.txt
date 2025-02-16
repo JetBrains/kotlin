@@ -4,6 +4,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
       argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -16,24 +17,28 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = j
               receiverType = null
               returnType = kotlin.Int
               symbol = j: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(i: Int, j: Int): Sub'.>
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -46,8 +51,10 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
               receiverType = null
               returnType = kotlin.Int
               symbol = p: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(p: Int): Sub'.>

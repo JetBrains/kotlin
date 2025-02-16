@@ -161,6 +161,9 @@ object ComposeErrors {
     @JvmField
     val REDUNDANT_COMPOSABLE_ANNOTATION = DiagnosticFactory0.create<PsiElement>(Severity.WARNING)
 
+    @JvmField
+    val COMPOSABLE_INAPPLICABLE_TYPE = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
+
     init {
         Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(
             ComposeErrors::class.java,

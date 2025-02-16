@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getKindSpecificClangFlags
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -30,19 +30,20 @@ import java.io.File
 @EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "V1")
 @TestMetadata("native/native.tests/testData/kt43502")
 @TestDataPath("\$PROJECT_ROOT")
+@ClassicPipeline()
 class ClassicDynamicKT43502Test : KT43502TestBase()
 
 @EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "STATIC")
 @EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "V1")
 @TestMetadata("native/native.tests/testData/kt43502")
 @TestDataPath("\$PROJECT_ROOT")
+@ClassicPipeline()
 class ClassicStaticKT43502Test : KT43502TestBase()
 
 @EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "DYNAMIC")
 @EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "V1")
 @TestMetadata("native/native.tests/testData/kt43502")
 @TestDataPath("\$PROJECT_ROOT")
-@Tag("frontend-fir")
 @FirPipeline()
 class FirDynamicKT43502Test : KT43502TestBase()
 
@@ -50,7 +51,6 @@ class FirDynamicKT43502Test : KT43502TestBase()
 @EnforcedProperty(property = ClassLevelProperty.C_INTERFACE_MODE, propertyValue = "V1")
 @TestMetadata("native/native.tests/testData/kt43502")
 @TestDataPath("\$PROJECT_ROOT")
-@Tag("frontend-fir")
 @FirPipeline()
 class FirStaticKT43502Test : KT43502TestBase()
 

@@ -12,7 +12,7 @@ KtNameReferenceExpression(21,24): 'Int'
 
 KtNameReferenceExpression(27,31): 'this'
   KtSimpleNameReference:
-    (in <local>: foo) extension receiver with type kotlin.Int
+    extension receiver with type kotlin.Int
 
 KtOperationReferenceExpression(32,33): '+'
   KtSimpleNameReference:
@@ -40,7 +40,7 @@ KtNameReferenceExpression(65,68): 'Int'
 
 KtNameReferenceExpression(71,75): 'this'
   KtSimpleNameReference:
-    (in <local>: bar) extension receiver with type kotlin.Int?
+    extension receiver with type kotlin.Int?
 
 KtOperationReferenceExpression(76,78): '?:'
   KtSimpleNameReference:

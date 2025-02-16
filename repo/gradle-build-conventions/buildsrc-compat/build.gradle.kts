@@ -92,6 +92,7 @@ dependencies {
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.spdx.gradlePlugin)
     implementation(libs.dexMemberList)
+    compileOnly(libs.node.gradlePlugin)
 
     // Keep in mind https://github.com/johnrengelman/shadow/issues/807 issue as shadow plugin brings transitively "org.ow2.asm" dependency,
     // which could conflict with a version in Kotlin compiler brought by KGP.

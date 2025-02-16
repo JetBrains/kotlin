@@ -14,9 +14,10 @@ val x: @EnhancedNullability Boolean /* by */
   }
 )
   get(): @EnhancedNullability Boolean {
-    return #x$delegate.getValue<@EnhancedNullability Boolean>(thisRef = null, property = ::x)
+    return getValue<@EnhancedNullability Boolean>(/* <this> = #x$delegate, */ thisRef = null, property = ::x)
   }
 
 fun main() {
   println(message = <get-x>() /*!! Boolean */)
 }
+

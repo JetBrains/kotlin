@@ -1,0 +1,39 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+
+context(foo: Foo, bar: Bar, fooBar: FooBar)
+@Composable
+fun String.B(a: Int, b: String = "", c: Int = 1) { }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun String.B(foo: Foo, bar: Bar, fooBar: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(B)P(4,2,5):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b00010000 != 0) {
+      b = ""
+    }
+    if (%default and 0b00100000 != 0) {
+      c = 1
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    B(foo, bar, fooBar, a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

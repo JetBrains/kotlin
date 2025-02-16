@@ -7,4 +7,13 @@
         restartRequired="true"
     />
   </extensions>
+
+  <extensionPoints>
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.kotlinResolutionScopeEnlarger"
+        interface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeEnlarger"
+        area="IDEA_PROJECT"
+        dynamic="true"
+    />
+  </extensionPoints>
 </idea-plugin>

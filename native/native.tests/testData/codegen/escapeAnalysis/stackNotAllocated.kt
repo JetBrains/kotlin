@@ -13,7 +13,7 @@ class A {
 
 fun f(x: Int): Int {
     val a = A()
-    assertFalse(a.isLocal())
+    assertFalse(a.isStack())
     return a.f(x)
 }
 

@@ -43,6 +43,12 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   }
 
   @Test
+  @TestMetadata("associatedObjectKey")
+  public void testAssociatedObjectKey() {
+    runTest("js/js.translator/testData/incremental/invalidation/associatedObjectKey/");
+  }
+
+  @Test
   @TestMetadata("circleExportsUpdate")
   public void testCircleExportsUpdate() {
     runTest("js/js.translator/testData/incremental/invalidation/circleExportsUpdate/");
@@ -367,6 +373,12 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   }
 
   @Test
+  @TestMetadata("jsExportWithClass")
+  public void testJsExportWithClass() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsExportWithClass/");
+  }
+
+  @Test
   @TestMetadata("jsExportWithMultipleFiles")
   public void testJsExportWithMultipleFiles() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExportWithMultipleFiles/");
@@ -460,6 +472,12 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   @TestMetadata("moveInlineFunctionBetweenModules")
   public void testMoveInlineFunctionBetweenModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
+  }
+
+  @Test
+  @TestMetadata("multiModuleEagerInitialization")
+  public void testMultiModuleEagerInitialization() {
+    runTest("js/js.translator/testData/incremental/invalidation/multiModuleEagerInitialization/");
   }
 
   @Test

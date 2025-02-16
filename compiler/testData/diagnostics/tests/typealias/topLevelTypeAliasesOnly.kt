@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RENDER_DIAGNOSTICS_FULL_TEXT
+
 typealias TopLevel = Any
 
 interface A {

@@ -18,12 +18,11 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isOverridableOrOverrides
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -51,7 +50,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+        irFile.acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -68,15 +67,14 @@ class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendCont
         if (irFunction !is IrSimpleFunction) return
         if (!irFunction.isOverridableOrOverrides) return
 
-        val oldReceiver = irFunction.dispatchReceiverParameter!!
-        val originalReceiverType = oldReceiver.type
+        val dispatchReceiver = irFunction.dispatchReceiverParameter!!
+        val originalReceiverType = dispatchReceiver.type
 
         // Interfaces in Wasm are erased to Any, so they already have appropriate type
         if (originalReceiverType.isInterface() || originalReceiverType.isAny()) return
 
         val builder = context.createIrBuilder(irFunction.symbol)
-        val newReceiver = oldReceiver.copyTo(irFunction, type = context.irBuiltIns.anyType)
-        irFunction.dispatchReceiverParameter = newReceiver
+        dispatchReceiver.type = context.irBuiltIns.anyType
 
         val blockBody = irFunction.body as? IrBlockBody ?: return
         val classThisReceiverSymbol = irFunction.parentAsClass.thisReceiver?.symbol
@@ -84,8 +82,8 @@ class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendCont
         val lazyCastedThis = lazy(LazyThreadSafetyMode.NONE) {
             builder.buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 scope.createTemporaryVariable(
-                    builder.irImplicitCast(builder.irGet(newReceiver), originalReceiverType),
-                    oldReceiver.name.asString()
+                    builder.irImplicitCast(builder.irGet(dispatchReceiver), originalReceiverType),
+                    dispatchReceiver.name.asString()
                 )
             }
         }
@@ -94,7 +92,7 @@ class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendCont
         irFunction.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 if (expression.type.isAny()) return expression
-                if (expression.symbol != oldReceiver.symbol && expression.symbol != classThisReceiverSymbol) return expression
+                if (expression.symbol != dispatchReceiver.symbol && expression.symbol != classThisReceiverSymbol) return expression
                 return builder.irGet(lazyCastedThis.value)
             }
         })

@@ -1,0 +1,9 @@
+// Klib ABI Dump
+// Targets: [linuxArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <org.example:bcv-klib-test>
+final fun org.example/add(kotlin/Long, kotlin/Long): kotlin/Long // org.example/add|add(kotlin.Long;kotlin.Long){}[0]

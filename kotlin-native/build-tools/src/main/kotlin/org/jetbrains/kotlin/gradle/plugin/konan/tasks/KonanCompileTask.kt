@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServ
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
+import java.io.File
 import javax.inject.Inject
 
 private abstract class KonanCompileAction : WorkAction<KonanCompileAction.Parameters> {
@@ -42,12 +44,47 @@ private abstract class KonanCompileAction : WorkAction<KonanCompileAction.Parame
     }
 }
 
+open class KotlinSourceDirectorySet @Inject constructor(
+        private val _name: String,
+        objectFactory: ObjectFactory,
+        private val layout: ProjectLayout,
+) : Named {
+    @Input
+    override fun getName() = _name
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE) // manually computed: relativePaths
+    protected val sources: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    @get:Input
+    @Suppress("unused") // used only by Gradle machinery via reflection.
+    protected val relativePaths = sources.elements.map { files ->
+        val base = layout.projectDirectory
+        files.map {
+            it.asFile.toRelativeString(base.asFile)
+        }
+    }
+
+    /**
+     * Add source directory. Accepts the same format as [org.gradle.api.Project.files].
+     */
+    fun srcDir(dir: Any) {
+        sources.from(layout.files(dir).asFileTree.matching {
+            include("**/*.kt")
+        })
+    }
+
+    @get:Internal("handled by sources")
+    internal val files: Set<File>
+        get() = sources.files
+}
+
 /**
  * A task compiling the target library using Kotlin/Native compiler
  */
 @CacheableTask
 open class KonanCompileTask @Inject constructor(
-        private val objectFactory: ObjectFactory,
+        objectFactory: ObjectFactory,
         private val workerExecutor: WorkerExecutor,
 ) : DefaultTask() {
     @get:OutputDirectory
@@ -62,13 +99,8 @@ open class KonanCompileTask @Inject constructor(
     @get:Classpath
     protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
 
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val sourceSets: NamedDomainObjectContainer<SourceDirectorySet> = objectFactory.domainObjectContainer(SourceDirectorySet::class.java) {
-        objectFactory.sourceDirectorySet(it, it).apply {
-            filter.include("**/*.kt")
-        }
-    }
+    @get:Nested
+    val sourceSets: NamedDomainObjectContainer<KotlinSourceDirectorySet> = objectFactory.domainObjectContainer(KotlinSourceDirectorySet::class.java)
 
     @get:ServiceReference
     protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()

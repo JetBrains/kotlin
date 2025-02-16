@@ -40,7 +40,7 @@ class EscapableCharactersInPathTest : BaseCompilationTest() {
             module1.replaceFileWithVersion("a.kt", "change-return-type")
 
             module1.compile { module, scenarioModule ->
-                expectFailWithError(".*/b.kt:6:18 Return type mismatch: expected 'kotlin.Int', actual 'kotlin.String'.".toRegex())
+                expectFailWithError(".*/b.kt:6:18 Return type mismatch: expected 'Int', actual 'String'.".toRegex())
             }
         }
     }

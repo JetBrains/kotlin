@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -42,14 +42,13 @@ fun compile(
     exportedDeclarations: Set<FqName> = emptySet(),
     keep: Set<String> = emptySet(),
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    verifySignatures: Boolean = true,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
+        loadIr(depsDescriptors, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
         moduleFragment,
@@ -132,7 +131,7 @@ fun compileIr(
     }
 
     // TODO should be done incrementally
-    generateJsTests(context, allModules.last(), groupByPackage = false)
+    generateJsTests(context, allModules.last())
     performanceManager?.notifyIRTranslationFinished()
 
     performanceManager?.notifyGenerationStarted()
@@ -140,7 +139,7 @@ fun compileIr(
     (irFactory.stageController as? WholeWorldStageController)?.let {
         lowerPreservingTags(allModules, context, it)
     } ?: run {
-        val phaserState = PhaserState<IrModuleFragment>()
+        val phaserState = PhaserState()
         getJsLowerings(configuration).forEachIndexed { _, lowering ->
             allModules.forEach { module ->
                 lowering.invoke(context.phaseConfig, phaserState, context, module)

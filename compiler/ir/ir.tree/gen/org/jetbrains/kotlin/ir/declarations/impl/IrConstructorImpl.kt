@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,6 +37,8 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override val symbol: IrConstructorSymbol,
     override var isPrimary: Boolean,
 ) : IrConstructor() {
+    override var attributeOwnerId: IrElement = this
+
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()

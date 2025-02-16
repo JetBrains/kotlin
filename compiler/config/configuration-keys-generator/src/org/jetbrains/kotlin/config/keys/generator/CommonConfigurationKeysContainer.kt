@@ -54,4 +54,14 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val ENABLE_IR_VISIBILITY_CHECKS by key<Boolean>("Check pre-lowering IR for visibility violations")
     val ENABLE_IR_VARARG_TYPES_CHECKS by key<Boolean>("Check IR for vararg types mismatches")
     val PHASE_CONFIG by key<PhaseConfig>("phase configuration")
+
+    val DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS by key<Boolean>(
+        description = "don't create separate session for scripts",
+        comment = "Should be used only in tests, impossible to set via compiler arguments"
+    )
+
+    val DONT_SORT_SOURCE_FILES by key<Boolean>(
+        description = "don't sort source files in FS order",
+        comment = "Should be used only in tests, impossible to set via compiler arguments",
+    )
 }

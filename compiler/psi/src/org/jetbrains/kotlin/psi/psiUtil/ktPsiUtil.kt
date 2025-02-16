@@ -328,7 +328,7 @@ fun PsiElement.isExtensionDeclaration(): Boolean {
 
 fun KtDeclaration.isExpectDeclaration(): Boolean = when {
     hasExpectModifier() -> true
-    this is KtParameter -> ownerFunction?.isExpectDeclaration() == true
+    this is KtParameter -> ownerDeclaration?.isExpectDeclaration() == true
     else -> containingClassOrObject?.isExpectDeclaration() == true
 }
 
@@ -346,9 +346,10 @@ fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && 
 //TODO: strange method, and not only Kotlin specific (also Java)
 fun PsiElement.parameterIndex(): Int {
     val parent = parent
-    return when {
-        this is KtParameter && parent is KtParameterList -> parent.parameters.indexOf(this)
-        this is PsiParameter && parent is PsiParameterList -> parent.getParameterIndex(this)
+    return when (this) {
+        is KtParameter if parent is KtParameterList -> parent.parameters.indexOf(this)
+        is KtParameter if parent is KtContextReceiverList -> parent.contextParameters().indexOf(this)
+        is PsiParameter if parent is PsiParameterList -> parent.getParameterIndex(this)
         else -> -1
     }
 }

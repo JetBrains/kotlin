@@ -4,6 +4,7 @@ KtOperationReferenceExpression(191,192): '-'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false
@@ -14,6 +15,7 @@ KtOperationReferenceExpression(191,192): '-'
           returnType = MyClass
           symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
           valueParameters = []
+          contextParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
     isInBestCandidates = true

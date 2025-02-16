@@ -7,22 +7,26 @@ KtCollectionLiteralExpression(10,19): '[1, 2, 3]'
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg elements: T
+          contextParameters = []
           callableId = null),
         2 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg elements: T
+          contextParameters = []
           callableId = null),
         3 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg elements: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -35,8 +39,10 @@ KtCollectionLiteralExpression(10,19): '[1, 2, 3]'
               receiverType = null
               returnType = kotlin.Int
               symbol = vararg elements: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (kotlin.Int)

@@ -8,10 +8,12 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.Version
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import java.io.Serializable
 import java.util.*
 
-internal fun AndroidGradlePluginVersion(versionString: String): AndroidGradlePluginVersion {
+@InternalKotlinGradlePluginApi
+fun AndroidGradlePluginVersion(versionString: String): AndroidGradlePluginVersion {
     return AndroidGradlePluginVersionOrNull(versionString)
         ?: throw IllegalArgumentException("Invalid Android Gradle Plugin version: $versionString")
 }
@@ -31,7 +33,8 @@ internal fun AndroidGradlePluginVersionOrNull(versionString: String): AndroidGra
     )
 }
 
-internal data class AndroidGradlePluginVersion(
+@InternalKotlinGradlePluginApi
+data class AndroidGradlePluginVersion(
     val major: Int,
     val minor: Int,
     val patch: Int = 0,
@@ -47,8 +50,8 @@ internal data class AndroidGradlePluginVersion(
         if (this.classifier == null) return 1
         if (other.classifier == null) return -1
 
-        val thisClassifierLowercase = this.classifier.toLowerCase(Locale.ROOT)
-        val otherClassifierLowercase = other.classifier.toLowerCase(Locale.ROOT)
+        val thisClassifierLowercase = this.classifier.lowercase()
+        val otherClassifierLowercase = other.classifier.lowercase()
         if (thisClassifierLowercase == otherClassifierLowercase) return 0
         return thisClassifierLowercase.compareTo(otherClassifierLowercase)
     }

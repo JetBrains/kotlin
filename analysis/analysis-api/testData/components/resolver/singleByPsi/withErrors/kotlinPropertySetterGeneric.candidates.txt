@@ -2,6 +2,7 @@ KtNameReferenceExpression(51,56): 'value'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = foo
@@ -12,6 +13,7 @@ KtNameReferenceExpression(51,56): 'value'
           receiverType = CInt32VarX<kotlin.Int>
           returnType = kotlin.Int
           symbol = var value: T
+          contextParameters = []
           callableId = /value
       simpleAccess = Write:
         value = 42

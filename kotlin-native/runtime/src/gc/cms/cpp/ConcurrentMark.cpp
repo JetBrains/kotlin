@@ -7,7 +7,6 @@
 
 #include "MarkAndSweepUtils.hpp"
 #include "GCStatistics.hpp"
-#include "Utils.hpp"
 #include "GCImpl.hpp"
 
 using namespace kotlin;
@@ -17,6 +16,35 @@ namespace {
 class FlushActionActivator final : public mm::ExtraSafePointActionActivator<FlushActionActivator> {};
 
 } // namespace
+
+void gc::mark::ConcurrentMark::ThreadData::onSuspendForGC() noexcept {
+    mark_.runOnMutator(threadData_);
+}
+
+bool gc::mark::ConcurrentMark::ThreadData::tryLockRootSet() noexcept {
+    bool expected = false;
+    bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
+    if (locked) {
+        RuntimeLogDebug(
+                {kTagGC}, "Thread %" PRIuPTR " have exclusively acquired thread %" PRIuPTR "'s root set", konan::currentThreadId(),
+                threadData_.threadId());
+    }
+    return locked;
+}
+
+void gc::mark::ConcurrentMark::ThreadData::publish() noexcept {
+    threadData_.Publish();
+    published_.store(true, std::memory_order_release);
+}
+
+bool gc::mark::ConcurrentMark::ThreadData::published() const noexcept {
+    return published_.load(std::memory_order_acquire);
+}
+
+void gc::mark::ConcurrentMark::ThreadData::clearMarkFlags() noexcept {
+    published_.store(false, std::memory_order_relaxed);
+    rootSetLocked_.store(false, std::memory_order_release);
+}
 
 void gc::mark::ConcurrentMark::ThreadData::ensureFlushActionExecuted() noexcept {
     flushAction_->ensureExecuted([this] { markQueue()->forceFlush(); });
@@ -47,7 +75,7 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
 
     // create mutator mark queues
     for (auto& thread : *lockedMutatorsList_) {
-        thread.gc().impl().gc().mark().markQueue().construct(*parallelProcessor_);
+        thread.gc().impl().mark_.markQueue().construct(*parallelProcessor_);
     }
 
     completeMutatorsRootSet(mainWorker);
@@ -82,7 +110,7 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     // However, some threads may still try to enqueue a marked object, before they observe the barrier disablement.
     // Thus, mark queue destruction takes place only later below.
 
-    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::SpecialRefRegistry::instance());
+    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::ExternalRCRefRegistry::instance());
 
     if (!terminateInSTW) {
         stopTheWorld(gcHandle(), "GC stop the world #2: prepare to sweep");
@@ -91,7 +119,7 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     barriers::disableBarriers();
 
     for (auto& thread : *lockedMutatorsList_) {
-        thread.gc().impl().gc().mark().markQueue().destroy();
+        thread.gc().impl().mark_.markQueue().destroy();
     }
     endMarkingEpoch();
 }
@@ -113,7 +141,7 @@ void gc::mark::ConcurrentMark::completeMutatorsRootSet(MarkTraits::MarkQueue& ma
 }
 
 void gc::mark::ConcurrentMark::tryCollectRootSet(mm::ThreadData& thread, MarkTraits::MarkQueue& markQueue) {
-    auto& gcData = thread.gc().impl().gc();
+    auto& gcData = thread.gc().impl().mark_;
     if (!gcData.tryLockRootSet()) return;
 
     GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %" PRIuPTR " for thread %" PRIuPTR, konan::currentThreadId(), thread.threadId());
@@ -148,7 +176,7 @@ bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) 
 
 void gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
     for (auto& mutator : *lockedMutatorsList_) {
-        mutator.gc().impl().gc().mark().flushAction_.construct();
+        mutator.gc().impl().mark_.flushAction_.construct();
     }
 
     {
@@ -158,7 +186,7 @@ void gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
         while (true) {
             bool allDone = true;
             for (auto& mutator : *lockedMutatorsList_) {
-                auto& markData = mutator.gc().impl().gc().mark();
+                auto& markData = mutator.gc().impl().mark_;
                 if (mutator.suspensionData().suspendedOrNative()) {
                     markData.ensureFlushActionExecuted();
                 } else if (!markData.flushAction_->executed()) {
@@ -172,13 +200,13 @@ void gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
 
     // It's guaranteed by the activator that no mutator thread would access somethingFlushed_ at this point.
     for (auto& mutator : *lockedMutatorsList_) {
-        mutator.gc().impl().gc().mark().flushAction_.destroy();
+        mutator.gc().impl().mark_.flushAction_.destroy();
     }
 }
 
 void gc::mark::ConcurrentMark::resetMutatorFlags() {
     for (auto& mut : *lockedMutatorsList_) {
-        mut.gc().impl().gc().clearMarkFlags();
+        mut.gc().impl().mark_.clearMarkFlags();
     }
 }
 

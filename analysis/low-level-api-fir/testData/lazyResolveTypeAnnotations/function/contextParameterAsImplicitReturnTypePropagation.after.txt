@@ -1,0 +1,21 @@
+@R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
+  context -> FirNamedFunctionSymbol /bar
+  anchor -> [FirValueParameterSymbol <local>/parameter from FirNamedFunctionSymbol /foo]
+
+FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String| {
+        ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|@R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String| {
+        ^foo R|<local>/parameter|
+    }

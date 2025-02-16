@@ -105,6 +105,8 @@ class JvmAbiOutputExtension(
                         val remapper = ClassRemapper(writer, object : Remapper() {
                             override fun map(internalName: String): String =
                                 internalName.also { innerClassesToKeep.add(it) }
+
+                            override fun mapInnerClassName(name: String, ownerName: String?, innerName: String?): String? = innerName
                         })
                         val parsingOptions = if (removeDebugInfo) ClassReader.SKIP_DEBUG else 0
                         ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, remapper) {

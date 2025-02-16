@@ -45,10 +45,6 @@ CXTypeAttributes clang_getCursorResultTypeAttributes(CXCursor cursor);
 
 enum CXNullabilityKind clang_Type_getNullabilityKind(CXType type, CXTypeAttributes attributes);
 
-unsigned clang_Type_getNumProtocols(CXType type);
-
-CXCursor clang_Type_getProtocol(CXType type, unsigned index);
-
 unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor);
 
 unsigned clang_Cursor_isObjCReturningRetainedMethod(CXCursor cursor);

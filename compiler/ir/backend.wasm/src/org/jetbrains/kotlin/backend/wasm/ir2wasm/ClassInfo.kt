@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.Name
 
@@ -38,8 +38,10 @@ data class WasmSignature(
     }
 }
 
-fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
-    WasmSignature(
+fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature {
+    val extensionReceiverParameter = parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
+    val valueParameters = parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+    return WasmSignature(
         name,
         moduleNameForInternals = if (visibility == INTERNAL) findOriginallyContainingModule()?.name else null,
         extensionReceiverParameter?.type?.toWasmSignatureType(irBuiltIns),
@@ -47,6 +49,7 @@ fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
         returnType.toWasmSignatureType(irBuiltIns),
         isOverridableOrOverrides,
     )
+}
 
 private fun IrType.toWasmSignatureType(irBuiltIns: IrBuiltIns): IrType =
     when (this) {
@@ -63,7 +66,7 @@ private fun IrSimpleType.toWasmSignatureSimpleType(irBuiltIns: IrBuiltIns): IrSi
         )
     }
 
-    val klass = (this.erasedUpperBound?.symbol ?: irBuiltIns.anyClass).owner
+    val klass = this.erasedUpperBound.symbol.owner
     return klass.defaultType.withNullability(this.isNullable())
 }
 

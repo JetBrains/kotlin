@@ -1,0 +1,174 @@
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Private
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(/foo)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    visibility: PRIVATE
+    getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+    getContainingJvmClassName: PropertyWithContextParametersKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+  callableId: /foo
+  compilerVisibility: Public
+  contextParameters: [
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: parameter1
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: [
+          Anno(position = "12")
+            psi: KtAnnotationEntry
+        ]
+        typeArguments: []
+        type: @R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+      getContainingJvmClassName: PropertyWithContextParametersKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaContextParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: parameter2
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: [
+              Anno(position = "str")
+                psi: KtAnnotationEntry
+            ]
+            typeArguments: []
+            type: @R|Anno|(position = String(str))  kotlin/Int
+        ]
+        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+      getContainingJvmClassName: PropertyWithContextParametersKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  contextReceivers: [
+    KaContextReceiver:
+      label: parameter1
+      type: KaUsualClassType:
+        annotations: [
+          Anno(position = "12")
+            psi: KtAnnotationEntry
+        ]
+        typeArguments: []
+        type: @R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
+    KaContextReceiver:
+      label: parameter2
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: [
+              Anno(position = "str")
+                psi: KtAnnotationEntry
+            ]
+            typeArguments: []
+            type: @R|Anno|(position = String(str))  kotlin/Int
+        ]
+        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+  ]
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    valueParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+    getContainingJvmClassName: PropertyWithContextParametersKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: TOP_LEVEL
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(propertyWithContextParameters.kt)
+  getContainingJvmClassName: PropertyWithContextParametersKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getFoo
+  javaSetterName: null
+  setterDeprecationStatus: null

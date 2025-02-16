@@ -22,6 +22,7 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
     override fun finishResolvingPhase(phase: FirResolvePhase) {}
 
     override fun lazyResolveToPhase(element: FirElementWithResolveState, toPhase: FirResolvePhase) {
+        assertLazyResolveAllowed()
         val session = element.llFirResolvableSession ?: return
         session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
             target = element,
@@ -30,6 +31,7 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
     }
 
     override fun lazyResolveToPhaseWithCallableMembers(clazz: FirClass, toPhase: FirResolvePhase) {
+        assertLazyResolveAllowed()
         val fir = clazz as? FirRegularClass ?: return
         val session = fir.llFirResolvableSession ?: return
         session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolveWithCallableMembers(
@@ -46,6 +48,7 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
     }
 
     override fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase) {
+        assertLazyResolveAllowed()
         val session = element.llFirResolvableSession ?: return
         session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolveRecursively(
             target = element,

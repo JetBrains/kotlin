@@ -119,12 +119,12 @@ internal object TestScopeRenderer {
                 forEach {
                     appendLine(
                         if (printPretty) {
-                            this@KaSession.renderPrettySymbol(it)
+                            this@renderScopeMembers.renderPrettySymbol(it)
                         } else {
                             debugRenderer.render(useSiteSession, it)
                         }
                     )
-                    this@KaSession.additionalSymbolInfo(it)?.let {
+                    this@renderScopeMembers.additionalSymbolInfo(it)?.let {
                         withIndent { appendLine(it) }
                     }
                 }

@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // FULL_JDK
+// DISABLE_JAVA_FACADE
 
 // FILE: Base.java
 import org.jetbrains.annotations.NotNull;

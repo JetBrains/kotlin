@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
@@ -19,4 +20,6 @@ class IrSyntheticBodyImpl internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var kind: IrSyntheticBodyKind,
-) : IrSyntheticBody()
+) : IrSyntheticBody() {
+    override var attributeOwnerId: IrElement = this
+}

@@ -114,11 +114,9 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),
             analysisFlag(JvmAnalysisFlags.sanitizeParentheses, trueOrNull(LanguageSettingsDirectives.SANITIZE_PARENTHESES in directives)),
             analysisFlag(JvmAnalysisFlags.enableJvmPreview, trueOrNull(LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in directives)),
-            analysisFlag(JvmAnalysisFlags.useIR, targetBackend?.isIR != false),
+            analysisFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib, trueOrNull(LanguageSettingsDirectives.EXPECT_BUILTINS_AS_PART_OF_STDLIB in directives)),
 
             analysisFlag(AnalysisFlags.explicitApiVersion, trueOrNull(apiVersion != null)),
-
-            analysisFlag(JvmAnalysisFlags.generatePropertyAnnotationsMethods, trueOrNull(LanguageSettingsDirectives.GENERATE_PROPERTY_ANNOTATIONS_METHODS in directives)),
         )
 
         analysisFlags.forEach { withFlag(it.first, it.second) }
@@ -138,6 +136,14 @@ class LanguageVersionSettingsBuilder {
         }
 
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }
+        if (LanguageSettingsDirectives.PROGRESSIVE_MODE in directives) {
+            for (feature in LanguageFeature.entries.filter { it.enabledInProgressiveMode }) {
+                if (feature.sinceVersion!! <= languageVersion) continue
+                if (feature !in specificFeatures) {
+                    specificFeatures[feature] = LanguageFeature.State.ENABLED
+                }
+            }
+        }
     }
 
     private fun parseLanguageFeature(featureString: String) {

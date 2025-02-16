@@ -50,6 +50,7 @@ internal class Runtime(
     val objHeaderPtrType = pointerType(objHeaderType)
     val objHeaderPtrPtrType = pointerType(objHeaderType)
     val arrayHeaderType = getStructType("ArrayHeader")
+    val stringHeaderType = getStructType("StringHeader")
 
     val frameOverlayType = getStructType("FrameOverlay")
 
@@ -115,14 +116,19 @@ internal class Runtime(
     val blockLiteralType by lazy { getStructType("Block_literal_1") }
     val blockDescriptorType by lazy { getStructType("Block_descriptor_1") }
 
-    val pointerSize: Int by lazy {
-        LLVMABISizeOfType(targetData, objHeaderPtrType).toInt()
-    }
+    fun sizeOf(type: LLVMTypeRef) = LLVMABISizeOfType(targetData, type).toInt()
+    fun alignOf(type: LLVMTypeRef) = LLVMABIAlignmentOfType(targetData, type)
+    fun offsetOf(type: LLVMTypeRef, index: Int) = LLVMOffsetOfElement(targetData, type, index).toInt()
 
-    val pointerAlignment: Int by lazy {
-        LLVMABIAlignmentOfType(targetData, objHeaderPtrType)
+    val pointerSize: Int by lazy { sizeOf(objHeaderPtrType) }
+    val pointerAlignment: Int by lazy { alignOf(objHeaderPtrType) }
+
+    val stringHeaderExtraSize: Int by lazy {
+        offsetOf(stringHeaderType, LLVMCountStructElementTypes(stringHeaderType) - 1) - sizeOf(arrayHeaderType)
     }
 
     // Must match kObjectAlignment in runtime
     val objectAlignment = 8
+
+    val isBigEndian: Boolean by lazy { LLVMByteOrder(targetData) == LLVMByteOrdering.LLVMBigEndian }
 }

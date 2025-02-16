@@ -1,5 +1,4 @@
 // LANGUAGE: +EnumEntries
-// IGNORE_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
 

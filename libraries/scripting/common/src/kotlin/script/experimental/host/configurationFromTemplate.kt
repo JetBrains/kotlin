@@ -176,7 +176,7 @@ private val KClass<*>.kotlinScriptAnnotation: KotlinScript
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.SimpleScriptTemplate",
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithArgs",
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithBindings",
-            -> DummyScriptTemplate::class.findAnnotation()
+                -> DummyScriptTemplate::class.findAnnotation()
             else -> null
         }
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $this")
@@ -188,7 +188,7 @@ private fun KotlinType.getTemplateClass(hostConfiguration: ScriptingHostConfigur
     return try {
         getScriptingClass(this, contextClass, hostConfiguration)
     } catch (e: Throwable) {
-        throw IllegalArgumentException("${ERROR_MSG_PREFIX}Unable to load base class $this", e)
+        throw IllegalArgumentException("${ERROR_MSG_PREFIX}Unable to load base class ${this.typeName}", e)
     }
 }
 

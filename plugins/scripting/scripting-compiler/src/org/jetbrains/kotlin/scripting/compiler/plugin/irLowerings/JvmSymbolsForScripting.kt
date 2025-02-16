@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -49,7 +50,7 @@ class JvmSymbolsForScripting(
     }.apply {
         parent = kotlinJvm
         addGetter().apply {
-            addExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
+            extensionReceiverParameter = createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
             returnType = javaLangClass.defaultType
         }
     }.symbol

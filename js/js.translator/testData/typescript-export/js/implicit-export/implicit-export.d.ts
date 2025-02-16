@@ -38,6 +38,7 @@ declare namespace JS_TESTS {
             constructor();
         }
         function baz(a: number): Promise<number>;
+        function bazVoid(a: number): Promise<void>;
         function bar(): Error;
         const console: Console;
         const error: WebAssembly.CompileError;

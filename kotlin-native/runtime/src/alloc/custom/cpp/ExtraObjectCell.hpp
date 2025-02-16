@@ -10,18 +10,21 @@
 namespace kotlin::alloc {
 
 struct ExtraObjectCell {
-    mm::ExtraObjectData* Data() { return reinterpret_cast<mm::ExtraObjectData*>(data_); }
-
-    // This is used to simultaneously build two lists: a free list and a finalizers queue.
-    // A cell cannot exist in both of them, but can be in neither when it's alive.
-    std::atomic<ExtraObjectCell*> next_;
-    struct alignas(mm::ExtraObjectData) {
-        uint8_t data_[sizeof(mm::ExtraObjectData)];
-    };
+    static constexpr AllocationSize size() {
+        return AllocationSize::bytesExactly(sizeof(ExtraObjectCell));
+    }
 
     static ExtraObjectCell* fromExtraObject(mm::ExtraObjectData* extraObjectData) {
         return reinterpret_cast<ExtraObjectCell*>(reinterpret_cast<uint8_t*>(extraObjectData) - offsetof(ExtraObjectCell, data_));
     }
+
+    mm::ExtraObjectData* Data() { return reinterpret_cast<mm::ExtraObjectData*>(data_); }
+
+    // This is used to build a finalizers queue.
+    std::atomic<ExtraObjectCell*> next_;
+    struct alignas(mm::ExtraObjectData) {
+        uint8_t data_[sizeof(mm::ExtraObjectData)];
+    };
 };
 
 } // namespace kotlin::alloc

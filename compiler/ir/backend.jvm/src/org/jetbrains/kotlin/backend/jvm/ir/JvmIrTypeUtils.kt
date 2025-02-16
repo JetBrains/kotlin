@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -19,88 +21,9 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isNullable
-
-/**
- * Perform as much type erasure as is significant for JVM signature generation.
- * Class types are kept as is, while type parameters are replaced with their
- * erased upper bounds, keeping the nullability information.
- *
- * For example, a type parameter `T?` where `T : Any`, `T : Comparable<T>` is
- * erased to `Any?`.
- *
- * Type arguments to the erased upper bound are replaced by `*`, since
- * recursive erasure could loop. For example, a type parameter
- * `T : Comparable<T>` is replaced by `Comparable<*>`.
- */
-fun IrType.eraseTypeParameters(): IrType = when (this) {
-    is IrSimpleType ->
-        when (val owner = classifier.owner) {
-            is IrScript -> {
-                assert(arguments.isEmpty()) { "Script can't be generic: " + owner.render() }
-                IrSimpleTypeImpl(classifier, nullability, emptyList(), annotations)
-            }
-            is IrClass -> IrSimpleTypeImpl(classifier, nullability, arguments.map { it.eraseTypeParameters() }, annotations)
-            is IrTypeParameter -> owner.erasedType(isNullable())
-            else -> error("Unknown IrSimpleType classifier kind: $owner")
-        }
-    is IrErrorType ->
-        this
-    else -> error("Unknown IrType kind: $this")
-}
-
-fun IrType.eraseIfTypeParameter(): IrType {
-    val typeParameter = (this as? IrSimpleType)?.classifier?.owner as? IrTypeParameter ?: return this
-    return typeParameter.erasedType(isNullable())
-}
-
-private fun IrTypeParameter.erasedType(isNullable: Boolean): IrType {
-    val upperBound = erasedUpperBound
-    return IrSimpleTypeImpl(
-        upperBound.symbol,
-        isNullable,
-        // Should not affect JVM signature, but may result in an invalid type object
-        List(upperBound.typeParameters.size) { IrStarProjectionImpl },
-        annotations
-    )
-}
-
-private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
-    is IrStarProjection -> this
-    is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
-}
-
-/**
- * Computes the erased class for this type parameter according to the java erasure rules.
- */
-val IrTypeParameter.erasedUpperBound: IrClass
-    get() {
-        // Pick the (necessarily unique) non-interface upper bound if it exists
-        for (type in superTypes) {
-            val irClass = type.classOrNull?.owner ?: continue
-            if (!irClass.isJvmInterface) return irClass
-        }
-
-        // Otherwise, choose either the first IrClass supertype or recurse.
-        // In the first case, all supertypes are interface types and the choice was arbitrary.
-        // In the second case, there is only a single supertype.
-        return superTypes.first().erasedUpperBound
-    }
-
-val IrType.erasedUpperBound: IrClass
-    get() = when (this) {
-        is IrSimpleType -> when (val classifier = classifier.owner) {
-            is IrClass -> classifier
-            is IrTypeParameter -> classifier.erasedUpperBound
-            is IrScript -> classifier.targetClass?.owner ?: error(render())
-            else -> error(render())
-        }
-        is IrErrorType -> symbol.owner
-        else -> error(render())
-    }
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 
 /**
  * Get the default null/0 value for the type.
@@ -175,9 +98,6 @@ fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrT
         .flatMap { it.typeParameters }
         .toSet()
 
-val IrType.isReifiedTypeParameter: Boolean
-    get() = (classifierOrNull as? IrTypeParameterSymbol)?.owner?.isReified == true
-
 val IrTypeParameter.representativeUpperBound: IrType
     get() {
         assert(superTypes.isNotEmpty()) { "Upper bounds should not be empty: ${render()}" }
@@ -187,3 +107,21 @@ val IrTypeParameter.representativeUpperBound: IrType
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
         } ?: superTypes.first()
     }
+
+@DeprecatedForRemovalCompilerApi(
+    CompilerVersionOfApiDeprecation._2_1_20,
+    "Moved to different package",
+    "org.jetbrains.kotlin.ir.util.erasedUpperBound"
+)
+// generic parameter to deprioritize in overload resolution against moved one if both are star-imported
+val <T : IrTypeParameter> T.erasedUpperBound
+    get() = /*org.jetbrains.kotlin.ir.util.*/erasedUpperBound
+
+@DeprecatedForRemovalCompilerApi(
+    CompilerVersionOfApiDeprecation._2_1_20,
+    "Moved to different package",
+    "org.jetbrains.kotlin.ir.util.erasedUpperBound"
+)
+// generic parameter to deprioritize in overload resolution against moved one if both are star-imported
+val <T : IrType> T.erasedUpperBound: IrClass
+    get() = /*org.jetbrains.kotlin.ir.util.*/erasedUpperBound

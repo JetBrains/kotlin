@@ -13,149 +13,130 @@
 #include "gtest/gtest.h"
 
 #include "Cell.hpp"
-#include "ExtraObjectPage.hpp"
 #include "FixedBlockPage.hpp"
-#include "TypeInfo.h"
+
+using namespace kotlin::alloc::test_support;
 
 using testing::_;
 
 namespace {
 
 using FixedBlockPage = typename kotlin::alloc::FixedBlockPage;
+using AllocationSize = typename kotlin::alloc::AllocationSize;
 
-TypeInfo fakeType = {.typeInfo_ = &fakeType, .flags_ = 0}; // a type without a finalizer
-
-void mark(void* obj) {
-    reinterpret_cast<uint64_t*>(obj)[0] = 1;
-}
-
-uint8_t* alloc(FixedBlockPage* page, size_t blockSize) {
+FakeObjectHeader* alloc(FixedBlockPage* page, size_t blockSizeCells) {
+    auto blockSize = AllocationSize::cells(blockSizeCells);
     uint8_t* ptr = page->TryAllocate();
     if (ptr) {
-        EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, blockSize * 8 - 1) == 0);
-        reinterpret_cast<uint64_t*>(ptr)[1] = reinterpret_cast<uint64_t>(&fakeType);
+        EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, blockSize.inBytes() - 1) == 0);
+        return new(ptr) FakeObjectHeader(blockSize.inBytes());
     }
-    return ptr;
+    return nullptr;
 }
 
-TEST(CustomAllocTest, FixedBlockPageConsequtiveAlloc) {
+} // namespace
+
+TEST_F(CustomAllocatorTest, FixedBlockPageConsequtiveAlloc) {
     for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
-        uint8_t* prev = alloc(page, size);
-        uint8_t* cur;
+        FakeObjectHeader* prev = alloc(page, size);
+        FakeObjectHeader* cur;
         while ((cur = alloc(page, size))) {
-            EXPECT_EQ(prev + sizeof(kotlin::alloc::Cell) * size, cur);
+            uint64_t dist = abs(reinterpret_cast<uint8_t*>(cur) - reinterpret_cast<uint8_t*>(prev));
+            EXPECT_EQ(dist, AllocationSize::cells(size).inBytes());
             prev = cur;
         }
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, FixedBlockPageSweepEmptyPage) {
-    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
-    auto gcScope = gcHandle.sweep();
-    kotlin::alloc::FinalizerQueue finalizerQueue;
+TEST_F(CustomAllocatorTest, FixedBlockPageSweepEmptyPage) {
     for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
-        EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
+        EXPECT_FALSE(page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, FixedBlockPageSweepFullUnmarkedPage) {
-    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
-    auto gcScope = gcHandle.sweep();
-    kotlin::alloc::FinalizerQueue finalizerQueue;
+TEST_F(CustomAllocatorTest, FixedBlockPageSweepFullUnmarkedPage) {
     for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint32_t count = 0;
         while (alloc(page, size)) ++count;
         EXPECT_EQ(count, FixedBlockPage::cellCount() / size);
-        EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
+        EXPECT_FALSE(page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, FixedBlockPageSweepSingleMarked) {
-    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
-    auto gcScope = gcHandle.sweep();
-    kotlin::alloc::FinalizerQueue finalizerQueue;
+TEST_F(CustomAllocatorTest, FixedBlockPageSweepSingleMarked) {
     for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
-        uint8_t* ptr = alloc(page, size);
-        mark(ptr);
-        EXPECT_TRUE(page->Sweep(gcScope, finalizerQueue));
+        FakeObjectHeader* obj = alloc(page, size);
+        obj->mark();
+        EXPECT_TRUE(page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, FixedBlockPageSweepSingleReuse) {
-    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
-    auto gcScope = gcHandle.sweep();
-    kotlin::alloc::FinalizerQueue finalizerQueue;
+TEST_F(CustomAllocatorTest, FixedBlockPageSweepSingleReuse) {
     for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
-        uint8_t* ptr = alloc(page, size);
-        EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
-        EXPECT_EQ(alloc(page, size), ptr);
+        FakeObjectHeader* obj = alloc(page, size);
+        EXPECT_FALSE(page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
+        EXPECT_EQ(alloc(page, size), obj);
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, FixedBlockPageSweepReuse) {
-    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
-    auto gcScope = gcHandle.sweep();
-    kotlin::alloc::FinalizerQueue finalizerQueue;
+TEST_F(CustomAllocatorTest, FixedBlockPageSweepReuse) {
     for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
-        uint8_t* ptr;
-        for (int count = 0; (ptr = alloc(page, size)); ++count) {
-            if (count % 2 == 0) mark(ptr);
+        FakeObjectHeader* obj;
+        for (int count = 0; (obj = alloc(page, size)); ++count) {
+            if (count % 2 == 0) obj->mark();
         }
-        EXPECT_TRUE(page->Sweep(gcScope, finalizerQueue));
+        EXPECT_TRUE(page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
         uint32_t count = 0;
-        for (; (ptr = alloc(page, size)); ++count) {
-            if (count % 2 == 0) mark(ptr);
+        for (; (obj = alloc(page, size)); ++count) {
+            if (count % 2 == 0) obj->mark();
         }
         EXPECT_EQ(count, FixedBlockPage::cellCount() / size / 2);
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, FixedBlockPageRandomExercise) {
-    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
-    auto gcScope = gcHandle.sweep();
-    kotlin::alloc::FinalizerQueue finalizerQueue;
+TEST_F(CustomAllocatorTest, FixedBlockPageRandomExercise) {
     std::minstd_rand r(42);
-    uint8_t* ptr;
     for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint32_t BLOCK_COUNT = FixedBlockPage::cellCount() / size;
-        std::vector<uint8_t*> seen;
-        while ((ptr = alloc(page, size))) seen.push_back(ptr);
+        std::vector<FakeObjectHeader*> seen;
+        while (FakeObjectHeader* obj = alloc(page, size)) seen.push_back(obj);
         EXPECT_EQ(seen.size(), BLOCK_COUNT);
-        EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
-        std::unordered_set<uint8_t*> live;
+        EXPECT_FALSE(page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
+        std::unordered_set<FakeObjectHeader*> live;
         for (int gc = 0; gc < 10; gc++) {
             int createCount = r() % BLOCK_COUNT;
             while (createCount-- > 0) {
-                ptr = alloc(page, size);
-                if (!ptr) break;
-                EXPECT_TRUE(live.insert(ptr).second);
+                FakeObjectHeader* obj = alloc(page, size);
+                if (!obj) break;
+                EXPECT_TRUE(live.insert(obj).second);
             }
             for (auto obj : seen) {
                 if (live.find(obj) != live.end()) {
                     if (r() % 2) {
-                        mark(obj);
+                        obj->mark();
                     } else {
                         live.erase(obj);
                     }
                 }
             }
-            EXPECT_EQ(page->Sweep(gcScope, finalizerQueue), !live.empty());
-            uint8_t* prev = nullptr;
+            EXPECT_EQ(page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue()), !live.empty());
+            FakeObjectHeader* prev = nullptr;
             uint32_t allocCount = 0;
-            for (auto* obj : page->GetAllocatedBlocks()) {
+            for (auto* ptr : page->GetAllocatedBlocks()) {
+                FakeObjectHeader* obj = FakeObjectHeader::at(ptr);
                 EXPECT_LT(prev, obj);
                 prev = obj;
                 ++allocCount;
@@ -163,9 +144,9 @@ TEST(CustomAllocTest, FixedBlockPageRandomExercise) {
             }
             EXPECT_EQ(allocCount, live.size());
         }
-        while ((ptr = alloc(page, size))) live.insert(ptr);
+        while (FakeObjectHeader* obj = alloc(page, size)) live.insert(obj);
         EXPECT_EQ(live.size(), BLOCK_COUNT);
-        EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
+        EXPECT_FALSE(page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue()));
         page->Destroy();
     }
 }
@@ -182,5 +163,3 @@ TEST(CustomAllocTest, FixedBlockPageSchedulerNotification) {
         testing::Mock::VerifyAndClearExpectations(&hookHandle.hook());
     }
 }
-
-} // namespace

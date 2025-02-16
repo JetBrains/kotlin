@@ -17,16 +17,18 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
  */
 class IrValidationErrorChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: TargetBackend.ANY
+        val targetBackend = testServices.defaultsProvider.targetBackend ?: TargetBackend.ANY
         return failedAssertions.map {
             if (it.cause is IrValidationError) {
-                IrValidationError(
-                    "IR validation failed. The errors stream should contain more information about which IR nodes caused this failure.\n" +
-                            "If the validation errors are caused by visibility violations which are intentional (for example, " +
-                            "if '@Suppress(\"INVISIBLE_REFERENCE\")' is used in the test), you can disable the visibility checks by " +
-                            "specifying the '// DISABLE_IR_VISIBILITY_CHECKS: ${targetBackend}' test directive.",
-                    it.cause,
-                ).wrap()
+                it.withReplacedCause(
+                    IrValidationError(
+                        "IR validation failed. The errors stream should contain more information about which IR nodes caused this failure.\n" +
+                                "If the validation errors are caused by visibility violations which are intentional (for example, " +
+                                "if '@Suppress(\"INVISIBLE_REFERENCE\")' is used in the test), you can disable the visibility checks by " +
+                                "specifying the '// DISABLE_IR_VISIBILITY_CHECKS: ${targetBackend}' test directive.",
+                        it.cause,
+                    )
+                )
             } else {
                 it
             }

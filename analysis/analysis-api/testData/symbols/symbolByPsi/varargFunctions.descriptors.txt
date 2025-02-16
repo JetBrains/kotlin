@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /primitive
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -69,6 +70,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /nullablePrimitive
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -136,6 +138,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /nonPrimitive
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -203,6 +206,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /error
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

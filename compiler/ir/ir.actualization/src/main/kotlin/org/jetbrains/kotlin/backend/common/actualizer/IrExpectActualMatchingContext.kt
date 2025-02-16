@@ -232,6 +232,14 @@ internal abstract class IrExpectActualMatchingContext(
     override val PropertySymbolMarker.setter: FunctionSymbolMarker?
         get() = asIr().setter?.symbol
 
+    override val PropertySymbolMarker.contextParameters: List<ValueParameterSymbolMarker>
+        get() = asIr()
+            .getter
+            ?.parameters
+            ?.filter { it.kind == IrParameterKind.Context }
+            ?.map { it.symbol }
+            ?: emptyList()
+
     override fun createExpectActualTypeParameterSubstitutor(
         expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
         parentSubstitutor: TypeSubstitutorMarker?,
@@ -319,8 +327,14 @@ internal abstract class IrExpectActualMatchingContext(
 
     override val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
         get() = asIr().parameters
-            .filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+            .filter { it.kind == IrParameterKind.Regular }
             .map { it.symbol }
+
+    override val FunctionSymbolMarker.contextParameters: List<ValueParameterSymbolMarker>
+        get() = asIr().parameters
+            .filter { it.kind == IrParameterKind.Context }
+            .map { it.symbol }
+
     override val ValueParameterSymbolMarker.isVararg: Boolean
         get() = asIr().isVararg
     override val ValueParameterSymbolMarker.isNoinline: Boolean

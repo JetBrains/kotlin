@@ -1,15 +1,14 @@
 // These functions should be included inside Traits with correct attributes (e.g. via #pragma clang attribute push).
 
-template<typename Traits>
-PERFORMANCE_INLINE static void polyHashTail(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
+template<typename Traits, typename UnitType>
+PERFORMANCE_INLINE static void polyHashTail(int& n, UnitType const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
     using Vec128Type = typename Traits::Vec128Type;
-    using U16VecType = typename Traits::U16VecType;
 
     const int vecLength = sizeof(VecType) / 4;
     if (n < vecLength / 4) return;
 
-    VecType x = Traits::u16Load(reinterpret_cast<U16VecType const*>(str));
+    VecType x = Traits::load(str);
     res = Traits::vec128Mul(res, *reinterpret_cast<Vec128Type const*>(b));
     VecType z = Traits::vecMul(x, *reinterpret_cast<VecType const*>(p));
     res = Traits::vec128Add(res, Traits::squash1(z));
@@ -18,11 +17,10 @@ PERFORMANCE_INLINE static void polyHashTail(int& n, uint16_t const*& str, typena
     n -= vecLength / 4;
 }
 
-template<typename Traits>
-PERFORMANCE_INLINE static void polyHashUnroll2(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
+template<typename Traits, typename UnitType>
+PERFORMANCE_INLINE static void polyHashUnroll2(int& n, UnitType const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
     using Vec128Type = typename Traits::Vec128Type;
-    using U16VecType = typename Traits::U16VecType;
 
     const int vecLength = sizeof(VecType) / 4;
     if (n < vecLength / 2) return;
@@ -33,8 +31,8 @@ PERFORMANCE_INLINE static void polyHashUnroll2(int& n, uint16_t const*& str, typ
     VecType res1 = Traits::initVec();
 
     do {
-        VecType x0 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str));
-        VecType x1 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength));
+        VecType x0 = Traits::load(str);
+        VecType x1 = Traits::load(str + vecLength);
         res0 = Traits::vecMul(res0, *reinterpret_cast<VecType const*>(b));
         res1 = Traits::vecMul(res1, *reinterpret_cast<VecType const*>(b));
         VecType z0 = Traits::vecMul(x0, *reinterpret_cast<VecType const*>(p));
@@ -49,11 +47,10 @@ PERFORMANCE_INLINE static void polyHashUnroll2(int& n, uint16_t const*& str, typ
     res = Traits::vec128Add(res, Traits::squash2(res0, res1));
 }
 
-template<typename Traits>
-PERFORMANCE_INLINE static void polyHashUnroll4(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
+template<typename Traits, typename UnitType>
+PERFORMANCE_INLINE static void polyHashUnroll4(int& n, UnitType const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
     using Vec128Type = typename Traits::Vec128Type;
-    using U16VecType = typename Traits::U16VecType;
 
     const int vecLength = sizeof(VecType) / 4;
     if (n < vecLength) return;
@@ -66,10 +63,10 @@ PERFORMANCE_INLINE static void polyHashUnroll4(int& n, uint16_t const*& str, typ
     VecType res3 = Traits::initVec();
 
     do {
-        VecType x0 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str));
-        VecType x1 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength));
-        VecType x2 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength * 2));
-        VecType x3 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength * 3));
+        VecType x0 = Traits::load(str);
+        VecType x1 = Traits::load(str + vecLength);
+        VecType x2 = Traits::load(str + vecLength * 2);
+        VecType x3 = Traits::load(str + vecLength * 3);
         res0 = Traits::vecMul(res0, *reinterpret_cast<VecType const*>(b));
         res1 = Traits::vecMul(res1, *reinterpret_cast<VecType const*>(b));
         res2 = Traits::vecMul(res2, *reinterpret_cast<VecType const*>(b));
@@ -90,11 +87,10 @@ PERFORMANCE_INLINE static void polyHashUnroll4(int& n, uint16_t const*& str, typ
     res = Traits::vec128Add(res, Traits::vec128Add(Traits::squash2(res0, res1), Traits::squash2(res2, res3)));
 }
 
-template<typename Traits>
-PERFORMANCE_INLINE static void polyHashUnroll8(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
+template<typename Traits, typename UnitType>
+PERFORMANCE_INLINE static void polyHashUnroll8(int& n, UnitType const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
     using Vec128Type = typename Traits::Vec128Type;
-    using U16VecType = typename Traits::U16VecType;
 
     const int vecLength = sizeof(VecType) / 4;
     if (n < vecLength * 2) return;
@@ -109,14 +105,14 @@ PERFORMANCE_INLINE static void polyHashUnroll8(int& n, uint16_t const*& str, typ
     VecType res7 = Traits::initVec();
 
     do {
-        VecType x0 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str));
-        VecType x1 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength));
-        VecType x2 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength * 2));
-        VecType x3 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength * 3));
-        VecType x4 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength * 4));
-        VecType x5 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength * 5));
-        VecType x6 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength * 6));
-        VecType x7 = Traits::u16Load(reinterpret_cast<U16VecType const*>(str + vecLength * 7));
+        VecType x0 = Traits::load(str);
+        VecType x1 = Traits::load(str + vecLength);
+        VecType x2 = Traits::load(str + vecLength * 2);
+        VecType x3 = Traits::load(str + vecLength * 3);
+        VecType x4 = Traits::load(str + vecLength * 4);
+        VecType x5 = Traits::load(str + vecLength * 5);
+        VecType x6 = Traits::load(str + vecLength * 6);
+        VecType x7 = Traits::load(str + vecLength * 7);
         res0 = Traits::vecMul(res0, *reinterpret_cast<VecType const*>(b));
         res1 = Traits::vecMul(res1, *reinterpret_cast<VecType const*>(b));
         res2 = Traits::vecMul(res2, *reinterpret_cast<VecType const*>(b));

@@ -13,7 +13,9 @@ import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.tools.ToolExecutionTask
 import org.jetbrains.kotlin.tools.libname
 import org.jetbrains.kotlin.tools.obj
 import org.jetbrains.kotlin.tools.solib
+import java.io.File
 
 open class NativeInteropPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -100,6 +103,7 @@ open class NativeInteropPlugin : Plugin<Project> {
             interopStubGeneratorCppRuntime(project(":kotlin-native:libclangInterop"))
             interopStubGeneratorCppRuntime(project(":kotlin-native:Interop:Runtime"))
             "api"(project(":kotlin-native:Interop:Runtime"))
+            "testImplementation"(project(":kotlin-native:Interop:StubGeneratorConsistencyCheck", "tests-jar"))
         }
 
         val genTask = target.tasks.register<KonanJvmInteropTask>("genInteropStubs") {
@@ -117,22 +121,63 @@ open class NativeInteropPlugin : Plugin<Project> {
             headersDirs.systemFrom(nativeInteropPlugin.systemIncludeDirs)
         }
 
-        val prebuiltRoot = target.provider { target.layout.projectDirectory.dir("gen/main") }
+        val hostName = PlatformInfo.hostName
+
+        val prebuiltRoot = target.provider { target.layout.projectDirectory.dir("gen/main-$hostName") }
         val generatedRoot = genTask.map { it.outputDirectory.get() }
 
         val bindingsRoot = nativeInteropPlugin.usePrebuiltSources.flatMap {
             if (it) prebuiltRoot else generatedRoot
         }
 
-        target.extensions.getByType<KotlinJvmProjectExtension>().sourceSets.named("main") {
+        val generatedTestsRoot = target.layout.projectDirectory.dir("tests-gen")
+
+        val kotlinJvm = target.extensions.getByType<KotlinJvmProjectExtension>()
+        kotlinJvm.sourceSets.named("main") {
             kotlin.srcDir(bindingsRoot.map { it.dir("kotlin") })
         }
+        kotlinJvm.sourceSets.named("test") {
+            kotlin.srcDir(generatedTestsRoot)
+        }
 
-        target.tasks.register<Sync>("updatePrebuilt") {
-            val usePrebuiltSources = nativeInteropPlugin.usePrebuiltSources
+        val usePrebuiltSources = nativeInteropPlugin.usePrebuiltSources
+
+        val updatePrebuilt = target.tasks.register<Sync>("updatePrebuilt") {
             onlyIf { usePrebuiltSources.get() }
             into(prebuiltRoot)
             from(generatedRoot)
+        }
+
+        target.tasks.register("generateTests") {
+            val packageName = "org.jetbrains.kotlin.konan.interop"
+            val testName = "ConsistencyCheckTest"
+
+            outputs.dir(generatedTestsRoot)
+            val testDirectory = generatedTestsRoot.dir(packageName.replace('.', File.separatorChar))
+            val testFile = testDirectory.file("$testName.kt")
+            val testFileContents = """
+                package $packageName
+
+                class `${target.path.replace(':', ' ').trim()} $testName` : Abstract$testName()
+            """.trimIndent()
+            inputs.property("testFileContents", testFileContents)
+            doLast {
+                generatedTestsRoot.asFile.deleteRecursively()
+                testDirectory.asFile.mkdirs()
+                testFile.asFile.writeText(testFileContents)
+            }
+        }
+
+        target.tasks.named<Test>("test") {
+            jvmArgumentProviders.add(target.objects.newInstance<ConsistencyCheckArgumentsProvider>().apply {
+                this.usePrebuiltSources.set(usePrebuiltSources)
+                this.generatedRoot.set(generatedRoot)
+                this.bindingsRoot.set(bindingsRoot)
+                this.hostName.set(hostName)
+                this.projectName.set(target.path)
+                this.regenerateTaskName.set(updatePrebuilt.name)
+            })
+            useJUnitPlatform {}
         }
 
         target.afterEvaluate {

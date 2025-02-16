@@ -4,9 +4,18 @@
  */
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Category
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import java.io.File
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeText
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
@@ -65,6 +74,10 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 otherProjectName = "sample-app",
                 pathPrefix = "new-mpp-lib-and-app",
                 localRepoDir = localRepoDir,
+            )
+
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
             )
 
             subProject("sample-app").apply {
@@ -176,4 +189,6 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             }
         }
     }
+
+
 }

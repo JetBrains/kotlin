@@ -1,6 +1,6 @@
 /main.kt:(99,104): error: Argument type mismatch: actual type is 'V (of fun <V> SLRUMap<V>.getOrPut)', but 'V (of fun <V> SLRUMap<V>.getOrPut) & Any' was expected.
 
-/main.kt:(120,121): error: Argument type mismatch: actual type is 'kotlin.collections.List<V (of fun <V> SLRUMap<V>.getOrPut)>', but 'kotlin.collections.(Mutable)List<@NotNull() V (of fun <V> SLRUMap<V>.getOrPut) & Any>' was expected.
+/main.kt:(120,121): error: Argument type mismatch: actual type is 'List<V (of fun <V> SLRUMap<V>.getOrPut)>', but '(Mutable)List<@NotNull() V (of fun <V> SLRUMap<V>.getOrPut) & Any>' was expected.
 
 /main.kt:(128,133): error: Cannot infer type for this parameter. Specify it explicitly.
 
@@ -8,7 +8,7 @@
 
 /main.kt:(145,154): error: Cannot infer type for this parameter. Specify it explicitly.
 
-/main.kt:(155,156): error: Argument type mismatch: actual type is 'kotlin.collections.List<V (of fun <V> SLRUMap<V>.getOrPut)>', but 'kotlin.collections.(Mutable)List<@NotNull() E (of fun <E : Any!> takeEList) & Any>' was expected.
+/main.kt:(155,156): error: Argument type mismatch: actual type is 'List<V (of fun <V> SLRUMap<V>.getOrPut)>', but '(Mutable)List<@NotNull() E (of fun <E : Any!> takeEList) & Any>' was expected.
 
 /main.kt:(162,167): error: Cannot infer type for this parameter. Specify it explicitly.
 

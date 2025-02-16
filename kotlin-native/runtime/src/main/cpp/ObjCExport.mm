@@ -116,17 +116,25 @@ extern "C" id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance) {
   return objc_retain(instance);
 }
 
+static NSStringEncoding Kotlin_StringEncoding_ToNSStringEncoding(StringEncoding encoding) {
+    switch (encoding) {
+    case StringEncoding::kUTF16: return NSUTF16LittleEndianStringEncoding;
+    case StringEncoding::kLatin1: return NSISOLatin1StringEncoding;
+    }
+}
+
 extern "C" id Kotlin_ObjCExport_CreateRetainedNSStringFromKString(ObjHeader* str) {
+  auto header = StringHeader::of(str);
   if (str->permanent()) {
-    return [[NSString alloc] initWithBytesNoCopy:StringRawData(str)
-        length:StringRawSize(str)
-        encoding:NSUTF16LittleEndianStringEncoding
+    return [[NSString alloc] initWithBytesNoCopy:header->data()
+        length:header->size()
+        encoding:Kotlin_StringEncoding_ToNSStringEncoding(header->encoding())
         freeWhenDone:NO];
   } else {
     // TODO: consider making NSString subclass to avoid copying here.
-    NSString* candidate = [[NSString alloc] initWithBytes:StringRawData(str)
-      length:StringRawSize(str)
-      encoding:NSUTF16LittleEndianStringEncoding];
+    NSString* candidate = [[NSString alloc] initWithBytes:header->data()
+      length:header->size()
+      encoding:Kotlin_StringEncoding_ToNSStringEncoding(header->encoding())];
 
     if (id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate)) {
       objc_release(candidate);
@@ -1088,6 +1096,16 @@ extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, void* obj) {
 }
 
 extern "C" ALWAYS_INLINE const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCClassPtr(Class* clazz) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
+}
+
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForProtocol(Protocol* protocol) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
+}
+
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForClass(Class clazz) {
   RuntimeAssert(false, "Unavailable operation");
   return nullptr;
 }

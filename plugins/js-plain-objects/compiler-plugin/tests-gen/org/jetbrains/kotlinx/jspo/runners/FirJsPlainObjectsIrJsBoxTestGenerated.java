@@ -25,15 +25,39 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("complexWithTypeParameter.kt")
+  public void testComplexWithTypeParameter() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/complexWithTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("copy.kt")
   public void testCopy() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/copy.kt");
   }
 
   @Test
+  @TestMetadata("jsExport.kt")
+  public void testJsExport() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/jsExport.kt");
+  }
+
+  @Test
+  @TestMetadata("jsQualifier.kt")
+  public void testJsQualifier() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/jsQualifier.kt");
+  }
+
+  @Test
   @TestMetadata("multiple-module.kt")
   public void testMultiple_module() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/multiple-module.kt");
+  }
+
+  @Test
+  @TestMetadata("nested.kt")
+  public void testNested() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/nested.kt");
   }
 
   @Test

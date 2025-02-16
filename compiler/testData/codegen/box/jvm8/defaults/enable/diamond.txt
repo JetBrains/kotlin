@@ -1,0 +1,63 @@
+@kotlin.Metadata
+public final class DiamondKt {
+    // source: 'diamond.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Test$DefaultImpls {
+    // source: 'diamond.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Test): java.lang.String
+    public final inner class Test$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Test {
+    // source: 'diamond.kt'
+    public synthetic static method access$test$jd(p0: Test): java.lang.String
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+    public final inner class Test$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class Test2$DefaultImpls {
+    // source: 'diamond.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Test2): java.lang.String
+    public final inner class Test2$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Test2 {
+    // source: 'diamond.kt'
+    public synthetic static method access$test$jd(p0: Test2): java.lang.String
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+    public final inner class Test2$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class Test3$DefaultImpls {
+    // source: 'diamond.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Test3): java.lang.String
+    public final inner class Test3$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Test3 {
+    // source: 'diamond.kt'
+    public synthetic static method access$test$jd(p0: Test3): java.lang.String
+    public final inner class Test3$DefaultImpls
+}
+
+@kotlin.Metadata
+public class TestClass {
+    // source: 'diamond.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class TestClass2 {
+    // source: 'diamond.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}

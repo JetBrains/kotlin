@@ -165,7 +165,18 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
+    fun classProto(klass: FirClass, containingFile: FirFile?): ProtoBuf.Class.Builder {
+        return if (containingFile == null) {
+            // Containing file can be null for local classes, as well as synthetic ones like kotlin/Cloneable.
+            // Not using `processFile` means that we will not be able to use IR-based constant expression evaluator when serializing
+            // annotations in such classes, and will fall back to the FIR-based evaluator.
+            classProtoImpl(klass)
+        } else extension.processFile(containingFile) {
+            classProtoImpl(klass)
+        }
+    }
+
+    private fun classProtoImpl(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass
@@ -419,6 +430,60 @@ class FirElementSerializer private constructor(
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(script))
 
         extension.serializeScript(script, builder, versionRequirementTable, this)
+
+        if (metDefinitelyNotNullType) {
+            builder.addVersionRequirement(
+                writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
+            )
+        }
+
+        typeTable.serialize()?.let { builder.typeTable = it }
+        versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
+
+        return builder
+    }
+
+    @OptIn(UnexpandedTypeCheck::class)
+    fun snippetProto(snippet: FirReplSnippet): ProtoBuf.Class.Builder = whileAnalysing(session, snippet) {
+        val builder = ProtoBuf.Class.newBuilder()
+
+        val flags = Flags.getClassFlags(
+            extension.hasAdditionalAnnotations(snippet),
+            ProtoEnumFlags.visibility(Visibilities.Public),
+            ProtoEnumFlags.modality(Modality.FINAL),
+            ProtoEnumFlags.classKind(ClassKind.CLASS, false),
+            /* inner = */ false,
+            /* isData = */ false,
+            /* isExternal = */ false,
+            /* isExpect = */ false,
+            /* isValue = */ false,
+            /* isFun = */ false,
+            /* hasEnumEntries = */ false,
+        )
+        if (flags != builder.flags) {
+            builder.flags = flags
+        }
+
+        val classId = snippetClassId(snippet)
+
+        builder.fqName = getClassifierId(classId)
+
+        for (statement in snippet.body.statements) {
+            val declaration = statement as? FirDeclaration ?: continue
+            when (declaration) {
+                is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
+                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                is FirRegularClass -> builder.addNestedClassName(getSimpleNameIndex(declaration.name))
+                is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
+                else -> {}
+            }
+        }
+
+        if (versionRequirementTable == null) error("Version requirements must be serialized for snippets: ${snippet.render()}")
+
+        builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(snippet))
+
+        extension.serializeSnippet(snippet, builder, versionRequirementTable, this)
 
         if (metDefinitelyNotNullType) {
             builder.addVersionRequirement(
@@ -1306,16 +1371,16 @@ class FirElementSerializer private constructor(
         return declaration.visibility.normalize()
     }
 
-    private fun getClassifierId(declaration: FirClassLikeDeclaration): Int =
-        when (val containingScriptSymbol = declaration.containingScriptSymbolAttr) {
-            null -> stringTable.getFqNameIndex(declaration)
-            else -> containingScriptSymbol.getScriptClassId(declaration)
-        }
+    private fun getClassifierId(declaration: FirClassLikeDeclaration): Int {
+        declaration.containingScriptSymbolAttr?.let { return getScriptOrReplClassId(declaration, scriptClassId(it.fir)) }
+        declaration.containingReplSymbolAttr?.let { return getScriptOrReplClassId(declaration, snippetClassId(it.fir)) }
+        return stringTable.getFqNameIndex(declaration)
+    }
 
-    private fun FirScriptSymbol.getScriptClassId(declaration: FirClassLikeDeclaration): Int {
-        val scriptClassClassId = declaration.symbol.classId.relativeClassName.pathSegments()
-            .fold(scriptClassId(fir)) { acc, n -> acc.createNestedClassId(n) }
-        return stringTable.getQualifiedClassNameIndex(scriptClassClassId)
+    private fun getScriptOrReplClassId(declaration: FirClassLikeDeclaration, containerClassId: ClassId): Int {
+        val relativeClassId = declaration.symbol.classId.relativeClassName.pathSegments()
+            .fold(containerClassId) { acc, n -> acc.createNestedClassId(n) }
+        return stringTable.getQualifiedClassNameIndex(relativeClassId)
     }
 
     private fun getClassifierId(classId: ClassId): Int =
@@ -1431,6 +1496,25 @@ class FirElementSerializer private constructor(
                 produceHeaderKlib,
             )
 
+        @JvmStatic
+        fun createForSnippet(
+            session: FirSession,
+            scopeSession: ScopeSession,
+            snippet: FirReplSnippet,
+            extension: FirSerializerExtension,
+            typeApproximator: AbstractTypeApproximator,
+            languageVersionSettings: LanguageVersionSettings,
+            produceHeaderKlib: Boolean = false,
+        ): FirElementSerializer =
+            FirElementSerializer(
+                session, scopeSession, snippet,
+                Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
+                serializeTypeTableToFunction = false,
+                typeApproximator,
+                languageVersionSettings,
+                produceHeaderKlib,
+            )
+
         private fun writeLanguageVersionRequirement(
             languageFeature: LanguageFeature,
             versionRequirementTable: MutableVersionRequirementTable
@@ -1479,3 +1563,6 @@ class FirElementSerializer private constructor(
 
 internal fun scriptClassId(script: FirScript): ClassId =
     ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, NameUtils.getScriptTargetClassName(script.name))
+
+internal fun snippetClassId(snippet: FirReplSnippet): ClassId =
+    ClassId(FqName.ROOT, NameUtils.getSnippetTargetClassName(snippet.name))

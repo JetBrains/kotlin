@@ -1,0 +1,41 @@
+FILE fqName:<root> fileName:/Derived.kt
+  CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived
+    ANONYMOUS_INITIALIZER isStatic=false
+      BLOCK_BODY
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
+          receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=IMPLICIT_ARGUMENT
+          value: CONST Int type=kotlin.Int value=0
+    CONSTRUCTOR visibility:public returnType:<root>.Derived [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Base
+    FUN name:getValue visibility:public modality:FINAL returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Derived
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getValue (): kotlin.Int declared in <root>.Derived'
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Derived origin=null
+            receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.getValue' type=<root>.Derived origin=IMPLICIT_ARGUMENT
+    FUN name:setValue visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Derived
+      VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+      BLOCK_BODY
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
+          receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
+          value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null
+    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final value: kotlin.Int declared in <root>.Base

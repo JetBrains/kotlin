@@ -11,25 +11,22 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 
-object FirInfixFunctionDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if ((declaration as? FirMemberDeclaration)?.status?.isInfix != true) return
-        val simpleFunction = declaration as FirSimpleFunction
+object FirInfixFunctionDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
+    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!declaration.status.isInfix) return
         if (
-            (simpleFunction.valueParameters.size != 1) ||
-            !hasExtensionOrDispatchReceiver(simpleFunction, context) ||
-            simpleFunction.valueParameters.single().isVararg
+            (declaration.valueParameters.size != 1) ||
+            !hasExtensionOrDispatchReceiver(declaration, context) ||
+            declaration.valueParameters.single().isVararg
         ) {
             reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_INFIX_MODIFIER, context)
         }
     }
 
     private fun hasExtensionOrDispatchReceiver(
-        function: FirSimpleFunction,
+        function: FirFunction,
         context: CheckerContext
     ): Boolean {
         if (function.receiverParameter != null) return true

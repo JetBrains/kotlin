@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirNameAwareCompositeScope
@@ -133,7 +134,11 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             } else {
                 baseScope
             }
-        }?.takeUnless { it.isEmpty() }
+        }?.takeIf {
+            // For Java declarations `isEmpty` check may trigger expensive and recursive iteration
+            // through declarations which might end up with SOE
+            origin == FirDeclarationOrigin.Java.Source || !it.isEmpty()
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -59,7 +59,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         analysisSession = session,
     )
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: findPsi() }
     override val name: Name get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val isBuiltinFunctionInvoke: Boolean
@@ -87,6 +87,11 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { createContextReceivers() }
+
+    override val contextParameters: List<KaContextParameterSymbol>
+        get() = withValidityAssertion {
+            createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
+        }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {
@@ -200,15 +205,17 @@ internal class KaFirNamedFunctionSymbol private constructor(
             KaSymbolLocation.TOP_LEVEL -> KaFirTopLevelFunctionSymbolPointer(
                 firSymbol.callableId,
                 FirCallableSignature.createSignature(firSymbol),
+                this
             )
 
             KaSymbolLocation.CLASS -> when (origin) {
-                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicFunctionSymbolPointer(name)
+                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicFunctionSymbolPointer(name, this)
                 else -> KaFirMemberFunctionSymbolPointer(
                     analysisSession.createOwnerPointer(this),
                     name,
                     FirCallableSignature.createSignature(firSymbol),
                     isStatic = firSymbol.isStatic,
+                    originalSymbol = this
                 )
             }
 

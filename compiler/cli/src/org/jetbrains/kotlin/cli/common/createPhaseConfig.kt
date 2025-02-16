@@ -10,28 +10,48 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 fun createPhaseConfig(
-    arguments: CommonCompilerArguments
+    arguments: CommonCompilerArguments,
+    phasesToExecute: List<AnyNamedPhase>? = null,
 ): PhaseConfig {
     val toDumpBoth = createPhaseSetFromArguments(arguments.phasesToDump)
     val toValidateBoth = createPhaseSetFromArguments(arguments.phasesToValidate)
 
+    val (additionalBefore, additionalAfter) = getCornerPhasesToDump(arguments, phasesToExecute)
     return PhaseConfig(
-        arguments.disablePhases.orEmpty().toSet(),
+        createPhaseSetFromArguments(arguments.disablePhases),
         createPhaseSetFromArguments(arguments.verbosePhases),
-        createPhaseSetFromArguments(arguments.phasesToDumpBefore) + toDumpBoth,
-        createPhaseSetFromArguments(arguments.phasesToDumpAfter) + toDumpBoth,
+        createPhaseSetFromArguments(arguments.phasesToDumpBefore) + toDumpBoth + additionalBefore,
+        createPhaseSetFromArguments(arguments.phasesToDumpAfter) + toDumpBoth + additionalAfter,
         createPhaseSetFromArguments(arguments.phasesToValidateBefore) + toValidateBoth,
         createPhaseSetFromArguments(arguments.phasesToValidateAfter) + toValidateBoth,
         arguments.dumpDirectory,
         arguments.dumpOnlyFqName,
         arguments.profilePhases,
         arguments.checkPhaseConditions,
-        arguments.checkStickyPhaseConditions
     )
 }
 
+private fun getCornerPhasesToDump(
+    arguments: CommonCompilerArguments,
+    phasesToExecute: List<AnyNamedPhase>? = null,
+): Pair<PhaseSet, PhaseSet> {
+    if (phasesToExecute != null && arguments.phasesToDump?.contains("IrLowering") == true) {
+        return PhaseSet.Enum(setOf(phasesToExecute.first().name)) to PhaseSet.Enum(setOf(phasesToExecute.last().name))
+    }
+    return PhaseSet.Empty to PhaseSet.Empty
+}
+
 fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
-    for ((depth, phase) in compoundPhase.getNamedSubphases()) {
+    list(compoundPhase.getNamedSubphases())
+}
+
+@JvmName("listPhases")
+fun PhaseConfig.list(phases: List<AnyNamedPhase>) {
+    list(phases.flatMap { it.getNamedSubphases() })
+}
+
+private fun PhaseConfig.list(phases: List<Pair<Int, AnyNamedPhase>>) {
+    for ((depth, phase) in phases) {
         println(buildString {
             append("    ".repeat(depth))
             append(phase.name)
@@ -42,7 +62,7 @@ fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
 }
 
 private fun createPhaseSetFromArguments(names: Array<String>?): PhaseSet = when {
-    names == null -> PhaseSet.Enum(emptySet())
-    "all" in names.map { it.toLowerCaseAsciiOnly() } -> PhaseSet.ALL
-    else -> PhaseSet.Enum(names.map { it.toLowerCaseAsciiOnly() }.toSet())
+    names == null -> PhaseSet.Empty
+    "all" in names.map { it.toLowerCaseAsciiOnly() } -> PhaseSet.All
+    else -> PhaseSet.Enum(names.toSet())
 }

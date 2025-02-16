@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGeneratorImpl
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
@@ -63,7 +65,7 @@ fun compileToLoweredIr(
     irModuleInfo: IrModuleInfo,
     mainModule: MainModule,
     configuration: CompilerConfiguration,
-    performanceManager: CommonCompilerPerformanceManager?,
+    performanceManager: PerformanceManager?,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateTypeScriptFragment: Boolean,
     propertyLazyInitialization: Boolean,
@@ -105,7 +107,7 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false
+        isIncremental = false,
     )
 
     performanceManager?.notifyIRLoweringFinished()
@@ -117,12 +119,12 @@ fun lowerPreservingTags(
     modules: Iterable<IrModuleFragment>,
     context: WasmBackendContext,
     controller: WholeWorldStageController,
-    isIncremental: Boolean
+    isIncremental: Boolean,
 ) {
     // Lower all the things
     controller.currentStage = 0
 
-    val phaserState = PhaserState<IrModuleFragment>()
+    val phaserState = PhaserState()
     val wasmLowerings = getWasmLowerings(context.configuration, isIncremental)
 
     wasmLowerings.forEachIndexed { i, lowering ->
@@ -144,7 +146,8 @@ fun compileWasm(
     emitNameSection: Boolean = false,
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
-    useDebuggerCustomFormatters: Boolean = false
+    useDebuggerCustomFormatters: Boolean = false,
+    generateDwarf: Boolean = false
 ): WasmCompilerResult {
     val useJsTag = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
@@ -159,6 +162,9 @@ fun compileWasm(
 
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments()
 
+    val dwarfGeneratorForBinary = runIf(generateDwarf) {
+        DwarfGenerator()
+    }
     val sourceMapGeneratorForBinary = runIf(generateSourceMaps) {
         SourceMapGenerator("$baseFileName.wasm", configuration)
     }
@@ -182,7 +188,10 @@ fun compileWasm(
             linkedModule,
             moduleName,
             emitNameSection,
-            sourceMapGeneratorForBinary
+            DebugInformationGeneratorImpl(
+                sourceMapGenerator = sourceMapGeneratorForBinary,
+                dwarfGenerator = dwarfGeneratorForBinary,
+            )
         )
 
     wasmIrToBinary.appendWasmModule()

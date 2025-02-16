@@ -1,5 +1,4 @@
 // Can't be tested in JVM because frontend doesn't allow such code
-// DONT_TARGET_EXACT_BACKEND: JVM
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // WITH_STDLIB
 

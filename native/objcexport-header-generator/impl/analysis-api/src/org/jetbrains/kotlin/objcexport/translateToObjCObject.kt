@@ -67,7 +67,7 @@ private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol, members: 
             propertyAttributes = listOf("class", "readonly"),
             getterName = getObjectPropertySelector(symbol),
             declarationAttributes = listOf(swiftNameAttribute(ObjCPropertyNames.objectPropertyName)),
-            origin = null
+            origin = analysisSession.getObjCExportStubOrigin(symbol),
         )
     )
     return result

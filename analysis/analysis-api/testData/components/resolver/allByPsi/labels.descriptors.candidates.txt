@@ -43,6 +43,7 @@ KtCallExpression(34,42): 'action()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action
           isSafeNavigation = false
@@ -53,6 +54,7 @@ KtCallExpression(34,42): 'action()'
           returnType = kotlin.Unit
           symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/Function0.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -61,6 +63,7 @@ KtNameReferenceExpression(34,40): 'action'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -68,6 +71,7 @@ KtNameReferenceExpression(34,40): 'action'
           receiverType = null
           returnType = kotlin.Function0<kotlin.Unit>
           symbol = action: kotlin.Function0<kotlin.Unit>
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -96,10 +100,12 @@ KtCallExpression(64,102): 'foo label@{'
           receiverType = null
           returnType = kotlin.Function0<kotlin.Unit>
           symbol = action: kotlin.Function0<kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -112,8 +118,10 @@ KtCallExpression(64,102): 'foo label@{'
               receiverType = null
               returnType = kotlin.Function0<kotlin.Unit>
               symbol = action: kotlin.Function0<kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -129,10 +137,12 @@ KtNameReferenceExpression(64,67): 'foo'
           receiverType = null
           returnType = kotlin.Function0<kotlin.Unit>
           symbol = action: kotlin.Function0<kotlin.Unit>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -145,8 +155,10 @@ KtNameReferenceExpression(64,67): 'foo'
               receiverType = null
               returnType = kotlin.Function0<kotlin.Unit>
               symbol = action: kotlin.Function0<kotlin.Unit>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -208,10 +220,12 @@ KtBinaryExpression(125,129): '0..1'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 0
           isSafeNavigation = false
@@ -227,8 +241,10 @@ KtBinaryExpression(125,129): '0..1'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeTo
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -245,10 +261,12 @@ KtOperationReferenceExpression(126,128): '..'
           receiverType = null
           returnType = kotlin.Int
           symbol = other: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = 0
           isSafeNavigation = false
@@ -264,8 +282,10 @@ KtOperationReferenceExpression(126,128): '..'
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Int.rangeTo
       typeArgumentsMapping = {}
     isInBestCandidates = true

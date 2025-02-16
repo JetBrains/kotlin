@@ -71,3 +71,5 @@ expect open class BaseGImpl() : BaseG {
     override fun foo()
 }
 class DerivedG1 : BaseGImpl()
+
+// MODULE: m1-jvm()()(m1-common)

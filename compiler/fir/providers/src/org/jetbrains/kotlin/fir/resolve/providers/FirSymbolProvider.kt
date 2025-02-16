@@ -18,6 +18,15 @@ import org.jetbrains.kotlin.name.Name
 @RequiresOptIn
 annotation class FirSymbolProviderInternals
 
+/**
+ * A symbol provider provides [class symbols][FirClassLikeSymbol] and [callable symbols][FirCallableSymbol] from a specific source, such as
+ * source files, libraries, or generated symbols.
+ *
+ * [FirSymbolProvider] is an abstract class instead of an interface by design: symbol providers are queried frequently by the compiler and
+ * are often used in hot spots. The `vtable` dispatch for abstract classes is generally faster than `itable` dispatch for interfaces. While
+ * that difference might be optimized away during [JVM dispatch optimizations](https://shipilev.net/blog/2015/black-magic-method-dispatch/),
+ * the abstract class guarantees that we can fall back to the faster `vtable` dispatch at more complicated call sites.
+ */
 abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent {
     abstract val symbolNamesProvider: FirSymbolNamesProvider
 

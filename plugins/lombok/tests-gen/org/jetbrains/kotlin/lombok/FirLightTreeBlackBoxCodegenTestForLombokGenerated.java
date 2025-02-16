@@ -85,6 +85,18 @@ public class FirLightTreeBlackBoxCodegenTestForLombokGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("builderWithClashingInnerBuilder.kt")
+  public void testBuilderWithClashingInnerBuilder() {
+    runTest("plugins/lombok/testData/box/builderWithClashingInnerBuilder.kt");
+  }
+
+  @Test
+  @TestMetadata("builderWithInnerBuilder.kt")
+  public void testBuilderWithInnerBuilder() {
+    runTest("plugins/lombok/testData/box/builderWithInnerBuilder.kt");
+  }
+
+  @Test
   @TestMetadata("configAccessors.kt")
   public void testConfigAccessors() {
     runTest("plugins/lombok/testData/box/configAccessors.kt");

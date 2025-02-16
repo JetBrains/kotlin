@@ -1,0 +1,39 @@
+// MODULE: lib
+// MODULE: main
+// FILE: nullCheckOnInterfaceDelegation.kt
+
+class Delegated : IFoo {
+  private /* final field */ val $$delegate_0: Derived = Derived()
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): String {
+    return <this>.#$$delegate_0.foo() /*!! String */
+  }
+
+}
+
+class Derived : A, IFoo {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): @FlexibleNullability String? {
+    return super<A>.foo()
+  }
+
+}
+
+interface IFoo {
+  abstract fun foo(): String
+
+}
+
+fun testReturnValue(): String {
+  return Delegated().foo()
+}

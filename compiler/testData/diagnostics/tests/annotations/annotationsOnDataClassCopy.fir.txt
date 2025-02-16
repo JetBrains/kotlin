@@ -1,4 +1,4 @@
-FILE: annotationsOnDataClassCopy.kt
+FILE: annotationsOnDataClassCopy.fir.kt
     public final annotation class NoTarget : R|kotlin/Annotation| {
         public constructor(): R|NoTarget| {
             super<R|kotlin/Any|>()

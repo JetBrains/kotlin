@@ -101,8 +101,8 @@ internal class FakeOverrideCopier(
 
     private fun copyTypeParameter(declaration: IrTypeParameter, newParent: IrDeclarationParent): IrTypeParameter =
         declaration.factory.createTypeParameter(
-            startOffset = declaration.startOffset,
-            endOffset = declaration.endOffset,
+            startOffset = parentClass.startOffset,
+            endOffset = parentClass.endOffset,
             origin = declaration.origin,
             name = declaration.name,
             symbol = IrTypeParameterSymbolImpl(null),

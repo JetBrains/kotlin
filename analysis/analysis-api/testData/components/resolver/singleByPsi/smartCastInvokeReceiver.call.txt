@@ -2,6 +2,7 @@ KtNameReferenceExpression(124,133): 'parameter'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -9,6 +10,7 @@ KtNameReferenceExpression(124,133): 'parameter'
           receiverType = null
           returnType = kotlin.Any
           symbol = parameter: kotlin.Any
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

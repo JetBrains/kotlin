@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -42,20 +42,20 @@ internal data class ScriptLikeToClassTransformerContext(
     val fieldForScriptThis: IrFieldSymbol?,
     val valueParameterForFieldReceiver: IrValueParameterSymbol?,
     val isInScriptConstructor: Boolean,
-    val topLevelDeclaration: IrDeclaration? = null,
+    val topLevelDeclarationWithScriptReceiver: IrDeclaration? = null,
 ) {
     companion object {
         fun makeRootContext(
             valueParameterForScriptThis: IrValueParameterSymbol?,
             isInScriptConstructor: Boolean,
-            topLevelDeclaration: IrDeclaration? = null
+            topLevelDeclarationWithScriptReceiver: IrDeclaration? = null
         ) =
             ScriptLikeToClassTransformerContext(
                 valueParameterForScriptThis = valueParameterForScriptThis,
                 fieldForScriptThis = null,
                 valueParameterForFieldReceiver = null,
                 isInScriptConstructor = isInScriptConstructor,
-                topLevelDeclaration = topLevelDeclaration
+                topLevelDeclarationWithScriptReceiver = topLevelDeclarationWithScriptReceiver
             )
     }
 }
@@ -155,7 +155,7 @@ internal abstract class ScriptLikeToClassTransformer(
     val targetClassReceiver: IrValueParameter,
     val typeRemapper: TypeRemapper,
     open val accessCallsGenerator: ScriptLikeAccessCallsGenerator,
-    val capturingClasses: Set<IrClassImpl>,
+    val capturingClasses: Set<IrClass>,
     val needsReceiverProcessing: Boolean,
 ) : IrTransformer<ScriptLikeToClassTransformerContext>() {
 
@@ -163,7 +163,7 @@ internal abstract class ScriptLikeToClassTransformer(
 
     private fun IrType.remapType() = typeRemapper.remapType(this)
 
-    val capturingClassesConstructors = mutableMapOf<IrConstructor, IrClassImpl>().apply {
+    val capturingClassesConstructors = mutableMapOf<IrConstructor, IrClass>().apply {
         capturingClasses.forEach { c ->
             c.declarations.forEach { d ->
                 if (d is IrConstructor) {
@@ -407,10 +407,10 @@ internal abstract class ScriptLikeToClassTransformer(
     protected open fun isValidNameForReceiver(name: Name) = name == SpecialNames.THIS
 
     private fun IrDeclaration.isCurrentScriptTopLevelDeclaration(data: ScriptLikeToClassTransformerContext): Boolean {
-        if (data.topLevelDeclaration == null || (parent != irScriptLike && parent != irTargetClass)) return false
+        if (data.topLevelDeclarationWithScriptReceiver == null || (parent != irScriptLike && parent != irTargetClass)) return false
         val declarationToCompare = if (this is IrFunction) this.propertyIfAccessor else this
         // TODO: might be fragile, if we'll start to use transformed declaration on either side, try to find a way to detect or avoid (KT-72943)
-        return declarationToCompare == data.topLevelDeclaration
+        return declarationToCompare == data.topLevelDeclarationWithScriptReceiver
     }
 
     private fun IrDeclaration.needsScriptReceiver() =
@@ -534,18 +534,18 @@ internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, co
 internal fun Collection<IrClass>.collectCapturersByReceivers(
     context: IrPluginContext,
     parentDeclaration: IrDeclaration,
-    externalReceivers: Set<IrType>,
-): Set<IrClassImpl> {
+    externalReceivers: Set<IrType>
+): Set<IrClass> {
     val annotator = ClosureAnnotator(parentDeclaration, parentDeclaration)
-    val capturingClasses = mutableSetOf<IrClassImpl>()
+    val capturingClasses = mutableSetOf<IrClass>()
 
-    val collector = object : IrElementVisitorVoid {
+    val collector = object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
 
         override fun visitClass(declaration: IrClass) {
-            if (declaration is IrClassImpl && !declaration.isInner) {
+            if (!declaration.isInner) {
                 val closure = annotator.getClassClosure(declaration)
                 if (closure.capturedValues.any { it.owner.type in externalReceivers }) {
                     fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {

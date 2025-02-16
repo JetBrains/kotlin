@@ -9,23 +9,23 @@ import kotlin.internal.RequireKotlin
 import kotlin.internal.RequireKotlinVersionKind
 
 /**
- * This annotation can no longer be used. It has been superseded by the new `-Xjvm-default` modes `all` and `all-compatibility`,
- * and the new annotations [JvmDefaultWithCompatibility] and [JvmDefaultWithoutCompatibility].
+ * This annotation can no longer be used. It has been superseded by the new `-jvm-default` modes `enable` and `no-compatibility`,
+ * and the annotations [JvmDefaultWithCompatibility] and [JvmDefaultWithoutCompatibility].
  */
 @SinceKotlin("1.2")
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-@Deprecated("Switch to new -Xjvm-default modes: `all` or `all-compatibility`", level = DeprecationLevel.HIDDEN)
+@Deprecated("Switch to new -jvm-default modes: `enable` or `no-compatibility`", level = DeprecationLevel.HIDDEN)
 public annotation class JvmDefault
 
 /**
  * Prevents the compiler from generating compatibility accessors for the annotated class or interface, and suppresses
  * any related compatibility warnings. In other words, this annotation makes the compiler generate the annotated class
- * or interface in the `-Xjvm-default=all` mode, where only JVM default methods are generated, without `DefaultImpls`.
+ * or interface in the `-jvm-default=no-compatibility` mode, where only JVM default methods are generated, without `DefaultImpls`.
  *
  * Annotating an existing class with this annotation is a binary incompatible change. Therefore this annotation makes
  * the most sense for _new_ classes in libraries which opted into the compatibility mode.
  *
- * Used only with `-Xjvm-default=all-compatibility`.
+ * Used only with `-jvm-default=enable`.
  */
 @SinceKotlin("1.4")
 @Retention(AnnotationRetention.SOURCE)
@@ -37,7 +37,7 @@ public annotation class JvmDefaultWithoutCompatibility
  * Please note that if an interface is annotated with this annotation for binary compatibility, public derived Kotlin interfaces should also be annotated with it,
  * because their `DefaultImpls` methods will be used to access implementations from the `DefaultImpls` class of the original interface.
  *
- * Used only with `-Xjvm-default=all`. For more details refer to `-Xjvm-default` documentation.
+ * Used only with `-jvm-default=no-compatibility`.
  */
 @SinceKotlin("1.6")
 @RequireKotlin("1.6", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)

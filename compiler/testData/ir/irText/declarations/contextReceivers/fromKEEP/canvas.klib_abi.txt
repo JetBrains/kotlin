@@ -10,13 +10,13 @@ abstract interface /Canvas { // /Canvas|null[0]
 }
 final class /Circle : /Shape { // /Circle|null[0]
     constructor <init>() // /Circle.<init>|<init>(){}[0]
-    final fun context(/Canvas) draw(): kotlin/String // /Circle.draw|draw!Canvas(){}[0]
+    final fun (context(/Canvas)).draw(): kotlin/String // /Circle.draw|draw(Canvas)(){}[0]
 }
 final object /MyCanvas : /Canvas { // /MyCanvas|null[0]
     final val suffix // /MyCanvas.suffix|{}suffix[0]
         final fun <get-suffix>(): kotlin/String // /MyCanvas.suffix.<get-suffix>|<get-suffix>(){}[0]
 }
 abstract interface /Shape { // /Shape|null[0]
-    abstract fun context(/Canvas) draw(): kotlin/String // /Shape.draw|draw!Canvas(){}[0]
+    abstract fun (context(/Canvas)).draw(): kotlin/String // /Shape.draw|draw(Canvas)(){}[0]
 }
 final fun /box(): kotlin/String // /box|box(){}[0]

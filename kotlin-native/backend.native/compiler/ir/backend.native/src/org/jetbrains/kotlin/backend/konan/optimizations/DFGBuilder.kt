@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -29,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 internal val STATEMENT_ORIGIN_PRODUCER_INVOCATION = IrStatementOriginImpl("PRODUCER_INVOCATION")
 internal val STATEMENT_ORIGIN_JOB_INVOCATION = IrStatementOriginImpl("JOB_INVOCATION")
@@ -202,7 +201,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         return function
     }
 
-    private inner class ElementFinderVisitor : IrElementVisitorVoid {
+    private inner class ElementFinderVisitor : IrVisitorVoid() {
         val expressions = mutableMapOf<IrExpression, IrLoop?>()
         val parentLoops = mutableMapOf<IrLoop, IrLoop?>()
         val variableValues = VariableValues()
@@ -401,6 +400,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
     private val arraySetSymbols = symbols.arraySet.values
     private val createUninitializedInstanceSymbol = symbols.createUninitializedInstance
     private val createUninitializedArraySymbol = symbols.createUninitializedArray
+    private val createEmptyStringSymbol = symbols.createEmptyString
     private val initInstanceSymbol = symbols.initInstance
     private val executeImplSymbol = symbols.executeImpl
     private val executeImplProducerClass = symbols.functionN(0).owner
@@ -645,6 +645,11 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                             value.typeArguments[0]!!.getClass()!!
                                     ), size = expressionToEdge(value.getValueArgument(0)!!), value)
 
+                                createEmptyStringSymbol ->
+                                    // Technically, this allocates an array. However, this is an empty string, so let's treat it
+                                    // like a fixed-size object.
+                                    DataFlowIR.Node.AllocInstance(symbolTable.mapType(createEmptyStringSymbol.owner.returnType), value)
+
                                 reinterpret -> getNode(value.extensionReceiver!!).value
 
                                 initInstanceSymbol -> error("Should've been lowered: ${value.render()}")
@@ -783,7 +788,7 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
         symbolTable.populateWith(irModule)
 
         val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
-        irModule.accept(object : IrElementVisitorVoid {
+        irModule.accept(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

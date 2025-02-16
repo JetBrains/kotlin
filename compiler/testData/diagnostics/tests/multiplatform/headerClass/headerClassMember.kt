@@ -15,11 +15,3 @@ actual class Foo {
 
     actual fun bar(x: Int): Int = x + 1
 }
-
-// MODULE: m3-js()()(m1-common)
-// FILE: js.kt
-actual class Foo {
-    actual val foo: String = "JS"
-
-    actual fun bar(x: Int): Int = x - 1
-}

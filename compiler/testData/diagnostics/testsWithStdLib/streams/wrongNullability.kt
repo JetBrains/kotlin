@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // JVM_TARGET: 1.8
+// FIR_DUMP
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.function.IntPredicate
 import java.util.stream.Stream

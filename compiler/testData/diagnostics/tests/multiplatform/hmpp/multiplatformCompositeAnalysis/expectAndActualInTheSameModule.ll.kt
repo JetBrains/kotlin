@@ -1,7 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-// TARGET_PLATFORM: Common
 
 expect class <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>CommonClass<!> {
     fun memberFun()
@@ -24,7 +23,6 @@ actual val <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>common
     get() = "hello"
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 
 expect class <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>IntermediateClass<!> {
     fun memberFun()

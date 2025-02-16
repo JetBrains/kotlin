@@ -1,12 +1,13 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-// TARGET_PLATFORM: Common
 <!AMBIGUOUS_ACTUALS{JVM}!>expect<!> fun foo()
+expect class Foo
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
+actual class <!CLASSIFIER_REDECLARATION!>Foo<!>
 
 // MODULE: main()()(common, intermediate)
 actual fun foo() {}
+actual class Foo

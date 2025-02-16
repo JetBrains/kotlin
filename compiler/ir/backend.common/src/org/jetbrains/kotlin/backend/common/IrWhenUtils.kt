@@ -64,9 +64,8 @@ object IrWhenUtils {
             return candidates.ifEmpty { null }
         } else if (condition is IrCall && condition.symbol == ororSymbol) {
             val candidates = ArrayList<IrCall>()
-            for (i in 0 until condition.valueArgumentsCount) {
-                val argument = condition.getValueArgument(i)!!
-                candidates += matchConditions(ororSymbol, argument) ?: return null
+            for (argument in condition.arguments) {
+                candidates += matchConditions(ororSymbol, argument!!) ?: return null
             }
             return candidates.ifEmpty { null }
         } else if (condition is IrCall) {

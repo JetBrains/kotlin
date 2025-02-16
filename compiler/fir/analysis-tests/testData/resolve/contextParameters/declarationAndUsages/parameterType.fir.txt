@@ -1,0 +1,103 @@
+FILE: test.kt
+    context(a: R|kotlin/String|)
+    public final fun test1(): R|kotlin/Unit| {
+        R|<local>/a|.R|kotlin/String.length|
+    }
+    context(a: R|() -> kotlin/String|)
+    public final fun test2(): R|kotlin/Unit| {
+        R|<local>/a|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|().R|kotlin/String.length|
+    }
+    context(a: R|T|)
+    public final fun <T> test3(): R|kotlin/Unit| {
+        (R|<local>/a| as R|kotlin/String|).R|kotlin/String.length|
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    context(b: R|B|)
+    public final fun test4(): R|kotlin/Unit| {
+        R|<local>/b|.R|/B.bar|()
+    }
+    context(a: R|kotlin/Unit|)
+    public final fun test5(): R|kotlin/Unit| {
+        R|<local>/a|.R|kotlin/Unit.toString|()
+    }
+    context(a: R|kotlin/Nothing|)
+    public final fun test6(): R|kotlin/Unit| {
+        R|<local>/a|.R|kotlin/toString|()
+    }
+    context(a: R|kotlin/Any|)
+    public final fun test7(): R|kotlin/Unit| {
+        R|<local>/a|.R|kotlin/Any.hashCode|()
+    }
+    context(a: R|kotlin/Int?|)
+    public final fun test8(): R|kotlin/Unit| {
+        R|<local>/a|?.{ $subj$.R|kotlin/Int.inc|() }
+    }
+    context(a: R|java/lang/Object|)
+    public final fun test9(): R|kotlin/Unit| {
+        R|<local>/a|.R|java/lang/Object.wait|()
+    }
+    context(a: R|JavaClass<kotlin/String>|)
+    public final fun test10(): R|kotlin/Unit| {
+        R|<local>/a|.R|SubstitutionOverride</JavaClass.foo: R|kotlin/String!|>|()
+    }
+    context(a: R|kotlin/Nothing?|)
+    public final fun test11(): R|kotlin/Unit| {
+        R|<local>/a|.R|kotlin/toString|()
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test1|()
+        }
+        )
+        R|kotlin/with|<R|() -> kotlin/String|, R|kotlin/Unit|>(with@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ String()
+        }
+        , <L> = with@fun R|() -> kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test2|()
+        }
+        )
+        R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test3|<R|kotlin/String|>()
+        }
+        )
+        R|kotlin/with|<R|B|, R|kotlin/Unit|>(R|/B.B|(), <L> = with@fun R|B|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test4|()
+        }
+        )
+        R|kotlin/with|<R|kotlin/Unit|, R|kotlin/Unit|>(Q|kotlin/Unit|, <L> = with@fun R|kotlin/Unit|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test5|()
+        }
+        )
+        R|kotlin/with|<R|kotlin/Nothing|, R|kotlin/Unit|>(throw R|java/lang/Exception.Exception|(), <L> = with@fun R|kotlin/Nothing|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test6|()
+        }
+        )
+        R|kotlin/with|<R|kotlin/Int|, R|kotlin/Unit|>(Int(1), <L> = with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test7|()
+        }
+        )
+        R|kotlin/with|<R|kotlin/Nothing?|, R|kotlin/Unit|>(Null(null), <L> = with@fun R|kotlin/Nothing?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test8|()
+        }
+        )
+        R|kotlin/with|<R|java/lang/Object|, R|kotlin/Unit|>(R|java/lang/Object.Object|(), <L> = with@fun R|java/lang/Object|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test9|()
+        }
+        )
+        R|kotlin/with|<R|JavaClass<kotlin/String>|, R|kotlin/Unit|>(R|/JavaClass.JavaClass|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=JavaTypeParameterDefaultRepresentationWithDNN) kotlin/String!|>(), <L> = with@fun R|JavaClass<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test10|()
+        }
+        )
+        R|kotlin/with|<R|kotlin/Nothing?|, R|kotlin/Unit|>(Null(null), <L> = with@fun R|kotlin/Nothing?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test11|()
+        }
+        )
+    }

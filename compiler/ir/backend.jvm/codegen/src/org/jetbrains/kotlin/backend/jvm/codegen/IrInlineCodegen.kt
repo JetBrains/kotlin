@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.IrExpressionLambda
@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
@@ -126,9 +129,9 @@ class IrInlineCodegen(
 
             val onStack = when (kind) {
                 ValueKind.METHOD_HANDLE_IN_DEFAULT ->
-                    StackValue.constant(null, AsmTypes.OBJECT_TYPE)
+                    StackValue.Constant(null, AsmTypes.OBJECT_TYPE)
                 ValueKind.DEFAULT_MASK ->
-                    StackValue.constant((argumentExpression as IrConst).value, Type.INT_TYPE)
+                    StackValue.Constant((argumentExpression as IrConst).value, Type.INT_TYPE)
                 ValueKind.DEFAULT_PARAMETER, ValueKind.DEFAULT_INLINE_PARAMETER ->
                     StackValue.createDefaultValue(parameterType)
                 else -> {
@@ -138,10 +141,12 @@ class IrInlineCodegen(
                     // Here we replicate the old backend: reusing the locals for everything except extension receivers.
                     // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
                     //   local will not be visible in the debugger, so this needs to be reconsidered.
-                    val argValue = if (irValueParameter.indexInOldValueParameters >= 0)
+                    val argValue = if (irValueParameter.indexInOldValueParameters >= 0) {
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
-                    else
-                        codegen.genToStackValue(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                    } else {
+                        codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                        StackValue.OnStack(parameterType, irValueParameter.type.toIrBasedKotlinType())
+                    }
                     if (inlineArgumentsInPlace) {
                         codegen.visitor.addInplaceArgumentEndMarker()
                     }

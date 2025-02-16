@@ -26,8 +26,8 @@ internal class GradleKotlinLogger(private val log: Logger, private val prefix: S
         log.info(transformMessage(msg))
     }
 
-    override fun warn(msg: String) {
-        log.warn(transformMessage(msg))
+    override fun warn(msg: String, throwable: Throwable?) {
+        log.warn(transformMessage(msg), throwable)
     }
 
     override fun lifecycle(msg: String) {

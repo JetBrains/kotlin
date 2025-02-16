@@ -30,22 +30,19 @@ test7: ---
 ---
 test8: ---
 (1 + 1).mustEqual(6)
-|  |
-|  2
-Asserter
+   |
+   2
 ---
 test9: ---
 (1 + 1).mustEqual(2 + 4)
-|  |                |
-|  |                6
-|  2
-Asserter
+   |                |
+   |                6
+   2
 ---
 test10: ---
 "hello".substring(1, 4).length.mustEqual("world".length)
-|       |               |                        |
-|       |               |                        5
-|       |               3
-|       ell
-Asserter
+        |               |                        |
+        |               |                        5
+        |               3
+        ell
 ---

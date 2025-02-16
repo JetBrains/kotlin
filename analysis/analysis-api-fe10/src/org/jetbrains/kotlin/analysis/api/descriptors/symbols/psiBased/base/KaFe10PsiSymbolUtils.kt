@@ -1,13 +1,17 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
-import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ClassErrorType
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiContextReceiverBasedContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ErrorType
+import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -148,5 +152,12 @@ internal fun PsiElement.getResolutionScope(bindingContext: BindingContext): Lexi
 
 internal fun KaFe10Symbol.createErrorType(): KaType {
     val type = ErrorUtils.createErrorType(ErrorTypeKind.UNAVAILABLE_TYPE_FOR_DECLARATION, psi.toString())
-    return KaFe10ClassErrorType(type, analysisContext)
+    return KaFe10ErrorType(type, analysisContext)
+}
+
+internal fun KtTypeParameterListOwnerStub<*>.contextParameters(analysisContext: Fe10AnalysisContext): List<KaContextParameterSymbol> {
+    val list = contextReceiverList ?: return emptyList()
+    val contextReceivers = list.contextReceivers().takeIf { it.isNotEmpty() }
+    return contextReceivers?.map { KaFe10PsiContextReceiverBasedContextParameterSymbol(it, analysisContext) }
+        ?: list.contextParameters().map { KaFe10PsiContextParameterSymbol(it, analysisContext) }
 }

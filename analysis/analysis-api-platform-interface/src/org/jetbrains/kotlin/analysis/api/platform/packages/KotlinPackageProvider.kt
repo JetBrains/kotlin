@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  * package providers, such as those created by [KotlinForwardDeclarationsPackageProviderFactory].
  *
  * Package providers are critical for performance, so implementations should cache results.
+ *
+ * ### Lifetime
+ *
+ * [KotlinPackageProvider] has the same lifetime guarantees as [KotlinDeclarationProvider][org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider].
  */
 public interface KotlinPackageProvider : KotlinComposableProvider {
     /**
@@ -46,31 +50,25 @@ public interface KotlinPackageProvider : KotlinComposableProvider {
     public fun doesPlatformSpecificPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean
 
     /**
-     * Returns the list of subpackages of a given package. The results must satisfy [nameFilter].
+     * Returns the list of subpackages of a given package.
      *
      * The returned subpackage list contains both Kotlin and [platform]-specific subpackages (e.g., for Kotlin/JVM, it should include Java
      * packages).
      *
-     * Generally, the result is equal to: [getKotlinOnlySubPackagesFqNames] union [getPlatformSpecificSubPackagesFqNames].
+     * Generally, the result is equal to: [getKotlinOnlySubpackageNames] union [getPlatformSpecificSubpackageNames].
      */
-    public fun getSubPackageFqNames(
-        packageFqName: FqName,
-        platform: TargetPlatform,
-        nameFilter: (Name) -> Boolean
-    ): Set<Name>
+    public fun getSubpackageNames(packageFqName: FqName, platform: TargetPlatform): Set<Name>
 
     /**
-     * Returns the list of subpackages of a given package which contain Kotlin declarations. The results must satisfy [nameFilter].
+     * Returns the list of subpackages of a given package which contain Kotlin declarations.
      */
-    public fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name>
+    public fun getKotlinOnlySubpackageNames(packageFqName: FqName): Set<Name>
 
     /**
-     * Returns the list of subpackages of a given package which contain [platform]-specific declarations. The results must satisfy
-     * [nameFilter].
+     * Returns the list of subpackages of a given package which contain [platform]-specific declarations.
      */
-    public fun getPlatformSpecificSubPackagesFqNames(
+    public fun getPlatformSpecificSubpackageNames(
         packageFqName: FqName,
         platform: TargetPlatform,
-        nameFilter: (Name) -> Boolean
     ): Set<Name>
 }

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
 
 // FILE: JavaGeneric.java
 public class JavaGeneric<T> {

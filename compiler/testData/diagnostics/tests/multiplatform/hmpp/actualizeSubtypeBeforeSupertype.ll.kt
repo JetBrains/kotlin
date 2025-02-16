@@ -1,13 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-// TARGET_PLATFORM: Common
 expect class A() : B
 expect class C() : B
 expect open class B()
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 actual class A : B() {
     // "Nothing to override" in metadata compilation. Unfortunately we don't check metadata compilation in diagnostic tests
     <!NOTHING_TO_OVERRIDE!>override<!> fun foo() {}

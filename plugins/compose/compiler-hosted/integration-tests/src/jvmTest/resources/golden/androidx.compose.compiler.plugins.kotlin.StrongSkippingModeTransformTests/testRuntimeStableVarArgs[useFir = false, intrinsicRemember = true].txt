@@ -25,6 +25,7 @@ class Holder<T>  {
     %composer = %composer.startRestartGroup(<>)
     val %dirty = %changed
     %composer.startMovableGroup(<>, x.size)
+    %dirty = %dirty or if (%composer.changed(x.size)) 0b0100 else 0
     val <iterator> = x.iterator()
     while (<iterator>.hasNext()) {
       val value = <iterator>.next()
@@ -52,7 +53,7 @@ class Holder<T>  {
     }
     val tmp0_rcvr = <this>
     %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-      tmp0_rcvr.Test(*x, %composer, updateChangedFlags(%changed or 0b0001))
+      tmp0_rcvr.Test(x, %composer, updateChangedFlags(%changed or 0b0001))
     }
   }
   static val %stable: Int = 0

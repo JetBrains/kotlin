@@ -1,0 +1,17 @@
+KtNameReferenceExpression(102,107): 'param'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = Context
+          symbol = param: Context
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -49,7 +49,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     final override val lazyFirSymbol: Lazy<FirPropertySymbol>,
 ) : KaKotlinPropertySymbol(), KaFirKtBasedSymbol<P, FirPropertySymbol> {
     override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+        get() = withValidityAssertion { backingPsi ?: findPsi() }
 
     override val name: Name
         get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
@@ -59,6 +59,9 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { createContextReceivers() }
+
+    override val contextParameters: List<KaContextParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
@@ -124,28 +127,30 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaVariableSymbol>()?.let {
-            return KaFirPsiBasedPropertySymbolPointer(it)
+            return KaFirPsiBasedPropertySymbolPointer(it, this)
         }
 
         when (val kind = location) {
             KaSymbolLocation.TOP_LEVEL -> {
                 if (firSymbol.fir.origin is FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
-                    KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this))
+                    KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this), this)
                 } else {
                     KaFirTopLevelPropertySymbolPointer(
                         firSymbol.callableId,
                         FirCallableSignature.createSignature(firSymbol),
+                        this
                     )
                 }
             }
 
             KaSymbolLocation.CLASS -> when (origin) {
-                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicPropertySymbolPointer(name)
+                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicPropertySymbolPointer(name, this)
                 else -> KaFirMemberPropertySymbolPointer(
                     ownerPointer = analysisSession.createOwnerPointer(this),
                     name = name,
                     signature = FirCallableSignature.createSignature(firSymbol),
                     isStatic = firSymbol.isStatic,
+                    originalSymbol = this
                 )
             }
 
@@ -231,6 +236,11 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
             KaFirReceiverParameterSymbol.create(backingPsi, analysisSession, this)
+        }
+
+    override val contextParameters: List<KaContextParameterSymbol>
+        get() = withValidityAssertion {
+            createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
         }
 
     override val isVal: Boolean

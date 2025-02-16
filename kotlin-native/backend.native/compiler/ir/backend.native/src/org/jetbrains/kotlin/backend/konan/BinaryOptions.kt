@@ -79,6 +79,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val disableMmap by booleanOption()
 
+    val mmapTag by uintOption()
+
     val enableSafepointSignposts by booleanOption()
 
     val packFields by booleanOption()
@@ -98,6 +100,10 @@ object BinaryOptions : BinaryOptionRegistry() {
     val enableDebugTransparentStepping by booleanOption()
 
     val debugCompilationDir by stringOption()
+
+    val pagedAllocator by booleanOption()
+
+    val latin1Strings by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

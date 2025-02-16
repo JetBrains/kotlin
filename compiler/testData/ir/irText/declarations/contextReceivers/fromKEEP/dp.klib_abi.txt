@@ -9,6 +9,6 @@ final class /View { // /View|null[0]
         final fun <get-coefficient>(): kotlin/Int // /View.coefficient.<get-coefficient>|<get-coefficient>(){}[0]
     constructor <init>() // /View.<init>|<init>(){}[0]
 }
-final val /dp // /dp|@kotlin.Int{}dp[0]
-    final fun context(kotlin/Int) (kotlin/Int).<get-dp>(): kotlin/Int // /dp.<get-dp>|<get-dp>!View@kotlin.Int(){}[0]
+final val /dp // /dp|(View)@kotlin.Int{}dp[0]
+    final fun (context(/View), kotlin/Int).<get-dp>(): kotlin/Int // /dp.<get-dp>|<get-dp>(View)@kotlin.Int(){}[0]
 final fun /box(): kotlin/String // /box|box(){}[0]

@@ -10,7 +10,7 @@ KaClassErrorType:
   nullability: UNKNOWN
   presentableText: Either
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: Either
       symbol: KaNamedClassSymbol(Either)
       typeArguments: []

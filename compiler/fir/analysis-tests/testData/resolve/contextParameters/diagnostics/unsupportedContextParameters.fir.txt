@@ -1,14 +1,19 @@
 FILE: unsupportedContextParameters.kt
     context(<unused var>: R|kotlin/String|)
     public final class C : R|kotlin/Any| {
+        context(<unused var>: R|kotlin/String|, <unused var>: R|kotlin/String|)
         public constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
     }
     public final class C2 : R|kotlin/Any| {
+        context(<unused var>: R|kotlin/String|)
         public constructor(): R|C2| {
             super<R|kotlin/Any|>()
+        }
+
+        init {
         }
 
     }
@@ -17,6 +22,7 @@ FILE: unsupportedContextParameters.kt
     }
     context(<unused var>: R|kotlin/String|)
     public final enum class E : R|kotlin/Enum<E>| {
+        context(<unused var>: R|kotlin/String|)
         private constructor(): R|E| {
             super<R|kotlin/Enum<E>|>()
         }
@@ -33,6 +39,7 @@ FILE: unsupportedContextParameters.kt
     }
     context(<unused var>: R|kotlin/String|)
     public final annotation class A : R|kotlin/Annotation| {
+        context(<unused var>: R|kotlin/String|)
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -40,6 +47,7 @@ FILE: unsupportedContextParameters.kt
     }
     context(<unused var>: R|kotlin/String|)
     public final object O : R|kotlin/Any| {
+        context(<unused var>: R|kotlin/String|)
         private constructor(): R|O| {
             super<R|kotlin/Any|>()
         }
@@ -70,10 +78,11 @@ FILE: unsupportedContextParameters.kt
         public get(): R|kotlin/String|
         public set(value: R|kotlin/String|): R|kotlin/Unit|
     public final var y: R|kotlin/String| = String()
-        public get(): R|kotlin/String|
-        public set(value: R|kotlin/String|): R|kotlin/Unit|
-    public final fun <no name provided>(): R|kotlin/Unit| {
-    }
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+        public set(v: R|kotlin/String|): R|kotlin/Unit| {
+        }
     context(<unused var>: R|kotlin/String|)
     public final var R|kotlin/Any|.d: R|kotlin/Any|by String()
         public get(): R|kotlin/Any| {
@@ -86,10 +95,8 @@ FILE: unsupportedContextParameters.kt
     public final var b: R|kotlin/String| = String()
         public get(): R|kotlin/String|
         public set(value: R|kotlin/String|): R|kotlin/Unit|
-    context(<unused var>@<ERROR TYPE REF: Incomplete code>)
     public final fun emptyContext(): R|kotlin/Unit| {
     }
-    context(<unused var>@<ERROR TYPE REF: Incomplete code>)
     public final class EmptyContextClass : R|kotlin/Any| {
         public constructor(): R|EmptyContextClass| {
             super<R|kotlin/Any|>()
@@ -104,6 +111,7 @@ FILE: unsupportedContextParameters.kt
     }
     context(R|kotlin/String|)
     public final class ClassWithContextReceiverSyntax : R|kotlin/Any| {
+        context(R|kotlin/String|, R|kotlin/String|)
         public constructor(): R|ClassWithContextReceiverSyntax| {
             super<R|kotlin/Any|>()
         }
@@ -111,6 +119,7 @@ FILE: unsupportedContextParameters.kt
     }
     context(x: R|kotlin/String| = ERROR_EXPR(Context parameters cannot have default values))
     public final class ClassWithContextDefaultValue : R|kotlin/Any| {
+        context(x: R|kotlin/String| = ERROR_EXPR(Context parameters cannot have default values))
         public constructor(): R|ClassWithContextDefaultValue| {
             super<R|kotlin/Any|>()
         }
@@ -126,4 +135,68 @@ FILE: unsupportedContextParameters.kt
     }
     context(vararg x: R|kotlin/Array<out kotlin/String>|, y: R|kotlin/String|, z: R|kotlin/String|, crossinline f1: R|() -> kotlin/Unit|, noinline f2: R|() -> kotlin/Unit|)
     public final inline fun contextHasModifier(): R|kotlin/Unit| {
+    }
+    public final fun test(collection: R|kotlin/Array<kotlin/Pair<kotlin/Int, kotlin/Int>>|): R|kotlin/Unit| {
+        context(s: R|kotlin/String|)
+        lval x: R|kotlin/Int| = Int(1)
+        context(s: R|kotlin/String|)
+        lval y: R|kotlin/Int| = Int(1)
+        when (lval z: R|kotlin/Int| = Int(1)) {
+            else ->  {
+            }
+        }
+
+         {
+            lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/Int.rangeTo|(Int(10)).R|kotlin/ranges/IntProgression.iterator|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval item: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                 {
+                }
+
+            }
+
+        }
+
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<kotlin/Pair<kotlin/Int, kotlin/Int>>| = R|<local>/collection|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<kotlin/Pair<kotlin/Int, kotlin/Int>>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Pair<kotlin/Int, kotlin/Int>|>|()
+                lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+                lval c: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+                 {
+                }
+
+            }
+
+        }
+
+        lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(Int(1), Int(2))
+        lval <unused var>: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+        local final fun local(f: R|kotlin/Int| = Int(1)): R|kotlin/Unit| {
+        }
+
+    }
+    public final class PropertyInConstructor : R|kotlin/Any| {
+        public constructor(k: R|kotlin/Boolean| = Boolean(true)): R|PropertyInConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val k: R|kotlin/Boolean| = R|<local>/k|
+            public get(): R|kotlin/Boolean|
+
+    }
+    public final fun runWithA(block: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun localFunctionsContextParametersWithoutType(): R|kotlin/Unit| {
+        lval t2: R|@ContextFunctionTypeParams (ERROR CLASS: Symbol not found for a) -> kotlin/Unit| = context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+        R|/runWithA|(context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+        context(a@<ERROR TYPE REF: Symbol not found for a>)
+        local final fun contextReceiverSyntax(): R|kotlin/Unit| {
+        }
+
     }

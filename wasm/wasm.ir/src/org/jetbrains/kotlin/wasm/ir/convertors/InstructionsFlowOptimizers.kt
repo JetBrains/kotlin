@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.ir.convertors
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+// TODO: All of those optimizations could be moved to WasmExpressionBuilder stage, so, we will not write the unreachable instructions and eliminate extra post-processing of the instruction flow
 private fun WasmOp.pureStacklessInstruction() = when (this) {
     WasmOp.REF_NULL, WasmOp.I32_CONST, WasmOp.I64_CONST, WasmOp.F32_CONST, WasmOp.F64_CONST, WasmOp.LOCAL_GET, WasmOp.GLOBAL_GET -> true
     else -> false
@@ -67,12 +68,10 @@ internal fun removeUnreachableInstructions(input: Sequence<WasmInstr>): Sequence
 }
 
 internal fun removeInstructionPriorUnreachable(input: Sequence<WasmInstr>): Sequence<WasmInstr> {
-    val inputIterator = input.iterator()
     var firstInstruction: WasmInstr? = null
 
     return sequence {
-        while (inputIterator.hasNext()) {
-            val instruction = inputIterator.next()
+        for (instruction in input) {
             if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
                 yield(instruction)
                 continue
@@ -87,7 +86,7 @@ internal fun removeInstructionPriorUnreachable(input: Sequence<WasmInstr>): Sequ
 
             if (instruction.operator == WasmOp.UNREACHABLE && (first.operator.pureStacklessInstruction() || first.operator == WasmOp.NOP)) {
                 if (first.operator != WasmOp.NOP) {
-                    val firstLocation = first.location as? SourceLocation.Location
+                    val firstLocation = first.location as? SourceLocation.DefinedLocation
                     if (firstLocation != null) {
                         //replace first instruction to NOP
                         yield(WasmInstrWithLocation(WasmOp.NOP, emptyList(), firstLocation))
@@ -105,13 +104,11 @@ internal fun removeInstructionPriorUnreachable(input: Sequence<WasmInstr>): Sequ
 }
 
 internal fun removeInstructionPriorDrop(input: Sequence<WasmInstr>): Sequence<WasmInstr> {
-    val inputIterator = input.iterator()
     var firstInstruction: WasmInstr? = null
     var secondInstruction: WasmInstr? = null
 
     return sequence {
-        while (inputIterator.hasNext()) {
-            val instruction = inputIterator.next()
+        for (instruction in input) {
             if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
                 yield(instruction)
                 continue
@@ -130,7 +127,7 @@ internal fun removeInstructionPriorDrop(input: Sequence<WasmInstr>): Sequence<Wa
             }
 
             if (second.operator == WasmOp.DROP && first.operator.pureStacklessInstruction()) {
-                val firstLocation = first.location as? SourceLocation.Location
+                val firstLocation = first.location as? SourceLocation.DefinedLocation
                 if (firstLocation != null) {
                     //replace first instruction
                     firstInstruction = WasmInstrWithLocation(WasmOp.NOP, emptyList(), firstLocation)
@@ -153,13 +150,10 @@ internal fun removeInstructionPriorDrop(input: Sequence<WasmInstr>): Sequence<Wa
 }
 
 internal fun mergeSetAndGetIntoTee(input: Sequence<WasmInstr>): Sequence<WasmInstr> {
-    val inputIterator = input.iterator()
     var firstInstruction: WasmInstr? = null
 
     return sequence {
-        while (inputIterator.hasNext()) {
-            val instruction = inputIterator.next()
-
+        for (instruction in input) {
             if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
                 yield(instruction)
                 continue

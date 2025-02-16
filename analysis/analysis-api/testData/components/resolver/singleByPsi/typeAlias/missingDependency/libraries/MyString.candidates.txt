@@ -7,10 +7,12 @@ KtNameReferenceExpression(141,146): 'check'
           receiverType = null
           returnType = {library1.MyString=} kotlin.String
           symbol = string: {library1.MyString=} kotlin.String
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtNameReferenceExpression(141,146): 'check'
               receiverType = null
               returnType = {library1.MyString=} kotlin.String
               symbol = string: {library1.MyString=} kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = library2/MyInterface.check
       typeArgumentsMapping = {}
     isInBestCandidates = true

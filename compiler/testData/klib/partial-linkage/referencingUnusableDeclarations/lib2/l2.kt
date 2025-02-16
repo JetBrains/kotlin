@@ -61,6 +61,10 @@ fun referenceChangedFunFromClass(): String = ClassWithChangedMembers::changedFun
 fun referenceRemovedFunFromInterface(): String = InterfaceWithChangedMembers::removedFun.name
 fun referenceChangedFunFromInterface(): String = InterfaceWithChangedMembers::changedFun.name
 
+fun referenceNestedToInnerConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::NestedToInner.name
+fun referenceInnerToNestedConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::InnerToNested.name
+fun referenceInnerToNestedConstructorWithDispatchReceiver(obj: ClassWithChangedMembers): String = obj::InnerToNested.name
+
 fun referenceFunctionWithUnlinkedParameter(): String = ::functionWithUnlinkedParameter.name
 fun referenceFunctionWithUnlinkedReturnValue(): String = ::functionWithUnlinkedReturnValue.name
 fun referenceFunctionWithRemovedTypeParameter(): String {

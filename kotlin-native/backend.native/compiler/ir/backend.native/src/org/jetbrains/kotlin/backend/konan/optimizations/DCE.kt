@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -30,20 +31,26 @@ internal fun dce(
             nonDevirtualizedCallSitesUnfoldFactor = -1,
     ).build()
     val referencedFunctions = mutableSetOf<IrSimpleFunction>()
-    callGraph.rootExternalFunctions.forEach {
-        referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
+
+    fun referenceFunction(functionSymbol: DataFlowIR.FunctionSymbol) {
+        val irFunction = functionSymbol.irFunction ?: error("No IR for: $functionSymbol")
+        referencedFunctions.add(irFunction)
+        // Need to keep the bridges' targets to not get them DCE-ed, as they are used during classes layout construction.
+        irFunction.bridgeTarget?.let { referencedFunctions.add(it) }
     }
+
+    callGraph.rootExternalFunctions.forEach { referenceFunction(it) }
     for (node in callGraph.directEdges.values) {
         if (!node.symbol.isStaticFieldInitializer)
-            referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
+            referenceFunction(node.symbol)
 
-        node.callSites.forEach {
-            if (!it.isVirtual)
-                referencedFunctions.add(it.actualCallee.irFunction ?: error("No IR for: ${it.actualCallee}"))
+        for (callSite in node.callSites) {
+            if (!callSite.isVirtual)
+                referenceFunction(callSite.actualCallee)
         }
     }
 
-    irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
+    irModule.acceptChildrenVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

@@ -7,10 +7,12 @@ KtOperationReferenceExpression(54,56): '+='
           receiverType = null
           returnType = kotlin.Int
           symbol = element: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = l
@@ -26,14 +28,16 @@ KtOperationReferenceExpression(54,56): '+='
               receiverType = null
               returnType = kotlin.Int
               symbol = element: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -42,10 +46,12 @@ KtOperationReferenceExpression(54,56): '+='
           receiverType = null
           returnType = kotlin.Array<kotlin.Int>
           symbol = elements: kotlin.Array<T>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = l
@@ -61,15 +67,17 @@ KtOperationReferenceExpression(54,56): '+='
               receiverType = null
               returnType = kotlin.Array<kotlin.Int>
               symbol = elements: kotlin.Array<T>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<T (of fun <T> MutableCollection<in T>.plusAssign)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -78,10 +86,12 @@ KtOperationReferenceExpression(54,56): '+='
           receiverType = null
           returnType = kotlin.collections.Iterable<kotlin.Int>
           symbol = elements: kotlin.collections.Iterable<T>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = l
@@ -97,15 +107,17 @@ KtOperationReferenceExpression(54,56): '+='
               receiverType = null
               returnType = kotlin.collections.Iterable<kotlin.Int>
               symbol = elements: kotlin.collections.Iterable<T>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<T (of fun <T> MutableCollection<in T>.plusAssign)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -114,10 +126,12 @@ KtOperationReferenceExpression(54,56): '+='
           receiverType = null
           returnType = kotlin.sequences.Sequence<kotlin.Int>
           symbol = elements: kotlin.sequences.Sequence<T>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = l
@@ -133,11 +147,13 @@ KtOperationReferenceExpression(54,56): '+='
               receiverType = null
               returnType = kotlin.sequences.Sequence<kotlin.Int>
               symbol = elements: kotlin.sequences.Sequence<T>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/plusAssign
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<T (of fun <T> MutableCollection<in T>.plusAssign)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Sequence<Int>' was expected.>
     isInBestCandidates = false

@@ -66,7 +66,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
         val firFile = mainFile.getOrBuildFirFile(resolveSession)
 
         val targetElement = testServices.expressionMarkerProvider
-            .getBottommostSelectedElementOfType(mainFile, KtElement::class.java)
+            .getBottommostSelectedElementOfType(mainFile, KtElement::class)
 
         val bodyElement = if (useBodyElement) targetElement else null
 
@@ -121,6 +121,17 @@ internal object ElementContextRenderer {
                                     contextReceiverValue.labelName?.let { labelName ->
                                         append("Label: ").appendLine(labelName)
                                     }
+                                }
+                            }
+                        }
+                    }
+
+                    towerDataElement.contextParameterGroup?.takeIf { it.isNotEmpty() }?.let { contextParameterValues ->
+                        appendBlock("Context parameters:") {
+                            for (contextParameterValue in contextParameterValues) {
+                                appendSymbol(contextParameterValue.boundSymbol).appendLine()
+                                appendBlock {
+                                    append("Type: ").appendType(contextParameterValue.type).appendLine()
                                 }
                             }
                         }

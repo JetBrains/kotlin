@@ -15,4 +15,6 @@ object CliDirectives : SimpleDirectivesContainer() {
     val FORCE_COMPILE_AS_JAVA_MODULE by directive(
         "Force using -Xmodule-path instead of -classpath, as if a Java module is compiled (even if there's no module-info.java)"
     )
+
+    val ADDITIONAL_JAVA_MODULES by stringDirective("Additional java modules to use in compilation")
 }

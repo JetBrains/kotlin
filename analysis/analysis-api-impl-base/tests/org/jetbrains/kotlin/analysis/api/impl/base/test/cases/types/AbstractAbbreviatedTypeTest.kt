@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -27,10 +27,8 @@ import org.jetbrains.kotlin.test.services.TestServices
  */
 abstract class AbstractAbbreviatedTypeTest : AbstractTypeTest() {
     override fun getType(analysisSession: KaSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
-        val callableSymbol = with(SymbolByFqName.getSymbolDataFromFile(testDataPath)) {
-            with(analysisSession) {
-                toSymbols(ktFile).singleOrNull() as? KaCallableSymbol ?: error("Expected a single callable declaration to be specified.")
-            }
+        val callableSymbol = with(analysisSession) {
+            getSingleTestTargetSymbolOfType<KaCallableSymbol>(testDataPath, ktFile)
         }
         return callableSymbol.returnType
     }

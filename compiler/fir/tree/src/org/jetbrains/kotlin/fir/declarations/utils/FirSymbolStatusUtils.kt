@@ -88,4 +88,4 @@ inline val FirClassSymbol<*>.isEnumEntry: Boolean
 
 // ---------------------- specific callables ----------------------
 
-inline val FirNamedFunctionSymbol.isLocal: Boolean get() = rawStatus.visibility == Visibilities.Local
+inline val FirFunctionSymbol<*>.isLocal: Boolean get() = rawStatus.visibility == Visibilities.Local

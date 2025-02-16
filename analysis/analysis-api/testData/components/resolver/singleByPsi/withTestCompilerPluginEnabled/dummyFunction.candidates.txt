@@ -7,10 +7,12 @@ KtNameReferenceExpression(127,136): 'dummyTest'
           receiverType = null
           returnType = test.Test
           symbol = value: test.Test
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtNameReferenceExpression(127,136): 'dummyTest'
               receiverType = null
               returnType = test.Test
               symbol = value: test.Test
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/dummyTest
       typeArgumentsMapping = {}
     isInBestCandidates = true

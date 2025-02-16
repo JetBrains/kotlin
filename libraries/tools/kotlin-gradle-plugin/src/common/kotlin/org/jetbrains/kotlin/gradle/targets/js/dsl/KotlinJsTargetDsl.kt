@@ -11,7 +11,6 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
@@ -128,9 +127,6 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 
     fun webpackTask(body: Action<KotlinWebpack>)
 
-    @Deprecated(KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    @ExperimentalDceDsl
-    fun dceTask(body: Action<@Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.gradle.dsl.KotlinJsDce>)
 }
 
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {

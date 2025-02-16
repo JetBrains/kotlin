@@ -1,0 +1,36 @@
+FILE: onContextParameters.kt
+    public abstract interface Ctx : R|kotlin/Any| {
+    }
+    public final class CtxImpl : R|Ctx| {
+        public constructor(): R|CtxImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun method(): R|kotlin/Unit| {
+        }
+
+    }
+    context(ctx: R|CtxImpl|)
+    public final fun function(): R|kotlin/Unit| {
+    }
+    context(ctx: R|Ctx|)
+    public final fun test(): R|kotlin/Unit| {
+        when () {
+            (R|<local>/ctx| is R|CtxImpl|) ->  {
+                R|<local>/ctx|.R|/CtxImpl.method|()
+            }
+        }
+
+    }
+    context(ctx: R|Ctx|)
+    public final fun test2(): R|kotlin/Unit| {
+        when () {
+            (R|<local>/ctx| is R|CtxImpl|) ->  {
+                R|/function|()
+            }
+            else ->  {
+                R|/function<Inapplicable(INAPPLICABLE): /function>#|()
+            }
+        }
+
+    }

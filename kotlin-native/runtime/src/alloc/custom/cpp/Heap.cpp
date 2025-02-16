@@ -15,7 +15,6 @@
 #include "AtomicStack.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
-#include "ExtraObjectPage.hpp"
 #include "GCApi.hpp"
 #include "Memory.h"
 #include "ThreadRegistry.hpp"
@@ -29,7 +28,8 @@ void Heap::PrepareForGC() noexcept {
     for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
         fixedBlockPages_[blockSize].PrepareForGC();
     }
-    extraObjectPages_.PrepareForGC();
+    fixedBlockExtraObjectPages_.PrepareForGC();
+    singleExtraObjectPages_.PrepareForGC();
 }
 
 FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
@@ -47,7 +47,8 @@ FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
     CustomAllocDebug("Heap: before extra sweep FinalizerQueue size == %zu", finalizerQueue.size());
     {
         auto sweepHandle = gcHandle.sweepExtraObjects();
-        extraObjectPages_.Sweep(sweepHandle, finalizerQueue);
+        fixedBlockExtraObjectPages_.Sweep(sweepHandle, finalizerQueue);
+        singleExtraObjectPages_.Sweep(sweepHandle, finalizerQueue);
     }
     // wait for concurrent assistants to finish sweeping the last popped page
     while (concurrentSweepersCount_.load(std::memory_order_acquire) > 0) {
@@ -67,14 +68,20 @@ FixedBlockPage* Heap::GetFixedBlockPage(uint32_t cellCount, FinalizerQueue& fina
     return fixedBlockPages_[cellCount].GetPage(cellCount, finalizerQueue, concurrentSweepersCount_);
 }
 
-SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
-    CustomAllocInfo("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
+SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount) noexcept {
+    CustomAllocInfo("CustomAllocator::GetSingleObjectPage(%" PRIu64 ")", cellCount);
     return singleObjectPages_.NewPage(cellCount);
 }
 
-ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept {
-    CustomAllocInfo("CustomAllocator::GetExtraObjectPage()");
-    return extraObjectPages_.GetPage(0, finalizerQueue, concurrentSweepersCount_);
+FixedBlockPage* Heap::GetFixedBlockExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept {
+    CustomAllocInfo("CustomAllocator::GetFixedBlockExtraObjectPage()");
+    auto cellCount = ExtraObjectCell::size().inCells();
+    return fixedBlockExtraObjectPages_.GetPage(cellCount, finalizerQueue, concurrentSweepersCount_);
+}
+
+SingleObjectPage* Heap::GetSingleExtraObjectPage() noexcept {
+    CustomAllocInfo("CustomAllocator::GetSingleExtraObjectPage()");
+    return singleExtraObjectPages_.NewPage(ExtraObjectCell::size().inCells());
 }
 
 void Heap::AddToFinalizerQueue(FinalizerQueue queue) noexcept {
@@ -121,7 +128,8 @@ void Heap::ClearForTests() noexcept {
     }
     nextFitPages_.Clear();
     singleObjectPages_.Clear();
-    extraObjectPages_.Clear();
+    fixedBlockExtraObjectPages_.Clear();
+    singleExtraObjectPages_.Clear();
 }
 
 } // namespace kotlin::alloc

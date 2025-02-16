@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -51,12 +52,12 @@ import kotlin.system.exitProcess
 
 abstract class CLICompiler<A : CommonCompilerArguments> {
 
-    abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
+    abstract val defaultPerformanceManager: PerformanceManager
 
     var isReadingSettingsFromEnvironmentAllowed: Boolean =
         this::class.java.classLoader.getResource(LanguageVersionSettings.RESOURCE_NAME_TO_ALLOW_READING_FROM_ENVIRONMENT) != null
 
-    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager =
+    protected open fun createPerformanceManager(arguments: A, services: Services): PerformanceManager =
         defaultPerformanceManager
 
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
@@ -76,14 +77,15 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
     }
 
     private fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
-        if (shouldRunK2(messageCollector, arguments)) {
+        val shouldRunK2 = shouldRunK2(messageCollector, arguments)
+        if (shouldRunK2) {
             val code = doExecutePhased(arguments, services, messageCollector)
             if (code != null) return code
         }
 
         val performanceManager = createPerformanceManager(arguments, services)
         if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableCollectingPerformanceStatistics()
+            performanceManager.enableCollectingPerformanceStatistics(isK2 = shouldRunK2)
         }
 
         val configuration = CompilerConfiguration()
@@ -137,7 +139,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                     throw e
                 }
             } finally {
-                Disposer.dispose(rootDisposable)
+                disposeRootInWriteAction(rootDisposable)
             }
         } catch (e: CompilationErrorException) {
             return COMPILATION_ERROR
@@ -189,13 +191,22 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
     protected abstract fun MutableList<String>.addPlatformOptions(arguments: A)
 
-    protected fun loadPlugins(paths: KotlinPaths?, arguments: A, configuration: CompilerConfiguration): ExitCode {
+    protected fun loadPlugins(
+        paths: KotlinPaths?,
+        arguments: A,
+        configuration: CompilerConfiguration,
+        parentDisposable: Disposable,
+    ): ExitCode {
         val pluginClasspaths = arguments.pluginClasspaths.orEmpty().toMutableList()
         val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
         val pluginConfigurations = arguments.pluginConfigurations.orEmpty().toMutableList()
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val useK2 = configuration.get(CommonConfigurationKeys.USE_FIR) == true
+
+        if (!checkPluginsArguments(messageCollector, useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
+            return INTERNAL_ERROR
+        }
 
         val scriptingPluginClasspath = mutableListOf<String>()
         val scriptingPluginOptions = mutableListOf<String>()
@@ -229,11 +240,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         pluginClasspaths.addAll(scriptingPluginClasspath)
         pluginOptions.addAll(scriptingPluginOptions)
 
-        if (!checkPluginsArguments(messageCollector, useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
-            return INTERNAL_ERROR
-        }
-
-        return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration)
+        return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration, parentDisposable)
     }
 
     private fun tryLoadScriptingPluginFromCurrentClassLoader(

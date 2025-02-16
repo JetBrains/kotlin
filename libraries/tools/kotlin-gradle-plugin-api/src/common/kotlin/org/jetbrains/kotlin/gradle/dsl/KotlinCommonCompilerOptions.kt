@@ -13,7 +13,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     /**
      * Allow using declarations from only the specified version of bundled libraries.
      *
-     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2 (experimental)", "2.3 (experimental)"
+     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2", "2.3 (experimental)"
      *
      * Default value: null
      */
@@ -24,7 +24,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     /**
      * Provide source compatibility with the specified version of Kotlin.
      *
-     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2 (experimental)", "2.3 (experimental)"
+     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2", "2.3 (experimental)"
      *
      * Default value: null
      */
@@ -41,7 +41,11 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     val optIn: org.gradle.api.provider.ListProperty<kotlin.String>
 
     /**
-     * Enable progressive compiler mode. In this mode, deprecations and bug fixes for unstable code take effect immediately instead of going through a graceful migration cycle. Code written in progressive mode is backward compatible; however, code written without progressive mode enabled may cause compilation errors in progressive mode.
+     * Enable progressive compiler mode.
+     * In this mode, deprecations and bug fixes for unstable code take effect immediately
+     * instead of going through a graceful migration cycle.
+     * Code written in progressive mode is backward compatible; however, code written without
+     * progressive mode enabled may cause compilation errors in progressive mode.
      *
      * Default value: false
      */
@@ -53,7 +57,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
      *
      * Default value: false
      */
-    @Deprecated(message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead", level = DeprecationLevel.ERROR)
+    @Deprecated(message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead", level = DeprecationLevel.HIDDEN)
     @get:org.gradle.api.tasks.Input
     val useK2: org.gradle.api.provider.Property<kotlin.Boolean>
 }

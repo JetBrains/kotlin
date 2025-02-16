@@ -17,7 +17,7 @@ class DFoo : IFoo {
 
   @Ann
   override fun String.testExtFun() {
-    (<this>.#$$delegate_0, <this>).testExtFun()
+    <this>.#$$delegate_0.testExtFun(/* <this> = <this> */)
   }
 
   @Ann
@@ -27,7 +27,7 @@ class DFoo : IFoo {
 
   override val String.testExtVal: String
     override get(): String {
-      return (<this>.#$$delegate_0, <this>).<get-testExtVal>()
+      return <this>.#$$delegate_0.<get-testExtVal>(/* <this> = <this> */)
     }
 
   override val testVal: String

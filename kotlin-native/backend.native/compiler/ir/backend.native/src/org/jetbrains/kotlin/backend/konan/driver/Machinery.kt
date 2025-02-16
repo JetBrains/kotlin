@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.backend.konan.driver
 import org.jetbrains.kotlin.backend.common.DisposableContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.config.LoggingContext
-import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -51,16 +51,16 @@ internal open class BasicPhaseContext(
 }
 
 internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
-    val phaserState = PhaserState<Any>()
+    val phaserState = PhaserState()
     val phaseConfig = config.phaseConfig
     val context = BasicPhaseContext(config)
-    val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
+    val topLevelPhase = object : NamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
         override fun phaseBody(context: PhaseContext, input: Any) {
             val engine = PhaseEngine(phaseConfig, phaserState, context)
             body(engine)
         }
 
-        override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Any>, context: PhaseContext, input: Any) {
+        override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: PhaseContext, input: Any) {
             error("Compiler was disabled")
         }
     }

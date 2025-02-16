@@ -3,6 +3,7 @@ KtAnnotationEntry(23,34): '@field:Anno'
     call = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -10,5 +11,6 @@ KtAnnotationEntry(23,34): '@field:Anno'
           returnType = Anno
           symbol = <constructor>(): Anno
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

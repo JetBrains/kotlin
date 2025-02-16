@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private const val INLINE_CLASS_IMPL_SUFFIX = "-impl"
 
@@ -82,11 +83,11 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
             initFunction.body = irConstructor.body?.let { body ->
                 context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                    val origParameterSymbol = irConstructor.valueParameters.single().symbol
+                    val origParameterSymbol = irConstructor.parameters.single().symbol
                     statements += context.createIrBuilder(initFunction.symbol).irBlockBody(initFunction) {
                         val builder = this
                         fun unboxedInlineClassValue() = builder.irReinterpretCast(
-                            builder.irGet(initFunction.valueParameters.single()),
+                            builder.irGet(initFunction.parameters.single()),
                             type = klass.defaultType,
                         )
 
@@ -120,7 +121,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                 override fun visitGetField(expression: IrGetField): IrExpression {
                                     expression.transformChildrenVoid()
                                     if (expression.symbol.owner.parent == klass)
-                                        return builder.irGet(initFunction.valueParameters.single())
+                                        return builder.irGet(initFunction.parameters.single())
                                     return expression
                                 }
 
@@ -129,14 +130,14 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                     if (expression.symbol.owner.parent == klass)
                                         return unboxedInlineClassValue()
                                     if (expression.symbol == origParameterSymbol)
-                                        return builder.irGet(initFunction.valueParameters.single())
+                                        return builder.irGet(initFunction.parameters.single())
                                     return expression
                                 }
 
                                 override fun visitSetValue(expression: IrSetValue): IrExpression {
                                     expression.transformChildrenVoid()
                                     if (expression.symbol == origParameterSymbol)
-                                        return builder.irSet(initFunction.valueParameters.single(), expression.value)
+                                        return builder.irSet(initFunction.parameters.single(), expression.value)
                                     return expression
                                 }
                             })
@@ -169,8 +170,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
                         // Secondary ctors of inline class must delegate to some other constructors.
                         // Use these delegating call later to initialize this variable.
                         lateinit var thisVar: IrVariable
-                        val parameterMapping = staticMethod.valueParameters.associateBy {
-                            irConstructor.valueParameters[it.indexInOldValueParameters].symbol
+                        val parameterMapping = staticMethod.parameters.associateBy {
+                            irConstructor.parameters[it.indexInParameters].symbol
                         }
 
                         (constructorBody as IrBlockBody).statements.forEach { statement ->
@@ -254,17 +255,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                             return context.createIrBuilder(staticMethod.symbol).irGet(
                                 when (valueDeclaration) {
-                                    function.dispatchReceiverParameter, function.parentAsClass.thisReceiver ->
-                                        staticMethod.valueParameters[0]
-
-                                    function.extensionReceiverParameter ->
-                                        staticMethod.valueParameters[1]
-
-                                    in function.valueParameters -> {
-                                        val offset = if (function.extensionReceiverParameter != null) 2 else 1
-                                        staticMethod.valueParameters[valueDeclaration.indexInOldValueParameters + offset]
-                                    }
-
+                                    function.parentAsClass.thisReceiver -> staticMethod.parameters[0]
+                                    in function.parameters -> staticMethod.parameters[valueDeclaration.indexInParameters]
                                     else -> return expression
                                 }
                             )
@@ -275,10 +267,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                             expression.transformChildrenVoid()
                             return context.createIrBuilder(staticMethod.symbol).irSet(
                                 when (valueDeclaration) {
-                                    in function.valueParameters -> {
-                                        val offset = if (function.extensionReceiverParameter != null) 2 else 1
-                                        staticMethod.valueParameters[valueDeclaration.indexInOldValueParameters + offset].symbol
-                                    }
+                                    in function.parameters -> staticMethod.parameters[valueDeclaration.indexInParameters].symbol
                                     else -> return expression
                                 },
                                 expression.value
@@ -295,16 +284,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                 statements += context.createIrBuilder(function.symbol).irBlockBody {
                     +irReturn(
                         irCall(staticMethod).apply {
-                            val parameters =
-                                listOfNotNull(
-                                    function.dispatchReceiverParameter!!,
-                                    function.extensionReceiverParameter
-                                ) + function.valueParameters
-
-                            for ((index, valueParameter) in parameters.withIndex()) {
-                                putValueArgument(index, irGet(valueParameter))
-                            }
-
+                            arguments.assignFrom(function.parameters.map { irGet(it) })
                             val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
                             for ((index, typeParameter) in typeParameters.withIndex()) {
                                 typeArguments[index] =

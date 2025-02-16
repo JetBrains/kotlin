@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCallToDeprecatedOverrideOfHidden
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -129,7 +129,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         callSite: FirElement?,
         context: CheckerContext,
     ): Boolean = when (referencedSymbol) {
-        is FirConstructorSymbol -> referencedSymbol.typeAliasForConstructor
+        is FirConstructorSymbol -> referencedSymbol.typeAliasConstructorInfo?.typeAliasSymbol
             ?.let { isTypealiasExpansionOf(it, callSite, context) }
             ?: false
         !is FirTypeAliasSymbol -> false
@@ -240,6 +240,6 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
     }
 
     private fun FirConstructorSymbol.classSymbolItIsCalledThrough(context: CheckerContext): FirClassLikeSymbol<*>? {
-        return typeAliasForConstructor ?: (resolvedReturnTypeRef.toRegularClassSymbol(context.session))
+        return typeAliasConstructorInfo?.typeAliasSymbol ?: (resolvedReturnTypeRef.toRegularClassSymbol(context.session))
     }
 }

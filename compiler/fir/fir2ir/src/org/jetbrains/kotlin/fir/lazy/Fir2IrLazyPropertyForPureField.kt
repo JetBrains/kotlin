@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.lazyMappedPropertyListVar
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -120,8 +121,7 @@ class Fir2IrLazyPropertyForPureField(
     override val containerSource: DeserializedContainerSource?
         get() = null
 
-    override var attributeOwnerId: IrAttributeContainer = this
-    override var originalBeforeInline: IrAttributeContainer? = null
+    override var attributeOwnerId: IrElement = this
 
     override val factory: IrFactory
         get() = IrFactoryImpl

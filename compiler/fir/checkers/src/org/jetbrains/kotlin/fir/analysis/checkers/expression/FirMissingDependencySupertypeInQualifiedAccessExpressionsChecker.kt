@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTypes
@@ -34,14 +33,15 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
             return
         }
 
-        val missingSupertype = checkMissingDependencySuperTypes(symbol.dispatchReceiverType, source, reporter, context)
+        val missingSuperTypes = checkMissingDependencySuperTypes(symbol.dispatchReceiverType, source, reporter, context)
+        val lazySupertypesUnresolvedByDefault = symbol is FirConstructorSymbol || symbol is FirAnonymousFunctionSymbol
+        val isEagerCheck = lazySupertypesUnresolvedByDefault || missingSuperTypes
 
-        val eagerChecksAllowed = context.languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)
-        val unresolvedLazySupertypesByDefault = symbol is FirConstructorSymbol || symbol is FirAnonymousFunctionSymbol
-
-        if (eagerChecksAllowed || !unresolvedLazySupertypesByDefault && !missingSupertype) {
-            checkMissingDependencySuperTypes(symbol.getOwnerLookupTag()?.toSymbol(context.session), source, reporter, context)
-            checkMissingDependencySuperTypes(symbol.resolvedReceiverTypeRef?.coneType, source, reporter, context)
-        }
+        checkMissingDependencySuperTypes(
+            symbol.getOwnerLookupTag()?.toSymbol(context.session), source, reporter, context, isEagerCheck
+        )
+        checkMissingDependencySuperTypes(
+            symbol.resolvedReceiverTypeRef?.coneType?.toSymbol(context.session), source, reporter, context, isEagerCheck
+        )
     }
 }

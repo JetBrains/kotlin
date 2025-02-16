@@ -24,11 +24,10 @@ Wrapper
 ---
 test5: ---
 Complex.holder.wrapper mustEqual "world".length
-|       |      |                         |
-|       |      |                         5
-|       |      Wrapper
-|       Holder(wrapper=Wrapper)
-Complex
+        |      |                         |
+        |      |                         5
+        |      Wrapper
+        Holder(wrapper=Wrapper)
 ---
 test6: ---
 Wrapper(2).mustEqual(6)
@@ -56,9 +55,8 @@ Wrapper
 ---
 test10: ---
 Complex.holder.wrapper.mustEqual("world".length)
-|       |      |                         |
-|       |      |                         5
-|       |      Wrapper
-|       Holder(wrapper=Wrapper)
-Complex
+        |      |                         |
+        |      |                         5
+        |      Wrapper
+        Holder(wrapper=Wrapper)
 ---

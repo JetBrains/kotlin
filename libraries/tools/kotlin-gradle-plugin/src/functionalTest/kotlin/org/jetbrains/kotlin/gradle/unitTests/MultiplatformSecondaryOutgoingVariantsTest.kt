@@ -85,10 +85,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
         project.evaluate()
 
-        project.assertJvmClassesVariants(
-            expectedArtifactsSize = 1,
-            isJavaCompilationEnabled = false,
-        )
+        project.assertJvmClassesVariants(expectedArtifactsSize = 2)
     }
 
     @Test
@@ -96,6 +93,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         val project = buildProjectWithMPPAndJvmClassesVariant {
             with(multiplatformExtension) {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
                 applyDefaultHierarchyTemplate()
@@ -104,7 +102,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
         project.evaluate()
 
-        project.assertJvmClassesVariants(expectedArtifactsSize = 2, isJavaCompilationEnabled = true)
+        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
     }
 
     @Test
@@ -114,6 +112,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
             with(multiplatformExtension) {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
                 applyDefaultHierarchyTemplate()
@@ -122,7 +121,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
         project.evaluate()
 
-        project.assertJvmClassesVariants(expectedArtifactsSize = 2, isJavaCompilationEnabled = true)
+        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
     }
 
     @Test
@@ -132,6 +131,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
             with(multiplatformExtension) {
                 jvm {
+                    @Suppress("DEPRECATION")
                     withJava()
                 }
                 applyDefaultHierarchyTemplate()
@@ -140,7 +140,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
         project.evaluate()
 
-        project.assertJvmClassesVariants(expectedArtifactsSize = 2, isJavaCompilationEnabled = true)
+        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
     }
 
     @Test
@@ -437,9 +437,9 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     }
 
     private fun Project.assertJvmClassesVariants(
-        expectedArtifactsSize: Int = 1,
+        expectedArtifactsSize: Int = 2,
         apiConfigurations: List<Configuration> = jvmApiConfigurations,
-        isJavaCompilationEnabled: Boolean = false,
+        isLegacyJavaCompilationEnabled: Boolean = false,
     ) {
         assertTrue(apiConfigurations.isNotEmpty())
 
@@ -454,12 +454,18 @@ class MultiplatformSecondaryOutgoingVariantsTest {
             assertNotNull(kotlinClasses)
             assertTrue(kotlinClasses.buildDependencies.getDependencies(null).size >= 1)
 
-            if (isJavaCompilationEnabled) {
-                val javaClasses = classesVariant.artifacts.find {
+            val javaClasses = classesVariant.artifacts.find {
+                it.file.path.endsWith("build/classes/java/jvmMain".osVariantSeparatorsPathString)
+            }
+            assertNotNull(javaClasses)
+            assertTrue(javaClasses.buildDependencies.getDependencies(null).size >= 1)
+
+            if (isLegacyJavaCompilationEnabled) {
+                val javaClassesLegacy = classesVariant.artifacts.find {
                     it.file.path.endsWith("build/classes/java/main".osVariantSeparatorsPathString)
                 }
-                assertNotNull(javaClasses)
-                assertTrue(javaClasses.buildDependencies.getDependencies(null).size >= 1)
+                assertNotNull(javaClassesLegacy)
+                assertTrue(javaClassesLegacy.buildDependencies.getDependencies(null).size >= 1)
             }
         }
     }

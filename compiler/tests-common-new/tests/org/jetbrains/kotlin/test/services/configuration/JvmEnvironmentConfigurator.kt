@@ -7,24 +7,33 @@ package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
 import com.intellij.util.lang.JavaVersion
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.moduleChunk
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler
+import org.jetbrains.kotlin.test.cli.CliDirectives
+import org.jetbrains.kotlin.test.cli.CliDirectives.ADDITIONAL_JAVA_MODULES
+import org.jetbrains.kotlin.test.cli.CliDirectives.FORCE_COMPILE_AS_JAVA_MODULE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.DISABLE_OPTIMIZATION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
@@ -45,7 +54,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEA
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_NEW_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIED_NULL_CHECKS
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OLD_INNER_CLASSES_LOGIC
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETERS_METADATA
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_TYPE_TABLE
@@ -60,7 +68,6 @@ import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.joinToArrayString
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
@@ -164,7 +171,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JvmEnvironmentConfigurationDirectives)
+        get() = listOf(JvmEnvironmentConfigurationDirectives, CliDirectives)
 
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::CompiledClassesManager))
@@ -187,16 +194,16 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(USE_TYPE_TABLE, JVMConfigurationKeys.USE_TYPE_TABLE)
         register(ENABLE_DEBUG_MODE, JVMConfigurationKeys.ENABLE_DEBUG_MODE)
         register(NO_NEW_JAVA_ANNOTATION_TARGETS, JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
-        register(OLD_INNER_CLASSES_LOGIC, JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
         register(LINK_VIA_SIGNATURES_K1, JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         register(ENABLE_JVM_IR_INLINER, JVMConfigurationKeys.ENABLE_IR_INLINER)
         register(USE_INLINE_SCOPES_NUMBERS, JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)
         register(USE_PSI_CLASS_FILES_READING, JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
         register(ALLOW_KOTLIN_PACKAGE, CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
+        register(DISABLE_OPTIMIZATION, JVMConfigurationKeys.DISABLE_OPTIMIZATION)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        if (module.targetPlatform !in JvmPlatforms.allJvmPlatforms) return
+        if (!module.targetPlatform(testServices).isJvm()) return
         configureDefaultJvmTarget(configuration)
         val registeredDirectives = module.directives
 
@@ -224,10 +231,17 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         }
 
         if (configurationKind.withRuntime) {
-            configuration.configureStandardLibs(
-                testServices.standardLibrariesPathProvider,
-                K2JVMCompilerArguments().also { it.noReflect = true }
-            )
+            if (testServices.cliBasedFacadesEnabled) {
+                val provider = testServices.standardLibrariesPathProvider
+                val isJava9Module = module.isJava9Module
+                configuration.addModularRootIfNotNull(isJava9Module, "kotlin.stdlib", provider.runtimeJarForTests())
+                configuration.addModularRootIfNotNull(isJava9Module, "kotlin.script.runtime", provider.scriptRuntimeJarForTests())
+            } else {
+                configuration.configureStandardLibs(
+                    testServices.standardLibrariesPathProvider,
+                    K2JVMCompilerArguments().also { it.noReflect = true }
+                )
+            }
         }
         configuration.addJvmClasspathRoots(getLibraryFilesExceptRealRuntime(testServices, configurationKind, module.directives))
 
@@ -242,7 +256,11 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         configuration.registerModuleDependencies(module)
 
-        configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
+        if (ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
+            configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
+        }
+
+        setupK2CliConfiguration(module, configuration)
 
         val javaFiles = module.javaFiles.ifEmpty { return }
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
@@ -261,6 +279,9 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath?.map(::File).orEmpty()
             )
         } else {
+            check(ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
+                "PROVIDE_JAVA_AS_BINARIES should be used only in combination with ENABLE_FOREIGN_ANNOTATIONS"
+            }
             if (javaModuleInfoFiles.isNotEmpty()) {
                 configuration.addJavaBinaryRootsByJavaModules(configurationKind, javaModuleInfoFiles)
             } else {
@@ -274,6 +295,36 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                         assertions = JUnit5Assertions,
                         useJava11 = registeredDirectives[JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11,
                     )
+                )
+            }
+        }
+    }
+
+    private fun setupK2CliConfiguration(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+    ) {
+        if (!testServices.cliBasedFacadesEnabled) return
+        val outputDir = testServices.compiledClassesManager.getOutputDirForModule(module)
+        configuration.moduleChunk = ModuleChunk(
+            listOf(
+                ModuleBuilder(
+                    name = module.name,
+                    outputDir = outputDir.canonicalPath,
+                    type = "test-module",
+                )
+            )
+        )
+        configuration.outputDirectory = outputDir
+        configuration.retainOutputInMemory = true
+        configuration.useClassBuilderFactoryForTest = true
+
+        val isMppCompilation = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+        for (mppModule in module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)) {
+            for (file in mppModule.kotlinFiles) {
+                configuration.addKotlinSourceRoot(
+                    path = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(file).canonicalPath,
+                    hmppModuleName = runIf(isMppCompilation) { mppModule.name }
                 )
             }
         }
@@ -318,7 +369,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         configurationKind: ConfigurationKind,
         module: TestModule
     ) {
-        val moduleDependencies = module.allDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
+        val moduleDependencies = module.allDependencies.map { it.dependencyModule }
         val javaModuleInfoFilesFromModuleDependencies = moduleDependencies.mapNotNull { moduleDependency ->
             moduleDependency.javaFiles.singleOrNull { javaFile -> javaFile.name == MODULE_INFO_FILE }
         }
@@ -348,32 +399,38 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         val phases = module.directives[CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES]
         if (phases.isNotEmpty()) {
             phaseConfig = PhaseConfig(
-                toDumpStateBefore = PhaseSet.Enum(phases.map { it.toLowerCaseAsciiOnly() }.toSet()),
-                toDumpStateAfter = PhaseSet.Enum(phases.map { it.toLowerCaseAsciiOnly() }.toSet()),
+                toDumpStateBefore = PhaseSet.Enum(phases.toSet()),
+                toDumpStateAfter = PhaseSet.Enum(phases.toSet()),
                 dumpToDirectory = dumpDirectory.absolutePath
             )
         }
     }
 
+    private val TestModule.isJava9Module: Boolean
+        get() = files.any(TestFile::isModuleInfoJavaFile) || FORCE_COMPILE_AS_JAVA_MODULE in directives
+
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
-        val isJava9Module = module.files.any(TestFile::isModuleInfoJavaFile)
+        val isJava9Module = module.isJava9Module
         for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
             if (isJava9Module) {
                 add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(dependency))
             }
-            addJvmClasspathRoot(dependency)
+            if (FORCE_COMPILE_AS_JAVA_MODULE !in module.directives) {
+                addJvmClasspathRoot(dependency)
+            }
         }
 
         val binaryFriends = module.friendDependencies.filter { it.kind == DependencyKind.Binary }
         if (binaryFriends.isNotEmpty()) {
             put(JVMConfigurationKeys.FRIEND_PATHS, binaryFriends.toFileList().map { it.absolutePath })
         }
+        addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, module.directives[ADDITIONAL_JAVA_MODULES])
     }
 
     private fun List<DependencyDescription>.toFileList(): List<File> = this.flatMap(::convertDependencyToFileList)
 
     protected open fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
-        val friendModule = testServices.dependencyProvider.getTestModule(dependency.moduleName)
+        val friendModule = dependency.dependencyModule
         return listOf(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(friendModule, classFileFactory = null))
     }
 }

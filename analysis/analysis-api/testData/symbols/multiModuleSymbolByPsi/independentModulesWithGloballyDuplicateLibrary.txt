@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /common
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -51,7 +52,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(Common())
+  initializer: KaNonConstantInitializerValue(Common())
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -100,6 +101,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /value
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -127,7 +129,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(common.foo())
+  initializer: KaNonConstantInitializerValue(common.foo())
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -178,6 +180,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /common
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -205,7 +208,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(Common())
+  initializer: KaNonConstantInitializerValue(Common())
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -254,6 +257,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /value
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -281,7 +285,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(common.bar())
+  initializer: KaNonConstantInitializerValue(common.bar())
   isActual: false
   isConst: false
   isDelegatedProperty: false

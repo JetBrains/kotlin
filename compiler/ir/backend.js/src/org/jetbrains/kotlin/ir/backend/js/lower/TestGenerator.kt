@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
@@ -30,50 +31,47 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-fun generateJsTests(context: JsCommonBackendContext, moduleFragment: IrModuleFragment, groupByPackage: Boolean) {
-    val generator = TestGenerator(
-        context = context,
-        groupByPackage = groupByPackage
-    )
-
-    moduleFragment.files.toList().forEach {
-        generator.lower(it)
+fun generateJsTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
+    val generator = TestGenerator(context = context)
+    moduleFragment.files.forEach {
+        val testContainerIfAny = generator.createTestContainer(it)
+        if (testContainerIfAny != null) {
+            context.testFunsPerFile[it] = testContainerIfAny
+        }
     }
 }
 
-private class TestGenerator(
-    val context: JsCommonBackendContext,
-    private val groupByPackage: Boolean,
-) : FileLoweringPass {
+class TestGenerator(val context: JsCommonBackendContext) {
+    fun createTestContainer(irFile: IrFile): IrSimpleFunction? {
+        if (irFile.declarations.isEmpty()) return null
 
-    override fun lower(irFile: IrFile) {
+        val testContainer = lazy {
+            context.irFactory.addFunction(irFile) {
+                name = Name.identifier("test fun")
+                returnType = context.irBuiltIns.unitType
+                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }.apply {
+                body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
+            }
+        }
+
         // Additional copy to prevent ConcurrentModificationException
-        if (irFile.declarations.isEmpty()) return
         ArrayList(irFile.declarations).forEach {
             if (it is IrClass) {
                 context.irFactory.stageController.restrictTo(it) {
-                    generateTestCalls(it) { if (groupByPackage) suiteForPackage(it) else context.createTestContainerFun(it) }
+                    generateTestCalls(it) { testContainer.value }
                 }
             }
 
             // TODO top-level functions
         }
-    }
 
-    private val packageSuites = hashMapOf<FqName, IrSimpleFunction>()
-
-    private fun suiteForPackage(container: IrDeclaration): IrSimpleFunction {
-        val irFile = container.file
-        val fn = context.createTestContainerFun(container)
-        return packageSuites.getOrPut(irFile.packageFqName) {
-            context.suiteFun!!.createInvocation(irFile.packageFqName.asString(), fn)
-        }
+        return if (testContainer.isInitialized()) testContainer.value else null
     }
 
     private fun IrSimpleFunctionSymbol.createInvocation(

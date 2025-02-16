@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.AbstractResolveToFirSymbolTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
@@ -42,6 +43,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractScriptLazyAnnotationsResolveTest> {
             model("lazyAnnotations", pattern = TestGeneratorUtil.KTS)
+        }
+
+        testClass<AbstractSourceDeprecationsResolveTest> {
+            model("lazyResolveDeprecation", pattern = TestGeneratorUtil.KT)
         }
 
         testClass<AbstractFirSourceLazyDeclarationResolveTest> {
@@ -293,6 +298,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("resolveExtensionDisposal")
         }
 
+        testClass<AbstractResolveToFirSymbolTest> {
+            model("resolveToFirSymbol")
+        }
+
         testClass<AbstractFirClassByPsiClassProviderTest> {
             model("firClassByPsiClass")
         }
@@ -317,8 +326,8 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         "compiler/fir/analysis-tests/testData",
     ) {
         fun TestGroup.TestClass.modelInit() {
-            model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME, excludeDirsRecursively = listOf("lightTree"))
-            model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME, excludeDirsRecursively = listOf("lightTree"))
+            model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractDiagnosticCompilerTestDataTest>(suiteTestClassName = "DiagnosticCompilerTestFirTestdataTestGenerated") {
@@ -328,6 +337,18 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest>(suiteTestClassName = "LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated") {
             modelInit()
         }
+    }
+    testGroup(
+        "analysis/low-level-api-fir/tests",
+        "analysis/low-level-api-fir/testData",
+    ) {
+        testClass<AbstractDiagnosticCompilerTestDataTest>(suiteTestClassName = "DiagnosticCompilerTestAATestdataTestGenerated") {
+            model("compilerLikeAnalysis", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+        testClass<AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest>(suiteTestClassName = "LLFirPreresolvedReversedDiagnosticCompilerAATestDataTestGenerated") {
+            model("compilerLikeAnalysis", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
     }
 
     testGroup(
@@ -380,7 +401,6 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 "diagnostics/tests",
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 pattern = KT_OR_KTS,
-                excludeDirsRecursively = listOf("lightTree"),
             )
             model(
                 "diagnostics/testsWithStdLib",

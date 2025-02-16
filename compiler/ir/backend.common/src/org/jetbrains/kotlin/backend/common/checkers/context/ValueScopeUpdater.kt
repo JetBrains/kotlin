@@ -6,20 +6,12 @@
 package org.jetbrains.kotlin.backend.common.checkers.context
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrScript
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -35,7 +27,7 @@ internal object ValueScopeUpdater : ContextUpdater {
     private class ValueScopeVisitor(
         private val context: CheckerContext,
         private val block: () -> Unit
-    ) : IrElementVisitorVoid {
+    ) : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             block()
         }
@@ -67,7 +59,7 @@ internal object ValueScopeUpdater : ContextUpdater {
             context.withScopeOwner(declaration, block) {
                 // A function parameter's default value may reference the parameters that come after it,
                 // so we add all the parameters to the scope manually before validating any of them
-                declaration.valueParameters.mapTo(this, IrValueParameter::symbol)
+                declaration.parameters.mapTo(this, IrValueParameter::symbol)
             }
         }
 
@@ -94,7 +86,7 @@ internal object ValueScopeUpdater : ContextUpdater {
         }
 
         private fun MutableSet<IrValueSymbol>.addValueParametersOfPrimaryConstructor(declaration: IrDeclaration) {
-            (declaration.parent as? IrClass)?.primaryConstructor?.valueParameters?.mapTo(this, IrValueParameter::symbol)
+            (declaration.parent as? IrClass)?.primaryConstructor?.parameters?.mapTo(this, IrValueParameter::symbol)
         }
     }
 }

@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
@@ -22,9 +25,11 @@ import org.jetbrains.kotlin.test.services.GlobalMetadataInfoHandler
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
 
-fun matchIrFileWithTestFile(irModuleFragment: IrModuleFragment, module: TestModule): List<Pair<IrFile, TestFile>> {
+fun matchIrFileWithTestFile(irModuleFragment: IrModuleFragment, module: TestModule, testServices: TestServices): List<Pair<IrFile, TestFile>> {
     val irFileWithTestFile = irModuleFragment.files.map { irFile ->
-        irFile to module.files.firstOrNull { testFile -> testFile.relativePath == irFile.fileEntry.name.drop(1) }
+        irFile to module.files.firstOrNull { testFile ->
+            testFile.matchPath(testServices) { it == irFile.fileEntry.name }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -38,7 +43,7 @@ open class IrInterpreterBackendHandler(testServices: TestServices) : AbstractIrH
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         val evaluator = Evaluator(IrInterpreter(info.irPluginContext.irBuiltIns), globalMetadataInfoHandler)
-        for ((irFile, testFile) in matchIrFileWithTestFile(info.irModuleFragment, module)) {
+        for ((irFile, testFile) in matchIrFileWithTestFile(info.irModuleFragment, module, testServices)) {
             evaluator.evaluate(irFile, testFile)
         }
     }

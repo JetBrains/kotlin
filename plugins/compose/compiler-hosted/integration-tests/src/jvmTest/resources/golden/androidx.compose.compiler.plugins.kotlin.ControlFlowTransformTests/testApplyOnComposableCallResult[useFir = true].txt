@@ -23,7 +23,7 @@ fun <T> provided(value: T): State<T> = remember { mutableStateOf(value) }.apply 
 
 @Composable
 fun <T> provided(value: T, %composer: Composer?, %changed: Int): State<T> {
-  sourceInformationMarkerStart(%composer, <>, "C(provided)*<rememb...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(provided)<rememb...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

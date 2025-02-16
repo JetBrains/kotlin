@@ -45,6 +45,9 @@ abstract class LLFirResolveExtensionTool : FirSessionComponent {
     internal abstract val symbolNamesProvider: FirSymbolNamesProvider
 }
 
+/**
+ * The session's [LLFirResolveExtensionTool], or `null` if the session's module defines no resolve extensions.
+ */
 val FirSession.llResolveExtensionTool: LLFirResolveExtensionTool? by FirSession.nullableSessionComponentAccessor()
 
 internal class LLFirNonEmptyResolveExtensionTool(
@@ -340,22 +343,18 @@ private class LLFirResolveExtensionToolPackageProvider(
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean =
         doesKotlinOnlyPackageExist(packageFqName)
 
-    override fun getSubPackageFqNames(packageFqName: FqName, platform: TargetPlatform, nameFilter: (Name) -> Boolean): Set<Name> =
-        getKotlinOnlySubPackagesFqNames(packageFqName, nameFilter)
+    override fun getSubpackageNames(packageFqName: FqName, platform: TargetPlatform): Set<Name> =
+        getKotlinOnlySubpackageNames(packageFqName)
 
     override fun doesPlatformSpecificPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean = false
 
-    override fun getPlatformSpecificSubPackagesFqNames(packageFqName: FqName, platform: TargetPlatform, nameFilter: (Name) -> Boolean) =
-        emptySet<Name>()
+    override fun getPlatformSpecificSubpackageNames(packageFqName: FqName, platform: TargetPlatform) = emptySet<Name>()
 
     override fun doesKotlinOnlyPackageExist(packageFqName: FqName): Boolean =
         packageFilter.packageExists(packageFqName)
 
-    override fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name> {
-        val subPackageNames = packageFilter.getAllSubPackages(packageFqName)
-        if (subPackageNames.isEmpty()) return emptySet()
-        return subPackageNames.filterTo(mutableSetOf()) { nameFilter(it) }
-    }
+    override fun getKotlinOnlySubpackageNames(packageFqName: FqName): Set<Name> =
+        packageFilter.getAllSubPackages(packageFqName)
 }
 
 private fun ClassId.getTopLevelShortClassName(): Name {

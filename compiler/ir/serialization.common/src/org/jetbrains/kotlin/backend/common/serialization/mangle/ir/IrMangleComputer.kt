@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.*
+import org.jetbrains.kotlin.backend.common.serialization.mangle.BaseKotlinMangleComputer
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
+import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -13,11 +16,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.util.isFacadeClass
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 /**
  * A mangle computer that generates a mangled name for a Kotlin declaration represented by [IrDeclaration].
@@ -64,28 +68,23 @@ open class IrMangleComputer(
         realParent.acceptVoid(Visitor())
     }
 
-    override fun getContextReceiverTypes(function: IrFunction): List<IrType> =
+    override fun getContextParameters(function: IrFunction): List<IrValueParameter> =
         function
-            .valueParameters
-            .asSequence()
-            .take(function.contextReceiverParametersCount)
+            .parameters
+            .filter { it.kind == IrParameterKind.Context }
             .filterNot { it.isHidden }
-            .map { it.type }
-            .toList()
 
-    override fun getExtensionReceiverParameterType(function: IrFunction) =
+    override fun getExtensionReceiverParameter(function: IrFunction): IrValueParameter? =
         function
-            .extensionReceiverParameter
+            .parameters
+            .firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
             ?.takeUnless { it.isHidden }
-            ?.type
 
-    override fun getValueParameters(function: IrFunction): List<IrValueParameter> =
+    override fun getRegularParameters(function: IrFunction): List<IrValueParameter> =
         function
-            .valueParameters
-            .asSequence()
-            .drop(function.contextReceiverParametersCount)
+            .parameters
+            .filter { it.kind == IrParameterKind.Regular }
             .filterNot { it.isHidden }
-            .toList()
 
     override fun getReturnType(function: IrFunction) = function.returnType
 
@@ -133,17 +132,13 @@ open class IrMangleComputer(
         }
     }
 
-    private inner class Visitor : IrElementVisitorVoid {
+    private inner class Visitor : IrVisitorVoid() {
 
         override fun visitElement(element: IrElement) =
             error("unexpected element ${element.render()}")
 
         override fun visitScript(declaration: IrScript) {
             declaration.visitParent()
-        }
-
-        override fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
-            declaration.mangleSimpleDeclaration(MangleConstant.ERROR_DECLARATION)
         }
 
         override fun visitClass(declaration: IrClass) {
@@ -181,7 +176,14 @@ open class IrMangleComputer(
                 builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
             }
 
-            accessor?.extensionReceiverParameter?.let {
+            val contextParameters = accessor?.parameters?.filter { it.kind == IrParameterKind.Context }.orEmpty()
+            if (contextParameters.isNotEmpty()) {
+                contextParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+                    mangleValueParameter(this, it, null)
+                }
+            }
+
+            accessor?.parameters?.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.let {
                 builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
                 mangleValueParameter(builder, it, null)
             }

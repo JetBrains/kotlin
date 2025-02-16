@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeParameter
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestServices
@@ -28,12 +28,8 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        with(builder) {
-            useDirectives(Directives)
-        }
-    }
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(Directives)
 
     @OptIn(KaExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -50,7 +46,7 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
                 typeParameterSymbol = classSymbol.typeParameters.find { it.name == typeParameterName }
                     ?: error("Type parameter $typeParameterName not found")
             } else {
-                val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtTypeParameter
+                val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtTypeParameter
                 typeParameterReferenceText = expressionAtCaret.text
                 typeParameterSymbol = expressionAtCaret.symbol
             }

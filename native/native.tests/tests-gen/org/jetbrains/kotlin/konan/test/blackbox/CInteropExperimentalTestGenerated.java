@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/CInterop/experimental/cases")
 @TestDataPath("$PROJECT_ROOT")
+@ClassicPipeline()
 public class CInteropExperimentalTestGenerated extends AbstractNativeCInteropExperimentalTest {
   @Test
   public void testAllFilesPresentInCases() {

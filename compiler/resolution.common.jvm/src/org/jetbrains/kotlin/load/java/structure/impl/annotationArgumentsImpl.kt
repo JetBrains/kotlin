@@ -29,7 +29,7 @@ sealed class JavaAnnotationArgumentImpl(
 ) : JavaAnnotationArgument {
     companion object Factory {
         fun create(
-            argument: PsiAnnotationMemberValue,
+            argument: PsiAnnotationMemberValue?,
             name: Name?,
             sourceFactory: JavaElementSourceFactory
         ): JavaAnnotationArgument {
@@ -37,7 +37,7 @@ sealed class JavaAnnotationArgumentImpl(
                 return JavaClassObjectAnnotationArgumentImpl(sourceFactory.createPsiSource(argument), name)
             }
 
-            val value = JavaPsiFacade.getInstance(argument.project).constantEvaluationHelper.computeConstantExpression(argument)
+            val value = argument?.let { JavaPsiFacade.getInstance(it.project).constantEvaluationHelper.computeConstantExpression(it) }
             if (value is Enum<*>) {
                 return JavaEnumValueAnnotationArgumentImpl(sourceFactory.createPsiSource(argument as PsiReferenceExpression), name)
             }

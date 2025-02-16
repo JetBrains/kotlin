@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
@@ -27,7 +26,7 @@ expect class AnnotationInside {
 @Ann
 actual class AnnotationMatching
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class AnnotationOnExpectOnly
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class AnnotationOnExpectOnly
 
 @Ann
 actual class AnnotationOnActualOnly
@@ -36,7 +35,7 @@ actual class AnnotationInside {
     @Ann
     actual fun matches() {}
 
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun onlyOnExpect() {}
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun onlyOnExpect() {}
 
     @Ann
     actual fun onlyOnActual() {}

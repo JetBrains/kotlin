@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.headerklib;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -17,10 +18,17 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/header-klibs/comparison")
 @TestDataPath("$PROJECT_ROOT")
+@ClassicPipeline()
 public class NativeHeaderKlibComparisonTestGenerated extends AbstractNativeHeaderKlibComparisonTest {
   @Test
   public void testAllFilesPresentInComparison() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/header-klibs/comparison"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
+
+  @Test
+  @TestMetadata("annotations")
+  public void testAnnotations() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/annotations/");
   }
 
   @Test

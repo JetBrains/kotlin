@@ -17,8 +17,8 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Assume.assumeFalse
+import org.junit.Assume.assumeTrue
 import org.junit.Test
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -652,10 +652,11 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         }
     )
 
-    @Ignore("b/357878245")
     @Test
-    fun testDefaultParametersInOpenFunctions() = validateBytecode(
-        """
+    fun testDefaultParametersInOpenFunctions() {
+        assumeTrue(useFir)
+        validateBytecode(
+            """
             import androidx.compose.runtime.*
 
             interface Test {
@@ -673,15 +674,16 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 test.bar(0)
             }
         """,
-        validate = {
-            assertTrue(
-                it.contains(
-                    "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
-                ),
-                "default static functions should be generated in ComposeDefaultsImpl class"
-            )
-        }
-    )
+            validate = {
+                assertTrue(
+                    it.contains(
+                        "INVOKESTATIC test/Test%ComposeDefaultImpls.bar%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)I"
+                    ),
+                    "default static functions should be generated in ComposeDefaultsImpl class"
+                )
+            }
+        )
+    }
 
     @Test
     fun testMemoizingFromDelegate() = testCompile(
@@ -836,5 +838,127 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         val function4 = function4Regex.find(newBytecode)?.value ?: error("Could not find function4 in new bytecode")
         val oldFunction4 = function4Regex.find(oldBytecode)?.value ?: error("Could not find function4 in old bytecide")
         assertEquals(oldFunction4, function4)
+    }
+
+    @Test
+    fun testAddingCodeCommentAboveGroupsWithControlFlow() {
+        val oldBytecode = compileBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable fun Box1() {}
+                @Composable fun Box2() {}
+                
+                @Composable fun Foo(test: Boolean) {
+                    if(test) {
+                        Box1()
+                    } else {
+                        Box2()
+                    }
+                }
+            """,
+            className = "TestClass",
+        )
+
+        val newBytecode = compileBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable fun Box1() {}
+                @Composable fun Box2() {}
+                
+                /*
+                Code Comment
+                 */
+                @Composable fun Foo(test: Boolean) {
+                    if(test) {
+                        Box1()
+                    } else {
+                        Box2()
+                    }
+                }
+            """,
+            className = "TestClass",
+        )
+
+        /**
+         * There are some parts of the bytecode that contain the actual line number.
+         * This is OK to be changed; therefore, we will sanitize this as we do care about the actual group keys
+         */
+        fun String.sanitize(): String = lines().map { line ->
+            if (line.contains("LINENUMBER")) {
+                return@map "<LINENUMBER>"
+            }
+            line.replace(Regex("""Test.kt:\d+"""), "Test.kt:<LINE_NUMBER>")
+        }.joinToString("\n")
+
+        assertEquals(newBytecode.sanitize(), oldBytecode.sanitize())
+    }
+
+    @Test
+    fun testLocalObjectCapture() = testCompile(
+        """
+            import androidx.compose.runtime.*
+    
+            @Composable
+            fun Test(strings: List<String>) {
+                val objects = strings.map { string -> 
+                    val stringVar = string
+                    object {
+                        val value get() = stringVar
+                    }
+                }
+                val lambda = { 
+                    objects.forEach { println(it.value) }
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testCaptureThisParameter() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            interface SomeHandler {
+              fun onClick(someItem: String)
+            }
+            fun setContent(content: @Composable () -> Unit) {}
+
+            class ComposeTest {
+              private var item: String = ""
+            
+              private val someHandler = object : SomeHandler {
+                override fun onClick(s: String) {
+                  item = s // this line captures `this` parameter from `ComposeTest`
+                }
+              }
+            
+              fun test() {
+                setContent {
+                  val a = { it: String -> someHandler.onClick(it) }
+                }
+              }
+            }
+        """,
+    )
+
+    @Test
+    fun testVarargRestartGroup() {
+        validateBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable
+                fun Foo(vararg text: String) {
+                    text.forEach { println(it) }
+                }
+            """,
+            validate = {
+                assertFalse {
+                    it.contains("Arrays.copyOf")
+                }
+            }
+        )
     }
 }

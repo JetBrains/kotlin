@@ -16,6 +16,6 @@ fun main() {
 
     foo(p1 = 1, p2 = "2", 3.0)
 
-    foo(1, p3 = 2.0, <!NO_VALUE_FOR_PARAMETER!>"")<!>
-    foo(1, p3 = 2.0, <!NO_VALUE_FOR_PARAMETER!>3.0)<!>
+    foo(1, p3 = 2.0, <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>""<!>)<!>
+    foo(1, p3 = 2.0, <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>3.0<!>)<!>
 }

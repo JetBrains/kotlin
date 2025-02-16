@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -30,9 +31,7 @@ abstract class AbstractFirNativeIrTextTestBase(private val parser: FirParser) : 
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            commonConfigurationForK2(parser)
-        }
+        builder.additionalK2ConfigurationForIrTextTest(parser)
     }
 }
 

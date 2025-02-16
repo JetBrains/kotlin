@@ -16,6 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverExplicitPrimaryConstructor.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
+        context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }

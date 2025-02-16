@@ -1,3 +1,5 @@
+Captured values:
 ContainingClass[name: <this>; isMutated: false; displayText: this@Clazz]
     class Clazz : R|kotlin/Any|
     R|Clazz|
+No captured files

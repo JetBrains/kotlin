@@ -10,6 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import java.nio.file.Path
 
 /**
@@ -27,7 +28,7 @@ object KtSourceTestModuleFactory : KtTestModuleFactory {
 
         val module = KaSourceModuleImpl(
             testModule.name,
-            testModule.targetPlatform,
+            testModule.targetPlatform(testServices),
             testModule.languageVersionSettings,
             project,
             GlobalSearchScope.filesScope(project, psiFiles.mapTo(mutableSetOf()) { it.virtualFile }),

@@ -1,2 +1,2 @@
-error: unknown -Xjvm-default mode: enable, supported modes: [disable, all-compatibility, all]
+error: unknown -jvm-default mode: all, supported modes: [disable, enable, no-compatibility]
 COMPILATION_ERROR

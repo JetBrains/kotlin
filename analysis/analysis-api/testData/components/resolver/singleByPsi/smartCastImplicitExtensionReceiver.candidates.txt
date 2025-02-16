@@ -4,6 +4,7 @@ KtCallExpression(51,56): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
@@ -32,6 +33,7 @@ KtCallExpression(51,56): 'foo()'
           returnType = kotlin.Unit
           symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

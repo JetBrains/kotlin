@@ -53,6 +53,18 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileCollectDiagnosticsTestG
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contextParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersAsLibrary.kt")
+  public void testContextParametersAsLibrary() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contextParametersAsLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("contracts.kt")
   public void testContracts() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contracts.kt");

@@ -21,8 +21,8 @@ class WasmBackendFacade(
 
     private val loweringFacade = WasmLoweringFacade(testServices)
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return deserializerFacade.shouldRunAnalysis(module) && loweringFacade.shouldRunAnalysis(module)
+    override fun shouldTransform(module: TestModule): Boolean {
+        return deserializerFacade.shouldTransform(module) && loweringFacade.shouldTransform(module)
     }
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Wasm? =

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -36,20 +37,24 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
+@KaImplementationDetail
 class CodeFragmentCapturedSymbol(
     val value: CodeFragmentCapturedValue,
     val symbol: FirBasedSymbol<*>,
     val typeRef: FirTypeRef,
 )
 
+@KaImplementationDetail
 data class CodeFragmentCapturedId(val symbol: FirBasedSymbol<*>)
 
+@KaImplementationDetail
 object CodeFragmentCapturedValueAnalyzer {
     fun analyze(resolveSession: LLFirResolveSession, codeFragment: FirCodeFragment): CodeFragmentCapturedValueData {
         val selfSymbols = CodeFragmentDeclarationCollector().apply { codeFragment.accept(this) }.symbols.toSet()
@@ -59,6 +64,7 @@ object CodeFragmentCapturedValueAnalyzer {
     }
 }
 
+@KaImplementationDetail
 class CodeFragmentCapturedValueData(val symbols: List<CodeFragmentCapturedSymbol>, val files: List<KtFile>)
 
 private class CodeFragmentDeclarationCollector : FirDefaultVisitorVoid() {
@@ -113,7 +119,7 @@ private class CodeFragmentCapturedValueVisitor(
         if (element is FirExpression) {
             val symbol = element.resolvedType.toSymbol(session)
             if (symbol != null) {
-                registerFile(symbol)
+                registerFileIfRequired(symbol)
             }
         }
 
@@ -229,6 +235,7 @@ private class CodeFragmentCapturedValueVisitor(
                 } else {
                     // Property call generation depends on complete backing field resolution (Fir2IrLazyProperty.backingField)
                     symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                    registerFileIfRequired(symbol)
                 }
             }
             is FirBackingFieldSymbol -> {
@@ -238,9 +245,7 @@ private class CodeFragmentCapturedValueVisitor(
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
             is FirNamedFunctionSymbol -> {
-                if (symbol.isLocal) {
-                    registerFile(symbol)
-                }
+                registerFileIfRequired(symbol)
             }
         }
 
@@ -268,14 +273,32 @@ private class CodeFragmentCapturedValueVisitor(
         }
 
         collectedMappings[id] = mapping
-        registerFile(mapping.symbol)
+        registerFileIfRequired(mapping.symbol)
     }
 
-    private fun registerFile(symbol: FirBasedSymbol<*>) {
+    private val FirFunctionSymbol<*>.isAnnotatedWithNonLiteralJvmName: Boolean
+        get() {
+            val jvmNameAnnotation = annotations.getAnnotationByClassId(StandardClassIds.Annotations.jvmName, session) ?: return false
+
+            lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+
+            val argument = jvmNameAnnotation.argumentMapping.mapping[Name.identifier("name")]
+            return argument != null && argument !is FirLiteralExpression
+        }
+
+    private val FirFunctionSymbol<*>.hasAnnotationArgumentShouldBeEvaluated: Boolean
+        get() {
+            return isAnnotatedWithNonLiteralJvmName
+        }
+
+    private fun registerFileIfRequired(symbol: FirBasedSymbol<*>) {
         val needsRegistration = when (symbol) {
             is FirRegularClassSymbol -> symbol.isLocal
             is FirAnonymousObjectSymbol -> true
-            is FirNamedFunctionSymbol -> symbol.callableId.isLocal
+            is FirNamedFunctionSymbol -> symbol.callableId.isLocal || symbol.hasAnnotationArgumentShouldBeEvaluated
+            is FirPropertySymbol ->
+                symbol.getterSymbol?.hasAnnotationArgumentShouldBeEvaluated == true
+                        || symbol.setterSymbol?.hasAnnotationArgumentShouldBeEvaluated == true
             else -> false
         }
 

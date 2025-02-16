@@ -44,39 +44,6 @@ uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
     return nullptr;
 }
 
-bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
-    CustomAllocDebug("NextFitPage@%p::Sweep()", this);
-    Cell* end = cells_ + NextFitPage::cellCount();
-    std::size_t aliveBytes = 0;
-    for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
-        if (block->isAllocated_) {
-            if (SweepObject(block->data_, finalizerQueue, sweepHandle)) {
-                aliveBytes += AllocationSize::cells(block->size_).inBytes();
-            } else {
-                block->Deallocate();
-            }
-        }
-    }
-    Cell* maxBlock = cells_; // size 0 block
-    for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
-        if (block->isAllocated_) continue;
-        for (auto* next = block->Next(); next != end; next = block->Next()) {
-            if (next->isAllocated_) {
-                break;
-            }
-            block->size_ += next->size_;
-            memset(next, 0, sizeof(*next));
-        }
-        if (block->size_ > maxBlock->size_) maxBlock = block;
-    }
-    curBlock_ = maxBlock;
-
-    RuntimeAssert(aliveBytes == GetAllocatedSizeBytes(),
-                  "Sweep counted %zu alive bytes, while GetAllocatedSizeBytes() returns %zu", aliveBytes, GetAllocatedSizeBytes());
-    allocatedSizeTracker_.afterSweep(aliveBytes);
-
-    return aliveBytes > 0;
-}
 
 void NextFitPage::UpdateCurBlock(uint32_t cellsNeeded) noexcept {
     CustomAllocDebug("NextFitPage@%p::UpdateCurBlock(%u)", this, cellsNeeded);

@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
-import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -90,8 +89,9 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 
     @get:Input
     @get:Optional
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
-    abstract val embedBitcode: Property<BitcodeEmbeddingMode>
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+    abstract val embedBitcode: Property<org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode>
 
     @get:Classpath
     abstract val libraries: ConfigurableFileCollection
@@ -200,7 +200,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
-    val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
+    val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
 
     init {
         baseName.convention(project.name)

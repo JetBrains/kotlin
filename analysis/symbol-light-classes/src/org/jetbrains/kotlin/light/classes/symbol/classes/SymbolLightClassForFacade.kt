@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,12 +9,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
@@ -58,6 +59,7 @@ internal class SymbolLightClassForFacade(
 
     private val firstFileInFacade: KtFile get() = files.first()
 
+    @OptIn(KaImplementationDetail::class)
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
@@ -68,7 +70,7 @@ internal class SymbolLightClassForFacade(
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
                         ktModule = this.ktModule,
-                        annotatedSymbolPointer = firstFileInFacade.symbolPointerOfType<KaFileSymbol>(),
+                        annotatedSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType<KaFileSymbol>(firstFileInFacade),
                     )
                 )
             },
@@ -93,7 +95,6 @@ internal class SymbolLightClassForFacade(
                         if (callableSymbol.isExpect) continue
                         if ((callableSymbol as? KaAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
                         if (multiFileClass && callableSymbol.toPsiVisibilityForMember() == PsiModifier.PRIVATE) continue
-                        if (hasTypeForValueClassInSignature(callableSymbol = callableSymbol, ignoreReturnType = true)) continue
                         yield(callableSymbol)
                     }
                 }

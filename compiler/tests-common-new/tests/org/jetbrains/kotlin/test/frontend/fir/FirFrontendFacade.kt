@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.container.topologicalSort
+import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
@@ -50,11 +49,12 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
@@ -63,29 +63,20 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.nio.file.Paths
-import kotlin.collections.filterIsInstance
-import kotlin.collections.orEmpty
 import org.jetbrains.kotlin.konan.file.File as KFile
 
-open class FirFrontendFacade(
-    testServices: TestServices,
-    private val additionalSessionConfiguration: SessionConfiguration?
-) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
-    private val testModulesByName by lazy { testServices.moduleStructure.testModulesByName }
-
-    // Separate constructor is needed for creating callable references to it
-    constructor(testServices: TestServices) : this(testServices, additionalSessionConfiguration = null)
-
-    fun interface SessionConfiguration : (FirSessionConfigurator) -> Unit
-
+open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirModuleInfoProvider))
+        get() = listOf(
+            service(::FirModuleInfoProvider),
+            service(::FirDiagnosticCollectorService),
+        )
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return shouldRunFirFrontendFacade(module, testServices.moduleStructure, testModulesByName)
+    override fun shouldTransform(module: TestModule): Boolean {
+        return shouldRunFirFrontendFacade(module, testServices)
     }
 
     private fun registerExtraComponents(session: FirSession) {
@@ -93,7 +84,7 @@ open class FirFrontendFacade(
     }
 
     override fun analyze(module: TestModule): FirOutputArtifact {
-        val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+        val isMppSupported = module.languageVersionSettings.supportsFeature(MultiPlatformProjects)
 
         val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
 
@@ -101,7 +92,7 @@ open class FirFrontendFacade(
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
-        val targetPlatform = module.targetPlatform
+        val targetPlatform = module.targetPlatform(testServices)
         val predefinedJavaComponents = runIf(targetPlatform.isJvm()) {
             FirSharableJavaComponents(firCachesFactoryForCliMode)
         }
@@ -124,15 +115,13 @@ open class FirFrontendFacade(
     }
 
     protected fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        return topologicalSort(listOf(module), reverseOrder = true) { item ->
-            item.dependsOnDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
-        }
+        return module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
     }
 
     private fun initializeModuleData(modules: List<TestModule>): Pair<Map<TestModule, FirModuleData>, ModuleDataProvider> {
         val mainModule = modules.last()
 
-        val targetPlatform = mainModule.targetPlatform
+        val targetPlatform = mainModule.targetPlatform(testServices)
 
         // the special name is required for `KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns`
         // it doesn't seem convincingly legitimate, probably should be refactored
@@ -157,8 +146,8 @@ open class FirFrontendFacade(
                 regularModules,
                 dependsOnModules,
                 friendModules,
-                mainModule.targetPlatform,
-                isCommon = module.targetPlatform.isCommon(),
+                targetPlatform,
+                isCommon = module.languageVersionSettings.supportsFeature(MultiPlatformProjects) && !module.isLeafModuleInMppGraph(testServices),
             )
 
             moduleInfoProvider.registerModuleData(module, moduleData)
@@ -182,9 +171,10 @@ open class FirFrontendFacade(
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val projectEnvironment: VfsBasedProjectEnvironment?
         val languageVersionSettings = module.languageVersionSettings
-        val isCommon = module.targetPlatform.isCommon()
+        val targetPlatform = module.targetPlatform(testServices)
+        val isCommon = targetPlatform.isCommon()
         val session = when {
-            isCommon || module.targetPlatform.isJvm() -> {
+            isCommon || targetPlatform.isJvm() -> {
                 val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
                 projectEnvironment = VfsBasedProjectEnvironment(
                     project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
@@ -227,7 +217,7 @@ open class FirFrontendFacade(
                     ).also(::registerExtraComponents)
                 }
             }
-            module.targetPlatform.isJs() -> {
+            targetPlatform.isJs() -> {
                 projectEnvironment = null
                 TestFirJsSessionFactory.createLibrarySession(
                     moduleName,
@@ -239,7 +229,7 @@ open class FirFrontendFacade(
                     extensionRegistrars,
                 ).also(::registerExtraComponents)
             }
-            module.targetPlatform.isNative() -> {
+            targetPlatform.isNative() -> {
                 projectEnvironment = null
                 TestFirNativeSessionFactory.createLibrarySession(
                     moduleName,
@@ -252,7 +242,7 @@ open class FirFrontendFacade(
                     languageVersionSettings,
                 ).also(::registerExtraComponents)
             }
-            module.targetPlatform.isWasm() -> {
+            targetPlatform.isWasm() -> {
                 projectEnvironment = null
                 TestFirWasmSessionFactory.createLibrarySession(
                     moduleName,
@@ -305,7 +295,6 @@ open class FirFrontendFacade(
             if (FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS in module.directives) {
                 registerExperimentalCheckers()
             }
-            additionalSessionConfiguration?.invoke(this)
         }
 
         val moduleBasedSession = createModuleBasedSession(
@@ -326,7 +315,7 @@ open class FirFrontendFacade(
             ktFiles.values,
             lightTreeFiles.values,
             parser,
-            testServices.lightTreeSyntaxDiagnosticsReporterHolder?.reporter,
+            testServices.firDiagnosticCollectorService.reporterForLTSyntaxErrors
         )
         val firFiles = firAnalyzerFacade.runResolution()
 
@@ -340,7 +329,13 @@ open class FirFrontendFacade(
             .onEach { assert(it.first.name == it.second.name) }
             .toMap()
 
-        return FirOutputPartForDependsOnModule(module, moduleBasedSession, firAnalyzerFacade, filesMap)
+        return FirOutputPartForDependsOnModule(
+            module,
+            moduleBasedSession,
+            firAnalyzerFacade.scopeSession,
+            firAnalyzerFacade,
+            filesMap
+        )
     }
 
     private fun createModuleBasedSession(
@@ -463,23 +458,23 @@ open class FirFrontendFacade(
                 }
             }
         }
-    }
-}
 
-fun shouldRunFirFrontendFacade(
-    module: TestModule,
-    moduleStructure: TestModuleStructure,
-    testModulesByName: Map<String, TestModule>,
-): Boolean {
-    val shouldRunAnalysis = module.frontendKind == FrontendKinds.FIR
+        fun shouldRunFirFrontendFacade(
+            module: TestModule,
+            testServices: TestServices,
+        ): Boolean {
+            val shouldRunAnalysis = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
 
-    if (!shouldRunAnalysis) {
-        return false
-    }
+            if (!shouldRunAnalysis) {
+                return false
+            }
 
-    return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-        moduleStructure.modules.none { testModule -> testModule.dependsOnDependencies.any { testModulesByName[it.moduleName] == module } }
-    } else {
-        true
+            return if (module.languageVersionSettings.supportsFeature(MultiPlatformProjects)) {
+                module.isLeafModuleInMppGraph(testServices)
+            } else {
+                true
+            }
+        }
+
     }
 }

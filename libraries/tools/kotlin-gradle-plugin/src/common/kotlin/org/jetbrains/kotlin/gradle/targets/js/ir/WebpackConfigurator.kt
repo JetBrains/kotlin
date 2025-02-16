@@ -10,7 +10,7 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Sync
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
-import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -80,9 +79,12 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
+                        // properties could be read by other agents (for example Android Studio)
+                        // without a wrapper,
+                        // it could force the error about querying a value of a task which is not executed yet
                         inputFilesDirectory = task.project.objects.directoryProperty().fileProvider(
                             task.project.provider { linkSyncTask.get().destinationDirectory.get() },
-                        ),
+                        ).also { it.finalizeValueOnRead() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
                         nodeJs = nodeJs,
@@ -90,7 +92,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     )
                 }
 
-                val distributionTask = subTarget.registerSubTargetTask<Copy>(
+                val distributionTask = subTarget.registerSubTargetTask<Sync>(
                     subTarget.disambiguateCamelCased(
                         if (binary.mode == KotlinJsBinaryMode.PRODUCTION && binary.compilation.isMain())
                             ""
@@ -173,9 +175,12 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     task.commonConfigure(
                         binary = binary,
                         mode = mode,
+                        // properties could be read by other agents (for example Android Studio)
+                        // without a wrapper,
+                        // it could force the error about querying a value of a task which is not executed yet
                         inputFilesDirectory = task.project.objects.directoryProperty().fileProvider(
-                            linkSyncTask.flatMap { it.destinationDirectory },
-                        ),
+                            task.project.provider { linkSyncTask.get().destinationDirectory.get() },
+                        ).also { it.finalizeValueOnRead() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
                         nodeJs = nodeJs,

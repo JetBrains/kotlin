@@ -9,7 +9,7 @@ final class /Context { // /Context|null[0]
     final fun foo(): kotlin/Int // /Context.foo|foo(){}[0]
 }
 final class /Test { // /Test|null[0]
-    constructor context(/Context) <init>() // /Test.<init>|<init>!Context(){}[0]
+    constructor (context(/Context)).<init>() // /Test.<init>|<init>(Context)(){}[0]
     final fun bar() // /Test.bar|bar(){}[0]
     final fun foo(): kotlin/Int // /Test.foo|foo(){}[0]
 }

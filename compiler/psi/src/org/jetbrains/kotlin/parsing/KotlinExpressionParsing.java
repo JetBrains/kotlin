@@ -314,6 +314,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             error("Expecting an expression");
             return;
         }
+
         parseBinaryExpression(Precedence.ASSIGNMENT);
     }
 
@@ -682,6 +683,15 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 parseDoWhile();
                 break;
             case IDENTIFIER_Id:
+                // Try to parse anonymous function with context parameters
+                if (at(CONTEXT_KEYWORD) && lookahead(1) == LPAR) {
+                    if (parseLocalDeclaration(true, false)) {
+                        break;
+                    } else {
+                        at(IDENTIFIER);
+                    }
+                }
+
                 parseSimpleNameExpression();
                 break;
             case LBRACE_Id:

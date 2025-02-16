@@ -8,7 +8,7 @@ dependencies {
     implementation(project(":kotlin-util-klib"))
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:ir.serialization.common"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

@@ -1,8 +1,6 @@
 // WITH_STDLIB
 // LINK_VIA_SIGNATURES_K1
 // DUMP_SIGNATURES
-// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
-// ^^^ KT-73619: dump of dependent Klib is missing. Should be fixed after KT-73619
 
 // MODULE: maven
 // FILE: MavenProject.kt

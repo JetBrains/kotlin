@@ -60,6 +60,7 @@ class KT60462WithJavaZombieCompilationTest {
     @Test
     fun `test - custom compilation`() = buildProjectWithMPP().runLifecycleAwareTest {
         multiplatformExtension.jvm().apply {
+            @Suppress("DEPRECATION")
             withJava()
 
             var instanceUsedForConfigureBlock: KotlinJvmCompilation? = null

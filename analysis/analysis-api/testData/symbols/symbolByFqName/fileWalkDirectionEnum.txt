@@ -2,6 +2,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/listOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -89,6 +90,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/listOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -179,6 +181,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: kotlin/collections/listOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

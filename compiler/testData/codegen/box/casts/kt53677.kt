@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// DONT_TARGET_EXACT_BACKEND: JVM
 
 import kotlin.coroutines.*
 

@@ -40,22 +40,30 @@ class FirClassDeclaredMemberScopeImpl(
         useSiteSession.nestedClassifierScope(klass)
     }
 
-    private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
+    /**
+     * This index should be lazy to avoid SOE for Java classes as [FirClass.declarations] in this case may lead to it
+     *
+     * Issues: KT-72660
+     */
+    private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
-        loop@ for (declaration in klass.declarations) {
-            if (declaration is FirCallableDeclaration) {
-                val name = when (declaration) {
-                    is FirConstructor -> SpecialNames.INIT
-                    is FirVariable -> when {
-                        declaration.isSynthetic || declaration.isEnumEntries(klass) && !klass.supportsEnumEntries -> continue@loop
-                        else -> declaration.name
-                    }
-                    is FirSimpleFunction -> declaration.name
-                    else -> continue@loop
+        for (declaration in klass.declarations) {
+            if (declaration !is FirCallableDeclaration) continue
+
+            val name = when (declaration) {
+                is FirConstructor -> SpecialNames.INIT
+                is FirVariable -> when {
+                    declaration.isSynthetic || declaration.isEnumEntries(klass) && !klass.supportsEnumEntries -> continue
+                    else -> declaration.name
                 }
-                result.getOrPut(name) { mutableListOf() } += declaration.symbol
+
+                is FirSimpleFunction -> declaration.name
+                else -> continue
             }
+
+            result.getOrPut(name) { mutableListOf() } += declaration.symbol
         }
+
         result
     }
 

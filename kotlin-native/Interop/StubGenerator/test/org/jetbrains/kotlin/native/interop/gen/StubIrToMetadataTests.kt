@@ -20,7 +20,7 @@ class StubIrToMetadataTests {
     }
 
     private fun createTrivialFunction(name: String): FunctionStub {
-        val cDeclaration = FunctionDecl(name, emptyList(), intType, "", false, false)
+        val cDeclaration = FunctionDecl(name, emptyList(), intType, false)
         val origin = StubOrigin.Function(cDeclaration)
         return FunctionStub(
                 name = cDeclaration.name,

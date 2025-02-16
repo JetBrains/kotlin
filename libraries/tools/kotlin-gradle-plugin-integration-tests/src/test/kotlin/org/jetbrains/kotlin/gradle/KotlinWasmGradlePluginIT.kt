@@ -6,11 +6,17 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
+import kotlin.io.path.Path
+import kotlin.io.path.appendText
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.io.path.pathString
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertTrue
@@ -166,12 +172,8 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
             projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").modify {
                 it.replace(
-                    "fun main() {}",
-                    """
-                            fun main() {
-                                println("Hello from Wasi")
-                            }
-                            """
+                    "println(foo())",
+                    """println("Hello from Wasi")"""
                 )
             }
 
@@ -190,6 +192,26 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             buildGradleKts.modify {
                 it.replace("<JsEngine>", "browser")
             }
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsBrowserDistribution")
+
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js")
+                assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js.map")
+
+                assertTrue("Expected one wasm file") {
+                    projectPath.resolve("build/${Distribution.DIST}/wasmJs/productionExecutable").toFile().listFiles()!!
+                        .filter { it.extension == "wasm" }
+                        .size == 1
+                }
+            }
+
+            projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").replaceText(
+                "actual fun foo(): Int = 2",
+                "actual fun foo(): Int = 3",
+            )
 
             build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
@@ -390,6 +412,62 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             build("assemble") {
                 assertFileExists(
                     projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin/$moduleName.mjs")
+                )
+            }
+        }
+    }
+
+    // Android Studio touches all properties to analyze
+    // It may break some properties with Task source
+    // but we need to work in Android Studio,
+    // so it is better to be sure that we work in this strange situation
+    @DisplayName("Touch properties to not break Android studio")
+    @GradleTest
+    fun testTouchingWebpackPropertyToNotBreakAndroidStudio(gradleVersion: GradleVersion) {
+        project("wasm-browser-simple-project", gradleVersion) {
+            val moduleName = "hello"
+            buildGradleKts.appendText(
+                //language=kotlin
+                """
+                    
+                    tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("wasmJsBrowserDevelopmentRun")                    
+                        .get()
+                        .inputFilesDirectory
+                        .get()
+                    
+                """.trimIndent()
+            )
+
+            build("help")
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Different binaryen versions per project")
+    @GradleTest
+    fun testDifferentBinaryenVersions(gradleVersion: GradleVersion) {
+        project("wasm-browser-several-modules", gradleVersion) {
+            subProject("foo").let {
+                it.buildScriptInjection {
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set("119")
+                }
+            }
+
+            subProject("bar").let {
+                it.buildScriptInjection {
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set("118")
+                }
+            }
+
+            build(":foo:compileProductionExecutableKotlinWasmJsOptimize") {
+                assertOutputContains(
+                    Path("binaryen-version_119").resolve("bin").resolve("wasm-opt").pathString
+                )
+            }
+
+            build(":bar:compileProductionExecutableKotlinWasmJsOptimize") {
+                assertOutputContains(
+                    Path("binaryen-version_118").resolve("bin").resolve("wasm-opt").pathString
                 )
             }
         }

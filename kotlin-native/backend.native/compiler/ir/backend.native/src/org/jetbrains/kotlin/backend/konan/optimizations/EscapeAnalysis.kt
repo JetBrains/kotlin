@@ -610,12 +610,33 @@ internal object EscapeAnalysis {
             return pointsToGraphs
         }
 
-        private fun arrayLengthOf(node: DataFlowIR.Node): Int? =
-                (node as? DataFlowIR.Node.SimpleConst<*>)?.value as? Int
-                // In case of several possible values, it's unknown what is used.
-                // TODO: if all values are constants which are less limit?
-                        ?: (node as? DataFlowIR.Node.Variable)
-                                ?.values?.singleOrNull()?.let { arrayLengthOf(it.node) }
+        private fun arrayLengthOf(node: DataFlowIR.Node): Int? {
+            var lengthNode: DataFlowIR.Node.SimpleConst<*>? = null
+            val nodes = mutableListOf(node)
+            val visited = mutableSetOf<DataFlowIR.Node>()
+            while (true) {
+                val currentNode = nodes.peek() ?: break
+                nodes.pop()
+                visited.add(currentNode)
+                when (currentNode) {
+                    is DataFlowIR.Node.SimpleConst<*> -> {
+                        if (lengthNode != null && currentNode != lengthNode)
+                            return null
+                        lengthNode = currentNode
+                    }
+                    is DataFlowIR.Node.Variable -> {
+                        currentNode.values.forEach {
+                            val nextNode = it.node
+                            if (nextNode !in visited)
+                                nodes.push(nextNode)
+                        }
+                    }
+                    else -> return null
+                }
+            }
+
+            return lengthNode?.value as? Int
+        }
 
         private val pointerSize = generationState.runtime.pointerSize
 
@@ -632,7 +653,7 @@ internal object EscapeAnalysis {
             else -> null
         }
 
-        private fun arraySize(itemSize: Int, length: Int): Long =
+        private fun arraySizeInBytes(itemSize: Int, length: Int): Long =
                 pointerSize /* typeinfo */ + 4 /* size */ + itemSize * length.toLong()
 
         private fun analyze(
@@ -766,7 +787,7 @@ internal object EscapeAnalysis {
             val isActualDrain get() = this == actualDrain
         }
 
-        private data class ArrayStaticAllocation(val node: PointsToGraphNode, val irClass: IrClass, val size: Int)
+        private data class ArrayStaticAllocation(val node: PointsToGraphNode, val irClass: IrClass, val length: Int, val sizeInBytes: Int)
 
         private enum class EdgeDirection {
             FORWARD,
@@ -1645,13 +1666,12 @@ internal object EscapeAnalysis {
                             if (itemSize != null) {
                                 val sizeArgument = node.size.node
                                 val arrayLength = arrayLengthOf(sizeArgument)?.takeIf { it >= 0 }
-                                val arraySize = arraySize(itemSize, arrayLength ?: Int.MAX_VALUE)
-                                if (arraySize <= allowedToAlloc) {
-                                    stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arraySize.toInt())
+                                val arraySizeInBytes = arraySizeInBytes(itemSize, arrayLength ?: Int.MAX_VALUE)
+                                if (arraySizeInBytes <= allowedToAlloc) {
+                                    stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arrayLength!!, arraySizeInBytes.toInt())
                                 } else {
                                     // Can be placed into the local arena.
-                                    // TODO. Support Lifetime.LOCAL
-                                    lifetime = Lifetime.GLOBAL
+                                    lifetime = Lifetime.LOCAL
                                 }
                             }
                         }
@@ -1668,13 +1688,14 @@ internal object EscapeAnalysis {
                     }
                 }
 
-                stackArrayCandidates.sortBy { it.size }
+                stackArrayCandidates.sortBy { it.sizeInBytes }
                 var remainedToAlloc = allowedToAlloc
-                for ((ptgNode, irClass, size) in stackArrayCandidates) {
+                for ((ptgNode, irClass, length, sizeInBytes) in stackArrayCandidates) {
                     if (lifetimeOf(ptgNode) != Lifetime.STACK) continue
-                    if (size <= remainedToAlloc)
-                        remainedToAlloc -= size
-                    else {
+                    if (sizeInBytes <= remainedToAlloc) {
+                        remainedToAlloc -= sizeInBytes
+                        ptgNode.forcedLifetime = Lifetime.STACK_ARRAY(length)
+                    } else {
                         remainedToAlloc = 0
                         // Do not exile primitive arrays - they ain't reference no object.
                         if (irClass.symbol == symbols.array && propagateExiledToHeapObjects) {
@@ -1682,7 +1703,7 @@ internal object EscapeAnalysis {
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)
                         } else {
-                            ptgNode.forcedLifetime = Lifetime.GLOBAL // TODO: Change to LOCAL when supported.
+                            ptgNode.forcedLifetime = Lifetime.LOCAL
                         }
                     }
                 }
@@ -1773,13 +1794,7 @@ internal object EscapeAnalysis {
         assert(lifetimes.isEmpty())
 
         try {
-            InterproceduralAnalysis(context, generationState, callGraph,
-                    moduleDFG, lifetimes,
-                    // The GC must be careful not to scan exiled objects, that have already became dead,
-                    // as they may reference other already destroyed stack-allocated objects.
-                    // TODO somehow tag these object, so that GC could handle them properly.
-                    propagateExiledToHeapObjects = context.config.gc == GC.CONCURRENT_MARK_AND_SWEEP
-            ).analyze()
+            InterproceduralAnalysis(context, generationState, callGraph, moduleDFG, lifetimes, propagateExiledToHeapObjects = false).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
                     """

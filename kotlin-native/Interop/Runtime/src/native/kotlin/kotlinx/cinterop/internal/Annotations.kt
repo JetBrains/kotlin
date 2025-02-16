@@ -27,14 +27,6 @@ public annotation class CStruct(val spelling: String) {
 
     @Retention(AnnotationRetention.BINARY)
     public annotation class VarType(val size: Long, val align: Int)
-
-    @Target(AnnotationTarget.CLASS)
-    @Retention(AnnotationRetention.BINARY)
-    public annotation class CPlusPlusClass
-
-    @Target(AnnotationTarget.CLASS)
-    @Retention(AnnotationRetention.BINARY)
-    public annotation class ManagedType
 }
 
 @Target(
@@ -72,10 +64,6 @@ public annotation class CCall(val id: String) {
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.BINARY)
     public annotation class Consumed
-
-    @Target(AnnotationTarget.CONSTRUCTOR)
-    @Retention(AnnotationRetention.BINARY)
-    public annotation class CppClassConstructor
 }
 
 /**

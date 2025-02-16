@@ -11,8 +11,6 @@ import org.jetbrains.dokka.plugability.DokkaContext
 
 @Suppress("UNUSED_PARAMETER")
 class KotlinWebsiteSampleRewriter(ctx: DokkaContext) : SampleRewriter {
-    private val importsToIgnore = setOf("samples.*", "samples.Sample")
-
     private fun String.escapeStringContent(): String = replace("\\", "\\\\").replace("\"", "\\\"")
 
     private val functionCallRewriters: Map<String, FunctionCallRewriter> = mapOf(
@@ -72,7 +70,7 @@ class KotlinWebsiteSampleRewriter(ctx: DokkaContext) : SampleRewriter {
     )
 
     override fun rewriteImportDirective(importPath: String): String? {
-        return if (importPath in importsToIgnore) null else importPath
+        return if (importPath.startsWith("samples.")) null else importPath
     }
 
     override fun getFunctionCallRewriter(name: String): FunctionCallRewriter? {

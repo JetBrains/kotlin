@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtExpression
+        val expressionAtCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret(mainFile) as KtExpression
 
         val (type, functionClassKind) = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {

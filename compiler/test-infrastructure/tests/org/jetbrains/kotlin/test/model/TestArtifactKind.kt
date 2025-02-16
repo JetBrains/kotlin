@@ -30,8 +30,8 @@ abstract class BackendKind<I : ResultingArtifact.BackendInput<I>>(representation
     }
 }
 
-abstract class BinaryKind<A : ResultingArtifact.Binary<A>>(representation: String) : TestArtifactKind<A>(representation) {
-    object NoArtifact : BinaryKind<ResultingArtifact.Binary.Empty>("NoArtifact") {
+abstract class ArtifactKind<A : ResultingArtifact.Binary<A>>(representation: String) : TestArtifactKind<A>(representation) {
+    object NoArtifact : ArtifactKind<ResultingArtifact.Binary.Empty>("NoArtifact") {
         override val shouldRunAnalysis: Boolean
             get() = false
     }

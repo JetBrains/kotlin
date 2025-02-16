@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import java.io.File
 import java.io.InputStream
 import java.nio.file.Path
 import java.util.*
@@ -16,7 +17,11 @@ import java.util.zip.ZipFile
  */
 fun <T> Path.useAsZipFile(
     action: (zipFile: ZipFile) -> T,
-): T = ZipFile(this.toFile()).use(action)
+): T = toFile().useAsZipFile(action)
+
+fun <T> File.useAsZipFile(
+    action: (zipFile: ZipFile) -> T,
+): T = ZipFile(this).use(action)
 
 
 /**

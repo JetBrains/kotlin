@@ -1,0 +1,78 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// WITH_STDLIB
+// SKIP_FIR_DUMP
+// ISSUE: KT-73771
+
+// FILE: main.kt
+val townsWiki = buildList {
+
+    listOf(
+        "  ,       Towny.   -    ."
+    )
+        .run(::add)
+    listOf("  -  -   /towny menu")
+        .run(::add)
+    // Section ------------------------------------------------------------------
+    listOf("").run(::add)
+    "        "
+        .run(::add)
+    listOf(
+        "/towny universe -  ,  ,   ." +
+                "/town list -  " +
+                "/nation list -  " +
+                "/towny prices -      ." +
+                "/town -     " +
+                "/town plots -     " +
+                "/towny time -       "
+    ).run(::add)
+    // Section ------------------------------------------------------------------
+    listOf(" ").run(::add)
+    ""
+        .run(::add)
+    ".  F3+G   "
+        .run(::add)
+    ""
+        .run(::add)
+    listOf(
+        "/town new ___ -  .   ,  ,    , " +
+                "/town _ -   " +
+                "/resident _ -   " +
+                "/t spawn -   " +
+                "/town set spawn -         " +
+                "/resident toggle constantplotborder -  F3+G" +
+                "/town claim -   " +
+                "/town map -     " +
+                "/town buy bonus 1 -    " +
+                "/town invite  -    " +
+                "/town toggle open -   /  "
+    ).run(::add)
+
+    listOf("").run(::add)
+    listOf("   -  .     .")
+        .run(::add)
+    listOf("  /town          ")
+        .run(::add)
+    listOf(
+        "     -  .      .     /town   .     -        !"
+    )
+        .run(::add)
+    listOf(
+        "" +
+                ",      10\$ -   5       100\$. " +
+                "        100\$     . " +
+                "           ."
+    ).run(::add)
+    listOf("     !")
+        .run(::add)
+    listOf("   !")
+    ("  ")
+        .run(::add)
+    listOf("!")
+    (
+            "" +
+                    "" +
+                    "" +
+                    ""
+            ).run(::add)
+}

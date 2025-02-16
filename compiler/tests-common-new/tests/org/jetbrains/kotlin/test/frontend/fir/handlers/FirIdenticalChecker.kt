@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,17 +26,12 @@ class FirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChec
             if (".reversed." in classicFile.path) return
 
             if (helper.contentsAreEquals(classicFile, testDataFile, trimLines = true)) {
-                helper.deleteFirFile(testDataFile)
+                helper.deleteFirFileToCompareAndAssertIfExists(testDataFile, suppressAssertion = true)
                 helper.addDirectiveToClassicFileAndAssert(classicFile)
             }
         } else {
-            removeFirFileIfExist(testDataFile)
+            Helper().deleteFirFileToCompareAndAssertIfExists(testDataFile)
         }
-    }
-
-    private fun removeFirFileIfExist(testDataFile: File) {
-        val firFile = Helper().getFirFileToCompare(testDataFile)
-        firFile.delete()
     }
 }
 
@@ -59,12 +54,25 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdentica
         }
         val helper = Helper(originalFile)
         if (helper.contentsAreEquals(originalFile, testDataFile)) {
-            helper.deleteFirFile(testDataFile)
             testServices.assertions.assertAll(
-                { helper.removeDirectiveFromClassicFileAndAssert(originalFile, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message) },
-                {
-                    if (additionalFile != null) {
-                        helper.removeDirectiveFromClassicFileAndAssert(additionalFile, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message)
+                buildList {
+                    add {
+                        helper.deleteFirFileToCompareAndAssertIfExists(testDataFile)
+                    }
+
+                    listOf(
+                        originalFile.originalTestDataFile,
+                        originalFile.firTestDataFile,
+                        originalFile.llFirTestDataFile,
+                        originalFile.reversedTestDataFile
+                    ).filter { it.exists() }
+                        .mapTo(this) { file ->
+                            { helper.removeDirectiveFromClassicFileAndAssert(file, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message) }
+                        }
+                    add {
+                        if (additionalFile != null) {
+                            helper.removeDirectiveFromClassicFileAndAssert(additionalFile, FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE, message)
+                        }
                     }
                 }
             )

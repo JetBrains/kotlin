@@ -1,0 +1,6 @@
+KtNameReferenceExpression(195,209): 'propertyMember'
+  KtSimpleNameReference:
+    (in Base) val propertyMember: kotlin.String
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

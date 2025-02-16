@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: Ignoring an implementation of the method `java.lang.Object Test2.foo(java.lang.Object)` because it has multiple definitions
+// RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
+// IGNORE_DEXING
 // MODULE: common
 // FILE: common.kt
 expect interface Base1<T>{
@@ -12,11 +13,11 @@ expect interface Base2<T>{
 
 class Test(val x: Base1<Int>) : Base2<Int>, Base1<Int> by x
 
-class Test2(val x: Base1<String>) : Base2<Int>, Base1<String> by x {
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class Test2(val x: Base1<String>) : Base2<Int>, Base1<String> by x {
     override fun foo(a: Int): Int {
         return a
     }
-}
+}<!>
 
 // MODULE: platform()()(common)
 // FILE: platform.kt

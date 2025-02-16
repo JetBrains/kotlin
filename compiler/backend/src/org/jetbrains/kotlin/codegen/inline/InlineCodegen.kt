@@ -9,8 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
@@ -88,7 +86,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 }
                 for (captured in lambda.capturedVars) {
                     val param = invocationParamBuilder.addCapturedParam(captured, captured.fieldName, false)
-                    param.remapValue = StackValue.local(codegen.frameMap.enterTemp(param.type), param.type)
+                    param.remapValue = StackValue.Local(codegen.frameMap.enterTemp(param.type), param.type, null)
                     param.isSynthetic = true
                 }
             }
@@ -216,13 +214,14 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinType?) {
         val info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
-        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(info.type, kotlinType))) {
+        val asmType = info.type
+        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(asmType, kotlinType))) {
             info.remapValue = stackValue
         } else {
-            stackValue.put(info.type, kotlinType, codegen.visitor)
-            val local = StackValue.local(codegen.frameMap.enterTemp(info.type), info.type)
-            local.store(StackValue.onStack(info.type), codegen.visitor)
-            info.remapValue = local
+            stackValue.put(asmType, kotlinType, codegen.visitor)
+            val index = codegen.frameMap.enterTemp(asmType)
+            codegen.visitor.store(index, asmType)
+            info.remapValue = StackValue.Local(index, asmType, null)
             info.isSynthetic = true
         }
     }
@@ -284,16 +283,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     companion object {
         private fun StackValue.isLocalWithNoBoxing(expected: JvmKotlinType): Boolean =
-            isPrimitive(expected.type) == isPrimitive(type) &&
-                    !StackValue.requiresInlineClassBoxingOrUnboxing(type, kotlinType, expected.type, expected.kotlinType) &&
-                    (this is StackValue.Local || isCapturedInlineParameter())
-
-        private fun StackValue.isCapturedInlineParameter(): Boolean {
-            val field = this
-            return field is StackValue.Field && field.descriptor is ParameterDescriptor &&
-                    InlineUtil.isInlineParameter(field.descriptor) &&
-                    InlineUtil.isInline(field.descriptor.containingDeclaration)
-        }
+            this is StackValue.Local &&
+                    isPrimitive(expected.type) == isPrimitive(type) &&
+                    !StackValue.requiresInlineClassBoxingOrUnboxing(type, kotlinType, expected.type, expected.kotlinType)
 
         // Stack spilling before inline function call is required if the inlined bytecode has:
         //   1. try-catch blocks - otherwise the stack spilling before and after them will not be correct;

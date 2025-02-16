@@ -11,12 +11,9 @@ import org.gradle.api.Task
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.SourceSet
-import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURES_FEATURE_NAME
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
@@ -24,16 +21,18 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.PomDependenciesRewriter
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.createDefaultPomDependenciesRewriterForTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.rewriteKmpDependenciesInPomForTargetPublication
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.configureKotlinConventions
+import org.jetbrains.kotlin.gradle.targets.jvm.kotlinSourceSetDslName
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"
@@ -41,7 +40,6 @@ const val COMPILER_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerClasspath"
 internal const val BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME = "kotlinBuildToolsApiClasspath"
 internal const val KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME = "kotlinKlibCommonizerClasspath"
 internal const val KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME = "kotlinNativeBundleConfiguration"
-internal const val PSM_RESOLVABLE_CONFIGURATION_NAME = "projectStructureMetadataResolvableConfiguration"
 private const val JAVA_TEST_FIXTURES_PLUGIN_ID = "java-test-fixtures"
 
 internal abstract class AbstractKotlinPlugin(
@@ -153,14 +151,14 @@ internal abstract class AbstractKotlinPlugin(
             val project = kotlinTarget.project
             val javaSourceSets = project.javaSourceSets
 
-            @Suppress("DEPRECATION") val kotlinSourceSetDslName = when (kotlinTarget.platformType) {
-                KotlinPlatformType.js -> KOTLIN_JS_DSL_NAME
-                else -> KOTLIN_DSL_NAME
-            }
-
+            val kotlinSourceSetDslName = kotlinTarget.kotlinSourceSetDslName
+            val isMppJvmTarget = kotlinTarget is KotlinJvmTarget
             javaSourceSets.all { javaSourceSet ->
-                val kotlinCompilation = kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
+                if (isMppJvmTarget && kotlinTarget.extras[extrasKeyOf<Boolean>(KotlinJvmCompilationFactory.EXTRA_CREATING_DEFAULT_JAVA_SOURCE_NAME)] == true) return@all
+                // KotlinJvmCompilation for this SourceSet already exist, no need to proceed
+                if (isMppJvmTarget && kotlinTarget.compilations.any { it.defaultSourceSet.name == javaSourceSet.name }) return@all
 
+                val kotlinCompilation = kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
 
                 if (duplicateJavaSourceSetsAsKotlinSourceSets) {
                     project.configurations
@@ -193,12 +191,7 @@ internal abstract class AbstractKotlinPlugin(
                     project.compatibilityConventionRegistrar.addConvention(javaSourceSet, kotlinSourceSetDslName, kotlinSourceSet)
                     javaSourceSet.addExtension(kotlinSourceSetDslName, kotlinSourceSet.kotlin)
                 } else {
-                    project.compatibilityConventionRegistrar.addConvention(
-                        javaSourceSet,
-                        kotlinSourceSetDslName,
-                        kotlinCompilation.defaultSourceSet
-                    )
-                    javaSourceSet.addExtension(kotlinSourceSetDslName, kotlinCompilation.defaultSourceSet.kotlin)
+                    javaSourceSet.configureKotlinConventions(project, kotlinCompilation)
                 }
             }
 
@@ -211,8 +204,6 @@ internal abstract class AbstractKotlinPlugin(
                 getByName(KotlinCompilation.TEST_COMPILATION_NAME).associateWith(getByName(KotlinCompilation.MAIN_COMPILATION_NAME))
             }
 
-            configureJavaTestFixturesSourceSets(kotlinTarget)
-
             // Since the 'java' plugin (as opposed to 'java-library') doesn't known anything about the 'api' configurations,
             // add the API dependencies of the main compilation directly to the 'apiElements' configuration, so that the 'api' dependencies
             // are properly published with the 'compile' scope (KT-28355):
@@ -222,29 +213,6 @@ internal abstract class AbstractKotlinPlugin(
                     val mainCompilation = kotlinTarget.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
                     val compilationApiConfiguration = getByName(mainCompilation.apiConfigurationName)
                     apiElementsConfiguration.extendsFrom(compilationApiConfiguration)
-                }
-            }
-        }
-
-        private fun configureJavaTestFixturesSourceSets(kotlinTarget: KotlinTarget) {
-            val project = kotlinTarget.project
-            project.plugins.withId(JAVA_TEST_FIXTURES_PLUGIN_ID) {
-                kotlinTarget.compilations.run {
-                    val testFixturesSourceSet = findByName(TEST_FIXTURES_FEATURE_NAME)
-                    if (testFixturesSourceSet == null) {
-                        project.logger.warn(
-                            "The `$JAVA_TEST_FIXTURES_PLUGIN_ID` plugin has been detected, " +
-                                    "however the `$TEST_FIXTURES_FEATURE_NAME` source set cannot be found. " +
-                                    "`internal` declarations can be not available in the test fixtures.",
-                        )
-                        return@withId
-                    }
-                    testFixturesSourceSet.associateWith(getByName(KotlinCompilation.MAIN_COMPILATION_NAME))
-                    getByName(KotlinCompilation.TEST_COMPILATION_NAME).associateWith(testFixturesSourceSet)
-                    project.logger.debug(
-                        "The `$JAVA_TEST_FIXTURES_PLUGIN_ID` plugin has been detected, and the `$TEST_FIXTURES_FEATURE_NAME` " +
-                                "source set has been associated with the default source sets to provide `internal` declarations access"
-                    )
                 }
             }
         }
@@ -262,13 +230,13 @@ internal abstract class AbstractKotlinPlugin(
             // platform-specific modules
             if (kotlinTarget.platformType != KotlinPlatformType.common) {
                 project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).run {
-                    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(kotlinTarget))
+                    KotlinUsages.configureProducerApiUsage(this, kotlinTarget)
                     attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                     usesPlatformOf(kotlinTarget)
                 }
 
                 project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).run {
-                    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(kotlinTarget))
+                    KotlinUsages.configureProducerRuntimeUsage(this, kotlinTarget)
                     attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                     usesPlatformOf(kotlinTarget)
                 }

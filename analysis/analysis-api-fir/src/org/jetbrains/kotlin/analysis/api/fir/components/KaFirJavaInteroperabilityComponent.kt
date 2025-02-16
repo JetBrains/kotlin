@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsElementImpl
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
@@ -233,7 +234,7 @@ internal class KaFirJavaInteroperabilityComponent(
                         .firstIsInstanceOrNull<PsiTypeParameterListOwner>()
 
                     if (member != null) {
-                        val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi() == member } as? FirCallableSymbol<*>
+                        val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(analysisSession.analysisScope) == member } as? FirCallableSymbol<*>
                         if (memberSymbol != null) {
                             //typeParamSymbol.fir.source == null thus zip is required, see KT-62354
                             memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { (typeParamSymbol, typeParam) ->
@@ -325,14 +326,9 @@ internal class KaFirJavaInteroperabilityComponent(
                 if (!platform.has<JvmPlatform>()) return null
 
                 val containingSymbolOrSelf = when (symbol) {
-                    is KaValueParameterSymbol -> {
-                        symbol.containingDeclaration as? KaFunctionSymbol ?: symbol
-                    }
-                    is KaPropertyAccessorSymbol -> {
-                        symbol.containingDeclaration as? KaPropertySymbol ?: symbol
-                    }
+                    is KaParameterSymbol -> symbol.containingDeclaration as? KaCallableSymbol ?: symbol
+                    is KaPropertyAccessorSymbol -> symbol.containingDeclaration as? KaPropertySymbol ?: symbol
                     is KaBackingFieldSymbol -> symbol.owningProperty
-                    is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
                     else -> symbol
                 }
 
@@ -422,15 +418,19 @@ private fun ConeKotlinType.simplifyType(
     val isInlineFunction = false
     var currentType = this
     do {
+        ProgressManager.checkCanceled()
+
         val oldType = currentType
         currentType = currentType.fullyExpandedType(session)
         if (currentType is ConeDynamicType) {
             return currentType
         }
+
         currentType = currentType.upperBoundIfFlexible()
         if (visibilityForApproximation != Visibilities.Local) {
             currentType = substitutor.substituteOrSelf(currentType)
         }
+
         val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
         // TODO: can we approximate local types in type arguments *selectively* ?
         currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session, needLocalTypeApproximation)
@@ -555,6 +555,9 @@ private class AnonymousTypesSubstitutor(
     ): Boolean {
         if (typeArguments.isEmpty()) return false
         if (!visited.add(this)) return true
+
+        ProgressManager.checkCanceled()
+
         for (projection in typeArguments) {
             // E.g., Test : Comparable<Test>
             val type = (projection as? ConeKotlinTypeProjection)?.type ?: continue
@@ -563,6 +566,7 @@ private class AnonymousTypesSubstitutor(
             // Visit new type: e.g., Test, as a type argument, is substituted with Comparable<Test>, again.
             if (newType.hasRecursiveTypeArgument(visited)) return true
         }
+
         return false
     }
 

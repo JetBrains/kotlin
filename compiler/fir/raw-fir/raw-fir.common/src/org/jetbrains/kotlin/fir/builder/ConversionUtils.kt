@@ -310,14 +310,6 @@ val FirClassBuilder.ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<FirClass
         is FirRegularClassBuilder -> symbol
     }
 
-/**
- * TODO: KT-72295 – the compiler should provide [explicitDeclarationSource] as well.
- *
- * @param explicitDeclarationSource In the Analysis API mode, this function is called at least twice – during [FirResolvePhase.RAW_FIR] in lazy mode,
- * and the next time to calculate lazy body.
- * This means that `fakeSource` will be different in these two situations after KT-64898.
- * As declarations (such as property accessors and the setter parameter) cannot be changed after creation, so it has to be stable.
- */
 fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     delegateBuilder: FirWrappedDelegateExpressionBuilder?,
     moduleData: FirModuleData,
@@ -759,7 +751,8 @@ fun FirExpression.guardedBy(
 fun AnnotationUseSiteTarget?.appliesToPrimaryConstructorParameter() = this == null ||
         this == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER ||
         this == AnnotationUseSiteTarget.RECEIVER ||
-        this == AnnotationUseSiteTarget.FILE
+        this == AnnotationUseSiteTarget.FILE ||
+        this == AnnotationUseSiteTarget.ALL
 
 fun FirErrorTypeRef.wrapIntoArray(): FirResolvedTypeRef {
     val typeRef = this

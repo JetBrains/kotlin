@@ -2,6 +2,7 @@ KtNameReferenceExpression(89,92): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -9,6 +10,7 @@ KtNameReferenceExpression(89,92): 'bar'
           receiverType = null
           returnType = kotlin.Int
           symbol = var bar: kotlin.Int
+          contextParameters = []
           callableId = /Dependency.Nested.bar
       simpleAccess = Read
       typeArgumentsMapping = {}

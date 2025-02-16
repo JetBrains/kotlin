@@ -19,7 +19,7 @@ abstract class AbstractPsiStubElementTypeConsistencyTest : AbstractDecompiledCla
     fun runTest(testDirectory: String) {
         val testDirectoryPath = Paths.get(testDirectory)
         val testData = TestData.createFromDirectory(testDirectoryPath)
-        testData.withFirIgnoreDirective {
+        testData.withFirIgnoreDirective(useK2ToCompileCode) {
             doTest(testData, useStringTable = true)
             doTest(testData, useStringTable = false)
         }

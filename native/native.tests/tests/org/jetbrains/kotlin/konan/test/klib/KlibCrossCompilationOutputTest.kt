@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.toOutput
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
@@ -96,12 +97,12 @@ abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
     }
 }
 
+@ClassicPipeline()
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 @EnforcedProperty(ClassLevelProperty.TEST_TARGET, "ios_arm64")
 class ClassicFEKlibCrossCompilationOutputTest : KlibCrossCompilationOutputTest()
 
 @FirPipeline
-@Tag("frontend-fir")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 @EnforcedProperty(ClassLevelProperty.TEST_TARGET, "ios_arm64")
 class FirKlibCrossCompilationOutputTest : KlibCrossCompilationOutputTest()

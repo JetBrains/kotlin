@@ -54,31 +54,3 @@ fun test2() {
     inst.<!INVISIBLE_MEMBER!>ClassInternal<!>()
     inst.<!INVISIBLE_MEMBER!>ClassPrivate<!>()
 }
-
-// MODULE: m3(m2)
-// FILE: c.kt
-
-import <!UNRESOLVED_REFERENCE!>p<!>.*
-
-fun test3() {
-    <!UNRESOLVED_REFERENCE!>propPublic<!>
-    <!UNRESOLVED_REFERENCE!>propInternal<!>
-    <!UNRESOLVED_REFERENCE!>propPrivate<!>
-    <!UNRESOLVED_REFERENCE!>funPublic<!>()
-    <!UNRESOLVED_REFERENCE!>funInternal<!>()
-    <!UNRESOLVED_REFERENCE!>funPrivate<!>()
-    <!UNRESOLVED_REFERENCE!>ClassPublic<!>()
-    <!UNRESOLVED_REFERENCE!>ClassInternal<!>()
-    <!UNRESOLVED_REFERENCE!>ClassPrivate<!>()
-
-    val inst = <!UNRESOLVED_REFERENCE!>A<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>propPublic<!>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>propInternal<!>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>propPrivate<!>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>funPublic<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>funInternal<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>funPrivate<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ClassPublic<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ClassInternal<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ClassPrivate<!>()
-}

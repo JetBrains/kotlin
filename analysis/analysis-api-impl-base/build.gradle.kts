@@ -13,6 +13,7 @@ dependencies {
     api(project(":compiler:resolution.common.jvm"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":compiler:backend-common"))
+    implementation(project(":compiler:backend"))
     implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
@@ -45,7 +46,7 @@ sourceSets {
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
+    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
     compilerOptions.optIn.addAll(
         listOf(
             "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",

@@ -52,6 +52,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Anno.param1
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -87,7 +88,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val param1: String)
+        initializer: KaNonConstantInitializerValue(val param1: String)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -179,6 +180,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Anno.param2
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -214,7 +216,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val param2: Int)
+        initializer: KaNonConstantInitializerValue(val param2: Int)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -318,6 +320,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /X.x
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

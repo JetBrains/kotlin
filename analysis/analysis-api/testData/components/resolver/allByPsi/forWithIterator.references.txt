@@ -24,7 +24,7 @@ KtNameReferenceExpression(122,125): 'Int'
 
 KtNameReferenceExpression(147,151): 'this'
   KtSimpleNameReference:
-    (in <local>: iterator) extension receiver with type f.IntProgression
+    extension receiver with type f.IntProgression
 
 KtLabelReferenceExpression(151,160): '@iterator'
   KtSimpleNameReference:
@@ -44,7 +44,7 @@ KtOperationReferenceExpression(204,206): '<='
 
 KtNameReferenceExpression(207,211): 'this'
   KtSimpleNameReference:
-    (in <local>: iterator) extension receiver with type f.IntProgression
+    extension receiver with type f.IntProgression
 
 KtLabelReferenceExpression(211,220): '@iterator'
   KtSimpleNameReference:

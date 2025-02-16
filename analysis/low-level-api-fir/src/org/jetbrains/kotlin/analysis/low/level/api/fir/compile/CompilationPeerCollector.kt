@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 
 import com.intellij.openapi.progress.ProgressManager
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fir.*
@@ -24,17 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addIfNotNull
-
-/**
- * This exception indicates that two or more inline functions reference each other. For example,
- * ```
- * inline fun a(): String = "Hi" + b()
- * inline fun b(): String = "Hi" + c()
- * inline fun c(): String = "Hi" + a()
- * ```
- * since we do not have a way to inline the above functions, we have to throw an exception.
- */
-class CyclicInlineDependencyException(message: String) : IllegalStateException(message)
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 /**
  * Processes the declaration, collecting files that would need to be submitted to the backend (or handled specially)
@@ -46,104 +40,116 @@ class CyclicInlineDependencyException(message: String) : IllegalStateException(m
  *
  * Note that compiled declarations are not analyzed, as the backend can inline them natively.
  */
-object CompilationPeerCollector {
-    fun process(declaration: FirDeclaration): CompilationPeerData {
+@KaImplementationDetail
+class CompilationPeerCollector private constructor() {
+    companion object {
+        fun process(file: FirFile): CompilationPeerData {
+            val collector = CompilationPeerCollector()
+            collector.process(file)
+
+            return CompilationPeerData(
+                peers = collector.peers,
+                inlinedClasses = collector.inlinedClasses
+            )
+        }
+    }
+
+    private val peers = LinkedHashMap<KaModule, MutableList<KtFile>>()
+    private val inlinedClasses = LinkedHashSet<KtClassOrObject>()
+
+    private val visited = HashSet<FirFile>()
+    private val moduleStack = ArrayDeque<KaModule>()
+
+    private fun process(file: FirFile) {
+        ProgressManager.checkCanceled()
+
+        val ktFile = file.containingKtFileIfAny
+        if (ktFile == null || ktFile.isCompiled) {
+            return
+        }
+
+        val module = file.llFirModuleData.ktModule
+        if (module in moduleStack && module != moduleStack.last()) {
+            // We cannot compile two or more modules together
+            errorWithAttachment("Cyclic dependency between modules") {
+                withEntry("cycle") {
+                    (moduleStack + module).forEach { this@withEntry.println(it) }
+                }
+            }
+
+            // Skip non-inlined indirect recursion
+            return
+        }
+
+        if (!visited.add(file)) {
+            // Skip the declaration we visited before
+            // Sic: this happens after the inline recursion check
+            return
+        }
+
+        // Avoid deep stacks by gathering callee files first
         val visitor = CompilationPeerCollectingVisitor()
-        visitor.process(declaration)
-        return CompilationPeerData(visitor.files, visitor.inlinedClasses)
+        file.accept(visitor)
+
+        inlinedClasses.addAll(visitor.inlinedClasses)
+
+        withModule(module) {
+            visitor.files.forEach(::process)
+        }
+
+        peers.getOrPut(module, ::ArrayList).add(ktFile)
+    }
+
+    private inline fun withModule(module: KaModule, block: () -> Unit) {
+        if (moduleStack.lastOrNull() == module) {
+            block()
+            return
+        }
+
+        moduleStack.addLast(module)
+        try {
+            block()
+        } finally {
+            moduleStack.removeLast()
+        }
     }
 }
 
+@KaImplementationDetail
 class CompilationPeerData(
     /**
-     * File with the original declaration and all files with called inline functions. [CompilationPeerCollector.process]
-     * recursively collects them and keeps them in a post order. For example,
-     *  - A is main source module. A has dependency on source module libraries B and C.
-     *  - B contains an inline function. B has dependency on a source module library C.
-     *  - C contains an inline function.
-     *  - [filesToCompile] returned by [CompilationPeerCollector.process] will be {C, B, A}.
+     * The original file and all files that contain inline functions/properties called from that file or any other files from the list.
+     * The returned list is in post-order.
+     * Files in the list are unique.
      *
-     * More formally, i-th element of [filesToCompile] will not have inline-dependency on any j-th element of
-     * [filesToCompile], where j > i.
+     * For example,
+     *  - A is a source file in module M(A) to be compiled; it calls an inline function from the file B of module M(B).
+     *  - B calls another inline function defined in C in module M(C).
+     *  - [peers] returned by [CompilationPeerCollector.process] then will be {C, B, A}.
+     *
+     * More formally, i-th element of [peers] will not have inline-dependency on any j-th element of
+     * [peers], where j > i.
      *
      * This list does not contain duplicated files.
      */
-    val filesToCompile: List<KtFile>,
+    val peers: Map<KaModule, List<KtFile>>,
 
     /** Local classes inlined as a part of inline functions. */
     val inlinedClasses: Set<KtClassOrObject>
 )
 
 private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
-    private val processed = mutableSetOf<FirDeclaration>()
+    private val collectedFunctions = HashSet<FirFunction>()
+    private val collectedFiles = LinkedHashSet<FirFile>()
+    private val collectedInlinedClasses = LinkedHashSet<KtClassOrObject>()
 
-    /** The entry of this class must be [process]. In that case, [queue] will always be initialized by [process] */
-    private lateinit var queue: MutableSet<FirDeclaration>
+    private var isInlineFunctionContext: Boolean = false
 
-    private val collectedFiles = mutableListOf<KtFile>()
-    private val collectedInlinedClasses = mutableSetOf<KtClassOrObject>()
-    private var isInlineFunctionContext = false
-
-    val files: List<KtFile>
+    val files: Set<FirFile>
         get() = collectedFiles
 
     val inlinedClasses: Set<KtClassOrObject>
         get() = collectedInlinedClasses
-
-    fun process(declaration: FirDeclaration) {
-        ProgressManager.checkCanceled()
-
-        val containingKtFile = declaration.psi?.containingFile as? KtFile ?: return
-        if (containingKtFile.isCompiled || containingKtFile in collectedFiles) return
-
-        if (!processed.add(declaration)) {
-            val exceptionMessage = buildString {
-                appendLine("Inline functions have a cyclic dependency:")
-                for (problematicFir in processed) {
-                    val problematicFirFile = problematicFir.getContainingFile()
-                    if (problematicFirFile != null) {
-                        append('[')
-                            .append(problematicFirFile.packageFqName.asString())
-                            .append('/')
-                            .append(problematicFirFile.name)
-                            .appendLine(']')
-                    } else {
-                        appendLine("(No containing file)")
-                    }
-                    appendLine(problematicFir.render())
-                }
-            }
-
-            throw CyclicInlineDependencyException(exceptionMessage.trim())
-        }
-
-        val inlineFunctionsUsedByDeclaration = mutableSetOf<FirDeclaration>()
-        queue = inlineFunctionsUsedByDeclaration
-        declaration.accept(this)
-
-        for (dependency in inlineFunctionsUsedByDeclaration) {
-            process(dependency)
-        }
-
-        /* When we have FirDeclarations other than `declaration` in the same file, and they use inline functions,
-           we have to collect them as well. For example, if `foo.kt` has the following functions:
-           ```
-           inline fun inline1() = .. inlineFromOtherFile() ..
-           fun bar() = .. inline2() .. // where inline2() is another inline function
-           ```
-           When `declaration` is `inline1`, we have to collect `inline2` as well. Since file is the unit of JVM IR gen,
-           without `inline2`, the JVM IR gen filling inline functions causes an exception reporting that it's missing. */
-        val inlineFunctionsUsedInSameFile = mutableSetOf<FirDeclaration>()
-        queue = inlineFunctionsUsedInSameFile
-        declaration.getContainingFile()?.accept(this)
-        for (dependency in inlineFunctionsUsedInSameFile) {
-            if (dependency !in processed) process(dependency)
-        }
-
-        // Since we want to put a file into `collectedFiles` only when its all dependencies are already in `collectedFiles`,
-        // we have to use the post-order traversal.
-        if (containingKtFile !in collectedFiles) collectedFiles.add(containingKtFile)
-    }
 
     override fun visitElement(element: FirElement) {
         if (element is FirResolvable) {
@@ -173,12 +179,14 @@ private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
         simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-        val oldIsInlineFunctionContext = isInlineFunctionContext
-        try {
-            isInlineFunctionContext = simpleFunction.isInline
+        withInlineFunctionContext(simpleFunction) {
             super.visitFunction(simpleFunction)
-        } finally {
-            isInlineFunctionContext = oldIsInlineFunctionContext
+        }
+    }
+
+    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+        withInlineFunctionContext(propertyAccessor) {
+            super.visitPropertyAccessor(propertyAccessor)
         }
     }
 
@@ -198,13 +206,6 @@ private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
 
     @OptIn(SymbolInternals::class)
     private fun processResolvable(element: FirResolvable) {
-        fun addToQueue(function: FirFunction?) {
-            val original = function?.unwrapSubstitutionOverrides() ?: return
-            if (original.isInline && original.hasBody) {
-                queue.add(function)
-            }
-        }
-
         val reference = element.calleeReference
         if (reference !is FirResolvedNamedReference) {
             return
@@ -214,13 +215,43 @@ private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
         if (symbol is FirCallableSymbol<*>) {
             when (val fir = symbol.fir) {
                 is FirFunction -> {
-                    addToQueue(fir)
+                    register(fir)
                 }
                 is FirProperty -> {
-                    addToQueue(fir.getter)
-                    addToQueue(fir.setter)
+                    fir.getter?.let(::register)
+                    fir.setter?.let(::register)
                 }
                 else -> {}
+            }
+        }
+    }
+
+    /**
+     * Register a containing source file for an inline function.
+     */
+    private fun register(callee: FirFunction) {
+        val originalFunction = callee.unwrapSubstitutionOverrides()
+        if (originalFunction.isInline && originalFunction.hasBody) {
+            if (collectedFunctions.add(originalFunction)) {
+                val calleeFile = callee.getContainingFile()
+                if (calleeFile != null && calleeFile.origin == FirDeclarationOrigin.Source) {
+                    collectedFiles.add(calleeFile)
+                }
+            }
+        }
+    }
+
+    private inline fun withInlineFunctionContext(function: FirFunction, block: () -> Unit) {
+        val needsInlineContext = !isInlineFunctionContext && function.isInline
+
+        try {
+            if (needsInlineContext) {
+                isInlineFunctionContext = true
+            }
+            block()
+        } finally {
+            if (needsInlineContext) {
+                isInlineFunctionContext = false
             }
         }
     }

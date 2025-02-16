@@ -125,6 +125,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val initMetadataForCoroutineSymbol = getInternalFunction("initMetadataForCoroutine")
     val initMetadataForFunctionReferenceSymbol = getInternalFunction("initMetadataForFunctionReference")
     val initMetadataForCompanionSymbol = getInternalFunction("initMetadataForCompanion")
+    val makeAssociatedObjectMapES5 = getInternalInRootPackage("makeAssociatedObjectMapES5")!!
+    val getAssociatedObjectId = getInternalInRootPackage("getAssociatedObjectId")!!
+    val nextAssociatedObjectId = getInternalFunction("nextAssociatedObjectId")
 
     val isInterfaceSymbol = getInternalFunction("isInterface")
     val isArraySymbol = getInternalFunction("isArray")
@@ -234,7 +237,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
         symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_FLOAT).single()
 
     val longCompareToLong: IrSimpleFunction = longClassSymbol.owner.findDeclaration<IrSimpleFunction> {
-        it.name == Name.identifier("compareTo") && it.valueParameters[0].type.isLong()
+        it.name == Name.identifier("compareTo") && it.parameters[1].type.isLong()
     }!!
 
     val charClassSymbol = irBuiltIns.charClass
@@ -367,6 +370,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
 
     val jsCharSequenceGet = getInternalFunction("charSequenceGet")
+    val jsCharCodeAt = getInternalFunction("charCodeAt")
     val jsCharSequenceLength = getInternalFunction("charSequenceLength")
     val jsCharSequenceSubSequence = getInternalFunction("charSequenceSubSequence")
 

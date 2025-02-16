@@ -30,8 +30,8 @@ internal class SL4JKotlinLogger(private val log: Logger, private val prefix: Str
         log.info(transformMessage(msg))
     }
 
-    override fun warn(msg: String) {
-        log.warn(transformMessage(msg))
+    override fun warn(msg: String, throwable: Throwable?) {
+        log.warn(transformMessage(msg), throwable)
     }
 
     override val isDebugEnabled: Boolean

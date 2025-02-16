@@ -8,16 +8,23 @@ package org.jetbrains.kotlin.native.interop.gen
 import org.jetbrains.kotlin.native.interop.indexer.EnumDef
 import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
+import org.jetbrains.kotlin.native.interop.indexer.Language
 import org.jetbrains.kotlin.native.interop.indexer.StructDecl
 import org.jetbrains.kotlin.utils.atMostOne
 
 open class IndexerTestsBase : InteropTestsBase() {
-    fun index(headerContents: String): IndexerResult {
+    fun index(headerContents: String, language: Language = Language.C): IndexerResult {
         val files = testFiles()
         files.file("header.h", headerContents)
+        val defFileLanguage = when (language) {
+            Language.C -> "C"
+            Language.CPP -> "C++"
+            Language.OBJECTIVE_C -> "Objective-C"
+        }
         val defFile = files.file("test.def", """
             headers = header.h
             headerFilter = header.h
+            language = $defFileLanguage
             """.trimIndent()
         )
 

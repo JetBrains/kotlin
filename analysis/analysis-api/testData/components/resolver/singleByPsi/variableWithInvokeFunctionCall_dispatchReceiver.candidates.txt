@@ -4,6 +4,7 @@ KtCallExpression(83,86): 'f()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = f
@@ -14,6 +15,7 @@ KtCallExpression(83,86): 'f()'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true

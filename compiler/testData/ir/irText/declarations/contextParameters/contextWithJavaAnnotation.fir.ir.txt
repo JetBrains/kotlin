@@ -1,0 +1,24 @@
+FILE fqName:<root> fileName:/test.kt
+  FUN name:b visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Context name:a index:0 type:kotlin.String
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.String
+      annotations:
+        JavaAnnotation
+    BLOCK_BODY
+  FUN name:bar visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Context name:a index:0 type:@[JavaTypeAnnotation] kotlin.String
+    BLOCK_BODY
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Context name:a index:0 type:kotlin.String
+      annotations:
+        JavaParameterAnnotation
+    BLOCK_BODY
+  PROPERTY name:b visibility:public modality:FINAL [val]
+    FUN name:<get-b> visibility:public modality:FINAL returnType:kotlin.String
+      VALUE_PARAMETER kind:Context name:a index:0 type:kotlin.String
+      annotations:
+        JavaAnnotation
+      correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-b> (a: kotlin.String): kotlin.String declared in <root>'
+          CONST String type=kotlin.String value=""

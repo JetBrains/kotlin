@@ -119,22 +119,16 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             withIndent {
                 val implementation = element.implementations.singleOrNull() ?: error("Ambiguous implementation")
                 print(implementation.render())
-                if (useWithShapeConstructor(element)) {
-                    print("WithShape")
-                }
                 val constructorArguments: List<Field> = implementation.fieldsInConstructor.filter { !it.deepCopyExcludeFromConstructor }
                 println("(")
                 withIndent {
-                    if (implementation.hasConstructorIndicator && !useWithShapeConstructor(element)) {
+                    if (implementation.hasConstructorIndicator) {
                         println("constructorIndicator = null,")
                     }
                     for (field in constructorArguments) {
                         print(field.name, " = ")
                         copyField(element, field)
                         println(",")
-                    }
-                    if (useWithShapeConstructor(element)) {
-                        printWithShapeExtraArguments(element)
                     }
                 }
                 val fieldsInApply = implementation.fieldsInBody.filter { !it.deepCopyExcludeFromApply && it !in constructorArguments }
@@ -194,9 +188,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
         }
     }
 
-    private fun useWithShapeConstructor(element: Element): Boolean =
-        element.isSubclassOfAny(IrTree.functionAccessExpression, IrTree.functionReference, IrTree.propertyReference)
-
     private fun ImportCollectingPrinter.printApply(element: Element, applyFields: List<Field>) {
         print(").apply")
         printBlock {
@@ -223,9 +214,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                     }
                 }
             }
-            if (element.isSubclassOf(IrTree.attributeContainer)) {
-                println("processAttributes(", element.visitorParameterName, ")")
-            }
             if (element.isSubclassOf(IrTree.memberAccessExpression) && !element.isSubclassOf(IrTree.localDelegatedPropertyReference)) {
                 println("copyRemappedTypeArgumentsFrom(", element.visitorParameterName, ")")
                 println("transformValueArguments(", element.visitorParameterName, ")")
@@ -242,16 +230,8 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             if (element.isSubclassOf(IrTree.moduleFragment)) {
                 println("this@DeepCopyIrTreeWithSymbols.transformedModule = null")
             }
-        }
-    }
 
-    private fun ImportCollectingPrinter.printWithShapeExtraArguments(element: Element) {
-        println("typeArgumentsCount = ${element.visitorParameterName}.typeArguments.size,")
-        println("hasDispatchReceiver = ${element.visitorParameterName}.targetHasDispatchReceiver,")
-        println("hasExtensionReceiver = ${element.visitorParameterName}.targetHasExtensionReceiver,")
-        if (!element.isSubclassOf(IrTree.propertyReference)) {
-            println("valueArgumentsCount = ${element.visitorParameterName}.valueArgumentsCount,")
-            println("contextParameterCount = ${element.visitorParameterName}.targetContextParameterCount,")
+            println("processAttributes(", element.visitorParameterName, ")")
         }
     }
 }

@@ -7,10 +7,12 @@ KtNameReferenceExpression(93,100): 'MyAlias'
           receiverType = null
           returnType = kotlin.String
           symbol = t: TT
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtNameReferenceExpression(93,100): 'MyAlias'
               receiverType = null
               returnType = kotlin.String
               symbol = t: TT
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         TT -> (kotlin.String)

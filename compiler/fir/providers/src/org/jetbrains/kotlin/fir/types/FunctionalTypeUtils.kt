@@ -67,6 +67,11 @@ fun ConeKotlinType.isBasicFunctionType(session: FirSession): Boolean {
     return isFunctionTypeWithPredicate(session) { it == FunctionTypeKind.Function }
 }
 
+// Function, KFunction
+fun ConeKotlinType.isBasicFunctionOrKFunctionType(session: FirSession): Boolean {
+    return isFunctionTypeWithPredicate(session) { it.isBasicFunctionOrKFunction }
+}
+
 // Function, SuspendFunction, KSuspendFunction, [Custom]Function, K[Custom]Function
 fun ConeKotlinType.isNonKFunctionType(session: FirSession): Boolean {
     return isFunctionTypeWithPredicate(session) { it != FunctionTypeKind.KFunction }
@@ -247,7 +252,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     var overriddenInvoke: FirFunctionSymbol<*>? = null
     if (declaredInvoke != null) {
         // Make sure the user-contributed or type-substituted invoke we just found above is an override of base invoke.
-        scope.processOverriddenFunctions(declaredInvoke!!) { functionSymbol ->
+        scope.processOverriddenFunctions(declaredInvoke) { functionSymbol ->
             if (functionSymbol == baseInvokeSymbol || functionSymbol.originalForSubstitutionOverride == baseInvokeSymbol) {
                 overriddenInvoke = functionSymbol
                 ProcessorAction.STOP

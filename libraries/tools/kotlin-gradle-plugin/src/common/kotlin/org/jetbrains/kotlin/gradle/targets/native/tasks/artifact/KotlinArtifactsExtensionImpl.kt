@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinArtifact
 import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactConfig
 import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactsExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
@@ -22,15 +21,16 @@ abstract class KotlinArtifactsExtensionImpl @Inject constructor(project: Project
     val RELEASE = NativeBuildType.RELEASE
     val DEBUG = NativeBuildType.DEBUG
 
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     class BitcodeEmbeddingModeDsl {
-        val DISABLE = BitcodeEmbeddingMode.DISABLE
-        val BITCODE = BitcodeEmbeddingMode.BITCODE
-        val MARKER = BitcodeEmbeddingMode.MARKER
+        val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
+        val BITCODE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE
+        val MARKER = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.MARKER
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     @JvmField
     val EmbedBitcodeMode = BitcodeEmbeddingModeDsl()
 

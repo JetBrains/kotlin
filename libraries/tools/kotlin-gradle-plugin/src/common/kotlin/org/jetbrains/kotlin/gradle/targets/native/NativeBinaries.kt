@@ -288,20 +288,22 @@ class Framework(
         get() = NativeOutputKind.FRAMEWORK
 
     // Embedding bitcode.
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     val embedBitcodeMode = project.objects.property(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode::class.java)
 
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].
      */
-    @Suppress("DEPRECATION")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
     fun embedBitcode(mode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode) {
         embedBitcodeMode.set(mode)
     }
@@ -309,8 +311,8 @@ class Framework(
     /**
      * [embedBitcode] is deprecated and has no effect
      */
-    @Suppress("DEPRECATION")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
     fun embedBitcode(mode: String) = embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.valueOf(mode.toUpperCaseAsciiOnly()))
 
     /**
@@ -318,7 +320,8 @@ class Framework(
      */
     var isStatic = false
 
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     object BitcodeEmbeddingMode {
         val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
         val BITCODE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE
@@ -331,5 +334,3 @@ class Framework(
         )
     }
 }
-
-

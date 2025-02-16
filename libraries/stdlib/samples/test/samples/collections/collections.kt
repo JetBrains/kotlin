@@ -871,25 +871,22 @@ class Collections {
         }
 
         @Sample
-        fun maxByOrNull() {
-            val nameToAge = listOf("Alice" to 42, "Bob" to 28, "Carol" to 51)
-            val oldestPerson = nameToAge.maxByOrNull { it.second }
-            assertPrints(oldestPerson, "(Carol, 51)")
+        fun minMaxByOrNull() {
+            val strings = listOf("abcd", "abc", "ab", "de", "abcde")
 
-            val emptyList = emptyList<Pair<String, Int>>()
-            val emptyMax = emptyList.maxByOrNull { it.second }
-            assertPrints(emptyMax, "null")
-        }
+            val longestString = strings.maxBy { it.length }
+            assertPrints(longestString, "abcde")
 
-        @Sample
-        fun minByOrNull() {
-            val list = listOf("abcd", "abc", "ab", "abcde")
-            val shortestString = list.minByOrNull { it.length }
+            val shortestString = strings.minBy { it.length }
             assertPrints(shortestString, "ab")
 
             val emptyList = emptyList<String>()
-            val emptyMin = emptyList.minByOrNull { it.length }
-            assertPrints(emptyMin, "null")
+            // maxBy() and minBy() throw if the collection is empty
+            assertFailsWith<NoSuchElementException> { emptyList.maxBy { it.length } }
+            assertFailsWith<NoSuchElementException> { emptyList.minBy { it.length } }
+            // maxByOrNull() and minByOrNull() return null if the collection is empty
+            assertPrints(emptyList.maxByOrNull { it.length }, "null")
+            assertPrints(emptyList.minByOrNull { it.length }, "null")
         }
 
         @Sample
@@ -1061,11 +1058,80 @@ class Collections {
 
         @Sample
         fun sortedBy() {
-            val list = listOf("aaa", "cc", "bbbb")
-            val sorted = list.sortedBy { it.length }
+            class Dish(val name: String, val calories: Int, val tasteRate: Float) {
+                override fun toString(): String = "Dish($name: $calories cal, taste $tasteRate/5)"
+            }
 
-            assertPrints(list, "[aaa, cc, bbbb]")
-            assertPrints(sorted, "[cc, aaa, bbbb]")
+            val fridgeContent = listOf(Dish("🍨", 207, 4.7f), Dish("🥦", 34, 2.3f), Dish("🧃", 34, 4.9f))
+
+            val dullDishes = fridgeContent.sortedBy { it.tasteRate }
+            assertPrints(dullDishes, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+
+            val lightDishes = fridgeContent.sortedBy { it.calories }
+            // note that the sorting is stable, so the 🥦 is before the 🧃
+            assertPrints(lightDishes, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
+
+            // the original collection remains unchanged
+            assertPrints(fridgeContent, "[Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+        }
+
+        @Sample
+        fun sortedPrimitiveArrayBy() {
+            val unsorted = intArrayOf(3, 1, 2, 4)
+
+            val sortedByRemainder = unsorted.sortedBy { it % 3 }
+            // the sorting is stable: the order of 1 (1 % 3 == 1) and 4 (4 % 3 == 1) was preserved
+            assertPrints(sortedByRemainder, "[3, 1, 4, 2]")
+
+            val mapping = mapOf(1 to "one", 2 to "two", 3 to "three", 4 to "four")
+            val sortedByPronunciation = unsorted.sortedBy {
+                // take a key to sort by from the mapping
+                mapping.getOrDefault(it, "unknown")
+            }
+            // four < one < three < two, lexicographically
+            assertPrints(sortedByPronunciation, "[4, 1, 3, 2]")
+
+            // the original array remains unchanged
+            assertPrints(unsorted.toList(), "[3, 1, 2, 4]")
+        }
+
+        @Sample
+        fun sortedByDescending() {
+            class Dish(val name: String, val calories: Int, val tasteRate: Float) {
+                override fun toString(): String = "Dish($name: $calories cal, taste $tasteRate/5)"
+            }
+
+            val fridgeContent = listOf(Dish("🥦", 34, 2.3f), Dish("🧃", 34, 4.9f), Dish("🍨", 207, 4.7f))
+
+            val tastyDishes = fridgeContent.sortedByDescending { it.tasteRate }
+            assertPrints(tastyDishes,"[Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5)]")
+
+            val energeticDishes = fridgeContent.sortedByDescending { it.calories }
+            // note that the sorting is stable, so the 🥦 is before the 🧃
+            assertPrints(energeticDishes,"[Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+
+            // the original collection remains unchanged
+            assertPrints(fridgeContent, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
+        }
+
+        @Sample
+        fun sortedPrimitiveArrayByDescending() {
+            val unsorted = intArrayOf(3, 1, 2, 4)
+
+            val sortedByValue = unsorted.sortedByDescending { it % 3 }
+            // the sorting is stable: the order of 1 (1 % 3 == 1) and 4 (4 % 3 == 1) was preserved
+            assertPrints(sortedByValue, "[2, 1, 4, 3]")
+
+            val mapping = mapOf(1 to "one", 2 to "two", 3 to "three", 4 to "four")
+            val sortedByPronunciation = unsorted.sortedByDescending {
+                // take a key to sort by from the mapping
+                mapping.getOrDefault(it, "unknown")
+            }
+            // two > three > one > four, lexicographically
+            assertPrints(sortedByPronunciation, "[2, 3, 1, 4]")
+
+            // the original array remains unchanged
+            assertPrints(unsorted.toList(), "[3, 1, 2, 4]")
         }
     }
 

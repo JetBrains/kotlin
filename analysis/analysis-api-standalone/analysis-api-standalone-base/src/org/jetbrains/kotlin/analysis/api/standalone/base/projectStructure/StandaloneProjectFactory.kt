@@ -271,10 +271,12 @@ object StandaloneProjectFactory {
                     .invoke(ProjectScope.getLibrariesScope(project))
             ),
             SingleJavaFileRootsIndex(singleJavaFileRoots),
-            true
+            usePsiClassFilesReading = true,
+            perfManager = null, // Don't care about pure compiler performance in Analysis API
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, false)
+        // Don't care about pure compiler performance in Analysis API
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, false, perfManager = null)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
     }

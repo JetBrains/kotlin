@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
-import org.jetbrains.kotlin.test.runners.codegen.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractFirJsES6Test(

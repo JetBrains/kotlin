@@ -8,22 +8,22 @@ public interface IrInlinedFunctionBlockOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>optional int64 inline_function_symbol = 1;</code>
+   * <code>optional int64 inlined_function_symbol = 1;</code>
    */
-  boolean hasInlineFunctionSymbol();
+  boolean hasInlinedFunctionSymbol();
   /**
-   * <code>optional int64 inline_function_symbol = 1;</code>
+   * <code>optional int64 inlined_function_symbol = 1;</code>
    */
-  long getInlineFunctionSymbol();
+  long getInlinedFunctionSymbol();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
    */
-  boolean hasFileEntry();
+  boolean hasInlinedFunctionFileEntry();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
+  org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getInlinedFunctionFileEntry();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3;</code>
@@ -33,4 +33,22 @@ public interface IrInlinedFunctionBlockOrBuilder extends
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock getBase();
+
+  /**
+   * <code>required int32 inlined_function_start_offset = 4;</code>
+   */
+  boolean hasInlinedFunctionStartOffset();
+  /**
+   * <code>required int32 inlined_function_start_offset = 4;</code>
+   */
+  int getInlinedFunctionStartOffset();
+
+  /**
+   * <code>required int32 inlined_function_end_offset = 5;</code>
+   */
+  boolean hasInlinedFunctionEndOffset();
+  /**
+   * <code>required int32 inlined_function_end_offset = 5;</code>
+   */
+  int getInlinedFunctionEndOffset();
 }

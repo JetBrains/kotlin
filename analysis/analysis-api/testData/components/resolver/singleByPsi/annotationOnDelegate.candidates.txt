@@ -3,6 +3,7 @@ KtAnnotationEntry(0,18): '@delegate:Suppress'
     candidate = KaAnnotationCall:
       argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -15,8 +16,10 @@ KtAnnotationEntry(0,18): '@delegate:Suppress'
               receiverType = null
               returnType = kotlin.String
               symbol = vararg names: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

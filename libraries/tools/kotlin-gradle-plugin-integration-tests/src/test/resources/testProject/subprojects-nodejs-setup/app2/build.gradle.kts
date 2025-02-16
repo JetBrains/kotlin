@@ -6,6 +6,7 @@ kotlin {
     js {
         binaries.executable()
         nodejs()
+        useEsModules()
     }
 }
 

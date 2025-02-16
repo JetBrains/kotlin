@@ -1,5 +1,5 @@
 fun String.test5(): String {
-  return <this>.<get-okext>()
+  return <get-okext>(/* <this> = <this> */)
 }
 
 val String.okext: String

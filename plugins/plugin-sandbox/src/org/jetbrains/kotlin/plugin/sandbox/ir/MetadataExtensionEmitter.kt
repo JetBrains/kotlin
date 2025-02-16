@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.toIrConst
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import java.nio.ByteBuffer
 
 const val pluginId = "org.jetbrains.kotlin.plugin.sandbox"
 
-class MetadataExtensionEmitter(val context: IrPluginContext) : IrElementVisitorVoid {
+class MetadataExtensionEmitter(val context: IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.EmitMetadata")
     }
@@ -44,7 +44,7 @@ class MetadataExtensionEmitter(val context: IrPluginContext) : IrElementVisitorV
     }
 
     private fun emitMetadata(irClass: IrClass, annotation: IrConstructorCall) {
-        val value = (annotation.getValueArgument(0) as IrConst).value as Int
+        val value = (annotation.arguments[0] as IrConst).value as Int
 
         context.metadataDeclarationRegistrar.addCustomMetadataExtension(
             irClass,
@@ -54,7 +54,7 @@ class MetadataExtensionEmitter(val context: IrPluginContext) : IrElementVisitorV
     }
 }
 
-class MetadataExtensionExtractor(val context: IrPluginContext) : IrElementVisitorVoid {
+class MetadataExtensionExtractor(val context: IrPluginContext) : IrVisitorVoid() {
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.GenerateBodyUsingEmittedMetadata")
     }
@@ -70,7 +70,7 @@ class MetadataExtensionExtractor(val context: IrPluginContext) : IrElementVisito
 
     override fun visitFunction(declaration: IrFunction) {
         if (!declaration.hasAnnotation(markerAnnotationFqName)) return
-        val parameterClass = declaration.valueParameters.firstOrNull()?.type?.classOrNull?.owner ?: return
+        val parameterClass = declaration.parameters.firstOrNull { it.kind == IrParameterKind.Regular }?.type?.classOrNull?.owner ?: return
         val valueFromMetadata = context.metadataDeclarationRegistrar.getCustomMetadataExtension(
             parameterClass,
             pluginId

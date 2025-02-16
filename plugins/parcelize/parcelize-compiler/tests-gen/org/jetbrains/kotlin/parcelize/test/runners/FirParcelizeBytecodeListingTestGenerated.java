@@ -179,4 +179,10 @@ public class FirParcelizeBytecodeListingTestGenerated extends AbstractFirParceli
   public void testUnsignedPrimitiveArrays() {
     runTest("plugins/parcelize/parcelize-compiler/testData/codegen/unsignedPrimitiveArrays.kt");
   }
+
+  @Test
+  @TestMetadata("uuid.kt")
+  public void testUuid() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/codegen/uuid.kt");
+  }
 }

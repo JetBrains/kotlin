@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // MODULE: m1-common
@@ -50,35 +49,35 @@ expect class InnerClassInsideTypealias {
 // FILE: jvm.kt
 class KtTypealiasNotMatchImpl
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias KtTypealiasNotMatch = KtTypealiasNotMatchImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias KtTypealiasNotMatch = KtTypealiasNotMatchImpl
 
 class AnnotationsNotConsideredOnTypealiasImpl
 
 @Ann
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias AnnotationsNotConsideredOnTypealias = AnnotationsNotConsideredOnTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias AnnotationsNotConsideredOnTypealias = AnnotationsNotConsideredOnTypealiasImpl
 
 class MethodsInsideTypealiasImpl {
     fun foo() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MethodsInsideTypealias = MethodsInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MethodsInsideTypealias = MethodsInsideTypealiasImpl
 
 class ValueInsideTypealiasImpl {
     val value: String = ""
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias ValueInsideTypealias = ValueInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias ValueInsideTypealias = ValueInsideTypealiasImpl
 
 class ConstructorInsideTypealiasImpl
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias ConstructorInsideTypealias = ConstructorInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias ConstructorInsideTypealias = ConstructorInsideTypealiasImpl
 
 class MethodWithComplexAnnInsideTypealiasImpl {
     @ComplexAnn("13")
     fun withComplexAnn() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MethodWithComplexAnnInsideTypealias = MethodWithComplexAnnInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MethodWithComplexAnnInsideTypealias = MethodWithComplexAnnInsideTypealiasImpl
 
 class InnerClassInsideTypealiasImpl {
     class Foo {
@@ -86,4 +85,4 @@ class InnerClassInsideTypealiasImpl {
     }
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias InnerClassInsideTypealias = InnerClassInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias InnerClassInsideTypealias = InnerClassInsideTypealiasImpl

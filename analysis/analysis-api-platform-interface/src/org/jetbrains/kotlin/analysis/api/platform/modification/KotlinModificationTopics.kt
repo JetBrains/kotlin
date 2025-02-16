@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  *  - [KotlinModuleOutOfBlockModificationListener]
  *  - [KotlinGlobalModuleStateModificationListener]
  *  - [KotlinGlobalSourceModuleStateModificationListener]
+ *  - [KotlinGlobalScriptModuleStateModificationListener]
  *  - [KotlinGlobalSourceOutOfBlockModificationListener]
  *  - [KotlinCodeFragmentContextModificationListener]
  *
@@ -99,14 +100,14 @@ public object KotlinModificationTopics {
     public val GLOBAL_SOURCE_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalSourceModuleStateModificationListener> =
         Topic(KotlinGlobalSourceModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 
+    public val GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalScriptModuleStateModificationListener> =
+        Topic(KotlinGlobalScriptModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
+
     public val GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION: Topic<KotlinGlobalSourceOutOfBlockModificationListener> =
         Topic(KotlinGlobalSourceOutOfBlockModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 
     public val CODE_FRAGMENT_CONTEXT_MODIFICATION: Topic<KotlinCodeFragmentContextModificationListener> =
         Topic(KotlinCodeFragmentContextModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
-
-    public val GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalScriptModuleStateModificationListener> =
-        Topic(KotlinGlobalScriptModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 }
 
 /**
@@ -118,6 +119,7 @@ public enum class KotlinModificationEventKind {
     MODULE_OUT_OF_BLOCK_MODIFICATION,
     GLOBAL_MODULE_STATE_MODIFICATION,
     GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
+    GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION,
     GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION,
     CODE_FRAGMENT_CONTEXT_MODIFICATION,
 }

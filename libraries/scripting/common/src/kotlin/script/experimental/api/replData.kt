@@ -6,6 +6,7 @@
 package kotlin.script.experimental.api
 
 import java.io.Serializable
+import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
 import kotlin.script.experimental.util.PropertiesCollection
 
 // Warning: during the transition to the new REPL infrastructure, should be kept in sync with REPL_CODE_LINE_FIRST_NO/REPL_CODE_LINE_FIRST_GEN
@@ -31,6 +32,17 @@ data class ReplSnippetIdImpl(override val no: Int, override val generation: Int,
         private val serialVersionUID: Long = 1L
     }
 }
+
+interface ReplScriptingHostConfigurationKeys
+
+open class ReplScriptingHostConfigurationBuilder : PropertiesCollection.Builder(),
+    ReplScriptingHostConfigurationKeys {
+    companion object : ReplScriptingHostConfigurationKeys
+}
+
+val ScriptingHostConfigurationKeys.repl
+    get() = ReplScriptingHostConfigurationBuilder()
+
 
 interface ReplScriptCompilationConfigurationKeys
 

@@ -1,5 +1,5 @@
-/kt45461_25.fir.kt:(206,210): warning: Unchecked cast of 'kotlin.Nothing?' to 'S (of fun <S : T> takeFoo)'.
+/kt45461_25.fir.kt:(206,210): warning: Unchecked cast of 'Nothing?' to 'S (of fun <S : T> takeFoo)'.
 
-/kt45461_25.fir.kt:(236,239): warning: Type 'kotlin.Int' is final, so the value of the type parameter is predetermined.
+/kt45461_25.fir.kt:(236,239): warning: Type 'Int' is final, so the value of the type parameter is predetermined.
 
-/kt45461_25.fir.kt:(306,313): error: Type argument for type parameter 'S' cannot be inferred because it has incompatible upper bounds: kotlin.String, K (of fun <K : L, L : N, N : Int> main) (multiple incompatible classes: kotlin/String, kotlin/Int).
+/kt45461_25.fir.kt:(306,313): error: Type argument for type parameter 'S' cannot be inferred because it has incompatible upper bounds: String, K (of fun <K : L, L : N, N : Int> main) (multiple incompatible classes: kotlin/String, kotlin/Int).

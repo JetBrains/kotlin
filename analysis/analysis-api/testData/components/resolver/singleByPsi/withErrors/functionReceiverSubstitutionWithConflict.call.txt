@@ -5,6 +5,7 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = f
@@ -20,14 +21,17 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = i: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /foo
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
         argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = f
@@ -43,8 +47,10 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
                 receiverType = null
                 returnType = kotlin.String
                 symbol = s: kotlin.String
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /foo
         typeArgumentsMapping = {}
     ]

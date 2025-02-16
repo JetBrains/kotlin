@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.LinkedHashSet
 
@@ -65,17 +64,21 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                     FunctionTags.DEFINED -> {
                         val locals = deserializeList(::deserializeLocal)
                         val instructions = deserializeList(::deserializeInstr)
+                        val startLocation = deserializeSourceLocation()
+                        val endLocation = deserializeSourceLocation()
                         WasmFunction.Defined(
                             name,
                             type,
                             locals,
-                            instructions
+                            instructions,
+                            startLocation,
+                            endLocation
                         )
                     }
                     FunctionTags.IMPORTED -> WasmFunction.Imported(
                         name,
                         type,
-                        deserializeImportDescriptor()
+                        deserializeImportDescriptor(),
                     )
                     else -> tagError(tag)
                 }
@@ -393,17 +396,15 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         withTag { tag ->
             when (tag) {
                 LocationTags.NO_LOCATION -> SourceLocation.NoLocation
-                else -> {
-                    val module = deserializeString()
-                    val file = deserializeString()
-                    val line = deserializeInt()
-                    val column = deserializeInt()
-                    when (tag) {
-                        LocationTags.LOCATION -> SourceLocation.Location(module, file, line, column)
-                        LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation(module, file, line, column)
-                        else -> tagError(tag)
-                    }
-                }
+                LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation
+                LocationTags.NEXT_LOCATION -> SourceLocation.NextLocation
+                LocationTags.LOCATION -> SourceLocation.DefinedLocation(
+                    module = deserializeString(),
+                    file = deserializeString(),
+                    line = deserializeInt(),
+                    column = deserializeInt()
+                )
+                else -> tagError(tag)
             }
         }
 
@@ -503,40 +504,34 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         }
 
     private fun deserializeConstantDataCharArray(): ConstantDataCharArray {
-        val name = deserializeString()
         val value = deserializeList { deserializeSymbol { Char(deserializeInt()) } }
-        return ConstantDataCharArray(name, value)
+        return ConstantDataCharArray(value)
     }
 
     private fun deserializeConstantDataCharField(): ConstantDataCharField {
-        val name = deserializeString()
         val value = deserializeSymbol { Char(deserializeInt()) }
-        return ConstantDataCharField(name, value)
+        return ConstantDataCharField(value)
     }
 
     private fun deserializeConstantDataIntArray(): ConstantDataIntArray {
-        val name = deserializeString()
         val value = deserializeList { deserializeSymbol(::deserializeInt) }
-        return ConstantDataIntArray(name, value)
+        return ConstantDataIntArray(value)
     }
 
     private fun deserializeConstantDataIntField(): ConstantDataIntField {
-        val name = deserializeString()
         val value = deserializeSymbol(::deserializeInt)
-        return ConstantDataIntField(name, value)
+        return ConstantDataIntField(value)
     }
 
     private fun deserializeConstantDataIntegerArray(): ConstantDataIntegerArray {
-        val name = deserializeString()
         val value = deserializeList { b.readUInt64().toLong() }
         val integerSize = deserializeInt()
-        return ConstantDataIntegerArray(name, value, integerSize)
+        return ConstantDataIntegerArray(value, integerSize)
     }
 
     private fun deserializeConstantDataStruct(): ConstantDataStruct {
-        val name = deserializeString()
         val value = deserializeList(::deserializeConstantDataElement)
-        return ConstantDataStruct(name, value)
+        return ConstantDataStruct(value)
     }
 
     private fun deserializeJsCodeSnippet(): WasmCompiledModuleFragment.JsCodeSnippet {
@@ -635,12 +630,11 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         jsExceptionTagIndex = deserializeNullableIntSymbol(),
         fieldInitializers = deserializeFieldInitializers(),
         mainFunctionWrappers = deserializeMainFunctionWrappers(),
-        testFun = deserializeTestFun(),
+        testFunctionDeclarators = deserializeTestFunctionDeclarators(),
         equivalentFunctions = deserializeClosureCallExports(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
-        tryGetAssociatedObjectFun = deserializeTryGetAssociatedObject(),
-        jsToKotlinAnyAdapterFun = deserializeJsToKotlinAnyAdapter(),
+        builtinIdSignatures = deserializeBuiltinIdSignatures(),
     )
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
@@ -667,12 +661,20 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeNullableIntSymbol() = deserializeNullable { deserializeSymbol(::deserializeInt) }
     private fun deserializeFieldInitializers(): MutableList<FieldInitializer> = deserializeList(::deserializeFieldInitializer)
     private fun deserializeMainFunctionWrappers() = deserializeList(::deserializeIdSignature)
-    private fun deserializeTestFun() = deserializeList(::deserializeIdSignature)
+    private fun deserializeTestFunctionDeclarators() = deserializeList(::deserializeIdSignature)
     private fun deserializeClosureCallExports() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
     private fun deserializeJsModuleAndQualifierReferences() = deserializeSet(::deserializeJsModuleAndQualifierReference)
     private fun deserializeClassAssociatedObjectInstanceGetters() = deserializeList(::deserializeClassAssociatedObjects)
-    private fun deserializeTryGetAssociatedObject() = deserializeNullable(::deserializeIdSignature)
-    private fun deserializeJsToKotlinAnyAdapter() = deserializeNullable(::deserializeIdSignature)
+    private fun deserializeBuiltinIdSignatures() =
+        deserializeNullable {
+            BuiltinIdSignatures(
+                throwable = deserializeNullable(::deserializeIdSignature),
+                tryGetAssociatedObject = deserializeNullable(::deserializeIdSignature),
+                jsToKotlinAnyAdapter = deserializeNullable(::deserializeIdSignature),
+                unitGetInstance = deserializeNullable(::deserializeIdSignature),
+                runRootSuites = deserializeNullable(::deserializeIdSignature),
+            )
+        }
 
     private fun deserializeFieldInitializer(): FieldInitializer = withFlags {
         val field = deserializeIdSignature()

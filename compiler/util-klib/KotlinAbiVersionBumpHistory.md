@@ -1,5 +1,15 @@
 # `KotlinAbiVersion` (KLIB ABI version) change history
 
+##### Bump 1.201.0 -> 2.2.0
+- Commit: `c6121a331c863b23d0ced9a9701b8a5481633d8c 2025-01-24 Bump KLIB ABI version: 1.201.0 -> 2.2.0`
+- The bump is caused by:
+  - New IR nodes supported in IR serialization
+    - [KT-73588](https://youtrack.jetbrains.com/issue/KT-73588): `IrReturnableBlock`, `IrInlinedFunctionBlock`
+    - [KT-72931](https://youtrack.jetbrains.com/issue/KT-72931): `IrRichFunctionReference`, `IrRichPropertyReference`
+  - [KT-73826](https://youtrack.jetbrains.com/issue/KT-73826):
+    `IrFileEntry` are deduplicated and stored in a separate file inside the KLIB + new way of serializing `IrFileEntry` in `IrFile`
+  - [KT-74396](https://youtrack.jetbrains.com/issue/KT-74396)
+
 ##### Bump 1.8.0 -> 1.201.0
 - Commit: `6616728ad2debf29024df4a4716949b5b0c76e58 2024-07-03 Bump KLIB ABI version: 1.8.0 -> 1.201.0`
 - The bump is caused by migration to new version of LLVM, which is not forward-compatible with old LLVM [KT-49279](https://youtrack.jetbrains.com/issue/KT-49279)

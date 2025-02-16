@@ -1,86 +1,86 @@
 FILE fqName:<root> fileName:/kt47082.kt
   CLASS INTERFACE name:Base modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base<E of <root>.Base>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base<E of <root>.Base>
     TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Derived modality:ABSTRACT visibility:public superTypes:[<root>.Base<E of <root>.Derived>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived<E of <root>.Derived>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived<E of <root>.Derived>
     TYPE_PARAMETER name:E index:0 variance:in superTypes:[kotlin.Any?] reified:false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Base
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Receiver modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Receiver<E of <root>.Receiver>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Receiver<E of <root>.Receiver>
     TYPE_PARAMETER name:E index:0 variance:out superTypes:[kotlin.Any?] reified:false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:foo visibility:public modality:FINAL <R> (r:<root>.Receiver<R of <root>.foo>) returnType:R of <root>.foo
+  FUN name:foo visibility:public modality:FINAL returnType:R of <root>.foo
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:r index:0 type:<root>.Receiver<R of <root>.foo>
+    VALUE_PARAMETER kind:Regular name:r index:0 type:<root>.Receiver<R of <root>.foo>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <R> (r: <root>.Receiver<R of <root>.foo>): R of <root>.foo declared in <root>'
         CALL 'public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>): E of <root>.produce declared in <root>' type=R of <root>.foo origin=null
-          <E>: R of <root>.foo
-          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Derived<R of <root>.foo>, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.Derived<R of <root>.foo>) returnType:kotlin.Unit
-              $receiver: VALUE_PARAMETER name:$this$produce type:<root>.Derived<R of <root>.foo>
+          TYPE_ARG E: R of <root>.foo
+          ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.Derived<R of <root>.foo>, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:ExtensionReceiver name:$this$produce index:0 type:<root>.Derived<R of <root>.foo>
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun toChannel <E, C> (destination: C of <root>.toChannel): C of <root>.toChannel declared in <root>' type=<root>.Derived<R of <root>.foo> origin=null
-                    <E>: R of <root>.foo
-                    <C>: <root>.Derived<R of <root>.foo>
-                    $receiver: GET_VAR 'r: <root>.Receiver<R of <root>.foo> declared in <root>.foo' type=<root>.Receiver<R of <root>.foo> origin=null
-                    destination: GET_VAR '$this$produce: <root>.Derived<R of <root>.foo> declared in <root>.foo.<anonymous>' type=<root>.Derived<R of <root>.foo> origin=null
-  FUN name:produce visibility:public modality:FINAL <E> (block:@[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>) returnType:E of <root>.produce
+                  CALL 'public final fun toChannel <E, C> (<this>: <root>.Receiver<E of <root>.toChannel>, destination: C of <root>.toChannel): C of <root>.toChannel declared in <root>' type=<root>.Derived<R of <root>.foo> origin=null
+                    TYPE_ARG E: R of <root>.foo
+                    TYPE_ARG C: <root>.Derived<R of <root>.foo>
+                    ARG <this>: GET_VAR 'r: <root>.Receiver<R of <root>.foo> declared in <root>.foo' type=<root>.Receiver<R of <root>.foo> origin=null
+                    ARG destination: GET_VAR '$this$produce: <root>.Derived<R of <root>.foo> declared in <root>.foo.<anonymous>' type=<root>.Derived<R of <root>.foo> origin=null
+  FUN name:produce visibility:public modality:FINAL returnType:E of <root>.produce
     TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>
+    VALUE_PARAMETER kind:Regular name:block index:0 type:@[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>): E of <root>.produce declared in <root>'
         TYPE_OP type=E of <root>.produce origin=CAST typeOperand=E of <root>.produce
           CONST Null type=kotlin.Nothing? value=null
-  FUN name:toChannel visibility:public modality:FINAL <E, C> ($receiver:<root>.Receiver<E of <root>.toChannel>, destination:C of <root>.toChannel) returnType:C of <root>.toChannel
+  FUN name:toChannel visibility:public modality:FINAL returnType:C of <root>.toChannel
     TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:C index:1 variance: superTypes:[<root>.Base<E of <root>.toChannel>] reified:false
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.Receiver<E of <root>.toChannel>
-    VALUE_PARAMETER name:destination index:0 type:C of <root>.toChannel
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.Receiver<E of <root>.toChannel>
+    VALUE_PARAMETER kind:Regular name:destination index:1 type:C of <root>.toChannel
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun toChannel <E, C> (destination: C of <root>.toChannel): C of <root>.toChannel declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun toChannel <E, C> (<this>: <root>.Receiver<E of <root>.toChannel>, destination: C of <root>.toChannel): C of <root>.toChannel declared in <root>'
         TYPE_OP type=C of <root>.toChannel origin=CAST typeOperand=C of <root>.toChannel
           CONST Null type=kotlin.Nothing? value=null

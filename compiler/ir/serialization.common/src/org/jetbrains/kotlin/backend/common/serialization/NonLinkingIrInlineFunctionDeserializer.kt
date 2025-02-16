@@ -83,12 +83,12 @@ class NonLinkingIrInlineFunctionDeserializer(
         val deserializedBody: IrBody? = deserializedFunction.body
         check(deserializedBody != null) { "Deserialized inline function has no body: $functionSignature" }
 
-        val deserializedDefaultValues: List<IrExpressionBody?> = deserializedFunction.valueParameters.map(IrValueParameter::defaultValue)
+        val deserializedDefaultValues: List<IrExpressionBody?> = deserializedFunction.parameters.map(IrValueParameter::defaultValue)
 
-        // Collect value parameter symbols that are referenced inside the deserialized function body, but point to value parameters
-        // of the deserialized function or one of it's containing classes (i.e., instance receiver value parameter).
+        // Collect type/value parameter symbols that are referenced inside the deserialized function body, but point to
+        // type/value parameters of the deserialized function or one of it's containing classes (i.e., instance receiver value parameter).
         // Such symbols should be substituted by the corresponding symbols of the original function and it's containing classes.
-        val valueParameterSymbolsToRemap = collectExternalValueParameterSymbolsToRemap(
+        val typeAndValueParameterSymbolsToRemap = collectExternalTypeAndValueParameterSymbolsToRemap(
             originalBodilessFunction = function,
             deserializedFunction = deserializedFunction
         )
@@ -97,7 +97,14 @@ class NonLinkingIrInlineFunctionDeserializer(
         // that will be used as a substitution during copying. This step needs to be done in advance before copying.
         val symbolRemapper = object : DeepCopySymbolRemapper() {
             init {
-                valueParameters.putAll(valueParameterSymbolsToRemap)
+                if (deserializedFunction is IrSimpleFunction && function is IrSimpleFunction) {
+                    // The function symbol can be referenced in return statements:
+                    functions[deserializedFunction.symbol] = function.symbol
+                }
+
+                // Type and value parameters can be referenced in expressions:
+                typeParameters += typeAndValueParameterSymbolsToRemap.typeParameterSymbols
+                valueParameters += typeAndValueParameterSymbolsToRemap.valueParameterSymbols
             }
         }
         deserializedBody.acceptVoid(symbolRemapper)
@@ -124,7 +131,7 @@ class NonLinkingIrInlineFunctionDeserializer(
         defaultValuesWithRemappedSymbols.forEach { it?.patchDeclarationParents(function) }
 
         function.body = bodyWithRemappedSymbols
-        function.valueParameters.forEachIndexed { index, parameter -> parameter.defaultValue = defaultValuesWithRemappedSymbols[index] }
+        function.parameters.forEachIndexed { index, parameter -> parameter.defaultValue = defaultValuesWithRemappedSymbols[index] }
     }
 
     private fun referencePublicSymbol(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =
@@ -200,28 +207,47 @@ class NonLinkingIrInlineFunctionDeserializer(
     }
 }
 
-private fun collectExternalValueParameterSymbolsToRemap(
+private data class TypeAndValueParameterSymbolsToRemap(
+    val typeParameterSymbols: Map</* deserialized */ IrTypeParameterSymbol, /* original */ IrTypeParameterSymbol>,
+    val valueParameterSymbols: Map</* deserialized */ IrValueParameterSymbol, /* original */ IrValueParameterSymbol>,
+)
+
+private fun collectExternalTypeAndValueParameterSymbolsToRemap(
     originalBodilessFunction: IrFunction,
     deserializedFunction: IrFunction,
-): Map<IrValueParameterSymbol, IrValueParameterSymbol> {
-    class ValueParameterSymbolsToRemapForSingleDeclaration(val declaration: IrDeclaration) {
-        val symbols = when (declaration) {
-            is IrFunction -> buildList {
-                // TODO: replace by `declaration.parameters.map { it.symbol }`
-                addIfNotNull(declaration.dispatchReceiverParameter?.symbol)
-                addIfNotNull(declaration.extensionReceiverParameter?.symbol)
-                declaration.valueParameters.mapTo(this) { it.symbol }
+): TypeAndValueParameterSymbolsToRemap {
+
+    class TypeAndValueParameterSymbolsToRemapForSingleDeclaration(val declaration: IrDeclaration) {
+        val typeParameterSymbols: List<IrTypeParameterSymbol>
+        val valueParameterSymbols: List<IrValueParameterSymbol>
+
+        init {
+            when (declaration) {
+                is IrFunction -> {
+                    typeParameterSymbols = declaration.typeParameters.map(IrTypeParameter::symbol)
+                    valueParameterSymbols = declaration.parameters.map(IrValueParameter::symbol)
+                }
+                is IrClass -> {
+                    typeParameterSymbols = declaration.typeParameters.map(IrTypeParameter::symbol)
+                    valueParameterSymbols = listOfNotNull(declaration.thisReceiver?.symbol)
+                }
+                else -> {
+                    typeParameterSymbols = emptyList()
+                    valueParameterSymbols = emptyList()
+                }
             }
-            is IrClass -> listOfNotNull(declaration.thisReceiver?.symbol)
-            else -> emptyList()
         }
+
+        fun matches(other: TypeAndValueParameterSymbolsToRemapForSingleDeclaration): Boolean =
+            typeParameterSymbols.size == other.typeParameterSymbols.size &&
+                    valueParameterSymbols.size == other.valueParameterSymbols.size
     }
 
-    fun collectSymbolsFrom(function: IrFunction): List<ValueParameterSymbolsToRemapForSingleDeclaration> {
-        val result = ArrayList<ValueParameterSymbolsToRemapForSingleDeclaration>()
+    fun collectSymbolsFrom(function: IrFunction): List<TypeAndValueParameterSymbolsToRemapForSingleDeclaration> {
+        val result = ArrayList<TypeAndValueParameterSymbolsToRemapForSingleDeclaration>()
 
         for (declaration in function.parentDeclarationsWithSelf) {
-            result += ValueParameterSymbolsToRemapForSingleDeclaration(declaration)
+            result += TypeAndValueParameterSymbolsToRemapForSingleDeclaration(declaration)
 
             if (declaration is IrClass && !declaration.isInner)
                 break
@@ -230,44 +256,50 @@ private fun collectExternalValueParameterSymbolsToRemap(
         return result
     }
 
-    val originalBodilessFunctionSymbols = collectSymbolsFrom(originalBodilessFunction)
-    val deserializedFunctionSymbols = collectSymbolsFrom(deserializedFunction)
+    val originalBodilessFunctionSymbolsByLevels = collectSymbolsFrom(originalBodilessFunction)
+    val deserializedFunctionSymbolsByLevels = collectSymbolsFrom(deserializedFunction)
 
     fun generateErrorMessage(): String = buildString {
-        append("The set of outer value parameters that can be referenced inside the body of the inline function ")
+        append("The set of type/value parameters that can be referenced inside the body of the inline function ")
         append(deserializedFunction.symbol.signature)
         appendLine(" differs between the bodiless function and the deserialized function.")
 
         appendLine("Bodiless function:")
-        for (symbols in originalBodilessFunctionSymbols) {
-            appendLine("\tDeclaration: ${symbols.declaration.render()}")
-            appendLine("\t\tValue parameters: ${symbols.symbols.joinToString()}")
+        for (symbolsAtSameLevel in originalBodilessFunctionSymbolsByLevels) {
+            appendLine("\tDeclaration: ${symbolsAtSameLevel.declaration.render()}")
+            appendLine("\t\tType parameters: ${symbolsAtSameLevel.typeParameterSymbols.joinToString()}")
+            appendLine("\t\tValue parameters: ${symbolsAtSameLevel.valueParameterSymbols.joinToString()}")
         }
 
         appendLine("Deserialized function:")
-        for (symbols in deserializedFunctionSymbols) {
-            appendLine("\tDeclaration: ${symbols.declaration.render()}")
-            appendLine("\t\tValue parameters: ${symbols.symbols.joinToString()}")
+        for (symbolsAtSameLevel in deserializedFunctionSymbolsByLevels) {
+            appendLine("\tDeclaration: ${symbolsAtSameLevel.declaration.render()}")
+            appendLine("\t\tType parameters: ${symbolsAtSameLevel.typeParameterSymbols.joinToString()}")
+            appendLine("\t\tValue parameters: ${symbolsAtSameLevel.valueParameterSymbols.joinToString()}")
         }
     }
 
-    check(originalBodilessFunctionSymbols.size == deserializedFunctionSymbols.size, ::generateErrorMessage)
+    check(originalBodilessFunctionSymbolsByLevels.size == deserializedFunctionSymbolsByLevels.size, ::generateErrorMessage)
 
-    return buildMap {
-        for (levelIndex in originalBodilessFunctionSymbols.indices) {
-            val originalSymbols = originalBodilessFunctionSymbols[levelIndex].symbols
-            val deserializedSymbols = deserializedFunctionSymbols[levelIndex].symbols
+    val typeParameterSymbolsForRemapping: MutableMap<IrTypeParameterSymbol, IrTypeParameterSymbol> = hashMapOf()
+    val valueParameterSymbolsForRemapping: MutableMap<IrValueParameterSymbol, IrValueParameterSymbol> = hashMapOf()
 
-            check(originalSymbols.size == deserializedSymbols.size, ::generateErrorMessage)
+    for (levelIndex in originalBodilessFunctionSymbolsByLevels.indices) {
+        val originalSymbolsAtSameLevel = originalBodilessFunctionSymbolsByLevels[levelIndex]
+        val deserializedSymbolsAtSameLevel = deserializedFunctionSymbolsByLevels[levelIndex]
 
-            for (parameterIndex in originalSymbols.indices) {
-                val originalSymbol = originalSymbols[parameterIndex]
-                val deserializedSymbol = deserializedSymbols[parameterIndex]
+        check(originalSymbolsAtSameLevel.matches(deserializedSymbolsAtSameLevel), ::generateErrorMessage)
 
-                this[deserializedSymbol] = originalSymbol
-            }
+        (originalSymbolsAtSameLevel.typeParameterSymbols zip deserializedSymbolsAtSameLevel.typeParameterSymbols).forEach { (originalSymbol, deserializedSymbol) ->
+            typeParameterSymbolsForRemapping[deserializedSymbol] = originalSymbol
+        }
+
+        (originalSymbolsAtSameLevel.valueParameterSymbols zip deserializedSymbolsAtSameLevel.valueParameterSymbols).forEach { (originalSymbol, deserializedSymbol) ->
+            valueParameterSymbolsForRemapping[deserializedSymbol] = originalSymbol
         }
     }
+
+    return TypeAndValueParameterSymbolsToRemap(typeParameterSymbolsForRemapping, valueParameterSymbolsForRemapping)
 }
 
 private class DeserializedDeclarationLeakagePreventingSymbolRemapper(
@@ -319,6 +351,9 @@ private class DeserializedDeclarationLeakagePreventingSymbolRemapper(
 
         override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol) =
             wrapped.getReferencedReturnableBlock(symbol)
+
+        override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol =
+            wrapped.getReferencedReturnTarget(symbol)
 
         override fun getReferencedValueParameter(symbol: IrValueParameterSymbol) =
             wrapped.getReferencedValueParameter(symbol)

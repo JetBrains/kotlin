@@ -277,28 +277,33 @@ class ConeResolvedCallableReferenceAtom(
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
-            if (!isPostponedBecauseOfAmbiguity) return emptyList()
+            // For not resolved references we don't expose input types because for the first time,
+            // we should try resolving them immediately (effectively, they're not fully blown postponed atoms)
+            if (state == State.NOT_RESOLVED_YET) return emptyList()
             return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)?.inputTypes
                 ?: listOfNotNull(expectedType)
         }
     override val outputType: ConeKotlinType?
         get() {
-            if (!isPostponedBecauseOfAmbiguity) return null
+            // For not resolved references we don't expose the output type because for the first time,
+            // we should try resolving them immediately (effectively, they're not fully blown postponed atoms)
+            if (state == State.NOT_RESOLVED_YET) return null
             return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)?.outputType
         }
 
     override val expectedType: ConeKotlinType?
+        // TODO: Consider changing `!isPostponedBecauseOfAmbiguity` to `state == State.NOT_RESOLVED_YET` (KT-74021)
         get() = if (!isPostponedBecauseOfAmbiguity)
             initialExpectedType
         else
             revisedExpectedType ?: initialExpectedType
 
     override var revisedExpectedType: ConeKotlinType? = null
+        // TODO: Consider simplifying this (KT-74021)
         get() = if (isPostponedBecauseOfAmbiguity) field else expectedType
         private set
 
     override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
-        if (!needsResolution) return
         require(expectedType is ConeKotlinType)
         revisedExpectedType = expectedType
     }

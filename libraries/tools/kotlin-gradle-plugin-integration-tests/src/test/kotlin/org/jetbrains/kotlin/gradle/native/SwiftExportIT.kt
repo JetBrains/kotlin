@@ -24,6 +24,31 @@ import kotlin.test.assertContains
 @SwiftExportGradlePluginTests
 class SwiftExportIT : KGPBaseTest() {
 
+    @DisplayName("embedSwiftExportForXcode fail")
+    @GradleTest
+    fun shouldFailWithExecutingEmbedSwiftExportForXcode(
+        gradleVersion: GradleVersion
+    ) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
+            buildAndFail(
+                ":shared:embedSwiftExportForXcode",
+                "-P${SimpleSwiftExportProperties.DSL_EXPORT}"
+            ) {
+                assertOutputContains("Please run the embedSwiftExportForXcode task from Xcode")
+                assertOutputDoesNotContain("ConfigurationCacheProblemsException: Configuration cache problems found in this build")
+            }
+        }
+    }
+
     @DisplayName("embedSwiftExport executes normally when Swift Export is enabled")
     @GradleTest
     fun testSwiftExportExecutionWithSwiftExportEnabled(

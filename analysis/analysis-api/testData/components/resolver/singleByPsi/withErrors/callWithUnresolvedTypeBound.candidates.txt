@@ -7,10 +7,12 @@ KtCallExpression(86,92): 'foo(x)'
           receiverType = null
           returnType = kotlin.Int
           symbol = x: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,11 +25,13 @@ KtCallExpression(86,92): 'foo(x)'
               receiverType = null
               returnType = kotlin.Int
               symbol = x: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /foo
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Int' was expected.>
     isInBestCandidates = true

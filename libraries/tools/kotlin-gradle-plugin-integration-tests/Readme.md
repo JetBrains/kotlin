@@ -53,9 +53,10 @@ to understand what test is about.
 `@JvmGradlePluginTests` - check yourself what suites best for the test. You could add tag onto test suite once, but then all tests 
 in test suite should be for the related tag. Preferably add tag for each test.
 - Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying existing test projects.
-- <a name="autodebug"></a> Use `debugTargetProcessWhenDebuggingKGP-IT=true` in `local.properties`. When debugging tests in IDE, Gradle will 
-also stream daemon logs and runs target project build in-process. This is especially useful for [build script injections](#injections) since 
-you will be able to break transparently in the injection. 
+- <a name="autodebug"></a> When debugging tests in IDE, Gradle will also stream daemon logs and runs target project 
+build in-process. This is especially useful for [build script injections](#injections) since you will be able to break 
+transparently in the injection. You can opt out of this behavior using `kotlin.gradle.autoDebugIT=false` 
+in `local.properties`.
 
 Tests run using [Gradle TestKit](https://docs.gradle.org/current/userguide/test_kit.html) and may reuse already active Gradle TestKit daemon.
 Shared TestKit caches are located in [./.testKitDir](.testKitDir) directory. It is cleared on CI after test run is finished, but not locally.
@@ -183,25 +184,152 @@ pluginManagement {
 
 ## <a name="injections"></a> build.gradle.kts injections from main test code
 
-It is possible to inject code from IT test directly into the build files of the test project.
-To do that use `buildScriptInjection` DSL function as follows:
+It is possible to inject code from IT test directly into the build files of the test project. 
+
+See [BuildScriptInjectionIT.kt](src/test/kotlin/org/jetbrains/kotlin/gradle/BuildScriptInjectionIT.kt) for examples of how to write a test 
+with injections including:
+* Generating a multiplatform project with sources from scratch
+* Building a multi-project and composite build setups
+* Publishing a project in a Maven repository and consuming it in another project as a dependency
+* Catching execution and configuration time exceptions
+
+With [implicit debugging](#autodebug) you can break transparently in the test, the injection and in KGP.
+
+To inject a test use `buildScriptInjection` DSL function as follows:
 
 ```kotlin
-nativeProject("native-fat-framework/smoke", gradleVersion) {
-    buildScriptInjection {
-        // This code will be executed inside build.gradle.kts during project evaluation
-        val macos = kotlinMultiplatform.macosX64()
-        macos.binaries.framework("DEBUG")
-        val fat = project.tasks.getByName("fat") as FatFrameworkTask
-        fat.from(macos.binaries.getFramework("DEBUG"))
+@GradleTest
+fun test(version: GradleVersion) {
+    // Any project can be injected; "empty" can be used as a bare template
+    project("empty", version) {
+        // Bare template doesn't have KGP in classpath, so it needs to be explicitly added before plugin application 
+        addKgpToBuildScriptCompilationClasspath()
+        buildScriptInjection {
+            // This code will be executed inside build.gradle(.kts) during project evaluation
+            project.applyMultiplatform {
+                linuxArm64()
+                sourceSets.commonMain.get().compileSource("class Common")
+            }
+        }
+        build("assemble") {
+            assertTasksExecuted(":compileKotlinLinuxArm64")
+        }
     }
-    buildAndFail("assemble") {}
 }
 ```
 
-It is possible to inject the same code to both groovy and kts buildscript files. 
+Injections can capture `java.io.Serializable` variables from the test:
 
-Invocation of `buildGradleKtsInjection` adds to the build script classpath classes from test. And injects in build script this line:
-`org.jetbrains.kotlin.gradle.testbase.invokeBuildScriptInjection(project, "<FQN to class produced from lambda>")`
+```kotlin
+data class PassMe(val foo: String) : java.io.Serializable
 
-Use `debugTargetProcessWhenDebuggingKGP-IT=true` in `local.properties` for an [improved DevX](#autodebug). 
+project("empty", version) {
+    // Instantiate Serializable types as variables in test
+    val loveInjectionsTask = "loveInjections"
+    val passMe = PassMe("Injections 🥰")
+    buildScriptInjection {
+        project.tasks.register(loveInjectionsTask) {
+            it.doLast {
+                // Use them during configuration or at execution
+                println(passMe)
+            }
+        }
+    }
+    build(loveInjectionsTask) {
+        assertOutputContains(passMe.foo)
+    }
+}
+```
+
+Injections can also return `Serializable` value from the build script back to the test using `buildScriptReturn` injections:
+
+```kotlin
+project("empty", version) {
+    addKgpToBuildScriptCompilationClasspath()
+    buildScriptInjection {
+        project.applyMultiplatform {
+            linuxArm64()
+            linuxX64()
+            sourceSets.commonMain.get().compileSource("class Common")
+        }
+    }
+
+    // Use assertions on this path or capture it in another injection!
+    val commonMainMetadataKlibPath: File = buildScriptReturn {
+        kotlinMultiplatform.metadata().compilations.getByName("commonMain").output.classesDirs.singleFile
+    }.buildAndReturn()
+}
+```
+
+Use injections to capture execution and configuration time failures:
+
+```kotlin
+data class A(val name: String = "A") : Exception()
+val a1 = A("1")
+
+project("empty", version) {
+    buildScriptInjection {
+        project.tasks.register("throwA") {
+            it.doLast { throw a1 }
+        }
+    }
+    assertEquals(
+        CaughtBuildFailure.Expected(setOf(a1)),
+        catchBuildFailures<A>().buildAndReturn(
+            "throwA",
+        )
+    )
+}
+```
+
+Settings build scripts are also injectable:
+
+```kotlin
+project("empty", version) {
+    settingsBuildScriptInjection {
+        settings.dependencyResolutionManagement {
+            // ...
+        }
+    }
+}
+```
+
+Injections also have access to KGP's internal APIs (IDE currently colors this code red due to KTIJ-31881, but it will compile):
+
+```kotlin
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+
+project("empty", version) {
+    addKgpToBuildScriptCompilationClasspath()
+    buildScriptInjection {
+        project.applyMultiplatform {
+            linuxArm64()
+        }
+    }
+
+    buildScriptReturn {
+        // Any internal KGP APIs are accessible in the injections
+        kotlinMultiplatform.linuxArm64().compilations.getByName("main").internal as InternalKotlinCompilation
+    }
+}
+```
+
+Finally, it is possible to inject the `buildscript` block using injections. Using this type of injections you can add plugins to the build script classpath:
+
+```kotlin
+project("empty", version) {
+    buildScriptBuildscriptBlockInjection {
+        buildscript.repositories.add(repositoryWithKgp)
+        buildscript.configurations.getByName("classpath").dependencies.add(
+            buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        )
+    }
+
+    buildScriptInjection {
+        // Now KGP plugins will apply
+        project.applyMultiplatform {
+            linuxArm64()
+        }
+    }
+}
+```

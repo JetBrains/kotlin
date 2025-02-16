@@ -8,11 +8,6 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 
 internal data class CCalleeWrapper(val lines: List<String>)
 
-open class ManagedTypePassing {
-    open val ManagedType.passValue: String get() = error("ManagedType support requires a plugin")
-    open val ManagedType.returnValue: String get() = error("ManagedType support requires a plugin")
-}
-
 /**
  * Some functions don't have an address (e.g. macros-based or builtins).
  * To solve this problem we generate a wrapper function.
@@ -56,7 +51,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
             *bindSymbolToFunction(symbolName, wrapperName).toTypedArray()
     )
 
-    private val Type.stringRepresentation get() = this.getStringRepresentation(context.plugin)
+    private val Type.stringRepresentation get() = this.getStringRepresentation()
 
     private fun createCCalleeWrapper(function: FunctionDecl, symbolName: String): List<String> {
         assert(context.configuration.library.language != Language.CPP)
@@ -89,10 +84,6 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         val unwrappedReturnType = function.returnType.unwrapTypedefs()
         val returnTypePrefix =
                 if (unwrappedReturnType is PointerType && unwrappedReturnType.isLVReference) "&" else ""
-        val returnTypePostfix =
-                if (unwrappedReturnType is ManagedType)
-                    with(context.plugin.managedTypePassing) { unwrappedReturnType.returnValue }
-                else ""
 
         val parameters = function.parameters.mapIndexed { index, parameter ->
             val type = parameter.type.stringRepresentation
@@ -114,9 +105,6 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
                     "(${unwrappedType.def.spelling})"
                 unwrappedType is RecordType ->
                     "*(${unwrappedType.decl.spelling}*)"
-                unwrappedType is ManagedType -> {
-                    with(context.plugin.managedTypePassing) { unwrappedType.passValue }
-                }
                 else ->
                     "$cppRefTypePrefix($parameterTypeText)"
             }
@@ -129,25 +117,13 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
             val arguments = argumentTypes.mapIndexed { index, type ->
                 "${type}(${parameters[index].name})"
             }
-            when {
-                isCxxInstanceMethod -> {
-                    val parametersPart = arguments.drop(1).joinToString()
-                    "(${parameters[0].name})->${name}($parametersPart)"
-                }
-                isCxxConstructor -> {
-                    val parametersPart = arguments.drop(1).joinToString()
-                    "new(${parameters[0].name}) ${cxxReceiverClass!!.spelling}($parametersPart)"
-                }
-                isCxxDestructor ->
-                    "(${parameters[0].name})->~${cxxReceiverClass!!.spelling.substringAfterLast(':')}()"
-                else -> "${fullName}(${arguments.joinToString()})"
-            }
+            "${fullName}(${arguments.joinToString()})"
         }
 
         val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
             "$callExpression;"
         } else {
-            "return (${returnType})$returnTypePrefix($callExpression)$returnTypePostfix;"
+            "return (${returnType})$returnTypePrefix($callExpression);"
         }
         return createWrapper(symbolName, wrapperName, returnType, parameters, wrapperBody)
     }

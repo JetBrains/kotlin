@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/nestedTypeAliases.kt:4:5: error: the feature "nested type aliases" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xnested-type-aliases', but note that no stability guarantees are provided.
+    typealias TA = A
+    ^^^^^^^^^^^^^^^^
+COMPILATION_ERROR

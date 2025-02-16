@@ -1,0 +1,3 @@
+/implictlyExposed.fir.kt:(174,180): warning: 'public' generic exposes its 'internal' parameter bound type 'Inter'. This will be prohibited in the future.
+
+/implictlyExposed.fir.kt:(219,224): error: 'public' function exposes its 'internal' return type argument 'Inter'.

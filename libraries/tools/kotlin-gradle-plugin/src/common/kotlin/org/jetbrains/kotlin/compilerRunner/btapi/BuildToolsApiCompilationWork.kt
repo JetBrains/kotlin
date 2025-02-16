@@ -86,7 +86,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 val classpathSnapshotsConfig = jvmCompilationConfig.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
                     .setRootProjectDir(icEnv.rootProjectDir)
                     .setBuildDir(icEnv.buildDir)
-                    .usePreciseJavaTracking(icEnv.usePreciseJavaTracking)
+                    .usePreciseJavaTracking(icEnv.icFeatures.usePreciseJavaTracking)
                     .usePreciseCompilationResultsBackup(icEnv.icFeatures.preciseCompilationResultsBackup)
                     .keepIncrementalCompilationCachesInMemory(icEnv.icFeatures.keepIncrementalCompilationCachesInMemory)
                     .useOutputDirs(workArguments.outputFiles)

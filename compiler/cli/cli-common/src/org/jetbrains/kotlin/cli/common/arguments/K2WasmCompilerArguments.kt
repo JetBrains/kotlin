@@ -31,6 +31,13 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Argument(value = "-Xwasm-debug-friendly", description = "Avoid optimizations that can break debugging.")
+    var forceDebugFriendlyCompilation = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xwasm-generate-wat", description = "Generate a .wat file.")
     var wasmGenerateWat = false
         set(value) {
@@ -120,6 +127,13 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
 
     @Argument(value = "-Xwasm-ic-cache-readonly", description = "Do not commit IC cache updates.")
     var icCacheReadonly = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(value = "-Xwasm-generate-dwarf", description = "Generate DWARF debug information.")
+    var generateDwarf = false
         set(value) {
             checkFrozen()
             field = value

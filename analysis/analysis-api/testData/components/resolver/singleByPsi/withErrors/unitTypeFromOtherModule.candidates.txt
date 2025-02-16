@@ -4,6 +4,7 @@ KtNameReferenceExpression(168,171): 'foo'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
           original = KaExplicitReceiverValue:
             expression = b
@@ -16,6 +17,7 @@ KtNameReferenceExpression(168,171): 'foo'
           returnType = kotlin.Unit
           symbol = dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = dependency/A.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true

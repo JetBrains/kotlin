@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 object CodegenTestDirectives : SimpleDirectivesContainer() {
@@ -262,17 +263,18 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 }
 
-fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule): Boolean {
+fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule, testServices: TestServices): Boolean {
     val specifiedBackends = module.directives[this]
-    return module.targetBackend in specifiedBackends || TargetBackend.ANY in specifiedBackends
+    return testServices.defaultsProvider.targetBackend in specifiedBackends || TargetBackend.ANY in specifiedBackends
 }
 
 fun extractIgnoredDirectiveForTargetBackend(
+    testServices: TestServices,
     module: TestModule,
     targetBackend: TargetBackend,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ): ValueDirective<TargetBackend>? =
-    when (module.frontendKind) {
+    when (testServices.defaultsProvider.frontendKind) {
         FrontendKinds.ClassicFrontend -> CodegenTestDirectives.IGNORE_BACKEND_K1
         FrontendKinds.FIR -> CodegenTestDirectives.IGNORE_BACKEND_K2
         else -> null

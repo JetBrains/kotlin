@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledL
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import java.nio.file.Path
 
 abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
@@ -35,7 +36,7 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
             testModule,
             KaLibraryModuleImpl(
                 testModule.name,
-                testModule.targetPlatform,
+                testModule.targetPlatform(testServices),
                 StandaloneProjectFactory.createSearchScopeByLibraryRoots(
                     binaryRoots,
                     emptyList(),

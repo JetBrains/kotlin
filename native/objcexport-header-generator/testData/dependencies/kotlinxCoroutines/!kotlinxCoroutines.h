@@ -2133,30 +2133,9 @@ __attribute__((swift_name("AtomicfuSynchronizedObject.LockState")))
 __attribute__((objc_subclassing_restricted))
 @interface KotlinAtomicReference<T> : Base
 - (instancetype)initWithValue:(T _Nullable)value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer));
-- (T _Nullable)compareAndExchangeExpectedValue:(T _Nullable)expectedValue newValue:(T _Nullable)newValue __attribute__((swift_name("compareAndExchange(expectedValue:newValue:)")));
-- (BOOL)compareAndSetExpectedValue:(T _Nullable)expectedValue newValue:(T _Nullable)newValue __attribute__((swift_name("compareAndSet(expectedValue:newValue:)")));
-
-/**
- * @note annotations
- *   kotlin.SinceKotlin(version="2.1")
- *   kotlin.ExperimentalStdlibApi
-*/
-- (T _Nullable)exchangeNewValue:(T _Nullable)newValue __attribute__((swift_name("exchange(newValue:)")));
-- (T _Nullable)getAndSetNewValue:(T _Nullable)newValue __attribute__((swift_name("getAndSet(newValue:)"))) __attribute__((deprecated("Use exchange(newValue: T) instead.")));
-
-/**
- * @note annotations
- *   kotlin.SinceKotlin(version="2.1")
- *   kotlin.ExperimentalStdlibApi
-*/
-- (T _Nullable)load __attribute__((swift_name("load()")));
-
-/**
- * @note annotations
- *   kotlin.SinceKotlin(version="2.1")
- *   kotlin.ExperimentalStdlibApi
-*/
-- (void)storeNewValue:(T _Nullable)newValue __attribute__((swift_name("store(newValue:)")));
+- (T _Nullable)compareAndExchangeExpected:(T _Nullable)expected newValue:(T _Nullable)newValue __attribute__((swift_name("compareAndExchange(expected:newValue:)")));
+- (BOOL)compareAndSetExpected:(T _Nullable)expected newValue:(T _Nullable)newValue __attribute__((swift_name("compareAndSet(expected:newValue:)")));
+- (T _Nullable)getAndSetNewValue:(T _Nullable)newValue __attribute__((swift_name("getAndSet(newValue:)")));
 - (NSString *)description __attribute__((swift_name("description()")));
 @property T _Nullable value __attribute__((swift_name("value")));
 @end

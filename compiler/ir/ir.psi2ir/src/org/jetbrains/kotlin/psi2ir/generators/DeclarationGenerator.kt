@@ -47,22 +47,13 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 is KtScript ->
                     ScriptGenerator(this).generateScriptDeclaration(ktDeclaration)
                 else ->
-                    context.irFactory.createErrorDeclaration(
-                        ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
-                        getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
-                    )
+                    null
             }
         } catch (e: BackendException) {
             throw e
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
             when {
-                context.configuration.ignoreErrors -> {
-                    context.irFactory.createErrorDeclaration(
-                        ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
-                        getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
-                    )
-                }
                 e is ErrorExpressionException ->
                     CodegenUtil.reportBackendException(e.cause ?: e, "psi2ir", PsiDiagnosticUtils.atLocation(e.ktElement), e.message)
                 else -> {

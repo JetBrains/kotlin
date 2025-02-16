@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.model.ResultingArtifact
 import java.io.File
 
 // IR backend (JVM, JS, Native, Wasm)
-sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
+abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     override val kind: BackendKind<IrBackendInput>
         get() = BackendKinds.IrBackend
 
@@ -116,7 +116,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     class JvmIrBackendInput(
         val state: GenerationState,
         val codegenFactory: JvmIrCodegenFactory,
-        val backendInput: JvmIrCodegenFactory.JvmIrBackendInput,
+        val backendInput: JvmIrCodegenFactory.BackendInput,
         val sourceFiles: List<KtSourceFile>,
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,

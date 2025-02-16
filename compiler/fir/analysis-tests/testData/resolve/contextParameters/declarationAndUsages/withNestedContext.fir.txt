@@ -1,0 +1,107 @@
+FILE: withNestedContext.kt
+    public final class NestedContext : R|kotlin/Any| {
+        public constructor(): R|NestedContext| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class B : R|kotlin/Any| {
+            public constructor(): R|NestedContext.B| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|NestedContext.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final object C : R|kotlin/Any| {
+            private constructor(): R|NestedContext.C| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final inner class D : R|kotlin/Any| {
+            public NestedContext.constructor(): R|NestedContext.D| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    context(ctx: R|T|)
+    public final fun <T> implicit(): R|T| {
+        ^implicit R|<local>/ctx|
+    }
+    context(c: R|NestedContext.B|)
+    public final fun test1(): R|kotlin/Unit| {
+        R|<local>/c|.R|/NestedContext.B.bar|()
+        R|/implicit|<R|NestedContext.B|>().R|/NestedContext.B.bar|()
+        R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|NestedContext|>().R|/NestedContext.bar|()
+    }
+    context(c: R|NestedContext.Companion|)
+    public final fun test2(): R|kotlin/Unit| {
+        R|<local>/c|.R|/NestedContext.Companion.bar|()
+        R|/implicit|<R|NestedContext.Companion|>().R|/NestedContext.Companion.bar|()
+        R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|NestedContext|>().R|/NestedContext.bar|()
+    }
+    context(c: R|NestedContext.C|)
+    public final fun test3(): R|kotlin/Unit| {
+        R|<local>/c|.R|/NestedContext.C.bar|()
+        R|/implicit|<R|NestedContext.C|>().R|/NestedContext.C.bar|()
+        R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|NestedContext|>().R|/NestedContext.bar|()
+    }
+    context(c: R|NestedContext.D|)
+    public final fun test4(): R|kotlin/Unit| {
+        R|<local>/c|.R|/NestedContext.D.bar|()
+        R|/implicit|<R|NestedContext.D|>().R|/NestedContext.D.bar|()
+        R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|NestedContext|>().R|/NestedContext.bar|()
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        R|kotlin/with|<R|NestedContext.B|, R|kotlin/Unit|>(Q|NestedContext|.R|/NestedContext.B.B|(), <L> = with@fun R|NestedContext.B|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test1|()
+        }
+        )
+        R|kotlin/with|<R|NestedContext.Companion|, R|kotlin/Unit|>(Q|NestedContext.Companion|, <L> = with@fun R|NestedContext.Companion|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test2|()
+        }
+        )
+        R|kotlin/with|<R|NestedContext.Companion|, R|kotlin/Unit|>(Q|NestedContext|, <L> = with@fun R|NestedContext.Companion|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test2|()
+        }
+        )
+        R|kotlin/with|<R|NestedContext.C|, R|kotlin/Unit|>(Q|NestedContext.C|, <L> = with@fun R|NestedContext.C|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test3|()
+        }
+        )
+        R|kotlin/with|<R|NestedContext.D|, R|kotlin/Unit|>(R|/NestedContext.NestedContext|().R|/NestedContext.D.D|(), <L> = with@fun R|NestedContext.D|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test4|()
+        }
+        )
+        R|kotlin/with|<R|NestedContext|, R|kotlin/Unit|>(R|/NestedContext.NestedContext|(), <L> = with@fun R|NestedContext|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test1<Inapplicable(INAPPLICABLE): /test1>#|()
+            R|/test2<Inapplicable(INAPPLICABLE): /test2>#|()
+            R|/test3<Inapplicable(INAPPLICABLE): /test3>#|()
+            R|/test4<Inapplicable(INAPPLICABLE): /test4>#|()
+        }
+        )
+    }

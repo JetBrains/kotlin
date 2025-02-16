@@ -10,16 +10,12 @@ interface A {
 open class B : A
 
 // MODULE: main(library)
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // FILE: source.kt
 import base.*
 
 interface C : A {
-    override fun f() {}
-}
-
-abstract class D : B() {
     abstract override fun f()
 }
 
-abstract class E : D(), C
+abstract class D : B(), C

@@ -18,8 +18,9 @@ class IncrementalFirJvmCompilerTestRunner(
     buildHistoryFile: File,
     outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
-    kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     classpathChanges: ClasspathChanges,
+    kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+    icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     val testLookupTracker: TestLookupTracker
 ) : IncrementalFirJvmCompilerRunner(
     workingDir,
@@ -27,8 +28,9 @@ class IncrementalFirJvmCompilerTestRunner(
     buildHistoryFile,
     outputDirs,
     modulesApiHistory,
+    classpathChanges,
     kotlinSourceFilesExtensions,
-    classpathChanges
+    icFeatures,
 ) {
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments): IncrementalJvmCachesManager =
         object : IncrementalJvmCachesManager(

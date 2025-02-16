@@ -22,11 +22,15 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidIT
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -491,6 +495,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("passes arguments from kapt configuration")
     @GradleTest
+    @TestMetadata("kapt2/arguments")
     fun testArguments(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -572,6 +577,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Should incrementally rebuild on annotation processor arguments change")
     @GradleTest
+    @TestMetadata("kapt2/arguments")
     fun testChangeAPArgumentsICRebuild(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -1041,6 +1047,9 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
+            if (!isWithJavaSupported) {
+                subProject("dac").buildGradle.replaceText("withJava()", "")
+            }
 
             build(":dac:compileKotlinJvm") {
                 assertTasksExecuted(
@@ -1129,6 +1138,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Works with JPMS on JDK 9+")
     @GradleTest
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testJpmsModule(gradleVersion: GradleVersion) {
         project(
             "jpms-module".withPrefix,
@@ -1356,6 +1366,25 @@ open class Kapt3IT : Kapt3BaseIT() {
                     "public static final class Companion",
                     "public static final class \$serializer implements kotlinx.serialization.internal.GeneratedSerializer<foo.Data>"
                 )
+            }
+        }
+    }
+
+    @DisplayName("K2 kapt cannot be enabled in K1")
+    @GradleTest
+    open fun testK2KaptCannotBeEnabledInK1(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildScriptInjection {
+                project.tasks.withType(KotlinCompile::class.java).configureEach {
+                    it.compilerOptions {
+                        languageVersion.set(KotlinVersion.KOTLIN_1_9)
+                    }
+                }
+            }
+            build("-Pkapt.use.k2=true", "build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("K2 kapt cannot be enabled in K1. Update language version to 2.0 or newer.")
             }
         }
     }

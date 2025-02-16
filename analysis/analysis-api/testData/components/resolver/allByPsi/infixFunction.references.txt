@@ -12,7 +12,7 @@ KtNameReferenceExpression(31,34): 'Int'
 
 KtNameReferenceExpression(37,41): 'this'
   KtSimpleNameReference:
-    (in <local>: myMinus) extension receiver with type kotlin.Int
+    extension receiver with type kotlin.Int
 
 KtOperationReferenceExpression(42,43): '-'
   KtSimpleNameReference:

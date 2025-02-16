@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeEnlarger
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirExceptionHandler
-import org.jetbrains.kotlin.fir.FirModulePrivateVisibilityChecker
+import org.jetbrains.kotlin.fir.FirPrivateVisibleFromDifferentModuleExtension
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
@@ -43,7 +43,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))
     register(FirElementFinder::class, FirElementFinder())
-    register(FirModulePrivateVisibilityChecker::class, LLFirModulePrivateVisibilityChecker(this))
+    register(FirPrivateVisibleFromDifferentModuleExtension::class, LLFirPrivateVisibleFromDifferentModuleExtension(this))
     register(
         FirLookupDefaultStarImportsInSourcesSettingHolder::class,
         createLookupDefaultStarImportsInSourcesSettingHolder(languageVersionSettings)
@@ -94,7 +94,7 @@ internal fun LLFirSession.registerCompilerPluginServices(
     project: Project,
     module: KaSourceModule
 ) {
-    val projectWithDependenciesScope = KotlinResolutionScopeProvider.getInstance(project).getResolutionScope(module)
+    val projectWithDependenciesScope = KotlinResolutionScopeEnlarger.getEnlargedResolutionScope(module, project)
     val annotationsResolver = project.createAnnotationResolver(projectWithDependenciesScope)
 
     // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process

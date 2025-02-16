@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.constant
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext>() {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
         require(!declaration.isExpect)
@@ -30,11 +29,6 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
             declaration,
             context.newDeclaration()
         ).generate()
-    }
-
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: JsGenerationContext): JsStatement {
-        // To avoid compiler crash with UnimplementedException just in case I added this visitor to catch uncovered cases
-        return JsSingleLineComment("\$error code: declaration")
     }
 
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {

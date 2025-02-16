@@ -18,6 +18,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.util.PatternFilterable
+import org.gradle.internal.configuration.problems.taskPathFrom
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -102,6 +103,9 @@ abstract class KotlinCompile @Inject constructor(
     @get:Optional
     @get:Input
     abstract override val moduleName: Property<String>
+
+    @get:Input
+    internal val useFirRunner: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
@@ -244,6 +248,24 @@ abstract class KotlinCompile @Inject constructor(
             }
 
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+
+            if (useFirRunner.get()) {
+                if (compilerOptions.languageVersion.orElse(KotlinVersion.DEFAULT).get() < KotlinVersion.KOTLIN_2_0) {
+                    reportDiagnostic(
+                        KotlinToolingDiagnostics.IcFirMisconfigurationLV(
+                            taskPath = path,
+                            languageVersion = compilerOptions.languageVersion.get()
+                        )
+                    )
+                }
+
+                if (!classpathSnapshotProperties.useClasspathSnapshot.get()) {
+                    reportDiagnostic(KotlinToolingDiagnostics.IcFirMisconfigurationRequireClasspathSnapshots(path))
+                }
+
+                args.useFirIC = true
+                args.useFirLT = true
+            }
         }
 
         pluginClasspath { args ->
@@ -319,16 +341,17 @@ abstract class KotlinCompile @Inject constructor(
 
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
+
             IncrementalCompilationEnvironment(
                 changedFiles = getChangedFiles(inputChanges, incrementalProps),
                 classpathChanges = getClasspathChanges(inputChanges),
                 workingDir = taskBuildCacheableOutputDirectory.get().asFile,
                 rootProjectDir = projectRootDir,
                 buildDir = projectLayout.buildDirectory.getFile(),
-                usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings,
                 icFeatures = makeIncrementalCompilationFeatures(),
+                useJvmFirRunner = useFirRunner.get(),
             )
         } else null
 
@@ -357,6 +380,11 @@ abstract class KotlinCompile @Inject constructor(
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
         args: K2JVMCompilerArguments,
     ) {
+        // Skip check in KMP projects and no Java sources
+        if (multiplatformStructure.fragments.get().isNotEmpty() &&
+            javaSources.isEmpty
+        ) return
+
         val severity = when (jvmTargetValidationMode.get()) {
             JvmTargetValidationMode.ERROR -> ToolingDiagnostic.Severity.FATAL
             JvmTargetValidationMode.WARNING -> ToolingDiagnostic.Severity.WARNING
@@ -466,9 +494,11 @@ abstract class KotlinCompile @Inject constructor(
         super.setSource(*sources)
     }
 
-    // override incremental compilation features, while withAbiSnapshot is JVM-only
+    // jvm-specific incremental compilation features
     override fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return super.makeIncrementalCompilationFeatures().copy(
+            usePreciseJavaTracking = usePreciseJavaTracking,
+            /* Disabled on JVM in favor of classpath snapshot machinery */
             withAbiSnapshot = false,
         )
     }

@@ -7,10 +7,12 @@ KtNameReferenceExpression(248,251): 'add'
           receiverType = null
           returnType = kotlin.String
           symbol = t: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -49,8 +51,10 @@ KtNameReferenceExpression(248,251): 'add'
               receiverType = null
               returnType = kotlin.String
               symbol = t: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = test/Target.add
       typeArgumentsMapping = {}
     isInBestCandidates = true

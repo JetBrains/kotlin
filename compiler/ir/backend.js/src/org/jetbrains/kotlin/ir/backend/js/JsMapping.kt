@@ -12,8 +12,6 @@ class JsMapping : Mapping() {
     val outerThisFieldSymbols: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
     val innerClassConstructors: DeclarationMapping<IrConstructor, IrConstructor> by AttributeBasedMappingDelegate()
     val originalInnerClassPrimaryConstructorByClass: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
-    val objectToGetInstanceFunction: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
-    val objectToInstanceField: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
     val classToSyntheticPrimaryConstructor: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
 
     val enumEntryToGetInstanceFun: DeclarationMapping<IrEnumEntry, IrSimpleFunction> by AttributeBasedMappingDelegate()
@@ -30,8 +28,6 @@ class JsMapping : Mapping() {
     val objectsWithPureInitialization: DeclarationMapping<IrClass, Boolean> by AttributeBasedMappingDelegate()
 
     // Wasm mappings
-    val wasmJsInteropFunctionToWrapper: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
-
     val wasmNestedExternalToNewTopLevelFunction: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
     val wasmExternalObjectToGetInstanceFunction: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()

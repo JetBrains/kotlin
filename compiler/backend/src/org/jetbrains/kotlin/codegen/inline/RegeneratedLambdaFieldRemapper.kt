@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.THIS
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
@@ -59,7 +60,7 @@ class RegeneratedLambdaFieldRemapper(
         assert(fieldName.startsWith(CAPTURED_FIELD_FOLD_PREFIX)) { "Captured field template should start with $CAPTURED_FIELD_FOLD_PREFIX prefix" }
         if (fieldName == CAPTURED_FIELD_FOLD_PREFIX + THIS) {
             assert(originalLambdaInternalName == node.owner) { "Can't unfold '$CAPTURED_FIELD_FOLD_PREFIX$THIS' parameter" }
-            return StackValue.LOCAL_0
+            return StackValue.Local(0, AsmTypes.OBJECT_TYPE, null)
         }
 
         val fin = FieldInsnNode(node.opcode, node.owner, fieldName.substringAfter(CAPTURED_FIELD_FOLD_PREFIX), node.desc)
@@ -73,15 +74,14 @@ class RegeneratedLambdaFieldRemapper(
             )
         )?.also { fromParent = true } ?: throw AssertionError("Couldn't find captured this $originalLambdaInternalName for $fieldName")
 
-
-        val result = StackValue.field(
+        val result = StackValue.Field(
             if (field.isSkipped && field.functionalArgument is LambdaInfo)
                 Type.getObjectType(parent!!.parent!!.newLambdaInternalName)
             else
                 field.type,
             Type.getObjectType(newLambdaInternalName), /*TODO owner type*/
-            field.newFieldName, false,
-            prefix ?: StackValue.LOCAL_0
+            field.newFieldName,
+            prefix ?: StackValue.Local(0, AsmTypes.OBJECT_TYPE, null)
         )
 
         return if (fromParent) parent!!.getFieldForInline(node, result) else result

@@ -10,12 +10,18 @@ import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findStringPlusSymbol
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.toKtPsiSourceElement
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * Collects [KT -> FIR][KtToFirMapping] mapping and [diagnostics][FileStructureElementDiagnostics] for [declaration].
@@ -27,7 +33,7 @@ import org.jetbrains.kotlin.psi.*
  */
 internal sealed class FileStructureElement(
     val declaration: FirDeclaration,
-    val diagnostics: FileStructureElementDiagnostics,
+    val diagnostics: FileStructureElementDiagnostics
 ) {
     val mappings: KtToFirMapping = KtToFirMapping(declaration)
 
@@ -42,6 +48,10 @@ internal sealed class FileStructureElement(
 }
 
 internal class KtToFirMapping(firElement: FirDeclaration) {
+    private val stringPlusSymbol: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        findStringPlusSymbol(firElement.moduleData.session)
+    }
+
     private val mapping = FirElementsRecorder.recordElementsFrom(
         firElement = firElement,
         recorder = FileStructureElement.recorderFor(firElement),
@@ -49,6 +59,37 @@ internal class KtToFirMapping(firElement: FirDeclaration) {
 
     fun getElement(ktElement: KtElement): FirElement? {
         return mapping[ktElement]
+    }
+
+    private fun checkStringLiteralFolderExpression(element: KtElement): FirElement? {
+        var current: PsiElement? = element
+        var fir: FirElement? = null
+        while (fir == null &&
+            (current is KtBinaryExpression || current is KtParenthesizedExpression || current is KtOperationReferenceExpression)
+        ) {
+            fir = getElement(current)
+            if (fir is FirStringConcatenationCall && fir.isFoldedStrings) {
+                // In case of folded string literals, we have to return plus operator reference for operation reference.
+                return if (element is KtOperationReferenceExpression)
+                    stringPlusSymbol?.let {
+                        buildResolvedNamedReference {
+                            source = element.toKtPsiSourceElement()
+                            name = OperatorNameConventions.PLUS
+                            resolvedSymbol = it
+                        }
+                    }
+                else
+                    fir
+            }
+
+            if (fir != null) {
+                return null
+            }
+
+            current = current.parent
+        }
+
+        return null
     }
 
     fun getFir(element: KtElement): FirElement? {
@@ -103,9 +144,10 @@ internal class KtToFirMapping(firElement: FirDeclaration) {
                 ) getElement(parent)
                 else getElement(current)
             }
-            is KtBinaryExpression ->
-                // Here there is no separate FIR node for partial operator calls (like for a[i] = 1, there is no separate node for a[i])
-                if (element is KtArrayAccessExpression || element is KtOperationReferenceExpression) getElement(current) else null
+            is KtParenthesizedExpression -> checkStringLiteralFolderExpression(element)
+            is KtBinaryExpression -> checkStringLiteralFolderExpression(element)
+            // Here there is no separate FIR node for partial operator calls (like for a[i] = 1, there is no separate node for a[i])
+                ?: if (element is KtArrayAccessExpression || element is KtOperationReferenceExpression) getElement(current) else null
             is KtBlockExpression ->
                 // For script initializers, we need to return FIR element for script itself
                 if (element is KtScriptInitializer) getElement(current.parent as KtScript) else null

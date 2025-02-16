@@ -1,1 +1,1 @@
-/emptyLambdaTypeMismatchDiagnostic.fir.kt:(101,103): error: Argument type mismatch: actual type is 'kotlin.Function1<kotlin.Int, kotlin.Unit>', but 'kotlin.Function1<kotlin.Int, kotlin.String>' was expected.
+/emptyLambdaTypeMismatchDiagnostic.fir.kt:(101,103): error: Argument type mismatch: actual type is 'Function1<Int, Unit>', but 'Function1<Int, String>' was expected.

@@ -5,15 +5,19 @@
 
 #include "polyhash/PolyHash.h"
 #include "polyhash/naive.h"
-#include "polyhash/x86.h"
-#include "polyhash/arm.h"
 
-int polyHash(int length, uint16_t const* str) {
 #if defined(__x86_64__) or defined(__i386__)
-    return polyHash_x86(length, str);
-#elif defined(__arm__) or defined(__aarch64__)
-    return polyHash_arm(length, str);
+#include "polyhash/PolyHash-x86.h"
+#elif (defined(__arm__) or defined(__aarch64__)) and defined(__ARM_NEON)
+#include "polyhash/PolyHash-arm.h"
 #else
+
+template <typename UnitType>
+int polyHash(int length, UnitType const* str) {
     return polyHash_naive(length, str);
-#endif
 }
+
+#endif
+
+template int polyHash<uint16_t>(int, uint16_t const*);
+template int polyHash<uint8_t>(int, uint8_t const*);

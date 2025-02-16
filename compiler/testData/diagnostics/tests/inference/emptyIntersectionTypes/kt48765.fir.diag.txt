@@ -1,5 +1,5 @@
-/kt48765.kt:(311,314): warning: Type argument for type parameter 'T' cannot be inferred because it has incompatible upper bounds: kotlin.String, kotlin.Number (multiple incompatible classes). This will become an error in a future release.
+/kt48765.kt:(311,314): warning: Type argument for type parameter 'T' cannot be inferred because it has incompatible upper bounds: String, Number (multiple incompatible classes). This will become an error in a future release.
 
-/kt48765.kt:(374,380): warning: Type 'kotlin.String' is final, so the value of the type parameter is predetermined.
+/kt48765.kt:(374,380): warning: Type 'String' is final, so the value of the type parameter is predetermined.
 
-/kt48765.kt:(408,412): warning: Unchecked cast of 'kotlin.String' to 'T (of fun <T : String> foo)'.
+/kt48765.kt:(408,412): warning: Unchecked cast of 'String' to 'T (of fun <T : String> foo)'.

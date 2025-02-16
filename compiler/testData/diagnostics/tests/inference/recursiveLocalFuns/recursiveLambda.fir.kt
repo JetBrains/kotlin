@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
-    fun bar() = <!RECURSION_IN_IMPLICIT_TYPES!>{
+    fun bar() = {
         <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>bar()<!>
-    }<!>
+    }
 }

@@ -2,6 +2,7 @@ KtDotQualifiedExpression(42,45): 'A.y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = A
           isSafeNavigation = false
@@ -12,6 +13,7 @@ KtDotQualifiedExpression(42,45): 'A.y'
           receiverType = null
           returnType = kotlin.Int
           symbol = val y: kotlin.Int
+          contextParameters = []
           callableId = /A.y
       simpleAccess = Read
       typeArgumentsMapping = {}

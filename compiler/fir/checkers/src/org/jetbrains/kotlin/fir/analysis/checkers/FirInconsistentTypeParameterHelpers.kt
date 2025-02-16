@@ -90,8 +90,7 @@ private fun buildDeepSubstitutionMultimap(
 
         for (superTypeRef in classSymbol.resolvedSuperTypeRefs) {
             val fullyExpandedType = superTypeRef.coneType.fullyExpandedType(session)
-            if (!visitedSupertypes.add(fullyExpandedType))
-                return
+            if (!visitedSupertypes.add(fullyExpandedType)) continue
 
             val superClassSymbol = fullyExpandedType.toRegularClassSymbol(session)
             if (!fullyExpandedType.isEnum && superClassSymbol != null) {

@@ -6,18 +6,11 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import java.io.File
 
 data class TestModule(
     val name: String,
-    val targetPlatform: TargetPlatform,
-    val targetBackend: TargetBackend?,
-    val frontendKind: FrontendKind<*>,
-    val backendKind: BackendKind<*>,
-    val binaryKind: BinaryKind<*>,
     val files: List<TestFile>,
     val allDependencies: List<DependencyDescription>,
     val directives: RegisteredDirectives,
@@ -38,7 +31,6 @@ data class TestModule(
     override fun toString(): String {
         return buildString {
             appendLine("Module: $name")
-            appendLine("targetPlatform = $targetPlatform")
             appendLine("Dependencies:")
             allDependencies.forEach { appendLine("  $it") }
             appendLine("Directives:\n  $directives")
@@ -62,11 +54,27 @@ class TestFile(
     val name: String = relativePath.split("/").last()
 
     override fun toString(): String = relativePath
+
+    fun copy(): TestFile = TestFile(
+        relativePath,
+        originalContent,
+        originalFile,
+        startLineNumberInOriginalFile,
+        isAdditional,
+        directives
+    )
 }
 
 val TestFile.nameWithoutExtension: String
     get() = name.substringBeforeLast(".")
 
+/**
+ * This enum represents the relation between the module and its dependency (assume that B depends on A)
+ * - [RegularDependency] means that B depend on A as a regular library dependency (A is passed to classpath of B);
+ * - [FriendDependency] is the same as [RegularDependency], but in addition B can access internal declarations of A (like test-main relation);
+ * - [DependsOnDependency] represents the dependency between modules inside the same HMPP hierarchy.
+ *   In the real compilation A and B will be compiled together, and declarations from B might actualize expect declarations from A.
+ */
 enum class DependencyRelation {
     RegularDependency,
     FriendDependency,
@@ -80,7 +88,7 @@ enum class DependencyKind {
 }
 
 data class DependencyDescription(
-    val moduleName: String,
+    val dependencyModule: TestModule,
     val kind: DependencyKind,
     val relation: DependencyRelation
 )

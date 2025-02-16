@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -232,7 +232,8 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             expression.reflectionTarget, expression.origin
         ).apply {
             buildReplacement(function, expression, replacement)
-        }.copyAttributes(expression)
+            copyAttributes(expression)
+        }
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {

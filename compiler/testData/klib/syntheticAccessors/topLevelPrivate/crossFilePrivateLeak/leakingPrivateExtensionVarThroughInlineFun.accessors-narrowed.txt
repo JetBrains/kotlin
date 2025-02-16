@@ -10,6 +10,6 @@ internal inline fun A.customSetVar(value: Int)
 internal inline fun A.customGetVar(): Int
     /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = <this>)
 /* ACCESSOR declaration */ internal fun access$<get-privateVar>$tBKt($receiver: A): Int
-    /* TARGET use-site */ $receiver.<get-privateVar>()
+    /* TARGET use-site */ <get-privateVar>(/* <this> = $receiver */)
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tBKt($receiver: A, value: Int)
-    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)
+    /* TARGET use-site */ <set-privateVar>(/* <this> = $receiver, */ value = value)

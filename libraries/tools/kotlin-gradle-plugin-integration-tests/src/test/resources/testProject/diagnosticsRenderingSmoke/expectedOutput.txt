@@ -1,17 +1,20 @@
 > Configure project :
 
 > Configure project :subprojectA
-e: [PreHMPPFlagsError | ERROR] The following properties are obsolete and no longer supported:
-kotlin.mpp.enableCompatibilityMetadataVariant, kotlin.mpp.hierarchicalStructureSupport
+e: [PreHMPPFlagsError | ERROR] Deprecated Kotlin Multiplatform Properties
+The following properties are obsolete and no longer supported:
+kotlin.mpp.hierarchicalStructureSupport
 Please remove the deprecated properties from the project.
 Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties
 #diagnostic-end
 
-e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] Invalid `dependsOn` Configuration in Common Source Set
+commonMain can't declare dependsOn on other source sets
 Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
-w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectA'':
+w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] Default Kotlin Hierarchy Template Not Applied Correctly
+The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectA'':
 Explicit .dependsOn() edges were configured for the following source sets:
 [commonMain]
 
@@ -20,15 +23,27 @@ Consider removing dependsOn-calls or disabling the default template by adding
 to your gradle.properties
 Please remove the dependsOn-calls or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
+#diagnostic-end
+
+w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] Usage of Internal Kotlin Gradle Plugin Properties Detected
+ATTENTION! This build uses the following Kotlin Gradle Plugin properties:
+
+kotlin.internal.diagnostics.ignoreWarningMode
+
+Internal properties are not recommended for production use.
+Stability and future compatibility of the build is not guaranteed.
+Please consider using the public API instead of internal properties.
 #diagnostic-end
 
 
 > Configure project :subprojectB
-e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] Invalid `dependsOn` Configuration in Common Source Set
+commonMain can't declare dependsOn on other source sets
 Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
-w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectB'':
+w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] Default Kotlin Hierarchy Template Not Applied Correctly
+The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectB'':
 Explicit .dependsOn() edges were configured for the following source sets:
 [commonMain]
 
@@ -39,7 +54,8 @@ Please remove the dependsOn-calls or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 #diagnostic-end
 
-w: [UnusedSourceSetsWarning | WARNING] The Kotlin source set unusedCreatedInAfterEvaluate was configured but not added to any Kotlin compilation.
+w: [UnusedSourceSetsWarning | WARNING] Unused Kotlin Source Sets
+The Kotlin source set unusedCreatedInAfterEvaluate was configured but not added to any Kotlin compilation.
 
 You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
 See https://kotl.in/connecting-source-sets

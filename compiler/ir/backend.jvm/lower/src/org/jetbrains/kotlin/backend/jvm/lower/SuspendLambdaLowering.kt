@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.continuationClassVarsCountByType
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
-import kotlin.collections.set
 
 private fun IrFunction.capturesCrossinline(): Boolean {
     val parents = parents.toSet()
@@ -163,7 +163,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
 
             // marking the parameters referenced in the function
             function.acceptChildrenVoid(
-                object : IrElementVisitorVoid {
+                object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
                     override fun visitGetValue(expression: IrGetValue) {
@@ -223,7 +223,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             it.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.valueParameters.size == 1 &&
                     it.valueParameters[0].type.isKotlinResult()
         }
-        return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
+        return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply override@{
             val localVals: List<IrVariable?> = parameterInfos.map { param ->
                 if (param.isUsed) {
                     buildVariable(
@@ -234,12 +234,17 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                         name = param.name,
                         type = param.type
                     ).apply {
-                        val receiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchReceiverParameter!!.symbol)
-                        val initializerBlock = IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
-                        initializerBlock.statements += IrGetFieldImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, param.field!!.symbol, type, receiver
-                        )
-                        initializer = initializerBlock
+                        context.createIrBuilder(this@override.symbol).apply {
+                            val receiver = irGet(dispatchReceiverParameter!!)
+                            initializer = irBlock(resultType = type) {
+                                if (type.isInlineClassType()) {
+                                    val tmp = irTemporary(irGetField(receiver, param.field!!))
+                                    +irIfNull(type, irGet(tmp), irNull(), irGet(tmp))
+                                } else {
+                                    +irGetField(receiver, param.field!!)
+                                }
+                            }
+                        }
                     }
                 } else null
             }

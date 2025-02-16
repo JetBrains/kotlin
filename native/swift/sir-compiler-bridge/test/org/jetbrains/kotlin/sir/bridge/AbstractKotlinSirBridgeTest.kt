@@ -6,77 +6,103 @@
 package org.jetbrains.kotlin.sir.bridge
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysisImpl
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
+import org.jetbrains.kotlin.sir.providers.source.KotlinPropertyAccessorOrigin
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.addChild
-import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
+import java.nio.file.Files
 import java.util.*
 
 abstract class AbstractKotlinSirBridgeTest {
+    /**
+     * TODO: Tests should be simpler. See KT-75083.
+     */
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = File(KtTestUtil.getHomeDirectory()).resolve(testPath)
-        val expectedKotlinSrc = testPathFull.resolve("expected.kt")
-        val expectedCHeader = testPathFull.resolve("expected.h")
+        val tempDirectory = Files.createTempDirectory("bridgesTest_${testPathFull.name}").toFile()
+        try {
+            val codeAnalysis = InlineSourceCodeAnalysisImpl(tempDirectory)
+            val expectedKotlinSrc = testPathFull.resolve("expected.kt")
+            val expectedCHeader = testPathFull.resolve("expected.h")
+            val ktFile = codeAnalysis.createKtFile(
+                """
+            fun dummyFunction() {}
 
-        val requests = parseRequestsFromTestDir(testPathFull)
+            var dummyProperty: Int = 0
+        """.trimIndent()
+            )
+            analyze(ktFile) {
+                val testHelper = TemporaryTestHelper(ktFile, this)
+                val requests = parseRequestsFromTestDir(testPathFull, testHelper)
 
-        val generator = createBridgeGenerator(object : SirTypeNamer {
-            override fun swiftFqName(type: SirType): String {
-                return when (type) {
-                    is SirNominalType -> {
-                        require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
-                        type.typeDeclaration.name
+                val generator = createBridgeGenerator(object : SirTypeNamer {
+                    override fun swiftFqName(type: SirType): String {
+                        return when (type) {
+                            is SirNominalType -> {
+                                require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
+                                type.typeDeclaration.name
+                            }
+                            is SirFunctionalType -> {
+                                // todo: KT-72993
+                                (listOf("function") + type.parameterTypes.map { swiftFqName(it) }).joinToString("_")
+                            }
+                            else -> error("Unsupported type: $type")
+                        }
                     }
-                    is SirFunctionalType -> {
-                        // todo: KT-72993
-                        (listOf("function") + type.parameterTypes.map { swiftFqName(it) }).joinToString("_")
+
+                    override fun kotlinFqName(type: SirType): String {
+                        return when (type) {
+                            is SirNominalType -> {
+                                require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
+                                type.typeDeclaration.name
+                            }
+                            is SirFunctionalType -> {
+                                // todo: KT-72993
+                                (listOf("function") + type.parameterTypes.map { kotlinFqName(it) }).joinToString("_")
+                            }
+                            else -> error("Unsupported type: $type")
+                        }
                     }
-                    else -> error("Unsupported type: $type")
+                })
+                val kotlinBridgePrinter = createKotlinBridgePrinter()
+                val cBridgePrinter = createCBridgePrinter()
+
+                requests.forEach { request ->
+                    generator.generateBridges(request).forEach {
+                        kotlinBridgePrinter.add(it)
+                        cBridgePrinter.add(it)
+                    }
                 }
-            }
 
-            override fun kotlinFqName(type: SirType): String {
-                return when (type) {
-                    is SirNominalType -> {
-                        require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
-                        type.typeDeclaration.name
-                    }
-                    is SirFunctionalType -> {
-                        // todo: KT-72993
-                        (listOf("function") + type.parameterTypes.map { kotlinFqName(it) }).joinToString("_")
-                    }
-                    else -> error("Unsupported type: $type")
-                }
-            }
-        })
-        val kotlinBridgePrinter = createKotlinBridgePrinter()
-        val cBridgePrinter = createCBridgePrinter()
+                val actualKotlinSrc = kotlinBridgePrinter.print().joinToString(separator = lineSeparator)
+                val actualHeader = cBridgePrinter.print().joinToString(separator = lineSeparator)
 
-        requests.forEach { request ->
-            generator.generateBridges(request).forEach {
-                kotlinBridgePrinter.add(it)
-                cBridgePrinter.add(it)
+                JUnit5Assertions.assertEqualsToFile(expectedCHeader, actualHeader)
+                JUnit5Assertions.assertEqualsToFile(expectedKotlinSrc, actualKotlinSrc)
             }
+        } finally {
+            tempDirectory.deleteRecursively()
         }
-
-        val actualKotlinSrc = kotlinBridgePrinter.print().joinToString(separator = lineSeparator)
-        val actualHeader = cBridgePrinter.print().joinToString(separator = lineSeparator)
-
-        JUnit5Assertions.assertEqualsToFile(expectedCHeader, actualHeader)
-        JUnit5Assertions.assertEqualsToFile(expectedKotlinSrc, actualKotlinSrc)
     }
 }
 
 private val lineSeparator: String = System.getProperty("line.separator")
 
-private fun parseRequestsFromTestDir(testDir: File): List<FunctionBridgeRequest> =
+private fun parseRequestsFromTestDir(testDir: File, testHelper: TemporaryTestHelper): List<FunctionBridgeRequest> =
     testDir.listFiles()
         ?.filter { it.extension == "properties" && it.name.startsWith("request") }
-        ?.map { readRequestFromFile(it) }
+        ?.map { readRequestFromFile(it, testHelper) }
         ?.sortedWith(StableBridgeRequestComparator)
         ?: emptyList()
 
@@ -140,7 +166,39 @@ private fun parseType(typeName: String): SirType {
     }
 }
 
-private fun readRequestFromFile(file: File): FunctionBridgeRequest {
+// A temporary solution to provide Kotlin origins to Swift declarations.
+// A proper solution would be to SIR session instead.
+private class TemporaryTestHelper(
+    private val ktFile: KtFile,
+    private val kaSession: KaSession,
+) {
+
+    private inline fun findProperty(filter: (KaPropertySymbol) -> Boolean = { true }) = with(kaSession) {
+        ktFile.symbol.fileScope.declarations.filterIsInstance<KaPropertySymbol>().first(filter)
+    }
+
+    fun propertyGetterOrigin(): Pair<KotlinSource, KotlinPropertyAccessorOrigin> = with(kaSession) {
+        val property = findProperty { it.getter != null }
+        KotlinSource(property) to KotlinPropertyAccessorOrigin(
+            property.getter!!,
+            property
+        )
+    }
+
+    fun propertySetterOrigin(): Pair<KotlinSource, KotlinPropertyAccessorOrigin> = with(kaSession) {
+        val property = findProperty { it.setter != null }
+        KotlinSource(property) to KotlinPropertyAccessorOrigin(
+            property.setter!!,
+            property
+        )
+    }
+
+    fun functionOrigin(): KotlinSource = with(kaSession) {
+        KotlinSource(ktFile.symbol.fileScope.declarations.filterIsInstance<KaNamedFunctionSymbol>().first())
+    }
+}
+
+private fun readRequestFromFile(file: File, testHelper: TemporaryTestHelper): FunctionBridgeRequest {
     val properties = Properties()
     file.bufferedReader().use(properties::load)
     val fqName = properties.getProperty("fqName").split('.')
@@ -166,6 +224,7 @@ private fun readRequestFromFile(file: File): FunctionBridgeRequest {
                 this.name = fqName.last()
                 this.returnType = returnType
                 this.parameters += parameters
+                this.origin = testHelper.functionOrigin()
             }
 
             buildModule {
@@ -177,13 +236,17 @@ private fun readRequestFromFile(file: File): FunctionBridgeRequest {
             function
         }
         BridgeRequestKind.PROPERTY_GETTER -> {
-            val getter = buildGetter {}
+            val (propertyOrigin, getterOrigin) = testHelper.propertyGetterOrigin()
+            val getter = buildGetter {
+                this.origin = getterOrigin
+            }
 
             val variable = buildVariable {
                 this.name = fqName.last()
                 this.type = returnType
                 check(parameters.isEmpty())
                 this.getter = getter
+                this.origin = propertyOrigin
             }
 
             getter.parent = variable
@@ -197,7 +260,10 @@ private fun readRequestFromFile(file: File): FunctionBridgeRequest {
             getter
         }
         BridgeRequestKind.PROPERTY_SETTER -> {
-            val setter = buildSetter {}
+            val (propertyOrigin, setterOrigin) = testHelper.propertySetterOrigin()
+            val setter = buildSetter {
+                origin = setterOrigin
+            }
 
             val variable = buildVariable {
                 this.name = fqName.last()
@@ -205,6 +271,7 @@ private fun readRequestFromFile(file: File): FunctionBridgeRequest {
                 check(parameters.isEmpty())
                 this.getter = buildGetter {}
                 this.setter = setter
+                this.origin = propertyOrigin
             }
 
             setter.parent = variable

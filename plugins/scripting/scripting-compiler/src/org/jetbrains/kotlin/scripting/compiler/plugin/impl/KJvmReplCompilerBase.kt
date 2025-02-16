@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -47,7 +46,7 @@ import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.experimental.util.add
 
 // NOTE: this implementation, as it is used in the REPL infrastructure, may be created for every snippet and provided with the state
-// so it should not keep any compilation state outside of the stste field
+// so it should not keep any compilation state outside the state field
 open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
     protected val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     val state: JvmReplCompilerState<*> = JvmReplCompilerState({ createCompilationState(it, hostConfiguration) })
@@ -150,10 +149,8 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     compilationState.environment.configuration,
                     compilationState.mangler, compilationState.symbolTable, generatorExtensions
                 )
-                val irBackendInput =codegenFactory.convertToIr(
-                    CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
-                        generationState, sourceFiles, compilationState.analyzerEngine.trace.bindingContext
-                    )
+                val irBackendInput = codegenFactory.convertToIr(
+                    generationState, sourceFiles, compilationState.analyzerEngine.trace.bindingContext
                 )
 
                 if (codegenDiagnosticsCollector.hasErrors) {

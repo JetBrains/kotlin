@@ -7,10 +7,12 @@ KtNameReferenceExpression(134,141): 'MyAlias'
           receiverType = null
           returnType = test.Other
           symbol = t: test.Other
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,8 +25,10 @@ KtNameReferenceExpression(134,141): 'MyAlias'
               receiverType = null
               returnType = test.Other
               symbol = t: test.Other
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

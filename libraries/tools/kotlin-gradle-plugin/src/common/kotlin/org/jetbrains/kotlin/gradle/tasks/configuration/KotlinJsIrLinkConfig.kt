@@ -70,7 +70,8 @@ internal open class KotlinJsIrLinkConfig(
 
                         KotlinJsBinaryMode.DEVELOPMENT -> {
                             configureOptions(
-                                compilation
+                                compilation,
+                                WASM_FORCE_DEBUG_FRIENDLY
                             )
                         }
                         else -> throw InvalidUserDataException(

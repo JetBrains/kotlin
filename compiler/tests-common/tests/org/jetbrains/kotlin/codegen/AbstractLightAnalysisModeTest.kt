@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -101,26 +99,6 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     private fun compileWithFullAnalysis(files: List<TestFile>): String {
         compile(files)
         return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter())
-    }
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configureIrAnalysisFlag(configuration)
-    }
-
-    // TODO: rewrite the test on the new infrastructure, so that this won't be needed.
-    private fun configureIrAnalysisFlag(configuration: CompilerConfiguration) {
-        val irFlag: Map<AnalysisFlag<*>, Boolean> = mapOf(JvmAnalysisFlags.useIR to backend.isIR)
-        val lvs = configuration.languageVersionSettings
-        if (lvs is CompilerTestLanguageVersionSettings) {
-            configuration.languageVersionSettings = LanguageVersionSettingsImpl(
-                lvs.languageVersion, lvs.apiVersion, lvs.analysisFlags + irFlag, lvs.extraLanguageFeatures,
-            )
-        } else {
-            configuration.languageVersionSettings = LanguageVersionSettingsImpl(
-                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, irFlag,
-            )
-        }
     }
 
     private class ListAnalysisFilter : BytecodeListingTextCollectingVisitor.Filter {

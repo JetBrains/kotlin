@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59550
-// LATEST_LV_DIFFERENCE
 // FILE: Base.kt
 abstract class Base(private val foo: String) {
     fun getFoo(): String = foo

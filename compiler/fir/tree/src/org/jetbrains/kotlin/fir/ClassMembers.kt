@@ -59,6 +59,9 @@ val FirRegularClassSymbol.containingClassForLocalAttr: ConeClassLikeLookupTag?
 private object ContainingScriptKey : FirDeclarationDataKey()
 var FirClassLikeDeclaration.containingScriptSymbolAttr: FirScriptSymbol? by FirDeclarationDataRegistry.data(ContainingScriptKey)
 
+private object ContainingReplKey : FirDeclarationDataKey()
+var FirClassLikeDeclaration.containingReplSymbolAttr: FirReplSnippetSymbol? by FirDeclarationDataRegistry.data(ContainingReplKey)
+
 private object HasNoEnumEntriesKey : FirDeclarationDataKey()
 var FirClass.hasNoEnumEntriesAttr: Boolean? by FirDeclarationDataRegistry.data(HasNoEnumEntriesKey)
 

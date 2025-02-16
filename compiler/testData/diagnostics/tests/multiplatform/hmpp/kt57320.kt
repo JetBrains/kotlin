@@ -3,15 +3,13 @@
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 
 // FILE: StringValue.kt
-expect class <!NO_ACTUAL_FOR_EXPECT{JS}!>StringValue<!>
+expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>StringValue<!>
 
-expect fun StringValue.<!NO_ACTUAL_FOR_EXPECT{JS}!>plus<!>(other: String): StringValue
+expect fun StringValue.<!NO_ACTUAL_FOR_EXPECT{JVM}!>plus<!>(other: String): StringValue
 
 // MODULE: commonJS()()(common)
-// TARGET_PLATFORM: JS
 
 // FILE: StringValueJs.kt
 actual class StringValue(val value: String)
@@ -19,7 +17,6 @@ actual class StringValue(val value: String)
 actual fun StringValue.plus(other: String) = StringValue(this.value + other)
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 
 // FILE: StringDemoInterface.kt
 expect interface StringDemoInterface
@@ -28,10 +25,9 @@ interface KotlinXStringDemoInterface {
     val value: String
 }
 
-expect fun StringDemoInterface.plusK(): <!NO_ACTUAL_FOR_EXPECT{JS}!>String<!>
+expect fun StringDemoInterface.plusK(): <!NO_ACTUAL_FOR_EXPECT{JVM}!>String<!>
 
 // MODULE: js()()(common, intermediate)
-// TARGET_PLATFORM: JS
 
 // FILE: StringDemoInterfaceJs.kt
 actual typealias StringDemoInterface = KotlinXStringDemoInterface

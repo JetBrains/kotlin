@@ -45,7 +45,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     c: Fir2IrComponents,
     thisType: IrType,
     thisOrigin: IrDeclarationOrigin,
-    kind: IrParameterKind? = null,
+    kind: IrParameterKind,
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
     name: Name = SpecialNames.THIS,
@@ -106,8 +106,8 @@ fun Fir2IrComponents.createSafeCallConstruction(
                 hasExtensionReceiver = false,
                 origin = IrStatementOrigin.EQEQ
             ).apply {
-                putValueArgument(0, IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol))
-                putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType))
+                arguments[0] = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+                arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
             }
             branches += IrBranchImpl(
                 condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)

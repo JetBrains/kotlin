@@ -1,0 +1,34 @@
+FILE: annotationOnTypeWithContext.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class AnnotationWithTypeTarget : R|kotlin/Annotation| {
+        public constructor(): R|AnnotationWithTypeTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class AnnotationWithConstructor : R|kotlin/Annotation| {
+        public constructor(k: R|kotlin/String|): R|AnnotationWithConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val k: R|kotlin/String| = R|<local>/k|
+            public get(): R|kotlin/String|
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun annotationOnContextType(a: R|@ContextFunctionTypeParams (@R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun annotationWithConstructorOnContextType(a: R|@ContextFunctionTypeParams (@R|AnnotationWithConstructor|(k = String())  A) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun annotationOnTypeWithContext(a: R|@R|AnnotationWithTypeTarget|()  @ContextFunctionTypeParams (A) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun annotationOnFunWithMoreThenOneContextType(a: R|@ContextFunctionTypeParams (@R|AnnotationWithTypeTarget|()  A, @R|AnnotationWithTypeTarget|()  kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun annotationOnValueParameterWithContextType(a: R|@ContextFunctionTypeParams (A, @R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun annotationOnExtensionParameterWithContextType(a: R|@ContextFunctionTypeParams A.(@R|AnnotationWithTypeTarget|()  A) -> kotlin/Unit|): R|kotlin/Unit| {
+    }

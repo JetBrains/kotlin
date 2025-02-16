@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isTopLevelInPackage
 import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -84,31 +85,27 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         private val IrCall.isStringPlusCall: Boolean
             get() {
                 val function = symbol.owner
-                val receiverParameter = function.dispatchReceiverParameter ?: function.extensionReceiverParameter
-
-                return receiverParameter != null
-                        && receiverParameter.type.isStringClassType()
+                return (function.hasShape(dispatchReceiver = true, regularParameters = 1)
+                        || function.hasShape(extensionReceiver = true, regularParameters = 1))
+                        && function.parameters[0].type.isStringClassType()
                         && function.returnType.isStringClassType()
-                        && function.valueParameters.size == 1
                         && function.name == OperatorNameConventions.PLUS
                         && function.fqNameWhenAvailable?.parent() in PARENT_NAMES
             }
 
         /** @return true if the function is Any.toString or an override of Any.toString */
         val IrSimpleFunction.isToString: Boolean
-            get() {
-                if (name != OperatorNameConventions.TO_STRING || valueParameters.isNotEmpty() || !returnType.isString())
-                    return false
-
-                return (dispatchReceiverParameter != null && extensionReceiverParameter == null
-                        && (dispatchReceiverParameter?.type?.isAny() == true || this.overriddenSymbols.isNotEmpty()))
-            }
+            get() = name == OperatorNameConventions.TO_STRING
+                    && hasShape(dispatchReceiver = true)
+                    && returnType.isString()
+                    && (parameters[0].type.isAny() || overriddenSymbols.isNotEmpty())
 
         /** @return true if the function is Any?.toString */
         private val IrSimpleFunction.isNullableToString: Boolean
             get() = isTopLevelInPackage(OperatorNameConventions.TO_STRING.asString(), StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
-                    && valueParameters.isEmpty() && returnType.isString()
-                    && dispatchReceiverParameter == null && extensionReceiverParameter?.type?.isNullableAny() == true
+                    && returnType.isString()
+                    && hasShape(extensionReceiver = true)
+                    && parameters[0].type.isNullableAny()
 
         /** @return true if the given expression is a call to [toString] */
         private val IrCall.isToStringCall: Boolean
@@ -131,7 +128,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         /** Recursively collects string concatenation arguments from the given expression. */
         private fun collectStringConcatenationArguments(expression: IrExpression): List<IrExpression> {
             val arguments = mutableListOf<IrExpression>()
-            expression.acceptChildrenVoid(object : IrElementVisitorVoid {
+            expression.acceptChildrenVoid(object : IrVisitorVoid() {
 
                 override fun visitElement(element: IrElement) {
                     // Theoretically this is unreachable code since all descendants of IrExpressions are IrExpressions.

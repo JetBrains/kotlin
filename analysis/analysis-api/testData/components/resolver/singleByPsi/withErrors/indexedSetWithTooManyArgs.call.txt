@@ -8,22 +8,26 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
             receiverType = null
             returnType = kotlin.Int
             symbol = a: kotlin.Int
+            contextParameters = []
             callableId = null),
           "foo" -> (KaVariableSignature:
             name = b
             receiverType = null
             returnType = kotlin.String
             symbol = b: kotlin.String
+            contextParameters = []
             callableId = null),
           false -> (KaVariableSignature:
             name = value
             receiverType = null
             returnType = kotlin.Boolean
             symbol = value: kotlin.Boolean
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = c
             isSafeNavigation = false
@@ -39,20 +43,24 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = a: kotlin.Int
+                contextParameters = []
                 callableId = null,
               KaVariableSignature:
                 name = b
                 receiverType = null
                 returnType = kotlin.String
                 symbol = b: kotlin.String
+                contextParameters = []
                 callableId = null,
               KaVariableSignature:
                 name = value
                 receiverType = null
                 returnType = kotlin.Boolean
                 symbol = value: kotlin.Boolean
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /C.set
         typeArgumentsMapping = {}
     ]

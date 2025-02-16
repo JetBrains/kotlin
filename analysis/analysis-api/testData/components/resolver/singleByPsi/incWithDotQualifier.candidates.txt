@@ -4,6 +4,7 @@ KtCallExpression(93,99): 'peek()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = foo()
           isSafeNavigation = false
@@ -14,6 +15,7 @@ KtCallExpression(93,99): 'peek()'
           returnType = F
           symbol = /F.peek(<dispatch receiver>: F): F
           valueParameters = []
+          contextParameters = []
           callableId = /F.peek
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
 import org.jetbrains.kotlin.ir.util.isUnsigned
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 
 internal class CommonProxy private constructor(override val state: Common, override val callInterceptor: CallInterceptor) : Proxy {
     private fun defaultEquals(other: Any?): Boolean = if (other is Proxy) this.state === other.state else false
@@ -37,7 +38,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
         val equalsFun = state.getEqualsFunction()
         if (equalsFun.isFakeOverriddenFromAny() || equalsFun.wasAlreadyCalled()) return defaultEquals(other)
 
-        equalsFun.getDispatchReceiver()!!.let { valueArguments.add(state) }
+        valueArguments.add(state)
         valueArguments.add(if (other is Proxy) other.state else other as State)
 
         return callInterceptor.interceptProxy(equalsFun, valueArguments) as Boolean
@@ -48,7 +49,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
         val hashCodeFun = state.getHashCodeFunction()
         if (hashCodeFun.isFakeOverriddenFromAny() || hashCodeFun.wasAlreadyCalled()) return defaultHashCode()
 
-        hashCodeFun.getDispatchReceiver()!!.let { valueArguments.add(state) }
+        valueArguments.add(state)
         return callInterceptor.interceptProxy(hashCodeFun, valueArguments) as Int
     }
 
@@ -62,7 +63,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
         val toStringFun = state.getToStringFunction()
         if (toStringFun.isFakeOverriddenFromAny() || toStringFun.wasAlreadyCalled()) return defaultToString()
 
-        toStringFun.getDispatchReceiver()!!.let { valueArguments.add(state) }
+        valueArguments.add(state)
         return callInterceptor.interceptProxy(toStringFun, valueArguments) as String
     }
 
@@ -86,7 +87,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
                         val irFunction = commonProxy.state.getIrFunction(method)
                             ?: return@newProxyInstance commonProxy.fallbackIfMethodNotFound(method)
                         val valueArguments = mutableListOf<State>(commonProxy.state)
-                        valueArguments += irFunction.valueParameters.mapIndexed { index, parameter ->
+                        valueArguments += irFunction.nonDispatchParameters.mapIndexed { index, parameter ->
                             callInterceptor.environment.convertToState(args[index], parameter.type)
                         }
                         callInterceptor.interceptProxy(irFunction, valueArguments, method.returnType)

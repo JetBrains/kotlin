@@ -1,0 +1,19 @@
+public abstract class cases/protected/PublicAbstractClass {
+	protected fun <init> ()V
+	protected abstract fun getProtectedVal ()I
+	protected abstract fun getProtectedVar ()Ljava/lang/Object;
+	protected abstract fun protectedFun ()V
+	protected abstract fun setProtectedVar (Ljava/lang/Object;)V
+}
+
+public final class cases/protected/PublicFinalClass {
+}
+
+public class cases/protected/PublicOpenClass {
+	protected fun <init> ()V
+	protected final fun getProtectedVal ()I
+	protected final fun getProtectedVar ()I
+	protected final fun protectedFun ()I
+	protected final fun setProtectedVar (I)V
+}
+

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
@@ -15,18 +15,22 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterCommon(
-    protected val parameterSymbolPointer: KaSymbolPointer<KaValueParameterSymbol>,
-    private val containingMethod: SymbolLightMethodBase,
+    protected val parameterSymbolPointer: KaSymbolPointer<KaParameterSymbol>,
+    containingMethod: SymbolLightMethodBase,
     override val kotlinOrigin: KtParameter?,
 ) : SymbolLightParameterBase(containingMethod) {
     internal constructor(
         ktAnalysisSession: KaSession,
-        parameterSymbol: KaValueParameterSymbol,
+        parameterSymbol: KaParameterSymbol,
         containingMethod: SymbolLightMethodBase,
     ) : this(
         parameterSymbolPointer = with(ktAnalysisSession) { parameterSymbol.createPointer() },
@@ -40,29 +44,38 @@ internal abstract class SymbolLightParameterCommon(
         }
     }
 
+    override fun getModifierList(): PsiModifierList = _modifierList
+
+    private val _modifierList: PsiModifierList by lazyPub {
+        SymbolLightClassModifierList(
+            containingDeclaration = this,
+            annotationsBox = GranularAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = parameterSymbolPointer,
+                ),
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
+            ),
+        )
+    }
+
     override fun getName(): String = _name
 
     override fun hasModifierProperty(name: String): Boolean = modifierList.hasModifierProperty(name)
 
-    abstract override fun getModifierList(): PsiModifierList
-
-    protected open fun isDeclaredAsVararg(): Boolean =
-        parameterSymbolPointer.withSymbol(ktModule) { it.isVararg }
-
-    override fun isVarArgs() =
-        // true only if this is "last" `vararg`
-        containingMethod.parameterList.parameters.lastOrNull() == this && isDeclaredAsVararg()
+    protected abstract fun isDeclaredAsVararg(): Boolean
+    abstract override fun isVarArgs(): Boolean
 
     protected open fun typeNullability(): KaTypeNullability {
         if (isDeclaredAsVararg()) return KaTypeNullability.NON_NULLABLE
 
-        val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
-                !containingMethod.containingClass.isAnnotationType &&
+        val nullabilityApplicable = !method.hasModifierProperty(PsiModifier.PRIVATE) &&
+                !method.containingClass.isAnnotationType &&
                 // `enum` synthetic members (e.g., values or valueOf) are not applicable for nullability.
                 // In other words, `enum` non-synthetic members are applicable for nullability.
                 // Technically, we should retrieve the symbol for the containing method and see if its origin is not synthetic.
                 // But, only `enum#valueOf` has a value parameter we want to filter out, so this is cheap yet feasible.
-                (!containingMethod.containingClass.isEnum || containingMethod.name != StandardNames.ENUM_VALUE_OF.identifier)
+                (!method.containingClass.isEnum || method.name != StandardNames.ENUM_VALUE_OF.identifier)
 
         return if (nullabilityApplicable) {
             parameterSymbolPointer.withSymbol(ktModule) { getTypeNullability(it.returnType) }

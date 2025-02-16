@@ -1,7 +1,8 @@
 class MyClass {
   private /* final field */ val contextReceiverField0: Unit
   private /* final field */ val contextReceiverField1: Int
-  constructor($context_receiver_0: Unit, $context_receiver_1: Int) /* primary */ {
+  context($context_receiver_0: Unit, $context_receiver_1: Int)
+  constructor() /* primary */ {
     super/*Any*/()
     <this>.#contextReceiverField0 = $context_receiver_0
     <this>.#contextReceiverField1 = $context_receiver_1
@@ -10,3 +11,4 @@ class MyClass {
   }
 
 }
+

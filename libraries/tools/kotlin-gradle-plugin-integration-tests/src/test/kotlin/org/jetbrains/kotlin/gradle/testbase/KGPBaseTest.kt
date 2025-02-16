@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.gradle.BrokenMacosTestInterceptor
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.test.WithMuteInDatabase
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -32,6 +34,7 @@ import java.nio.file.Paths
 @WithMuteInDatabase
 @TagsCountValidator
 @TestDataPath("\$CONTENT_ROOT/resources/testProject")
+@ExtendWith(BrokenMacosTestInterceptor::class)
 @OsCondition
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()

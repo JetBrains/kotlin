@@ -1,0 +1,50 @@
+FILE: intersectionWithTypeParameter.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface First<T> : R|kotlin/Any| {
+        context(a: R|T|)
+        public abstract fun foo(): R|kotlin/Unit|
+
+        context(a: R|T|)
+        public abstract val b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface Second<K> : R|kotlin/Any| {
+        context(a: R|K|)
+        public abstract fun foo(): R|kotlin/Unit|
+
+        context(a: R|K|)
+        public abstract val b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public abstract interface IntersectionInterface<T> : R|First<T>|, R|Second<T>| {
+    }
+    public final class IntersectionClass<R> : R|First<R>|, R|Second<R>| {
+        public constructor<R>(): R|IntersectionClass<R>| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|R|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|R|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
+    public final fun usage(a: R|IntersectionInterface<A>|): R|kotlin/Unit| {
+        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/a|.R|SubstitutionOverride</IntersectionInterface.foo: R|kotlin/Unit|>|()
+            R|/IntersectionClass.IntersectionClass|<R|A|>().R|SubstitutionOverride</IntersectionClass.foo: R|kotlin/Unit|>|()
+        }
+        )
+    }

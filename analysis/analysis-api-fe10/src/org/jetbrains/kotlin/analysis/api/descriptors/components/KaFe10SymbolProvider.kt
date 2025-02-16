@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFe10SymbolProvider(
     override val analysisSessionProvider: () -> KaFe10Session,
@@ -43,10 +45,22 @@ internal class KaFe10SymbolProvider(
     override val KtParameter.symbol: KaVariableSymbol
         get() = createPsiBasedSymbolWithValidityAssertion {
             when {
-                isFunctionTypeParameter -> error("Function type parameters are not supported in getParameterSymbol()")
+                isFunctionTypeParameter -> errorWithAttachment(
+                    "Creating ${KaVariableSymbol::class.simpleName} for function type parameter is not possible. " +
+                            "Please see the KDoc of `symbol`"
+                ) {
+                    withPsiEntry("parameter", this@symbol)
+                }
+
                 isLoopParameter -> KaFe10PsiLoopParameterLocalVariableSymbol(this, analysisContext)
+                isContextParameter -> KaFe10PsiContextParameterSymbol(this, analysisContext)
                 else -> KaFe10PsiValueParameterSymbol(this, analysisContext)
             }
+        }
+
+    override val KtContextReceiver.symbol: KaContextParameterSymbol
+        get() = createPsiBasedSymbolWithValidityAssertion {
+            KaFe10PsiContextReceiverBasedContextParameterSymbol(this, analysisContext)
         }
 
     override val KtNamedFunction.symbol: KaFunctionSymbol

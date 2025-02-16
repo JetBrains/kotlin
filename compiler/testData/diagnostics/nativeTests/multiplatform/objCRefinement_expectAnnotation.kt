@@ -3,38 +3,38 @@
 
 // MODULE: common
 // FILE: common.kt
-@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+<!OPT_IN_WITHOUT_ARGUMENTS!>@file:OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalObjCRefinement<!>::class<!>)<!>
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-@kotlin.experimental.ExperimentalObjCRefinement
-expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyHidesFromObjC<!>()
+@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalObjCRefinement<!>
+expect annotation class MyHidesFromObjC()
 
 @MyHidesFromObjC
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-@kotlin.experimental.ExperimentalObjCRefinement
-expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyHiddenFromObjC<!>()
+@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalObjCRefinement<!>
+expect annotation class MyHiddenFromObjC()
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
-@kotlin.experimental.ExperimentalObjCRefinement
-expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyRefinesInSwift<!>()
+@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalObjCRefinement<!>
+expect annotation class MyRefinesInSwift()
 
 @MyRefinesInSwift
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-@kotlin.experimental.ExperimentalObjCRefinement
-expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyShouldRefineInSwift<!>()
+@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalObjCRefinement<!>
+expect annotation class MyShouldRefineInSwift()
 
 <!INVALID_REFINES_IN_SWIFT_TARGETS{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyRefinesInSwift<!><!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-expect annotation class <!NO_ACTUAL_FOR_EXPECT, NO_ACTUAL_FOR_EXPECT{NATIVE}!>MyWrongShouldRefineInSwift<!>()
+expect annotation class <!NO_ACTUAL_FOR_EXPECT{NATIVE}!>MyWrongShouldRefineInSwift<!>()
 
 // FILE: plugin.kt
-@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+<!OPT_IN_WITHOUT_ARGUMENTS!>@file:OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalObjCRefinement<!>::class<!>)<!>
 
 @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHidesFromObjC<!>
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
@@ -47,7 +47,7 @@ annotation class PluginMyHiddenFromObjC
 annotation class PluginMyShouldRefineInSwift
 
 // FILE: main.kt
-@file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+<!OPT_IN_WITHOUT_ARGUMENTS!>@file:OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalObjCRefinement<!>::class<!>)<!>
 
 @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHidesFromObjC<!>
 <!REDUNDANT_SWIFT_REFINEMENT{NATIVE}!>@<!OPT_IN_USAGE_ERROR{NATIVE}!>MyRefinesInSwift<!><!>
@@ -105,7 +105,7 @@ interface InterfaceB {
     val barA: Int
     @MyShouldRefineInSwift
     val barB: Int
-    @<!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR{NATIVE}!>HFOC<!>
+    @<!OPT_IN_USAGE_ERROR{NATIVE}!>HFOC<!>
     fun fooA()
     @<!OPT_IN_USAGE_ERROR{NATIVE}!>MyHiddenFromObjC<!>
     fun fooB()

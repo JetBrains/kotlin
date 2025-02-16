@@ -90,7 +90,6 @@ val compilerBaseName = name
 val compilerModules: Array<String> by rootProject.extra
 
 val distLibraryProjects = listOfNotNull(
-    ":kotlin-annotation-processing-compiler",
     ":kotlin-annotation-processing-cli",
     ":kotlin-annotation-processing-runtime",
     ":kotlin-annotation-processing",
@@ -105,6 +104,7 @@ val distLibraryProjects = listOfNotNull(
     // SNAPSHOT reflect into the dist because we use reflect dist in user code compile classpath (see JvmArgumentsKt.configureStandardLibs).
     // We can use reflect of a bigger version in Kotlin compiler runtime, because kotlin-reflect follows backwards binary compatibility
     ":kotlin-reflect",
+    ":kotlin-metadata-jvm",
     ":kotlin-runner",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
@@ -137,6 +137,7 @@ val distCompilerPluginProjectsCompat = listOf(
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
     ":kotlin-script-runtime",
+    ":kotlin-metadata-jvm",
 )
 
 configurations.all {
@@ -230,7 +231,7 @@ dependencies {
     fatJarContents(intellijCore())
     fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna")) { isTransitive = false }
     fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna-platform")) { isTransitive = false }
-    fatJarContents(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    fatJarContents(libs.intellij.fastutil)
     fatJarContents(commonDependency("org.lz4:lz4-java")) { isTransitive = false }
     fatJarContents(libs.intellij.asm) { isTransitive = false }
     fatJarContents(libs.guava) { isTransitive = false }

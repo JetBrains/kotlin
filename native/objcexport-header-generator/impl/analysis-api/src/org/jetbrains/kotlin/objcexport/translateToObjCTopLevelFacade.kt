@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubOrigin
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
@@ -56,7 +57,9 @@ fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFi
     if (topLevelCallables.isNotEmpty()) return ObjCInterfaceImpl(
         name = fileName.objCName,
         comment = null,
-        origin = null,
+        origin = file.file?.let {
+            ObjCExportStubOrigin.Source(null, null, it)
+        },
         attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
         superProtocols = emptyList(),
         members = topLevelCallables,

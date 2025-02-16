@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.receiverType
 
 object FirMissingDependencyClassForLambdaReceiverChecker :
@@ -23,7 +23,7 @@ object FirMissingDependencyClassForLambdaReceiverChecker :
         if (!declaration.isLambda) return
         val receiverType = declaration.receiverType ?: return
 
-        val missingTypes = mutableSetOf<ConeKotlinType>()
+        val missingTypes = mutableSetOf<ConeClassLikeType>()
         considerType(receiverType, missingTypes, context)
         reportMissingTypes(
             declaration.source, missingTypes, context, reporter,

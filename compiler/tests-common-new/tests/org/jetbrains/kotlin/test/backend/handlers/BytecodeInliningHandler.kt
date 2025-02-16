@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.dependencyProvider
+import org.jetbrains.kotlin.test.services.artifactsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class BytecodeInliningHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
@@ -26,7 +26,7 @@ class BytecodeInliningHandler(testServices: TestServices) : JvmBinaryArtifactHan
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val classFiles = testServices.moduleStructure.modules.flatMap {
-            testServices.dependencyProvider.getArtifact(it, ArtifactKinds.Jvm).classFileFactory.getClassFiles()
+            testServices.artifactsProvider.getArtifact(it, ArtifactKinds.Jvm).classFileFactory.getClassFiles()
         }
         val allDirectives = testServices.moduleStructure.allDirectives
         InlineTestUtil.checkNoCallsToInline(

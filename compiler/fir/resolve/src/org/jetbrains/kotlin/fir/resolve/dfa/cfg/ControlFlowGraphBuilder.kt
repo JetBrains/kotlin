@@ -1170,7 +1170,7 @@ class ControlFlowGraphBuilder {
     fun exitFinallyBlock(): FinallyBlockExitNode {
         val enterNode = finallyBlocksInProgress.top()
         val tryExitNode = tryExitNodes.top()
-        val exitNode = createFinallyBlockExitNode(enterNode.fir)
+        val exitNode = createFinallyBlockExitNode(enterNode)
         popAndAddEdge(exitNode)
         addEdge(exitNode, tryExitNode, isDead = enterNode.allNormalInputsAreDead)
         val nextExitLevel = levelOfNextExceptionCatchingGraph()

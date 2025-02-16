@@ -1,0 +1,17 @@
+@R|Anno|(LAZY_EXPRESSION)  kotlin/String
+  context -> FirValueParameterSymbol <local>/parameter from FirPropertySymbol /foo
+  anchor -> [FirValueParameterSymbol <local>/parameter from FirPropertySymbol /foo]
+
+FILE: [ResolvedTo(IMPORTS)] contextParameter.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    context([ResolvedTo(TYPES)] parameter: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|)
+    public? final? [ResolvedTo(TYPES)] val foo: R|kotlin/Int|
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }

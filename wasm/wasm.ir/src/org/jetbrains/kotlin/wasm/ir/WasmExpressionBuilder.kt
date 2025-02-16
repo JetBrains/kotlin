@@ -25,7 +25,7 @@ internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
  *     - at least, an API user has to think about what to pass a location
  *     - it's not taken from some context-like thing implicitly, so you will not get it implicitly from a wrong context/scope.
  */
-class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
+class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipCommentInstructions: Boolean = false) {
     private var _numberOfNestedBlocks = 0
 
     fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
@@ -87,8 +87,12 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
         buildInstrWithNoLocation(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
     }
 
-    fun buildElse() {
-        buildInstrWithNoLocation(WasmOp.ELSE)
+    fun buildElse(location: SourceLocation? = null) {
+        if (location != null) {
+            buildInstr(WasmOp.ELSE, location)
+        } else {
+            buildInstrWithNoLocation(WasmOp.ELSE)
+        }
     }
 
     fun buildBlock(resultType: WasmType? = null): Int {
@@ -96,8 +100,12 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
         return numberOfNestedBlocks
     }
 
-    fun buildEnd() {
-        buildInstrWithNoLocation(WasmOp.END)
+    fun buildEnd(location: SourceLocation? = null) {
+        if (location != null) {
+            buildInstr(WasmOp.END, location)
+        } else {
+            buildInstrWithNoLocation(WasmOp.END)
+        }
     }
 
     fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, location: SourceLocation) {
@@ -189,8 +197,8 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
         )
     }
 
-    fun buildCatch(tagIdx: WasmSymbol<Int>) {
-        buildInstrWithNoLocation(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
+    fun buildCatch(tagIdx: WasmSymbol<Int>, location: SourceLocation = SourceLocation.NoLocation("Catch")) {
+        buildInstr(WasmOp.CATCH, location, WasmImmediate.TagIdx(tagIdx))
     }
 
     fun buildCatchAll() {
@@ -281,15 +289,25 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
     }
 
     inline fun commentPreviousInstr(text: () -> String) {
-        buildInstr(WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR, SourceLocation.NoLocation("Pseudo-instruction"), WasmImmediate.ConstString(text()))
+        if (!skipCommentInstructions) {
+            buildInstr(
+                WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR,
+                SourceLocation.NoLocation("Pseudo-instruction"),
+                WasmImmediate.ConstString(text())
+            )
+        }
     }
 
     inline fun commentGroupStart(text: () -> String) {
-        buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_START, SourceLocation.NoLocation("Pseudo-instruction"), WasmImmediate.ConstString(text()))
+        if (!skipCommentInstructions) {
+            buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_START, SourceLocation.NoLocation("Pseudo-instruction"), WasmImmediate.ConstString(text()))
+        }
     }
 
     fun commentGroupEnd() {
-        buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_END, SourceLocation.NoLocation("Pseudo-instruction"))
+        if (!skipCommentInstructions) {
+            buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_END, SourceLocation.NoLocation("Pseudo-instruction"))
+        }
     }
 }
 

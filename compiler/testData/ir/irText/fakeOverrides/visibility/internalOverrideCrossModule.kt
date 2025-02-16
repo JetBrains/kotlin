@@ -10,6 +10,7 @@ open class KotlinInternal {
 }
 
 // MODULE: main(separate)
+// IGNORE_FIR_DIAGNOSTICS
 // FILE: Java1.java
 public class Java1 extends KotlinInternal {}
 

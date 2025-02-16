@@ -4,6 +4,7 @@ KtOperationReferenceExpression(138,140): '--'
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable
             isSafeNavigation = false
@@ -14,9 +15,11 @@ KtOperationReferenceExpression(138,140): '--'
             returnType = MyClass
             symbol = /MyClass.dec(<dispatch receiver>: MyClass): MyClass
             valueParameters = []
+            contextParameters = []
             callableId = /MyClass.dec
         precedence = PREFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -24,5 +27,6 @@ KtOperationReferenceExpression(138,140): '--'
           receiverType = null
           returnType = MyClass
           symbol = var variable: MyClass
+          contextParameters = []
           callableId = /variable
     isInBestCandidates = true

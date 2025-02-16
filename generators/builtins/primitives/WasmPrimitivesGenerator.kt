@@ -233,7 +233,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
 
     override fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {
         when (thisKind) {
-            in PrimitiveType.floatingPoint -> "dtoa(this${thisKind.castToIfNecessary(PrimitiveType.DOUBLE)})"
+            in PrimitiveType.floatingPoint -> "dtoa(this${thisKind.castToIfNecessary(PrimitiveType.DOUBLE)}, isSinglePrecision = ${thisKind == PrimitiveType.FLOAT})"
             PrimitiveType.INT, PrimitiveType.LONG -> "itoa${thisKind.bitSize}(this)"
             else -> "this.toInt().toString()"
         }.setAsExpressionBody()

@@ -30,7 +30,7 @@ internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String
 
     fun traverseDependencies(library: KotlinLibrary) {
         library.unresolvedDependencies.forEach {
-            val dependency = allLibraries[it.path]!!
+            val dependency = allLibraries[it.path] ?: return@forEach
             if (dependency !in allDependencies) {
                 allDependencies += dependency
                 traverseDependencies(dependency)
@@ -49,6 +49,7 @@ class CacheBuilder(
 ) {
     private val configuration = konanConfig.configuration
     private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!.map { File(it) }
+    private val explicitCachesOnly = configuration.getBoolean(KonanConfigKeys.EXPLICIT_CACHES_ONLY)
     private val icEnabled = configuration.get(CommonConfigurationKeys.INCREMENTAL_COMPILATION)!!
     private val includedLibraries = configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty().toSet()
     private val generateTestRunner = configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER)
@@ -85,27 +86,37 @@ class CacheBuilder(
         override fun toString() = "${library.uniqueName}|$file"
     }
 
-    private val KotlinLibrary.isExternal
-        get() = autoCacheableFrom.any { libraryFile.absolutePath.startsWith(it.absolutePath) }
+    private val KotlinLibrary.isCacheableExternalLibrary: Boolean
+        get() {
+            val isAutoCacheable = autoCacheableFrom.any { libraryFile.canonicalFile.startsWith(it.canonicalFile) }
+            return if (explicitCachesOnly) {
+                isAutoCacheable
+            } else {
+                isDefault || isNativeStdlib || isAutoCacheable
+            }
+        }
 
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
         val icedLibraries = mutableListOf<KotlinLibrary>()
 
         allLibraries.forEach { library ->
-            val isSubjectOfIC = !library.isDefault && !library.isExternal && !library.isNativeStdlib
+            val isSubjectOfIC = !library.isCacheableExternalLibrary
             val cache = konanConfig.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
             cache?.let {
                 caches[library] = it
                 cacheRootDirectories[library] = it.rootDirectory
             }
             if (isSubjectOfIC) {
+                if (icEnabled && (library.isNativeStdlib || library.isDefault)) {
+                    error("Unexpected attempt to cache the standard library or default one: ${library.libraryName}")
+                }
                 icedLibraries += library
             } else {
                 if (cache == null) externalLibrariesToCache += library
             }
-            library.unresolvedDependencies.forEach {
-                val dependency = uniqueNameToLibrary[it.path]!!
+            library.unresolvedDependencies.forEach dependenciesLoop@{
+                val dependency = uniqueNameToLibrary[it.path] ?: return@dependenciesLoop
                 dependableLibraries.getOrPut(dependency) { mutableListOf() }.add(library)
             }
         }

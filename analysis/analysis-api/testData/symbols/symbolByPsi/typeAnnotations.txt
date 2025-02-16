@@ -188,6 +188,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Anno5.s
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -223,7 +224,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val s: String)
+        initializer: KaNonConstantInitializerValue(val s: String)
         isActual: false
         isConst: false
         isDelegatedProperty: false
@@ -358,6 +359,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /X.f
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -462,6 +464,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /X.x
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -500,7 +503,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(this)
+  initializer: KaNonConstantInitializerValue(this)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -595,6 +598,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -695,6 +699,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

@@ -1,27 +1,3 @@
-CODE_COMPILATION_EXCEPTION:
-Inline functions have a cyclic dependency:
-[home/main.kt]
-FILE: main.kt
-    public final fun Greeting(name: R|kotlin/String|): R|kotlin/Unit| {
-        R|com/example/jvmLib/Text|(<strcat>(R|<local>/name|, String(!)).R|kotlin/String.plus|(Q|com/example/common/Foo|.R|com/example/common/Foo.Companion.getInline|()))
-    }
-
-[com.example.common/common.kt]
-public final inline fun getInline(): R|kotlin/String| {
-    ^getInline this@R|com/example/common/Foo.Companion|.R|com/example/common/Foo.Companion.getPublished|().R|kotlin/String.plus|(R|com/example/commonDep/a|())
-}
-
-[com.example.commonDep/commonDep.kt]
-public final inline fun a(): R|kotlin/String| {
-    ^a String(Hi).R|kotlin/String.plus|(R|com/example/commonDep/b|())
-}
-
-[com.example.commonDep/commonDep.kt]
-public final inline fun b(): R|kotlin/String| {
-    ^b String(Hi).R|kotlin/String.plus|(R|com/example/commonDep/c|())
-}
-
-[com.example.commonDep/commonDep.kt]
-public final inline fun c(): R|kotlin/String| {
-    ^c String(Hi).R|kotlin/String.plus|(R|com/example/commonDep/a|())
-}
+(215,218) INLINE_CALL_CYCLE The 'a' invocation is a part of inline cycle
+(143,146) INLINE_CALL_CYCLE The 'b' invocation is a part of inline cycle
+(179,182) INLINE_CALL_CYCLE The 'c' invocation is a part of inline cycle

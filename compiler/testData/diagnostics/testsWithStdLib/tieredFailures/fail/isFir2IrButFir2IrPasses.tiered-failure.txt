@@ -1,1 +1,0 @@
-Looks like tier FIR2IR passes with no error diagnostics. Please update the tier directive to `// RUN_PIPELINE_TILL: BACKEND` and regenerate tests.

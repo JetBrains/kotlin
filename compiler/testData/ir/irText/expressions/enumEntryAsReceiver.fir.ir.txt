@@ -1,18 +1,18 @@
 FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
   CLASS ENUM_CLASS name:X modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.X>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.X
     ENUM_ENTRY name:B
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.X.B'
       class: CLASS ENUM_ENTRY name:B modality:FINAL visibility:private superTypes:[<root>.X]
-        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X.B
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.X.B
         PROPERTY name:value2 visibility:public modality:FINAL [val]
           FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]
             EXPRESSION_BODY
               CONST String type=kotlin.String value="OK"
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.String
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.X.B
             correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL [val]
-            $this: VALUE_PARAMETER name:<this> type:<root>.X.B
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public final fun <get-value2> (): kotlin.String declared in <root>.X.B'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
@@ -23,90 +23,90 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
           FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:private [final]
             EXPRESSION_BODY
               FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.X.B.value'
                       CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <root>.X.B declared in <root>.X.B' type=<root>.X.B origin=null
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN <> ($this:<root>.X.B) returnType:kotlin.Function0<kotlin.String>
+                        ARG <this>: GET_VAR '<this>: <root>.X.B declared in <root>.X.B' type=<root>.X.B origin=IMPLICIT_ARGUMENT
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN returnType:kotlin.Function0<kotlin.String>
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.X.B
             correspondingProperty: PROPERTY name:value visibility:public modality:OPEN [val]
             overridden:
               public abstract fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X
-            $this: VALUE_PARAMETER name:<this> type:<root>.X.B
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public open fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X.B'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:private [final]' type=kotlin.Function0<kotlin.String> origin=null
                   receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value>' type=<root>.X.B origin=null
-        CONSTRUCTOR visibility:private <> () returnType:<root>.X.B [primary]
+        CONSTRUCTOR visibility:private returnType:<root>.X.B [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.X'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:B modality:FINAL visibility:private superTypes:[<root>.X]' type=kotlin.Unit
-        FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>, other:<root>.X) returnType:kotlin.Int [fake_override,operator]
+        FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
+          VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.X
           overridden:
             public final fun compareTo (other: <root>.X): kotlin.Int declared in <root>.X
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
-          VALUE_PARAMETER name:other index:0 type:<root>.X
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
+          VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
           overridden:
             public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.X
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
-          VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.Int [fake_override]
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
           overridden:
             public final fun hashCode (): kotlin.Int declared in <root>.X
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.String [fake_override]
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
           overridden:
             public open fun toString (): kotlin.String declared in <root>.X
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
         PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
           annotations:
             IntrinsicConstEvaluation
           overridden:
             public final name: kotlin.String declared in <root>.X
-          FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.String [fake_override]
+          FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
             overridden:
               public final fun <get-name> (): kotlin.String declared in <root>.X
-            $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
         PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
           overridden:
             public final ordinal: kotlin.Int declared in <root>.X
-          FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.Int [fake_override]
+          FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
             overridden:
               public final fun <get-ordinal> (): kotlin.Int declared in <root>.X
-            $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
-    CONSTRUCTOR visibility:private <> () returnType:<root>.X [primary]
+    CONSTRUCTOR visibility:private returnType:<root>.X [primary]
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
-          <E>: <root>.X
+          TYPE_ARG E: <root>.X
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:X modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.X>]' type=kotlin.Unit
-    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.X
-      VALUE_PARAMETER name:value index:0 type:kotlin.String
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:<root>.X
+      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.X>
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL returnType:kotlin.Array<<root>.X>
       SYNTHETIC_BODY kind=ENUM_VALUES
-    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>, other:<root>.X) returnType:kotlin.Int [fake_override,operator]
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.X
       overridden:
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
-      VALUE_PARAMETER name:other index:0 type:<root>.X
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
       overridden:
         public final fun hashCode (): kotlin.Int declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Enum
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.X>
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.X>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
@@ -114,26 +114,26 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
         IntrinsicConstEvaluation
       overridden:
         public final name: kotlin.String declared in kotlin.Enum
-      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.String [fake_override]
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-name> (): kotlin.String declared in kotlin.Enum
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
     PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final ordinal: kotlin.Int declared in kotlin.Enum
-      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.X>) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.X>
     PROPERTY name:value visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.Function0<kotlin.String>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT returnType:kotlin.Function0<kotlin.String>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.X
         correspondingProperty: PROPERTY name:value visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.X
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
-          $this: CALL 'public abstract fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X' type=kotlin.Function0<kotlin.String> origin=GET_PROPERTY
-            $this: GET_ENUM 'ENUM_ENTRY name:B' type=<root>.X
+          ARG <this>: CALL 'public abstract fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X' type=kotlin.Function0<kotlin.String> origin=GET_PROPERTY
+            ARG <this>: GET_ENUM 'ENUM_ENTRY name:B' type=<root>.X

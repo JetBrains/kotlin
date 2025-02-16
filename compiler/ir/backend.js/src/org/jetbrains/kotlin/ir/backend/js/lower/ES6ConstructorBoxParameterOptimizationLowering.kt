@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.constructorFactory
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
@@ -18,12 +20,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -118,6 +121,13 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
                         super.visitWhen(expression)
                     }
 
+                override fun visitReturn(expression: IrReturn): IrExpression =
+                    if (expression.returnTargetSymbol == original.symbol) {
+                        IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, newReplacement.symbol, expression.value)
+                    } else {
+                        super.visitReturn(expression)
+                    }
+
                 override fun visitCall(expression: IrCall): IrExpression {
                     if (expression.isSuperCallWithBoxParameter) {
                         expression.putValueArgument(expression.valueArgumentsCount - 1, context.getVoid())
@@ -196,7 +206,7 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
                 var meetCapturing = false
                 val boxParameter = it.boxParameter
 
-                it.body?.acceptChildrenVoid(object : IrElementVisitorVoid {
+                it.body?.acceptChildrenVoid(object : IrVisitorVoid() {
                     override fun visitSetField(expression: IrSetField) {
                         val receiver = expression.receiver as? IrGetValue
                         if (receiver != null && receiver.symbol == boxParameter?.symbol) {

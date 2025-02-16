@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1210,11 +1210,18 @@ public fun CharSequence.max(): Char {
 }
 
 /**
- * Returns the first character yielding the largest value of the given function.
+ * Returns the first character yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of characters corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the char sequence contains zero or one characters
+ * because in these cases it is clear which character to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -1237,9 +1244,16 @@ public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R):
 }
 
 /**
- * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
+ * Returns the first character yielding the largest value of the given [selector] function or `null` if there are no characters.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of characters corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the char sequence contains zero or one characters
+ * because in these cases it is clear which character to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharSequence.maxByOrNull(selector: (Char) -> R): Char? {
@@ -1520,11 +1534,18 @@ public fun CharSequence.min(): Char {
 }
 
 /**
- * Returns the first character yielding the smallest value of the given function.
+ * Returns the first character yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of characters corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the char sequence contains zero or one characters
+ * because in these cases it is clear which character to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -1547,9 +1568,16 @@ public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R):
 }
 
 /**
- * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
+ * Returns the first character yielding the smallest value of the given [selector] function or `null` if there are no characters.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of characters corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the char sequence contains zero or one characters
+ * because in these cases it is clear which character to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharSequence.minByOrNull(selector: (Char) -> R): Char? {

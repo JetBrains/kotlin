@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 object CLIConfigurationKeys {
@@ -46,7 +47,7 @@ object CLIConfigurationKeys {
     val ALLOW_KOTLIN_PACKAGE = CompilerConfigurationKey.create<Boolean>("allow kotlin package")
 
     @JvmField
-    val PERF_MANAGER = CompilerConfigurationKey.create<CommonCompilerPerformanceManager>("performance manager")
+    val PERF_MANAGER = CompilerConfigurationKey.create<PerformanceManager>("performance manager")
 
     // Used in Eclipse plugin (see KotlinCLICompiler)
     @JvmField
@@ -102,7 +103,7 @@ var CompilerConfiguration.allowKotlinPackage: Boolean
     get() = getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
     set(value) { put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, value) }
 
-var CompilerConfiguration.perfManager: CommonCompilerPerformanceManager?
+var CompilerConfiguration.perfManager: PerformanceManager?
     get() = get(CLIConfigurationKeys.PERF_MANAGER)
     set(value) { put(CLIConfigurationKeys.PERF_MANAGER, requireNotNull(value) { "nullable values are not allowed" }) }
 

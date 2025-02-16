@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
 
@@ -248,7 +249,7 @@ class MppPublicationTest {
         // Even though creation of default publications are disabled
         // it is still important that components and everything else needed for publishing are still present
         val components = project.components.names
-        assertEquals(setOf("kotlin"), components)
+        assertEquals(setOf("kotlin", "adhocKotlin"), components)
 
         val expectedSourcesJarTasks = setOf("sourcesJar", "metadataSourcesJar", "jvmSourcesJar", "linuxArm64SourcesJar")
         val missingSourcesJarTasks = expectedSourcesJarTasks - project.tasks.names
@@ -306,5 +307,4 @@ class MppPublicationTest {
 
     private fun AttributeContainer.toMapOfStrings(): Map<String, String> = keySet()
         .associate { key -> key.name to getAttribute(key).toString() }
-
 }

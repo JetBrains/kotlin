@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
-import org.jetbrains.kotlin.test.directives.TargetPlatformEnum
+import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
@@ -21,7 +21,11 @@ import kotlin.io.path.div
 import kotlin.io.path.writeText
 
 abstract class TestModuleCompiler : TestService {
-    fun compileTestModuleToLibrary(module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): CompilationResult {
+    fun compileTestModuleToLibrary(
+        module: TestModule,
+        dependencyBinaryRoots: Collection<Path>,
+        testServices: TestServices,
+    ): CompilationResult {
         val byRoot = module.files.groupBy { it.directives[Directives.BINARY_ROOT].singleOrNull() }
         val binary = mutableListOf<Path>()
         val sources = mutableListOf<Path>()
@@ -36,7 +40,14 @@ abstract class TestModuleCompiler : TestService {
                 tmpSourceFile.writeText(text)
             }
 
-            binary.add(compile(tmpDir, module, dependencyBinaryRoots, testServices))
+            val libraryName = buildString {
+                append(module.name)
+                if (binaryRootName != null) {
+                    append("-")
+                    append(binaryRootName)
+                }
+            }
+            binary.add(compile(tmpDir, module, libraryName, dependencyBinaryRoots, testServices))
             sources.add(compileSources(files, module, testServices))
         }
         return CompilationResult(binary, sources)
@@ -47,6 +58,7 @@ abstract class TestModuleCompiler : TestService {
     abstract fun compile(
         tmpDir: Path,
         module: TestModule,
+        libraryName: String,
         dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
     ): Path

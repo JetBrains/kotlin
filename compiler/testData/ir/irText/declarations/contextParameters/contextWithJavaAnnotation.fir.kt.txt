@@ -1,0 +1,19 @@
+context(a: String)
+fun String.b() {
+}
+
+context(a: @JavaTypeAnnotation String)
+fun bar() {
+}
+
+context(@JavaParameterAnnotation a: String)
+fun foo() {
+}
+
+val b: String
+  @JavaAnnotation
+  context(a: String)
+  get(): String {
+    return ""
+  }
+

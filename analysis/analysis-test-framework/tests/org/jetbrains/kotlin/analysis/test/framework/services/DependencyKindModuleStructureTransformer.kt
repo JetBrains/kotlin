@@ -45,7 +45,7 @@ object DependencyKindModuleStructureTransformer : ModuleStructureTransformer() {
         dependency: DependencyDescription,
         moduleMapping: Map<String, TestModule>,
     ): DependencyDescription {
-        val dependencyModule = moduleMapping.getValue(dependency.moduleName)
+        val dependencyModule = moduleMapping.getValue(dependency.dependencyModule.name)
         val newKind = when (dependencyModule.explicitTestModuleKind) {
             TestModuleKind.Source,
             TestModuleKind.LibrarySource,

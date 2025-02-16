@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.getShapeOfParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
@@ -90,9 +91,12 @@ internal fun ProtoClass.findInlineFunction(irFunction: IrFunction, fileReader: I
         val child = this.getDeclaration(i)
         if (child.declaratorCase != ProtoDeclaration.DeclaratorCase.IR_FUNCTION) continue
         val childFunction = child.irFunction
-        if (childFunction.base.valueParameterCount != irFunction.valueParameters.size) continue
-        if (childFunction.base.hasExtensionReceiver() xor (irFunction.extensionReceiverParameter != null)) continue
-        if (childFunction.base.hasDispatchReceiver() xor (irFunction.dispatchReceiverParameter != null)) continue
+
+        val irFunctionShape = irFunction.getShapeOfParameters()
+        if (childFunction.base.hasDispatchReceiver() != irFunctionShape.hasDispatchReceiver) continue
+        if (childFunction.base.hasExtensionReceiver() != irFunctionShape.hasExtensionReceiver) continue
+        if (childFunction.base.contextParameterCount != irFunctionShape.contextParameterCount) continue
+        if (childFunction.base.regularParameterCount != irFunctionShape.regularParameterCount) continue
         if (!FunctionFlags.decode(childFunction.base.base.flags).isInline) continue
 
         val nameAndType = BinaryNameAndType.decode(childFunction.base.nameType)

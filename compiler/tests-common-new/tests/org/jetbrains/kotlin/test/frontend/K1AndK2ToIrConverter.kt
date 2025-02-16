@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runWithEnablingFirUseOption
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 
 class K1AndK2ToIrConverter(testServices: TestServices) :
     Frontend2BackendConverter<K1AndK2OutputArtifact, IrBackendInputsFromK1AndK2>(
@@ -31,8 +32,8 @@ class K1AndK2ToIrConverter(testServices: TestServices) :
         return IrBackendInputsFromK1AndK2(irFromClassic, irFromFir)
     }
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == BackendKinds.IrBackend
+    override fun shouldTransform(module: TestModule): Boolean {
+        return testServices.defaultsProvider.backendKind == BackendKinds.IrBackendForK1AndK2
     }
 
 }

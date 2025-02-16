@@ -5,7 +5,7 @@
 // -- Module: <m3> --
 
 // -- Module: <m4> --
-/Call.kt:91:19: error: unresolved reference: result
+/Call.kt:90:19: error: unresolved reference: result
 fun simple(b: com.result.B<*>) {}
                   ^^^^^^
 

@@ -1,0 +1,27 @@
+public final class cases/default/ClassConstructors {
+}
+
+public class cases/default/ClassFunctions {
+	public fun <init> ()V
+}
+
+public abstract interface class cases/default/InterfaceFunctions {
+	public abstract fun withAllDefaults (ILjava/lang/String;)V
+	public static synthetic fun withAllDefaults$default (Lcases/default/InterfaceFunctions;ILjava/lang/String;ILjava/lang/Object;)V
+	public abstract fun withSomeDefaults (ILjava/lang/String;)V
+	public static synthetic fun withSomeDefaults$default (Lcases/default/InterfaceFunctions;ILjava/lang/String;ILjava/lang/Object;)V
+}
+
+public final class cases/default/InterfaceFunctions$DefaultImpls {
+	public static synthetic fun withAllDefaults$default (Lcases/default/InterfaceFunctions;ILjava/lang/String;ILjava/lang/Object;)V
+	public static synthetic fun withSomeDefaults$default (Lcases/default/InterfaceFunctions;ILjava/lang/String;ILjava/lang/Object;)V
+}
+
+public abstract interface class cases/default/PublicInterfaceWithAllFunctionsFilteredOut {
+}
+
+public final class cases/default/PublishedApiWithDefaultsKt {
+	public static final fun twoDefaults (ILjava/lang/Object;Ljava/lang/String;)V
+	public static synthetic fun twoDefaults$default (ILjava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)V
+}
+

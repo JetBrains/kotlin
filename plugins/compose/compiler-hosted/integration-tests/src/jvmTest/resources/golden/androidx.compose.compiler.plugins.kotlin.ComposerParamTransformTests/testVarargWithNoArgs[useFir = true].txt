@@ -33,6 +33,7 @@ fun VarArgsFirst(foo: Array<out Any?>, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(VarArgsFirst):Test.kt#2487m")
   val %dirty = %changed
   %composer.startMovableGroup(<>, foo.size)
+  %dirty = %dirty or if (%composer.changed(foo.size)) 0b0100 else 0
   val <iterator> = foo.iterator()
   while (<iterator>.hasNext()) {
     val value = <iterator>.next()
@@ -54,7 +55,7 @@ fun VarArgsFirst(foo: Array<out Any?>, %composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    VarArgsFirst(*foo, %composer, updateChangedFlags(%changed or 0b0001))
+    VarArgsFirst(foo, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
 @Composable

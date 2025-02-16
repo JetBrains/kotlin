@@ -37,7 +37,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
     init {
         val compilerSystemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project)
-        val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
         val buildIdService = BuildIdService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
@@ -84,7 +83,9 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.enableUnsafeIncrementalCompilationForMultiplatform
                 .convention(propertiesProvider.enableUnsafeOptimizationsForMultiplatform)
                 .finalizeValueOnRead()
-            task.buildFinishedListenerService.value(buildFinishedListenerService).disallowChanges()
+            task.enableMonotonousIncrementalCompileSetExpansion
+                .convention(propertiesProvider.enableMonotonousIncrementalCompileSetExpansion)
+                .finalizeValueOnRead()
             task.buildIdService.value(buildIdService).disallowChanges()
 
             task.incremental = false

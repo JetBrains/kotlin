@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: library
 // JVM_TARGET: 11
 // FILE: a.kt

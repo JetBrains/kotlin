@@ -9,19 +9,25 @@
 
 #include "CustomAllocator.hpp"
 #include "CustomFinalizerProcessor.hpp"
-#include "GCApi.hpp"
+#include "GlobalData.hpp"
 #include "Heap.hpp"
+#include "SegregatedFinalizerProcessor.hpp"
 
 namespace kotlin::alloc {
 
 class Allocator::Impl : private Pinned {
 public:
-    Impl() noexcept = default;
+    Impl() noexcept : finalizerProcessor_([](int64_t epoch) noexcept { mm::GlobalData::Instance().gc().onEpochFinalized(epoch); }) {}
 
     Heap& heap() noexcept { return heap_; }
+    FinalizerQueue& pendingFinalizers() noexcept { return pendingFinalizers_; }
+    SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits>& finalizerProcessor() noexcept { return finalizerProcessor_; }
 
 private:
     Heap heap_;
+    // Preallocated place for finalizers for avoiding memory allocation during GC.
+    FinalizerQueue pendingFinalizers_;
+    SegregatedFinalizerProcessor<FinalizerQueueSingle, FinalizerQueueTraits> finalizerProcessor_;
 };
 
 class Allocator::ThreadData::Impl : private Pinned {

@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.powerassert.getExplicitReceiver
 import org.jetbrains.kotlin.powerassert.irString
+import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
+import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
 
 fun IrBuilderWithScope.irDiagramString(
     sourceFile: SourceFile,
@@ -186,7 +189,7 @@ private fun IrTemporaryVariable.toValueDisplay(
  *   | <- display offset: 0
  * ```
  */
-private fun findDisplayOffset(
+internal fun findDisplayOffset(
     expression: IrExpression,
     sourceRangeInfo: SourceRangeInfo,
     source: String,
@@ -257,38 +260,42 @@ private fun binaryOperatorOffset(lhs: IrExpression, wholeOperatorSourceRangeInfo
  * that have a more complex structure than just a single call with two arguments.
  */
 private fun IrCall.binaryOperatorLhs(): IrExpression? = when (origin) {
-    IrStatementOrigin.EXCLEQ -> {
+    IrStatementOrigin.EXCLEQ, IrStatementOrigin.EXCLEQEQ -> {
         // The `!=` operator call is actually a sugar for `lhs.equals(rhs).not()`.
-        (arguments[0] as? IrCall)?.simpleBinaryOperatorLhs()
-    }
-    IrStatementOrigin.EXCLEQEQ -> {
         // The `!==` operator call is actually a sugar for `(lhs === rhs).not()`.
-        (arguments[0] as? IrCall)?.simpleBinaryOperatorLhs()
+        val innerCall = (arguments[0] as? IrCall)?.takeIf { it.isInnerOfNotEqualOperator() } ?: this
+        innerCall.simpleBinaryOperatorLhs()
     }
     IrStatementOrigin.IN -> {
         // The `in` operator call is actually a sugar for `rhs.contains(lhs)`.
-        arguments[1]
+        arguments.last()
     }
     IrStatementOrigin.NOT_IN -> {
         // The `!in` operator call is actually a sugar for `rhs.contains(lhs).not()`.
-        (arguments[0] as? IrCall)?.arguments?.get(1)
+        (arguments[0] as? IrCall)?.arguments?.last()
+    }
+    IrStatementOrigin.LT, IrStatementOrigin.GT, IrStatementOrigin.LTEQ, IrStatementOrigin.GTEQ -> {
+        // Comparison operator calls are actually sugar for `lhs.compareTo(rhs) <> 0`.
+        val innerCall = (arguments[0] as? IrCall)?.takeIf { it.isInnerOfComparisonOperator() } ?: this
+        innerCall.simpleBinaryOperatorLhs()
     }
     else -> simpleBinaryOperatorLhs()
 }
 
 /**
- * The left-hand side expression of an infix operator/function.
- * For single-value operators returns `null`, for all other infix operators/functions, returns the receiver or the first value argument.
+ * The left-hand side expression of an infix operator/function:
+ * * For single-value operators returns `null`,
+ * * For all others, returns the explicit receiver or the first regular argument.
  */
 private fun IrCall.simpleBinaryOperatorLhs(): IrExpression? {
     val parameters = symbol.owner.parameters
     val singleReceiver =
         1 == parameters.count { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
-    return if (singleReceiver && parameters.none { it.kind == IrParameterKind.Regular }) {
-        null
-    } else {
-        return parameters.firstOrNull { it.kind != IrParameterKind.Context }
-            ?.takeIf { it.kind != IrParameterKind.Regular || symbol.owner.origin == IrBuiltIns.BUILTIN_OPERATOR }
-            ?.let { arguments[it] }
+    if (singleReceiver && parameters.none { it.kind == IrParameterKind.Regular }) {
+        return null
     }
+
+    getExplicitReceiver()?.let { return it }
+    if (symbol.owner.origin != IrBuiltIns.BUILTIN_OPERATOR) return null
+    return parameters.firstOrNull { it.kind == IrParameterKind.Regular }?.let { arguments[it] }
 }

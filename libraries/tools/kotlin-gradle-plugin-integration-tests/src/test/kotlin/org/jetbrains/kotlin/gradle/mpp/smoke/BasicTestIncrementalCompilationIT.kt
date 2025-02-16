@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -43,6 +44,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
     @DisplayName("KMP tests are rebuilt when affected")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testAffectingTestDependencies(gradleVersion: GradleVersion): Unit = withProject(gradleVersion) {
         build("build")
 

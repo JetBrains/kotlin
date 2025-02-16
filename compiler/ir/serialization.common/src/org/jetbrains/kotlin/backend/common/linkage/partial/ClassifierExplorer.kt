@@ -17,10 +17,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstantObject
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable.*
@@ -29,7 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
@@ -47,21 +43,24 @@ internal class ClassifierExplorer(
         )
     }
 
-    @OptIn(InternalSymbolFinderAPI::class)  // KT-73430: Consider pre-finding these symbols and storing them into Symbols
+    @OptIn(InternalSymbolFinderAPI::class)
     private val permittedAnnotationParameterSymbols: Set<IrClassSymbol> by lazy {
-        buildSet {
-            this += permittedAnnotationArrayParameterSymbols
+        permittedAnnotationArrayParameterSymbols + setOf(
+            builtIns.booleanClass, builtIns.booleanArray,
+            builtIns.charClass, builtIns.charArray,
+            builtIns.floatClass, builtIns.floatArray,
+            builtIns.doubleClass, builtIns.doubleArray,
 
-            PrimitiveType.entries.forEach {
-                addIfNotNull(builtIns.symbolFinder.findClass(it.typeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.<primitive>
-                addIfNotNull(builtIns.symbolFinder.findClass(it.arrayTypeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.<primitive>Array
-            }
+            builtIns.byteClass, builtIns.byteArray,
+            builtIns.shortClass, builtIns.shortArray,
+            builtIns.intClass, builtIns.intArray,
+            builtIns.longClass, builtIns.longArray,
 
-            UnsignedType.entries.forEach {
-                addIfNotNull(builtIns.symbolFinder.findClass(it.typeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.U<signed>
-                addIfNotNull(builtIns.symbolFinder.findClass(it.arrayClassId.shortClassName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.U<signed>Array
-            }
-        }
+            builtIns.ubyteClass, builtIns.ubyteArray,
+            builtIns.ushortClass, builtIns.ushortArray,
+            builtIns.uintClass, builtIns.uintArray,
+            builtIns.ulongClass, builtIns.ulongArray,
+        ).filterNotNull()
     }
 
     private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
@@ -70,7 +69,14 @@ internal class ClassifierExplorer(
     fun exploreSymbol(symbol: IrClassifierSymbol): Unusable? = symbol.exploreSymbol(visitedSymbols = hashSetOf()).asUnusable()
 
     fun exploreIrElement(element: IrElement) {
-        element.acceptChildrenVoid(IrElementExplorer { it.exploreType(visitedSymbols = hashSetOf()) })
+        element.acceptChildrenVoid(
+            object : IrTypeVisitorVoid() {
+                override fun visitType(container: IrElement, type: IrType) {}
+                override fun visitTypeRecursively(container: IrElement, type: IrType) {
+                    type.exploreType(visitedSymbols = hashSetOf())
+                }
+            }
+        )
     }
 
     /** Explore the IR type to find the first cause why this type should be considered as unusable. */
@@ -152,7 +158,7 @@ internal class ClassifierExplorer(
     }
 
     private fun IrConstructor.exploreAnnotationConstructor(visitedSymbols: MutableSet<IrClassifierSymbol>): Unusable? {
-        return valueParameters.firstUnusable { valueParameter ->
+        return parameters.firstUnusable { valueParameter ->
             valueParameter.type.exploreType(visitedSymbols).asUnusable()
                 ?: valueParameter.exploreAnnotationConstructorParameter(visitedSymbols, annotationClass = parentAsClass)
         }
@@ -271,56 +277,5 @@ internal class ClassifierExplorer(
 
         private inline fun <T> Sequence<T>.firstUnusable(transform: (T) -> ExploredClassifier?): Unusable? =
             firstNotNullOfOrNull { transform(it).asUnusable() }
-    }
-}
-
-private class IrElementExplorer(private val visitType: (IrType) -> Unit) : IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitValueParameter(declaration: IrValueParameter) {
-        visitType(declaration.type)
-        super.visitValueParameter(declaration)
-    }
-
-    override fun visitTypeParameter(declaration: IrTypeParameter) {
-        declaration.superTypes.forEach(visitType)
-        super.visitTypeParameter(declaration)
-    }
-
-    override fun visitFunction(declaration: IrFunction) {
-        visitType(declaration.returnType)
-        super.visitFunction(declaration)
-    }
-
-    override fun visitField(declaration: IrField) {
-        visitType(declaration.type)
-        super.visitField(declaration)
-    }
-
-    override fun visitVariable(declaration: IrVariable) {
-        visitType(declaration.type)
-        super.visitVariable(declaration)
-    }
-
-    override fun visitExpression(expression: IrExpression) {
-        visitType(expression.type)
-        super.visitExpression(expression)
-    }
-
-    override fun visitClassReference(expression: IrClassReference) {
-        visitType(expression.classType)
-        super.visitClassReference(expression)
-    }
-
-    override fun visitConstantObject(expression: IrConstantObject) {
-        expression.typeArguments.forEach(visitType)
-        super.visitConstantObject(expression)
-    }
-
-    override fun visitTypeOperator(expression: IrTypeOperatorCall) {
-        visitType(expression.typeOperand)
-        super.visitTypeOperator(expression)
     }
 }

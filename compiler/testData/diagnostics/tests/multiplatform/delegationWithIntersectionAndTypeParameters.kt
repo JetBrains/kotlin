@@ -1,13 +1,14 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: Ignoring an implementation of the method `java.lang.Object Test3.foo(java.lang.Object)` because it has multiple definitions
+// RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
+// IGNORE_DEXING
 // MODULE: common
 // FILE: common.kt
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Base1<!><T>{
+expect interface Base1<T>{
     fun foo(t: T): T
     val a : T
 }
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Base2<!><T>{
+expect interface Base2<T>{
     fun foo(t: T): T
     val a : T
 }

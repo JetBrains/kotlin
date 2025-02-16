@@ -7,6 +7,7 @@ import kotlinx.metadata.jvm.UnstableMetadataApi
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 description = "Kotlin Full Reflection Library"
 
@@ -17,10 +18,22 @@ buildscript {
 }
 
 plugins {
-    `java-library`
+    kotlin("jvm")
 }
 
-configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_8)
+configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+
+sourceSets {
+    "main" {
+        java.srcDir("$rootDir/core/reflection.jvm/src")
+        resources.srcDir("$rootDir/core/reflection.jvm/resources")
+    }
+    if (kotlinBuildProperties.includeJava9) {
+        "java9" {
+            java.srcDir("$rootDir/libraries/reflect/api/src/java9/java")
+        }
+    }
+}
 
 publish()
 
@@ -41,7 +54,6 @@ dependencies {
     proguardDeps(kotlinStdlib())
     proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
 
-    embedded(project(":kotlin-reflect-api")) { isTransitive = false }
     embedded(project(":core:metadata")) { isTransitive = false }
     embedded(project(":core:metadata.jvm")) { isTransitive = false }
     embedded(project(":core:compiler.common")) { isTransitive = false }
@@ -57,6 +69,31 @@ dependencies {
     embedded(protobufLite()) { isTransitive = false }
 
     compileOnly("org.jetbrains:annotations:13.0")
+}
+
+if (kotlinBuildProperties.includeJava9) {
+    val java9PatchModule = configurations.register("java9PatchModule") {
+        extendsFrom(configurations.getByName("compileOnly"))
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+        isCanBeResolved = true
+    }
+    configureJava9Compilation(
+        "kotlin.reflect",
+        listOf(sourceSets["main"].output, java9PatchModule.get()),
+    )
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.set(
+            listOf(
+                "-Xallow-kotlin-package",
+                "-Xno-new-java-annotation-targets",
+                "-Xdont-warn-on-error-suppression",
+            )
+        )
+        moduleName.set("kotlin-reflection")
+    }
 }
 
 @CacheableTransformer
@@ -114,6 +151,10 @@ val reflectShadowJar by task<ShadowJar> {
     archiveClassifier.set("shadow")
     configurations = listOf(embedded)
 
+    from(sourceSets["main"].output)
+    if (kotlinBuildProperties.includeJava9) {
+        from(sourceSets["java9"].output)
+    }
     exclude("**/*.proto")
     exclude("org/jetbrains/annotations/Nls*.class")
 

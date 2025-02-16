@@ -19,15 +19,6 @@ public final class C /* C*/ {
 }
 
 public static final class Companion /* C.Companion*/ {
-  @Anno(p = "x")
-  @java.lang.Deprecated()
-  public static void getX$annotations();//  getX$annotations()
-
-  @Anno(p = "y")
-  @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
-  public static void getY$annotations();//  getY$annotations()
-
   private  Companion();//  .ctor()
 
   public final int getX();//  getX()
@@ -37,14 +28,6 @@ public static final class Companion /* C.Companion*/ {
 
 public class O /* O*/ {
   private final int protectedProperty = 1 /* initializer type: int */;
-
-  @Anno(p = "private")
-  @java.lang.Deprecated()
-  private static void getPrivateProperty$annotations();//  getPrivateProperty$annotations()
-
-  @Anno(p = "protected")
-  @java.lang.Deprecated()
-  protected static void getProtectedProperty$annotations();//  getProtectedProperty$annotations()
 
   private final int getPrivateProperty();//  getPrivateProperty()
 
@@ -69,38 +52,6 @@ public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
   private static final int privateProperty = 1 /* initializer type: int */;
 
   public static final int constProperty = 1 /* initializer type: int */ /* constant value 1 */;
-
-  @Anno(p = "const")
-  @java.lang.Deprecated()
-  public static void getConstProperty$annotations();//  getConstProperty$annotations()
-
-  @Anno(p = "nonNullable")
-  @java.lang.Deprecated()
-  public static void getNonNullable$annotations();//  getNonNullable$annotations()
-
-  @Anno(p = "nullable")
-  @java.lang.Deprecated()
-  public static void getNullable$annotations();//  getNullable$annotations()
-
-  @Anno(p = "private")
-  @java.lang.Deprecated()
-  private static void getPrivateProperty$annotations();//  getPrivateProperty$annotations()
-
-  @Anno(p = "property")
-  @java.lang.Deprecated()
-  public static void getExtensionProperty1$annotations(java.lang.Object);//  getExtensionProperty1$annotations(java.lang.Object)
-
-  @Anno(p = "property")
-  @java.lang.Deprecated()
-  public static void getExtensionProperty2$annotations(@org.jetbrains.annotations.NotNull() java.util.List);//  getExtensionProperty2$annotations(@org.jetbrains.annotations.NotNull() java.util.List)
-
-  @Anno(p = "property")
-  @java.lang.Deprecated()
-  public static void getExtensionProperty3$annotations(java.util.Map);//  getExtensionProperty3$annotations(java.util.Map)
-
-  @java.lang.Deprecated()
-  @kotlin.Deprecated(message = "deprecated")
-  public static void getDeprecated$annotations();//  getDeprecated$annotations()
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getNonNullable();//  getNonNullable()

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -50,6 +50,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
      * not allow accessing its parent test instance in case there are inner test classes in the generated test suite.
      */
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        extensionContext.tags.enforceFrontendMarks()
         val settings = createTestRunSettings(computeBlackBoxTestInstances())
 
         // Inject the required properties to test instance.
@@ -62,6 +63,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
 class NativeSimpleTestSupport : BeforeEachCallback {
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        extensionContext.tags.enforceFrontendMarks()
         val settings = createSimpleTestRunSettings()
 
         // Inject the required properties to test instance.
@@ -69,6 +71,12 @@ class NativeSimpleTestSupport : BeforeEachCallback {
             testRunSettings = settings
             testRunProvider = getOrCreateSimpleTestRunProvider()
         }
+    }
+}
+
+private fun Set<String>.enforceFrontendMarks() {
+    if (!(("frontend-fir" in this) xor ("frontend-classic" in this))) {
+        error("Test should be marked either with \"frontend-fir\" or \"frontend-classic\" tag")
     }
 }
 
@@ -184,8 +192,10 @@ object NativeTestSupport {
 
     private fun ExtensionContext.addCommonTestClassSettingsTo(
         enclosingTestClass: Class<*>,
-        output: MutableCollection<Any>
+        output: MutableCollection<Any>,
     ): KotlinNativeTargets {
+        tags.enforceFrontendMarks()
+
         val enforcedProperties = EnforcedProperties(enclosingTestClass)
 
         val optimizationMode = computeOptimizationMode(enforcedProperties)
@@ -303,15 +313,20 @@ object NativeTestSupport {
         enforcedProperties: EnforcedProperties,
         distribution: Distribution,
         kotlinNativeTargets: KotlinNativeTargets,
-        optimizationMode: OptimizationMode
+        optimizationMode: OptimizationMode,
     ): CacheMode {
         val defaultCache = CacheMode.defaultForTestTarget(distribution, kotlinNativeTargets)
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
             enforcedProperties,
             CacheMode.Alias.values(),
             default = if (optimizationMode != OptimizationMode.OPT) defaultCache
-                      else CacheMode.Alias.NO,
+            else CacheMode.Alias.NO,
         )
+        if (kotlinNativeTargets.testTarget == KonanTarget.MINGW_X64) {
+            if (!(cacheMode == CacheMode.Alias.NO || cacheMode == CacheMode.Alias.STATIC_ONLY_DIST)) {
+                fail { "Cache mode $cacheMode is not supported for MinGW x64 target." }
+            }
+        }
         val useStaticCacheForUserLibraries = when (cacheMode) {
             CacheMode.Alias.NO -> return CacheMode.WithoutCache
             CacheMode.Alias.STATIC_ONLY_DIST -> false
@@ -520,7 +535,7 @@ object NativeTestSupport {
     private fun computeGeneratedSourceDirs(
         baseDirs: BaseDirs,
         targets: KotlinNativeTargets,
-        enclosingTestClass: Class<*>
+        enclosingTestClass: Class<*>,
     ): GeneratedSources {
         val testSourcesDir = baseDirs.testBuildDir
             .resolve("bb.src") // "bb" for black box
@@ -538,7 +553,7 @@ object NativeTestSupport {
     private fun computeBinariesForBlackBoxTests(
         baseDirs: BaseDirs,
         targets: KotlinNativeTargets,
-        enclosingTestClass: Class<*>
+        enclosingTestClass: Class<*>,
     ): Binaries {
         val testBinariesDir = baseDirs.testBuildDir
             .resolve("bb.out") // "bb" for black box
@@ -553,14 +568,15 @@ object NativeTestSupport {
     }
 
     private fun computePipelineType(enforcedProperties: EnforcedProperties, testClass: Class<*>): PipelineType {
-        val pipelineTypeFromFirPipelineAnnotation = if (testClass.annotations.any { it is FirPipeline })
-            PipelineType.K2
-        else PipelineType.K1
+        val pipelineTypeFromPipelineAnnotation = if (testClass.annotations.any { it is ClassicPipeline })
+            PipelineType.K1
+        else if (testClass.annotations.any { it is FirPipeline }) PipelineType.K2
+        else error("Pipeline has to be explicitly specified!")
 
         return ClassLevelProperty.PIPELINE_TYPE.readValue(
             enforcedProperties,
             PipelineType.entries.toTypedArray(),
-            default = pipelineTypeFromFirPipelineAnnotation
+            default = pipelineTypeFromPipelineAnnotation
         )
     }
 
@@ -638,7 +654,8 @@ object NativeTestSupport {
         )
     }
 
-    private fun ExtensionContext.computeSimpleTestInstances() = NativeTestInstances<AbstractNativeSimpleTest>(requiredTestInstances.allInstances)
+    private fun ExtensionContext.computeSimpleTestInstances() =
+        NativeTestInstances<AbstractNativeSimpleTest>(requiredTestInstances.allInstances)
 
     /** See also [computeBinariesForBlackBoxTests] */
     private fun ExtensionContext.computeBinariesForSimpleTests(baseDirs: BaseDirs, targets: KotlinNativeTargets): Binaries {

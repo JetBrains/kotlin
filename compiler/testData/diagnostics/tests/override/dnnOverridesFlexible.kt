@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +AllowDnnTypeOverridingFlexibleType
 // ISSUE: KT-58933
 // FILE: J.java
 public interface J<T> {

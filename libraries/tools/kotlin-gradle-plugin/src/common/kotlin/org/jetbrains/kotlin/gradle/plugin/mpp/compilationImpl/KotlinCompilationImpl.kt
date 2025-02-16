@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal class KotlinCompilationImpl constructor(
+internal class KotlinCompilationImpl(
     private val params: Params,
 ) : InternalKotlinCompilation<KotlinCommonOptions> {
 
@@ -92,7 +93,7 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = sourceSets.kotlinSourceSets
 
-    @Deprecated("scheduled for removal with Kotlin 2.1")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun source(sourceSet: KotlinSourceSet) {
         project.kotlinToolingDiagnosticsCollector.report(project, KotlinCompilationSourceDeprecation(Throwable()))
         sourceSets.source(sourceSet)
@@ -166,6 +167,7 @@ internal class KotlinCompilationImpl constructor(
 
     override val archiveTaskName: String?
         get() = project.kotlinCompilationArchiveTasksOrNull?.getArchiveTaskOrNull(this)?.name
+            ?: target.artifactsTaskName.takeIf { isMain() }
 
     //region CompilerOptions & KotlinOptions
 

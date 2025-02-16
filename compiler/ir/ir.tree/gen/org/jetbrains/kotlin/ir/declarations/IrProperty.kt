@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.property]
  */
-abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrOverridableDeclaration<IrPropertySymbol>, IrMetadataSourceOwner, IrAttributeContainer, IrMemberWithContainerSource {
+abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrOverridableDeclaration<IrPropertySymbol>, IrMetadataSourceOwner, IrMemberWithContainerSource {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor
 

@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
@@ -27,10 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunc
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.registerCommonComponents
-import org.jetbrains.kotlin.fir.session.registerCommonComponentsAfterExtensionsAreConfigured
-import org.jetbrains.kotlin.fir.session.registerJavaComponents
-import org.jetbrains.kotlin.fir.session.registerModuleData
+import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.has
@@ -65,8 +63,23 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
             }
         }.value
 
-    @TestOnly
-    fun clearForTheNextTest() {
+    /**
+     * Invalidates all builtins modules and sessions.
+     *
+     * [invalidateAll] should be called after [global module state modification][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION],
+     * as well as after [module state modification][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics.MODULE_STATE_MODIFICATION]
+     * of a [KaBuiltinsModule]. Modification of builtins might affect any session, so in addition to the builtins sessions, all other
+     * sessions should also be invalidated.
+     *
+     * Builtins cannot be affected by out-of-block modification.
+     *
+     * While we could invalidate builtins modules and sessions per [TargetPlatform] on receiving a [KaBuiltinsModule] module state
+     * modification event, there is currently no good reason to be this granular.
+     *
+     * The method must be called in a write action, or alternatively when the caller can guarantee that no other threads can perform
+     * invalidation or code analysis until the invalidation is complete.
+     */
+    internal fun invalidateAll() {
         builtinsModules.clear()
         builtinsAndCloneableSessions.clear()
     }
@@ -79,6 +92,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
         return session.apply {
             val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+            registerDefaultComponents()
             registerIdeComponents(project, languageVersionSettings)
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(languageVersionSettings)
@@ -115,7 +129,6 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     }
 
     companion object {
-        fun getInstance(project: Project): LLFirBuiltinsSessionFactory =
-            project.getService(LLFirBuiltinsSessionFactory::class.java)
+        fun getInstance(project: Project): LLFirBuiltinsSessionFactory = project.service()
     }
 }

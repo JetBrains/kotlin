@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -409,7 +410,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             parent = currentDeclarationParent!!
             superTypes = listOf(superClass.defaultType)
             createThisReceiverParameter()
-        }.copyAttributes(expression)
+            copyAttributes(expression)
+        }
 
         addConstructor(expression, referenceClass, superClass)
 
@@ -420,40 +422,41 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
         val field = expression.field?.owner
         if (field == null) {
-            fun IrBuilderWithScope.setCallArguments(call: IrCall, arguments: List<IrValueParameter>) {
+            fun IrBuilderWithScope.setCallArguments(call: IrCall, parameters: List<IrValueParameter>) {
                 val backingField =
                     with(FunctionReferenceLowering) { referenceClass.getReceiverField(this@PropertyReferenceLowering.context) }
-                val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type) }
+                val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(parameters[0]), backingField), it.type) }
                 if (expression.isJavaSyntheticPropertyReference) {
                     assert(call.typeArguments.size == 0) { "Unexpected type arguments: ${call.typeArguments.size}" }
                 } else {
                     call.copyTypeArgumentsFrom(expression)
                 }
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
-                    receiverFromField ?: irImplicitCast(irGet(arguments[1]), expression.receiverType)
+                    receiverFromField ?: irImplicitCast(irGet(parameters[1]), expression.receiverType)
                 }
                 call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
                     if (call.symbol.owner.dispatchReceiverParameter == null)
-                        receiverFromField ?: irImplicitCast(irGet(arguments[1]), it.type)
+                        receiverFromField ?: irImplicitCast(irGet(parameters[1]), it.type)
                     else
-                        irImplicitCast(irGet(arguments[if (receiverFromField != null) 1 else 2]), it.type)
+                        irImplicitCast(irGet(parameters[if (receiverFromField != null) 1 else 2]), it.type)
                 }
             }
 
             expression.getter?.owner?.let { getter ->
-                referenceClass.addOverride(get!!) { arguments ->
+                referenceClass.addOverride(get!!) { parameters ->
                     expression.constInitializer?.let { return@addOverride it }
-                    irGet(getter.returnType, null, getter.symbol).apply {
-                        setCallArguments(this, arguments)
+                    irCall(getter, origin = IrStatementOrigin.GET_PROPERTY).apply {
+                        setCallArguments(this, parameters)
                     }
                 }
                 referenceClass.addFakeOverride(invoke!!)
             }
 
             expression.setter?.owner?.let { setter ->
-                referenceClass.addOverride(set!!) { arguments ->
-                    irSet(setter.returnType, null, setter.symbol, irGet(arguments.last())).apply {
-                        setCallArguments(this, arguments)
+                referenceClass.addOverride(set!!) { parameters ->
+                    irCall(setter, origin = IrStatementOrigin.EQ).apply {
+                        setCallArguments(this, parameters)
+                        arguments[arguments.lastIndex] = irGet(parameters.last())
                     }
                 }
             }

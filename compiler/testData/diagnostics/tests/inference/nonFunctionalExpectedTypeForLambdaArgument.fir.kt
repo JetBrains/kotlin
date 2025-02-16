@@ -21,13 +21,13 @@ fun testAnyCall() {
 }
 
 fun testParam() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
         <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> param
     }
 }
 
 fun testParamCall() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
         <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> <!UNRESOLVED_REFERENCE!>param<!>()
     }
 }

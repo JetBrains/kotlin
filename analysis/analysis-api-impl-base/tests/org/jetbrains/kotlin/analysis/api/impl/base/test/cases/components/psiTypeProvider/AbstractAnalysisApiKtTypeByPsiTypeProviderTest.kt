@@ -53,15 +53,15 @@ private fun getTestDataContext(testServices: TestServices): TestDataContext {
     var useSitePosition: PsiElement? = null
 
     testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
-        val psiFiles = ktTestModule.files
+        val psiFiles = ktTestModule.psiFiles
         for (psiFile in psiFiles) {
-            val targetOffset = testServices.expressionMarkerProvider.getCaretPositionOrNull(psiFile)
+            val targetOffset = testServices.expressionMarkerProvider.getCaretOrNull(psiFile)
             if (targetOffset != null) {
                 if (psiDeclaration != null) error("Only one target method is expected")
                 psiDeclaration = psiFile.findElementAt(targetOffset)?.parentsWithSelf?.find { it is PsiMethod || it is PsiVariable }
             }
 
-            val useSiteOffset = testServices.expressionMarkerProvider.getCaretPositionOrNull(psiFile, caretTag = "useSite")
+            val useSiteOffset = testServices.expressionMarkerProvider.getCaretOrNull(psiFile, qualifier = "useSite")
             if (useSiteOffset != null) {
                 if (useSitePosition != null) error("Only one target method is expected")
                 useSitePosition = psiFile.findElementAt(useSiteOffset)?.parentOfType<PsiElement>(withSelf = true)

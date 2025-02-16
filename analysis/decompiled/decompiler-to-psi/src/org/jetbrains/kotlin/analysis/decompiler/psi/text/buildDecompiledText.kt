@@ -38,6 +38,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     defaultParameterValueRenderer = { _ -> COMPILED_DEFAULT_PARAMETER_VALUE }
     includePropertyConstant = true
     propertyConstantRenderer = { _ -> COMPILED_DEFAULT_INITIALIZER }
+    presentableUnresolvedTypes = true
 }
 
 /**

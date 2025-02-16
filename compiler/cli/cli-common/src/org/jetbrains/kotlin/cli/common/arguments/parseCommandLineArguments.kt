@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -93,7 +94,7 @@ data class ArgumentParseErrors(
     val argfileErrors: MutableList<String> = SmartList(),
 
     // Reports from internal arguments parsers
-    val internalArgumentsParsingProblems: MutableList<String> = SmartList()
+    val internalArgumentsParsingProblems: MutableList<Pair<CompilerMessageSeverity, String>> = SmartList()
 )
 
 inline fun <reified T : CommonToolArguments> parseCommandLineArguments(args: List<String>): T {

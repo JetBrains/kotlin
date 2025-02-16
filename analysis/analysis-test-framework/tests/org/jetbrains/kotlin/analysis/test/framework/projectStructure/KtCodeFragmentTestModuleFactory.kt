@@ -6,23 +6,14 @@
 package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.forcedSpecialModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.explicitModule
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValue
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
-import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
-import org.jetbrains.kotlin.psi.KtBlockCodeFragment
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTypeCodeFragment
-import org.jetbrains.kotlin.psi.analysisContext
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -31,7 +22,6 @@ import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.org.objectweb.asm.Type
 import java.nio.file.Path
@@ -67,8 +57,7 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
             error("Imports cannot be configured for type code fragments")
         }
 
-        val contextElement = contextModule.files
-            .filterIsInstance<KtFile>()
+        val contextElement = contextModule.ktFiles
             .firstNotNullOfOrNull { findContextElement(it, testServices) }
 
         val codeFragment = when (codeFragmentKind) {
@@ -82,12 +71,12 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
 
 
         val module = KaDanglingFileModuleImpl(
-            codeFragment,
+            listOf(codeFragment),
             contextModule.ktModule,
             getResolutionMode(testFile)
         )
 
-        codeFragment.forcedSpecialModule = module
+        codeFragment.explicitModule = module
 
         return KtTestModule(TestModuleKind.CodeFragment, testModule, module, listOf(codeFragment))
     }
@@ -102,7 +91,7 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
     }
 
     private fun findContextElement(file: KtFile, testServices: TestServices): KtElement? {
-        val offset = testServices.expressionMarkerProvider.getCaretPositionOrNull(file, "context") ?: return null
+        val offset = testServices.expressionMarkerProvider.getCaretOrNull(file, "context") ?: return null
         return file.findElementAt(offset)?.getParentOfType<KtElement>(strict = false)
     }
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -187,8 +188,8 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                             tryScopes   = tryScopes,
                             index       = index + 1,
                             jump        = jump,
-                            startOffset = startOffset,
-                            endOffset   = endOffset,
+                            startOffset = UNDEFINED_OFFSET,
+                            endOffset   = UNDEFINED_OFFSET,
                             value       = inlinedFinally)
                 }
             }
@@ -210,7 +211,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
 
         val startOffset = aTry.startOffset
         val endOffset = aTry.endOffset
-        val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
+        val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol)
         val transformer = this
         irBuilder.run {
             val transformedFinallyExpression = finallyExpression.transform(transformer, null)
@@ -270,7 +271,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                                                                                     finallyExpression: IrExpression
     ): IrExpression {
         return when {
-            type.isUnit() || type.isNothing() -> irBlock(value, null, type) {
+            type.isUnit() || type.isNothing() -> irBlock(value, null, type, UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 +irReturnableBlock(symbol, type) {
                     +value
                 }
@@ -278,7 +279,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                     +copy(finallyExpression)
                 }
             }
-            else -> irBlock(value, null, type) {
+            else -> irBlock(value, null, type, UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 val tmp = createTmpVariable(irReturnableBlock(symbol, type) {
                     +irReturn(symbol, value)
                 })

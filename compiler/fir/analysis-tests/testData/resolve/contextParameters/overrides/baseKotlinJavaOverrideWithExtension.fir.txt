@@ -1,0 +1,29 @@
+FILE: test.kt
+    public abstract interface KotlinContextInterface : R|kotlin/Any| {
+        context(a: R|kotlin/String|)
+        public abstract fun R|kotlin/Int|.foo(b: R|kotlin/Boolean|): R|kotlin/String|
+
+    }
+    public final fun usage(a: R|JavaWithOverride|, b: R|JavaWithFakeOverride|): R|kotlin/Unit| {
+        R|<local>/a|.<Unresolved name: foo>#(String(), Int(1), Boolean(true))
+        R|<local>/b|.<Unresolved name: foo>#(String(), Int(1), Boolean(true))
+        R|kotlin/with|<R|kotlin/String|, R|kotlin/String|>(String(OK), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|kotlin/with|<R|JavaWithOverride|, R|@EnhancedNullability kotlin/String|>(R|<local>/a|, <L> = with@fun R|JavaWithOverride|.<anonymous>(): R|@EnhancedNullability kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ (this@R|special/anonymous|, Int(1)).R|/JavaWithOverride.foo|(Boolean(true))
+            }
+            )
+            ^ R|kotlin/with|<R|JavaWithFakeOverride|, R|kotlin/String|>(R|<local>/b|, <L> = with@fun R|JavaWithFakeOverride|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ (this@R|special/anonymous|, Int(1)).R|/KotlinContextInterface.foo|(Boolean(true))
+            }
+            )
+        }
+        )
+        R|kotlin/with|<R|JavaWithOverride|, R|@EnhancedNullability kotlin/String|>(R|<local>/a|, <L> = with@fun R|JavaWithOverride|.<anonymous>(): R|@EnhancedNullability kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ (this@R|special/anonymous|, Int(1)).R|/JavaWithOverride.foo<Inapplicable(INAPPLICABLE): /JavaWithOverride.foo>#|(Boolean(true))
+        }
+        )
+        R|kotlin/with|<R|JavaWithFakeOverride|, R|kotlin/String|>(R|<local>/b|, <L> = with@fun R|JavaWithFakeOverride|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ (this@R|special/anonymous|, Int(1)).R|/KotlinContextInterface.foo<Inapplicable(INAPPLICABLE): /KotlinContextInterface.foo>#|(Boolean(true))
+        }
+        )
+    }

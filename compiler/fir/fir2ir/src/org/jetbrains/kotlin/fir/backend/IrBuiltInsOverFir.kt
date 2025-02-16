@@ -125,6 +125,18 @@ class IrBuiltInsOverFir(
     override val longClass: IrClassSymbol get() = fir2irBuiltins.longClass
     override val longType: IrType get() = fir2irBuiltins.longType
 
+    override val ubyteClass: IrClassSymbol get() = fir2irBuiltins.ubyteClass
+    override val ubyteType: IrType get() = fir2irBuiltins.ubyteType
+
+    override val ushortClass: IrClassSymbol get() = fir2irBuiltins.ushortClass
+    override val ushortType: IrType get() = fir2irBuiltins.ushortType
+
+    override val uintClass: IrClassSymbol get() = fir2irBuiltins.uintClass
+    override val uintType: IrType get() = fir2irBuiltins.uintType
+
+    override val ulongClass: IrClassSymbol get() = fir2irBuiltins.ulongClass
+    override val ulongType: IrType get() = fir2irBuiltins.ulongType
+
     override val floatClass: IrClassSymbol get() = fir2irBuiltins.floatClass
     override val floatType: IrType get() = fir2irBuiltins.floatType
 
@@ -208,6 +220,11 @@ class IrBuiltInsOverFir(
     override val floatArray: IrClassSymbol get() = fir2irBuiltins.floatArray
     override val doubleArray: IrClassSymbol get() = fir2irBuiltins.doubleArray
 
+    override val ubyteArray: IrClassSymbol get() = fir2irBuiltins.ubyteArray
+    override val ushortArray: IrClassSymbol get() = fir2irBuiltins.ushortArray
+    override val uintArray: IrClassSymbol get() = fir2irBuiltins.uintArray
+    override val ulongArray: IrClassSymbol get() = fir2irBuiltins.ulongArray
+
     override val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType> get() = fir2irBuiltins.primitiveArraysToPrimitiveTypes
     override val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
         get() = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
@@ -244,19 +261,19 @@ class IrBuiltInsOverFir(
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val intPlusSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
-            it.owner.name == OperatorNameConventions.PLUS && it.owner.valueParameters[0].type == intType
+            it.owner.name == OperatorNameConventions.PLUS && it.owner.parameters[1].type == intType
         }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val intTimesSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
-            it.owner.name == OperatorNameConventions.TIMES && it.owner.valueParameters[0].type == intType
+            it.owner.name == OperatorNameConventions.TIMES && it.owner.parameters[1].type == intType
         }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val intXorSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
-            it.owner.name == OperatorNameConventions.XOR && it.owner.valueParameters[0].type == intType
+            it.owner.name == OperatorNameConventions.XOR && it.owner.parameters[1].type == intType
         }
 
     override val extensionToString: IrSimpleFunctionSymbol by lazy {
@@ -536,7 +553,7 @@ class IrBuiltInsOverFir(
     override fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
         val definingClass = lhsType.getMaybeBuiltinClass() ?: error("Defining class not found: $lhsType")
         return definingClass.functions.single { function ->
-            function.name == name && function.valueParameters.size == 1 && function.valueParameters[0].type == rhsType
+            function.name == name && function.parameters.size == 2 && function.parameters[1].type == rhsType
         }.symbol
     }
 
@@ -545,7 +562,7 @@ class IrBuiltInsOverFir(
     override fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
         val definingClass = receiverType.getMaybeBuiltinClass() ?: error("Defining class not found: $receiverType")
         return definingClass.functions.single { function ->
-            function.name == name && function.valueParameters.isEmpty()
+            function.name == name && function.parameters.size == 1
         }.symbol
     }
 
@@ -684,7 +701,12 @@ class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContai
         clazz.owner.findDeclaration<IrProperty> { it.name == name }?.getter?.symbol
 
     override fun findPrimaryConstructor(clazz: IrClassSymbol): IrConstructorSymbol? = clazz.owner.primaryConstructor?.symbol
-    override fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol? = clazz.owner.constructors.singleOrNull { it.valueParameters.isEmpty() }?.symbol
+
+    override fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol? =
+        clazz.owner.constructors.singleOrNull { c ->
+            // either no parameters or only dispatch receiver
+            c.parameters.all { it.kind == IrParameterKind.DispatchReceiver }
+        }?.symbol
 
     override fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol? {
         return clazz.owner.declarations.filterIsInstance<IrClass>().singleOrNull { it.name == name }?.symbol
@@ -693,18 +715,18 @@ class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContai
     override fun getName(clazz: IrClassSymbol): Name = clazz.owner.name
 
     override fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean {
-        return property.owner.getter?.extensionReceiverParameter?.type?.classOrNull == expected
+        return property.owner.getter?.parameters?.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classOrNull == expected
     }
 
     override fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean {
-        return function.owner.extensionReceiverParameter?.type?.classOrNull == expected
+        return function.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classOrNull == expected
     }
 
     override fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean? {
-        return function.owner.extensionReceiverParameter?.type?.isMarkedNullable()
+        return function.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.isMarkedNullable()
     }
 
-    override fun getValueParametersCount(function: IrFunctionSymbol): Int = function.owner.valueParameters.size
+    override fun getValueParametersCount(function: IrFunctionSymbol): Int = function.owner.parameters.count { it.kind == IrParameterKind.Regular }
 
     override fun getTypeParametersCount(function: IrFunctionSymbol): Int = function.owner.typeParameters.size
 
@@ -713,7 +735,11 @@ class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContai
     }
 
     override fun isValueParameterClass(function: IrFunctionSymbol, index: Int, expected: IrClassSymbol?): Boolean {
-        return function.owner.valueParameters.getOrNull(index)?.type?.classOrNull == expected
+        return function.owner.parameters
+            .filter { it.kind == IrParameterKind.Regular }
+            .getOrNull(index)
+            ?.type
+            ?.classOrNull == expected
     }
 
     override fun isReturnClass(function: IrFunctionSymbol, expected: IrClassSymbol): Boolean {
@@ -721,13 +747,20 @@ class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContai
     }
 
     override fun isValueParameterTypeArgumentClass(function: IrFunctionSymbol, index: Int, argumentIndex: Int, expected: IrClassSymbol?): Boolean {
-        val type = function.owner.valueParameters.getOrNull(index)?.type as? IrSimpleType ?: return false
+        val type = function.owner.parameters
+            .filter { it.kind == IrParameterKind.Regular }
+            .getOrNull(index)
+            ?.type as? IrSimpleType ?: return false
         val argumentType = type.arguments.getOrNull(argumentIndex) as? IrSimpleType ?: return false
         return argumentType.classOrNull == expected
     }
 
     override fun isValueParameterNullable(function: IrFunctionSymbol, index: Int): Boolean? {
-        return function.owner.valueParameters.getOrNull(index)?.type?.isMarkedNullable()
+        return function.owner.parameters
+            .filter { it.kind == IrParameterKind.Regular }
+            .getOrNull(index)
+            ?.type
+            ?.isMarkedNullable()
     }
 
     override fun isExpect(function: IrFunctionSymbol): Boolean = function.owner.isExpect

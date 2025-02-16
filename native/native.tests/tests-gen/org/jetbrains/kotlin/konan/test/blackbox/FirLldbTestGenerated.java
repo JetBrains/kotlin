@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 @UseStandardTestCaseGroupProvider()
 @EnforcedProperty(property = ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
 @EnforcedHostTarget()
-@Tag("frontend-fir")
 @FirPipeline()
 public class FirLldbTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
@@ -81,6 +80,12 @@ public class FirLldbTestGenerated extends AbstractNativeBlackBoxTest {
   @TestMetadata("inlineArgs.kt")
   public void testInlineArgs() {
     runTest("native/native.tests/testData/lldb/inlineArgs.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineLambdaRepresentation.kt")
+  public void testInlineLambdaRepresentation() {
+    runTest("native/native.tests/testData/lldb/inlineLambdaRepresentation.kt");
   }
 
   @Test

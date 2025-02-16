@@ -1,0 +1,9 @@
+FILE: anonymousFunctionContextWithoutType.kt
+    public final fun foo(f: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(context(c@<ERROR TYPE REF: Symbol not found for c>) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@foo <Unresolved name: c>#
+        }
+        )
+    }

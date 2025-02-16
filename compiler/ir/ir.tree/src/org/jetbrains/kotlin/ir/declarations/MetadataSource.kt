@@ -22,6 +22,7 @@ interface MetadataSource {
     }
     interface Script : MetadataSource
     interface CodeFragment : MetadataSource
+    interface ReplSnippet : MetadataSource
     interface Function : MetadataSource
     interface Property : MetadataSource {
         val isConst: Boolean
@@ -45,6 +46,8 @@ sealed class DescriptorMetadataSource : MetadataSource {
     }
 
     class Script(override val descriptor: ScriptDescriptor) : DescriptorMetadataSource(), MetadataSource.Script
+
+    class CodeFragment : DescriptorMetadataSource(), MetadataSource.CodeFragment
 
     class Function(override val descriptor: FunctionDescriptor) : DescriptorMetadataSource(), MetadataSource.Function
 

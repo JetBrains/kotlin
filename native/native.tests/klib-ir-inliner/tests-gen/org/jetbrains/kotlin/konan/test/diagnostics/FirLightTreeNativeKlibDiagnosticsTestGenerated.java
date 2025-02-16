@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.konan.test.diagnostics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
   @Nested
   @TestMetadata("compiler/testData/diagnostics/klibSerializationTests")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-fir")
   @FirPipeline()
   @Tag("klib")
   public class KlibSerializationTests {
@@ -58,7 +57,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
     @Nested
     @TestMetadata("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class PrivateTypeUsageInsideNonPrivateInlineFunction {
@@ -118,7 +116,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
       @Nested
       @TestMetadata("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateMember")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class PrivateMember {
@@ -155,7 +152,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
       @Nested
       @TestMetadata("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate")
       @TestDataPath("$PROJECT_ROOT")
-      @Tag("frontend-fir")
       @FirPipeline()
       @Tag("klib")
       public class TopLevelPrivate {
@@ -206,7 +202,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
   @Nested
   @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("frontend-fir")
   @FirPipeline()
   @Tag("klib")
   public class SpecialBackendChecks {
@@ -218,7 +213,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/cInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class CInterop {
@@ -357,7 +351,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/concurrent")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Concurrent {
@@ -394,7 +387,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/immutableBlobOf")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ImmutableBlobOf {
@@ -431,7 +423,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/nativeRef")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class NativeRef {
@@ -456,7 +447,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class ObjCInterop {
@@ -631,7 +621,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Posix {
@@ -656,7 +645,6 @@ public class FirLightTreeNativeKlibDiagnosticsTestGenerated extends AbstractFirL
     @Nested
     @TestMetadata("compiler/testData/diagnostics/nativeTests/specialBackendChecks/reflect")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("frontend-fir")
     @FirPipeline()
     @Tag("klib")
     public class Reflect {

@@ -7,22 +7,26 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           receiverType = null
           returnType = O1
           symbol = a: O1
+          contextParameters = []
           callableId = null),
         { s -> true } -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
           symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+          contextParameters = []
           callableId = null),
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
           returnType = T1
           symbol = c: T1
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -35,20 +39,24 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
               receiverType = null
               returnType = O1
               symbol = a: O1
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
               symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = c
               receiverType = null
               returnType = T1
               symbol = c: T1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -61,22 +69,26 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           receiverType = null
           returnType = O2
           symbol = a: O2
+          contextParameters = []
           callableId = null),
         { s -> true } -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
           symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+          contextParameters = []
           callableId = null),
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
           returnType = T2
           symbol = c: T2
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -89,20 +101,24 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
               receiverType = null
               returnType = O2
               symbol = a: O2
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
               symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = c
               receiverType = null
               returnType = T2
               symbol = c: T2
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -115,22 +131,26 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           receiverType = null
           returnType = O3
           symbol = a: O3
+          contextParameters = []
           callableId = null),
         { s -> true } -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
+          contextParameters = []
           callableId = null),
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
           returnType = T3
           symbol = c: T3
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -143,21 +163,25 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
               receiverType = null
               returnType = O3
               symbol = a: O3
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String
+              contextParameters = []
               callableId = null,
             KaVariableSignature:
               name = c
               receiverType = null
               returnType = T3
               symbol = c: T3
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Function1<ERROR CLASS: Cannot infer type for parameter s, ERROR CLASS: Cannot infer type variable TypeVariable(_L)>', but 'kotlin.String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Cannot infer type for parameter s, ERROR CLASS: Cannot infer type variable TypeVariable(_L)>', but 'String' was expected.>
     isInBestCandidates = false

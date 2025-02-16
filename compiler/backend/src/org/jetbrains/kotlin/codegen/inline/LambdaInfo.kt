@@ -96,7 +96,7 @@ class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompiler
 
     init {
         val classBytes =
-            sourceCompiler.state.inlineCache.classBytes.getOrPut(lambdaClassType.internalName) {
+            sourceCompiler.state.inlineCache.computeClassBytes(lambdaClassType.internalName) {
                 loadClassBytesByInternalName(sourceCompiler.state, lambdaClassType.internalName)
             }
         val superName = ClassReader(classBytes).superName

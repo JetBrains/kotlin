@@ -47,6 +47,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /f
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

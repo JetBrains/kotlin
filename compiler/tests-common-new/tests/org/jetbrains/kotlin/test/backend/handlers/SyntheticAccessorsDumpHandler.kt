@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import com.intellij.openapi.util.io.FileUtil.loadFile
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.config.syntheticAccessorsWithNarrowedVisibility
 import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.Assertions
@@ -20,7 +21,7 @@ import java.io.File
 
 abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
     testServices: TestServices,
-    artifactKind: BinaryKind<A>,
+    artifactKind: ArtifactKind<A>,
 ) : BinaryArtifactHandler<A>(
     testServices,
     artifactKind,
@@ -37,10 +38,10 @@ abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(testModules.first())
         val dumpDir = DumpSyntheticAccessors.getDumpDirectoryOrNull(configuration) ?: return
-        val withNarrowedVisibility = configuration.getBoolean(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
+        val withNarrowedVisibility = configuration.syntheticAccessorsWithNarrowedVisibility
 
         val uniqueIrModuleNames = testModules.mapNotNull { testModule ->
-            testServices.dependencyProvider.getArtifactSafe(testModule, BackendKinds.IrBackend)?.irModuleFragment?.name
+            testServices.artifactsProvider.getArtifactSafe(testModule, BackendKinds.IrBackend)?.irModuleFragment?.name
         }.toSet()
 
         assertions.assertSyntheticAccessorDumpIsCorrect(

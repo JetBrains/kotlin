@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_FQ_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_SENTENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.STRING_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.formatKotlinWithVersion
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IMPLEMENTA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
@@ -132,7 +134,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES,
-            "Argument type mismatch: actual type is ''{1}'', but ''{0}'' was expected. This will become an error in ${
+            "Argument type mismatch: actual type is ''{0}'', but ''{1}'' was expected. This will become an error in ${
                 LanguageFeature.ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces.formatKotlinWithVersion()
             }.",
             RENDER_TYPE,
@@ -279,10 +281,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not yet supported.")
         map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "'@JvmInline' annotation is applicable only to value classes.")
 
-        map.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with ''-Xjvm-default'' option.", STRING)
+        map.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with ''-jvm-default'' option.", STRING)
         map.put(
             JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION,
-            "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-Xjvm-default=all' option."
+            "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-jvm-default=no-compatibility' option."
         )
         map.put(
             JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE,
@@ -312,7 +314,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER,
-            "Calling JVM-default members via super is supported only in Kotlin 2.1 and later, or with -Xjvm-default=all/all-compatibility.",
+            "Calling JVM-default members via super is supported only in Kotlin 2.1 and later, or with -jvm-default=enable/no-compatibility.",
         )
         map.put(
             SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC,
@@ -384,6 +386,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS,
             "'@JvmSerializableLambda' is not applicable to inlined function literals."
+        )
+        map.put(
+            INCOMPATIBLE_ANNOTATION_TARGETS,
+            "Java {0} missing, corresponding to Kotlin {1}.",
+            STRING_TARGETS,
+            STRING_TARGETS
         )
         map.put(
             NO_REFLECTION_IN_CLASS_PATH,

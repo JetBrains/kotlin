@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 
 @Suppress("warnings")
 abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
@@ -64,29 +65,30 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
             moduleStructure.originalTestDataFiles
         )
         val incrementalRunner = TestRunner(incrementalConfiguration)
-        val incrementalDependencyProvider = testServices.dependencyProvider.copy().also {
+        val incrementalArtifactsProvider = testServices.artifactsProvider.copy().also {
             it.unregisterAllArtifacts(module)
-        } as DependencyProviderImpl
+        }
 
         val incrementalServices = incrementalConfiguration.testServices
-        incrementalServices.registerDependencyProvider(incrementalDependencyProvider)
+        incrementalServices.registerArtifactsProvider(incrementalArtifactsProvider)
         incrementalServices.register(TestModuleStructure::class, incrementalModuleStructure)
         incrementalServices.register(TemporaryDirectoryManager::class, testServices.temporaryDirectoryManager)
 
         incrementalServices.register(module)
 
         val incrementalArtifact = try {
-            incrementalRunner.processModule(incrementalModule, incrementalDependencyProvider)
+            incrementalRunner.processModule(incrementalModule, incrementalArtifactsProvider)
             incrementalRunner.reportFailures(incrementalServices)
-            incrementalDependencyProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
+            incrementalArtifactsProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
         } finally {
-            Disposer.dispose(incrementalConfiguration.rootDisposable)
+            disposeRootInWriteAction(incrementalConfiguration.rootDisposable)
         }
 
         return BinaryArtifacts.Js.IncrementalJsArtifact(inputArtifact, incrementalArtifact)
     }
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.targetBackend == backendKind && JsEnvironmentConfigurator.run { incrementalEnabled(testServices) && module.hasFilesToRecompile()}
+    override fun shouldTransform(module: TestModule): Boolean {
+        return testServices.defaultsProvider.targetBackend == backendKind &&
+                JsEnvironmentConfigurator.run { incrementalEnabled(testServices) && module.hasFilesToRecompile()}
     }
 }

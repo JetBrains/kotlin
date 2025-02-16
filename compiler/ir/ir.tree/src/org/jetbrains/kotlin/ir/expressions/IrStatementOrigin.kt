@@ -73,6 +73,7 @@ interface IrStatementOrigin {
         val PERCEQ by IrStatementOriginImpl
 
         val ARGUMENTS_REORDERING_FOR_CALL by IrStatementOriginImpl
+        val IMPLICIT_ARGUMENT by IrStatementOriginImpl
         val DESTRUCTURING_DECLARATION by IrStatementOriginImpl
 
         /**
@@ -111,6 +112,13 @@ interface IrStatementOrigin {
         val SYNTHETIC_NOT_AUTOBOXED_CHECK by IrStatementOriginImpl
 
         val PARTIAL_LINKAGE_RUNTIME_ERROR by IrStatementOriginImpl
+
+        val SYNTHESIZED_INIT_BLOCK by IrStatementOriginImpl
+        val DEFAULT_DISPATCH_CALL by IrStatementOriginImpl
+        val STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE by IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
+        val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
+        val INLINE_LAMBDA by IrStatementOriginImpl
+        val INLINE_ARGS_CONTAINER by IrStatementOriginImpl
     }
 
     data class COMPONENT_N private constructor(val index: Int) : IrStatementOrigin {
@@ -147,4 +155,14 @@ fun IrStatementOrigin.isAssignmentOperator(): Boolean =
         IrStatementOrigin.DIVEQ,
         IrStatementOrigin.PERCEQ -> true
         else -> isAssignmentOperatorWithResult()
+    }
+
+fun IrStatementOrigin.isComparisonOperator() =
+    when (this) {
+        IrStatementOrigin.LT,
+        IrStatementOrigin.GT,
+        IrStatementOrigin.LTEQ,
+        IrStatementOrigin.GTEQ,
+            -> true
+        else -> false
     }

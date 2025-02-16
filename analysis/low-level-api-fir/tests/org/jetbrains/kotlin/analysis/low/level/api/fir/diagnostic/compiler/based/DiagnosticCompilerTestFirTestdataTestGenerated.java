@@ -53,7 +53,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
 
     @Test
     public void testAllFilesPresentInResolve() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
@@ -495,6 +495,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     }
 
     @Test
+    @TestMetadata("nestedAnnotationConstExprArguments.kt")
+    public void testNestedAnnotationConstExprArguments() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/nestedAnnotationConstExprArguments.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedClass.kt");
@@ -681,9 +687,15 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     }
 
     @Test
-    @TestMetadata("topLevelDestruction.kt")
-    public void testTopLevelDestruction() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestruction.kt");
+    @TestMetadata("topLevelDestructuring.kt")
+    public void testTopLevelDestructuring() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelDestructuring2.kt")
+    public void testTopLevelDestructuring2() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/topLevelDestructuring2.kt");
     }
 
     @Test
@@ -812,7 +824,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -846,7 +858,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Arguments {
       @Test
       public void testAllFilesPresentInArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1084,7 +1096,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Arrays {
       @Test
       public void testAllFilesPresentInArrays() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arrays"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arrays"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1106,7 +1118,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Builtins {
       @Test
       public void testAllFilesPresentInBuiltins() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1122,7 +1134,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class CallResolution {
       @Test
       public void testAllFilesPresentInCallResolution() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1282,7 +1294,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Cfa {
       @Test
       public void testAllFilesPresentInCfa() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfa"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfa"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1322,7 +1334,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Cfg {
       @Test
       public void testAllFilesPresentInCfg() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1536,7 +1548,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Checkers {
       @Test
       public void testAllFilesPresentInCheckers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/checkers"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/checkers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1630,7 +1642,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class ClasspathSubstitution {
       @Test
       public void testAllFilesPresentInClasspathSubstitution() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1646,33 +1658,9 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
-      @TestMetadata("cyclicSupertype3.kt")
-      public void testCyclicSupertype3() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertype3.kt");
-      }
-
-      @Test
-      @TestMetadata("cyclicSupertype4.kt")
-      public void testCyclicSupertype4() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertype4.kt");
-      }
-
-      @Test
       @TestMetadata("cyclicSupertypeBetweenModules.kt")
       public void testCyclicSupertypeBetweenModules() {
         runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeBetweenModules.kt");
-      }
-
-      @Test
-      @TestMetadata("cyclicSupertypeWithAlias.kt")
-      public void testCyclicSupertypeWithAlias() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeWithAlias.kt");
-      }
-
-      @Test
-      @TestMetadata("cyclicSupertypeWithAlias2.kt")
-      public void testCyclicSupertypeWithAlias2() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution/cyclicSupertypeWithAlias2.kt");
       }
     }
 
@@ -1682,7 +1670,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class ConstVal {
       @Test
       public void testAllFilesPresentInConstVal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1716,7 +1704,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1738,7 +1726,13 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("ambiguityBetweenReceiverAndContext.kt")
+      public void testAmbiguityBetweenReceiverAndContext() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/ambiguityBetweenReceiverAndContext.kt");
       }
 
       @Test
@@ -1754,9 +1748,289 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("contextualLateinit.kt")
+      public void testContextualLateinit() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextualLateinit.kt");
+      }
+
+      @Test
+      @TestMetadata("expectActualMatch.kt")
+      public void testExpectActualMatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/expectActualMatch.kt");
+      }
+
+      @Test
+      @TestMetadata("expectActualMismatch.kt")
+      public void testExpectActualMismatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/expectActualMismatch.kt");
+      }
+
+      @Test
       @TestMetadata("smoke.kt")
       public void testSmoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smoke.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages")
+      @TestDataPath("$PROJECT_ROOT")
+      public class DeclarationAndUsages {
+        @Test
+        public void testAllFilesPresentInDeclarationAndUsages() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("annotationOnTypeWithContext.kt")
+        public void testAnnotationOnTypeWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/annotationOnTypeWithContext.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationTargetInContext.kt")
+        public void testAnnotationTargetInContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/annotationTargetInContext.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousFunctionContextWithoutType.kt")
+        public void testAnonymousFunctionContextWithoutType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/anonymousFunctionContextWithoutType.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousFunctionWithWrongShape.kt")
+        public void testAnonymousFunctionWithWrongShape() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/anonymousFunctionWithWrongShape.kt");
+        }
+
+        @Test
+        @TestMetadata("classMembersWithContext.kt")
+        public void testClassMembersWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/classMembersWithContext.kt");
+        }
+
+        @Test
+        @TestMetadata("contextInCompanionObject.kt")
+        public void testContextInCompanionObject() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextInCompanionObject.kt");
+        }
+
+        @Test
+        @TestMetadata("contextInLocalFunction.kt")
+        public void testContextInLocalFunction() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextInLocalFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("contextInLocalFunctionResolution.kt")
+        public void testContextInLocalFunctionResolution() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextInLocalFunctionResolution.kt");
+        }
+
+        @Test
+        @TestMetadata("contextOnGetterSetter.kt")
+        public void testContextOnGetterSetter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextOnGetterSetter.kt");
+        }
+
+        @Test
+        @TestMetadata("contextOrderWithAnnotation.kt")
+        public void testContextOrderWithAnnotation() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextOrderWithAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("contextParameterIsNotInlined.kt")
+        public void testContextParameterIsNotInlined() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextParameterIsNotInlined.kt");
+        }
+
+        @Test
+        @TestMetadata("contextParameterToDefaultArgument.kt")
+        public void testContextParameterToDefaultArgument() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextParameterToDefaultArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("contextWithAnnotation.kt")
+        public void testContextWithAnnotation() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextWithAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("contextualAnonymousFunction.kt")
+        public void testContextualAnonymousFunction() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/contextualAnonymousFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("dslMarkerOnContextType.kt")
+        public void testDslMarkerOnContextType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/dslMarkerOnContextType.kt");
+        }
+
+        @Test
+        @TestMetadata("emptyContextName.kt")
+        public void testEmptyContextName() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/emptyContextName.kt");
+        }
+
+        @Test
+        @TestMetadata("emptyListOfContextParameters.kt")
+        public void testEmptyListOfContextParameters() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/emptyListOfContextParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("inFunctionDeclaration.kt")
+        public void testInFunctionDeclaration() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/inFunctionDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("inFunctionalType.kt")
+        public void testInFunctionalType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/inFunctionalType.kt");
+        }
+
+        @Test
+        @TestMetadata("inPropertyDeclaration.kt")
+        public void testInPropertyDeclaration() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/inPropertyDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("initializerInProperty.kt")
+        public void testInitializerInProperty() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/initializerInProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineForTypeWithContext.kt")
+        public void testInlineForTypeWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/inlineForTypeWithContext.kt");
+        }
+
+        @Test
+        @TestMetadata("memberUsageFromContextScope.kt")
+        public void testMemberUsageFromContextScope() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/memberUsageFromContextScope.kt");
+        }
+
+        @Test
+        @TestMetadata("moreThenOneContext.kt")
+        public void testMoreThenOneContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/moreThenOneContext.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleContextsWithTheSameType.kt")
+        public void testMultipleContextsWithTheSameType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/multipleContextsWithTheSameType.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleDslMarkers.kt")
+        public void testMultipleDslMarkers() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/multipleDslMarkers.kt");
+        }
+
+        @Test
+        @TestMetadata("nameClashes.kt")
+        public void testNameClashes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/nameClashes.kt");
+        }
+
+        @Test
+        @TestMetadata("onClassifierDeclaration.kt")
+        public void testOnClassifierDeclaration() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/onClassifierDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("onConstructor.kt")
+        public void testOnConstructor() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/onConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("parameterModifiersOnContextParameter.kt")
+        public void testParameterModifiersOnContextParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/parameterModifiersOnContextParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("parameterType.kt")
+        public void testParameterType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/parameterType.kt");
+        }
+
+        @Test
+        @TestMetadata("parameterTypeWithContext.kt")
+        public void testParameterTypeWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/parameterTypeWithContext.kt");
+        }
+
+        @Test
+        @TestMetadata("parameterWithDefault.kt")
+        public void testParameterWithDefault() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/parameterWithDefault.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyWithContextAndContextType.kt")
+        public void testPropertyWithContextAndContextType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/propertyWithContextAndContextType.kt");
+        }
+
+        @Test
+        @TestMetadata("theSameContextAndDispatchReceiver.kt")
+        public void testTheSameContextAndDispatchReceiver() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/theSameContextAndDispatchReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("usageOfTypeWithContext.kt")
+        public void testUsageOfTypeWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/usageOfTypeWithContext.kt");
+        }
+
+        @Test
+        @TestMetadata("usageWithoutContext.kt")
+        public void testUsageWithoutContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/usageWithoutContext.kt");
+        }
+
+        @Test
+        @TestMetadata("usageWithoutContextForMultipleParameters.kt")
+        public void testUsageWithoutContextForMultipleParameters() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/usageWithoutContextForMultipleParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("valVarOnContextParameter.kt")
+        public void testValVarOnContextParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/valVarOnContextParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("visibilityOfContextTypeOnFunction.kt")
+        public void testVisibilityOfContextTypeOnFunction() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/visibilityOfContextTypeOnFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("visibilityOfContextTypeOnProperty.kt")
+        public void testVisibilityOfContextTypeOnProperty() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/visibilityOfContextTypeOnProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("withNestedContext.kt")
+        public void testWithNestedContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/withNestedContext.kt");
+        }
       }
 
       @Nested
@@ -1765,13 +2039,31 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Diagnostics {
         @Test
         public void testAllFilesPresentInDiagnostics() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("anonymousFunctionsWithModifiers.kt")
+        public void testAnonymousFunctionsWithModifiers() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/anonymousFunctionsWithModifiers.kt");
+        }
+
+        @Test
+        @TestMetadata("contextParameterSyntaxWithReceiversLanguageFeature.kt")
+        public void testContextParameterSyntaxWithReceiversLanguageFeature() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/contextParameterSyntaxWithReceiversLanguageFeature.kt");
         }
 
         @Test
         @TestMetadata("contextParameterSyntaxWithoutLanguageFeature.kt")
         public void testContextParameterSyntaxWithoutLanguageFeature() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/contextParameterSyntaxWithoutLanguageFeature.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleContextParameterLists.kt")
+        public void testMultipleContextParameterLists() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multipleContextParameterLists.kt");
         }
 
         @Test
@@ -1785,165 +2077,225 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         public void testUnsupportedContextParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
         }
+      }
 
-        @Nested
-        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages")
-        @TestDataPath("$PROJECT_ROOT")
-        public class DeclarationAndUsages {
-          @Test
-          public void testAllFilesPresentInDeclarationAndUsages() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
-          }
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Multiplatform {
+        @Test
+        public void testAllFilesPresentInMultiplatform() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
 
-          @Test
-          @TestMetadata("contextOnGetterSetter.kt")
-          public void testContextOnGetterSetter() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextOnGetterSetter.kt");
-          }
+        @Test
+        @TestMetadata("contextInFunctionAsAType.kt")
+        public void testContextInFunctionAsAType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform/contextInFunctionAsAType.kt");
+        }
 
-          @Test
-          @TestMetadata("contextParameterIsNotInlined.kt")
-          public void testContextParameterIsNotInlined() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextParameterIsNotInlined.kt");
-          }
+        @Test
+        @TestMetadata("contextInPropertyAsAType.kt")
+        public void testContextInPropertyAsAType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform/contextInPropertyAsAType.kt");
+        }
 
-          @Test
-          @TestMetadata("contextParameterToDefaultArgument.kt")
-          public void testContextParameterToDefaultArgument() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextParameterToDefaultArgument.kt");
-          }
+        @Test
+        @TestMetadata("extensionFunWithContextInExpectActual.kt")
+        public void testExtensionFunWithContextInExpectActual() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform/extensionFunWithContextInExpectActual.kt");
+        }
 
-          @Test
-          @TestMetadata("emptyContextName.kt")
-          public void testEmptyContextName() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyContextName.kt");
-          }
+        @Test
+        @TestMetadata("extensionPropertyWithContextInExpectActual.kt")
+        public void testExtensionPropertyWithContextInExpectActual() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform/extensionPropertyWithContextInExpectActual.kt");
+        }
 
-          @Test
-          @TestMetadata("emptyListOfContextParameters.kt")
-          public void testEmptyListOfContextParameters() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyListOfContextParameters.kt");
-          }
+        @Test
+        @TestMetadata("funWithContextInExpectActual.kt")
+        public void testFunWithContextInExpectActual() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform/funWithContextInExpectActual.kt");
+        }
 
-          @Test
-          @TestMetadata("inFunctionDeclaration.kt")
-          public void testInFunctionDeclaration() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inFunctionDeclaration.kt");
-          }
+        @Test
+        @TestMetadata("memberWithAContext.kt")
+        public void testMemberWithAContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform/memberWithAContext.kt");
+        }
 
-          @Test
-          @TestMetadata("inFunctionalType.kt")
-          public void testInFunctionalType() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inFunctionalType.kt");
-          }
+        @Test
+        @TestMetadata("overloadWithContext.kt")
+        public void testOverloadWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform/overloadWithContext.kt");
+        }
 
-          @Test
-          @TestMetadata("inPropertyDeclaration.kt")
-          public void testInPropertyDeclaration() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inPropertyDeclaration.kt");
-          }
+        @Test
+        @TestMetadata("propertyWithContextInExpectActual.kt")
+        public void testPropertyWithContextInExpectActual() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/multiplatform/propertyWithContextInExpectActual.kt");
+        }
+      }
 
-          @Test
-          @TestMetadata("initializerInProperty.kt")
-          public void testInitializerInProperty() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/initializerInProperty.kt");
-          }
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Operators {
+        @Test
+        public void testAllFilesPresentInOperators() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
 
-          @Test
-          @TestMetadata("inlineForTypeWithContext.kt")
-          public void testInlineForTypeWithContext() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inlineForTypeWithContext.kt");
-          }
+        @Test
+        @TestMetadata("baseOperatorsWithContext.kt")
+        public void testBaseOperatorsWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators/baseOperatorsWithContext.kt");
+        }
 
-          @Test
-          @TestMetadata("moreThenOneContext.kt")
-          public void testMoreThenOneContext() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/moreThenOneContext.kt");
-          }
+        @Test
+        @TestMetadata("infixOperator.kt")
+        public void testInfixOperator() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators/infixOperator.kt");
+        }
 
-          @Test
-          @TestMetadata("multipleContextsWithTheSameType.kt")
-          public void testMultipleContextsWithTheSameType() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/multipleContextsWithTheSameType.kt");
-          }
+        @Test
+        @TestMetadata("infixOperatorOnTypeWithContext.kt")
+        public void testInfixOperatorOnTypeWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators/infixOperatorOnTypeWithContext.kt");
+        }
 
-          @Test
-          @TestMetadata("nameClashes.kt")
-          public void testNameClashes() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/nameClashes.kt");
-          }
+        @Test
+        @TestMetadata("invokeOnTypeWithContext.kt")
+        public void testInvokeOnTypeWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/operators/invokeOnTypeWithContext.kt");
+        }
+      }
 
-          @Test
-          @TestMetadata("onClassifierDeclaration.kt")
-          public void testOnClassifierDeclaration() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/onClassifierDeclaration.kt");
-          }
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Overrides {
+        @Test
+        public void testAllFilesPresentInOverrides() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
 
-          @Test
-          @TestMetadata("onConstructor.kt")
-          public void testOnConstructor() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/onConstructor.kt");
-          }
+        @Test
+        @TestMetadata("baseKotlinJavaOverride.kt")
+        public void testBaseKotlinJavaOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/baseKotlinJavaOverride.kt");
+        }
 
-          @Test
-          @TestMetadata("parameterModifiersOnContextParameter.kt")
-          public void testParameterModifiersOnContextParameter() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterModifiersOnContextParameter.kt");
-          }
+        @Test
+        @TestMetadata("baseKotlinJavaOverrideWithExtension.kt")
+        public void testBaseKotlinJavaOverrideWithExtension() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/baseKotlinJavaOverrideWithExtension.kt");
+        }
 
-          @Test
-          @TestMetadata("parameterType.kt")
-          public void testParameterType() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterType.kt");
-          }
+        @Test
+        @TestMetadata("baseOverride.kt")
+        public void testBaseOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/baseOverride.kt");
+        }
 
-          @Test
-          @TestMetadata("parameterTypeWithContext.kt")
-          public void testParameterTypeWithContext() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterTypeWithContext.kt");
-          }
+        @Test
+        @TestMetadata("intersectionOverride.kt")
+        public void testIntersectionOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/intersectionOverride.kt");
+        }
 
-          @Test
-          @TestMetadata("parameterWithDefault.kt")
-          public void testParameterWithDefault() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterWithDefault.kt");
-          }
+        @Test
+        @TestMetadata("intersectionOverrideWithContextTypeAndJava.kt")
+        public void testIntersectionOverrideWithContextTypeAndJava() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/intersectionOverrideWithContextTypeAndJava.kt");
+        }
 
-          @Test
-          @TestMetadata("propertyWithContextAndContextType.kt")
-          public void testPropertyWithContextAndContextType() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/propertyWithContextAndContextType.kt");
-          }
+        @Test
+        @TestMetadata("intersectionOverrideWithExtensionAndValue.kt")
+        public void testIntersectionOverrideWithExtensionAndValue() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/intersectionOverrideWithExtensionAndValue.kt");
+        }
 
-          @Test
-          @TestMetadata("usageWithoutContext.kt")
-          public void testUsageWithoutContext() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/usageWithoutContext.kt");
-          }
+        @Test
+        @TestMetadata("intersectionOverrideWithJava.kt")
+        public void testIntersectionOverrideWithJava() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/intersectionOverrideWithJava.kt");
+        }
 
-          @Test
-          @TestMetadata("usageWithoutContextForMultipleParameters.kt")
-          public void testUsageWithoutContextForMultipleParameters() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/usageWithoutContextForMultipleParameters.kt");
-          }
+        @Test
+        @TestMetadata("intersectionWithTypeParameter.kt")
+        public void testIntersectionWithTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/intersectionWithTypeParameter.kt");
+        }
 
-          @Test
-          @TestMetadata("valVarOnContextParameter.kt")
-          public void testValVarOnContextParameter() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/valVarOnContextParameter.kt");
-          }
+        @Test
+        @TestMetadata("KJKHierarchyWithOverride.kt")
+        public void testKJKHierarchyWithOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/KJKHierarchyWithOverride.kt");
+        }
 
-          @Test
-          @TestMetadata("visibilityOfContextTypeOnFunction.kt")
-          public void testVisibilityOfContextTypeOnFunction() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnFunction.kt");
-          }
+        @Test
+        @TestMetadata("nameCanBeChangedInOverride.kt")
+        public void testNameCanBeChangedInOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/nameCanBeChangedInOverride.kt");
+        }
 
-          @Test
-          @TestMetadata("visibilityOfContextTypeOnProperty.kt")
-          public void testVisibilityOfContextTypeOnProperty() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnProperty.kt");
-          }
+        @Test
+        @TestMetadata("orderAndTypeOfContextsInOverride.kt")
+        public void testOrderAndTypeOfContextsInOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/orderAndTypeOfContextsInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionOverride.kt")
+        public void testSubstitutionOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/substitutionOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("withContextInType.kt")
+        public void testWithContextInType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overrides/withContextInType.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Smartcast {
+        @Test
+        public void testAllFilesPresentInSmartcast() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("onContextParameters.kt")
+        public void testOnContextParameters() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast/onContextParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("onPropertyWithContext.kt")
+        public void testOnPropertyWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast/onPropertyWithContext.kt");
+        }
+
+        @Test
+        @TestMetadata("onTypeWithContext.kt")
+        public void testOnTypeWithContext() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast/onTypeWithContext.kt");
+        }
+
+        @Test
+        @TestMetadata("withCallInPlaceContract.kt")
+        public void testWithCallInPlaceContract() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast/withCallInPlaceContract.kt");
+        }
+
+        @Test
+        @TestMetadata("withImpliesContract.kt")
+        public void testWithImpliesContract() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smartcast/withImpliesContract.kt");
         }
       }
     }
@@ -1954,7 +2306,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2006,7 +2358,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Delegates {
       @Test
       public void testAllFilesPresentInDelegates() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2082,7 +2434,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
 
       @Test
       public void testAllFilesPresentInDiagnostics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2445,7 +2797,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class FunctionAsExpression {
         @Test
         public void testAllFilesPresentInFunctionAsExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2462,7 +2814,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Exhaustiveness {
       @Test
       public void testAllFilesPresentInExhaustiveness() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -2471,7 +2823,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Negative {
         @Test
         public void testAllFilesPresentInNegative() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2511,7 +2863,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Positive {
         @Test
         public void testAllFilesPresentInPositive() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2612,7 +2964,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
 
       @Test
       public void testAllFilesPresentInExpresssions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2999,7 +3351,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3027,7 +3379,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3133,13 +3485,19 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Operators {
         @Test
         public void testAllFilesPresentInOperators() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
-        @TestMetadata("binaryOpIntStackOverflow.kt")
-        public void testBinaryOpIntStackOverflow() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpIntStackOverflow.kt");
+        @TestMetadata("binaryOpFolding.kt")
+        public void testBinaryOpFolding() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpFolding.kt");
+        }
+
+        @Test
+        @TestMetadata("binaryOpStackOverflow.kt")
+        public void testBinaryOpStackOverflow() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpStackOverflow.kt");
         }
 
         @Test
@@ -3168,7 +3526,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class ExtraCheckers {
       @Test
       public void testAllFilesPresentInExtraCheckers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3261,7 +3619,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class CanBeReplacedWithOperatorAssignment {
         @Test
         public void testAllFilesPresentInCanBeReplacedWithOperatorAssignment() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3385,7 +3743,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class EmptyRangeChecker {
         @Test
         public void testAllFilesPresentInEmptyRangeChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3407,7 +3765,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class RedundantCallOfConversionMethod {
         @Test
         public void testAllFilesPresentInRedundantCallOfConversionMethod() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3537,7 +3895,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Unused {
         @Test
         public void testAllFilesPresentInUnused() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3649,7 +4007,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class UselessCallOnNotNullChecker {
         @Test
         public void testAllFilesPresentInUselessCallOnNotNullChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3732,7 +4090,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class FromBuilder {
       @Test
       public void testAllFilesPresentInFromBuilder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3772,7 +4130,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3992,12 +4350,34 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/incorporation")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Incorporation {
+        @Test
+        public void testAllFilesPresentInIncorporation() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/incorporation"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("insideOtherConstraintsWithFlexibleTypes.kt")
+        public void testInsideOtherConstraintsWithFlexibleTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/incorporation/insideOtherConstraintsWithFlexibleTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("insideOtherConstraintsWithFlexibleTypesOriginal.kt")
+        public void testInsideOtherConstraintsWithFlexibleTypesOriginal() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/incorporation/insideOtherConstraintsWithFlexibleTypesOriginal.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/pcla")
       @TestDataPath("$PROJECT_ROOT")
       public class Pcla {
         @Test
         public void testAllFilesPresentInPcla() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/pcla"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/pcla"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -4020,7 +4400,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4054,13 +4434,19 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class InnerClasses {
       @Test
       public void testAllFilesPresentInInnerClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
       @TestMetadata("inner.kt")
       public void testInner() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inner.kt");
+      }
+
+      @Test
+      @TestMetadata("innerInsideNestedSealed.kt")
+      public void testInnerInsideNestedSealed() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerInsideNestedSealed.kt");
       }
 
       @Test
@@ -4088,7 +4474,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class LocalClasses {
       @Test
       public void testAllFilesPresentInLocalClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4140,7 +4526,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Multifile {
       @Test
       public void testAllFilesPresentInMultifile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4216,25 +4602,55 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class NestedTypeAliases {
       @Test
       public void testAllFilesPresentInNestedTypeAliases() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
-      @TestMetadata("nestedTypeAliasVisibility.kt")
-      public void testNestedTypeAliasVisibility() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasVisibility.kt");
+      @TestMetadata("deepInnerRHS.kt")
+      public void testDeepInnerRHS() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/deepInnerRHS.kt");
       }
 
       @Test
-      @TestMetadata("nestedTypeAliasWithInnerRHS.kt")
-      public void testNestedTypeAliasWithInnerRHS() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasWithInnerRHS.kt");
+      @TestMetadata("innerRHS.kt")
+      public void testInnerRHS() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/innerRHS.kt");
+      }
+
+      @Test
+      @TestMetadata("innerRHSandTypeArguments.kt")
+      public void testInnerRHSandTypeArguments() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/innerRHSandTypeArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("kmp.kt")
+      public void testKmp() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/kmp.kt");
+      }
+
+      @Test
+      @TestMetadata("local.kt")
+      public void testLocal() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/local.kt");
       }
 
       @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("typeAliasExpansionCapturesOuterTypeParametersErrorMessage.kt")
+      public void testTypeAliasExpansionCapturesOuterTypeParametersErrorMessage() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/typeAliasExpansionCapturesOuterTypeParametersErrorMessage.kt");
+      }
+
+      @Test
+      @TestMetadata("visibility.kt")
+      public void testVisibility() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/visibility.kt");
       }
     }
 
@@ -4244,7 +4660,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Overrides {
       @Test
       public void testAllFilesPresentInOverrides() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4308,7 +4724,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Problems {
       @Test
       public void testAllFilesPresentInProblems() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4510,7 +4926,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4574,7 +4990,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class PropertyVsField {
       @Test
       public void testAllFilesPresentInPropertyVsField() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/propertyVsField"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/propertyVsField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4608,7 +5024,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class References {
       @Test
       public void testAllFilesPresentInReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4690,7 +5106,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class SamConstructors {
       @Test
       public void testAllFilesPresentInSamConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4742,7 +5158,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class SamConversions {
       @Test
       public void testAllFilesPresentInSamConversions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4818,7 +5234,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Scopes {
       @Test
       public void testAllFilesPresentInScopes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scopes"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scopes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4924,7 +5340,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Scripts {
       @Test
       public void testAllFilesPresentInScripts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
     }
 
@@ -4940,7 +5356,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
 
       @Test
       public void testAllFilesPresentInSmartcasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5117,7 +5533,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Booleans {
         @Test
         public void testAllFilesPresentInBooleans() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5151,7 +5567,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class BoundSmartcasts {
         @Test
         public void testAllFilesPresentInBoundSmartcasts() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5197,7 +5613,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class ControlStructures {
         @Test
         public void testAllFilesPresentInControlStructures() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5255,7 +5671,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Lambdas {
         @Test
         public void testAllFilesPresentInLambdas() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5283,7 +5699,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Loops {
         @Test
         public void testAllFilesPresentInLoops() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5311,7 +5727,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Problems {
         @Test
         public void testAllFilesPresentInProblems() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5339,7 +5755,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Receivers {
         @Test
         public void testAllFilesPresentInReceivers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5379,7 +5795,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class SafeCalls {
         @Test
         public void testAllFilesPresentInSafeCalls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5425,7 +5841,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Stability {
         @Test
         public void testAllFilesPresentInStability() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5441,7 +5857,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Variables {
         @Test
         public void testAllFilesPresentInVariables() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5470,7 +5886,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Stdlib {
       @Test
       public void testAllFilesPresentInStdlib() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -5479,7 +5895,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class J_k {
         @Test
         public void testAllFilesPresentInJ_k() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5502,7 +5918,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Suppress {
       @Test
       public void testAllFilesPresentInSuppress() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5548,7 +5964,13 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/typeParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/typeParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("anonymousFunction.kt")
+      public void testAnonymousFunction() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/typeParameters/anonymousFunction.kt");
       }
 
       @Test
@@ -5576,7 +5998,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Types {
       @Test
       public void testAllFilesPresentInTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5622,7 +6044,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class UnqualifiedEnum {
       @Test
       public void testAllFilesPresentInUnqualifiedEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5680,7 +6102,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Vfir {
       @Test
       public void testAllFilesPresentInVfir() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -5689,7 +6111,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Expressions {
         @Test
         public void testAllFilesPresentInExpressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir/expressions"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir/expressions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5706,7 +6128,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Visibility {
       @Test
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5800,7 +6222,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class WithAllowedKotlinPackage {
       @Test
       public void testAllFilesPresentInWithAllowedKotlinPackage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5823,7 +6245,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
 
     @Test
     public void testAllFilesPresentInResolveWithStdlib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5944,6 +6366,18 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     @TestMetadata("fillInStackTrace.kt")
     public void testFillInStackTrace() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/fillInStackTrace.kt");
+    }
+
+    @Test
+    @TestMetadata("flatMapWithReverseOrder.kt")
+    public void testFlatMapWithReverseOrder() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/flatMapWithReverseOrder.kt");
+    }
+
+    @Test
+    @TestMetadata("flatMapWithReverseOrderLegacy.kt")
+    public void testFlatMapWithReverseOrderLegacy() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/flatMapWithReverseOrderLegacy.kt");
     }
 
     @Test
@@ -6181,6 +6615,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     }
 
     @Test
+    @TestMetadata("topLevelResolve.kt")
+    public void testTopLevelResolve() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/topLevelResolve.kt");
+    }
+
+    @Test
     @TestMetadata("typeAliasDeserialization.kt")
     public void testTypeAliasDeserialization() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/typeAliasDeserialization.kt");
@@ -6222,7 +6662,13 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("annotationAllUseSiteTarget.kt")
+      public void testAnnotationAllUseSiteTarget() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationAllUseSiteTarget.kt");
       }
 
       @Test
@@ -6244,9 +6690,21 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("annotationIncompatibleTargets.kt")
+      public void testAnnotationIncompatibleTargets() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationIncompatibleTargets.kt");
+      }
+
+      @Test
       @TestMetadata("annotationUseSites.kt")
       public void testAnnotationUseSites() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationUseSites.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleAnnotationsWithAllUseSiteTarget.kt")
+      public void testMultipleAnnotationsWithAllUseSiteTarget() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/multipleAnnotationsWithAllUseSiteTarget.kt");
       }
     }
 
@@ -6256,7 +6714,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class CallableReferences {
       @Test
       public void testAllFilesPresentInCallableReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6409,7 +6867,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class FromBasicDiagnosticTests {
         @Test
         public void testAllFilesPresentInFromBasicDiagnosticTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6498,7 +6956,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -6507,7 +6965,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class FromLibrary {
         @Test
         public void testAllFilesPresentInFromLibrary() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6541,7 +6999,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class FromSource {
         @Test
         public void testAllFilesPresentInFromSource() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Nested
@@ -6550,7 +7008,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         public class Bad {
           @Test
           public void testAllFilesPresentInBad() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6565,7 +7023,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
           public class CallsInPlace {
             @Test
             public void testAllFilesPresentInCallsInPlace() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Test
@@ -6617,7 +7075,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
           public class ReturnsImplies {
             @Test
             public void testAllFilesPresentInReturnsImplies() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Test
@@ -6646,7 +7104,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         public class Good {
           @Test
           public void testAllFilesPresentInGood() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
           }
 
           @Nested
@@ -6655,7 +7113,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
           public class CallsInPlace {
             @Test
             public void testAllFilesPresentInCallsInPlace() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Test
@@ -6731,7 +7189,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
           public class ReturnsImplies {
             @Test
             public void testAllFilesPresentInReturnsImplies() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Test
@@ -6807,7 +7265,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
           public class VariousContracts {
             @Test
             public void testAllFilesPresentInVariousContracts() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Nested
@@ -6816,7 +7274,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
             public class NewSyntax {
               @Test
               public void testAllFilesPresentInNewSyntax() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
               }
 
               @Test
@@ -6836,7 +7294,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Delegates {
       @Test
       public void testAllFilesPresentInDelegates() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6918,7 +7376,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Diagnostics {
       @Test
       public void testAllFilesPresentInDiagnostics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6933,7 +7391,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class FunctionReturnTypeMismatchChecker {
         @Test
         public void testAllFilesPresentInFunctionReturnTypeMismatchChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6949,7 +7407,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class InitializerTypeMismatchChecker {
         @Test
         public void testAllFilesPresentInInitializerTypeMismatchChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6966,7 +7424,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7029,7 +7487,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class Problems {
         @Test
         public void testAllFilesPresentInProblems() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -7064,7 +7522,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Initialization {
       @Test
       public void testAllFilesPresentInInitialization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7086,7 +7544,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
 
       @Test
       public void testAllFilesPresentInIntellij() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7186,7 +7644,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class J_k {
       @Test
       public void testAllFilesPresentInJ_k() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7500,6 +7958,40 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public void testUsingObject() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/UsingObject.kt");
       }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes")
+      @TestDataPath("$PROJECT_ROOT")
+      public class CommonAtomicTypes {
+        @Test
+        public void testAllFilesPresentInCommonAtomicTypes() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("javaToKotlinHierarchy.kt")
+        public void testJavaToKotlinHierarchy() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes/javaToKotlinHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("KJKHierarchy.kt")
+        public void testKJKHierarchy() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes/KJKHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinToJavaHierarchy.kt")
+        public void testKotlinToJavaHierarchy() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes/kotlinToJavaHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideWithRawType.kt")
+        public void testOverrideWithRawType() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes/overrideWithRawType.kt");
+        }
+      }
     }
 
     @Nested
@@ -7508,7 +8000,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7554,7 +8046,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
 
       @Test
       public void testAllFilesPresentInProblems() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7762,7 +8254,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7777,7 +8269,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       public class BackingField {
         @Test
         public void testAllFilesPresentInBackingField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -7872,7 +8364,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Reinitializations {
       @Test
       public void testAllFilesPresentInReinitializations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7888,7 +8380,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Smartcasts {
       @Test
       public void testAllFilesPresentInSmartcasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test

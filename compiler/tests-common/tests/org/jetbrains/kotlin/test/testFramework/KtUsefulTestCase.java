@@ -31,6 +31,7 @@ import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.UtilsKt;
 import org.jetbrains.kotlin.testFramework.MockComponentManagerCreationTracer;
 import org.jetbrains.kotlin.types.AbstractTypeChecker;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
@@ -196,7 +197,7 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected final void disposeRootDisposable() {
-        Disposer.dispose(getTestRootDisposable());
+        UtilsKt.disposeRootInWriteAction(getTestRootDisposable());
     }
 
     protected void addTmpFileToKeep(@NotNull File file) {
@@ -288,7 +289,10 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected void invokeTestRunnable(@NotNull Runnable runnable) throws Exception {
-        runnable.run();
+        org.jetbrains.kotlin.test.MuteWithDatabaseJunit4Kt.runTest(this, () -> {
+            runnable.run();
+            return null;
+        });
     }
 
     protected void defaultRunBare() throws Throwable {

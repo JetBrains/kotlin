@@ -35,7 +35,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             get() = facade.outputKind
 
         override fun shouldProcessModule(module: TestModule, inputArtifact: ResultingArtifact<*>): Boolean {
-            return super.shouldProcessModule(module, inputArtifact) && facade.shouldRunAnalysis(module)
+            return super.shouldProcessModule(module, inputArtifact) && facade.shouldTransform(module)
         }
 
         override fun processModule(
@@ -47,7 +47,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                 facade.transform(module, inputArtifact) ?: return StepResult.NoArtifactFromFacade
             } catch (e: Throwable) {
                 // TODO: remove inheritors of WrappedException.FromFacade
-                return StepResult.ErrorFromFacade(WrappedException.FromFacade(e, facade))
+                return StepResult.ErrorFromFacade(WrappedException.FromFacade(e, module, facade))
             }
             return StepResult.Artifact(outputArtifact)
         }
@@ -77,7 +77,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                     try {
                         outputHandler.processModule(module, inputArtifact)
                     } catch (e: Throwable) {
-                        exceptions += WrappedException.FromHandler(e, outputHandler)
+                        exceptions += WrappedException.FromHandler(e, module, outputHandler)
                         if (outputHandler.failureDisablesNextSteps) {
                             return StepResult.HandlersResult(exceptions, shouldRunNextSteps = false)
                         }

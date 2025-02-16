@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -70,7 +71,7 @@ class FirScriptConfiguratorExtensionImpl(
 
     @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
-        val configuration = getOrLoadConfiguration(sourceFile!!) ?: run {
+        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
             log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
             return
         }
@@ -139,6 +140,22 @@ class FirScriptConfiguratorExtensionImpl(
             )
         }
 
+        configuration[ScriptCompilationConfiguration.explainField]?.let {
+            parameters.add(
+                buildProperty {
+                    moduleData = session.moduleData
+                    source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                    origin = FirDeclarationOrigin.ScriptCustomization.Parameter
+                    returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class))
+                    name = Name.identifier(it)
+                    symbol = FirPropertySymbol(name)
+                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                    isLocal = true
+                    isVar = false
+                }
+            )
+        }
+
         configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
             _knownAnnotationsForSamWithReceiver.add(it.typeName)
         }
@@ -187,18 +204,6 @@ class FirScriptConfiguratorExtensionImpl(
     }
 
     private fun KtSourceFile.asString() = path ?: name
-
-    private fun getOrLoadConfiguration(file: KtSourceFile): ScriptCompilationConfiguration? {
-        val service = checkNotNull(session.scriptDefinitionProviderService)
-        val sourceCode = file.toSourceCode()
-        val ktFile = sourceCode?.originalKtFile()
-        val configuration = with(service) {
-            ktFile?.let { asKtFile -> configurationFor(asKtFile) }
-                ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
-                ?: defaultConfiguration()?.also { log.debug("Default configuration loaded for ${file.asString()}") }
-        }
-        return configuration
-    }
 
     private fun FirScriptBuilder.tryResolveOrBuildParameterTypeRefFromKotlinType(
         kotlinType: KotlinType,
@@ -263,3 +268,16 @@ fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name)
     else -> null
 }
+
+internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ScriptCompilationConfiguration? {
+    val service = checkNotNull(session.scriptDefinitionProviderService)
+    val sourceCode = file.toSourceCode()
+    val ktFile = sourceCode?.originalKtFile()
+    val configuration = with(service) {
+        ktFile?.let { asKtFile -> configurationFor(asKtFile) }
+            ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
+            ?: defaultConfiguration()
+    }
+    return configuration
+}
+

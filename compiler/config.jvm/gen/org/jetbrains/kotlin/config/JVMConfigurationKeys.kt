@@ -147,9 +147,6 @@ object JVMConfigurationKeys {
     val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
 
     @JvmField
-    val OLD_INNER_CLASSES_LOGIC = CompilerConfigurationKey.create<Boolean>("Use old logic for generation of InnerClasses attributes")
-
-    @JvmField
     val ENABLE_IR_INLINER = CompilerConfigurationKey.create<Boolean>("Enable inlining on IR, instead of inlining on bytecode")
 
     @JvmField
@@ -160,6 +157,10 @@ object JVMConfigurationKeys {
 
     @JvmField
     val EXPRESSION_TO_EVALUATE = CompilerConfigurationKey.create<String>("Expression to evaluate in script mode")
+
+    // For test purposes only. Cannot be set via CLI arguments
+    @JvmField
+    val USE_CLASS_BUILDER_FACTORY_FOR_TEST = CompilerConfigurationKey.create<Boolean>("Use ClassBuilderFactory.Test for GenerationState")
 
 }
 
@@ -335,10 +336,6 @@ var CompilerConfiguration.noNewJavaAnnotationTargets: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
     set(value) { put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, value) }
 
-var CompilerConfiguration.oldInnerClassesLogic: Boolean
-    get() = getBoolean(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
-    set(value) { put(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC, value) }
-
 var CompilerConfiguration.enableIrInliner: Boolean
     get() = getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
     set(value) { put(JVMConfigurationKeys.ENABLE_IR_INLINER, value) }
@@ -354,4 +351,8 @@ var CompilerConfiguration.skipBodies: Boolean
 var CompilerConfiguration.expressionToEvaluate: String?
     get() = get(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE)
     set(value) { putIfNotNull(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE, value) }
+
+var CompilerConfiguration.useClassBuilderFactoryForTest: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_CLASS_BUILDER_FACTORY_FOR_TEST)
+    set(value) { put(JVMConfigurationKeys.USE_CLASS_BUILDER_FACTORY_FOR_TEST, value) }
 

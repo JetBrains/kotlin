@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.config.keys.generator
 
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
-import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
@@ -38,7 +37,7 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
 
     val ALLOW_KOTLIN_PACKAGE by key<Boolean>("allow kotlin package")
 
-    val PERF_MANAGER by key<CommonCompilerPerformanceManager>("performance manager")
+    val PERF_MANAGER by key<PerformanceManager>("performance manager")
 
     val INTELLIJ_PLUGIN_ROOT by key<String>(
         "intellij plugin root",

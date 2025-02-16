@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
 import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
 import org.jetbrains.kotlin.fir.scopes.impl.similarFunctionsOrBothProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -120,7 +121,17 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
 
         val typeCheckerState = session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
-            stubTypesEqualToAnything = false
+            stubTypesEqualToAnything = false,
+            /**
+             * Type checking here influence only selecting of most specific members
+             * Having foo(param: T & Any) and Java foo(param: T!) and dnnTypesEqualToFlexible = true,
+             *  we can achieve 0 result here, instead of 1/-1 with dnnTypesEqualToFlexible = false.
+             * The list in [selectMostSpecificMembers] can change size because of this,
+             * and we can build [ResultOfIntersection.NonTrivial] instead of [ResultOfIntersection.SingleMember].
+             * But in fact, it does not influence resolve significantly, so it's better to keep behavior
+             * with dnnTypesEqualToFlexible = false
+             */
+            dnnTypesEqualToFlexible = false
         )
         val aSubtypesB = AbstractTypeChecker.isSubtypeOf(typeCheckerState, aReturnType, bReturnType)
         val bSubtypesA = AbstractTypeChecker.isSubtypeOf(typeCheckerState, bReturnType, aReturnType)

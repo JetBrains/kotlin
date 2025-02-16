@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.util.transformSubsetFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
@@ -88,7 +88,7 @@ fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ClassLoweringVisitor(
     private val loweringPass: ClassLoweringPass
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -105,7 +105,7 @@ fun ScriptLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ScriptLoweringVisitor(
     private val loweringPass: ScriptLoweringPass
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -123,7 +123,7 @@ fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class DeclarationContainerLoweringVisitor(
     private val loweringPass: DeclarationContainerLoweringPass
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -165,7 +165,7 @@ fun BodyAndScriptBodyLoweringPass.runOnFilePostfix(irFile: IrFile) {
 private open class BodyLoweringVisitor(
     private val loweringPass: BodyLoweringPass,
     private val withLocalDeclarations: Boolean,
-) : IrElementVisitor<Unit, IrDeclaration?> {
+) : IrVisitor<Unit, IrDeclaration?>() {
     override fun visitElement(element: IrElement, data: IrDeclaration?) {
         element.acceptChildren(this, data)
     }
@@ -239,7 +239,7 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
+    private class Visitor(private val transformer: DeclarationTransformer) : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -247,7 +247,7 @@ interface DeclarationTransformer : FileLoweringPass {
         override fun visitFunction(declaration: IrFunction) {
             declaration.acceptChildrenVoid(this)
 
-            for (v in declaration.valueParameters) {
+            for (v in declaration.parameters) {
                 val result = transformer.transformFlatRestricted(v)
                 if (result != null) error("Don't know how to add value parameters")
             }

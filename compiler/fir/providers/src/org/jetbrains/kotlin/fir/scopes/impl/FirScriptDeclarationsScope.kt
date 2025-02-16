@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,30 +21,38 @@ class FirScriptDeclarationsScope(
     val useSiteSession: FirSession,
     val script: FirScript,
 ) : FirContainingNamesAwareScope() {
-
-    private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
+    /**
+     * This index is lazily calculated as its value might not be used in the Analysis API mode
+     */
+    private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
-        loop@ for (statement in script.declarations) {
-            if (statement is FirCallableDeclaration) {
-                val name = when (statement) {
-                    is FirVariable -> if (statement.isSynthetic) continue@loop else statement.name
-                    is FirSimpleFunction -> statement.name
-                    // TODO: destructuring decl
-                    else -> continue@loop
-                }
-                result.getOrPut(name) { mutableListOf() } += statement.symbol
+        for (statement in script.declarations) {
+            if (statement !is FirCallableDeclaration) continue
+
+            val name = when (statement) {
+                is FirVariable -> if (statement.isSynthetic) continue else statement.name
+                is FirSimpleFunction -> statement.name
+                // TODO: destructuring decl
+                else -> continue
             }
+
+            result.getOrPut(name) { mutableListOf() } += statement.symbol
         }
+
         result
     }
 
-    private val classIndex: Map<Name, FirRegularClassSymbol> = run {
+    /**
+     * This index is lazily calculated as its value might not be used in the Analysis API mode
+     */
+    private val classIndex: Map<Name, FirRegularClassSymbol> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
         for (declaration in script.declarations) {
             if (declaration is FirRegularClass) {
                 result[declaration.name] = declaration.symbol
             }
         }
+
         result
     }
 

@@ -127,13 +127,9 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 forceSkipTypeCheck = (currentFunction as? IrSimpleFunction)?.bridgeTarget == target)
     }
 
-    override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
-        return this.useAsArgument(expression.target.extensionReceiverParameter!!)
-    }
-
-    override fun IrExpression.useAsValueArgument(expression: IrFunctionAccessExpression,
-                                                 parameter: IrValueParameter): IrExpression {
-        return this.useAsArgument(expression.target.valueParameters[parameter.indexInOldValueParameters])
+    override fun IrExpression.useAsNonDispatchArgument(expression: IrFunctionAccessExpression,
+                                                       parameter: IrValueParameter): IrExpression {
+        return this.useAsArgument(expression.target.parameters[parameter.indexInParameters])
     }
 
     /**
@@ -154,7 +150,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         val conversion = context.getTypeConversion(actualType, expectedType)
         return if (conversion == null) {
             val actualClass = actualType.classOrNull?.owner
-            val erasedExpectedType = expectedType.erasure()
+            val erasedExpectedType = expectedType.eraseTypeParameters()
             val erasedExpectedClass = erasedExpectedType.classOrFail.owner
             return when {
                 actualType.makeNotNull() == expectedType.makeNotNull() -> this
@@ -182,13 +178,13 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 it.type = expectedType
                 return it
             }
-            val parameter = conversion.owner.valueParameters.single()
+            val parameter = conversion.owner.parameters.single()
             val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
                 this.checkedCast(actualType, conversion.owner.returnType)
             else this
 
             irBuilders.peek()!!.at(this)
-                    .irCall(conversion).apply { this.putValueArgument(parameter.indexInOldValueParameters, argument) }
+                    .irCall(conversion).apply { this.arguments[parameter.indexInParameters] = argument }
         }
     }
 
@@ -209,7 +205,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
                 assert(oldType.computePrimitiveBinaryTypeOrNull() == newType.computePrimitiveBinaryTypeOrNull())
 
-                expression.extensionReceiver = expression.extensionReceiver!!.useAs(oldType)
+                expression.arguments[0] = expression.arguments[0]!!.useAs(oldType)
 
                 expression
             }
@@ -312,10 +308,6 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             if (declaration.constructedClass.isNativePrimitiveType()) {
                 // Constructors for these types aren't used and actually are malformed (e.g. lack the parameter).
                 // Skipping here for simplicity.
-            } else if (declaration.hasCCallAnnotation("CppClassConstructor") && !declaration.isPrimary) {
-                // At this point secondary cpp constructor calls have already been transformed
-                // by interop lowering. So don't mess with them.
-                // Otherwise we could assert having assumptions on (empty at the moment) body of the constructor.
             } else {
                 buildLoweredConstructor(declaration)
             }
@@ -559,6 +551,6 @@ private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructo
         // So it is just a trick to make [copyTo] happy:
         val remapTypeMap = irConstructor.constructedClass.typeParameters.associateBy { it }
 
-        valueParameters = irConstructor.valueParameters.map { it.copyTo(this, remapTypeMap = remapTypeMap) }
+        parameters = irConstructor.parameters.map { it.copyTo(this, remapTypeMap = remapTypeMap) }
     }
 }

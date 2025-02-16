@@ -42,9 +42,10 @@ compose-stable = "1.7.0-alpha08" # Used for Compose compiler plugin tests
 androidx-collections = "1.5.0-alpha02" # Used for Compose compiler plugin tests
 ant = "1.10.14"
 kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
-intellij-asm = "9.0"
+intellij-asm = "9.6.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
+fastutil = "8.5.13-jb4"
 # Wasm specific
 wasmedge = "0.14.0"
 vavr = "0.10.4"
@@ -76,6 +77,7 @@ kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", v
 shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
+node-gradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradle-node-plugin" }
 woodstox-core = { module = "com.fasterxml.woodstox:woodstox-core", version.ref = "woodstox-core" }
 dataframe = { module = "org.jetbrains.kotlinx:dataframe", version.ref = "dataframe" }
 
@@ -124,6 +126,8 @@ android-gradle-plugin-gradle = { module = "com.android.tools.build:gradle", vers
 android-gradle-plugin-builder = { module = "com.android.tools.build:builder", version.ref = "android-gradle-plugin" }
 android-gradle-plugin-builder-model = { module = "com.android.tools.build:builder-model", version.ref = "android-gradle-plugin" }
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
+
+intellij-fastutil = { module = "org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil", version.ref = "fastutil" }
 
 xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 

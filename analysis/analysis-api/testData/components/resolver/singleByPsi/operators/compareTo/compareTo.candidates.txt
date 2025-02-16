@@ -7,10 +7,12 @@ KtNameReferenceExpression(114,123): 'compareTo'
           receiverType = null
           returnType = MyClass
           symbol = value: MyClass
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtNameReferenceExpression(114,123): 'compareTo'
               receiverType = null
               returnType = MyClass
               symbol = value: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
     isInBestCandidates = true

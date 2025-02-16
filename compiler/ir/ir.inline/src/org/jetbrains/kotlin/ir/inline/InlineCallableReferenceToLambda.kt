@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
-import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -32,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
 
 private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
 
-fun IrFunction.isStubForInline() = name == STUB_FOR_INLINING && origin == LoweredDeclarationOrigins.INLINE_LAMBDA
+fun IrFunction.isStubForInline() = name == STUB_FOR_INLINING && origin == IrDeclarationOrigin.INLINE_LAMBDA
 
 /**
  * This lowering transforms inlined callable references to lambdas. Callable reference is inlined if it's passed to a non-noinline
@@ -73,8 +71,8 @@ abstract class InlineCallableReferenceToLambdaPhase(
         this is IrBlock && origin.isInlinable -> apply {
             // Already a lambda or similar, just mark it with an origin.
             val reference = statements.last() as IrFunctionReference
-            reference.symbol.owner.origin = LoweredDeclarationOrigins.INLINE_LAMBDA
-            reference.origin = LoweredStatementOrigins.INLINE_LAMBDA
+            reference.symbol.owner.origin = IrDeclarationOrigin.INLINE_LAMBDA
+            reference.origin = IrStatementOrigin.INLINE_LAMBDA
         }
 
         this is IrFunctionReference -> {
@@ -102,7 +100,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
     private fun IrPropertyReference.wrapField(field: IrField): IrSimpleFunction =
         context.irFactory.buildFun {
             setSourceRange(this@wrapField)
-            origin = LoweredDeclarationOrigins.INLINE_LAMBDA
+            origin = IrDeclarationOrigin.INLINE_LAMBDA
             name = STUB_FOR_INLINING
             visibility = DescriptorVisibilities.LOCAL
             returnType = field.type
@@ -128,7 +126,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
     private fun IrCallableReference<*>.wrapFunction(referencedFunction: IrFunction): IrSimpleFunction =
         context.irFactory.buildFun {
             setSourceRange(this@wrapFunction)
-            origin = LoweredDeclarationOrigins.INLINE_LAMBDA
+            origin = IrDeclarationOrigin.INLINE_LAMBDA
             name = STUB_FOR_INLINING
             visibility = DescriptorVisibilities.LOCAL
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
@@ -191,7 +189,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             +IrFunctionReferenceImpl.fromSymbolOwner(
                 startOffset, endOffset, original.type.convertToFunctionIfNeeded(context.irBuiltIns), symbol,
                 typeArgumentsCount = 0, reflectionTarget = null,
-                origin = LoweredStatementOrigins.INLINE_LAMBDA
+                origin = IrStatementOrigin.INLINE_LAMBDA
             ).apply {
                 copyAttributes(original)
                 if (original is IrFunctionReference) {

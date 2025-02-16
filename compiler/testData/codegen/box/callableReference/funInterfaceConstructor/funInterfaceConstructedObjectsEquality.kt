@@ -1,8 +1,5 @@
 // LANGUAGE: +KotlinFunInterfaceConstructorReference
 
-// IGNORE_BACKEND: JVM
-//  ^ unsupported in old JVM BE
-
 // IGNORE_BACKEND: WASM
 //  ^ wasm-function[1893]:0x1cf8a: RuntimeError: dereferencing a null pointer
 

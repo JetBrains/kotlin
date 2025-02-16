@@ -293,6 +293,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("generated typescript declarations validation")
     @GradleTest
+    @BrokenOnMacosTest
     fun testGeneratedTypeScriptDeclarationsValidation(gradleVersion: GradleVersion) {
         project("js-ir-validate-ts", gradleVersion) {
             buildGradleKts.appendText(
@@ -694,6 +695,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Custom plugin applying Kotlin/JS plugin")
     @GradleTest
+    @BrokenOnMacosTest
     fun customPluginApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("js-custom-build-src-plugin", gradleVersion) {
             build("checkConfigurationsResolve") {
@@ -928,6 +930,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("yarn is set up")
     @GradleTest
+    @BrokenOnMacosTest
     fun testYarnSetup(gradleVersion: GradleVersion) {
         project("yarn-setup", gradleVersion) {
             build("yarnFolderRemove")
@@ -957,6 +960,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("yarn is set up from local archive")
     @GradleTest
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testYarnSetupFromLocalArchive(gradleVersion: GradleVersion) {
         project("yarn-setup", gradleVersion) {
             build("yarnFolderRemove")
@@ -1236,6 +1240,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("webpack-config-d directory created during the build is not ignored")
     @GradleTest
+    @BrokenOnMacosTest
     fun testDynamicWebpackConfigD(gradleVersion: GradleVersion) {
         project("js-dynamic-webpack-config-d", gradleVersion) {
             build("build") {
@@ -1411,6 +1416,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("nodejs up-to-date check works")
     @GradleTest
+    @BrokenOnMacosTest
     fun testNodeJsAndYarnDownload(gradleVersion: GradleVersion) {
         project("cleanTask", gradleVersion) {
             build("checkDownloadedFolder")

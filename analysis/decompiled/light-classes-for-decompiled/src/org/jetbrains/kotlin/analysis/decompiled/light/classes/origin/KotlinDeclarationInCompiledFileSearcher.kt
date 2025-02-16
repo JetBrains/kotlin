@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -162,10 +162,18 @@ class KotlinDeclarationInCompiledFileSearcher {
         return declaration.name
     }
 
+    private fun KtCallableDeclaration.extractContextParameters(to: MutableList<KtTypeReference>) {
+        modifierList?.contextReceiverList?.let { contextReceiverList ->
+            contextReceiverList.contextReceivers().forEach { to.add(it.typeReference()!!) }
+            contextReceiverList.contextParameters().forEach { to.add(it.typeReference!!) }
+        }
+
+        receiverTypeReference?.let { to.add(it) }
+    }
+
     private fun doPropertyMatch(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
         val ktTypes = mutableListOf<KtTypeReference>()
-        property.contextReceivers.forEach { ktTypes.add(it.typeReference()!!) }
-        property.receiverTypeReference?.let { ktTypes.add(it) }
+        property.extractContextParameters(ktTypes)
         property.typeReference?.let { ktTypes.add(it) }
 
         val psiTypes = mutableListOf<PsiType>()
@@ -186,9 +194,10 @@ class KotlinDeclarationInCompiledFileSearcher {
         if (!doTypeParameters(member, ktNamedFunction)) {
             return false
         }
+
         val ktTypes = mutableListOf<KtTypeReference>()
-        ktNamedFunction.contextReceivers.forEach { ktTypes.add(it.typeReference()!!) }
-        ktNamedFunction.receiverTypeReference?.let { ktTypes.add(it) }
+        ktNamedFunction.extractContextParameters(ktTypes)
+
         val valueParameters = ktNamedFunction.valueParameters
         val memberParameterList = member.parameterList
         val memberParametersCount = memberParameterList.parametersCount

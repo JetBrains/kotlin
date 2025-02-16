@@ -27,7 +27,7 @@ val litmusKt by configurations.creating {
     }
 }
 
-val litmusKtVersion = "0.1"
+val litmusKtVersion = "0.1.2"
 val litmusKtArtifacts = listOf(
     "org.jetbrains.litmuskt:litmuskt-core",
     "org.jetbrains.litmuskt:litmuskt-testsuite",

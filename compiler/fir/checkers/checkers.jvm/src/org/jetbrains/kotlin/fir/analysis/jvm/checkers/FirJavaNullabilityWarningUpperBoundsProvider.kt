@@ -5,17 +5,21 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformUpperBoundsProvider
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
-import org.jetbrains.kotlin.fir.java.enhancement.enhancedTypeForWarning
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 
 class FirJavaNullabilityWarningUpperBoundsProvider(session: FirSession) : FirPlatformUpperBoundsProvider {
-    private val substitutor: EnhancedForWarningConeSubstitutor = EnhancedForWarningConeSubstitutor(session.typeContext)
+    private val substitutor: EnhancedForWarningConeSubstitutor = EnhancedForWarningConeSubstitutor(
+        session.typeContext,
+        useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature = LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
+    )
 
     override val diagnostic: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
         get() = FirJvmErrors.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS

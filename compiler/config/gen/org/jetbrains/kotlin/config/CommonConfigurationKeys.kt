@@ -101,6 +101,14 @@ object CommonConfigurationKeys {
     @JvmField
     val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("phase configuration")
 
+    // Should be used only in tests, impossible to set via compiler arguments
+    @JvmField
+    val DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS = CompilerConfigurationKey.create<Boolean>("don't create separate session for scripts")
+
+    // Should be used only in tests, impossible to set via compiler arguments
+    @JvmField
+    val DONT_SORT_SOURCE_FILES = CompilerConfigurationKey.create<Boolean>("don't sort source files in FS order")
+
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
@@ -206,4 +214,12 @@ var CompilerConfiguration.enableIrVarargTypesChecks: Boolean
 var CompilerConfiguration.phaseConfig: PhaseConfig?
     get() = get(CommonConfigurationKeys.PHASE_CONFIG)
     set(value) { put(CommonConfigurationKeys.PHASE_CONFIG, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.dontCreateSeparateSessionForScripts: Boolean
+    get() = getBoolean(CommonConfigurationKeys.DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS)
+    set(value) { put(CommonConfigurationKeys.DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS, value) }
+
+var CompilerConfiguration.dontSortSourceFiles: Boolean
+    get() = getBoolean(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES)
+    set(value) { put(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES, value) }
 

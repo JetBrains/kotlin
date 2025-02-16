@@ -61,8 +61,10 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
-            ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
-            "Open Composable functions with default values are not currently supported"
+            ComposeErrors.DEPRECATED_OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+            "Detected a @Composable function that overrides an open function compiled with older compiler that is known to " +
+                    "crash at runtime. Consider recompiling the dependency with a newer compiler version (>= 2.1.20) to get correct " +
+                    "behavior. See https://issuetracker.google.com/165812010 for more details."
         )
 
         map.put(
@@ -98,6 +100,12 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ComposeErrors.MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL,
             "Mismatched @Composable annotation between expect and actual declaration"
+        )
+
+        map.put(
+            ComposeErrors.COMPOSABLE_INAPPLICABLE_TYPE,
+            "@Composable annotation is not applicable to {0}",
+            FirDiagnosticRenderers.RENDER_TYPE
         )
     }
 }

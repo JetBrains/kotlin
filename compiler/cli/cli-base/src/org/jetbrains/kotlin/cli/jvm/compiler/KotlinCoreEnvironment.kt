@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
@@ -66,6 +67,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
@@ -230,7 +232,9 @@ class KotlinCoreEnvironment private constructor(
 
         collectAdditionalSources(project)
 
-        sourceFiles.sortBy { it.virtualFile.path }
+        if (!configuration.dontSortSourceFiles) {
+            sourceFiles.sortBy { it.virtualFile.path }
+        }
 
         val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
@@ -277,11 +281,14 @@ class KotlinCoreEnvironment private constructor(
             updateClasspathFromRootsIndex(this)
         }
 
+        val perfManager = configuration.perfManager
+
         javaFileManager.initialize(
             rootsIndex,
             packagePartProviders,
             SingleJavaFileRootsIndex(singleJavaFileRoots),
-            configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
+            configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
+            perfManager,
         )
 
         project.registerService(
@@ -289,7 +296,7 @@ class KotlinCoreEnvironment private constructor(
             CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
@@ -389,6 +396,9 @@ class KotlinCoreEnvironment private constructor(
         // TODO: add new Java modules to CliJavaModuleResolver
         val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots - initialRoots
 
+        val newIndex = rootsIndex.addNewIndexForRoots(newRoots) ?: return null
+        updateClasspathFromRootsIndex(newIndex)
+
         if (packagePartProviders.isEmpty()) {
             initialRoots.addAll(newRoots)
         } else {
@@ -399,12 +409,9 @@ class KotlinCoreEnvironment private constructor(
 
         configuration.addAll(CLIConfigurationKeys.CONTENT_ROOTS, contentRoots - configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
 
-        return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
-            updateClasspathFromRootsIndex(newIndex)
-            newIndex.indexedRoots.mapNotNull { (file) ->
-                VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
-            }.toList()
-        }.orEmpty()
+        return newIndex.indexedRoots.map { (file) ->
+            VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
+        }.toList()
     }
 
     private fun contentRootToVirtualFile(root: JvmContentRootBase): VirtualFile? =
@@ -768,6 +775,7 @@ class KotlinCoreEnvironment private constructor(
                 with(registrar) { extensionStorage.registerExtensions(configuration) }
             }
             extensionStorage.registerInProject(project) { createErrorMessage(it) }
+            configuration[TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK]?.invoke(project)
         }
 
         private fun registerApplicationServicesForCLI(applicationEnvironment: KotlinCoreApplicationEnvironment) {

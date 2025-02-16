@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
@@ -175,6 +175,31 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
 private fun Boolean.toInt(): Int = if (this) 1 else 0
+
+data class FunctionParameterShape(
+    val hasDispatchReceiver: Boolean,
+    val hasExtensionReceiver: Boolean,
+    val contextParameterCount: Int,
+    val regularParameterCount: Int,
+)
+
+fun IrFunction.getShapeOfParameters(): FunctionParameterShape {
+    var hasDispatchReceiver = false
+    var hasExtensionReceiver = false
+    var contextParameterCount = 0
+    var regularParameterCount = 0
+    for (param in parameters) {
+        when (param.kind) {
+            IrParameterKind.DispatchReceiver -> hasDispatchReceiver = true
+            IrParameterKind.ExtensionReceiver -> hasExtensionReceiver = true
+            IrParameterKind.Context -> contextParameterCount++
+            IrParameterKind.Regular -> regularParameterCount++
+        }
+    }
+
+    return FunctionParameterShape(hasDispatchReceiver, hasExtensionReceiver, contextParameterCount, regularParameterCount)
+}
+
 /**
  * [IrFunction.parameters], except [IrFunction.dispatchReceiverParameter], if present.
  */
@@ -619,7 +644,7 @@ val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 val IrFunction.originalFunction: IrFunction
-    get() = (this as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: this
+    get() = (this.attributeOwnerId as? IrFunction) ?: this
 
 val IrProperty.originalProperty: IrProperty
     get() = attributeOwnerId as? IrProperty ?: this
@@ -1040,7 +1065,7 @@ fun <T : IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
     return this
 }
 
-object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
+object SetDeclarationsParentVisitor : IrVisitor<Unit, IrDeclarationParent>() {
     override fun visitElement(element: IrElement, data: IrDeclarationParent) {
         if (element !is IrDeclarationParent) {
             element.acceptChildren(this, data)
@@ -1256,7 +1281,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
 
         if (copyMetadata) metadata = oldFunction.metadata
 
-        copyAttributes(oldFunction as? IrAttributeContainer)
+        copyAttributes(oldFunction)
     }
 }
 
@@ -1369,23 +1394,11 @@ fun IrFunction.hasShape(
     regularParameters: Int = 0,
     parameterTypes: List<IrType?> = emptyList(),
 ): Boolean {
-    var actuallyHasDispatchReceiver = false
-    var actuallyHasExtensionReceiver = false
-    var actualContextParameters = 0
-    var actualRegularParameters = 0
-    for (param in target.parameters) {
-        when (param.kind) {
-            IrParameterKind.DispatchReceiver -> actuallyHasDispatchReceiver = true
-            IrParameterKind.ExtensionReceiver -> actuallyHasExtensionReceiver = true
-            IrParameterKind.Context -> actualContextParameters++
-            IrParameterKind.Regular -> actualRegularParameters++
-        }
-    }
-
-    if (actuallyHasDispatchReceiver != dispatchReceiver) return false
-    if (actuallyHasExtensionReceiver != extensionReceiver) return false
-    if (actualContextParameters != contextParameters) return false
-    if (actualRegularParameters != regularParameters) return false
+    val actualShape = getShapeOfParameters()
+    if (actualShape.hasDispatchReceiver != dispatchReceiver) return false
+    if (actualShape.hasExtensionReceiver != extensionReceiver) return false
+    if (actualShape.contextParameterCount != contextParameters) return false
+    if (actualShape.regularParameterCount != regularParameters) return false
 
     for ((param, expectedType) in parameters zip parameterTypes) {
         if (expectedType != null && param.type != expectedType) return false
@@ -1426,7 +1439,7 @@ val Int.previousOffset
             else -> if (this > 0) minus(1) else error("Invalid offset appear")
         }
 
-fun IrAttributeContainer.extractRelatedDeclaration(): IrDeclaration? {
+fun IrElement.extractRelatedDeclaration(): IrDeclaration? {
     return when (this) {
         is IrClass -> this
         is IrFunctionExpression -> function
@@ -1527,11 +1540,31 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
     }
 }
 
+// TODO: KT-75196: please make `startOffset` and `endOffset` mutable, and remove this method
 fun IrConst.copyWithOffsets(startOffset: Int, endOffset: Int) =
     IrConstImpl(startOffset, endOffset, type, kind, value)
 
+// TODO: KT-75196: please make `startOffset` and `endOffset` mutable, and remove this method
 fun IrGetValue.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
     IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)
+
+// TODO: KT-75196: please make `startOffset` and `endOffset` mutable, and remove this method
+fun IrRichFunctionReference.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrRichFunctionReference =
+    IrRichFunctionReferenceImpl(
+        newStartOffset, newEndOffset,
+        type,
+        reflectionTargetSymbol,
+        overriddenFunctionSymbol,
+        invokeFunction,
+        origin,
+        hasUnitConversion,
+        hasSuspendConversion,
+        hasVarargConversion,
+        isRestrictedSuspension
+    ).apply {
+        copyAttributes(this@copyWithOffsets)
+        boundValues.addAll(this@copyWithOffsets.boundValues)
+    }
 
 fun IrModuleFragment.addFile(file: IrFile) {
     files.add(file)

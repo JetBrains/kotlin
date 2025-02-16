@@ -103,7 +103,7 @@ internal class AbiRendererImpl(
 
     private abstract class RenderedDeclarationContainerKind<T : AbiDeclarationContainer> {
         /**
-         * Determines the relative order of the given [renderedDeclaration] to put it upper or lower in the renderer's output.
+         * Determines the relative order of the given [renderedDeclaration] to put it upper or lower in the renderer's a output.
          * The declarations of different kinds (ex: a class and a function) should always get a different order index.
          */
         protected abstract fun orderByDeclarationKind(renderedDeclaration: RenderedDeclaration<*>): Int
@@ -114,7 +114,7 @@ internal class AbiRendererImpl(
                  * Always sort declarations in a strictly specific order before printing them to make the output
                  * be unaffected by the actual serialization order:
                  *   1. by declaration kind, see [orderByDeclarationKind]
-                 *   2. by a fully-qualified name of the declaration
+                 *   2. by a fully qualified name of the declaration
                  *   3. by an additional ordering factor #1, see implementations of [RenderedDeclaration.additionalOrderingFactor1]
                  *   4. by the text of the rendered declaration (excluding signatures!)
                  *   5. by an additional ordering factor #2, see implementations of [RenderedDeclaration.additionalOrderingFactor2]
@@ -166,7 +166,7 @@ internal class AbiRendererImpl(
             }
 
             fun StringBuilder.appendNameOf(declaration: AbiDeclaration) {
-                // For non-top level declarations print only simple declaration's name.
+                // For non-top level declarations print only a simple declaration's name.
                 val isTopLevel = declaration.qualifiedName.relativeName.nameSegmentsCount == 1
                 append(if (isTopLevel) declaration.qualifiedName else declaration.qualifiedName.relativeName.simpleName)
             }
@@ -332,7 +332,7 @@ internal class AbiRendererImpl(
         /**
          * Use rendered text of [getter] or [setter], because the rendered text of the property does not include
          * any value parameter information useful for the proper ordering among all properties that share
-         * the same qualified name (i.e. among overloaded properties).
+         * the same qualified name (i.e., among overloaded properties).
          */
         override val additionalOrderingFactor2 get() = (getter ?: setter)?.text.orEmpty()
 
@@ -373,46 +373,54 @@ internal class AbiRendererImpl(
     ) {
         /**
          * Determines the relative order of a function to put it upper or lower in the renderer's output:
-         * - Functions without extension receiver go above functions with an extension receiver.
-         * - Functions without context receivers go above functions with context receivers.
-         * - The more regular value parameters function has, the lower it goes.
-         * - Same among functions with context receiver parameters.
+         * - Functions without an extension receiver go above functions with an extension receiver.
+         * - Functions without context parameters go above functions with context parameters.
+         * - The more regular value parameters a function has, the lower it goes.
+         * - Same among functions with context parameters.
          */
         override val additionalOrderingFactor1: Int
             get() {
-                val extensionReceivers = if (declaration.hasExtensionReceiverParameter) 1 else 0
-                val contextReceivers = declaration.contextReceiverParametersCount
-                val regularParameters = declaration.valueParameters.size - extensionReceivers - contextReceivers
-                return (((contextReceivers shl 1) or extensionReceivers) shl BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT) or regularParameters
+                var extensionReceivers = 0
+                var contextParameters = 0
+                var regularParameters = 0
+
+                declaration.valueParameters.forEach { valueParameter ->
+                    when (valueParameter.kind) {
+                        AbiValueParameterKind.CONTEXT -> contextParameters++
+                        AbiValueParameterKind.EXTENSION_RECEIVER -> extensionReceivers++
+                        AbiValueParameterKind.REGULAR -> regularParameters++
+                    }
+                }
+
+                return (((contextParameters shl 1) or extensionReceivers) shl BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT) or regularParameters
             }
 
         override fun print(printer: Printer) = printer.printDeclaration(this)
 
         companion object {
             private fun StringBuilder.appendIrregularValueParametersOf(function: AbiFunction) {
-                if (function.contextReceiverParametersCount > 0)
-                    function.valueParameters
-                        .asSequence()
-                        .apply { if (function.hasExtensionReceiverParameter) drop(1) }
-                        .take(function.contextReceiverParametersCount)
-                        .joinTo(this, separator = ", ", prefix = "context(", postfix = ") ") { valueParameter ->
-                            appendValueParameter(valueParameter)
-                        }
-
-                if (function.hasExtensionReceiverParameter) {
-                    append('(')
-                    appendValueParameter(function.valueParameters[0])
-                    append(").")
+                val contextParameters = function.valueParameters.filter { it.kind == AbiValueParameterKind.CONTEXT }
+                val extensionReceiver = function.valueParameters.firstOrNull { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }
+                if (contextParameters.isEmpty() && extensionReceiver == null) {
+                    return
                 }
+
+                append("(")
+                if (contextParameters.isNotEmpty()) {
+                    contextParameters.joinTo(this, separator = ", ", prefix = "context(", postfix = ")") { appendValueParameter(it) }
+                    if (extensionReceiver != null) {
+                        append(", ")
+                    }
+                }
+                if (extensionReceiver != null) {
+                    append(appendValueParameter(extensionReceiver))
+                }
+                append(").")
             }
 
             private fun StringBuilder.appendRegularValueParametersOf(function: AbiFunction) {
-                val skippedParametersCount = (if (function.hasExtensionReceiverParameter) 1 else 0) +
-                        function.contextReceiverParametersCount
-
                 function.valueParameters
-                    .asSequence()
-                    .drop(skippedParametersCount)
+                    .filter { it.kind == AbiValueParameterKind.REGULAR }
                     .joinTo(this, separator = ", ", prefix = "(", postfix = ")") { valueParameter ->
                         appendValueParameter(valueParameter)
                     }

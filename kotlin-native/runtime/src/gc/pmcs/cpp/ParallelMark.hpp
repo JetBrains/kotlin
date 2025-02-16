@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 
@@ -82,8 +83,6 @@ public:
     public:
         using MarkQueue = ParallelProcessor::Worker;
 
-        static constexpr auto kAllowHeapToStackRefs = true;
-
         static void clear(MarkQueue& queue) noexcept {
             RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
         }
@@ -113,7 +112,7 @@ public:
         }
     };
 
-    ParallelMark(bool mutatorsCooperate);
+    explicit ParallelMark(bool mutatorsCooperate);
 
     void beginMarkingEpoch(gc::GCHandle gcHandle);
     void endMarkingEpoch();
@@ -178,6 +177,24 @@ private:
 
     std::mutex workerCreationMutex_;
     std::atomic<std::size_t> activeWorkersCount_ = 0;
+};
+
+class ParallelMarkThreadData : private Pinned {
+public:
+    ParallelMarkThreadData(ParallelMark& markDispatcher, mm::ThreadData& threadData) noexcept;
+
+    void onSuspendForGC() noexcept;
+
+    bool tryLockRootSet() noexcept;
+    void publish() noexcept;
+    bool published() const noexcept;
+    void clearMarkFlags() noexcept;
+
+private:
+    ParallelMark& markDispatcher_;
+    mm::ThreadData& threadData_;
+    std::atomic<bool> rootSetLocked_ = false;
+    std::atomic<bool> published_ = false;
 };
 
 } // namespace kotlin::gc::mark

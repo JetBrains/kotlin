@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isVararg
+import org.jetbrains.kotlin.ir.util.nonDispatchArguments
 
 class JsDefaultParameterInjector(context: JsIrBackendContext) :
     DefaultParameterInjector<JsIrBackendContext>(
@@ -39,7 +40,7 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
         }
 
     override fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression): Boolean {
-        return super.shouldReplaceWithSyntheticFunction(functionAccess) || functionAccess.symbol.owner.run {
+        return functionAccess.nonDispatchArguments.any { it == null } || functionAccess.symbol.owner.run {
             origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT &&
                     !isTopLevel &&
                     functionAccess.origin != JsStatementOrigins.IMPLEMENTATION_DELEGATION_CALL &&
@@ -47,31 +48,31 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
         }
     }
 
-    override fun IrBlockBuilder.argumentsForCall(expression: IrFunctionAccessExpression, stubFunction: IrFunction): Map<IrValueParameter, IrExpression?> {
+    override fun IrBlockBuilder.argumentsForCall(
+        expression: IrFunctionAccessExpression,
+        stubFunction: IrFunction,
+    ): Map<IrValueParameter, IrExpression?> {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
 
         return buildMap {
-            stubFunction.dispatchReceiverParameter?.let { put(it, expression.dispatchReceiver) }
-            stubFunction.extensionReceiverParameter?.let { put(it, expression.extensionReceiver) }
-            for (i in 0 until expression.valueArgumentsCount) {
-                val declaredParameter = stubFunction.valueParameters[i]
-                val actualArgument = expression.getValueArgument(i)
-                put(declaredParameter, actualArgument ?: nullConst(startOffset, endOffset, declaredParameter))
+            for (i in 0..<expression.arguments.size) {
+                val parameter = stubFunction.parameters[i]
+                val argument = expression.arguments[i]
+                put(parameter, argument ?: nullConst(startOffset, endOffset, parameter))
             }
 
             if (expression is IrCall && stubFunction.hasSuperContextParameter()) {
                 put(
-                    stubFunction.valueParameters[expression.valueArgumentsCount],
+                    stubFunction.parameters[expression.arguments.size],
                     expression.superQualifierSymbol?.prototypeOf() ?: this@JsDefaultParameterInjector.context.getVoid()
                 )
             }
         }
     }
 
-    private fun IrFunction.hasSuperContextParameter(): Boolean {
-        return valueParameters.lastOrNull()?.origin == JsLoweredDeclarationOrigin.JS_SUPER_CONTEXT_PARAMETER
-    }
+    private fun IrFunction.hasSuperContextParameter(): Boolean =
+        parameters.lastOrNull()?.origin == JsLoweredDeclarationOrigin.JS_SUPER_CONTEXT_PARAMETER
 
     private fun IrClassSymbol.prototypeOf(): IrExpression {
         return IrCallImpl(
@@ -81,7 +82,7 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
             context.intrinsics.jsPrototypeOfSymbol,
             typeArgumentsCount = 0,
         ).apply {
-            putValueArgument(0, owner.jsConstructorReference(context))
+            arguments[0] = owner.jsConstructorReference(context)
         }
     }
 

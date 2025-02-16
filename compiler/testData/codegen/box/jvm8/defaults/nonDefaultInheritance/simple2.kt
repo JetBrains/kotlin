@@ -3,7 +3,7 @@
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // MODULE: lib
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // FILE: Foo.kt
 
 interface Foo {
@@ -31,7 +31,8 @@ fun box(): String {
 
     val nonOverride = DerivedClass().nonOverride()
     if (nonOverride[1] != "Foo.nonOverride") return "fail 3: ${nonOverride[1]}"
-    if (nonOverride[2] != "MainKt.box") return "fail 4: ${nonOverride[2]}"
+    if (nonOverride[2] != "DerivedClass.nonOverride") return "fail 4: ${nonOverride[2]}"
+    if (nonOverride[3] != "MainKt.box") return "fail 5: ${nonOverride[3]}"
 
     return "OK"
 }

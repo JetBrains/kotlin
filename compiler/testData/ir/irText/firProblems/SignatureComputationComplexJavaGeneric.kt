@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // ISSUE: KT-57022
+// DISABLE_JAVA_FACADE
 
 // FILE: JavaClass1.java
 

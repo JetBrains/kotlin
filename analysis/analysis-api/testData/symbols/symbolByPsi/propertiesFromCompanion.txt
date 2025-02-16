@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.property
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -61,7 +62,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(0)
+  initializer: KaConstantInitializerValue(0)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -126,6 +127,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.constProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -161,7 +163,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(1)
+  initializer: KaConstantInitializerValue(1)
   isActual: false
   isConst: true
   isDelegatedProperty: false
@@ -229,6 +231,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.staticProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -264,7 +267,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(2)
+  initializer: KaConstantInitializerValue(2)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -332,6 +335,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.fieldProperty
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -367,7 +371,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(3)
+  initializer: KaConstantInitializerValue(3)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -432,6 +436,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.variable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -467,7 +472,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: KtConstantInitializerValue(4)
+  initializer: KaConstantInitializerValue(4)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -624,6 +629,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.staticVariable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -659,7 +665,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: KtConstantInitializerValue(5)
+  initializer: KaConstantInitializerValue(5)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -816,6 +822,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /MyClass.Companion.fieldVariable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -851,7 +858,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: KtConstantInitializerValue(0)
+  initializer: KaConstantInitializerValue(0)
   isActual: false
   isConst: false
   isDelegatedProperty: false

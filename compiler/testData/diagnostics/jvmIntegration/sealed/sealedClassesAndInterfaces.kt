@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: library
 // FILE: Base.kt
 package test

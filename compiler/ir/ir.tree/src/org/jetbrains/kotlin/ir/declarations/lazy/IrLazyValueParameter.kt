@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -32,7 +33,7 @@ class IrLazyValueParameter(
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
-    override val isAssignable: Boolean,
+    override var isAssignable: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrValueParameter(), IrLazyDeclarationBase {
@@ -47,6 +48,8 @@ class IrLazyValueParameter(
     override var varargElementType: IrType? by lazyVar(stubGenerator.lock) {
         varargElementKotlinType?.toIrType()
     }
+
+    override var attributeOwnerId: IrElement = this
 
     init {
         symbol.bind(this)

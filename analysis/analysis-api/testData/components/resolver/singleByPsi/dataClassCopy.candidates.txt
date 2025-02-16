@@ -1,0 +1,37 @@
+KtNameReferenceExpression(82,86): 'copy'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = aaa
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = aaa: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = d
+          isSafeNavigation = false
+          type = Data
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Data
+          symbol = /Data.copy(<dispatch receiver>: Data, aaa: kotlin.Int): Data
+          valueParameters = [
+            KaVariableSignature:
+              name = aaa
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = aaa: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Data.copy
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

@@ -12,20 +12,30 @@ sealed class PhaseSet {
 
     abstract operator fun plus(phaseSet: PhaseSet): PhaseSet
 
-    class Enum(val phases: Set<String>) : PhaseSet() {
+    class Enum(phases: Set<String>) : PhaseSet() {
+        private val phases: Set<String> = phases.map { it.toLowerCaseAsciiOnly() }.toSet()
+
         override fun contains(phase: AnyNamedPhase): Boolean =
             phase.name.toLowerCaseAsciiOnly() in phases
 
         override fun plus(phaseSet: PhaseSet): PhaseSet = when (phaseSet) {
-            ALL -> ALL
+            All -> All
+            Empty -> this
             is Enum -> Enum(phases + phaseSet.phases)
         }
     }
 
-    object ALL : PhaseSet() {
+    object All : PhaseSet() {
         override fun contains(phase: AnyNamedPhase): Boolean =
             true
 
-        override fun plus(phaseSet: PhaseSet): PhaseSet = ALL
+        override fun plus(phaseSet: PhaseSet): PhaseSet = All
+    }
+
+    object Empty : PhaseSet() {
+        override fun contains(phase: AnyNamedPhase): Boolean =
+            false
+
+        override fun plus(phaseSet: PhaseSet): PhaseSet = phaseSet
     }
 }

@@ -29,7 +29,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
     override val firSymbol: FirSyntheticPropertySymbol,
     override val analysisSession: KaFirSession,
 ) : KaSyntheticJavaPropertySymbol(), KaFirSymbol<FirSyntheticPropertySymbol> {
-    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { findPsi() }
 
     override val isVal: Boolean get() = withValidityAssertion { firSymbol.isVal }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
@@ -97,6 +97,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
             ownerPointer = analysisSession.createOwnerPointer(this),
             propertyName = name,
             isSynthetic = firSymbol is SyntheticSymbol,
+            originalSymbol = this
         )
     }
 

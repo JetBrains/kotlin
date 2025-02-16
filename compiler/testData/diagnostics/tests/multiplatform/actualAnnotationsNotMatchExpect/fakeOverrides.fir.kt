@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
@@ -30,4 +29,4 @@ abstract class Intermediate : I {
     override fun noAnnotationOnActual() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class FakeOverrideActual : Intermediate(), I
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class FakeOverrideActual : Intermediate(), I

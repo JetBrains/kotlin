@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_17
 // MODULE: module
@@ -16,6 +17,7 @@ public class Foo {
 
 // MODULE: module9
 // KOTLINC_ARGS: -Xjdk-release=9
+// JDK_RELEASE: 9
 // FILE: module-info.java
 module module9 {
     exports foo;
@@ -31,6 +33,7 @@ public class Foo {
 
 // MODULE: module11
 // KOTLINC_ARGS: -Xjdk-release=11
+// JDK_RELEASE: 11
 // FILE: module-info.java
 module module11 {
     exports foo;
@@ -46,6 +49,7 @@ public class Foo {
 
 // MODULE: module17
 // KOTLINC_ARGS: -Xjdk-release=17
+// JDK_RELEASE: 17
 // FILE: module-info.java
 module module17 {
     exports foo;
@@ -61,6 +65,7 @@ public class Foo {
 
 // MODULE: moduleSwing
 // KOTLINC_ARGS: -Xjdk-release=9
+// JDK_RELEASE: 9
 // FILE: module-info.java
 module moduleSwing {
     exports foo;

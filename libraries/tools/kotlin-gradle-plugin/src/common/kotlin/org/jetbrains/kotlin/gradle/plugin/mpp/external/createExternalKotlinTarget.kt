@@ -133,13 +133,13 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
 
 private fun ExternalKotlinTargetImpl.setupApiElements(configuration: Configuration) {
     configuration.usesPlatformOf(this)
-    configuration.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(this))
+    KotlinUsages.configureProducerApiUsage(configuration, this)
     configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
 }
 
 private fun ExternalKotlinTargetImpl.setupRuntimeElements(configuration: Configuration) {
     configuration.usesPlatformOf(this)
-    configuration.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(this))
+    KotlinUsages.configureProducerRuntimeUsage(configuration, this)
     configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
 }
 

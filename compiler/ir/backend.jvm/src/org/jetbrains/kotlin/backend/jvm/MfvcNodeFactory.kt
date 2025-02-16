@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.IrPropertyOrIrField.Property
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
 import org.jetbrains.kotlin.backend.jvm.UnboxFunctionImplementation.*
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -482,7 +482,7 @@ private fun makePrimaryConstructorImpl(
         metadata = oldPrimaryConstructor.metadata
         oldPrimaryConstructor.metadata = null
     }
-    copyAttributes(oldPrimaryConstructor as? IrAttributeContainer)
+    copyAttributes(oldPrimaryConstructor)
     // body is added in the Lowering file as it needs to be lowered
 }
 

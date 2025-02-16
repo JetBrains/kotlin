@@ -52,8 +52,8 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         return builderClassId.constructClassLikeType(arrayOf(ConeStarProjection, ConeStarProjection), isMarkedNullable = false)
     }
 
-    override fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType {
-        return builderSymbol.typeParameterSymbols[BUILDER_TYPE_PARAMETER_INDEX].defaultType
+    override fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType? {
+        return builderSymbol.typeParameterSymbols.elementAtOrNull(BUILDER_TYPE_PARAMETER_INDEX)?.defaultType
     }
 
     override fun MutableMap<Name, FirJavaMethod>.addSpecialBuilderMethods(
@@ -62,13 +62,16 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
     ) {
-        val builderTypeParameterSymbols = builderSymbol.typeParameterSymbols
+        // Don't care about manually written builder classes without specified type parameters
+        // Because they are anyway incorrect, Lombok reports Java errors on them and doesn't generate corresponding code
+        val builderType = getBuilderType(builderSymbol) ?: return
+        val classType = builderSymbol.typeParameterSymbols.elementAtOrNull(CLASS_TYPE_PARAMETER_INDEX)?.defaultType ?: return
 
         addIfNonClashing(Name.identifier("self"), existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 it,
                 valueParameters = emptyList(),
-                returnTypeRef = builderTypeParameterSymbols[BUILDER_TYPE_PARAMETER_INDEX].defaultType.toFirResolvedTypeRef(),
+                returnTypeRef = builderType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Protected,
                 modality = Modality.ABSTRACT
             )
@@ -77,7 +80,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             builderSymbol.createJavaMethod(
                 it,
                 valueParameters = emptyList(),
-                returnTypeRef = builderTypeParameterSymbols[CLASS_TYPE_PARAMETER_INDEX].defaultType.toFirResolvedTypeRef(),
+                returnTypeRef = classType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Public,
                 modality = Modality.ABSTRACT
             )

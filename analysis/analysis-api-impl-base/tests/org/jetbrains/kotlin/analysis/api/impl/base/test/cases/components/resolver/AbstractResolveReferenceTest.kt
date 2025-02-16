@@ -14,20 +14,18 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRend
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDeclarationModifiersRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaModifierListRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaDeclarationNameRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParameterRendererFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaPropertyAccessorsRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.services.CaretMarker
+import org.jetbrains.kotlin.analysis.test.framework.services.FileMarker
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.toCaretMarker
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
@@ -63,21 +61,18 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
         module: KtTestModule,
         testServices: TestServices,
     ): Collection<ResolveTestCaseContext<KtReference?>> {
-        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(file).ifEmpty {
-            testServices.expressionMarkerProvider.getSelectedRangeOrNull(file)?.let {
-                CaretMarker(tag = "", offset = it.startOffset)
-            }.let(::listOfNotNull)
-        }
+        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(file).takeIf { it.isNotEmpty() }
+            ?: testServices.expressionMarkerProvider.getAllSelections(file).map { it.toCaretMarker() }
 
         return collectElementsToResolve(caretPositions, file)
     }
 
     protected fun collectElementsToResolve(
-        carets: List<CaretMarker>,
+        carets: List<FileMarker<Int>>,
         file: KtFile,
-    ): Collection<ResolveTestCaseContext<KtReference?>> = carets.flatMap<CaretMarker, ResolveTestCaseContext<KtReference?>> { caret ->
-        val marker = caret.fullTag
-        val contexts: List<ResolveTestCaseContext<KtReference?>> = findReferencesAtCaret(file, caret.offset).map { reference ->
+    ): Collection<ResolveTestCaseContext<KtReference?>> = carets.flatMap<FileMarker<Int>, ResolveTestCaseContext<KtReference?>> { caret ->
+        val marker = caret.tagText
+        val contexts: List<ResolveTestCaseContext<KtReference?>> = findReferencesAtCaret(file, caret.value).map { reference ->
             ResolveReferenceTestCaseContext(element = reference, marker = marker)
         }
 

@@ -22,29 +22,13 @@ public class base/B {
 }
 Module: main
 @kotlin.Metadata
-public final class C$DefaultImpls {
-    // source: 'source.kt'
-    public deprecated static @java.lang.Deprecated method f(@org.jetbrains.annotations.NotNull p0: C): void
-    public final inner class C$DefaultImpls
-}
-
-@kotlin.Metadata
 public interface C {
     // source: 'source.kt'
-    public synthetic static method access$f$jd(p0: C): void
-    public method f(): void
-    public final inner class C$DefaultImpls
-}
-
-@kotlin.Metadata
-public abstract class D {
-    // source: 'source.kt'
-    public method <init>(): void
     public abstract method f(): void
 }
 
 @kotlin.Metadata
-public abstract class E {
+public abstract class D {
     // source: 'source.kt'
     public method <init>(): void
 }

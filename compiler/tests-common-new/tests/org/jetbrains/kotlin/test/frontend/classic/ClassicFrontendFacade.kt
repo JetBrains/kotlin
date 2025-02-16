@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys.JVM_TARGET
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
@@ -151,7 +152,19 @@ class ClassicFrontendFacade(
         friendsDescriptors: List<ModuleDescriptorImpl>,
         dependsOnDescriptors: List<ModuleDescriptorImpl>
     ): AnalysisResult {
-        val targetPlatform = module.targetPlatform
+        /*
+         * K1 frontend expects for common mpp modules to have common platform as a target platform. K2 in opposite performs resolution
+         * with the target platform of the leaf module, and the test system centered around it. So to fix K1 test it's needed to manually
+         * configure the target platform in this case
+         */
+        val targetPlatform = if (
+            module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
+            !module.isLeafModuleInMppGraph(testServices)
+        ) {
+            CommonPlatforms.defaultCommonPlatform
+        } else {
+            module.targetPlatform(testServices)
+        }
         return when {
             targetPlatform.isJvm() -> performJvmModuleResolve(
                 module, project, configuration, packagePartProviderFactory,
@@ -172,7 +185,8 @@ class ClassicFrontendFacade(
                 compilerEnvironment,
                 dependencyDescriptors,
                 friendsDescriptors,
-                files
+                files,
+                targetPlatform
             )
             else -> error("Should not be here")
         }
@@ -401,6 +415,7 @@ class ClassicFrontendFacade(
         dependencyDescriptors: List<ModuleDescriptorImpl>,
         friendsDescriptors: List<ModuleDescriptorImpl>,
         files: List<KtFile>,
+        targetPlatform: TargetPlatform,
     ): AnalysisResult {
         val moduleDescriptor = createModuleContext(
             module, project,
@@ -414,7 +429,7 @@ class ClassicFrontendFacade(
             Name.special("<${module.name}>"),
             dependOnBuiltIns = true,
             module.languageVersionSettings,
-            module.targetPlatform,
+            targetPlatform,
             compilerEnvironment,
             dependenciesContainer = CommonDependenciesContainerImpl(moduleDescriptor)
         ) {
@@ -463,7 +478,7 @@ class ClassicFrontendFacade(
 
         val builtIns = builtInsFactory(storageManager)
         val moduleDescriptor = ModuleDescriptorImpl(
-            Name.special("<${module.name}>"), storageManager, builtIns, module.targetPlatform, capabilities
+            Name.special("<${module.name}>"), storageManager, builtIns, module.targetPlatform(testServices), capabilities
         )
         val dependencies = buildSet {
             add(moduleDescriptor)

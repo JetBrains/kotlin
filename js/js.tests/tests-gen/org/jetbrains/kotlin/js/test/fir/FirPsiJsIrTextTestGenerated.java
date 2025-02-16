@@ -773,6 +773,22 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/ir/irText/declarations/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ContextParameters {
+      @Test
+      public void testAllFilesPresentInContextParameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("contextWithAnnotation.kt")
+      public void testContextWithAnnotation() {
+        runTest("compiler/testData/ir/irText/declarations/contextParameters/contextWithAnnotation.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")
     public class ContextReceivers {

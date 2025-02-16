@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Anno(vararg val x: String, val y: String)
 
@@ -19,7 +18,7 @@ fun foo3() {}
 fun foo4() {}
 
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Anno1(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_WARNING!>Array<in String><!>, val y: String)
+annotation class Anno1(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>Array<in String><!>, val y: String)
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Anno2(vararg val x: String, val y: String)

@@ -1,0 +1,167 @@
+// CHECK:
+//   Mangled name: KClass
+//   Public signature: /KClass|null[0]
+open class KClass {
+  // CHECK:
+  //   Mangled name: KClass{}publicProp
+  //   Public signature: /KClass.publicProp|4521262503577324295[0]
+  //   Public signature debug description: {}publicProp
+  open lateinit var publicProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KClass#<get-publicProp>(){}kotlin.String
+    //   Public signature: /KClass.publicProp.<get-publicProp>|4188112947174015644[0]
+    //   Public signature debug description: <get-publicProp>(){}kotlin.String
+    open get
+    // CHECK:
+    //   Mangled name: KClass#<set-publicProp>(kotlin.String){}
+    //   Public signature: /KClass.publicProp.<set-publicProp>|42895388121626808[0]
+    //   Public signature debug description: <set-publicProp>(kotlin.String){}
+    open set
+
+  // CHECK:
+  //   Mangled name: KClass{}protectedProp
+  //   Public signature: /KClass.protectedProp|8517586314868595700[0]
+  //   Public signature debug description: {}protectedProp
+  protected lateinit var protectedProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KClass#<get-protectedProp>(){}kotlin.String
+    //   Public signature: /KClass.protectedProp.<get-protectedProp>|187086955466686970[0]
+    //   Public signature debug description: <get-protectedProp>(){}kotlin.String
+    protected get
+    // CHECK:
+    //   Mangled name: KClass#<set-protectedProp>(kotlin.String){}
+    //   Public signature: /KClass.protectedProp.<set-protectedProp>|1420115733417460736[0]
+    //   Public signature debug description: <set-protectedProp>(kotlin.String){}
+    protected set
+
+  // CHECK:
+  //   Mangled name: KClass{}privateProp
+  //   Public signature: /KClass.privateProp|-27749374741926956[0]
+  //   Public signature debug description: {}privateProp
+  private lateinit var privateProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KClass#<get-privateProp>(){}kotlin.String
+    //   Public signature: /KClass.privateProp.<get-privateProp>|-2972782750668378885[0]
+    //   Public signature debug description: <get-privateProp>(){}kotlin.String
+    private get
+    // CHECK:
+    //   Mangled name: KClass#<set-privateProp>(kotlin.String){}
+    //   Public signature: /KClass.privateProp.<set-privateProp>|-2639488175126671399[0]
+    //   Public signature debug description: <set-privateProp>(kotlin.String){}
+    private set
+
+  // CHECK:
+  //   Mangled name: KClass{}initializedPublicProp
+  //   Public signature: /KClass.initializedPublicProp|1277392463416342774[0]
+  //   Public signature debug description: {}initializedPublicProp
+  open var initializedPublicProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KClass#<get-initializedPublicProp>(){}kotlin.String
+    //   Public signature: /KClass.initializedPublicProp.<get-initializedPublicProp>|694526342536604770[0]
+    //   Public signature debug description: <get-initializedPublicProp>(){}kotlin.String
+    open get
+    // CHECK:
+    //   Mangled name: KClass#<set-initializedPublicProp>(kotlin.String){}
+    //   Public signature: /KClass.initializedPublicProp.<set-initializedPublicProp>|-1345235569253808[0]
+    //   Public signature debug description: <set-initializedPublicProp>(kotlin.String){}
+    open set
+
+  // CHECK:
+  //   Mangled name: KClass{}initializedProtectedProp
+  //   Public signature: /KClass.initializedProtectedProp|642456037454147623[0]
+  //   Public signature debug description: {}initializedProtectedProp
+  protected open var initializedProtectedProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KClass#<get-initializedProtectedProp>(){}kotlin.String
+    //   Public signature: /KClass.initializedProtectedProp.<get-initializedProtectedProp>|-8348261078781953551[0]
+    //   Public signature debug description: <get-initializedProtectedProp>(){}kotlin.String
+    protected open get
+    // CHECK:
+    //   Mangled name: KClass#<set-initializedProtectedProp>(kotlin.String){}
+    //   Public signature: /KClass.initializedProtectedProp.<set-initializedProtectedProp>|3348294240352810295[0]
+    //   Public signature debug description: <set-initializedProtectedProp>(kotlin.String){}
+    protected open set
+
+  // CHECK:
+  //   Mangled name: KClass#<init>(){}
+  //   Public signature: /KClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: KKClass
+//   Public signature: /KKClass|null[0]
+open class KKClass : KClass {
+  // CHECK:
+  //   Mangled name: KKClass{}initializedPublicProp
+  //   Public signature: /KKClass.initializedPublicProp|1277392463416342774[0]
+  //   Public signature debug description: {}initializedPublicProp
+  override lateinit var initializedPublicProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KKClass#<get-initializedPublicProp>(){}kotlin.String
+    //   Public signature: /KKClass.initializedPublicProp.<get-initializedPublicProp>|694526342536604770[0]
+    //   Public signature debug description: <get-initializedPublicProp>(){}kotlin.String
+    override get
+    // CHECK:
+    //   Mangled name: KKClass#<set-initializedPublicProp>(kotlin.String){}
+    //   Public signature: /KKClass.initializedPublicProp.<set-initializedPublicProp>|-1345235569253808[0]
+    //   Public signature debug description: <set-initializedPublicProp>(kotlin.String){}
+    override set
+
+  // CHECK:
+  //   Mangled name: KKClass{}initializedProtectedProp
+  //   Public signature: /KKClass.initializedProtectedProp|642456037454147623[0]
+  //   Public signature debug description: {}initializedProtectedProp
+  protected override lateinit var initializedProtectedProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KKClass#<get-initializedProtectedProp>(){}kotlin.String
+    //   Public signature: /KKClass.initializedProtectedProp.<get-initializedProtectedProp>|-8348261078781953551[0]
+    //   Public signature debug description: <get-initializedProtectedProp>(){}kotlin.String
+    protected override get
+    // CHECK:
+    //   Mangled name: KKClass#<set-initializedProtectedProp>(kotlin.String){}
+    //   Public signature: /KKClass.initializedProtectedProp.<set-initializedProtectedProp>|3348294240352810295[0]
+    //   Public signature debug description: <set-initializedProtectedProp>(kotlin.String){}
+    protected override set
+
+  // CHECK:
+  //   Mangled name: KKClass#<init>(){}
+  //   Public signature: /KKClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KKClass{}protectedProp
+  //   Public signature: /KKClass.protectedProp|8517586314868595700[0]
+  //   Public signature debug description: {}protectedProp
+  protected /* fake */ override lateinit var protectedProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KKClass#<get-protectedProp>(){}kotlin.String
+    //   Public signature: /KKClass.protectedProp.<get-protectedProp>|187086955466686970[0]
+    //   Public signature debug description: <get-protectedProp>(){}kotlin.String
+    protected /* fake */ override get(): String
+    // CHECK:
+    //   Mangled name: KKClass#<set-protectedProp>(kotlin.String){}
+    //   Public signature: /KKClass.protectedProp.<set-protectedProp>|1420115733417460736[0]
+    //   Public signature debug description: <set-protectedProp>(kotlin.String){}
+    protected /* fake */ override set(<set-?>: String): Unit
+
+  // CHECK:
+  //   Mangled name: KKClass{}publicProp
+  //   Public signature: /KKClass.publicProp|4521262503577324295[0]
+  //   Public signature debug description: {}publicProp
+  /* fake */ override lateinit var publicProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: KKClass#<get-publicProp>(){}kotlin.String
+    //   Public signature: /KKClass.publicProp.<get-publicProp>|4188112947174015644[0]
+    //   Public signature debug description: <get-publicProp>(){}kotlin.String
+    /* fake */ override get(): String
+    // CHECK:
+    //   Mangled name: KKClass#<set-publicProp>(kotlin.String){}
+    //   Public signature: /KKClass.publicProp.<set-publicProp>|42895388121626808[0]
+    //   Public signature debug description: <set-publicProp>(kotlin.String){}
+    /* fake */ override set(<set-?>: String): Unit
+
+}

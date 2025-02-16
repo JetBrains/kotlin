@@ -1,13 +1,13 @@
 // RUN_PIPELINE_TILL: BACKEND
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR JVM
+// IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-66436
 
 // MODULE: common
 // FILE: common.kt
 package kotlin.collections
 
-public expect abstract class <!NO_ACTUAL_FOR_EXPECT!>AbstractMutableList<!>() {
+public expect abstract class AbstractMutableList() {
     protected var modCount: Int
 }
 

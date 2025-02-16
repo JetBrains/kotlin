@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize
 
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
@@ -160,6 +160,9 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             "kotlin.ULongArray" ->
                 return ulongArraySerializer
             // Library types
+            "kotlin.uuid.Uuid" ->
+                return wrapNullableSerializerIfNeeded(
+                    irType, IrUuidParcelSerializer(irType.getClass()!!, longSerializer))
             "kotlin.time.Duration" ->
                 return wrapNullableSerializerIfNeeded(irType, durationSerializer)
             "kotlin.ranges.IntRange" -> return wrapNullableSerializerIfNeeded(

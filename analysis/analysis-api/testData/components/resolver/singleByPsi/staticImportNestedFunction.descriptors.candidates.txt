@@ -4,6 +4,7 @@ KtCallExpression(104,109): 'foo()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.Nested
           type = one.two.TopLevelObject.Nested
@@ -13,15 +14,17 @@ KtCallExpression(104,109): 'foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = one/two/TopLevelObject.Nested.foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = one/two/TopLevelObject.Nested
           type = one.two.TopLevelObject.Nested
@@ -36,8 +39,10 @@ KtCallExpression(104,109): 'foo()'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = one/two/TopLevelObject.Nested.foo
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>

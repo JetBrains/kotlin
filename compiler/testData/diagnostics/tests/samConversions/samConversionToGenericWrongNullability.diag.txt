@@ -1,52 +1,52 @@
-/edge-cases.kt:169:9: error: type mismatch: inferred type is Unit but String! was expected
+/edge-cases.kt:179:9: error: type mismatch: inferred type is Unit but String! was expected
         run {
         ^^^^^
-/edge-cases.kt:175:9: error: type mismatch: inferred type is Unit but String! was expected
+/edge-cases.kt:185:9: error: type mismatch: inferred type is Unit but String! was expected
         run {
         ^^^^^
-/edge-cases.kt:176:24: error: type mismatch: inferred type is String? but Unit was expected
+/edge-cases.kt:186:24: error: type mismatch: inferred type is String? but Unit was expected
             return@run returnNullableString()
                        ^^^^^^^^^^^^^^^^^^^^^^
-/edge-cases.kt:181:9: error: type mismatch: inferred type is Unit but String! was expected
+/edge-cases.kt:191:9: error: type mismatch: inferred type is Unit but String! was expected
         run run@ {
         ^^^^^^^^^^
-/edge-cases.kt:182:24: error: type mismatch: inferred type is String? but Unit was expected
+/edge-cases.kt:192:24: error: type mismatch: inferred type is String? but Unit was expected
             return@run returnNullableString()
                        ^^^^^^^^^^^^^^^^^^^^^^
-/edge-cases.kt:187:9: error: type mismatch: inferred type is Unit but String! was expected
+/edge-cases.kt:197:9: error: type mismatch: inferred type is Unit but String! was expected
         run {
         ^^^^^
 /test.kt:49:9: error: type mismatch: inferred type is String? but String was expected
         TestValueProvider.getNullableString()
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/test.kt:89:9: error: type mismatch: inferred type is String? but String was expected
+/test.kt:99:9: error: type mismatch: inferred type is String? but String was expected
         returnNullableString()
         ^^^^^^^^^^^^^^^^^^^^^^
-/test.kt:94:30: error: type mismatch: inferred type is String? but String was expected
+/test.kt:104:30: error: type mismatch: inferred type is String? but String was expected
             if (true) return returnNullableString()
                              ^^^^^^^^^^^^^^^^^^^^^^
-/test.kt:100:9: error: type mismatch: inferred type is () -> String but String was expected
+/test.kt:110:9: error: type mismatch: inferred type is () -> String but String was expected
         fun(): String {
         ^^^^^^^^^^^^^^^
-/test.kt:100:9: error: type mismatch: inferred type is () -> String but String! was expected
+/test.kt:110:9: error: type mismatch: inferred type is () -> String but String! was expected
         fun(): String {
         ^^^^^^^^^^^^^^^
-/test.kt:101:30: error: type mismatch: inferred type is String? but String was expected
+/test.kt:111:30: error: type mismatch: inferred type is String? but String was expected
             if (true) return returnNullableString()
                              ^^^^^^^^^^^^^^^^^^^^^^
-/test.kt:107:9: error: type mismatch: inferred type is () -> String? but () -> String was expected
+/test.kt:117:9: error: type mismatch: inferred type is () -> String? but () -> String was expected
         fun(): String? {
         ^^^^^^^^^^^^^^^^
-/test.kt:114:9: error: type mismatch: inferred type is () -> String? but String was expected
+/test.kt:124:9: error: type mismatch: inferred type is () -> String? but String was expected
         fun(): String? {
         ^^^^^^^^^^^^^^^^
-/test.kt:114:9: error: type mismatch: inferred type is () -> String? but String! was expected
+/test.kt:124:9: error: type mismatch: inferred type is () -> String? but String! was expected
         fun(): String? {
         ^^^^^^^^^^^^^^^^
-/test.kt:126:29: error: return type of 'get' is not a subtype of the return type of the overridden member 'public abstract fun get(): String defined in java.util.function.Supplier'
+/test.kt:136:29: error: return type of 'get' is not a subtype of the return type of the overridden member 'public abstract fun get(): String defined in java.util.function.Supplier'
         override fun get(): String? = returnNullableString()
                             ^^^^^^^
-/test.kt:130:22: error: return type of 'get' is not a subtype of the return type of the overridden member 'public abstract fun get(): String defined in java.util.function.Supplier'
+/test.kt:140:22: error: return type of 'get' is not a subtype of the return type of the overridden member 'public abstract fun get(): String defined in java.util.function.Supplier'
         override fun get() = returnNullableString()
                      ^^^
 

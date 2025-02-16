@@ -1,0 +1,34 @@
+KtNameReferenceExpression(100,103): 'foo'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = val foo: kotlin.Boolean
+            contextParameters = [
+              KaVariableSignature:
+                name = int
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = int: kotlin.Int
+                contextParameters = []
+                callableId = null,
+              KaVariableSignature:
+                name = string
+                receiverType = null
+                returnType = kotlin.String
+                symbol = string: kotlin.String
+                contextParameters = []
+                callableId = null
+            ]
+            callableId = /foo
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'String' found.>

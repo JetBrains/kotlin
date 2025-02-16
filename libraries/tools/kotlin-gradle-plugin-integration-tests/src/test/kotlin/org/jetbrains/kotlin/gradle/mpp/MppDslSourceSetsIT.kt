@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 
 @MppGradlePluginTests
@@ -43,6 +44,7 @@ class MppDslSourceSetsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
+            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
             build("publish") {
                 assertTasksNoSource(
                     ":compileKotlinJs",

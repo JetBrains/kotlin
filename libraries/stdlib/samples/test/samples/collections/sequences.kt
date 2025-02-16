@@ -278,4 +278,44 @@ class Sequences {
         }
     }
 
+    class Sorting {
+        @Sample
+        fun sortedBy() {
+            class Dish(val name: String, val calories: Int, val tasteRate: Float) {
+                override fun toString(): String = "Dish($name: $calories cal, taste $tasteRate/5)"
+            }
+
+            val fridgeContent = sequenceOf(Dish("🍨", 207, 4.7f), Dish("🥦", 34, 2.3f), Dish("🧃", 34, 4.9f))
+
+            val dullDishes = fridgeContent.sortedBy { it.tasteRate }
+            assertPrints(dullDishes.toList(), "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+
+            val lightDishes = fridgeContent.sortedBy { it.calories }
+            // note that the sorting is stable, so the 🥦 is before the 🧃
+            assertPrints(lightDishes.toList(), "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
+
+            // the original sequence's state remains unchanged
+            assertPrints(fridgeContent.toList(), "[Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+        }
+
+        @Sample
+        fun sortedByDescending() {
+            class Dish(val name: String, val calories: Int, val tasteRate: Float) {
+                override fun toString(): String = "Dish($name: $calories cal, taste $tasteRate/5)"
+            }
+
+            val fridgeContent = sequenceOf(Dish("🥦", 34, 2.3f), Dish("🧃", 34, 4.9f), Dish("🍨", 207, 4.7f))
+
+            val tastyDishes = fridgeContent.sortedByDescending { it.tasteRate }
+            assertPrints(tastyDishes.toList(),"[Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5)]")
+
+            val energeticDishes = fridgeContent.sortedByDescending { it.calories }
+            // note that the sorting is stable, so the 🥦 is before the 🧃
+            assertPrints(energeticDishes.toList(),"[Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+
+            // the original sequence's state remains unchanged
+            assertPrints(fridgeContent.toList(), "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
+        }
+
+    }
 }

@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /variable
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -51,7 +52,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: KtConstantInitializerValue(0)
+  initializer: KaConstantInitializerValue(0)
   isActual: true
   isConst: false
   isDelegatedProperty: false

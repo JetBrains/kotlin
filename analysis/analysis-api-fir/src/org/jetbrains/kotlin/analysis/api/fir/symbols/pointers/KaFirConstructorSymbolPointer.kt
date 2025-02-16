@@ -19,7 +19,8 @@ internal class KaFirConstructorSymbolPointer(
     ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val isPrimary: Boolean,
     private val signature: FirCallableSignature,
-) : KaFirMemberSymbolPointer<KaConstructorSymbol>(ownerPointer) {
+    originalSymbol: KaConstructorSymbol?,
+) : KaFirMemberSymbolPointer<KaConstructorSymbol>(ownerPointer, originalSymbol = originalSymbol) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession,

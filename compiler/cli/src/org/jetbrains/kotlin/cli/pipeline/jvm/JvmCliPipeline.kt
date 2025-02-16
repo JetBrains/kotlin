@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import org.jetbrains.kotlin.backend.common.phaser.then
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.K2JVMCompilerPerformanceManager
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineContext
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
-
+import org.jetbrains.kotlin.util.PerformanceManager
 
 class JvmCliPipeline(override val defaultPerformanceManager: K2JVMCompilerPerformanceManager) : AbstractCliPipeline<K2JVMCompilerArguments>() {
     override fun createCompoundPhase(arguments: K2JVMCompilerArguments): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JVMCompilerArguments>, *> {
@@ -48,7 +47,7 @@ class JvmCliPipeline(override val defaultPerformanceManager: K2JVMCompilerPerfor
     override fun createPerformanceManager(
         arguments: K2JVMCompilerArguments,
         services: Services,
-    ): CommonCompilerPerformanceManager {
+    ): PerformanceManager {
         return K2JVMCompiler.createCustomPerformanceManagerOrNull(arguments, services) ?: defaultPerformanceManager
     }
 }

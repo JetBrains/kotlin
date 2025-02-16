@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,7 +30,7 @@ public interface KaRendererModalityModifierProvider {
     public object WITH_IMPLICIT_MODALITY : KaRendererModalityModifierProvider {
         override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? = when (symbol) {
             is KaPropertyAccessorSymbol,
-            is KaValueParameterSymbol,
+            is KaParameterSymbol,
             is KaBackingFieldSymbol,
             is KaScriptSymbol,
             is KaClassInitializerSymbol,

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom.Companion.createRawAtom
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -44,6 +43,17 @@ class CandidateFactory private constructor(
             callInfo.argumentAtoms.forEach {
                 system.addSubsystemFromAtom(it)
             }
+            return system.asReadOnlyStorage()
+        }
+
+        // For callable reference candidates, we use containing call as a source for the base system.
+        // Thus, their Constraint Systems are effectively clones of the containing call ones with additional constraints.
+        fun createForCallableReferenceCandidate(context: ResolutionContext, containingCall: Candidate): CandidateFactory =
+            CandidateFactory(context, buildBaseSystemForCallableReference(context, containingCall))
+
+        private fun buildBaseSystemForCallableReference(context: ResolutionContext, containingCall: Candidate): ConstraintStorage {
+            val system = context.inferenceComponents.createConstraintSystem()
+            system.setBaseSystem(containingCall.system.currentStorage())
             return system.asReadOnlyStorage()
         }
     }

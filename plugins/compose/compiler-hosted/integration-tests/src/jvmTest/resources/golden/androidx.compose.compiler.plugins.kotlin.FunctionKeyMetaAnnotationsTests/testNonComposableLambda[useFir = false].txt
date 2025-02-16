@@ -1,0 +1,39 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+ 
+fun higherOrderFunction(child: Any.() -> Unit) {
+
+}
+
+
+@Composable 
+fun Foo() {
+    higherOrderFunction {
+        print("Foo")
+    }
+} 
+
+//
+// Transformed IR
+// ------------------------------------------
+
+TestKt {
+    higherOrderFunction (Lkotlin/jvm/functions/Function1;)V null
+    Foo (Landroidx/compose/runtime/Composer;I)V [key=-607362160, startOffset=112, endOffset=178]
+}
+
+TestKt$Foo$1 {
+    <init> ()V null
+    invoke (Ljava/lang/Object;)V null
+    invoke (Ljava/lang/Object;)Ljava/lang/Object; null
+    <clinit> ()V null
+}
+
+TestKt$Foo$2 {
+    <init> (I)V null
+    invoke (Landroidx/compose/runtime/Composer;I)V null
+    invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
+}

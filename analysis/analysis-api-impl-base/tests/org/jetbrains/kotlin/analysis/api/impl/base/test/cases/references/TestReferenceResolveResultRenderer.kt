@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -80,7 +80,7 @@ object TestReferenceResolveResultRenderer {
 
     @Suppress("unused")// KaSession receiver
     private fun KaSession.symbolContainerFqName(symbol: KaSymbol): String? {
-        if (symbol is KaPackageSymbol || symbol is KaValueParameterSymbol) return null
+        if (symbol is KaPackageSymbol || symbol is KaParameterSymbol) return null
         val nonLocalFqName = when (symbol) {
             is KaConstructorSymbol -> symbol.containingClassId?.asSingleFqName()
             is KaCallableSymbol -> symbol.callableId?.asSingleFqName()?.parent()

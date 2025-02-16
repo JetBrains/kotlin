@@ -39,12 +39,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
-  @TestMetadata("actualExternalInJs.kt")
-  public void testActualExternalInJs() {
-    runTest("compiler/testData/diagnostics/tests/multiplatform/actualExternalInJs.kt");
-  }
-
-  @Test
   @TestMetadata("actualMissingConstructor.kt")
   public void testActualMissingConstructor() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/actualMissingConstructor.kt");
@@ -224,6 +218,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
+  @TestMetadata("errorProneAtomicReferencePrimitivesInKMP.kt")
+  public void testErrorProneAtomicReferencePrimitivesInKMP() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/errorProneAtomicReferencePrimitivesInKMP.kt");
+  }
+
+  @Test
   @TestMetadata("expectAbstractToString.kt")
   public void testExpectAbstractToString() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");
@@ -314,12 +314,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
-  @TestMetadata("expectShouldBeJSExportable.kt")
-  public void testExpectShouldBeJSExportable() {
-    runTest("compiler/testData/diagnostics/tests/multiplatform/expectShouldBeJSExportable.kt");
-  }
-
-  @Test
   @TestMetadata("expectTailrec.kt")
   public void testExpectTailrec() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectTailrec.kt");
@@ -329,12 +323,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   @TestMetadata("expectTailrec_oldLanguageVersion.kt")
   public void testExpectTailrec_oldLanguageVersion() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectTailrec_oldLanguageVersion.kt");
-  }
-
-  @Test
-  @TestMetadata("expectsWithJsExport.kt")
-  public void testExpectsWithJsExport() {
-    runTest("compiler/testData/diagnostics/tests/multiplatform/expectsWithJsExport.kt");
   }
 
   @Test
@@ -377,12 +365,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   @TestMetadata("incompatibles.kt")
   public void testIncompatibles() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/incompatibles.kt");
-  }
-
-  @Test
-  @TestMetadata("JsExternalTypeExtendsActualExternalType.kt")
-  public void testJsExternalTypeExtendsActualExternalType() {
-    runTest("compiler/testData/diagnostics/tests/multiplatform/JsExternalTypeExtendsActualExternalType.kt");
   }
 
   @Test
@@ -671,6 +653,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     }
 
     @Test
+    @TestMetadata("annotationArgRendering.kt")
+    public void testAnnotationArgRendering() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgRendering.kt");
+    }
+
+    @Test
     @TestMetadata("annotationArgumentsConstExpressions.kt")
     public void testAnnotationArgumentsConstExpressions() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgumentsConstExpressions.kt");
@@ -914,22 +902,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     @TestMetadata("withOtherIncomatibilities.kt")
     public void testWithOtherIncomatibilities() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/withOtherIncomatibilities.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/lightTree")
-    @TestDataPath("$PROJECT_ROOT")
-    public class LightTree {
-      @Test
-      public void testAllFilesPresentInLightTree() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/lightTree"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
-      }
-
-      @Test
-      @TestMetadata("annotationArgRendering.kt")
-      public void testAnnotationArgRendering() {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/lightTree/annotationArgRendering.kt");
-      }
     }
   }
 
@@ -2189,6 +2161,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     }
 
     @Test
+    @TestMetadata("expectsHmppRedeclaration.kt")
+    public void testExpectsHmppRedeclaration() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/expectsHmppRedeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("hmppModalityClash.kt")
     public void testHmppModalityClash() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/hmppModalityClash.kt");
@@ -2382,6 +2360,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     @Test
     public void testAllFilesPresentInJava() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/java"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("atomicTypes.kt")
+    public void testAtomicTypes() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/java/atomicTypes.kt");
     }
 
     @Test

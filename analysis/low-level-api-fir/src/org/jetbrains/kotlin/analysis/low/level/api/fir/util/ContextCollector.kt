@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
@@ -565,6 +564,10 @@ private class ContextCollectorVisitor(
         processList(anonymousObject.superTypeRefs)
     }
 
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) {
+        visitConstructor(errorPrimaryConstructor)
+    }
+
     override fun visitConstructor(constructor: FirConstructor) = withProcessor(constructor) {
         dumpContext(constructor, ContextKind.SELF)
 
@@ -646,6 +649,10 @@ private class ContextCollectorVisitor(
                 }
             }
         }
+    }
+
+    override fun visitErrorProperty(errorProperty: FirErrorProperty) {
+        visitProperty(errorProperty)
     }
 
     override fun visitProperty(property: FirProperty) = withProcessor(property) {
@@ -796,11 +803,9 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousFunction)
 
         onActiveBody {
-            context.withAnonymousFunction(anonymousFunction, bodyHolder, ResolutionMode.ContextIndependent) {
-                for (parameter in anonymousFunction.valueParameters) {
-                    process(parameter)
-                    context.storeVariable(parameter, bodyHolder.session)
-                }
+            context.withAnonymousFunction(anonymousFunction, bodyHolder) {
+                processList(anonymousFunction.contextParameters)
+                processList(anonymousFunction.valueParameters)
 
                 dumpContext(anonymousFunction, ContextKind.BODY)
 
@@ -813,7 +818,6 @@ private class ContextCollectorVisitor(
                 }
             }
         }
-
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor(anonymousObject) {

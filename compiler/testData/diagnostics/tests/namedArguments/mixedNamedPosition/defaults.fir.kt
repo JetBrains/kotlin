@@ -22,8 +22,8 @@ fun main() {
 
     foo()
     foo(1, p2 = "")
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(p3 = 4.0, '4')
+    foo(p3 = 4.0, <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>'4'<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(1, p3 = 2.0, "")
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(1, p3 = 2.0, 3.0)
+    foo(1, p3 = 2.0, <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>""<!>)
+    foo(1, p3 = 2.0, <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>3.0<!>)
 }

@@ -1,0 +1,22 @@
+FILE: local.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun f1(): R|kotlin/Unit| {
+        local final typealias LocalTA = R|C|
+
+    }
+    public final fun f2(): R|kotlin/Unit| {
+        local final class Local : R|kotlin/Any| {
+            public constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            local final typealias LocalTA = R|C|
+
+        }
+
+    }

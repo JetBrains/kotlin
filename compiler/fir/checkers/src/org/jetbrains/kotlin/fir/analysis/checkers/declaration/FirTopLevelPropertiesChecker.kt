@@ -31,6 +31,10 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrIni
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 // See old FE's [DeclarationsChecker]
 object FirTopLevelPropertiesChecker : FirFileChecker(MppCheckerKind.Common) {
@@ -206,8 +210,14 @@ internal fun checkPropertyInitializer(
                     reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY, context)
                 }
                 // TODO, KT-59807: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
-                if (backingFieldRequired && !inInterface && isCorrectlyInitialized) {
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                    if (
+                        backingFieldRequired &&
+                        !inInterface &&
+                        isCorrectlyInitialized &&
+                        property.backingField?.hasAnnotation(StandardClassIds.Annotations.Transient, context.session) != true &&
+                        !property.hasAnnotation(KOTLINX_SERIALIZATION_TRANSIENT, context.session)
+                    ) {
                         reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT, context)
                     }
                 }
@@ -289,3 +299,8 @@ private fun FirProperty.getEffectiveModality(containingClass: FirClass?, languag
         true -> getEffectiveModality(containingClass)
         false -> status.modality
     }
+
+private val KOTLINX_SERIALIZATION_TRANSIENT = ClassId(
+    FqName.fromSegments("kotlinx.serialization".split(".")),
+    Name.identifier("Transient")
+)

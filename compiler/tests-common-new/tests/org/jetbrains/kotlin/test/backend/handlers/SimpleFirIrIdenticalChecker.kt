@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -57,11 +57,11 @@ abstract class SimpleFirIrIdenticalChecker(
         if (failedAssertions.isNotEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         if (markedAsIdentical()) {
-            simpleChecker.deleteFirFile(testDataFile)
+            simpleChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile)
             return
         }
         if (simpleChecker.firAndClassicContentsAreEquals(testDataFile, trimLines)) {
-            simpleChecker.deleteFirFile(testDataFile)
+            simpleChecker.deleteFirFileToCompareAndAssertIfExists(testDataFile, suppressAssertion = true)
             processClassicFileIfContentIsIdentical(testDataFile)
         }
     }

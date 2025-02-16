@@ -22,7 +22,7 @@ abstract class TransformingTestMethodModel(val source: SimpleTestMethodModel, va
     override fun imports(): Collection<Class<*>> = super.imports() + TransformerFunctionsClassPlaceHolder::class.java
 
     internal val registerInConstructor
-        get() = source.targetBackend == TargetBackend.NATIVE
+        get() = source.targetBackend == TargetBackend.NATIVE && !source.nativeTestInNonNativeTestInfra
     // Native tests load sources before runTest call if more than 1 test is called, so we need to register it before.
 
     override fun shouldBeGenerated(): Boolean = source.shouldBeGenerated()

@@ -4,6 +4,7 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,17 +12,19 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
           returnType = kotlin.collections.MutableList<kotlin.String>
           symbol = kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/collections/mutableListOf
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -34,8 +37,10 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
               receiverType = null
               returnType = kotlin.String
               symbol = vararg elements: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/collections/mutableListOf
       typeArgumentsMapping = {
         T -> (kotlin.String)

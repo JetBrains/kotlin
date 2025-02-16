@@ -71,4 +71,6 @@ private fun Project.registerVariantImplementations() {
         ConfigurationCacheStartParameterAccessorG80.Factory()
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
         ProjectIsolationStartParameterAccessorG80.Factory()
+    factories[JavaExecTaskParametersCompatibility.Factory::class] =
+        JavaExecTaskParametersCompatibilityG80.Factory()
 }

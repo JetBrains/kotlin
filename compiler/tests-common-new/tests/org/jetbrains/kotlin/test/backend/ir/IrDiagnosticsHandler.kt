@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
+import org.jetbrains.kotlin.test.backend.handlers.findByPath
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -33,7 +34,9 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
             val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
             val lightTreeEnabled = currentModule.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
             for (file in currentModule.files) {
-                val diagnostics = diagnosticsByFilePath["/" + file.relativePath]
+                val diagnostics = file.findByPath(testServices) {
+                    diagnosticsByFilePath[it]
+                }
                 if (diagnostics != null && diagnostics.isNotEmpty()) {
                     val diagnosticsMetadataInfos =
                         diagnostics.diagnosticCodeMetaInfos(

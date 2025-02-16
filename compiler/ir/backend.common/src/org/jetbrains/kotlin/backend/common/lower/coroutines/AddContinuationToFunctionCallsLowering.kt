@@ -67,7 +67,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                     newReturnType = newFun.returnType,
                     newSuperQualifierSymbol = expression.superQualifierSymbol
                 ).also {
-                    it.putValueArgument(it.valueArgumentsCount - 1, getContinuation() ?: return expression.throwLinkageError(plFile))
+                    it.arguments[it.arguments.lastIndex] = getContinuation() ?: return expression.throwLinkageError(plFile)
                 }
             }
         })
@@ -86,7 +86,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                     throw IllegalArgumentException("Continuation parameter only exists in lowered suspend functions, but function origin is $origin")
             }
 
-            val continuation = valueParameters.lastOrNull()
+            val continuation = parameters.lastOrNull()
             require(continuation != null && continuation.origin == IrDeclarationOrigin.CONTINUATION) {
                 "Continuation parameter is expected to be the last one"
             }

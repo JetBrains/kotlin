@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.diagnostics.findChildByType
-import org.jetbrains.kotlin.diagnostics.findDescendantByType
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -28,24 +28,6 @@ fun KtModifierKeywordToken.toVisibilityOrNull(): Visibility? {
         KtTokens.INTERNAL_KEYWORD -> Visibilities.Internal
         else -> null
     }
-}
-
-/**
- * Locates first [CONTEXT_RECEIVER_LIST] and returns position in source.
- */
-fun KtSourceElement.findContextReceiverListSource(): KtLightSourceElement? {
-    if (this.lighterASTNode.tokenType == KtNodeTypes.CONTEXT_RECEIVER_LIST)
-        return this.lighterASTNode.toKtLightSourceElement(treeStructure)
-
-    if (this.lighterASTNode.tokenType == KtNodeTypes.TYPE_REFERENCE) {
-        return treeStructure.findChildByType(lighterASTNode, KtNodeTypes.FUNCTION_TYPE)
-            ?.let { treeStructure.findChildByType(it, KtNodeTypes.CONTEXT_RECEIVER_LIST) }
-            ?.toKtLightSourceElement(treeStructure)
-    }
-
-    return treeStructure
-        .findChildByType(lighterASTNode, KtNodeTypes.CONTEXT_RECEIVER_LIST)
-        ?.toKtLightSourceElement(treeStructure)
 }
 
 internal fun KtSourceElement.delegatedPropertySourceOrThis(context: CheckerContext): KtSourceElement {

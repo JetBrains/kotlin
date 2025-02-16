@@ -81,13 +81,21 @@ class JsPerModuleCache(
 
     override fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {
         val mainModule = moduleArtifacts.last()
+        val mainModuleSafeName = mainModule.moduleSafeName
         return moduleArtifacts.map { artifact ->
-            fun loadModuleInfo() = CachedModuleInfo(
-                artifact,
-                artifact
-                    .loadJsIrModule(mainModule.moduleSafeName.takeIf { moduleKind !== ModuleKind.ES && artifact !== mainModule })
-                    .makeModuleHeader()
-            )
+            fun loadModuleInfo(): CachedModuleInfo {
+                val couldBeReexportedInMain = moduleKind !== ModuleKind.ES && artifact !== mainModule
+                val couldBeImportedWithEffectInMain = moduleKind === ModuleKind.ES && artifact !== mainModule
+                return CachedModuleInfo(
+                    artifact,
+                    artifact
+                        .loadJsIrModule(
+                            reexportedInModuleWithName = mainModuleSafeName.takeIf { couldBeReexportedInMain },
+                            importedWithEffectInModuleWithName = mainModuleSafeName.takeIf { couldBeImportedWithEffectInMain }
+                        )
+                        .makeModuleHeader()
+                )
+            }
 
             val actualInfo = when {
                 artifact.forceRebuildJs -> loadModuleInfo()

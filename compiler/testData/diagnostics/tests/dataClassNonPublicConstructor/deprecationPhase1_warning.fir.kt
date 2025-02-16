@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: D8 dexing error: Ignoring an implementation of the method `VarargData VarargData.copy(int[])` because it has multiple definitions
+// RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
+// IGNORE_DEXING
 // LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
 data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int) {
     fun member() {
@@ -14,9 +15,9 @@ data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!>
     }
 }
 
-data class VarargData <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val value: IntArray) {
-    fun copy(vararg value: Int): VarargData = null!!
-}
+<!CONFLICTING_JVM_DECLARATIONS!>data class VarargData <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val value: IntArray) {
+    <!CONFLICTING_JVM_DECLARATIONS!>fun copy(vararg value: Int): VarargData = null!!<!>
+}<!>
 
 data object DataObject {
     fun copy(): DataObject = null!!

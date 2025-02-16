@@ -480,25 +480,15 @@ They should be a subset of sources passed as free arguments."""
             field = value
         }
 
-    @Argument(
-        value = "-Xcheck-sticky-phase-conditions",
-        description = "Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'."
-    )
-    var checkStickyPhaseConditions = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @GradleDeprecatedOption(
         message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        level = DeprecationLevel.ERROR,
-        removeAfter = LanguageVersion.KOTLIN_2_1,
+        level = DeprecationLevel.HIDDEN,
+        removeAfter = LanguageVersion.KOTLIN_2_2,
     )
     @GradleOption(
         DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
+        shouldGenerateDeprecatedKotlinOptions = false,
     )
     @Argument(
         value = "-Xuse-k2",
@@ -612,17 +602,6 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
                 "Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build."
     )
     var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xextended-compiler-checks",
-        description = """Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
-Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code."""
-    )
-    var extendedCompilerChecks = false
         set(value) {
             checkFrozen()
             field = value
@@ -830,6 +809,17 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
+        value = "-Xnested-type-aliases",
+        description = "Enable experimental language support for nested type aliases."
+    )
+    @Enables(LanguageFeature.NestedTypeAliases)
+    var nestedTypeAliases = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xsuppress-warning",
         valueDescription = "<WARNING_NAME>",
         description = "Suppress specified warning module-wide."
@@ -865,6 +855,17 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             field = value
         }
 
+    @Argument(
+        value = "-Xannotation-target-all",
+        description = "Enable experimental language support for @all: annotation use-site target."
+    )
+    @Enables(LanguageFeature.AnnotationAllUseSiteTarget)
+    var annotationTargetAll = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -888,7 +889,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
                 CompilerMessageSeverity.ERROR,
                 "Unknown value for parameter -XXexplicit-return-types: '$explicitReturnTypes'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
-            put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.stdlibCompilation, stdlibCompilation)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
@@ -1016,9 +1016,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         checkOutdatedVersions(languageVersion, apiVersion, collector)
         checkProgressiveMode(languageVersion, collector)
 
-        checkIrSupport(languageVersionSettings, collector)
-
-        checkPlatformSpecificSettings(languageVersionSettings, collector)
         checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector)
 
         return languageVersionSettings
@@ -1096,16 +1093,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         }
     }
 
-    protected open fun defaultLanguageVersion(collector: MessageCollector): LanguageVersion =
-        LanguageVersion.LATEST_STABLE
-
-    protected open fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-    }
-
-    protected open fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        // backend-specific
-    }
-
     private fun checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector: MessageCollector) {
         if (explicitApi == ExplicitApiMode.DISABLED.state || explicitReturnTypes == ExplicitApiMode.DISABLED.state) return
         if (explicitApi != explicitReturnTypes) {
@@ -1136,7 +1123,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         }
 
         // If only "-api-version" is specified, language version is assumed to be the latest stable
-        return parseVersion(collector, languageVersion, "language") ?: defaultLanguageVersion(collector)
+        return parseVersion(collector, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
     }
 
     private fun parseVersion(collector: MessageCollector, value: String?, versionOf: String): LanguageVersion? =

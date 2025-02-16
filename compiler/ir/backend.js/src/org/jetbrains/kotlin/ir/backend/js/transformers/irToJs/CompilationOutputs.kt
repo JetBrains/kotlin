@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
@@ -19,12 +20,6 @@ val ModuleKind.extension: String
         ModuleKind.ES -> ESM_EXTENSION
         else -> REGULAR_EXTENSION
     }
-
-enum class TsCompilationStrategy {
-    NONE,
-    MERGED,
-    EACH_FILE
-}
 
 abstract class CompilationOutputs {
     var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()

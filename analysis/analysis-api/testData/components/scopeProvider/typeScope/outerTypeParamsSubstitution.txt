@@ -12,20 +12,24 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = x: X
+      contextParameters = []
       callableId = null,
     KaVariableSignature:
       name = y
       receiverType = null
       returnType = Y
       symbol = y: Y
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = /A.foo
 KaVariableSignature:
   name = map
   receiverType = null
   returnType = kotlin.collections.Map<kotlin.Int, kotlin.String>
   symbol = val map: kotlin.collections.Map<X, kotlin.String>
+  contextParameters = []
   callableId = /A.map
 KaFunctionSignature:
   receiverType = null
@@ -37,20 +41,24 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/Any.equals
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Any.hashCode
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Any.toString
 
 
@@ -59,6 +67,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.foo
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -188,6 +197,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: /A.map
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -259,6 +269,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -316,6 +327,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -347,6 +359,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

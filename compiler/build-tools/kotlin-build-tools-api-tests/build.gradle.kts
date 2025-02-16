@@ -22,7 +22,7 @@ kotlin {
         optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
         optIn.add("kotlin.ExperimentalStdlibApi")
         optIn.add("kotlin.io.path.ExperimentalPathApi")
-        freeCompilerArgs.add("-Xcontext-receivers")
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 
@@ -69,6 +69,7 @@ val businessLogicTestSuits = setOf(
     "testExample",
     "testEscapableCharacters",
     "testInputChangesTracking",
+    "testCrossModuleIncrementalChanges",
 )
 
 testing {

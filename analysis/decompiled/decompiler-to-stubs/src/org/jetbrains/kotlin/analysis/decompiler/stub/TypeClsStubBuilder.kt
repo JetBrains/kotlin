@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -137,9 +138,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val numContextReceivers = if (contextReceiverAnnotations.isEmpty()) {
                 0
             } else {
-                annotations.map { it.annotationWithArgs }.find { annotationWithArgs ->
-                    annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
-                }?.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
+                contextReceiverAnnotations.first().annotationWithArgs.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
                     ?: error("Error: can't get type parameter count from ${StandardNames.FqNames.contextFunctionTypeParams}")
             }
             createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers, abbreviatedType)
@@ -261,7 +260,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         var processedTypes = 0
 
         if (numContextReceivers != 0) {
-            ContextReceiversListStubBuilder(c).createContextReceiverStubs(
+            createContextReceiverStubs(
                 functionType,
                 typeArgumentList.subList(
                     processedTypes,
@@ -458,5 +457,16 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         return this.hasClassName() &&
                 c.nameResolver.getClassId(className).let { StandardNames.FqNames.any == it.asSingleFqName().toUnsafe() } &&
                 this.nullable
+    }
+
+    fun createContextReceiverStubs(parent: StubElement<*>, contextReceiverTypes: List<Type>) {
+        if (contextReceiverTypes.isEmpty()) return
+        val contextReceiverListStub =
+            KotlinPlaceHolderStubImpl<KtContextReceiverList>(parent, KtStubElementTypes.CONTEXT_RECEIVER_LIST)
+        for (contextReceiverType in contextReceiverTypes) {
+            val contextReceiverStub =
+                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, label = null)
+            createTypeReferenceStub(contextReceiverStub, contextReceiverType)
+        }
     }
 }

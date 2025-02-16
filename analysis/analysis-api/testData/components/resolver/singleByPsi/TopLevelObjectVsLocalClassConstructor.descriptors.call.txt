@@ -4,6 +4,7 @@ KtNameReferenceExpression(71,79): 'Conflict'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,5 +12,6 @@ KtNameReferenceExpression(71,79): 'Conflict'
           returnType = test.Conflict
           symbol = <constructor>(): test.Conflict
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

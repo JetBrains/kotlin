@@ -20,18 +20,18 @@ class SourceFileInfo(
 
 object BinaryArtifacts {
     class Jvm(val classFileFactory: ClassFileFactory, val fileInfos: Collection<SourceFileInfo>) : ResultingArtifact.Binary<Jvm>() {
-        override val kind: BinaryKind<Jvm>
+        override val kind: ArtifactKind<Jvm>
             get() = ArtifactKinds.Jvm
     }
 
     class JvmFromK1AndK2(val fromK1: Jvm, val fromK2: Jvm) : ResultingArtifact.Binary<JvmFromK1AndK2>() {
-        override val kind: BinaryKind<JvmFromK1AndK2>
+        override val kind: ArtifactKind<JvmFromK1AndK2>
             get() = ArtifactKinds.JvmFromK1AndK2
     }
 
     sealed class Js : ResultingArtifact.Binary<Js>() {
         abstract val outputFile: File
-        override val kind: BinaryKind<Js>
+        override val kind: ArtifactKind<Js>
             get() = ArtifactKinds.Js
 
         open fun unwrap(): Js = this
@@ -49,7 +49,7 @@ object BinaryArtifacts {
     }
 
     class Native : ResultingArtifact.Binary<Native>() {
-        override val kind: BinaryKind<Native>
+        override val kind: ArtifactKind<Native>
             get() = ArtifactKinds.Native
     }
 
@@ -58,12 +58,12 @@ object BinaryArtifacts {
         val compilerResultWithDCE: WasmCompilerResult,
         val compilerResultWithOptimizer: WasmCompilerResult?,
     ) : ResultingArtifact.Binary<Wasm>() {
-        override val kind: BinaryKind<Wasm>
+        override val kind: ArtifactKind<Wasm>
             get() = ArtifactKinds.Wasm
     }
 
     class KLib(val outputFile: File, val reporter: BaseDiagnosticsCollector) : ResultingArtifact.Binary<KLib>() {
-        override val kind: BinaryKind<KLib>
+        override val kind: ArtifactKind<KLib>
             get() = ArtifactKinds.KLib
     }
 }

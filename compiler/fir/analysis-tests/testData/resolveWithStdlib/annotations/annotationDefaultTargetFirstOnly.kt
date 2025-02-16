@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -AnnotationDefaultTargetMigrationWarning
-// LANGUAGE: -PropertyParamAnnotationDefaultTargetMode
-// ISSUE: KT-73255
+// LANGUAGE: -AnnotationDefaultTargetMigrationWarning -PropertyParamAnnotationDefaultTargetMode -ForbidFieldAnnotationsOnAnnotationParameters
+// ISSUE: KT-73255 KT-73831
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class ParamOnly
@@ -58,3 +57,15 @@ class My(
     <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
     val z: Int get() = 0
 }
+
+annotation class Your(
+    @ParamOnly
+    @PropertyOnly
+    <!WRONG_ANNOTATION_TARGET_WARNING!>@FieldOnly<!>
+    @ParamProperty
+    @ParamField
+    @PropertyField
+    @ParamPropertyField
+    <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
+    val s: String
+)

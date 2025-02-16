@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.ir
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runWithEnablingFirUseOption
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 
 class K1AndK2JvmIrBackendFacade(testServices: TestServices) :
     BackendFacade<IrBackendInputsFromK1AndK2, BinaryArtifacts.JvmFromK1AndK2>(
@@ -26,7 +27,9 @@ class K1AndK2JvmIrBackendFacade(testServices: TestServices) :
         return BinaryArtifacts.JvmFromK1AndK2(fromClassicFrontend, fromFir)
     }
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == BackendKinds.IrBackend && module.binaryKind == ArtifactKinds.JvmFromK1AndK2
+    override fun shouldTransform(module: TestModule): Boolean {
+        return with(testServices.defaultsProvider) {
+            backendKind == BackendKinds.IrBackendForK1AndK2 && artifactKind == ArtifactKinds.JvmFromK1AndK2
+        }
     }
 }

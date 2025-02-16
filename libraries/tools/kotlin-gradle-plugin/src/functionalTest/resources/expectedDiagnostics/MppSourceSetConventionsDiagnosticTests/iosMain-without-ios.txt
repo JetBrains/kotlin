@@ -1,4 +1,5 @@
-[IosSourceSetConventionUsedWithoutIosTarget | WARNING] Accessed 'source set iosMain' without registering any ios target:
+[IosSourceSetConventionUsedWithoutIosTarget | WARNING] iOS Source Set Used Without an iOS Target
+Accessed 'source set iosMain' without registering any ios target:
 kotlin {
     /* Register at least one of the following targets */
     iosX64()
@@ -12,7 +13,8 @@ kotlin {
 }
 Please register at least one of the iOS targets.
 ----
-[IosSourceSetConventionUsedWithoutIosTarget | WARNING] Accessed 'source set iosTest' without registering any ios target:
+[IosSourceSetConventionUsedWithoutIosTarget | WARNING] iOS Source Set Used Without an iOS Target
+Accessed 'source set iosTest' without registering any ios target:
 kotlin {
     /* Register at least one of the following targets */
     iosX64()
@@ -26,7 +28,8 @@ kotlin {
 }
 Please register at least one of the iOS targets.
 ----
-[UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+[UnusedSourceSetsWarning | WARNING] Unused Kotlin Source Sets
+The following Kotlin source sets were configured but not added to any Kotlin compilation:
  * iosMain
  * iosTest
 You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.

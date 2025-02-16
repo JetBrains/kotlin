@@ -95,8 +95,6 @@ allprojects {
 val generatorClasspath by configurations.creating
 
 dependencies {
-    implementation(project(":compiler:fir:fir-serialization"))
-    implementation(project(":compiler:backend"))
     generatorClasspath(project(":analysis:analysis-api-fir:analysis-api-fir-generator"))
 }
 
@@ -120,5 +118,5 @@ val compileKotlin by tasks
 compileKotlin.dependsOn(generateCode)
 
 tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
+    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
 }

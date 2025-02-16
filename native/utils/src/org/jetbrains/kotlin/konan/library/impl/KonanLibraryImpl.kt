@@ -59,8 +59,8 @@ open class BitcodeLibraryImpl(
     targeted: TargetedLibrary
 ) : BitcodeLibrary, TargetedLibrary by targeted {
     override val bitcodePaths: List<String>
-        get() = access.realFiles { it: BitcodeKotlinLibraryLayout ->
-            (it.kotlinDir.listFilesOrEmpty + it.nativeDir.listFilesOrEmpty).map { it.absolutePath }
+        get() = access.realFiles {
+            it.nativeDir.listFilesOrEmpty.map { it.absolutePath }
         }
 }
 

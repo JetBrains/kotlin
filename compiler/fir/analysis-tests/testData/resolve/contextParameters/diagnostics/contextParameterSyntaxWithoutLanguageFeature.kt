@@ -1,5 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextReceivers
 
-context(<!UNSUPPORTED_FEATURE!>s: String<!>)
+<!UNSUPPORTED_FEATURE!>context(s: String)<!>
 fun foo() {}
+
+fun bar(
+    x: List<<!UNSUPPORTED_FEATURE!>context(String)<!> () -> Unit>
+) {}

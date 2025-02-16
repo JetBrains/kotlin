@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -161,14 +162,18 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testIncompleteHierarchyNoErrors() {
-        doTestBrokenLibrary("library", "test/Super.class")
+        doTestBrokenLibrary(
+            "library",
+            "test/Super.class",
+            additionalOptions = listOf("-XXLanguage:-${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
+        )
     }
 
     fun testIncompleteHierarchyWithExtendedCompilerChecks() {
         doTestBrokenLibrary(
             "library",
             "test/Super.class",
-            additionalOptions = listOf(CommonCompilerArguments::extendedCompilerChecks.cliArgument),
+            additionalOptions = listOf("-XXLanguage:+${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}"),
         )
     }
 

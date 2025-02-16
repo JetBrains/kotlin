@@ -4,6 +4,7 @@ KtCallExpression(74,87): 'Foo<String>()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -16,8 +17,10 @@ KtCallExpression(74,87): 'Foo<String>()'
               receiverType = null
               returnType = kotlin.String
               symbol = x: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.String)

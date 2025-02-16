@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // MODULE: lib
-// JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: no-compatibility
 // FILE: P.java
 
 public interface P {

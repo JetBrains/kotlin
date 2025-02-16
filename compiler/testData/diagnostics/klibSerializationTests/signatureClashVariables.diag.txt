@@ -10,10 +10,6 @@
     val myDelegated: kotlin.Int defined in com.example.klib.serialization.diagnostics
     val myDelegated: kotlin.Long defined in com.example.klib.serialization.diagnostics
 
-/foo.kt:20:53: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated.<get-myDelegated>|<get-myDelegated>(){}[0]):
-    fun `<get-myDelegated>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
-    fun `<get-myDelegated>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
-
 /foo.kt:22:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/extensionValue|@kotlin.Int{}extensionValue[0]):
     val kotlin.Int.extensionValue: kotlin.Int defined in com.example.klib.serialization.diagnostics
     var kotlin.Int.extensionValue: kotlin.Int defined in com.example.klib.serialization.diagnostics
@@ -49,10 +45,6 @@
 /main.kt:37:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated|{}myDelegated[0]):
     val myDelegated: kotlin.Int defined in com.example.klib.serialization.diagnostics
     val myDelegated: kotlin.Long defined in com.example.klib.serialization.diagnostics
-
-/main.kt:37:52: error: Platform declaration clash: The following functions have the same IR signature (com.example.klib.serialization.diagnostics/myDelegated.<get-myDelegated>|<get-myDelegated>(){}[0]):
-    fun `<get-myDelegated>`(): kotlin.Int defined in com.example.klib.serialization.diagnostics
-    fun `<get-myDelegated>`(): kotlin.Long defined in com.example.klib.serialization.diagnostics
 
 /main.kt:39:1: error: Platform declaration clash: The following properties have the same IR signature (com.example.klib.serialization.diagnostics/extensionValue|@kotlin.Int{}extensionValue[0]):
     val kotlin.Int.extensionValue: kotlin.Int defined in com.example.klib.serialization.diagnostics

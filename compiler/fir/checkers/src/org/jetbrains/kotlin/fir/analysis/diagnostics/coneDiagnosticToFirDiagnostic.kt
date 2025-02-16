@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -306,25 +308,43 @@ private fun mapInapplicableCandidateError(
                 rootCause.forbiddenNamedArgumentsTarget
             )
 
+            is MixingNamedAndPositionArguments -> FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS.createOn(
+                rootCause.argument.source,
+            )
+
             is ArgumentTypeMismatch -> {
                 diagnosticForArgumentTypeMismatch(
                     source = rootCause.argument.source ?: source,
-                    expectedType = rootCause.expectedType.removeTypeVariableTypes(typeContext),
+                    expectedType = rootCause.expectedType.substituteTypeVariableTypes(
+                        diagnostic.candidate,
+                        typeContext,
+                    ),
+                    // For lambda expressions, use their resolved type because `rootCause.actualType` can contain unresolved types
                     actualType = if (rootCause.argument is FirAnonymousFunctionExpression && !rootCause.argument.resolvedType.hasError()) {
                         rootCause.argument.resolvedType
                     } else {
-                        rootCause.actualType.removeTypeVariableTypes(typeContext)
+                        rootCause.actualType.substituteTypeVariableTypes(
+                            diagnostic.candidate,
+                            typeContext,
+                        )
                     },
                     isMismatchDueToNullability = rootCause.isMismatchDueToNullability,
-                    candidate = diagnostic.candidate
+                    candidate = diagnostic.candidate,
+                    rootCause.anonymousFunctionIfReturnExpression,
                 )
             }
 
             is UnitReturnTypeLambdaContradictsExpectedType -> {
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.sourceForFunctionExpression ?: rootCause.lambda.source ?: source,
-                    rootCause.wholeLambdaExpectedType.removeTypeVariableTypes(typeContext),
-                    rootCause.lambda.typeRef.coneType.removeTypeVariableTypes(typeContext),
+                    rootCause.lambda.typeRef.coneType.substituteTypeVariableTypes(
+                        diagnostic.candidate,
+                        typeContext,
+                    ),
+                    rootCause.wholeLambdaExpectedType.substituteTypeVariableTypes(
+                        diagnostic.candidate,
+                        typeContext,
+                    ),
                     false // not isMismatchDueToNullability
                 )
             }
@@ -344,7 +364,10 @@ private fun mapInapplicableCandidateError(
             is NoContextArgument ->
                 FirErrors.NO_CONTEXT_ARGUMENT.createOn(
                     qualifiedAccessSource ?: source,
-                    rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
+                    rootCause.expectedContextReceiverType.substituteTypeVariableTypes(
+                        diagnostic.candidate,
+                        typeContext,
+                    )
                 )
 
             is UnsupportedContextualDeclarationCall -> FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL.createOn(source)
@@ -352,7 +375,10 @@ private fun mapInapplicableCandidateError(
             is AmbiguousContextArgument ->
                 FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT.createOn(
                     qualifiedAccessSource ?: source,
-                    rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
+                    rootCause.expectedContextReceiverType.substituteTypeVariableTypes(
+                        diagnostic.candidate,
+                        typeContext,
+                    )
                 )
 
             is TypeVariableAsExplicitReceiver -> {
@@ -366,7 +392,10 @@ private fun mapInapplicableCandidateError(
             }
 
             is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.createOn(
-                rootCause.argument.source ?: source, rootCause.expectedType.removeTypeVariableTypes(typeContext)
+                rootCause.argument.source ?: source, rootCause.expectedType.substituteTypeVariableTypes(
+                    diagnostic.candidate,
+                    typeContext,
+                )
             )
 
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
@@ -450,32 +479,37 @@ private fun diagnosticForArgumentTypeMismatch(
     actualType: ConeKotlinType,
     isMismatchDueToNullability: Boolean,
     candidate: AbstractCallCandidate<*>,
+    /**
+     * See [org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
+     */
+    anonymousFunctionIfReturnExpression: FirAnonymousFunction?,
 ): KtDiagnostic {
     val symbol = candidate.symbol as FirCallableSymbol
     val receiverType = (candidate.chosenExtensionReceiver ?: candidate.dispatchReceiver)?.expression?.resolvedType
 
-    return if (expectedType is ConeCapturedType &&
-        expectedType.constructor.projection.kind.let { it == ProjectionKind.OUT || it == ProjectionKind.STAR } &&
-        receiverType != null &&
-        // Ensure we report an actual argument type mismatch of the candidate and not a lambda return expression
-        candidate.argumentMapping.keys.any { it.expression.source == source }
-    ) {
-        FirErrors.MEMBER_PROJECTED_OUT.createOn(
+    return when {
+        anonymousFunctionIfReturnExpression != null ->
+            FirErrors.RETURN_TYPE_MISMATCH.createOn(
+                source, expectedType, actualType, anonymousFunctionIfReturnExpression, isMismatchDueToNullability
+            )
+        expectedType is ConeCapturedType && expectedType.isBasedOnStarOrOut() && receiverType != null ->
+            FirErrors.MEMBER_PROJECTED_OUT.createOn(
+                source,
+                receiverType,
+                expectedType.projectionKindAsString(),
+                symbol.originalOrSelf(),
+            )
+        else -> FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
             source,
-            receiverType,
-            expectedType.projectionKindAsString(),
-            symbol.originalOrSelf(),
-        )
-    } else {
-        FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
-            source,
-            expectedType,
-            // For lambda expressions, use their resolved type because `rootCause.actualType` can contain unresolved types
             actualType,
+            expectedType,
             isMismatchDueToNullability
         )
     }
 }
+
+private fun ConeCapturedType.isBasedOnStarOrOut(): Boolean =
+    constructor.projection.kind.let { it == ProjectionKind.OUT || it == ProjectionKind.STAR }
 
 private fun UnstableSmartCast.mapUnstableSmartCast(): KtDiagnosticWithParameters4<ConeKotlinType, FirExpression, String, Boolean> {
     val factory = when {
@@ -561,10 +595,11 @@ private fun ConstraintSystemError.toDiagnostic(
             argument?.let {
                 return diagnosticForArgumentTypeMismatch(
                     source = reportOn ?: it.source ?: source,
-                    expectedType = lowerConeType.removeTypeVariableTypes(typeContext),
-                    actualType = upperConeType.removeTypeVariableTypes(typeContext),
+                    expectedType = lowerConeType.substituteTypeVariableTypes(candidate, typeContext),
+                    actualType = upperConeType.substituteTypeVariableTypes(candidate, typeContext),
                     isMismatchDueToNullability = typeMismatchDueToNullability,
-                    candidate = candidate
+                    candidate = candidate,
+                    anonymousFunctionIfReturnExpression = (position as? ConeLambdaArgumentConstraintPosition)?.lambda,
                 )
             }
 
@@ -578,8 +613,8 @@ private fun ConstraintSystemError.toDiagnostic(
 
                     FirErrors.TYPE_MISMATCH.createOn(
                         qualifiedAccessSource ?: source,
-                        upperConeType.removeTypeVariableTypes(typeContext),
-                        inferredType.removeTypeVariableTypes(typeContext),
+                        upperConeType.substituteTypeVariableTypes(candidate, typeContext),
+                        inferredType.substituteTypeVariableTypes(candidate, typeContext),
                         typeMismatchDueToNullability
                     )
                 }
@@ -646,6 +681,16 @@ private fun ConstraintSystemError.toDiagnostic(
 
         else -> null
     }
+}
+
+private fun ConeKotlinType.substituteTypeVariableTypes(
+    candidate: AbstractCallCandidate<*>,
+    typeContext: ConeTypeContext,
+): ConeKotlinType {
+    val nonErrorSubstitutionMap = candidate.system.asReadOnlyStorage().fixedTypeVariables.filterValues { it !is ConeErrorType }
+    val substitutor = typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap) as ConeSubstitutor
+
+    return substitutor.substituteOrSelf(this).removeTypeVariableTypes(typeContext)
 }
 
 private fun AbstractCallCandidate<*>.sourceOfCallToSymbolWith(
@@ -746,6 +791,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.NotASupertype -> FirErrors.NOT_A_SUPERTYPE
         DiagnosticKind.SuperNotAvailable -> FirErrors.SUPER_NOT_AVAILABLE
         DiagnosticKind.AnnotationInWhereClause -> FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR
+        DiagnosticKind.MultipleAnnotationWithAllTarget -> FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR

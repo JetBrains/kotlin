@@ -5,22 +5,22 @@
 
 #include "Weak.hpp"
 
+#include "ExternalRCRef.hpp"
 #include "ExtraObjectData.hpp"
-#include "WeakRef.hpp"
 #include "ThreadState.hpp"
 #include "Types.h"
 
 using namespace kotlin;
 
 extern "C" {
-OBJ_GETTER(makeRegularWeakReferenceImpl, void*, void*);
+OBJ_GETTER(makeRegularWeakReferenceImpl, KRef, void*);
 }
 
 namespace {
 
 struct RegularWeakReferenceImpl {
     ObjHeader header;
-    mm::WeakRef weakRef;
+    mm::RawExternalRCRef* weakRef;
     void* referred;
 };
 
@@ -39,17 +39,13 @@ OBJ_GETTER(mm::createRegularWeakReferenceImpl, ObjHeader* object) noexcept {
         RETURN_OBJ(weakRef);
     }
     ObjHolder holder;
-    auto* weakRef = makeRegularWeakReferenceImpl(static_cast<mm::RawSpecialRef*>(mm::WeakRef::create(object)), object, holder.slot());
+    auto* weakRef = makeRegularWeakReferenceImpl(object, object, holder.slot());
     auto* setWeakRef = extraObject.GetOrSetRegularWeakReferenceImpl(object, weakRef);
     RETURN_OBJ(setWeakRef);
 }
 
 void mm::disposeRegularWeakReferenceImpl(ObjHeader* weakRef) noexcept {
-    std::move(asRegularWeakReferenceImpl(weakRef)->weakRef).dispose();
-}
-
-OBJ_GETTER(mm::derefRegularWeakReferenceImpl, ObjHeader* weakRef) noexcept {
-    RETURN_RESULT_OF0(asRegularWeakReferenceImpl(weakRef)->weakRef.tryRef);
+    mm::disposeExternalRCRef(asRegularWeakReferenceImpl(weakRef)->weakRef);
 }
 
 ObjHeader* mm::regularWeakReferenceImplBaseObjectUnsafe(ObjHeader* weakRef) noexcept {

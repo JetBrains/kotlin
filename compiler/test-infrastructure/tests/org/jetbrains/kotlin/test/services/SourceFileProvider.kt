@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services
 
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
@@ -140,4 +141,9 @@ val TestFile.isExternalAnnotation: Boolean
 
 fun SourceFileProvider.getRealJavaFiles(module: TestModule): List<File> {
     return module.javaFiles.map { getOrCreateRealFileForSourceFile(it) }
+}
+
+fun TestModule.independentSourceDirectoryPath(testServices: TestServices): String {
+    val path = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(this).canonicalPath
+    return FileUtil.toSystemIndependentName(path)
 }

@@ -5,21 +5,16 @@
 
 package org.jetbrains.kotlin.test.cli
 
-import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.frontend.fir.handlers.NonSourceErrorMessagesHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 
+@DeprecatedCliFacades
 class CliOutputHandler(testServices: TestServices) : BinaryArtifactHandler<CliArtifact>(
     testServices,
     CliArtifact.Kind,
@@ -30,6 +25,7 @@ class CliOutputHandler(testServices: TestServices) : BinaryArtifactHandler<CliAr
         get() = listOf(CodegenTestDirectives)
 
     private val multiModuleInfoDumper = MultiModuleInfoDumper()
+    private val delegateHandler = NonSourceErrorMessagesHandler(testServices)
 
     override fun processModule(module: TestModule, info: CliArtifact) {
         if (info.kotlinOutput.isEmpty()) return
@@ -38,33 +34,6 @@ class CliOutputHandler(testServices: TestServices) : BinaryArtifactHandler<CliAr
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val defaultOutFile = sourceFile.withExtension(".out")
-        val firOutFile = sourceFile.withExtension(".fir.out")
-
-        val isFir = testServices.defaultsProvider.defaultFrontend == FrontendKinds.FIR
-
-        val outFile = if (isFir && firOutFile.exists()) firOutFile else defaultOutFile
-
-        if (multiModuleInfoDumper.isEmpty()) {
-            if (outFile == firOutFile) {
-                assertions.assertEqualsToFile(firOutFile, "")
-            } else {
-                assertions.assertFileDoesntExist(outFile, CHECK_COMPILER_OUTPUT)
-            }
-            return
-        }
-
-        val actualOutput = CompilerTestUtil.normalizeCompilerOutput(
-            multiModuleInfoDumper.generateResultingDump(),
-            testServices.temporaryDirectoryManager.rootDir.path,
-        )
-        assertions.assertEqualsToFile(outFile, actualOutput)
-
-        if (outFile != defaultOutFile) {
-            if (outFile.readText().trim() == defaultOutFile.readText().trim()) assertions.fail {
-                "Classic and FIR golden files are identical. Remove $outFile."
-            }
-        }
+        delegateHandler.check(multiModuleInfoDumper.generateResultingDump())
     }
 }

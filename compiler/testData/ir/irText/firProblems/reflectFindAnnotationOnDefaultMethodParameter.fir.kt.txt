@@ -26,7 +26,7 @@ fun box(): String {
 
     <no name provided>()
   }
-  val method: @FlexibleNullability Method? = impl.<get-javaClass><<no name provided>>().getMethod(p0 = "m", p1 = [String::class.<get-java><String>()])
+  val method: @FlexibleNullability Method? = <get-javaClass><<no name provided>>(/* <this> = impl */).getMethod(p0 = "m", p1 = [<get-java><String>(/* <this> = String::class */)])
   val parameter: @FlexibleNullability Parameter? = method.getParameters().get(index = 0)
   val size: Int = parameter.getAnnotations().<get-size>()
   when {

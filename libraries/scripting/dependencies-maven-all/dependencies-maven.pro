@@ -1,4 +1,4 @@
--target 1.6
+-target 1.8
 -dontoptimize
 -dontobfuscate
 -dontprocesskotlinmetadata

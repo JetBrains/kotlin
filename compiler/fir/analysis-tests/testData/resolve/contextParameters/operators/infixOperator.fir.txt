@@ -1,0 +1,50 @@
+FILE: infixOperator.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final infix fun infixTopLevel(x: R|kotlin/Int|): R|kotlin/Int| {
+        ^infixTopLevel R|<local>/x|
+    }
+    context(a: R|A|)
+    public final infix fun R|A|.infixTopLevelExtension(x: R|kotlin/Int|): R|kotlin/Int| {
+        ^infixTopLevelExtension R|<local>/x|
+    }
+    public final class X : R|kotlin/Any| {
+        public constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public final infix fun infixMember(x: R|kotlin/Int|): R|kotlin/Int| {
+            ^infixMember R|<local>/x|
+        }
+
+        context(a: R|A|)
+        public final infix fun R|A|.infixMemberExtension(x: R|kotlin/Int|): R|kotlin/Int| {
+            ^infixMemberExtension R|<local>/x|
+        }
+
+        public final fun usageInside(): R|kotlin/Unit| {
+            R|kotlin/with|<R|A|, R|kotlin/Int|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|/X.X|().R|/X.infixMember|(Int(1))
+                ^ (this@R|/X|, R|/A.A|()).R|/X.infixMemberExtension|(Int(1))
+            }
+            )
+            R|/X.X|().R|/X.infixMember<Inapplicable(INAPPLICABLE): /X.infixMember>#|(Int(1))
+            (this@R|/X|, R|/A.A|()).R|/X.infixMemberExtension<Inapplicable(INAPPLICABLE): /X.infixMemberExtension>#|(Int(1))
+        }
+
+    }
+    public final fun usageOutside(): R|kotlin/Unit| {
+        R|kotlin/with|<R|A|, R|kotlin/Int|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/X.X|().R|/X.infixMember|(Int(1))
+            ^ R|/A.A|().R|/infixTopLevelExtension|(Int(1))
+        }
+        )
+        R|/X.X|().R|/X.infixMember<Inapplicable(INAPPLICABLE): /X.infixMember>#|(Int(1))
+        R|/A.A|().R|/infixTopLevelExtension<Inapplicable(INAPPLICABLE): /infixTopLevelExtension>#|(Int(1))
+    }

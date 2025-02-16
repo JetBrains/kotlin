@@ -76,7 +76,8 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
      * Returns raw C pointer value, usable for interoperability with C scenarious.
      */
     @ExperimentalForeignApi
-    public fun asCPointer(): COpaquePointer? = interpretCPointer<COpaque>(stable.load())
+    @Suppress("DEPRECATION")
+    public fun asCPointer(): COpaquePointer? = interpretCPointer<COpaque>(stable.value)
 }
 
 /**
@@ -92,7 +93,7 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
 public inline fun <reified T> DetachedObjectGraph<T>.attach(): T {
     var rawStable: NativePtr
     do {
-        rawStable = stable.load()
+        rawStable = stable.value
     } while (!stable.compareAndSet(rawStable, NativePtr.NULL))
     val result = attachObjectGraphInternal(rawStable) as T
     return result

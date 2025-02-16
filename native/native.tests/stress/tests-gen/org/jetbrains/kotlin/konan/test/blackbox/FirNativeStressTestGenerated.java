@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 @Tag("stress")
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "15m")
 @UseStandardTestCaseGroupProvider()
-@Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeStressTestGenerated extends AbstractNativeBlackBoxTest {
   @Test

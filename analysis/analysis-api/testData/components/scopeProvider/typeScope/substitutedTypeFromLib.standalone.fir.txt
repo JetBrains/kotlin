@@ -7,18 +7,21 @@ KaFunctionSignature:
   returnType = kotlin.String
   symbol = kotlin/Pair.toString(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.String
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Pair.toString
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Pair.component1(<dispatch receiver>: kotlin.Pair<A, B>): A
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Pair.component1
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Pair.component2(<dispatch receiver>: kotlin.Pair<A, B>): B
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Pair.component2
 KaFunctionSignature:
   receiverType = null
@@ -30,14 +33,17 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = first: A
+      contextParameters = []
       callableId = null,
     KaVariableSignature:
       name = second
       receiverType = null
       returnType = kotlin.Int
       symbol = second: B
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/Pair.copy
 KaFunctionSignature:
   receiverType = null
@@ -49,26 +55,31 @@ KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
+      contextParameters = []
       callableId = null
   ]
+  contextParameters = []
   callableId = kotlin/Pair.equals
 KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Pair.hashCode(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.Int
   valueParameters = []
+  contextParameters = []
   callableId = kotlin/Pair.hashCode
 KaVariableSignature:
   name = first
   receiverType = null
   returnType = kotlin.Int
   symbol = val first: A
+  contextParameters = []
   callableId = kotlin/Pair.first
 KaVariableSignature:
   name = second
   receiverType = null
   returnType = kotlin.Int
   symbol = val second: B
+  contextParameters = []
   callableId = kotlin/Pair.second
 
 
@@ -77,6 +88,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.toString
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -108,6 +120,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.component1
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -138,6 +151,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.component2
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -168,6 +182,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.copy
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -255,6 +270,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.equals
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -312,6 +328,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.hashCode
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -362,6 +379,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: kotlin/Pair.first
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -434,6 +452,7 @@ KaKotlinPropertySymbol:
     visibility: PRIVATE
   callableId: kotlin/Pair.second
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

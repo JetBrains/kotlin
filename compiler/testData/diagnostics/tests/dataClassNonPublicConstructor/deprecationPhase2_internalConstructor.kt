@@ -33,17 +33,3 @@ fun local() {
         copy()
     }
 }
-
-// MODULE: b(a)
-// FILE: b.kt
-package b
-
-import a.Data
-
-fun topLevel(data: Data) {
-    data.copy()
-}
-
-fun Data.topLevelExtension() {
-    copy()
-}

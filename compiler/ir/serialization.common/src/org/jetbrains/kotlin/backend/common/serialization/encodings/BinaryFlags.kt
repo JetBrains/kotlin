@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.serialization.deserialization.memberKind
@@ -250,5 +252,31 @@ value class LocalVariableFlags(val flags: Long) {
         }
 
         fun decode(code: Long) = LocalVariableFlags(code)
+    }
+}
+
+@JvmInline
+value class RichFunctionReferenceFlags(val flags: Long) {
+    val hasUnitConversion: Boolean get() = HAS_UNIT_CONVERSION.get(flags.toInt())
+    val hasSuspendConversion: Boolean get() = HAS_SUSPEND_CONVERSION.get(flags.toInt())
+    val hasVarargConversion: Boolean get() = HAS_VARARG_CONVERSION.get(flags.toInt())
+    val isRestrictedSuspension: Boolean get() = IS_RESTRICTED_SUSPENSION.get(flags.toInt())
+
+    companion object {
+        val HAS_UNIT_CONVERSION: Flags.BooleanFlagField = Flags.FlagField.booleanFirst()
+        val HAS_SUSPEND_CONVERSION: Flags.BooleanFlagField = Flags.FlagField.booleanAfter(HAS_UNIT_CONVERSION)
+        val HAS_VARARG_CONVERSION: Flags.BooleanFlagField = Flags.FlagField.booleanAfter(HAS_SUSPEND_CONVERSION)
+        val IS_RESTRICTED_SUSPENSION: Flags.BooleanFlagField = Flags.FlagField.booleanAfter(HAS_VARARG_CONVERSION)
+
+        fun encode(reference: IrRichFunctionReference): Long {
+            return reference.run {
+                HAS_UNIT_CONVERSION.toFlags(hasUnitConversion) or
+                        HAS_SUSPEND_CONVERSION.toFlags(hasSuspendConversion) or
+                        HAS_VARARG_CONVERSION.toFlags(hasVarargConversion) or
+                        IS_RESTRICTED_SUSPENSION.toFlags(isRestrictedSuspension)
+            }.toLong()
+        }
+
+        fun decode(code: Long) = RichFunctionReferenceFlags(code)
     }
 }

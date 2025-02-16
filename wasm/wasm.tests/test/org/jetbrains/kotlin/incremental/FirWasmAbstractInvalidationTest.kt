@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.js.klib.compileModulesToAnalyzedFirWithLightTree
-import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
-import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
+import org.jetbrains.kotlin.cli.common.perfManager
+import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase.transformFirToIr
+import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase.compileModulesToAnalyzedFirWithLightTree
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase.serializeFirKlib
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -94,6 +95,7 @@ abstract class FirWasmAbstractInvalidationTest(
             libraries = libraries,
             friendLibraries = friendLibraries,
             diagnosticsReporter = diagnosticsReporter,
+            performanceManager = configuration.perfManager,
             incrementalDataProvider = null,
             lookupTracker = null,
             useWasmPlatform = true,

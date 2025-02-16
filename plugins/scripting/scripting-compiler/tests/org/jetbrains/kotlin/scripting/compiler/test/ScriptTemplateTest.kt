@@ -16,8 +16,11 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.compiler.plugin.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.assertHasMessage
+import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.junit.Assert
@@ -389,7 +393,7 @@ class ScriptTemplateTest : TestCase() {
                 configuration.put(CommonConfigurationKeys.USE_FIR, true)
             }
 
-            loadScriptingPlugin(configuration)
+            loadScriptingPlugin(configuration, rootDisposable)
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
@@ -414,7 +418,7 @@ class ScriptTemplateTest : TestCase() {
                 throw t
             }
         } finally {
-            Disposer.dispose(rootDisposable)
+            disposeRootInWriteAction(rootDisposable)
         }
     }
 }

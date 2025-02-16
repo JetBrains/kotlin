@@ -1,5 +1,4 @@
 // JVM_TARGET: 1.8
-// IGNORE_BACKEND: JVM
 
 fun box(): String {
     val a = BooleanWrap(false)

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.native.interop.gen.jvm.DefaultPlugin
-import org.jetbrains.kotlin.native.interop.gen.jvm.Plugin
 import org.jetbrains.kotlin.native.interop.indexer.*
 
 /**
@@ -26,10 +24,10 @@ import org.jetbrains.kotlin.native.interop.indexer.*
  *
  * TODO: use libclang to implement?
  */
-fun Type.getStringRepresentation(plugin: Plugin = DefaultPlugin): String = when (this) {
+fun Type.getStringRepresentation(): String = when (this) {
     VoidType -> "void"
     CharType -> "char"
-    CBoolType -> if (plugin.name == "Skia") "bool" else "_Bool"
+    CBoolType -> "_Bool"
     ObjCBoolType -> "BOOL"
     is IntegerType -> this.spelling
     is FloatingType -> this.spelling
@@ -46,7 +44,7 @@ fun Type.getStringRepresentation(plugin: Plugin = DefaultPlugin): String = when 
         this.def.spelling
     }
 
-    is Typedef -> this.def.aliased.getStringRepresentation(plugin)
+    is Typedef -> this.def.aliased.getStringRepresentation()
 
     is ObjCPointer -> when (this) {
         is ObjCIdType -> "id$protocolQualifier"
@@ -55,8 +53,6 @@ fun Type.getStringRepresentation(plugin: Plugin = DefaultPlugin): String = when 
         is ObjCInstanceType -> TODO(this.toString()) // Must have already been handled.
         is ObjCBlockPointer -> "id"
     }
-
-    is ManagedType -> with(plugin) { this@getStringRepresentation.stringRepresentation }
 
     else -> throw NotImplementedError()
 }

@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
-import org.jetbrains.kotlin.backend.common.IrValidatorConfig
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.validateIr
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -40,7 +37,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -229,6 +226,8 @@ private class Fir2IrPipeline(
             fakeOverrideResolver
         )
 
+        checkUnboundSymbols(mainIrFragment)
+
         evaluateConstants()
 
         val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
@@ -348,7 +347,7 @@ private class Fir2IrPipeline(
             }
         }
 
-        class ClassVisitor : IrElementVisitorVoid {
+        class ClassVisitor : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

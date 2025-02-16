@@ -66,17 +66,17 @@ interface EvaluatorHandler {
 
 interface IrInterpreterDumpHandler : EvaluatorHandler {
     fun processIrModule(module: TestModule): Map<TestFile, List<ParsedCodeMetaInfo>> {
-        if (!module.isSuppressedForK2() && testServices.defaultsProvider.defaultFrontend == FrontendKinds.ClassicFrontend) {
+        if (!module.isSuppressedForK2() && testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend) {
             return module.files.associateWith { testFile -> testFile.getExpectedResult() }
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val evaluatedConstTracker = configuration.get(CommonConfigurationKeys.EVALUATED_CONST_TRACKER)
             ?: error("Couldn't find `EVALUATED_CONST_TRACKER` for IR interpreter dump handler")
-        val irModule = testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend).irModuleFragment
+        val irModule = testServices.artifactsProvider.getArtifact(module, BackendKinds.IrBackend).irModuleFragment
 
         return buildMap {
-            for ((irFile, testFile) in matchIrFileWithTestFile(irModule, module)) {
+            for ((irFile, testFile) in matchIrFileWithTestFile(irModule, module, testServices)) {
                 putAll(evaluatedConstTracker.processFile(testFile, irFile))
             }
         }
@@ -84,7 +84,7 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
 
     fun TestModule.isSuppressedForK2(): Boolean {
         val ignoredBackends = this.directives[IGNORE_BACKEND_K2]
-        val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: this.targetBackend
+        val targetBackend = testServices.defaultsProvider.targetBackend
         return targetBackend in ignoredBackends || TargetBackend.ANY in ignoredBackends
     }
 
@@ -93,7 +93,7 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
         val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
         this.load(irFile.nameWithPackage)?.forEach { (pair, constantValue) ->
             if (constantValue is AnnotationValue) return@forEach
-            
+
             val (start, end) = pair
             if (rangesThatAreNotSupposedToBeRendered.any { start >= it.first && start <= it.second }) return@forEach
 
@@ -206,7 +206,7 @@ interface FirEvaluatorDumpHandler : EvaluatorHandler {
 
 interface FirAndIrDumpHandler: FirEvaluatorDumpHandler, IrInterpreterDumpHandler {
     fun processModule(module: TestModule) {
-        val firArtifact = testServices.dependencyProvider.getArtifactSafe(module, FrontendKinds.FIR)
+        val firArtifact = testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.FIR)
         val irMetaInfo = processIrModule(module)
         val firMetaInfo = firArtifact?.let { processFirModule(module, it) } ?: irMetaInfo
 

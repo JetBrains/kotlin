@@ -1,4 +1,4 @@
-// JVM_ANNOTATIONS
+// WITH_KOTLIN_JVM_ANNOTATIONS
 package test;
 
 import kotlin.annotations.jvm.*;

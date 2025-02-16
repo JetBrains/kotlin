@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -485,25 +487,66 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return JsArrayLiteral(arity.toSmartList()).takeIf { arity.isNotEmpty() }
     }
 
-    private fun generateAssociatedObjectKey(): JsIntLiteral? {
-        return context.getAssociatedObjectKey(irClass)?.let { JsIntLiteral(it) }
+    private fun generateAssociatedObjectKey(): JsExpression? {
+        if (!irClass.isAssociatedObjectAnnotatedAnnotation) return null
+        return if (backendContext.incrementalCacheEnabled) {
+            JsInvocation(
+                context.getNameForStaticFunction(backendContext.intrinsics.nextAssociatedObjectId.owner).makeRef(),
+            )
+        } else {
+            val key = backendContext.nextAssociatedObjectKey++
+            irClass.associatedObjectKey = key
+            JsIntLiteral(key)
+        }
     }
 
-    private fun generateAssociatedObjects(): JsObjectLiteral? {
+    private fun generateAssociatedObjects(): JsExpression? {
         val associatedObjects = irClass.annotations.mapNotNull { annotation ->
             val annotationClass = annotation.symbol.owner.constructedClass
-            context.getAssociatedObjectKey(annotationClass)?.let { key ->
-                annotation.associatedObject()?.let { obj ->
-                    backendContext.mapping.objectToGetInstanceFunction[obj]?.let { factory ->
-                        JsPropertyInitializer(JsIntLiteral(key), context.staticContext.getNameForStaticFunction(factory).makeRef())
-                    }
-                }
-            }
-        }.toSmartList()
+            val objectGetInstanceFunction = annotation.associatedObject()?.objectGetInstanceFunction ?: return@mapNotNull null
+            annotationClass to context.staticContext.getNameForStaticFunction(objectGetInstanceFunction).makeRef()
+        }
 
-        return associatedObjects
-            .takeIf { it.isNotEmpty() }
-            ?.let { JsObjectLiteral(it) }
+        if (associatedObjects.isEmpty()) return null
+
+        return when {
+            !backendContext.incrementalCacheEnabled -> {
+                JsObjectLiteral(
+                    associatedObjects
+                        .map { (key, objectGetInstanceFunction) ->
+                            JsPropertyInitializer(JsIntLiteral(key.associatedObjectKey!!), objectGetInstanceFunction)
+                        }
+                        .toSmartList()
+                )
+            }
+            es6mode -> {
+                JsObjectLiteral(
+                    associatedObjects
+                        .map { (key, objectGetInstanceFunction) ->
+                            JsPropertyInitializer(
+                                JsInvocation(
+                                    context.staticContext.getNameForStaticFunction(backendContext.intrinsics.getAssociatedObjectId.owner).makeRef(),
+                                    key.getClassRef(context.staticContext),
+                                ),
+                                objectGetInstanceFunction
+                            )
+                        }
+                        .toSmartList()
+                )
+            }
+            else -> {
+                // In ES5 object literals don't support computed keys, so we have to invoke a helper function to construct the associated
+                // object map.
+                JsInvocation(
+                    context.staticContext.getNameForStaticFunction(backendContext.intrinsics.makeAssociatedObjectMapES5.owner).makeRef(),
+                    JsArrayLiteral(
+                        associatedObjects.flatMap { (key, objectGetInstanceFunction) ->
+                            listOf(key.getClassRef(context.staticContext), objectGetInstanceFunction)
+                        }.toSmartList()
+                    )
+                )
+            }
+        }
     }
 }
 
@@ -562,3 +605,11 @@ class JsIrIcClassModel(val superClasses: List<JsName>) {
     val preDeclarationBlock = JsCompositeBlock()
     val postDeclarationBlock = JsCompositeBlock()
 }
+
+/**
+ * Each `@AssociatedObjectKey`-annotated annotation class is assigned a unique integer.
+ *
+ * This property is only used in non-incremental compilation.
+ * When compiling incrementally, these integers are assigned at runtime.
+ */
+private var IrClass.associatedObjectKey: Int? by irAttribute(followAttributeOwner = false)

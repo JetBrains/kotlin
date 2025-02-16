@@ -56,6 +56,7 @@ KaConstructorSymbol:
           deprecationStatus: null
         callableId: /Foo.ints
         compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
@@ -95,7 +96,7 @@ KaConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(vararg val ints)
+        initializer: KaNonConstantInitializerValue(vararg val ints)
         isActual: false
         isConst: false
         isDelegatedProperty: false

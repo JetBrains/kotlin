@@ -1,0 +1,5 @@
+/ErrorProneAtomicRefPrimitives.kt:(184,209): warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/ErrorProneAtomicRefPrimitives.kt:(222,248): warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/ErrorProneAtomicRefPrimitives.kt:(448,474): warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.

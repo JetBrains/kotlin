@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.utils
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisitor
+import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
@@ -78,10 +79,41 @@ private fun ConstantValueKind.toIrConstKind(): IrConstKind = when (this) {
     ConstantValueKind.Error -> throw IllegalArgumentException()
 }
 
-// This method is intended to be used for default values of annotation parameters (compile-time strings, numbers, enum values, KClasses)
-// where they are needed and may produce incorrect results for values that may be encountered outside annotations.
-fun FirExpression.asCompileTimeIrInitializer(components: Fir2IrComponents, expectedType: ConeKotlinType? = null): IrExpressionBody {
-    val visitor = Fir2IrVisitor(components, Fir2IrConversionScope(components.configuration))
-    val expression = visitor.convertToIrExpression(this, expectedType = expectedType)
+/**
+ * This method is intended to be used for default values of annotation parameters (compile-time strings, numbers, enum values, KClasses)
+ * where they are needed and may produce incorrect results for values that may be encountered outside annotations.
+ *
+ *
+ * [CallAndReferenceGenerator] relies on the [Fir2IrVisitor.annotationMode] to properly generate the arguments of call, and it's essential
+ * to pass `annotationMode = true` to it.
+ *
+ * But the problem is that [components] contain the main instance of [CallAndReferenceGenerator], which contains not the visitor
+ * created in this function, but the main visitor.
+ *
+ * So to properly handle this situation, it's required to create a new [CallAndReferenceGenerator] which will store the proper visitor.
+ */
+fun FirExpression.asCompileTimeIrInitializerForAnnotationParameter(
+    components: Fir2IrComponents,
+    expectedTypeForAnnotationArgument: ConeKotlinType? = null,
+): IrExpressionBody {
+    val componentsWithReplacedCallGenerator = object : Fir2IrComponents by components {
+        override val callGenerator: CallAndReferenceGenerator
+            get() = _callGenerator!!
+
+        var _callGenerator: CallAndReferenceGenerator? = null
+    }
+    val conversionScope = Fir2IrConversionScope(components.configuration)
+    val visitor = Fir2IrVisitor(componentsWithReplacedCallGenerator, conversionScope)
+    componentsWithReplacedCallGenerator._callGenerator = CallAndReferenceGenerator(
+        componentsWithReplacedCallGenerator,
+        visitor,
+        conversionScope
+    )
+    val expression = visitor.withAnnotationMode {
+        visitor.convertToIrExpression(
+            this,
+            expectedTypeForAnnotationArgument = expectedTypeForAnnotationArgument,
+        )
+    }
     return IrFactoryImpl.createExpressionBody(expression)
 }

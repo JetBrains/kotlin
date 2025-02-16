@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.objcexport.testUtils.createObjCExportFile
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
 import org.junit.jupiter.api.Test
@@ -56,7 +57,7 @@ class IsVisibleInObjCTest(
             """
                 @kotlin.native.HidesFromObjC
                 annotation class MyInternalApi
-                
+
                 @MyInternalApi
                 fun foo() = Unit
             """.trimIndent()
@@ -170,7 +171,7 @@ class IsVisibleInObjCTest(
             """
                 @kotlin.native.HidesFromObjC
                 annotation class MyInternalApi
-                
+
                 @MyInternalApi
                 class Foo
             """.trimIndent()
@@ -270,7 +271,7 @@ class IsVisibleInObjCTest(
 
             class PublicA {
                 fun publicA() = Unit
-            
+
                 @HideIt
                 class HiddenB {
                     fun publicB() = Unit

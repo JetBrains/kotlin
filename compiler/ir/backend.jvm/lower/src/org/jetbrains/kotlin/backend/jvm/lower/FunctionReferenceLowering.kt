@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -47,7 +46,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     private val crossinlineLambdas = HashSet<IrSimpleFunction>()
 
     private val IrFunctionReference.isIgnored: Boolean
-        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || origin == LoweredStatementOrigins.INLINE_LAMBDA
+        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || origin == IrStatementOrigin.INLINE_LAMBDA
 
     // `suspend` function references are the same as non-`suspend` ones, just with an extra continuation parameter;
     // however, suspending lambdas require different generation implemented in SuspendLambdaLowering

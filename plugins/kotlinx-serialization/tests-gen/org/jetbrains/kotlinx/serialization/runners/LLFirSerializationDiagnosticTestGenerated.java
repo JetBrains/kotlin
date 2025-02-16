@@ -171,6 +171,12 @@ public class LLFirSerializationDiagnosticTestGenerated extends AbstractLLFirSeri
     }
 
     @Test
+    @TestMetadata("ProtobufFieldNumbers.kt")
+    public void testProtobufFieldNumbers() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/ProtobufFieldNumbers.kt");
+    }
+
+    @Test
     @TestMetadata("repeatableSerialInfo.kt")
     public void testRepeatableSerialInfo() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/repeatableSerialInfo.kt");
@@ -216,6 +222,12 @@ public class LLFirSerializationDiagnosticTestGenerated extends AbstractLLFirSeri
     @TestMetadata("SerializerTypeIncompatibleViaTypealias.kt")
     public void testSerializerTypeIncompatibleViaTypealias() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializerTypeIncompatibleViaTypealias.kt");
+    }
+
+    @Test
+    @TestMetadata("trainsientLateinit.kt")
+    public void testTrainsientLateinit() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/trainsientLateinit.kt");
     }
 
     @Test

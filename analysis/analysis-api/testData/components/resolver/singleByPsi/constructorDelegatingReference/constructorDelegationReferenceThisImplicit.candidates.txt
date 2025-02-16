@@ -4,6 +4,7 @@ KtConstructorDelegationReferenceExpression(136,136): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtConstructorDelegationReferenceExpression(136,136): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

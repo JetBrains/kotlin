@@ -51,19 +51,19 @@ fun box(): String {
   with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
     { // BLOCK
       val tmp_1: Result = result
-      result = tmp_1.inc($context_receiver_0 = $this$with)
+      result = inc(/* $context_receiver_0 = $this$with, <this> = tmp_1 */)
       tmp_1
     } /*~> Unit */
     { // BLOCK
       val tmp_2: Result = result
-      result = tmp_2.inc($context_receiver_0 = $this$with)
+      result = inc(/* $context_receiver_0 = $this$with, <this> = tmp_2 */)
       tmp_2
     } /*~> Unit */
-    result.unaryMinus($context_receiver_0 = $this$with) /*~> Unit */
-    result.unaryPlus($context_receiver_0 = $this$with) /*~> Unit */
+    unaryMinus(/* $context_receiver_0 = $this$with, <this> = result */) /*~> Unit */
+    unaryPlus(/* $context_receiver_0 = $this$with, <this> = result */) /*~> Unit */
     return { // BLOCK
       val tmp_3: Result = result
-      result = tmp_3.dec($context_receiver_0 = $this$with)
+      result = dec(/* $context_receiver_0 = $this$with, <this> = tmp_3 */)
       tmp_3
     }
   }
@@ -77,28 +77,32 @@ fun box(): String {
   }
 }
 
-operator fun Result.dec($context_receiver_0: Int): Result {
+context($context_receiver_0: Int)
+operator fun Result.dec(): Result {
   { // BLOCK
     <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().minus(other = 1))
 }
 
-operator fun Result.inc($context_receiver_0: Int): Result {
+context($context_receiver_0: Int)
+operator fun Result.inc(): Result {
   { // BLOCK
     <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().plus(other = 1))
 }
 
-operator fun Result.unaryMinus($context_receiver_0: Int): Result {
+context($context_receiver_0: Int)
+operator fun Result.unaryMinus(): Result {
   { // BLOCK
     <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().unaryMinus())
 }
 
-operator fun Result.unaryPlus($context_receiver_0: Int): Result {
+context($context_receiver_0: Int)
+operator fun Result.unaryPlus(): Result {
   { // BLOCK
     <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }

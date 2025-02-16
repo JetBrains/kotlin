@@ -8,11 +8,22 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.Project
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
+import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 
+/**
+ * Returns [true] only when Gradle build is invoked during IDEA Project Sync
+ * i.e. regular Task Execution via IDEA it will be [false].
+ */
 internal val Project.isInIdeaSync
-    get() = providers.of(IdeaPropertiesValueSource::class.java) {}
+    get() = providers.of(IsInIdeaSyncValueSource::class.java) {}
 
-internal abstract class IdeaPropertiesValueSource : ValueSource<Boolean, ValueSourceParameters.None> {
+/**
+ * Returns [true] when Gradle build is invoked in any sort of IDEA environment: sync or task execution
+ */
+internal val Project.isInIdeaEnvironment
+    get() = providers.of(IsInIdeaEnvironmentValueSource::class.java) {}.map { it.value }
+
+private abstract class IsInIdeaSyncValueSource : ValueSource<Boolean, ValueSourceParameters.None> {
     override fun obtain(): Boolean {
         // "idea.sync.active" was introduced in 2019.1
         if (System.getProperty("idea.sync.active")?.toBoolean() == true) return true
@@ -27,4 +38,8 @@ internal abstract class IdeaPropertiesValueSource : ValueSource<Boolean, ValueSo
 
         return isBeforeIdea2019 && System.getProperty("idea.active")?.toBoolean() == true
     }
+}
+
+private abstract class IsInIdeaEnvironmentValueSource : ConfigurationCacheOpaqueValueSource<Boolean>("isInIdeaEnvironment") {
+    override fun obtainValue(): Boolean = System.getProperty("idea.version") != null
 }

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
 

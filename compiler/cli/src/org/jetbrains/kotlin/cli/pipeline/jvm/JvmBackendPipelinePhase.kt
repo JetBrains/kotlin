@@ -10,10 +10,14 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.buildFile
 import org.jetbrains.kotlin.cli.common.moduleChunk
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
-import org.jetbrains.kotlin.cli.pipeline.*
-import org.jetbrains.kotlin.codegen.CodegenFactory
+import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
+import org.jetbrains.kotlin.cli.jvm.compiler.getSourceFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
+import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useLightTree
@@ -36,6 +40,10 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
     )
 ) {
     override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBinaryPipelineArtifact? {
+        return executePhase(input, ignoreErrors = false)
+    }
+
+    fun executePhase(input: JvmFir2IrPipelineArtifact, ignoreErrors: Boolean): JvmBinaryPipelineArtifact? {
         val (fir2IrResult, configuration, environment, diagnosticCollector, allSourceFiles, mainClassFqName) = input
         val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
         val project = environment.project
@@ -49,7 +57,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
 
         val chunk = configuration.moduleChunk!!.modules
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-        val codegenInputs = ArrayList<CodegenFactory.CodegenInput>(chunk.size)
+        val codegenInputs = ArrayList<JvmIrCodegenFactory.CodegenInput>(chunk.size)
 
         val buildFile = configuration.buildFile
         for (module in chunk) {
@@ -98,14 +106,20 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
                 diagnosticCollector,
                 input.state.configuration,
                 reportGenerationFinished = false,
+                reportDiagnosticsToMessageCollector = false, // diagnostics will be reported in CheckCompilationErrors.CheckDiagnosticCollector
             )
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        val success = writeOutputsIfNeeded(project, configuration, configuration.messageCollector, outputs, mainClassFqName)
+        val success = writeOutputsIfNeeded(
+            project,
+            configuration,
+            configuration.messageCollector,
+            hasPendingErrors = diagnosticCollector.hasErrors,
+            outputs,
+            mainClassFqName
+        )
 
-        if (!success) return null
-
-        return JvmBinaryPipelineArtifact(outputs)
+        return JvmBinaryPipelineArtifact(outputs).takeIf { success || ignoreErrors }
     }
 }

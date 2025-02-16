@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -36,7 +37,8 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
-    final override fun TestConfigurationBuilder.configuration() {
+    @OptIn(TestInfrastructureInternals::class)
+    override fun configureInternal(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = JvmPlatforms.defaultJvmPlatform
@@ -48,7 +50,7 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
         }
 
         FirLowLevelCompilerBasedTestConfigurator.configureTest(this, disposable)
-        configureTest(this)
+        configure(this)
         defaultConfiguration(this)
         registerAnalysisApiBaseTestServices(disposable, FirLowLevelCompilerBasedTestConfigurator)
         useAdditionalServices(service<FirDiagnosticCollectorService>(::AnalysisApiFirDiagnosticCollectorService))
@@ -69,8 +71,6 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
 
         useAfterAnalysisCheckers(::LLFirTestSuppressor)
     }
-
-    abstract fun configureTest(builder: TestConfigurationBuilder)
 
     inner class LowLevelFirFrontendFacade(
         testServices: TestServices,
@@ -115,6 +115,7 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
             return FirOutputPartForDependsOnModule(
                 module,
                 firResolveSession.useSiteFirSession,
+                analyzerFacade.scopeSession,
                 analyzerFacade,
                 analyzerFacade.allFirFiles
             )

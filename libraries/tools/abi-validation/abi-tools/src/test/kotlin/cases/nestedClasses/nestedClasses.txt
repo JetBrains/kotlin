@@ -1,0 +1,86 @@
+public abstract class cases/nestedClasses/PublicAbstractClass {
+	public fun <init> ()V
+}
+
+protected final class cases/nestedClasses/PublicAbstractClass$InnerProtected {
+	public fun <init> (Lcases/nestedClasses/PublicAbstractClass;)V
+}
+
+protected final class cases/nestedClasses/PublicAbstractClass$NestedProtected {
+	public fun <init> ()V
+}
+
+protected abstract interface class cases/nestedClasses/PublicAbstractClass$NestedProtectedInterface {
+}
+
+protected final class cases/nestedClasses/PublicAbstractClass$ObjProtected {
+	public static final field INSTANCE Lcases/nestedClasses/PublicAbstractClass$ObjProtected;
+}
+
+public final class cases/nestedClasses/PublicClass {
+	public fun <init> ()V
+}
+
+public final class cases/nestedClasses/PublicClass$InnerPublic {
+	public fun <init> (Lcases/nestedClasses/PublicClass;)V
+}
+
+public final class cases/nestedClasses/PublicClass$NestedPublic {
+	public fun <init> ()V
+}
+
+public abstract interface class cases/nestedClasses/PublicClass$NestedPublicInterface {
+}
+
+public final class cases/nestedClasses/PublicClass$ObjPublic {
+	public static final field INSTANCE Lcases/nestedClasses/PublicClass$ObjPublic;
+}
+
+public abstract interface class cases/nestedClasses/PublicInterface {
+}
+
+public final class cases/nestedClasses/PublicInterface$NestedPublic {
+	public fun <init> ()V
+}
+
+public abstract interface class cases/nestedClasses/PublicInterface$NestedPublicInterface {
+}
+
+public final class cases/nestedClasses/PublicInterface$ObjPublic {
+	public static final field INSTANCE Lcases/nestedClasses/PublicInterface$ObjPublic;
+}
+
+public final class cases/nestedClasses/PublicObject {
+	public static final field INSTANCE Lcases/nestedClasses/PublicObject;
+}
+
+public final class cases/nestedClasses/PublicObject$NestedPublic {
+	public fun <init> ()V
+}
+
+public abstract interface class cases/nestedClasses/PublicObject$NestedPublicInterface {
+}
+
+public final class cases/nestedClasses/PublicObject$ObjPublic {
+	public static final field INSTANCE Lcases/nestedClasses/PublicObject$ObjPublic;
+}
+
+public class cases/nestedClasses/PublicOpenClass {
+	public fun <init> ()V
+}
+
+protected final class cases/nestedClasses/PublicOpenClass$InnerProtected {
+	public fun <init> (Lcases/nestedClasses/PublicOpenClass;)V
+}
+
+protected final class cases/nestedClasses/PublicOpenClass$NestedProtected {
+	public fun <init> ()V
+}
+
+protected abstract interface class cases/nestedClasses/PublicOpenClass$NestedProtectedInterface {
+}
+
+protected final class cases/nestedClasses/PublicOpenClass$ObjProtected {
+	public static final field INSTANCE Lcases/nestedClasses/PublicOpenClass$ObjProtected;
+}
+

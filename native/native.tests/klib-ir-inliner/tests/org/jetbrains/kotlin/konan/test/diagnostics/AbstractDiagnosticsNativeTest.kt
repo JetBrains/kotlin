@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.baseFirNativeDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.builders.baseNativeDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
@@ -30,8 +28,8 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
-import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.junit.jupiter.api.Assumptions
 import java.io.File
@@ -40,11 +38,7 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
     abstract val targetFrontend: FrontendKind<R>
     abstract val frontend: Constructor<FrontendFacade<R>>
 
-    final override fun TestConfigurationBuilder.configuration() = Unit
-
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(builder)
-
         globalDefaults {
             frontend = targetFrontend
             targetPlatform = NativePlatforms.unspecifiedNativePlatform

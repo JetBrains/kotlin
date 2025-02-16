@@ -47,13 +47,7 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
         }
 
         is MemberAccessExpressionArgumentsMismatch -> expression(expression) {
-            memberAccessExpressionArgumentsMismatch(
-                expression.symbol,
-                expressionHasDispatchReceiver,
-                functionHasDispatchReceiver,
-                expressionValueArgumentCount,
-                functionValueParameterCount
-            )
+            memberAccessExpressionArgumentsMismatch(expression.symbol, this@renderLinkageError)
         }
 
         is InvalidSamConversion -> expression(expression) {
@@ -520,24 +514,17 @@ private fun Appendable.wrongTypeOfDeclaration(actualDeclarationSymbol: IrSymbol,
 
 private fun Appendable.memberAccessExpressionArgumentsMismatch(
     functionSymbol: IrFunctionSymbol,
-    expressionHasDispatchReceiver: Boolean,
-    functionHasDispatchReceiver: Boolean,
-    expressionValueArgumentCount: Int,
-    functionValueParameterCount: Int
-): Appendable = when {
-    expressionHasDispatchReceiver && !functionHasDispatchReceiver ->
-        append("The call site provides excessive dispatch receiver parameter 'this' that is not needed for the ")
-            .declarationKind(functionSymbol, capitalized = false)
-
-    !expressionHasDispatchReceiver && functionHasDispatchReceiver ->
-        append("The call site does not provide a dispatch receiver parameter 'this' that the ")
-            .declarationKind(functionSymbol, capitalized = false).append(" requires")
-
-    else ->
-        append("The call site provides ").append(if (expressionValueArgumentCount > functionValueParameterCount) "more" else "less")
-            .append(" value arguments (").append(expressionValueArgumentCount.toString()).append(") than the ")
-            .declarationKind(functionSymbol, capitalized = false).append(" requires (")
-            .append(functionValueParameterCount.toString()).append(")")
+    mismatch: MemberAccessExpressionArgumentsMismatch,
+): Appendable = when(mismatch) {
+    is MemberAccessExpressionArgumentsMismatch.ExcessiveArguments -> append("The call site provides ${mismatch.count} more value argument(s) than the ")
+        .declarationKind(functionSymbol, capitalized = false).append(" expects")
+    is MemberAccessExpressionArgumentsMismatch.MissingArguments -> append("The call site has ${mismatch.forParameters.size} less value argument(s) than the ")
+        .declarationKind(functionSymbol, capitalized = false).append(" requires.")
+        .append(" Those arguments are missing: ").append(mismatch.forParameters.joinToString { it.name.asString() })
+    is MemberAccessExpressionArgumentsMismatch.MissingArgumentValues-> append("The ")
+        .declarationKind(functionSymbol, capitalized = false)
+        .append(" has some value parameters for which neither the call site provides an argument, nor do they have a default value: ")
+        .append(mismatch.forParameters.joinToString() { it.name.asString() })
 }
 
 private fun Appendable.invalidSamConversion(

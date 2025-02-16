@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface ToSubstitute : R|Main| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface ToSubstitute : <ERROR TYPE REF: Loop in supertypes involving /ToSubstitute> {
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Main : R|Intermediate| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Main : <ERROR TYPE REF: Loop in supertypes involving /Main> {
     }

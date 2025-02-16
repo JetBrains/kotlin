@@ -38,8 +38,8 @@ class WasmLoweringFacade(
 ) : BackendFacade<IrBackendInput, BinaryArtifacts.Wasm>(testServices, BackendKinds.IrBackend, ArtifactKinds.Wasm) {
     private val supportedOptimizer: WasmOptimizer = WasmOptimizer.Binaryen
 
-    override fun shouldRunAnalysis(module: TestModule): Boolean {
-        require(module.backendKind == inputKind && module.binaryKind == outputKind)
+    override fun shouldTransform(module: TestModule): Boolean {
+        require(with(testServices.defaultsProvider) { backendKind == inputKind && artifactKind == outputKind })
         return WasmEnvironmentConfigurator.isMainModule(module, testServices)
     }
 
@@ -55,7 +55,7 @@ class WasmLoweringFacade(
             val dumpOutputDir = File(outputDirBase, "irdump")
             println("\n ------ Dumping phases to file://${dumpOutputDir.absolutePath}")
             PhaseConfig(
-                toDumpStateAfter = PhaseSet.ALL,
+                toDumpStateAfter = PhaseSet.All,
                 dumpToDirectory = dumpOutputDir.path,
             )
         } else {
@@ -67,6 +67,7 @@ class WasmLoweringFacade(
 
         val testPackage = extractTestPackage(testServices)
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+        val generateDwarf = WasmEnvironmentConfigurationDirectives.GENERATE_DWARF in testServices.moduleStructure.allDirectives
         val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
         val generateDts = WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS in testServices.moduleStructure.allDirectives
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
@@ -87,6 +88,7 @@ class WasmLoweringFacade(
             wasmModuleMetadataCache,
             moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             allowIncompleteImplementations = false,
+            skipCommentInstructions = !generateWat,
         )
         val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
@@ -99,6 +101,7 @@ class WasmLoweringFacade(
             emitNameSection = true,
             generateWat = generateWat,
             generateSourceMaps = generateSourceMaps,
+            generateDwarf = generateDwarf
         )
 
         val dceDumpNameCache = DceDumpNameCache()
@@ -112,6 +115,7 @@ class WasmLoweringFacade(
             wasmModuleMetadataCacheDce,
             moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             allowIncompleteImplementations = true,
+            skipCommentInstructions = !generateWat,
         )
         val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
 
@@ -124,6 +128,7 @@ class WasmLoweringFacade(
             emitNameSection = true,
             generateWat = generateWat,
             generateSourceMaps = generateSourceMaps,
+            generateDwarf = generateDwarf
         )
 
         return BinaryArtifacts.Wasm(

@@ -12,12 +12,19 @@ import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.hasEnumEntries
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -28,10 +35,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 
 class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     // ------------------------------------ type parameters ------------------------------------
@@ -326,6 +330,31 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             }
         }
         return irClass
+    }
+
+    // ------------------------------------ REPL snippets ------------------------------------
+
+    @OptIn(LookupTagInternals::class)
+    fun createEarlierSnippetClass(snippet: FirReplSnippet, containingPackageFragment: IrPackageFragment, symbol: IrClassSymbol): IrClass {
+        val name = NameUtils.getScriptTargetClassName(snippet.name)
+        val firSnippetClassSymbol = FirRegularClassSymbol(ClassId(containingPackageFragment.packageFqName, name))
+        val firSnippetClass = buildRegularClass {
+            moduleData = snippet.moduleData
+            origin = FirDeclarationOrigin.FromOtherReplSnippet
+            this.name = name
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public
+            )
+            classKind = ClassKind.CLASS
+            this.symbol = firSnippetClassSymbol
+            superTypeRefs += session.builtinTypes.anyType
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            scopeProvider = session.kotlinScopeProvider
+        }
+        (firSnippetClass.symbol.toLookupTag() as? ConeClassLikeLookupTagImpl)?.bindSymbolToLookupTag(session, firSnippetClassSymbol)
+        return lazyDeclarationsGenerator.createIrLazyClass(firSnippetClass, containingPackageFragment, symbol)
     }
 
     // ------------------------------------ enum entries ------------------------------------

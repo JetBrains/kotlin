@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
-
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
 

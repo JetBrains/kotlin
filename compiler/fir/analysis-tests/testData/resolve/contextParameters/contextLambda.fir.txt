@@ -5,7 +5,7 @@ FILE: contextLambda.kt
     public final fun acceptLambda(f: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/acceptLambda|(<L> = acceptLambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/acceptLambda|(<L> = context(<unused var>: R|kotlin/String|) acceptLambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/foo|()
             <Unresolved name: length>#
         }

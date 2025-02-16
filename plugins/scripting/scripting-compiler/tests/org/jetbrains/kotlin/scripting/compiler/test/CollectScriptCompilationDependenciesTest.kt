@@ -83,7 +83,7 @@ class CollectScriptCompilationDependenciesTest : TestCase() {
             addKotlinSourceRoot(File(testDataPath, scriptFile).path)
             put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, true)
 
-            loadScriptingPlugin(this)
+            loadScriptingPlugin(this, testRootDisposable)
         }
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

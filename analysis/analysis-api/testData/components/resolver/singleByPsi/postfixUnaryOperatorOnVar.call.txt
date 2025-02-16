@@ -4,6 +4,7 @@ KtPostfixExpression(31,34): 'i++'
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = i
             isSafeNavigation = false
@@ -14,9 +15,11 @@ KtPostfixExpression(31,34): 'i++'
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
+            contextParameters = []
             callableId = kotlin/Int.inc
         precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -24,4 +27,5 @@ KtPostfixExpression(31,34): 'i++'
           receiverType = null
           returnType = kotlin.Int
           symbol = var i: kotlin.Int
+          contextParameters = []
           callableId = null

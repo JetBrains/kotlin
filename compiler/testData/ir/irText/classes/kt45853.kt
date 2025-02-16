@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 // DUMP_EXTERNAL_CLASS: X
@@ -23,6 +22,6 @@ public interface X {
 public abstract class AX extends A implements X {
     @Override
     public AX getA() {
-        return (AX) super.getA();
+        return null;
     }
 }

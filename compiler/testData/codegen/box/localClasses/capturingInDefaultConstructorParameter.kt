@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 open class Base(val fn: () -> String)
 
 class Test(x: String) :

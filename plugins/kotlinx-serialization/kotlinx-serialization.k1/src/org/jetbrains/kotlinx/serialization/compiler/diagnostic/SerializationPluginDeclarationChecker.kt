@@ -30,15 +30,14 @@ import org.jetbrains.kotlin.types.typeUtil.isEnum
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors.EXTERNAL_SERIALIZER_USELESS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LOAD_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationFqName
 
 val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
 
@@ -66,6 +65,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
         val props = buildSerializableProperties(descriptor, context.trace) ?: return
         checkCorrectTransientAnnotationIsUsed(descriptor, props.serializableProperties, context.trace)
+        checkProtobufProperties(props.serializableProperties, context.trace)
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
         checkInheritedAnnotations(descriptor, declaration, context.trace)
@@ -426,6 +426,95 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 
+    private fun checkProtobufProperties(
+        properties: List<SerializableProperty>,
+        trace: BindingTrace,
+    ) {
+        /*
+        IMPORTANT! In protobuf filed numbers starts with 1
+        Therefore, for correct calculations, we assume that the fields in the class are also numbered from 1
+
+        The following notation is used in the comments:
+        proto number - field number used when encoding with protobuf
+        origin number - sequence number of field in the class, starts with 1
+        custom number - redefined by @ProtoNumber annotation value of proto number
+
+        Target proto number is origin number or if @ProtoNumber is specified a custom number
+         */
+
+        // origin number -> custom number
+        val originToCustom = mutableMapOf<Int, Int>()
+
+        properties.forEachIndexed { index, property ->
+
+            // TODO should we throw error if there is no `number` argument or there is evaluation error
+            val customNumber =
+                property.descriptor.annotations.findAnnotationConstantValue<Int>(
+                    SerializationAnnotations.protoNumberAnnotationFqName,
+                    "number"
+                ) ?: return@forEachIndexed
+
+            // use +1 to follow the rule that fields are numbered from 1
+            originToCustom[index + 1] = customNumber
+        }
+
+        // there is no ProtoNumber annotation
+        if (originToCustom.isEmpty()) return
+
+        // origin number -> proto number
+        // proto id = null if there is no override annotation
+        val originToProto = mutableMapOf<Int, Int?>()
+        for (number in 1..properties.size) {
+            // use -1 to follow the rule that fields are numbered from 1
+            if (properties[number - 1].descriptor.annotations.hasAnnotation(protoOneOfAnnotationFqName)) {
+                // if property marked with ProtoOneOf annotation we should skip check field number for it
+                // because filed number will be specified in heirs
+                continue
+            }
+
+            originToProto[number] = originToCustom[number]
+        }
+
+        // proto id -> [list of origin fields numbers that uses it, null there is no annotation on a field]
+        val duplicates = mutableMapOf<Int, MutableList<Int?>>()
+        originToProto.forEach { (originNumber, protoNumber) ->
+            if (protoNumber != null) {
+                duplicates.getOrPut(protoNumber) { mutableListOf() }.add(originNumber)
+            } else {
+                duplicates.getOrPut(originNumber) { mutableListOf() }.add(null)
+            }
+        }
+
+        originToProto.forEach { (originNumber, protoNumber) ->
+            // skip fields without ProtoNumber annotation
+            if (protoNumber == null) return@forEach
+
+            val duplicates = duplicates.getValue(protoNumber)
+            if (duplicates.size < 2) return@forEach
+
+            // use -1 to follow the rule that fields are numbered from 1
+            val property = properties[originNumber - 1]
+            val annotation = property.descriptor
+                .findAnnotationDeclaration(SerializationAnnotations.protoNumberAnnotationFqName) ?: return@forEach
+
+            val duplicateFieldsNames = duplicates.asSequence()
+                // if fieldNumber == null it's mean that there is no custom annotation and proto number is an origin field number
+                .map { number -> number ?: protoNumber }
+                .filter { number -> number != originNumber }
+                // use -1 to follow the rule that fields are numbered from 1
+                .map { number -> properties[number - 1].descriptor.name.asString() }
+                .joinToString()
+
+            trace.report(
+                SerializationErrors.PROTOBUF_PROTO_NUM_DUPLICATED.on(
+                    annotation,
+                    property.descriptor.name.asString(),
+                    duplicateFieldsNames
+                )
+            )
+        }
+    }
+
     private fun declarationHasInitializer(declaration: KtDeclaration): Boolean = when (declaration) {
         is KtParameter -> declaration.hasDefaultValue()
         is KtProperty -> declaration.hasDelegateExpressionOrInitializer()
@@ -433,7 +522,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     }
 
     private fun analyzePropertiesSerializers(trace: BindingTrace, serializableClass: ClassDescriptor, props: List<SerializableProperty>) {
-        val generatorContextForAnalysis = object : AbstractSerialGenerator(trace.bindingContext, serializableClass) {}
+        val serializersDeclaredOnFile = SerializationContextInFile(trace.bindingContext, serializableClass)
         props.forEach {
             val serializer = it.serializableWith?.toClassDescriptor
             val propertyPsi = it.descriptor.findPsi() ?: return@forEach
@@ -446,9 +535,9 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 checkCustomSerializerParameters(it.module, it.descriptor, it.type, annotationPsi, propertyPsi, trace)
                 checkCustomSerializerIsNotLocal(it.module, it.descriptor, trace, propertyPsi)
                 checkSerializerNullability(it.type, serializer.defaultType, element, trace, propertyPsi)
-                generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
+                serializersDeclaredOnFile.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
             } else {
-                generatorContextForAnalysis.checkType(it.module, it.type, ktType, trace, propertyPsi)
+                serializersDeclaredOnFile.checkType(it.module, it.type, ktType, trace, propertyPsi)
                 checkGenericArrayType(it.type, ktType, trace, propertyPsi)
             }
         }
@@ -466,7 +555,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 
-    private fun AbstractSerialGenerator.checkTypeArguments(
+    private fun SerializationContextInFile.checkTypeArguments(
         module: ModuleDescriptor,
         type: KotlinType,
         element: KtTypeElement?,
@@ -491,7 +580,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         return VersionReader.canSupportInlineClasses(module, trace)
     }
 
-    private fun AbstractSerialGenerator.checkType(
+    private fun SerializationContextInFile.checkType(
         module: ModuleDescriptor,
         type: KotlinType,
         ktType: KtTypeReference?,

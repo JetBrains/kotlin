@@ -227,9 +227,3 @@ internal fun IrElement.checkFunctionDispatchReceiver(function: IrFunction, conte
         context.error(this, "Dispatch receivers with 'dynamic' type are not allowed")
     }
 }
-
-internal fun IrSymbol.ensureBound(expression: IrExpression, context: CheckerContext) {
-    if (!this.isBound && expression.type !is IrDynamicType) {
-        context.error(expression, "Unbound symbol $this")
-    }
-}

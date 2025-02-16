@@ -27,12 +27,7 @@ abstract class AbstractFirBlackBoxCodegenTestSpecBase(parser: FirParser) : Abstr
     }
 }
 
-open class AbstractFirBlackBoxCodegenTestSpec : AbstractFirBlackBoxCodegenTestSpecBase(FirParser.LightTree) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useAdditionalService { LightTreeSyntaxDiagnosticsReporterHolder() }
-    }
-}
+open class AbstractFirBlackBoxCodegenTestSpec : AbstractFirBlackBoxCodegenTestSpecBase(FirParser.LightTree)
 
 private fun TestConfigurationBuilder.baseFirSpecBlackBoxCodegenTestConfiguration(baseDir: String = ".") {
     defaultDirectives {

@@ -1,0 +1,34 @@
+KtCallExpression(72,77): 'foo()'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = [
+            KaVariableSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = string
+              receiverType = null
+              returnType = kotlin.String
+              symbol = string: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'String' found.>
+    isInBestCandidates = true

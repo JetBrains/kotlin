@@ -15,8 +15,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,7 +35,6 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -77,9 +74,6 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter
     private List<String> pluginOptions;
 
-    @Parameter
-    private boolean multiPlatform = false;
-
     protected List<String> getSourceFilePaths() {
         List<String> sourceFilePaths = new ArrayList<>();
         if (sourceDirs != null && !sourceDirs.isEmpty()) sourceFilePaths.addAll(sourceDirs);
@@ -98,31 +92,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             addSourceRoots(result, source);
         }
 
-        Map<String, MavenProject> projectReferences = project.getProjectReferences();
-        if (projectReferences != null) {
-            iterateDependencies:
-            for (Dependency dependency : project.getDependencies()) {
-                MavenProject sibling = projectReferences.get(dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion());
-                if (sibling != null) {
-                    Plugin plugin = sibling.getPlugin("org.jetbrains.kotlin:kotlin-maven-plugin");
-                    if (plugin != null) {
-                        for (PluginExecution pluginExecution : plugin.getExecutions()) {
-                            if (pluginExecution.getGoals() != null && pluginExecution.getGoals().contains("metadata")) {
-                                for (String sourceRoot : orEmpty(getRelatedSourceRoots(sibling))) {
-                                    addSourceRoots(result, sourceRoot);
-                                    continue iterateDependencies;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         return result;
     }
-
-    protected abstract List<String> getRelatedSourceRoots(MavenProject project);
 
     private void addSourceRoots(List<File> result, String source) {
         File f = new File(source);
@@ -457,7 +428,6 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         arguments.setSuppressWarnings(nowarn);
         arguments.setLanguageVersion(languageVersion);
         arguments.setApiVersion(apiVersion);
-        arguments.setMultiPlatform(multiPlatform);
 
         configureSpecificCompilerArguments(arguments, sourceRoots);
 

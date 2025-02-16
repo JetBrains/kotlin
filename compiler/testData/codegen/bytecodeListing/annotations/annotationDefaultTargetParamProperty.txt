@@ -22,18 +22,3 @@ public annotation class SomeField {
 public annotation class SomeProperty {
     // source: 'annotationDefaultTargetParamProperty.kt'
 }
-
-@kotlin.Metadata
-public final class Your$DefaultImpls {
-    // source: 'annotationDefaultTargetParamProperty.kt'
-    public synthetic deprecated static @SomeProperty method value$annotations(): void
-    public final inner class Your$DefaultImpls
-}
-
-@java.lang.annotation.Retention(value=RUNTIME)
-@kotlin.Metadata
-public annotation class Your {
-    // source: 'annotationDefaultTargetParamProperty.kt'
-    public abstract method value(): java.lang.String
-    public final inner class Your$DefaultImpls
-}

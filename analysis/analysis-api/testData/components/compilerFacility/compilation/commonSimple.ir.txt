@@ -1,44 +1,44 @@
 MODULE_FRAGMENT
   FILE fqName:app fileName:main.kt
     CLASS CLASS name:Foo modality:FINAL visibility:public [expect] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:app.Foo
-      CONSTRUCTOR visibility:public <> () returnType:app.Foo [primary,expect]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:app.Foo
+      CONSTRUCTOR visibility:public returnType:app.Foo [primary,expect]
       PROPERTY name:text visibility:public modality:FINAL [expect,val]
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text> visibility:public modality:FINAL <> ($this:app.Foo) returnType:kotlin.String
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text> visibility:public modality:FINAL returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:app.Foo
           correspondingProperty: PROPERTY name:text visibility:public modality:FINAL [expect,val]
-          $this: VALUE_PARAMETER name:<this> type:app.Foo
     CLASS OBJECT name:Shared modality:FINAL visibility:public superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:app.Shared
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:app.Shared
       PROPERTY name:text visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String visibility:private [final]
           EXPRESSION_BODY
             CONST String type=kotlin.String value="Hello, world!"
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text> visibility:public modality:FINAL <> ($this:app.Shared) returnType:kotlin.String
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text> visibility:public modality:FINAL returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:app.Shared
           correspondingProperty: PROPERTY name:text visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:app.Shared
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-text> (): kotlin.String declared in app.Shared'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: app.Shared declared in app.Shared.<get-text>' type=app.Shared origin=null
-      CONSTRUCTOR visibility:private <> () returnType:app.Shared [primary]
+      CONSTRUCTOR visibility:private returnType:app.Shared [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Shared modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
       BLOCK_BODY
         CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
-          message: CALL 'public final fun <get-text> (): kotlin.String declared in app.Foo' type=kotlin.String origin=GET_PROPERTY
-            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary,expect] declared in app.Foo' type=app.Foo origin=null
+          ARG message: CALL 'public final fun <get-text> (): kotlin.String declared in app.Foo' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () [primary,expect] declared in app.Foo' type=app.Foo origin=null

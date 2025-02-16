@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.Kapt3BaseIT
 import org.jetbrains.kotlin.gradle.forceK1Kapt
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -113,6 +114,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
 
     @DisplayName("kapt works with realm")
     @GradleAndroidTest
+    @BrokenOnMacosTest
     fun testRealm(
         gradleVersion: GradleVersion,
         agpVersion: String,

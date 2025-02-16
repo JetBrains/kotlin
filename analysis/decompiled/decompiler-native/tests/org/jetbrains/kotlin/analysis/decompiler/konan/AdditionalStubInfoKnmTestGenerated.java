@@ -42,6 +42,12 @@ public class AdditionalStubInfoKnmTestGenerated extends AbstractAdditionalStubIn
   }
 
   @Test
+  @TestMetadata("FlexibleDnnType")
+  public void testFlexibleDnnType() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/FlexibleDnnType/");
+  }
+
+  @Test
   @TestMetadata("MultiFieldValueClassWithTypeAlias")
   public void testMultiFieldValueClassWithTypeAlias() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/MultiFieldValueClassWithTypeAlias/");

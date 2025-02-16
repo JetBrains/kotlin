@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
@@ -17,15 +18,20 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.scopes.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirNameAwareOnlyCallablesScope
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScopeWithLazyNestedScope
+import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.scopeForSupertype
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 object JavaScopeProvider : FirScopeProvider() {
     override fun getUseSiteMemberScope(
@@ -41,6 +47,12 @@ object JavaScopeProvider : FirScopeProvider() {
         }
         return enhancementScope
     }
+
+    override fun getTypealiasConstructorScope(
+        typeAlias: FirTypeAlias,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirScope = shouldNotBeCalled("Java doesn't support typealias")
 
     private fun buildSyntheticScopeForAnnotations(
         session: FirSession,
@@ -157,7 +169,7 @@ object JavaScopeProvider : FirScopeProvider() {
                     useSiteSession,
                     declaredMemberScope = declaredScope,
                     superClassScope, superTypesScopes,
-                    klass.javaTypeParameterStack
+                    klass,
                 )
             )
         }.also {

@@ -1,13 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.services
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.createEmptySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
@@ -15,28 +13,17 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtConstructor
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.KtTypeParameter
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.types.Variance
@@ -79,6 +66,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
         }
 
         if (!modifiersMatch(psi, fir)) return false
+        if (!contextParametersMatch(psi, fir)) return false
         if (!receiverTypeMatches(psi, fir)) return false
         if (!returnTypesMatch(psi, fir)) return false
         if (!typeParametersMatch(psi, fir)) return false
@@ -139,21 +127,53 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
     }
 
     private fun valueParametersMatch(psiFunction: KtCallableDeclaration, firFunction: FirFunction): Boolean {
-        if (firFunction.valueParameters.size != psiFunction.valueParameters.size) return false
-        firFunction.valueParameters.zip(psiFunction.valueParameters) { expectedParameter, candidateParameter ->
+        return parametersMatch(firFunction.valueParameters, psiFunction.valueParameters)
+    }
+
+    private fun parametersMatch(firParameters: List<FirValueParameter>, psiParameters: List<KtParameter>): Boolean {
+        if (firParameters.size != psiParameters.size) {
+            return false
+        }
+
+        firParameters.zip(psiParameters) { expectedParameter, candidateParameter ->
             if (expectedParameter.name.toString() != candidateParameter.name) return false
             if (expectedParameter.isVararg != candidateParameter.isVarArg) return false
             val candidateParameterType = candidateParameter.typeReference ?: return false
-            if (!isTheSameTypes(
-                    candidateParameterType,
-                    expectedParameter.returnTypeRef,
-                    isVararg = expectedParameter.isVararg
-                )
-            ) {
+            if (!isTheSameTypes(candidateParameterType, expectedParameter.returnTypeRef, isVararg = expectedParameter.isVararg)) {
                 return false
             }
         }
+
         return true
+    }
+
+    private fun contextParametersMatch(psiCallable: KtCallableDeclaration, firCallable: FirCallableDeclaration): Boolean {
+        val contextReceiverList = psiCallable.modifierList?.contextReceiverList
+        val firContextParameters = firCallable.contextParameters
+        return when {
+            contextReceiverList == null -> firContextParameters.isEmpty()
+            firContextParameters.isEmpty() -> false
+            else -> {
+                val contextParameters = contextReceiverList.contextParameters()
+                if (contextParameters.isNotEmpty()) {
+                    return parametersMatch(firContextParameters, contextParameters)
+                }
+
+                val contextReceivers = contextReceiverList.contextReceivers()
+                if (firContextParameters.size != contextReceivers.size) {
+                    return false
+                }
+
+                firContextParameters.zip(contextReceivers) { expectedParameter, candidateParameterType ->
+                    val typeReference = candidateParameterType.typeReference() ?: return false
+                    if (!isTheSameTypes(typeReference, expectedParameter.returnTypeRef, isVararg = false)) {
+                        return false
+                    }
+                }
+
+                true
+            }
+        }
     }
 
     private fun FirTypeRef.renderTypeAsKotlinType(isVararg: Boolean = false): String {
@@ -284,6 +304,12 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             scopeSession: ScopeSession,
             memberRequiredPhase: FirResolvePhase?,
         ): FirTypeScope = shouldNotBeCalled()
+
+        override fun getTypealiasConstructorScope(
+            typeAlias: FirTypeAlias,
+            useSiteSession: FirSession,
+            scopeSession: ScopeSession,
+        ): FirScope = shouldNotBeCalled()
 
         override fun getStaticCallableMemberScope(
             klass: FirClass,

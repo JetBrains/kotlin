@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.artifacts.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsRepo
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmCompilationWireJavaSourcesSideEffect
+import org.jetbrains.kotlin.gradle.targets.jvm.ConfigureJavaTestFixturesSideEffect
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
@@ -61,6 +64,9 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, SetupKotlinNativeStdlibAndPlatformDependenciesImport)
         register(project, FinalizeConfigurationFusMetricAction)
 
+        if (isAbiValidationEnabled) {
+            register(project, AbiValidationSetupAction)
+        }
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)
@@ -118,6 +124,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigureFrameworkExportSideEffect)
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
         register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
+        register(project, ConfigureJavaTestFixturesSideEffect)
         if (useNonPackedKlibs) {
             register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
             register(project, CreateNonPackedKlibVariantsSideEffect)
@@ -133,11 +140,11 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCompilationProcessorSideEffect)
         register(project, KotlinCreateNativeCInteropTasksSideEffect)
         register(project, KotlinCreateCompilationArchivesTask)
+        register(project, KotlinJvmCompilationWireJavaSourcesSideEffect)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
         register(project, KotlinMetadataArtifact)
-        register(project, KotlinLegacyCompatibilityMetadataArtifact)
         register(project, KotlinLegacyMetadataArtifact)
         register(project, KotlinJvmJarArtifact)
         register(project, KotlinJsKlibArtifact)
@@ -184,6 +191,8 @@ internal fun Project.registerKotlinPluginExtensions() {
 }
 
 private val Project.isKmpProjectIsolationEnabled get() = PropertiesProvider(project).kotlinKmpProjectIsolationEnabled
+
+private val Project.isAbiValidationEnabled get() = !PropertiesProvider(project).abiValidationDisabled
 
 /* Helper functions to make configuration code above easier to read */
 

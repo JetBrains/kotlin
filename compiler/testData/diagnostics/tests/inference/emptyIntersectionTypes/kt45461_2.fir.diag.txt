@@ -1,3 +1,3 @@
-/kt45461_2.kt:(227,230): warning: Type 'kotlin.Int' is final, so the value of the type parameter is predetermined.
+/kt45461_2.kt:(227,230): warning: Type 'Int' is final, so the value of the type parameter is predetermined.
 
-/kt45461_2.kt:(282,289): warning: Type argument for type parameter 'S' cannot be inferred because it has incompatible upper bounds: kotlin.String, K (of fun <K : Int> main) (multiple incompatible classes: kotlin/String, kotlin/Int). This will become an error in a future release.
+/kt45461_2.kt:(282,289): warning: Type argument for type parameter 'S' cannot be inferred because it has incompatible upper bounds: String, K (of fun <K : Int> main) (multiple incompatible classes: kotlin/String, kotlin/Int). This will become an error in a future release.

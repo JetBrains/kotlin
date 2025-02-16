@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.library.abi.impl.AbiSignatureVersions
  *   Corresponds to the `unique_name` manifest property.
  * @property signatureVersions The versions of signatures supported by the KLIB. Note that not every [AbiSignatureVersion]
  *   which is supported by the KLIB is also supported by the ABI reader. To check this please use
- *   [AbiSignatureVersion.isSupportedByAbiReader]. An attempt to obtain a signature of unsupported version will result
+ *   [AbiSignatureVersion.isSupportedByAbiReader]. An attempt to get a signature of an unsupported version will result
  *   in an exception. See also [AbiSignatures.get].
  * @property topLevelDeclarations The list of top-level declarations.
  */
@@ -32,7 +32,7 @@ class LibraryAbi(
  *
  * @property versionNumber The unique version number of the IR signature.
  * @property isSupportedByAbiReader Whether this IR signature version is supported by the current implementation of
- *   the ABI reader. If it's not supported then such signatures can't be read by the ABI reader, and the version itself
+ *   the ABI reader. If it's not supported, then such signatures can't be read by the ABI reader, and the version itself
  *   just serves for information purposes.
  * @property description Brief description of the IR signature version, if available. To be used purely for discovery
  *   purposes by ABI reader clients. Warning: The description text may be freely changed in the future. So, it should
@@ -66,7 +66,7 @@ interface AbiSignatures {
      * - If the signature version is not supported by the ABI reader (according to [AbiSignatureVersion.isSupportedByAbiReader])
      *   then throw an exception.
      * - If the signature version is supported by the ABI reader, but the signature is unavailable for some other reason
-     *   (e.g. a particular type of declaration misses a signature of a particular version), then return `null`.
+     *   (e.g., a particular type of declaration misses a signature of a particular version), then return `null`.
      **/
     operator fun get(signatureVersion: AbiSignatureVersion): String?
 }
@@ -179,7 +179,32 @@ interface AbiAnnotatedEntity {
      * Annotations are not a part of ABI. But sometimes it is useful to have the ability to check if some declaration
      * has a specific annotation. See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
      */
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"))
     fun hasAnnotation(annotationClassName: AbiQualifiedName): Boolean
+
+    /**
+     * Gets a list of annotations that the declaration is marked with.
+     *
+     * Annotations are **not** a part of ABI.
+     * The result of this method is not related to binary compatibility, and it can change even for fully compatible declarations.
+     *
+     * This function should only be used for filtering and searching for the required declaration.
+     *
+     * See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
+     */
+    fun annotatedWith(): List<AbiAnnotation>
+}
+
+/**
+ * The annotation that marked some [AbiDeclaration].
+ *
+ * It is not part of the ABI, but it can be used to filter and search for the necessary ABI declarations.
+ *
+ * @property qualifiedName The annotation qualified name.
+ */
+@ExperimentalLibraryAbiReader
+interface AbiAnnotation {
+    val qualifiedName: AbiQualifiedName
 }
 
 /**
@@ -236,7 +261,7 @@ interface AbiTopLevelDeclarations : AbiDeclarationContainer
  * @property isInner Whether the class is an inner class.
  * @property isValue Whether the class is a value-class.
  * @property isFunction Whether the interface represented by this [AbiClass] is a fun-interface.
- * @property superTypes The set of non-trivial supertypes (i.e. excluding [kotlin.Any]).
+ * @property superTypes The set of non-trivial supertypes (i.e., excluding [kotlin.Any]).
  *   Important: The order of supertypes is preserved exactly as in serialized IR.
  */
 @ExperimentalLibraryAbiReader
@@ -267,12 +292,10 @@ interface AbiEnumEntry : AbiDeclaration
  * @property isInline Whether this is an `inline` function.
  * @property isSuspend Whether this is a `suspend` function.
  * @property hasExtensionReceiverParameter If this function has an extension receiver parameter.
- * @property contextReceiverParametersCount The number of context receiver parameters.
+ * @property contextReceiverParametersCount The number of context parameters.
  * @property valueParameters The function value parameters.
  *   Important: All value parameters of the function are stored in the single place, in the [valueParameters] list in
- *   a well-defined order. First, unless [hasExtensionReceiverParameter] is false, goes the extension receiver parameter.
- *   It is followed by [contextReceiverParametersCount] context receiver parameters. The remainder are the regular
- *   value parameters of the function.
+ *   a well-defined order: context parameters, extension receiver, regular parameters.
  * @property returnType The function's return type. Always `null` for constructors.
  */
 @ExperimentalLibraryAbiReader
@@ -280,7 +303,17 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
     val isConstructor: Boolean
     val isInline: Boolean
     val isSuspend: Boolean
+
+    @Deprecated(
+        "Please use `valueParameters.any { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }`",
+        ReplaceWith("valueParameters.any { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }")
+    )
     val hasExtensionReceiverParameter: Boolean
+
+    @Deprecated(
+        "Please use `valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }`",
+        ReplaceWith("valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }")
+    )
     val contextReceiverParametersCount: Int
     val valueParameters: List<AbiValueParameter>
     val returnType: AbiType?
@@ -289,6 +322,7 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
 /**
  * An individual value parameter of a function.
  *
+ * @property kind The value parameter kind.
  * @property type The type of the value parameter.
  * @property isVararg Whether the value parameter is a var-arg parameter.
  * @property hasDefaultArg Whether the value parameter has a default value.
@@ -297,11 +331,17 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
  */
 @ExperimentalLibraryAbiReader
 interface AbiValueParameter {
+    val kind: AbiValueParameterKind
     val type: AbiType
     val isVararg: Boolean
     val hasDefaultArg: Boolean
     val isNoinline: Boolean
     val isCrossinline: Boolean
+}
+
+/** All known kinds of value parameters that may appear in ABI. */
+enum class AbiValueParameterKind {
+    CONTEXT, EXTENSION_RECEIVER, REGULAR;
 }
 
 /**
@@ -353,7 +393,7 @@ sealed interface AbiTypeParametersContainer : AbiDeclaration {
  *   with the type parameter's name.
  * @property variance The type parameter variance.
  * @property isReified Whether the type parameter is a reified parameter.
- * @property upperBounds The set of non-trivial upper bounds (i.e. excluding nullable [kotlin.Any]).
+ * @property upperBounds The set of non-trivial upper bounds (i.e., excluding nullable [kotlin.Any]).
  *   Important: The order of upper bounds is preserved exactly as in serialized IR.
  */
 @ExperimentalLibraryAbiReader
@@ -403,7 +443,7 @@ sealed interface AbiTypeArgument {
      * A regular type argument.
      *
      * @property type The type argument's type.
-     * @property variance The type arguemnt's variance.
+     * @property variance The type argument's variance.
      */
     interface TypeProjection : AbiTypeArgument {
         val type: AbiType

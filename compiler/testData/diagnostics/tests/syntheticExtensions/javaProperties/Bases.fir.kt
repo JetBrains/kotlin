@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // FILE: KotlinFile.kt
 open class KotlinClass1 : JavaClass1() {
     public fun getSomethingKotlin1(): Int = 1
@@ -16,7 +15,7 @@ fun foo(k: KotlinClass2) {
     useInt(k.something2)
     useInt(k.getSomethingKotlin1())
     useInt(k.getSomethingKotlin2())
-    k.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>somethingKotlin1<!>
+    k.<!FUNCTION_CALL_EXPECTED!>somethingKotlin1<!>
     k.<!UNRESOLVED_REFERENCE!>somethingKotlin2<!>
 }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir
 
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.swiftFqName
 
 sealed interface SirType {
     val attributes: List<SirAttribute>
@@ -73,14 +74,18 @@ class SirDictionaryType(keyType: SirType, valueType: SirType): SirNominalType(
 }
 
 class SirExistentialType(
-    // TODO: Protocols. For now, only `any Any` is supported
+    protocols: List<SirProtocol>,
 ) : SirType {
     override val attributes: List<SirAttribute> = emptyList()
+    
+    val protocols: List<SirProtocol> = protocols.sortedBy { it.swiftFqName }
+
+    constructor(vararg protocols: SirProtocol) : this(protocols.toList())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other != null && this::class != other::class) return false
-        return true
+        if (other == null || other !is SirExistentialType) return false
+        return protocols == other.protocols
     }
 
     override fun hashCode(): Int {

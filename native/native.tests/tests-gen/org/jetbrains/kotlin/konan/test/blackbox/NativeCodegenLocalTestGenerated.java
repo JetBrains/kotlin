@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
+@ClassicPipeline()
 @UseExtTestCaseGroupProvider()
 public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTest {
   @Test
@@ -36,6 +38,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/associatedObjects")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class AssociatedObjects {
     @Test
@@ -71,6 +74,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/bridges")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Bridges {
     @Test
@@ -94,6 +98,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/cinterop")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Cinterop {
     @Test
@@ -272,6 +277,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/cinterop/basics")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class Basics {
       @Test
@@ -421,6 +427,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/cinterop/exceptions")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class Exceptions {
       @Test
@@ -438,6 +445,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/cinterop/objc")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class Objc {
       @Test
@@ -533,6 +541,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/cinterop/packages")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class Packages {
       @Test
@@ -580,6 +589,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/cinterop/threadStates")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class ThreadStates {
       @Test
@@ -652,6 +662,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/classes")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Classes {
     @Test
@@ -681,6 +692,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/contracts")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Contracts {
     @Test
@@ -698,6 +710,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/controlflow")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Controlflow {
     @Test
@@ -715,6 +728,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/coroutines")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Coroutines {
     @Test
@@ -732,6 +746,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/enum")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Enum {
     @Test
@@ -755,6 +770,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/escapeAnalysis")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class EscapeAnalysis {
     @Test
@@ -772,6 +788,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @TestMetadata("stackAllocated.kt")
     public void testStackAllocated() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocated.kt");
+    }
+
+    @Test
+    @TestMetadata("stackAllocatedArray.kt")
+    public void testStackAllocatedArray() {
+      runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocatedArray.kt");
     }
 
     @Test
@@ -796,6 +818,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/exceptions")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Exceptions {
     @Test
@@ -867,6 +890,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/fileCheck")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class FileCheck {
     @Test
@@ -1141,6 +1165,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/fileCheck/cinterop")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class Cinterop {
       @Test
@@ -1164,6 +1189,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/fileCheck/kt53261")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class Kt53261 {
       @Test
@@ -1235,6 +1261,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/fileCheck/stringConcatenationTypeNarrowing")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class StringConcatenationTypeNarrowing {
       @Test
@@ -1283,6 +1310,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/funInterface")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class FunInterface {
     @Test
@@ -1300,6 +1328,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/initializers")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Initializers {
     @Test
@@ -1388,6 +1417,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/initializers/files")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class Files {
       @Test
@@ -1416,6 +1446,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       @Nested
       @TestMetadata("native/native.tests/testData/codegen/initializers/files/eagerInitialization")
       @TestDataPath("$PROJECT_ROOT")
+      @ClassicPipeline()
       @UseExtTestCaseGroupProvider()
       public class EagerInitialization {
         @Test
@@ -1450,6 +1481,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         @Nested
         @TestMetadata("native/native.tests/testData/codegen/initializers/files/eagerInitialization/multiModule")
         @TestDataPath("$PROJECT_ROOT")
+        @ClassicPipeline()
         @UseExtTestCaseGroupProvider()
         public class MultiModule {
           @Test
@@ -1488,6 +1520,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/inline")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Inline {
     @Test
@@ -1505,6 +1538,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/inlineClass")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class InlineClass {
     @Test
@@ -1528,6 +1562,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/interfaceCallsNCasts")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class InterfaceCallsNCasts {
     @Test
@@ -1545,6 +1580,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/interop")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Interop {
     @Test
@@ -1568,6 +1604,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/intrinsics")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Intrinsics {
     @Test
@@ -1615,6 +1652,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/kclass")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Kclass {
     @Test
@@ -1644,6 +1682,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/ktype")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Ktype {
     @Test
@@ -1661,6 +1700,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/link")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Link {
     @Test
@@ -1714,6 +1754,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/literals")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Literals {
     @Test
@@ -1737,6 +1778,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/lower")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Lower {
     @Test
@@ -1772,6 +1814,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/mangling")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Mangling {
     @Test
@@ -1795,6 +1838,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/object")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Object {
     @Test
@@ -1812,6 +1856,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/objectDeclaration")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class ObjectDeclaration {
     @Test
@@ -1865,6 +1910,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/reflection")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Reflection {
     @Test
@@ -1875,6 +1921,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class CollectReferenceFieldValues {
       @Test
@@ -1928,6 +1975,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/reflection/objc")
     @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
     @UseExtTestCaseGroupProvider()
     public class Objc {
       @Test
@@ -1958,6 +2006,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/serialization")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Serialization {
     @Test
@@ -1993,6 +2042,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/variables")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Variables {
     @Test
@@ -2028,6 +2078,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
   @Nested
   @TestMetadata("native/native.tests/testData/codegen/vector")
   @TestDataPath("$PROJECT_ROOT")
+  @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Vector {
     @Test

@@ -1,0 +1,23 @@
+FILE: memberUsageFromContextScope.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public final fun funMember(): R|kotlin/Unit| {
+        }
+
+    }
+    context(a: R|A|, b: R|Base|)
+    public final fun usageFromOnlyContextScope(): R|kotlin/Unit| {
+        R|<local>/a|.<Unresolved name: funMember>#()
+        R|<local>/b|.R|/Base.funMember|()
+        R|/Base.Base|().R|/Base.funMember|()
+    }

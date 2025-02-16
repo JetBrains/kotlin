@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 class A(val x: String) {
     open inner class AB(val y: String) {
         fun bar() = x + y

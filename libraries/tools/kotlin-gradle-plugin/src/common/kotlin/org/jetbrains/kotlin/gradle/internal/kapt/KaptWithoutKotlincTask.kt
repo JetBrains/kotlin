@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -13,7 +12,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -28,9 +26,9 @@ import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.rootOrSelf
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
+import org.jetbrains.kotlin.gradle.utils.getJdkClassesRoots
 import org.jetbrains.kotlin.gradle.utils.listPropertyWithConvention
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.PathUtil
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.Serializable
@@ -109,7 +107,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         if (addJdkClassesToClasspath.get()) {
             compileClasspath.addAll(
                 0,
-                PathUtil.getJdkClassesRoots(defaultKotlinJavaToolchain.get().buildJvm.get().javaHome)
+                getJdkClassesRoots(defaultKotlinJavaToolchain.get().buildJvm.get().javaHome.toPath(), isJre = false)
             )
         }
 
@@ -289,9 +287,13 @@ private class KaptExecution @Inject constructor(
 
         private fun ClassLoader.kaptClass(simpleName: String): Class<*> =
             try {
-                Class.forName("org.jetbrains.kotlin.kapt3.base.$simpleName", true, this)
+                Class.forName("org.jetbrains.kotlin.kapt.base.$simpleName", true, this)
             } catch (_: ClassNotFoundException) { // in case we have an old plugin version on the classpath
-                Class.forName("org.jetbrains.kotlin.base.kapt3.$simpleName", true, this)
+                try {
+                    Class.forName("org.jetbrains.kotlin.kapt3.base.$simpleName", true, this)
+                } catch (_: ClassNotFoundException) {
+                    Class.forName("org.jetbrains.kotlin.base.kapt3.$simpleName", true, this)
+                }
             }
 
         private var classLoadersCache: ClassLoadersCache? = null

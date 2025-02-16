@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.headerklib;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/header-klibs/compilation")
 @TestDataPath("$PROJECT_ROOT")
+@ClassicPipeline()
 public class NativeHeaderKlibCompilationTestGenerated extends AbstractNativeHeaderKlibCompilationTest {
   @Test
   public void testAllFilesPresentInCompilation() {

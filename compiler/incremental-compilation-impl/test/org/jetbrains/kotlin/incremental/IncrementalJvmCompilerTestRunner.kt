@@ -15,26 +15,22 @@ import java.io.File
 class IncrementalJvmCompilerTestRunner(
     workingDir: File,
     val testReporter: TestBuildReporter,
-    usePreciseJavaTracking: Boolean,
     buildHistoryFile: File,
     outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
-    override val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
+    kotlinSourceFilesExtensions: Set<String>,
     classpathChanges: ClasspathChanges,
-    withAbiSnapshot: Boolean = false,
+    icFeatures: IncrementalCompilationFeatures,
     val testLookupTracker: TestLookupTracker
 ) : IncrementalJvmCompilerRunner(
     workingDir,
     testReporter,
-    usePreciseJavaTracking,
     buildHistoryFile,
     outputDirs,
     modulesApiHistory,
-    kotlinSourceFilesExtensions,
     classpathChanges,
-    icFeatures = IncrementalCompilationFeatures(
-        withAbiSnapshot = withAbiSnapshot
-    ),
+    kotlinSourceFilesExtensions,
+    icFeatures,
 ) {
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments): IncrementalJvmCachesManager =
         object : IncrementalJvmCachesManager(

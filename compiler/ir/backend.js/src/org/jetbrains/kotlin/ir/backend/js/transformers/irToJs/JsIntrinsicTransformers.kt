@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
@@ -181,7 +183,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsBoxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = icUtils.getInlinedClass(call.typeArguments[0]!!)!!
+                val inlineClass = call.typeArguments[0]?.let { icUtils.getRuntimeClassFor(it) }
+                    ?: compilationException("Unexpected type argument in box intrinsic", call)
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
 
                 JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
@@ -207,9 +210,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsBind) { call, context: JsGenerationContext ->
-                val receiver = call.getValueArgument(0)!!
+                val receiver = call.arguments[0]!!
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val jsBindTarget = when (val target = call.getValueArgument(1)!!) {
+                val jsBindTarget = when (val target = call.arguments[1]!!) {
                     is IrFunctionReference -> {
                         val superClass = call.superQualifierSymbol!!
                         val functionName = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
@@ -227,9 +230,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsContexfulRef) { call, context: JsGenerationContext ->
-                val receiver = call.getValueArgument(0)!!
+                val receiver = call.arguments[0]!!
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val target = call.getValueArgument(1) as IrRawFunctionReference
+                val target = call.arguments[1] as IrRawFunctionReference
                 val jsTarget = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
 
                 JsNameRef(jsTarget, jsReceiver)
@@ -241,7 +244,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.createSharedBox) { call, context: JsGenerationContext ->
                 val arg = translateCallArguments(call, context).single()
-                JsObjectLiteral(listOf(JsPropertyInitializer(JsNameRef(Namer.SHARED_BOX_V), arg)))
+                JsObjectLiteral(listOf(JsPropertyInitializer(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
             }
 
             add(intrinsics.readSharedBox) { call, context: JsGenerationContext ->
@@ -263,7 +266,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
                 val jsInvokeFunName = context.getNameForMemberFunction(invokeFun)
 
-                val jsExtensionReceiver = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!!
+                val jsExtensionReceiver = call.arguments[0]?.accept(IrElementToJsExpressionTransformer(), context)!!
                 val args = translateCallArguments(call, context)
 
                 JsInvocation(JsNameRef(jsInvokeFunName, jsExtensionReceiver), args)

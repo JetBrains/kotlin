@@ -41,10 +41,14 @@ fun fail() : String {
 // test.kt:10 box
 
 // EXPECTATIONS WASM
-// test.kt:5 $box (4, 4)
-// test.kt:13 $box (11, 11, 4, 11, 11, 4)
-// test.kt:6 $box
-// test.kt:17 $fail (11, 11, 11, 11, 4, 11, 11, 11, 11, 4)
-// test.kt:8 $box (4, 4)
-// test.kt:9 $box
-// test.kt:10 $box
+// test.kt:5 $box (4)
+// test.kt:13 $box (11, 4)
+// test.kt:6 $box (12)
+// test.kt:17 $fail (11, 4)
+// test.kt:5 $box (4)
+// test.kt:8 $box (4)
+// test.kt:17 $fail (11, 4)
+// test.kt:9 $box (16)
+// test.kt:13 $box (11, 4)
+// test.kt:8 $box (4)
+// test.kt:10 $box (1)

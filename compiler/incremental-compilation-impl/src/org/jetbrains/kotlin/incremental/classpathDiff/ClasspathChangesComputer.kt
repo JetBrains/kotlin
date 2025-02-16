@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasspath
 import org.jetbrains.kotlin.incremental.classpathDiff.ImpactedSymbolsComputer.computeImpactedSymbols
+import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
+import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.loadFromFile
 import org.jetbrains.kotlin.name.ClassId
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import java.util.*
 
 /** Computes changes between two [ClasspathSnapshot]s .*/
-object ClasspathChangesComputer {
+internal object ClasspathChangesComputer {
 
     /**
      * Computes changes between the current and previous classpath, plus unchanged elements that are impacted by the changes.
@@ -34,36 +35,20 @@ object ClasspathChangesComputer {
      * classpath must not contain duplicate classes.
      */
     fun computeClasspathChanges(
-        classpathSnapshotFiles: ClasspathSnapshotFiles,
         lookupStorage: LookupStorage,
-        storeCurrentClasspathSnapshotForReuse: (currentClasspathSnapshot: List<AccessibleClassSnapshot>, shrunkCurrentClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>) -> Unit,
+        lazyClasspathSnapshot: LazyClasspathSnapshot,
         reporter: ClasspathSnapshotBuildReporter
     ): ProgramSymbolSet {
-        val currentClasspathSnapshot = reporter.measure(GradleBuildTime.LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
-            val classpathSnapshot =
-                CachedClasspathSnapshotSerializer.load(classpathSnapshotFiles.currentClasspathEntrySnapshotFiles, reporter)
-            reporter.measure(GradleBuildTime.REMOVE_DUPLICATE_CLASSES) {
-                classpathSnapshot.removeDuplicateAndInaccessibleClasses()
-            }
-        }
-        val shrunkCurrentClasspathAgainstPreviousLookups = reporter.measure(GradleBuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
-            shrinkClasspath(
-                currentClasspathSnapshot, lookupStorage,
-                ClasspathSnapshotShrinker.MetricsReporter(
-                    reporter,
-                    GradleBuildTime.GET_LOOKUP_SYMBOLS, GradleBuildTime.FIND_REFERENCED_CLASSES, GradleBuildTime.FIND_TRANSITIVELY_REFERENCED_CLASSES
-                )
-            )
-        }
+        val currentClasspathSnapshot = lazyClasspathSnapshot.getCurrentClasspathSnapshot(LazySnapshotLoadingMetrics.OnClasspathDiffComputation)
+        val shrunkCurrentClasspathAgainstPreviousLookups = lazyClasspathSnapshot
+            .getComputedShrunkClasspathAgainstPreviousLookups(lookupStorage, LazySnapshotLoadingMetrics.OnClasspathDiffComputation)
         reporter.debug {
             "Shrunk current classpath snapshot for diffing," +
                     " retained ${shrunkCurrentClasspathAgainstPreviousLookups.size} / ${currentClasspathSnapshot.size} classes"
         }
-        storeCurrentClasspathSnapshotForReuse(currentClasspathSnapshot, shrunkCurrentClasspathAgainstPreviousLookups)
 
-        val shrunkPreviousClasspathSnapshot = reporter.measure(GradleBuildTime.LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT) {
-            ListExternalizer(AccessibleClassSnapshotExternalizer).loadFromFile(classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile)
-        }
+        val shrunkPreviousClasspathSnapshot = lazyClasspathSnapshot
+            .getSavedShrunkClasspathAgainstPreviousLookups(LazySnapshotLoadingMetrics.OnClasspathDiffComputation)
         reporter.debug {
             "Loaded shrunk previous classpath snapshot for diffing, found ${shrunkPreviousClasspathSnapshot.size} classes"
         }

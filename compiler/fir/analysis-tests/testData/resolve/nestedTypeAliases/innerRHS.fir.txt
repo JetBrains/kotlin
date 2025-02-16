@@ -1,0 +1,36 @@
+FILE: innerRHS.kt
+    public open class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final typealias NestedTA = R|Outer.Inner|
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/Outer|.R|/Outer.Inner.Inner|()
+        }
+
+    }
+    public final typealias OuterTA = R|{Outer.NestedTA=} Outer.Inner|
+    public final class OuterSuccessor : R|Outer| {
+        public constructor(): R|OuterSuccessor| {
+            super<R|Outer|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            this@R|/OuterSuccessor|.R|/Outer.Inner.Inner|()
+        }
+
+    }
+    public final fun bar(): R|kotlin/Unit| {
+        R|/Outer.Outer|().<Unresolved name: NestedTA>#()
+        R|/OuterSuccessor.OuterSuccessor|().<Unresolved name: NestedTA>#()
+        R|/Outer.Outer|().R|/Outer.Inner.Inner|()
+    }

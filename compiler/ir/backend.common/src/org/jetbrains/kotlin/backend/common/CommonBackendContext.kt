@@ -73,7 +73,7 @@ interface InlineClassesUtils {
      * for some reason it can be called for classes which are not inline, e.g. `kotlin.Double`.
      */
     fun getInlineClassUnderlyingType(irClass: IrClass): IrType =
-        irClass.declarations.firstIsInstanceOrNull<IrConstructor>()?.takeIf { it.isPrimary }?.valueParameters?.get(0)?.type
+        irClass.declarations.firstIsInstanceOrNull<IrConstructor>()?.takeIf { it.isPrimary }?.parameters[0]?.type
             ?: error("Class has no primary constructor: ${irClass.fqNameWhenAvailable}")
 }
 

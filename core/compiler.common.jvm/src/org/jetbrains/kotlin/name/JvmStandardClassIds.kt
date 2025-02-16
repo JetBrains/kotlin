@@ -78,6 +78,61 @@ object JvmStandardClassIds {
     @JvmField
     val TRANSIENT_ANNOTATION_CLASS_ID = ClassId.topLevel(TRANSIENT_ANNOTATION_FQ_NAME)
 
+    @JvmField
+    val ATOMIC_BOOLEAN_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicBoolean")
+
+    @JvmField
+    val ATOMIC_BOOLEAN_CLASS_ID = ClassId.topLevel(ATOMIC_BOOLEAN_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_INTEGER_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicInteger")
+
+    @JvmField
+    val ATOMIC_INTEGER_CLASS_ID = ClassId.topLevel(ATOMIC_INTEGER_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_LONG_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicLong")
+
+    @JvmField
+    val ATOMIC_LONG_CLASS_ID = ClassId.topLevel(ATOMIC_LONG_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_REFERENCE_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicReference")
+
+    @JvmField
+    val ATOMIC_REFERENCE_CLASS_ID = ClassId.topLevel(ATOMIC_REFERENCE_FQ_NAME)
+
+    @JvmField
+    val atomicByPrimitive = mapOf(
+        StandardClassIds.Boolean to ATOMIC_BOOLEAN_CLASS_ID,
+        StandardClassIds.Int to ATOMIC_INTEGER_CLASS_ID,
+        StandardClassIds.Long to ATOMIC_LONG_CLASS_ID,
+    )
+
+    @JvmField
+    val ATOMIC_REFERENCE_ARRAY_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicReferenceArray")
+
+    @JvmField
+    val ATOMIC_REFERENCE_ARRAY_CLASS_ID = ClassId.topLevel(ATOMIC_REFERENCE_ARRAY_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_INTEGER_ARRAY_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicIntegerArray")
+
+    @JvmField
+    val ATOMIC_INTEGER_ARRAY_CLASS_ID = ClassId.topLevel(ATOMIC_INTEGER_ARRAY_FQ_NAME)
+
+    @JvmField
+    val ATOMIC_LONG_ARRAY_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicLongArray")
+
+    @JvmField
+    val ATOMIC_LONG_ARRAY_CLASS_ID = ClassId.topLevel(ATOMIC_LONG_ARRAY_FQ_NAME)
+
+    @JvmField
+    val atomicArrayByPrimitive = mapOf(
+        StandardClassIds.Int to ATOMIC_INTEGER_ARRAY_CLASS_ID,
+        StandardClassIds.Long to ATOMIC_LONG_ARRAY_CLASS_ID,
+    )
+
     const val MULTIFILE_PART_NAME_DELIMITER = "__"
 
     object Annotations {
@@ -110,6 +165,26 @@ object JvmStandardClassIds {
 
     object Callables {
         val JavaClass = CallableId(BASE_JVM_PACKAGE, Name.identifier("javaClass"))
+
+        val atomicReferenceCompareAndSet = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("compareAndSet"))
+        val atomicReferenceWeakCompareAndSet = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("weakCompareAndSet"))
+        val atomicReferenceWeakCompareAndSetAcquire = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("weakCompareAndSetAcquire"))
+        val atomicReferenceWeakCompareAndSetRelease = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("weakCompareAndSetRelease"))
+        val atomicReferenceWeakCompareAndSetPlain = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("weakCompareAndSetPlain"))
+        val atomicReferenceWeakCompareAndSetVolatile = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("weakCompareAndSetVolatile"))
+        val atomicReferenceCompareAndExchange = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("compareAndExchange"))
+        val atomicReferenceCompareAndExchangeAcquire = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("compareAndExchangeAcquire"))
+        val atomicReferenceCompareAndExchangeRelease = CallableId(ATOMIC_REFERENCE_CLASS_ID, Name.identifier("compareAndExchangeRelease"))
+
+        val atomicReferenceArrayCompareAndSet = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("compareAndSet"))
+        val atomicReferenceArrayWeakCompareAndSet = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("weakCompareAndSet"))
+        val atomicReferenceArrayWeakCompareAndSetAcquire = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("weakCompareAndSetAcquire"))
+        val atomicReferenceArrayWeakCompareAndSetRelease = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("weakCompareAndSetRelease"))
+        val atomicReferenceArrayWeakCompareAndSetPlain = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("weakCompareAndSetPlain"))
+        val atomicReferenceArrayWeakCompareAndSetVolatile = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("weakCompareAndSetVolatile"))
+        val atomicReferenceArrayCompareAndExchange = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("compareAndExchange"))
+        val atomicReferenceArrayCompareAndExchangeAcquire = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("compareAndExchangeAcquire"))
+        val atomicReferenceArrayCompareAndExchangeRelease = CallableId(ATOMIC_REFERENCE_ARRAY_CLASS_ID, Name.identifier("compareAndExchangeRelease"))
     }
 }
 

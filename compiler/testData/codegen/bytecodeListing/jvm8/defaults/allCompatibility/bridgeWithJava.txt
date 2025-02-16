@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class Test2$DefaultImpls {
+    // source: 'kotlin.kt'
+    public deprecated static @java.lang.Deprecated method forDefaultImpls(@org.jetbrains.annotations.NotNull p0: Test2): void
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Test2, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public final inner class Test2$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Test2 {
+    // source: 'kotlin.kt'
+    public synthetic static method access$forDefaultImpls$jd(p0: Test2): void
+    public synthetic static method access$test$jd(p0: Test2, p1: java.lang.String): java.lang.String
+    public method forDefaultImpls(): void
+    public @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic bridge method test(p0: java.lang.Object): java.lang.Object
+    public final inner class Test2$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class TestClass {
+    // source: 'kotlin.kt'
+    public method <init>(): void
+    public method forDefaultImpls(): void
+    public @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic bridge method test(p0: java.lang.Object): java.lang.Object
+}

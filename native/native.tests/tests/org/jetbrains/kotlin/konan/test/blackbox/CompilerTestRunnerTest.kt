@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCo
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertContains
@@ -281,11 +281,11 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
 }
 
 @Suppress("JUnitTestCaseWithNoTests")
+@ClassicPipeline()
 @TestDataPath("\$PROJECT_ROOT")
 class ClassicCompilerTestRunnerTest : CompilerTestRunnerTestBase()
 
 @Suppress("JUnitTestCaseWithNoTests")
 @FirPipeline
-@Tag("frontend-fir")
 @TestDataPath("\$PROJECT_ROOT")
 class FirCompilerTestRunnerTest : CompilerTestRunnerTestBase()

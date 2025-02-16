@@ -70,6 +70,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extend
   }
 
   @Test
+  @TestMetadata("classWithContextReceiverFromLibrary.kt")
+  public void testClassWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/classWithContextReceiverFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/enumEntry.kt");
@@ -79,6 +85,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extend
   @TestMetadata("fileWalkDirectionEnum.kt")
   public void testFileWalkDirectionEnum() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/fileWalkDirectionEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithContextParameterFromLibrary.kt")
+  public void testFunctionWithContextParameterFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/functionWithContextParameterFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithContextReceiverFromLibrary.kt")
+  public void testFunctionWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/functionWithContextReceiverFromLibrary.kt");
   }
 
   @Test
@@ -97,6 +115,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extend
   @TestMetadata("kclass.kt")
   public void testKclass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/kclass.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryNestedClass.kt")
+  public void testLibraryNestedClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/libraryNestedClass.kt");
   }
 
   @Test
@@ -127,6 +151,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extend
   @TestMetadata("nothing.kt")
   public void testNothing() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nothing.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithContextParameterFromLibrary.kt")
+  public void testPropertyWithContextParameterFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyWithContextParameterFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithContextReceiverFromLibrary.kt")
+  public void testPropertyWithContextReceiverFromLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/propertyWithContextReceiverFromLibrary.kt");
   }
 
   @Test

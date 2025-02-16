@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -60,7 +60,6 @@ public interface KaAnnotationUseSiteTargetRenderer {
             printer: PrettyPrinter,
         ) {
             val print = when (owner) {
-                is KaReceiverParameterSymbol -> true
                 !is KaCallableSymbol -> return
                 is KaAnonymousFunctionSymbol -> true
                 is KaConstructorSymbol -> true
@@ -74,6 +73,7 @@ public interface KaAnnotationUseSiteTargetRenderer {
                     val containingSymbol = with(analysisSession) { owner.containingDeclaration }
                     containingSymbol !is KaPropertySetterSymbol || annotation.useSiteTarget != AnnotationUseSiteTarget.SETTER_PARAMETER
                 }
+                is KaParameterSymbol -> true
                 is KaJavaFieldSymbol -> true
                 is KaLocalVariableSymbol -> true
                 is KaPropertySymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY

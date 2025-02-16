@@ -16,7 +16,7 @@ fun box(): String {
     if (user.age != 10) return "Fail: problem with `age` property"
 
     val json = js("JSON.stringify(user)")
-    if (json != "{\"age\":10,\"name\":\"Name\"}") return "Fail: got the next json: $json"
+    if (json != "{\"name\":\"Name\",\"age\":10}") return "Fail: got the next json: $json"
 
     val withEmail = User(name = "Name", age = 10, email = "test@test")
 
@@ -25,7 +25,7 @@ fun box(): String {
     if (withEmail.email != "test@test") return "Fail: problem with emailed `email` property"
 
     val jsonWithEmail = js("JSON.stringify(withEmail)")
-    if (jsonWithEmail != "{\"email\":\"test@test\",\"age\":10,\"name\":\"Name\"}") return "Fail: got the next emailed json: $jsonWithEmail"
+    if (jsonWithEmail != "{\"name\":\"Name\",\"age\":10,\"email\":\"test@test\"}") return "Fail: got the next emailed json: $jsonWithEmail"
 
     return "OK"
 }

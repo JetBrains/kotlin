@@ -4,7 +4,7 @@ KaUsualClassType:
   classId: kotlin/Any
   nullability: NON_NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: Any
       symbol: KaNamedClassSymbol(kotlin/Any)
       typeArguments: []

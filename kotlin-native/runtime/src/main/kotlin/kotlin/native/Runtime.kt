@@ -3,10 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalAtomicApi::class)
 
 package kotlin.native
 
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.*
 import kotlin.native.internal.escapeAnalysis.Escapes

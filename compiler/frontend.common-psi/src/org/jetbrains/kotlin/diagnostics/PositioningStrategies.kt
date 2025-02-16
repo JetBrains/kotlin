@@ -68,6 +68,18 @@ object PositioningStrategies {
         }
     }
 
+    val SYNTAX_ERROR: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            return DEFAULT.mark(element)
+        }
+
+        @DiagnosticLossRisk
+        override fun isValid(element: PsiElement): Boolean {
+            if (element is PsiErrorElement) return true
+            return DEFAULT.isValid(element)
+        }
+    }
+
     @JvmField
     val SUPERTYPES_LIST: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {

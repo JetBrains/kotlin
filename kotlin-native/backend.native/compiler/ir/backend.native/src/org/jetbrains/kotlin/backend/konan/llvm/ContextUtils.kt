@@ -51,8 +51,12 @@ internal sealed class Lifetime(val slotType: SlotType) {
         }
     }
 
+    class STACK_ARRAY(val size: Int) : Lifetime(SlotType.STACK) {
+        override fun toString() = "STACK_ARRAY[$size]"
+    }
+
     // If reference is frame-local (only obtained from some call and never leaves).
-    object LOCAL : Lifetime(SlotType.ARENA) {
+    object LOCAL : Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "LOCAL"
         }
@@ -192,7 +196,7 @@ internal interface ContextUtils : RuntimeAware {
                         this.computeSymbolName()
                     } else {
                         val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
-                                ?: context.irLinker.getExternalDeclarationFileName(this)
+                                ?: context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this)
                         this.computePrivateSymbolName(containerName)
                     }
                     val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils, LLVMLinkage.LLVMExternalLinkage)
@@ -217,7 +221,7 @@ internal interface ContextUtils : RuntimeAware {
                 val typeInfoSymbolName = if (KonanBinaryInterface.isExported(this)) {
                     this.computeTypeInfoSymbolName()
                 } else {
-                    this.computePrivateTypeInfoSymbolName(context.irLinker.getExternalDeclarationFileName(this))
+                    this.computePrivateTypeInfoSymbolName(context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this))
                 }
 
                 constPointer(importGlobal(typeInfoSymbolName, runtime.typeInfoType, this))
@@ -271,6 +275,10 @@ internal class ConstInt1(llvm: CodegenLlvmHelpers, val value: Boolean) : ConstVa
 }
 
 internal class ConstInt8(llvm: CodegenLlvmHelpers, val value: Byte) : ConstValue {
+    override val llvm = LLVMConstInt(llvm.int8Type, value.toLong(), 1)!!
+}
+
+internal class ConstUInt8(llvm: CodegenLlvmHelpers, val value: UByte) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int8Type, value.toLong(), 1)!!
 }
 
@@ -524,13 +532,24 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
-    fun struct(vararg elements: ConstValue) = Struct(structType(elements.map { it.llvmType }), *elements)
+    fun struct(vararg elements: ConstValue, packed: Boolean = false) =
+            Struct(structType(elements.map { it.llvmType }, packed), *elements)
 
-    private fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
-            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, 0)!!
+    private fun structType(types: List<LLVMTypeRef>, packed: Boolean = false): LLVMTypeRef =
+            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, if (packed) 1 else 0)!!
+
+    fun structTypeWithFlexibleArray(original: LLVMTypeRef, newSize: Int): LLVMTypeRef {
+        assert(LLVMGetTypeKind(original) == LLVMTypeKind.LLVMStructTypeKind) { "not a struct" }
+        val types = (0 until LLVMCountStructElementTypes(original)).mapTo(mutableListOf()) { LLVMStructGetTypeAtIndex(original, it) }
+        val array = types.last()
+        assert(LLVMGetTypeKind(array) == LLVMTypeKind.LLVMArrayTypeKind && LLVMGetArrayLength(array) == 0) { "not a flexible array" }
+        types[types.lastIndex] = LLVMArrayType(LLVMGetElementType(array), newSize)
+        return LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, LLVMIsPackedStruct(original))!!
+    }
 
     fun constInt1(value: Boolean) = ConstInt1(this, value)
     fun constInt8(value: Byte) = ConstInt8(this, value)
+    fun constUInt8(value: UByte) = ConstUInt8(this, value)
     fun constInt16(value: Short) = ConstInt16(this, value)
     fun constChar16(value: Char) = ConstChar16(this, value)
     fun constInt32(value: Int) = ConstInt32(this, value)
@@ -630,4 +649,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 }
 
-class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LlvmCallable)
+class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val runtimeInitializer: RuntimeInitializer)
+
+/**
+ * Function of the [CodeGeneratorVisitor.kInitFuncType] type (aka `Initializer` in `Runtime.h`).
+ */
+@JvmInline
+value class RuntimeInitializer(val llvmCallable: LlvmCallable)

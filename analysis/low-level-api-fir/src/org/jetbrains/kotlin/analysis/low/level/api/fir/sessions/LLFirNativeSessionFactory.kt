@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
@@ -34,7 +34,7 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
 
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOfNotNull(
                         context.firProvider.symbolProvider,
@@ -55,7 +55,7 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
             register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOf(
                         context.firProvider.symbolProvider,
@@ -78,7 +78,7 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
 
             register(
                 FirSymbolProvider::class,
-                LLFirModuleWithDependenciesSymbolProvider(
+                LLModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOfNotNull(
                         firProvider.symbolProvider,

@@ -1,0 +1,4 @@
+KtNameReferenceExpression(245,259): 'propertyMember'
+  KtSimpleNameReference:
+    (in Base) context(a@A)
+    val propertyMember: kotlin.String

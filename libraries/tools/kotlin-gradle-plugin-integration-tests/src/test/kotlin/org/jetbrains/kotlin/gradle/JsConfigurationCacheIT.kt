@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
@@ -168,6 +169,29 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
                 assertTasksExecuted(":nodeDevelopmentRun")
                 assertConfigurationCacheReused()
             }
+        }
+    }
+
+    @DisplayName("Test with custom build logic plugin")
+    @GradleTest
+    fun testWithCustomBuildLogic(gradleVersion: GradleVersion) {
+        project("kotlin-js-build-logic", gradleVersion) {
+
+            settingsGradleKts
+                .replaceText(
+                    "pluginManagement {",
+                    """
+
+                    pluginManagement {
+                        includeBuild("build-logic")
+
+                    """.trimIndent()
+                )
+
+            assertSimpleConfigurationCacheScenarioWorks(
+                ":rootPackageJson",
+                buildOptions = defaultBuildOptions,
+            )
         }
     }
 }

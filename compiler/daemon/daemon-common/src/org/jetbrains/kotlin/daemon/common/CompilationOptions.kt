@@ -63,7 +63,8 @@ class IncrementalCompilationOptions(
     reportSeverity: Int,
     /** @See [CompilationResultCategory]] */
     requestedCompilationResults: Array<Int>,
-    val usePreciseJavaTracking: Boolean,
+    /** Use new JvmBaseFirRunner */
+    val useJvmFirRunner: Boolean,
     /**
      * Directories that should be cleared when IC decides to rebuild
      */
@@ -96,7 +97,6 @@ class IncrementalCompilationOptions(
                 "classpathChanges=${classpathChanges::class.simpleName}, " +
                 "workingDir=$workingDir, " +
                 "multiModuleICSettings=$multiModuleICSettings, " +
-                "usePreciseJavaTracking=$usePreciseJavaTracking, " +
                 "icFeatures=$icFeatures, " +
                 "outputFiles=$outputFiles" +
                 ")"

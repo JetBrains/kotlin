@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -159,6 +160,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
 
                 else -> return
             }
+            ALL -> TODO() // How @all: interoperates with ValueClasses feature?
         }
         reportIfMfvc(context, reporter, annotation, hint, type)
     }
@@ -207,14 +209,17 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 context
             )
         } else if (useSiteTarget != null) {
-            reporter.reportOn(
-                annotation.source,
-                FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
-                targetDescription,
-                useSiteTarget.renderName,
-                applicableTargets,
-                context
-            )
+            if (useSiteTarget != ALL) {
+                // We report specific diagnostics for ALL use-site target
+                reporter.reportOn(
+                    annotation.source,
+                    FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
+                    targetDescription,
+                    useSiteTarget.renderName,
+                    applicableTargets,
+                    context
+                )
+            }
         } else {
             reporter.reportOn(
                 annotation.source,
@@ -301,6 +306,54 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     applicableTargets,
                     context
                 )
+            }
+            ALL -> {
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+                    when (annotated) {
+                        is FirValueParameter -> {
+                            if (annotated.correspondingProperty == null) {
+                                reporter.reportOn(
+                                    annotation.source,
+                                    FirErrors.INAPPLICABLE_ALL_TARGET,
+                                    context
+                                )
+                            }
+                        }
+                        is FirProperty -> {
+                            if (annotated.isLocal) {
+                                reporter.reportOn(
+                                    annotation.source,
+                                    FirErrors.INAPPLICABLE_ALL_TARGET,
+                                    context
+                                )
+                            } else if (KotlinTarget.PROPERTY !in applicableTargets) {
+                                reporter.reportOn(
+                                    annotation.source,
+                                    FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
+                                    "property",
+                                    target.renderName,
+                                    applicableTargets,
+                                    context
+                                )
+                            }
+                        }
+                        else -> {
+                            reporter.reportOn(
+                                annotation.source,
+                                FirErrors.INAPPLICABLE_ALL_TARGET,
+                                context
+                            )
+                        }
+                    }
+                } else if (annotated !is FirValueParameter || annotated.correspondingProperty == null) {
+                    // Condition is needed to avoid error duplication
+                    reporter.reportOn(
+                        annotation.source,
+                        FirErrors.UNSUPPORTED_FEATURE,
+                        LanguageFeature.AnnotationAllUseSiteTarget to context.languageVersionSettings,
+                        context
+                    )
+                }
             }
         }
     }
@@ -433,9 +486,12 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                         annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, PROPERTY.renderName, context
                     )
                 } else if (correspondingProperty.backingField != null) {
-                    reporter.reportOn(
-                        annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, FIELD.renderName, context
-                    )
+                    val containingClass = context.containingDeclarations.getOrNull(context.containingDeclarations.size - 2) as? FirClass
+                    if (containingClass?.classKind != ClassKind.ANNOTATION_CLASS) {
+                        reporter.reportOn(
+                            annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, FIELD.renderName, context
+                        )
+                    }
                 }
             }
         }

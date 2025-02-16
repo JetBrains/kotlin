@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -101,9 +101,6 @@ fun FirResult.convertToIrAndActualizeForJvm(
     diagnosticsReporter: BaseDiagnosticsCollector,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
 ): Fir2IrActualizedResult {
-    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyIRTranslationStarted()
-
     val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(configuration, diagnosticsReporter)
 
     return convertToIrAndActualize(
@@ -127,7 +124,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
                 )
             }
         }
-    ).also { performanceManager?.notifyIRTranslationFinished() }
+    )
 }
 
 @LegacyK2CliPipeline
@@ -146,7 +143,11 @@ fun generateCodeFromIr(
         builderFactory,
         targetId = input.targetId,
         moduleName = input.targetId.name,
-        onIndependentPartCompilationEnd = createOutputFilesFlushingCallbackIfPossible(input.configuration),
+        onIndependentPartCompilationEnd =
+            if (input.configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)) {
+                // Do not output class file stubs to disk in the kapt mode.
+                {}
+            } else createOutputFilesFlushingCallbackIfPossible(input.configuration),
         jvmBackendClassResolver = FirJvmBackendClassResolver(input.components),
         diagnosticReporter = environment.diagnosticsReporter,
     )
@@ -154,9 +155,9 @@ fun generateCodeFromIr(
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
     performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
-    JvmIrCodegenFactory(input.configuration).generateModuleInFrontendIRMode(
-        generationState,
+    val backendInput = JvmIrCodegenFactory.BackendInput(
         input.irModuleFragment,
+        input.pluginContext.irBuiltIns,
         input.symbolTable,
         input.components.irProviders,
         input.extensions,
@@ -164,15 +165,18 @@ fun generateCodeFromIr(
             input.components,
             input.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
         ),
-        input.pluginContext
-    ) {
-        performanceManager?.notifyIRLoweringFinished()
-        performanceManager?.notifyIRGenerationStarted()
-    }
-    CodegenFactory.doCheckCancelled(generationState)
-    generationState.factory.done()
-    performanceManager?.notifyIRGenerationFinished()
+        input.pluginContext,
+    )
 
+    val codegenFactory = JvmIrCodegenFactory(input.configuration)
+    val codegenInput = codegenFactory.invokeLowerings(generationState, backendInput)
+
+    performanceManager?.notifyIRLoweringFinished()
+    performanceManager?.notifyIRGenerationStarted()
+
+    codegenFactory.invokeCodegen(codegenInput)
+
+    performanceManager?.notifyIRGenerationFinished()
     performanceManager?.notifyGenerationFinished()
 
     return ModuleCompilerOutput(generationState, builderFactory)
@@ -295,12 +299,14 @@ fun createProjectEnvironment(
         }
     }
 
+    val perfManager = configuration.perfManager
+
     project.registerService(
         JavaModuleResolver::class.java,
         CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
     )
 
-    val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
+    val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
     project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
     project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
@@ -316,7 +322,8 @@ fun createProjectEnvironment(
             rootsIndex,
             it.packagePartProviders,
             SingleJavaFileRootsIndex(singleJavaFileRoots),
-            configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
+            configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
+            perfManager,
         )
     }
 }

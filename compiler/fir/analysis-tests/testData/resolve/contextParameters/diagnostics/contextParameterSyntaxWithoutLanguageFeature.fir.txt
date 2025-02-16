@@ -2,3 +2,5 @@ FILE: contextParameterSyntaxWithoutLanguageFeature.kt
     context(s: R|kotlin/String|)
     public final fun foo(): R|kotlin/Unit| {
     }
+    public final fun bar(x: R|kotlin/collections/List<@ContextFunctionTypeParams kotlin/Function1<kotlin/String, kotlin/Unit>>|): R|kotlin/Unit| {
+    }

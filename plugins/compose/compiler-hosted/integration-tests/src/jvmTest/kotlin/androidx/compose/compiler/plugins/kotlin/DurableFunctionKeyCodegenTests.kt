@@ -24,7 +24,7 @@ import org.junit.Test
 class DurableFunctionKeyCodegenTests(useFir: Boolean) : AbstractCodegenSignatureTest(useFir) {
 
     override fun CompilerConfiguration.updateConfiguration() {
-        put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_CLASSES_KEY, true)
+        put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY, true)
     }
 
     @Test
@@ -33,8 +33,6 @@ class DurableFunctionKeyCodegenTests(useFir: Boolean) : AbstractCodegenSignature
             @Composable fun Example() {}
         """
     ) { bytecode ->
-        bytecode.assertKeyMetaClass(1)
-        bytecode.assertFunctionKeyMetaClassAnnotationCount(1)
         bytecode.assertFunctionKeyMetaAnnotationCount(1)
     }
 
@@ -45,8 +43,6 @@ class DurableFunctionKeyCodegenTests(useFir: Boolean) : AbstractCodegenSignature
             @Composable fun Example2() {}
         """
     ) { bytecode ->
-        bytecode.assertKeyMetaClass(1)
-        bytecode.assertFunctionKeyMetaClassAnnotationCount(1)
         bytecode.assertFunctionKeyMetaAnnotationCount(2)
     }
 
@@ -59,25 +55,7 @@ class DurableFunctionKeyCodegenTests(useFir: Boolean) : AbstractCodegenSignature
             }
         """
     ) { bytecode ->
-        bytecode.assertKeyMetaClass(1)
-        bytecode.assertFunctionKeyMetaClassAnnotationCount(1)
         bytecode.assertFunctionKeyMetaAnnotationCount(3)
-    }
-
-    private fun String.assertKeyMetaClass(expected: Int) {
-        assertEquals(expected,
-                     lines().count {
-                         it.contains("final class") && it.endsWith("%KeyMeta {")
-                     }
-        )
-    }
-
-    private fun String.assertFunctionKeyMetaClassAnnotationCount(expected: Int) {
-        assertEquals(expected,
-                     lines().count {
-                         it.contains("@Landroidx/compose/runtime/internal/FunctionKeyMetaClass;")
-                     }
-        )
     }
 
     private fun String.assertFunctionKeyMetaAnnotationCount(expected: Int) {

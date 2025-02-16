@@ -6,12 +6,13 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import java.util.zip.ZipFile
+import kotlin.io.path.appendText
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.name
@@ -23,32 +24,32 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
+    @BrokenOnMacosTest
     fun testLibAndApp(gradleVersion: GradleVersion) {
         doTestLibAndApp(
             libProjectPath = "new-mpp-lib-and-app/sample-lib",
             appProjectPath = "new-mpp-lib-and-app/sample-app",
             gradleVersion = gradleVersion,
-            hmppSupport = true,
         )
     }
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testLibAndAppWithoutHMPP(gradleVersion: GradleVersion) = doTestLibAndApp(
         libProjectPath = "new-mpp-lib-and-app/sample-lib",
         appProjectPath = "new-mpp-lib-and-app/sample-app",
         gradleVersion = gradleVersion,
-        hmppSupport = false,
     )
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testLibAndAppWithGradleKotlinDsl(gradleVersion: GradleVersion) {
         doTestLibAndApp(
             libProjectPath = "new-mpp-lib-and-app/sample-lib-gradle-kotlin-dsl",
             appProjectPath = "new-mpp-lib-and-app/sample-app-gradle-kotlin-dsl",
             gradleVersion = gradleVersion,
-            hmppSupport = true,
         )
     }
 
@@ -56,15 +57,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
         libProjectPath: String,
         appProjectPath: String,
         gradleVersion: GradleVersion,
-        hmppSupport: Boolean,
     ) {
         val additionalBuildArgs = buildList {
-            if (hmppSupport) {
-                add("-P" + "kotlin.mpp.hierarchicalStructureSupport")
-                add("-P" + "kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError,KotlinTargetAlreadyDeclaredError")
-            } else {
-                add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
-            }
+            add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
         }
 
         val localRepoDir = defaultLocalRepo(gradleVersion)
@@ -80,6 +75,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
+            )
             build(
                 buildArguments = buildList {
                     add("clean")
@@ -138,6 +136,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
+            gradleProperties.appendText(
+                "\nkotlin.jvm.target.validation.mode=warning\n"
+            )
             val buildGradle = listOf(buildGradle, buildGradleKts).first { it.exists() }
             buildGradle.replaceText(
                 "kotlinCompileLogLevel = LogLevel.LIFECYCLE",

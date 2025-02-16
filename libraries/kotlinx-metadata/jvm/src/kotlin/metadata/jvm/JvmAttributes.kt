@@ -26,15 +26,12 @@ public var KmProperty.isMovedFromInterfaceCompanion: Boolean by BooleanFlagDeleg
 )
 
 /**
- * Applicable to an interface compiled with -Xjvm-default=all or all-compatibility.
+ * Applicable to an interface compiled with `-jvm-default=enable` or `-jvm-default=no-compatibility`.
  * True if interface has method bodies in it, false if Kotlin compiler moved all interface method bodies into a nested `DefaultImpls`
  * class.
  *
- * Method bodies are also present in interface method if it has `@JvmDefault` annotation (now deprecated).
- *
  * Check [documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#compatibility-modes-for-default-methods) for more details.
  *
- * @see JvmDefault
  * @see JvmDefaultWithCompatibility
  * @see JvmDefaultWithoutCompatibility
  */
@@ -44,12 +41,12 @@ public var KmClass.hasMethodBodiesInInterface: Boolean by BooleanFlagDelegate(
 )
 
 /**
- * Indicates if an interface was compiled with -Xjvm-default=all-compatibility.
+ * Indicates if an interface was compiled with `-jvm-default=enable`.
  *
  * In compatibility mode Kotlin/JVM compiler generates method bodies directly in the interface,
  * and also generates bridges in a nested `DefaultImpls` class.
  * Bridges are intended for use by already existing clients,
- * such as compiled Java code or Kotlin code compiled without all/all-compatibility setting.
+ * such as compiled Java code or Kotlin code compiled in the `-jvm-default=disable` mode.
  *
  * Also, can be a result of compiling interface with `@JvmDefaultWithCompatibility` annotation.
  * Check [documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#compatibility-modes-for-default-methods) for more details.

@@ -7,10 +7,12 @@ KtOperationReferenceExpression(69,72): '!in'
           receiverType = null
           returnType = kotlin.Int
           symbol = v: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = Foo()
           isSafeNavigation = false
@@ -26,7 +28,9 @@ KtOperationReferenceExpression(69,72): '!in'
               receiverType = null
               returnType = kotlin.Int
               symbol = v: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /Foo.contains
       typeArgumentsMapping = {}

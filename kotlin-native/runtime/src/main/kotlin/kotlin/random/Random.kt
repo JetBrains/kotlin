@@ -3,11 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalAtomicApi::class)
 
 package kotlin.random
 
-import kotlin.concurrent.AtomicLong
+import kotlin.concurrent.atomics.AtomicLong
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.system.getTimeNanos
 
 /**

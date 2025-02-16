@@ -7,14 +7,49 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FrameworkBinariesTests {
+
+    @Test
+    fun `assemble task dependencies includes framework tasks`() {
+        val linkageTasksInAssemble = buildProjectWithMPP {
+            kotlin {
+                listOf(
+                    // Thin linkage task
+                    iosArm64(),
+                    // These will also implicitly create a universal framework task
+                    iosSimulatorArm64(),
+                    iosX64(),
+                ).forEach { it.binaries.framework() }
+            }
+        }.evaluate().tasks.getByName("assemble")
+            .taskDependencies.getDependencies(null)
+            .filter { it is KotlinNativeLink || it is FatFrameworkTask }
+            .map { it.name }
+
+        assertEquals(
+            setOf(
+                "linkDebugFrameworkIosArm64",
+                "linkDebugFrameworkIosFat",
+                "linkDebugFrameworkIosSimulatorArm64",
+                "linkDebugFrameworkIosX64",
+                "linkReleaseFrameworkIosArm64",
+                "linkReleaseFrameworkIosFat",
+                "linkReleaseFrameworkIosSimulatorArm64",
+                "linkReleaseFrameworkIosX64",
+            ),
+            linkageTasksInAssemble.toSet()
+        )
+    }
 
     @Test
     fun `framework output file - reflects link task output file`() {
@@ -89,10 +124,10 @@ class FrameworkBinariesTests {
         val buildTypes = listOf("release", "debug")
         testCases.forEach { testCase ->
             buildTypes.forEach { buildType ->
-                val mainFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}Framework${testCase.target.capitalize()}")
+                val mainFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalizeAsciiOnly()}Framework${testCase.target.capitalizeAsciiOnly()}")
                 mainFrameworkConfiguration.validateOutgoing(
                     OutgoingArtifactCheck(
-                        buildType = buildType.toUpperCase(),
+                        buildType = buildType.uppercase(),
                         frameworkTargets = setOf(testCase.targetAttribute),
                         frameworkName = "main.framework",
                         disambiguation1Attribute = testCase.expectedDisambiguation1Attribute,
@@ -133,10 +168,10 @@ class FrameworkBinariesTests {
 
         val buildTypes = listOf("release", "debug")
         buildTypes.forEach { buildType ->
-            val universalFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}FrameworkIosFat")
+            val universalFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalizeAsciiOnly()}FrameworkIosFat")
             universalFrameworkConfiguration.validateOutgoing(
                 OutgoingArtifactCheck(
-                    buildType = buildType.toUpperCase(),
+                    buildType = buildType.uppercase(),
                     frameworkTargets = setOf("ios_x64", "ios_arm64"),
                     frameworkName = "main.framework",
                     disambiguation1Attribute = null,

@@ -7,9 +7,11 @@ KtAnnotationEntry(25,52): '@Suppress("UNCHECKED_CAST")'
           receiverType = null
           returnType = kotlin.String
           symbol = vararg names: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -22,8 +24,10 @@ KtAnnotationEntry(25,52): '@Suppress("UNCHECKED_CAST")'
               receiverType = null
               returnType = kotlin.String
               symbol = vararg names: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

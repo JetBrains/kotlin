@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 // WITH_REFLECT
 // FILE: 1.kt
 package test

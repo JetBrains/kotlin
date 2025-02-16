@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: enable
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 
@@ -56,15 +56,4 @@ private class Outer {
 
 fun local() {
     object : Foo<String> {}
-}
-
-fun interface F : Foo<String> {
-    fun invoke(o: String): String
-}
-
-fun test(): String {
-    if (F { o -> o + "K" }.invoke("O") != "OK") return "Fail"
-
-    val lambda: (String) -> String = { o -> o + "K" }
-    return F(lambda).invoke("O")
 }

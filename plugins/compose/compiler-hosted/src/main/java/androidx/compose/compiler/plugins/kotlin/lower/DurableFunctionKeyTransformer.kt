@@ -22,32 +22,21 @@ import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices.DURABLE_FUNCTION_KEY
-import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices.DURABLE_FUNCTION_KEYS
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import org.jetbrains.kotlin.name.Name
 
 class KeyInfo(
     val name: String,
@@ -70,7 +59,7 @@ class KeyInfo(
  * This transform runs early on in the lowering pipeline, and stores the keys for every function in
  * the file in the BindingTrace for each function. These keys are then retrieved later on by other
  * lowerings and marked as used. After all lowerings have completed, one can use the
- * [realizeKeyMetaAnnotations] method to generate additional empty classes that include annotations
+ * [realizeKeyMetaAnnotations] method to generate additional annotations
  * with the keys of each function and their source locations for tooling to utilize.
  *
  * For example, this transform will run on code like the following:
@@ -83,6 +72,7 @@ class KeyInfo(
  *
  * And produce code like the following:
  *
+ *     @FunctionKeyMeta(key=123, startOffset=24, endOffset=56)
  *     @Composable fun Example() {
  *       startGroup(123)
  *       Box {
@@ -92,11 +82,6 @@ class KeyInfo(
  *       }
  *       endGroup()
  *     }
- *
- *     @FunctionKeyMetaClass
- *     @FunctionKeyMeta(key=123, startOffset=24, endOffset=56)
- *     @FunctionKeyMeta(key=345, startOffset=32, endOffset=43)
- *     class Example-KeyMeta
  *
  * @see DurableKeyVisitor
  */
@@ -112,51 +97,24 @@ class DurableFunctionKeyTransformer(
     metrics,
     featureFlags,
 ) {
-    fun removeKeyMetaClasses(moduleFragment: IrModuleFragment) {
-        moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitFile(declaration: IrFile): IrFile {
-                includeFileNameInExceptionTrace(declaration) {
-                    val children = declaration.declarations.toList().filterIsInstance<IrClass>()
-                    for (child in children) {
-                        val keys = context.irTrace[DURABLE_FUNCTION_KEYS, child]
-                        if (keys != null) {
-                            declaration.declarations.remove(child)
-                        }
-                    }
-                    return declaration
-                }
-            }
-        })
-    }
 
     fun realizeKeyMetaAnnotations(moduleFragment: IrModuleFragment) {
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitFile(declaration: IrFile): IrFile {
-                includeFileNameInExceptionTrace(declaration) {
-                    val children = declaration.declarations.toList().filterIsInstance<IrClass>()
-                    for (child in children) {
-                        val keys = context.irTrace[DURABLE_FUNCTION_KEYS, child]
-                        if (keys != null) {
-                            val usedKeys = keys.filter { it.used }
-                            if (usedKeys.isNotEmpty()) {
-                                child.annotations += usedKeys.map { irKeyMetaAnnotation(it) }
-                            } else {
-                                declaration.declarations.remove(child)
-                            }
-                        }
-                    }
-                    return declaration
+            override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                run transform@{
+                    val functionKey = context.irTrace[DURABLE_FUNCTION_KEY, declaration] ?: return@transform
+                    if (!declaration.hasComposableAnnotation()) return@transform
+                    if (declaration.hasAnnotation(ComposeClassIds.FunctionKeyMeta)) return@transform
+                    declaration.annotations += irKeyMetaAnnotation(functionKey)
                 }
+
+                return super.visitSimpleFunction(declaration)
             }
         })
     }
 
-    var currentKeys = mutableListOf<KeyInfo>()
-
     private val keyMetaAnnotation =
         getTopLevelClassOrNull(ComposeClassIds.FunctionKeyMeta)
-    private val metaClassAnnotation =
-        getTopLevelClassOrNull(ComposeClassIds.FunctionKeyMetaClass)
 
     private fun irKeyMetaAnnotation(
         key: KeyInfo,
@@ -173,72 +131,6 @@ class DurableFunctionKeyTransformer(
         putValueArgument(2, irConst(key.endOffset))
     }
 
-    private fun irMetaClassAnnotation(
-        file: String,
-    ): IrConstructorCall = IrConstructorCallImpl(
-        UNDEFINED_OFFSET,
-        UNDEFINED_OFFSET,
-        metaClassAnnotation!!.defaultType,
-        metaClassAnnotation.constructors.single(),
-        typeArgumentsCount = 0,
-        constructorTypeArgumentsCount = 0,
-    ).apply {
-        putValueArgument(0, irConst(file))
-    }
-
-    private fun buildClass(filePath: String): IrClass {
-        val fileName = filePath.split('/').last()
-        return context.irFactory.buildClass {
-            kind = ClassKind.CLASS
-            visibility = DescriptorVisibilities.INTERNAL
-            val shortName = PackagePartClassUtils.getFilePartShortName(fileName)
-            // the name of the LiveLiterals class is per-file, so we use the same name that
-            // the kotlin file class lowering produces, prefixed with `LiveLiterals$`.
-            name = Name.identifier("$shortName\$KeyMeta")
-        }.also {
-            it.createThisReceiverParameter()
-
-            // store the full file path to the file that this class is associated with in an
-            // annotation on the class. This will be used by tooling to associate the keys
-            // inside of this class with actual PSI in the editor.
-            if (metaClassAnnotation != null) {
-                it.annotations += irMetaClassAnnotation(filePath)
-            }
-            it.addConstructor {
-                isPrimary = true
-            }.also { ctor ->
-                ctor.body = DeclarationIrBuilder(context, it.symbol).irBlockBody {
-                    +irDelegatingConstructorCall(
-                        context
-                            .irBuiltIns
-                            .anyClass
-                            .owner
-                            .primaryConstructor!!
-                    )
-                }
-            }
-        }
-    }
-
-    override fun visitFile(declaration: IrFile): IrFile {
-        includeFileNameInExceptionTrace(declaration) {
-            val stringKeys = mutableSetOf<String>()
-            return root(stringKeys) {
-                val metaClass = buildClass(declaration.fileEntry.name)
-                val prev = currentKeys
-                val next = mutableListOf<KeyInfo>()
-                try {
-                    currentKeys = next
-                    super.visitFile(declaration)
-                } finally {
-                    context.irTrace.record(DURABLE_FUNCTION_KEYS, metaClass, next)
-                    declaration.addChild(metaClass)
-                    currentKeys = prev
-                }
-            }
-        }
-    }
-
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
         val signature = declaration.signatureString()
         val (fullName, success) = buildKey("fun-$signature")
@@ -248,7 +140,6 @@ class DurableFunctionKeyTransformer(
             declaration.endOffset,
             !success,
         )
-        currentKeys.add(info)
         context.irTrace.record(DURABLE_FUNCTION_KEY, declaration, info)
         return super.visitSimpleFunction(declaration)
     }

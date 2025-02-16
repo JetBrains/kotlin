@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.gradle.experimental
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -314,6 +316,8 @@ class TryNextIT : KGPBaseTest() {
     @DisplayName("Native: check that only expected tasks use languageVersion")
     @NativeGradlePluginTests
     @GradleTest
+    @TestMetadata("native-configuration-cache")
+    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun smokeTestForNativeTasks(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
             enableTryNext()

@@ -12,12 +12,13 @@ interface NumberOperations {
 
 }
 
-fun Matrix.plus($context_receiver_0: NumberOperations, other: Matrix): Matrix {
+context($context_receiver_0: NumberOperations)
+fun Matrix.plus(other: Matrix): Matrix {
   return TODO()
 }
 
 fun NumberOperations.plusMatrix(m1: Matrix, m2: Matrix) {
-  m1.plus($context_receiver_0 = <this>, other = m2) /*~> Unit */
-  m2.plus($context_receiver_0 = <this>, other = m1) /*~> Unit */
+  plus(/* $context_receiver_0 = <this>, <this> = m1, */ other = m2) /*~> Unit */
+  plus(/* $context_receiver_0 = <this>, <this> = m2, */ other = m1) /*~> Unit */
 }
 

@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.backend.jvm.metadata.DescriptorMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.JvmOptionalAnnotationSerializerExtension
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.config.JvmAbiStability
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -46,10 +44,6 @@ interface JvmBackendExtension {
         }
 
         override fun createBuiltinsSerializer() = error("JVM backend builtins serialization is not supported in K1")
-
-        fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
-            JvmAnnotationNames.METADATA_JVM_IR_FLAG or
-                    (if (abiStability != JvmAbiStability.UNSTABLE) JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG else 0)
     }
 
     fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer

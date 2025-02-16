@@ -57,23 +57,23 @@ android {
     flavorDimensions "box"
 
     productFlavors {
-        common_ir0 {
+        common0 {
             dimension "box"
         }
 
-        common_ir1 {
+        common1 {
             dimension "box"
         }
 
-        common_ir2 {
+        common2 {
             dimension "box"
         }
 
-        common_ir3 {
+        common3 {
             dimension "box"
         }
 
-        reflect_ir0 {
+        reflect0 {
             dimension "box"
         }
     }

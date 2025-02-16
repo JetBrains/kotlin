@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -54,11 +54,15 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                     addLast(it)
                 }
         }
-        val declarationVisitor = object : IrElementVisitorVoid {
+        val declarationVisitor = object : IrVisitorVoid() {
             override fun visitFunction(declaration: IrFunction) {
                 visitType(declaration.returnType)
                 declaration.typeParameters.forEach(::visitTypeParameter)
-                declaration.valueParameters.forEach(::visitValueParameter)
+                declaration.parameters.forEach {
+                    if (it.kind != IrParameterKind.DispatchReceiver) {
+                        visitValueParameter(it)
+                    }
+                }
             }
 
             override fun visitClass(declaration: IrClass) {
@@ -130,14 +134,14 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 isStatic = function.isStaticMethodOfClass,
                 isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
                 isAbstract = parentClass != null && !parentClass.isInterface && function.modality == Modality.ABSTRACT,
-                parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters)
+                parameters = function.parameters.filter { it.kind != IrParameterKind.DispatchReceiver }
                     .memoryOptimizedMap { exportParameter(it) },
             )
         }
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration {
         assert(constructor.isPrimary) { "Can't export not-primary constructor" }
-        val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) + constructor.valueParameters
+        val allValueParameters = constructor.parameters.filter { it.kind != IrParameterKind.DispatchReceiver }
         return ExportedConstructor(
             parameters = allValueParameters.memoryOptimizedMap { exportParameter(it) },
             visibility = constructor.visibility.toExportedVisibility()

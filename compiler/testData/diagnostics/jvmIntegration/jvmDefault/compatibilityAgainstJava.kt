@@ -1,6 +1,8 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: library
-// KOTLINC_ARGS: -Xjvm-default=disable
+// KOTLINC_ARGS: -jvm-default=disable
+// JVM_DEFAULT_MODE: disable
 // FILE: test/JavaInterface.java
 package test;
 
@@ -18,7 +20,8 @@ public interface JavaInterface2<T> extends JavaInterface<T> {
 }
 
 // MODULE: main(library)
-// KOTLINC_ARGS: -Xjvm-default=all-compatibility
+// KOTLINC_ARGS: -jvm-default=enable
+// JVM_DEFAULT_MODE: enable
 // FILE: source.kt
 import test.*
 

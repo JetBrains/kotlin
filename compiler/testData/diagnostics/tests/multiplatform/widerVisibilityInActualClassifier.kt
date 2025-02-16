@@ -1,9 +1,8 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-59355
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 internal expect open class Some {
     protected class ProtectedNested
     internal class InternalNested

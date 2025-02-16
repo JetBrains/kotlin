@@ -46,7 +46,8 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger
 	public abstract fun info (Ljava/lang/String;)V
 	public abstract fun isDebugEnabled ()Z
 	public abstract fun lifecycle (Ljava/lang/String;)V
-	public abstract fun warn (Ljava/lang/String;)V
+	public fun warn (Ljava/lang/String;)V
+	public abstract fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ProjectId {

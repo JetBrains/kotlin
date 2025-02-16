@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: Unexpected IR element found during code generation. Either code generation for it is not implemented, or it should have been lowered: ERROR_CALL 'Unresolved reference: <Unresolved name: getValue>#' type=IrErrorType([Error type: Unresolved type for getValue])
+// DISABLE_NEXT_PHASE_SUGGESTION: Unexpected IR element found during code generation. Either code generation for it is not implemented, or it should have been lowered: ERROR_CALL 'Unresolved reference: <Unresolved name: getValue>#' type=IrErrorType([Error type: Unresolved type for getValue])
 // MODULE: lib
 
 // FILE: test/Foo.java

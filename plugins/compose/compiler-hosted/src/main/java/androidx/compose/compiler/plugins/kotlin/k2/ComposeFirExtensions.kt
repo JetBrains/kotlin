@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
@@ -111,5 +108,8 @@ class ComposeFirCheckersExtension(session: FirSession) : FirAdditionalCheckersEx
 
         override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> =
             setOf(ComposableCallableReferenceChecker)
+
+        override val annotationCheckers: Set<FirAnnotationChecker> =
+            setOf(ComposableAnnotationChecker())
     }
 }

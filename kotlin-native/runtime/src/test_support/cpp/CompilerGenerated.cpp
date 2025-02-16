@@ -8,6 +8,7 @@
 #include "Logging.hpp"
 #include "ObjectTestSupport.hpp"
 #include "Types.h"
+#include "KString.h"
 
 using kotlin::test_support::internal::createCleanerWorkerMock;
 using kotlin::test_support::internal::shutdownCleanerWorkerMock;
@@ -52,8 +53,6 @@ kotlin::test_support::TypeInfoHolder theRegularWeakReferenceImplTypeInfoHolder{
         kotlin::test_support::TypeInfoHolder::ObjectBuilder<kotlin::test_support::RegularWeakReferenceImplPayload>().addFlag(
                 TF_HAS_FINALIZER)};
 
-ArrayHeader theEmptyStringImpl = {theStringTypeInfoHolder.typeInfo(), /* element count */ 0};
-
 template <class T>
 struct KBox {
     ObjHeader header;
@@ -80,6 +79,8 @@ extern const int32_t Kotlin_gcMarkSingleThreaded = 1;
 extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
 #endif
 extern const int32_t Kotlin_fixedBlockPageSize = 128;
+extern const int32_t Kotlin_pagedAllocator = 1;
+extern const int32_t Kotlin_latin1Strings = 1;
 
 extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
 extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();
@@ -104,11 +105,14 @@ extern const TypeInfo* theRegularWeakReferenceImplTypeInfo = theRegularWeakRefer
 
 extern const ArrayHeader theEmptyArray = {theArrayTypeInfoHolder.typeInfo(), /* element count */ 0};
 
+static StringHeader theEmptyStringImpl =
+    {theStringTypeInfoHolder.typeInfo(), /* element count */ StringHeader::extraLength(0) / sizeof(KChar), /* hashcode */ 0, /* flags */ 0};
+
 OBJ_GETTER0(TheEmptyString) {
-    RETURN_OBJ(theEmptyStringImpl.obj());
+    RETURN_OBJ(reinterpret_cast<KRef>(&theEmptyStringImpl));
 }
 
-RUNTIME_NORETURN OBJ_GETTER(makeRegularWeakReferenceImpl, void*) {
+RUNTIME_NORETURN OBJ_GETTER(makeRegularWeakReferenceImpl, KRef, void*) {
     throw std::runtime_error("Not implemented for tests");
 }
 
@@ -131,7 +135,11 @@ void checkRangeIndexes(KInt from, KInt to, KInt size) {
     }
 }
 
-RUNTIME_NORETURN OBJ_GETTER(WorkerLaunchpad, KRef) {
+kotlin::mm::RawExternalRCRef* RUNTIME_NORETURN WorkerExecuteLaunchpad(KRef (*job)(KRef, ObjHeader**), kotlin::mm::RawExternalRCRef* jobArgument) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+void RUNTIME_NORETURN WorkerExecuteAfterLaunchpad(kotlin::mm::RawExternalRCRef* job) {
     throw std::runtime_error("Not implemented for tests");
 }
 
@@ -191,7 +199,7 @@ void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message) {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void RUNTIME_NORETURN ThrowFileFailedToInitializeException() {
+void RUNTIME_NORETURN ThrowFileFailedToInitializeException(KRef reason) {
     throw std::runtime_error("Not implemented for tests");
 }
 

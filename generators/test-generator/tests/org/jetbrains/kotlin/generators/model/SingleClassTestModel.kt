@@ -53,7 +53,8 @@ class SingleClassTestModel(
 
     private fun getTestMethodsFromFile(file: File): Collection<MethodModel> {
         return methodModelLocator(
-            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored, tags = emptyList()
+            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored, tags = emptyList(),
+            nativeTestInNonNativeTestInfra = false
         )
     }
 

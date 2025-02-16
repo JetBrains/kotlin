@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // FILE: KotlinFile.kt
 open class KotlinClass1 : JavaClass1() {
     public fun getSomethingKotlin1(): Int = 1

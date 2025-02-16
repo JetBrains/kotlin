@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// LANGUAGE: +ContextParameters
 
 import kotlin.wasm.WasmImport
 
@@ -49,3 +49,7 @@ external fun fooDeafultAndVararg(
 <!WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE!>a: Int = definedExternally<!>,
 <!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE, WASM_IMPORT_EXPORT_VARARG_PARAMETER!>vararg b: Int<!>
 ): Unit
+
+<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+@WasmImport("a", "b")
+external fun fooWithContext(): Unit

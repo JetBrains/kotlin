@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -73,6 +73,7 @@ public class KaDeclarationRenderer private constructor(
     public val propertyRenderer: KaKotlinPropertySymbolRenderer,
     public val kotlinPropertyRenderer: KaKotlinPropertySymbolRenderer,
     public val syntheticJavaPropertyRenderer: KaSyntheticJavaPropertySymbolRenderer,
+    public val contextParameterRenderer: KaContextParameterSymbolRenderer,
     public val valueParameterRenderer: KaValueParameterSymbolRenderer,
     public val samConstructorRenderer: KaSamConstructorSymbolRenderer,
     public val propertyAccessorsRenderer: KaPropertyAccessorsRenderer,
@@ -103,6 +104,7 @@ public class KaDeclarationRenderer private constructor(
             is KaBackingFieldSymbol -> backingFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaEnumEntrySymbol -> enumEntryRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaValueParameterSymbol -> valueParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaContextParameterSymbol -> contextParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaReceiverParameterSymbol -> {}
             is KaJavaFieldSymbol -> javaFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaLocalVariableSymbol -> localVariableRenderer.renderSymbol(analysisSession, symbol, this, printer)
@@ -162,6 +164,7 @@ public class KaDeclarationRenderer private constructor(
             this.propertyRenderer = renderer.propertyRenderer
             this.kotlinPropertyRenderer = renderer.kotlinPropertyRenderer
             this.syntheticJavaPropertyRenderer = renderer.syntheticJavaPropertyRenderer
+            this.contextParameterRenderer = renderer.contextParameterRenderer
             this.valueParameterRenderer = renderer.valueParameterRenderer
             this.samConstructorRenderer = renderer.samConstructorRenderer
             this.propertyAccessorsRenderer = renderer.propertyAccessorsRenderer
@@ -233,6 +236,7 @@ public class KaDeclarationRenderer private constructor(
         public lateinit var propertyRenderer: KaKotlinPropertySymbolRenderer
         public lateinit var kotlinPropertyRenderer: KaKotlinPropertySymbolRenderer
         public lateinit var syntheticJavaPropertyRenderer: KaSyntheticJavaPropertySymbolRenderer
+        public lateinit var contextParameterRenderer: KaContextParameterSymbolRenderer
         public lateinit var valueParameterRenderer: KaValueParameterSymbolRenderer
         public lateinit var samConstructorRenderer: KaSamConstructorSymbolRenderer
         public lateinit var propertyAccessorsRenderer: KaPropertyAccessorsRenderer
@@ -291,6 +295,7 @@ public class KaDeclarationRenderer private constructor(
             propertyRenderer,
             kotlinPropertyRenderer,
             syntheticJavaPropertyRenderer,
+            contextParameterRenderer,
             valueParameterRenderer,
             samConstructorRenderer,
             propertyAccessorsRenderer,

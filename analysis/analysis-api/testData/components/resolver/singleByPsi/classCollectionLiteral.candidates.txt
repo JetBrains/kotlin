@@ -7,16 +7,19 @@ KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKCl
           receiverType = null
           returnType = kotlin.reflect.KClass<*>
           symbol = vararg elements: T
+          contextParameters = []
           callableId = null),
         one.AnnoWithKClass::class -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.reflect.KClass<*>
           symbol = vararg elements: T
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -29,8 +32,10 @@ KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKCl
               receiverType = null
               returnType = kotlin.reflect.KClass<*>
               symbol = vararg elements: T
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (kotlin.reflect.KClass<*>)

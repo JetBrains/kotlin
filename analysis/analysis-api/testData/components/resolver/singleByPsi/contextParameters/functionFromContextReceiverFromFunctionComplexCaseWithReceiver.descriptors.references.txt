@@ -1,0 +1,7 @@
+KtNameReferenceExpression(127,128): 'c'
+  KtSimpleNameReference:
+    (in Container) context(Receiver@Receiver)
+    fun c()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

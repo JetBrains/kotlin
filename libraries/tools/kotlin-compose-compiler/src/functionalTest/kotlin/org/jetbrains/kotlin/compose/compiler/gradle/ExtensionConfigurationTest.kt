@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.compose.compiler.gradle
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.junit.jupiter.api.Test
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithJvm
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.composeOptions
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -22,8 +22,7 @@ class ExtensionConfigurationTest {
         testComposeOptions { options, _ ->
             assertEquals(
                 listOf(
-                    "generateFunctionKeyMetaClasses" to "false",
-                    "sourceInformation" to "false",
+                    "sourceInformation" to "true",
                     "traceMarkersEnabled" to "true",
                 ),
                 options
@@ -107,13 +106,13 @@ class ExtensionConfigurationTest {
     }
 
     @Test
-    fun notIncludeSourceInformationOnAgpPresence() {
+    fun doesIncludeSourceInformationOnAgpPresence() {
         testComposeOptions(
             { _, project ->
                 project.simulateAgpPresence()
             }
         ) { options, _ ->
-            assertFalse(
+            assertTrue(
                 options.map { it.first }.contains("sourceInformation")
             )
         }

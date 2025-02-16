@@ -1,15 +1,15 @@
 MODULE_FRAGMENT
   FILE fqName:<root> fileName:InlineTarget.kt
-    FUN name:it1 visibility:public modality:FINAL <> () returnType:kotlin.String [inline]
+    FUN name:it1 visibility:public modality:FINAL returnType:kotlin.String [inline]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun it1 (): kotlin.String [inline] declared in <root>'
           CONST String type=kotlin.String value="I am foo"
-    FUN name:it2 visibility:public modality:FINAL <> () returnType:kotlin.String
+    FUN name:it2 visibility:public modality:FINAL returnType:kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun it2 (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value="I am bar"
   FILE fqName:<root> fileName:main.kt
-    FUN name:callInlineTarget visibility:public modality:FINAL <> () returnType:kotlin.String
+    FUN name:callInlineTarget visibility:public modality:FINAL returnType:kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun callInlineTarget (): kotlin.String declared in <root>'
           CALL 'public final fun it1 (): kotlin.String [inline] declared in <root>' type=kotlin.String origin=null

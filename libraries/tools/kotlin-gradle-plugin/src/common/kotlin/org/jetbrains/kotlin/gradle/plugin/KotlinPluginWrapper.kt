@@ -71,6 +71,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.registerDefaultVariantImplementations()
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
+        BuildFinishedListenerService.registerIfAbsent(project)
 
         val buildUidService = BuildUidService.registerIfAbsent(project)
         if (project.kotlinPropertiesProvider.enableFusMetricsCollection) {
@@ -159,6 +160,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         factories.putIfAbsent(
             MavenPublicationComponentAccessor.Factory::class,
             DefaultMavenPublicationComponentAccessorFactory()
+        )
+
+        factories.putIfAbsent(
+            JavaExecTaskParametersCompatibility.Factory::class,
+            DefaultJavaExecTaskParametersCompatibility.Factory()
         )
     }
 

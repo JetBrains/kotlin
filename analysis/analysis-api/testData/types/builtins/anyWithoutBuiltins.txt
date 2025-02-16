@@ -6,10 +6,10 @@ KaClassErrorType:
   nullability: NON_NULLABLE
   presentableText: kotlin.Any
   qualifiers: [
-    qualifier:
+    KaUnresolvedClassTypeQualifier:
       name: kotlin
       typeArguments: []
-    qualifier:
+    KaUnresolvedClassTypeQualifier:
       name: Any
       typeArguments: []
   ]

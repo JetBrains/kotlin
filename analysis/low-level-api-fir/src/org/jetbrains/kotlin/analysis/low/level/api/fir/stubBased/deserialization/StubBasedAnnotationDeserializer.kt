@@ -34,6 +34,15 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class StubBasedAnnotationDeserializer(
     private val session: FirSession,
 ) {
+    companion object {
+        fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
+            val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
+                ?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
+                ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
+            return userType.classId()
+        }
+    }
+
     fun loadAnnotations(
         ktAnnotated: KtAnnotated,
     ): List<FirAnnotation> {
@@ -70,13 +79,6 @@ class StubBasedAnnotationDeserializer(
             ((ktAnnotation.stub ?: loadStubByElement(ktAnnotation)) as? KotlinAnnotationEntryStubImpl)?.valueArguments,
             ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
         )
-    }
-
-    fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
-        val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
-            ?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
-            ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
-        return userType.classId()
     }
 
     private fun deserializeAnnotation(

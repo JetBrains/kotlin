@@ -28,7 +28,8 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
-                "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl"
+                "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl",
+                "org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation",
             )
         )
     }
@@ -102,13 +103,6 @@ val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
     ":wasm:wasm.config", // for k/js task
 )
 
-val intellijRuntimeDependencies = listOf( // TODO: remove in KT-70252
-    intellijUtilRt(), // for kapt (PathUtil.getJdkClassesRoots)
-    intellijPlatformUtil(), // for kapt (JavaVersion), KotlinToolRunner (escapeStringCharacters)
-    intellijPlatformUtilBase(), // for kapt (PathUtil.getJdkClassesRoots)
-    commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil") // for kapt (PathUtil.getJdkClassesRoots)
-)
-
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
@@ -149,12 +143,6 @@ dependencies {
     commonCompileOnly(libs.android.gradle.plugin.builder) { isTransitive = false }
     commonCompileOnly(libs.android.gradle.plugin.builder.model) { isTransitive = false }
     commonCompileOnly(libs.android.tools.common) { isTransitive = false }
-    commonCompileOnly(intellijPlatformUtil()) { // TODO: remove in KT-70252
-        isTransitive = false
-    }
-    commonCompileOnly(intellijUtilRt()) { // TODO: remove in KT-70252
-        isTransitive = false
-    }
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly(libs.develocity.gradlePlugin)
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
@@ -173,14 +161,13 @@ dependencies {
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247
 
+    commonImplementation(project(":libraries:tools:abi-validation:abi-tools-api"))
+
     commonRuntimeOnly(project(":kotlin-compiler-runner")) { // TODO: consider removing in KT-70247
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
     }
     for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {
         embedded(project(compilerRuntimeDependency)) { isTransitive = false }
-    }
-    for (compilerRuntimeDependency in intellijRuntimeDependencies) {
-        embedded(compilerRuntimeDependency) { isTransitive = false }
     }
 
     embedded(project(":kotlin-gradle-build-metrics"))
@@ -355,9 +342,9 @@ tasks {
             /*
              * This excludes .kotlin_module files for compiler modules from the fat jars.
              * These files are required only at compilation time, but we include the modules only for runtime
-             * Hack for not limiting LV to 1.5 for those modules. To be removed after KT-70247
+             * Hack for not limiting LV to 1.7 for those modules. To be removed after KT-70247
              */
-            pivotVersion = KotlinMetadataPivotVersion(1, 6, 0)
+            pivotVersion = KotlinMetadataPivotVersion(1, 8, 0)
         }
         asmDeprecation {
             val exclusions = listOf(

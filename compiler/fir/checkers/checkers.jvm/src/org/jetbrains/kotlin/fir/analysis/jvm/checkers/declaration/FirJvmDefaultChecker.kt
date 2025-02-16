@@ -36,7 +36,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         if (annotationWithCompatibility != null) {
             val source = annotationWithCompatibility.source
             when {
-                jvmDefaultMode != JvmDefaultMode.ALL -> {
+                jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY -> {
                     reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION, context)
                     return
                 }

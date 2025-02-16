@@ -9,7 +9,7 @@ fun testA() {
         // should fix OTv := ScopeOwner for scope navigation
         otvValue.function()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultAA<!>
@@ -23,7 +23,7 @@ fun testB() {
         // should fix OTv := ScopeOwner for scope navigation
         if (false) return@pcla { otvValue -> otvValue.function() }
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
         return@pcla { _ ->  }
     }
     // expected: ScopeOwner
@@ -44,7 +44,7 @@ fun testC() {
         // should fix OTv := ScopeOwner for scope navigation
         sotvOwner.provide().function()
         // expected: Interloper </: ScopeOwner
-        sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("FOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & Any & TOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & Any & ScopeOwner; Interloper")!>Interloper<!>)
+        sotvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; FOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & Any & TOT (of fun <FOT, SOT : FOT, TOT : SOT> pcla) & Any & ScopeOwner")!>Interloper<!>)
     }
     // expected: kotlin.Triple<ScopeOwner, ScopeOwner, ScopeOwner>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Triple<ScopeOwner, ScopeOwner, ScopeOwner>")!>resultCA<!>
@@ -64,7 +64,7 @@ fun testD() {
         // should fix OTv := ScopeOwner for scope navigation
         { otvOwnerB -> otvOwnerB.provide().function() },
         // expected: Interloper </: ScopeOwner
-        { otvOwnerC -> otvOwnerC.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>) },
+        { otvOwnerC -> otvOwnerC.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>) },
     )
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultDA<!>

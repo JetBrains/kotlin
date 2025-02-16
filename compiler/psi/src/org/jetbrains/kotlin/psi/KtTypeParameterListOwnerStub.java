@@ -69,6 +69,7 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
 
     @Nullable
     public KtContextReceiverList getContextReceiverList() {
-        return getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+        KtModifierList modifierList = getModifierList();
+        return modifierList == null ? null : modifierList.getContextReceiverList();
     }
 }

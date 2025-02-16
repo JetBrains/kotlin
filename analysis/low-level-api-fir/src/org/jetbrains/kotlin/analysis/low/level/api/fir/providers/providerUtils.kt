@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 
-internal fun <T: Any> Optional<T>.getOrNull(): T? = orElse(null)
+internal fun <T : Any> Optional<T>.getOrNull(): T? = orElse(null)
 
 fun FirCallableSymbol<*>.jvmClassNameIfDeserialized(): JvmClassName? {
     return when (val containerSource = fir.containerSource) {

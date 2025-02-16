@@ -7,10 +7,12 @@ KtNameReferenceExpression(114,123): 'compareTo'
           receiverType = null
           returnType = MyClass
           symbol = value: MyClass
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,13 +28,15 @@ KtNameReferenceExpression(114,123): 'compareTo'
               receiverType = null
               returnType = MyClass
               symbol = value: MyClass
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
     diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun compareTo(value: MyClass): Int.>
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
@@ -41,10 +45,12 @@ KtNameReferenceExpression(114,123): 'compareTo'
           receiverType = null
           returnType = kotlin.Int
           symbol = int: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = m
@@ -60,8 +66,10 @@ KtNameReferenceExpression(114,123): 'compareTo'
               receiverType = null
               returnType = kotlin.Int
               symbol = int: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = /compareTo
       typeArgumentsMapping = {
         T -> (MyClass)

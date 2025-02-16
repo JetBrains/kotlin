@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/compilationErrorK2.kt
+-ir-output-dir
+$TEMP_DIR$
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main

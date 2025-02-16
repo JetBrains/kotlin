@@ -144,7 +144,7 @@ class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoaded
 
 abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>>(
     testServices: TestServices,
-    override val artifactKind: BinaryKind<A>
+    override val artifactKind: ArtifactKind<A>
 ) : BinaryArtifactHandler<A>(
     testServices,
     artifactKind,
@@ -166,9 +166,8 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         }
 
         val emptyModule = TestModule(
-            name = "dump-${module.name}", module.targetPlatform, module.targetBackend, FrontendKinds.FIR,
-            BackendKinds.IrBackend, module.binaryKind, files = emptyList(),
-            allDependencies = listOf(DependencyDescription(module.name, dependencyKind, DependencyRelation.RegularDependency)),
+            name = "dump-${module.name}", files = emptyList(),
+            allDependencies = listOf(DependencyDescription(module, dependencyKind, DependencyRelation.RegularDependency)),
             RegisteredDirectives.Empty, languageVersionSettings
         )
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(emptyModule)
@@ -216,7 +215,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         if (dumper.isEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
 
-        val frontendKind = testServices.defaultsProvider.defaultFrontend
+        val frontendKind = testServices.defaultsProvider.frontendKind
 
         val commonExtension = ".fir.txt"
         val (specificExtension, otherSpecificExtension) = when (frontendKind) {
@@ -225,7 +224,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
             else -> shouldNotBeCalled()
         }
 
-        val targetPlatform = testServices.defaultsProvider.defaultPlatform
+        val targetPlatform = testServices.moduleStructure.modules.last().targetPlatform(testServices)
         if (PLATFORM_DEPENDANT_METADATA in testServices.moduleStructure.allDirectives) {
             val platformExtension = specificExtension.replace(".txt", "${targetPlatform.suffix}.txt")
             val otherPlatformExtension = specificExtension.replace(".txt", "${targetPlatform.oppositeSuffix}.txt")
@@ -347,9 +346,9 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
     }
 
     private fun extractNames(module: TestModule, packageFqName: FqName): Collection<Name> {
-        testServices.dependencyProvider.getArtifactSafe(module, FrontendKinds.ClassicFrontend)
+        testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.ClassicFrontend)
             ?.let { return extractNames(it, packageFqName) }
-        testServices.dependencyProvider.getArtifactSafe(module, FrontendKinds.FIR)
+        testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.FIR)
             ?.let { return extractNames(it, packageFqName) }
         error("Frontend artifact for module $module not found")
     }

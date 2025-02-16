@@ -1,0 +1,19 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] namedPropertyContextParameter.kt
+    context([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit| {
+        }

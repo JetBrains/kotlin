@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.services.TestServices
@@ -25,15 +25,11 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 abstract class AbstractClassSubtypingTypeRelationTest : AbstractTypeRelationTest() {
     protected abstract val errorTypePolicy: KaSubtypingErrorTypePolicy
 
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        with(builder) {
-            useDirectives(ClassSubtypingTestDirectives)
-        }
-    }
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(ClassSubtypingTestDirectives)
 
     override fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
-        val type = getTypeAtMarker(mainFile, testServices, caretTag = "type1")
+        val type = getTypeAtMarker(mainFile, testServices, qualifier = "type1")
         val classId = ClassId.fromString(
             testServices.moduleStructure.allDirectives.singleValue(ClassSubtypingTestDirectives.SUPERCLASS_ID)
         )

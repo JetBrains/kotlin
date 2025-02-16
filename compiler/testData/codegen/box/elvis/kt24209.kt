@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 interface Interface
 
 operator fun Interface.invoke(): String = "OK"

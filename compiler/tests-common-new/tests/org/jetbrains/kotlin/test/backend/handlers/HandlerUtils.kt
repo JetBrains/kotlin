@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.test.frontend.fir.handlers.toMetaInfos
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
@@ -47,7 +48,9 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
     fun processModule(module: TestModule) {
         if (!processedModules.add(module)) return
         for (testFile in module.files) {
-            val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath["/${testFile.name}"] ?: continue
+            val ktDiagnostics = testFile.findByPath(testServices) {
+                ktDiagnosticReporter.diagnosticsByFilePath[it]
+            } ?: continue
             ktDiagnostics.forEach {
                 if (diagnosticsService.shouldRenderDiagnostic(module, it.factoryName, it.severity)) {
                     val metaInfos = it.toMetaInfos(module, testFile, globalMetadataInfoHandler, lightTreeEnabled, lightTreeComparingModeEnabled)
@@ -55,8 +58,7 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
                 }
             }
         }
-        for ((moduleName, _, _) in module.dependsOnDependencies) {
-            val dependantModule = testServices.dependencyProvider.getTestModule(moduleName)
+        for ((dependantModule, _, _) in module.dependsOnDependencies) {
             processModule(dependantModule)
         }
     }
@@ -119,4 +121,23 @@ private fun renderDiagnosticMessage(fileName: String, severity: Severity, messag
 
 fun Assertions.assertFileDoesntExist(file: File, directive: Directive) {
     assertFileDoesntExist(file) { "Dump file detected but no '$directive' directive specified or nothing to dump." }
+}
+
+/**
+ * Some tests pass relative file names to FirFile/IrFile, and some pass the full path.
+ * This utility is intended to cover both of these cases.
+ */
+fun <R> TestFile.findByPath(testServices: TestServices, finder: (String) -> R?): R? {
+    finder("/${this.name}")?.let { return it }
+    val realFile = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(this)
+    val normalizedPath = FileUtil.toSystemIndependentName(realFile.canonicalPath)
+    return finder(normalizedPath)
+}
+
+/**
+ * Some tests pass relative file names to FirFile/IrFile, and some pass the full path.
+ * This utility is intended to cover both of these cases.
+ */
+fun TestFile.matchPath(testServices: TestServices, matcher: (String) -> Boolean): Boolean {
+    return findByPath(testServices) { path -> matcher(path).takeIf { it } } ?: false
 }

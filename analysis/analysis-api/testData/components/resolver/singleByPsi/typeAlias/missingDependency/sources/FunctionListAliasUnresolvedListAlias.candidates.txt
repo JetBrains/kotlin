@@ -7,10 +7,12 @@ KtNameReferenceExpression(166,171): 'check'
           receiverType = null
           returnType = {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
           symbol = list: {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -26,8 +28,10 @@ KtNameReferenceExpression(166,171): 'check'
               receiverType = null
               returnType = {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
               symbol = list: {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = dependency3/MyInterface.check
       typeArgumentsMapping = {}
     isInBestCandidates = true

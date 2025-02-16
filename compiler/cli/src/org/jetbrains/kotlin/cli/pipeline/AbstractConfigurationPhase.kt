@@ -80,6 +80,10 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         val pluginConfigurations = arguments.pluginConfigurations.orEmpty().toMutableList()
         val messageCollector = configuration.messageCollector
 
+        if (!checkPluginsArguments(messageCollector, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
+            return
+        }
+
         val scriptingPluginClasspath = mutableListOf<String>()
         val scriptingPluginOptions = mutableListOf<String>()
 
@@ -112,11 +116,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         pluginClasspaths.addAll(scriptingPluginClasspath)
         pluginOptions.addAll(scriptingPluginOptions)
 
-        if (!checkPluginsArguments(messageCollector, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
-            return
-        }
-
-        PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration)
+        PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration, input.rootDisposable)
     }
 
     private fun tryLoadScriptingPluginFromCurrentClassLoader(

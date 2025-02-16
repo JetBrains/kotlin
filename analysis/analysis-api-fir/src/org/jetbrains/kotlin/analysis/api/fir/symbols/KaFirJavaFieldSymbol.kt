@@ -29,7 +29,7 @@ internal class KaFirJavaFieldSymbol(
     override val analysisSession: KaFirSession,
 ) : KaJavaFieldSymbol(), KaFirSymbol<FirFieldSymbol> {
     override val token: KaLifetimeToken get() = builder.token
-    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { findPsi() }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
@@ -47,7 +47,7 @@ internal class KaFirJavaFieldSymbol(
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
     override fun createPointer(): KaSymbolPointer<KaJavaFieldSymbol> = withValidityAssertion {
-        KaFirJavaFieldSymbolPointer(analysisSession.createOwnerPointer(this), name, firSymbol.isStatic)
+        KaFirJavaFieldSymbolPointer(analysisSession.createOwnerPointer(this), name, firSymbol.isStatic, this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

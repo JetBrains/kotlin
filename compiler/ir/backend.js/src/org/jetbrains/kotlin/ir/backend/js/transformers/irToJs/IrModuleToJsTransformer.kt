@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
-import org.jetbrains.kotlin.ir.backend.js.ic.JsPerFileCache
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
@@ -58,6 +58,13 @@ fun generateProxyIrModuleWith(
     importedWithEffectInModuleWithName: String? = null
 ): JsIrModule {
     val programFragment = JsIrProgramFragment(safeName, "<proxy-file>").apply {
+        // INFO: we need it to "simulate"
+        // that this program fragment has an effect in case if the [importedWithEffectInModuleWithName] was provided,
+        // It should be revisited and reworked if the `per-module` granularity is dropped
+        importedWithEffectInModuleWithName?.let {
+            eagerInitializers.statements += JsCompositeBlock()
+        }
+
         mainFunctionTag?.let {
             this.mainFunctionTag = it
             nameBindings[it] = ReservedJsNames.makeMainFunctionName()
@@ -80,12 +87,6 @@ fun generateProxyIrModuleWith(
         listOf(programFragment),
         importedWithEffectInModuleWithName = importedWithEffectInModuleWithName
     )
-}
-
-enum class JsGenerationGranularity {
-    WHOLE_PROGRAM,
-    PER_MODULE,
-    PER_FILE
 }
 
 enum class TranslationMode(
@@ -273,17 +274,22 @@ class IrModuleToJsTransformer(
 
     private fun generateJsIrProgramPerModule(exportData: List<IrAndExportedDeclarations>, mode: TranslationMode): JsIrProgram {
         val mainModule = exportData.last()
+        val mainModuleSafeName = mainModule.fragment.safeName
 
         return JsIrProgram(
             exportData.map { data ->
+                val couldBeReexportedInMain = !isEsModules && data !== mainModule
+                val couldBeImportedWithEffectInMain = isEsModules && data !== mainModule
+
                 JsIrModule(
-                    data.fragment.safeName,
-                    moduleFragmentToNameMapper.getExternalNameFor(data.fragment),
-                    data.files.flatMap {
+                    moduleName = data.fragment.safeName,
+                    externalModuleName = moduleFragmentToNameMapper.getExternalNameFor(data.fragment),
+                    fragments = data.files.flatMap {
                         val fragments = generateProgramFragment(it, mode)
                         listOfNotNull(fragments.mainFragment, fragments.exportFragment)
                     },
-                    mainModule.fragment.safeName.takeIf { !isEsModules && data != mainModule }
+                    reexportedInModuleWithName = runIf(couldBeReexportedInMain) { mainModuleSafeName },
+                    importedWithEffectInModuleWithName = runIf(couldBeImportedWithEffectInMain) { mainModuleSafeName },
                 )
             }
         )

@@ -405,10 +405,9 @@ internal fun TryCatchBlockNode.text(insns: InsnList): String =
 
 internal fun loadClassBytesByInternalName(state: GenerationState, internalName: String): ByteArray {
     //try to find just compiled classes then in dependencies
-    val outputFile = state.factory.get("$internalName.class")
-    if (outputFile != null) {
-        return outputFile.asByteArray()
-    }
+    state.factory.get("$internalName.class")?.let { return it.asByteArray() }
+
+    state.inlineCache.getClassBytes(internalName)?.let { return it }
 
     val file = findVirtualFileImprecise(state, internalName) ?: throw RuntimeException("Couldn't find virtual file for $internalName")
 
@@ -532,6 +531,7 @@ internal fun isAfterInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarke
 internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_RETURNS_UNIT)
 internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
     insn.previous != null && isSuspendMarker(insn.previous, INLINE_MARKER_FAKE_CONTINUATION) && insn.opcode == Opcodes.ACONST_NULL
+
 internal fun isBeforeUnboxInlineClassMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS)
 internal fun isAfterUnboxInlineClassMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS)
 

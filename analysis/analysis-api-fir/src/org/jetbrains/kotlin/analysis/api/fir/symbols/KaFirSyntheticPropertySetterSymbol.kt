@@ -37,7 +37,7 @@ internal class KaFirSyntheticPropertySetterSymbol(
     }
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { firSymbol.findPsi() }
+        get() = withValidityAssertion { findPsi() }
 
     override val isDefault: Boolean
         get() = withValidityAssertion { false }
@@ -83,7 +83,7 @@ internal class KaFirSyntheticPropertySetterSymbol(
         get() = withValidityAssertion { firSymbol.fir.hasStableParameterNames }
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
-        KaBasePropertySetterSymbolPointer(propertySymbolPointer = analysisSession.createOwnerPointer(this))
+        KaBasePropertySetterSymbolPointer(propertySymbolPointer = analysisSession.createOwnerPointer(this), this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

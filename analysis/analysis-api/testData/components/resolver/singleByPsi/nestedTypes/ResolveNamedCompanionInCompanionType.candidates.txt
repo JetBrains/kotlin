@@ -4,6 +4,7 @@ KtNameReferenceExpression(125,129): 'COMP'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtNameReferenceExpression(125,129): 'COMP'
           returnType = foo.bar.baz.X.COMP
           symbol = <constructor>(): foo.bar.baz.X.COMP
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

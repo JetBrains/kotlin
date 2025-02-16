@@ -10,7 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -26,9 +26,7 @@ class IrFunctionReferenceImpl internal constructor(
     symbol: IrFunctionSymbol,
     override var reflectionTarget: IrFunctionSymbol?,
 ) : IrFunctionReference() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
+    override var attributeOwnerId: IrElement = this
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
 

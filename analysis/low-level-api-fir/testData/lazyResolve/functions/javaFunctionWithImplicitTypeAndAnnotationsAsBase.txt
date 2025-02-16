@@ -1,0 +1,231 @@
+STATUS:
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|Anno|(LAZY_EXPRESSION)  kotlin/String}, baseSymbol=FirNamedFunctionSymbol /JavaExtension.defaultMethod), SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(STATUS)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String!>|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val firstConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val secondConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun defaultMethod([ResolvedTo(STATUS)] p: R|kotlin/collections/List<T>|): <implicit> { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|Anno|(LAZY_EXPRESSION)  kotlin/String}, baseSymbol=FirNamedFunctionSymbol /JavaExtension.defaultMethod), SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(EXPECT_ACTUAL_MATCHING)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String!>|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val firstConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val secondConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun defaultMethod([ResolvedTo(STATUS)] p: R|kotlin/collections/List<T>|): <implicit> { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+CONTRACTS:
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|Anno|(LAZY_EXPRESSION)  kotlin/String}, baseSymbol=FirNamedFunctionSymbol /JavaExtension.defaultMethod), SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(CONTRACTS)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String!>|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val firstConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val secondConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun defaultMethod([ResolvedTo(STATUS)] p: R|kotlin/collections/List<T>|): <implicit> { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String!>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String!>|
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val firstConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val secondConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+            ^defaultMethod R|<local>/p|
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(CONSTANT_EVALUATION)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String!>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String!>|
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val firstConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val secondConst: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+            ^defaultMethod R|<local>/p|
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|))  kotlin/String!>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|))  kotlin/String!>|
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.i] i: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val firstConst: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConst: R|kotlin/Int| = Int(2)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+            ^defaultMethod R|<local>/p|
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+BODY_RESOLVE:
+TARGET: @R|java/lang/Override|() public open override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/JavaExtension.defaultMethod] fun defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|))  kotlin/String!>|): R|@EnhancedNullability kotlin/collections/List<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|))  kotlin/String!>|
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.i] i: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val firstConst: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConst: R|kotlin/Int| = Int(2)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public abstract [ResolvedTo(STATUS)] interface BaseKotlinInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun defaultMethod([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+            ^defaultMethod R|<local>/p|
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.i] i: R|kotlin/Int|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1)] val firstConst: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2)] val secondConst: R|kotlin/Int| = Int(2)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface BaseKotlinInterface<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun defaultMethod([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/collections/List<T>|): R|kotlin/collections/List<T>| {
+            ^defaultMethod R|<local>/p|
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class LeafKotlinClass : R|JavaExtension<@R|Anno|(i = R|/firstConst|.R|kotlin/Int.plus|(R|/secondConst|))  kotlin/String>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LeafKotlinClass] constructor(): R|LeafKotlinClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

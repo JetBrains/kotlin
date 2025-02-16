@@ -1,0 +1,13 @@
+KT element: KtClass
+KT element text:
+public interface KotlinInterface<T1> : JavaInterface<T1> {
+    public abstract fun doSmth(x: T1 & Any): T1 & Any
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] interface KotlinInterface<[ResolvedTo(BODY_RESOLVE)] T1> : R|JavaInterface<T1>| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] fun doSmth([ResolvedTo(BODY_RESOLVE)] x: R|T1 & Any|): R|T1 & Any|
+
+}

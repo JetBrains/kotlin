@@ -397,6 +397,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
             isMutable = true
         }
+        +field("scopeProvider", firScopeProviderType)
     }
 
     val klass: Element by sealedElement(Declaration, name = "Class") {
@@ -411,7 +412,6 @@ object FirTree : AbstractFirTreeBuilder() {
             withTransform = true
         }
         +annotations
-        +field("scopeProvider", firScopeProviderType)
     }
 
     val regularClass: Element by element(Declaration) {
@@ -675,7 +675,7 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val errorProperty: Element by element(Declaration) {
-        parent(variable)
+        parent(property)
         parent(diagnosticHolder)
 
         +declaredSymbol(errorPropertySymbolType)
@@ -977,6 +977,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
 
         +field("expression", expression)
+        +field("usesFunctionKindConversion", boolean)
     }
 
     val resolvedQualifier: Element by element(Expression) {
@@ -1013,6 +1014,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
 
         +field("interpolationPrefix", string)
+        +field("isFoldedStrings", boolean)
     }
 
     val throwExpression: Element by element(Expression) {

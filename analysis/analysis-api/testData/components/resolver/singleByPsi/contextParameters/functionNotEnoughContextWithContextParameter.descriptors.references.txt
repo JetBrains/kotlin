@@ -1,0 +1,6 @@
+KtNameReferenceExpression(84,87): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun foo()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

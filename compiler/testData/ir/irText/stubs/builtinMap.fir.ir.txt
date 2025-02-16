@@ -1,35 +1,35 @@
 FILE fqName:<root> fileName:/builtinMap.kt
-  FUN name:plus visibility:public modality:FINAL <K1, V1> ($receiver:kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>, pair:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus>
+  FUN name:plus visibility:public modality:FINAL returnType:kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus>
     TYPE_PARAMETER name:K1 index:0 variance: superTypes:[kotlin.Any?] reified:false
     TYPE_PARAMETER name:V1 index:1 variance: superTypes:[kotlin.Any?] reified:false
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>
-    VALUE_PARAMETER name:pair index:0 type:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>
+    VALUE_PARAMETER kind:Regular name:pair index:1 type:kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun plus <K1, V1> (pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>): kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun plus <K1, V1> (<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>, pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus>): kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> declared in <root>'
         WHEN type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=IF
           BRANCH
             if: CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Map' type=kotlin.Boolean origin=null
-              $this: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
+              ARG <this>: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
             then: CALL 'public final fun mapOf <K, V> (pair: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=null
-              <K>: K1 of <root>.plus
-              <V>: V1 of <root>.plus
-              pair: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
+              TYPE_ARG K: K1 of <root>.plus
+              TYPE_ARG V: V1 of <root>.plus
+              ARG pair: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply declared in kotlin' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
-              <T>: java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?>
-              $receiver: CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap<out @[FlexibleNullability] K of java.util.LinkedHashMap?, out @[FlexibleNullability] V of java.util.LinkedHashMap?>?) declared in java.util.LinkedHashMap' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
-                <class: K>: @[FlexibleNullability] K1 of <root>.plus?
-                <class: V>: @[FlexibleNullability] V1 of <root>.plus?
-                p0: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
-              block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?>, kotlin.Unit> origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?>) returnType:kotlin.Unit
-                  $receiver: VALUE_PARAMETER name:$this$apply type:java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?>
+            then: CALL 'public final fun apply <T> (<this>: T of kotlin.apply, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply declared in kotlin' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
+              TYPE_ARG T: java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?>
+              ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap<out @[FlexibleNullability] K of java.util.LinkedHashMap?, out @[FlexibleNullability] V of java.util.LinkedHashMap?>?) declared in java.util.LinkedHashMap' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
+                TYPE_ARG (of class) K: @[FlexibleNullability] K1 of <root>.plus?
+                TYPE_ARG (of class) V: @[FlexibleNullability] V1 of <root>.plus?
+                ARG p0: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
+              ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?>, kotlin.Unit> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER kind:ExtensionReceiver name:$this$apply index:0 type:java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?>
                   BLOCK_BODY
                     TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                       CALL 'public open fun put (p0: @[EnhancedNullability] K of java.util.LinkedHashMap, p1: @[EnhancedNullability] V of java.util.LinkedHashMap): @[EnhancedNullability] V of java.util.LinkedHashMap? declared in java.util.LinkedHashMap' type=@[EnhancedNullability] V1 of <root>.plus? origin=null
-                        $this: GET_VAR '$this$apply: java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> declared in <root>.plus.<anonymous>' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
-                        p0: CALL 'public final fun <get-first> (): A of kotlin.Pair declared in kotlin.Pair' type=K1 of <root>.plus origin=GET_PROPERTY
-                          $this: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
-                        p1: CALL 'public final fun <get-second> (): B of kotlin.Pair declared in kotlin.Pair' type=V1 of <root>.plus origin=GET_PROPERTY
-                          $this: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
+                        ARG <this>: GET_VAR '$this$apply: java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> declared in <root>.plus.<anonymous>' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=IMPLICIT_ARGUMENT
+                        ARG p0: CALL 'public final fun <get-first> (): A of kotlin.Pair declared in kotlin.Pair' type=K1 of <root>.plus origin=GET_PROPERTY
+                          ARG <this>: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
+                        ARG p1: CALL 'public final fun <get-second> (): B of kotlin.Pair declared in kotlin.Pair' type=V1 of <root>.plus origin=GET_PROPERTY
+                          ARG <this>: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null

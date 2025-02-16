@@ -70,7 +70,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
         get() = emptyList()
 
     override val typeParameters: List<FirTypeParameter>
-        get() = emptyList()
+        get() = getter.typeParameters
 
     override val containerSource: DeserializedContainerSource?
         get() = null

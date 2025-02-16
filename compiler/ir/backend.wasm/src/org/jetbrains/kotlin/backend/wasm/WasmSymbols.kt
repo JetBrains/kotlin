@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -97,6 +99,12 @@ class WasmSymbols(
         getInternalFunction("getCoroutineContext")
     override val returnIfSuspended =
         getInternalFunction("returnIfSuspended")
+
+    private val _arraysContentEquals = symbolFinder.topLevelFunctions(COLLECTIONS_PACKAGE_FQ_NAME, "contentEquals").filter {
+        it.descriptor.extensionReceiverParameter?.type?.isMarkedNullable == true
+    }
+    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
+        get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
 
     val throwLinkageError = getInternalFunction("throwLinkageError")
 
@@ -223,6 +231,8 @@ class WasmSymbols(
 
     val testFun = maybeGetFunction("test", kotlinTestPackageFqName)
     val suiteFun = maybeGetFunction("suite", kotlinTestPackageFqName)
+    val registerRootSuiteBlock = maybeGetFunction("registerRootSuiteBlock", kotlinTestPackageFqName)
+    val runRootSuites = maybeGetFunction("runRootSuites", kotlinTestPackageFqName)
 
     val wasmTypeId = getInternalFunction("wasmTypeId")
 
@@ -264,7 +274,7 @@ class WasmSymbols(
 
     private fun findNullableOverloadForReceiver(arrayType: IrType, overloadsList: List<IrSimpleFunctionSymbol>): IrSimpleFunctionSymbol =
         overloadsList.first {
-            val receiverType = it.owner.extensionReceiverParameter?.type
+            val receiverType = it.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
             receiverType != null && receiverType.isNullable() && arrayType.classOrNull == receiverType.classOrNull
         }
 
@@ -283,7 +293,7 @@ class WasmSymbols(
 
     override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
         toUIntSymbols.associateBy {
-            it.owner.extensionReceiverParameter?.type?.classifierOrFail
+            it.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
                 ?: error("Expected extension receiver for ${it.owner.render()}")
         }
     }
@@ -292,7 +302,7 @@ class WasmSymbols(
 
     override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
         toULongSymbols.associateBy {
-            it.owner.extensionReceiverParameter?.type?.classifierOrFail
+            it.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
                 ?: error("Expected extension receiver for ${it.owner.render()}")
         }
     }

@@ -1,8 +1,7 @@
-// IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-// TARGET_PLATFORM: Common
 
 package test
 
@@ -13,7 +12,6 @@ expect sealed interface SealedIface
 expect class SealedImpl1 : SealedIface
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 
 package test
 
@@ -26,7 +24,6 @@ actual class SealedImpl1() : SealedIface
 expect class SealedImpl2 : SealedIface
 
 // MODULE: main()()(intermediate)
-// TARGET_PLATFORM: JVM
 
 package test
 

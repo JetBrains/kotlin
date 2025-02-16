@@ -118,6 +118,18 @@ open class Test {
       sourceInformationMarkerEnd(%composer)
     }
   }
+  @Composable
+  @JvmSynthetic
+  @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
+  open fun foo(param: Int, %composer: Composer?, %changed: Int, %default: Int) {
+    return foo%default(param, <this>, %composer, %changed, %default)
+  }
+  @Composable
+  @JvmSynthetic
+  @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
+  open fun bar(param: Int, %composer: Composer?, %changed: Int, %default: Int): Int {
+    return bar%default(param, <this>, %composer, %changed, %default)
+  }
 }
 @StabilityInferred(parameters = 1)
 class TestImpl : Test {

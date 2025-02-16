@@ -22,7 +22,14 @@ import androidx.compose.compiler.plugins.StabilityTestProtos
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import androidx.compose.compiler.plugins.kotlin.lower.fastForEach
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -31,8 +38,11 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.name.Name
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -1068,6 +1078,23 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     )
 
     @Test
+    fun testChildOfUnstableClass() = assertStability(
+        "",
+        """
+            open class Parent {
+                var age: Int = 0
+                var name: String = ""
+
+                fun info() = name + "|" + age.toString()
+            }
+
+            class Child : Parent()
+        """,
+        "Child()",
+        "Unstable"
+    )
+
+    @Test
     fun testPersistentMapOfCallWithStableTypeIsStable() = assertStability(
         "",
         """
@@ -1757,6 +1784,51 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         )
     }
 
+    // regression test for b/381407900
+    @OptIn(ExperimentalCompilerApi::class)
+    @Test
+    fun testWithOtherCompilerPlugins() {
+        compileToIr(
+            listOf(
+                SourceFile(
+                    "Test.kt",
+                    """
+                    """
+                )
+            ),
+            registerExtensions = {
+                registerExtensionsForTest(this, it) {
+                    with(ComposePluginRegistrar.Companion) {
+                        registerCommonExtensions()
+                    }
+                }
+                IrGenerationExtension.registerExtension(
+                    this,
+                    object : IrGenerationExtension {
+                        override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+                            moduleFragment.files.fastForEach {
+                                it.addChild(
+                                    pluginContext.irFactory.buildClass {
+                                        name = Name.identifier("StabilityTest")
+                                    }.apply {
+                                        thisReceiver = buildReceiverParameter {
+                                            origin = IrDeclarationOrigin.INSTANCE_RECEIVER
+                                            type = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList())
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                )
+                IrGenerationExtension.registerExtension(
+                    this,
+                    ComposePluginRegistrar.createComposeIrExtension(it)
+                )
+            }
+        )
+    }
+
     private fun assertStability(
         externalSrc: String,
         localSrc: String,
@@ -1845,9 +1917,8 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         """.trimIndent()
 
         val files = listOf(SourceFile("Test.kt", source))
-        return compileToIr(files, additionalPaths + classesDirectory.root, registerExtensions = {
+        return compileToIr(files, additionalPaths + classesDirectory.root, updateConfiguration = {
             it.put(ComposeConfiguration.TEST_STABILITY_CONFIG_KEY, externalTypes)
-            it.updateConfiguration()
         })
     }
 

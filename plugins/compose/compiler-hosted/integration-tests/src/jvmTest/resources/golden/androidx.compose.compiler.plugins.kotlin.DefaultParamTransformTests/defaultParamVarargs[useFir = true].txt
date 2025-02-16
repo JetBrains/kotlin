@@ -1,0 +1,172 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+            @Composable
+fun Test() {
+    VarargWDefault()
+    VarargWDefault(1, 2)
+    VarargWContent { }
+    VarargWContent(1, 2) { }
+}
+
+@Composable
+fun VarargWDefault(vararg values: Int = intArrayOf()) {
+    used(values)
+}
+
+@Composable
+fun VarargWContent(vararg values: Int = intArrayOf(1), content: @Composable () -> Unit) {
+    used(values)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Vararg...>,<Vararg...>,<Vararg...>,<Vararg...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    VarargWDefault(null, %composer, 0, 0b0001)
+    VarargWDefault(1, 2, %composer, 0, 0)
+    VarargWContent(null, ComposableSingletons%TestKt.lambda%1963231897, %composer, 0b00110000, 0b0001)
+    VarargWContent(1, 2, ComposableSingletons%TestKt.lambda%-168993022, %composer, 0b00110000, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun VarargWDefault(values: IntArray?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(VarargWDefault):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 == 0) {
+    %composer.startMovableGroup(<>, values.size)
+    %dirty = %dirty or if (%composer.changed(values.size)) 0b0100 else 0
+    val <iterator> = values.iterator()
+    while (<iterator>.hasNext()) {
+      val value = <iterator>.next()
+      %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
+    }
+    %composer.endMovableGroup()
+    if (%dirty and 0b1110 == 0) {
+      %dirty = %dirty or 0b0010
+    }
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        values = intArrayOf()
+        %dirty = %dirty and 0b1110.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty and 0b1110.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(values)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    VarargWDefault(values, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+fun VarargWContent(values: IntArray?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(VarargWContent)P(1):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 == 0) {
+    %composer.startMovableGroup(<>, values.size)
+    %dirty = %dirty or if (%composer.changed(values.size)) 0b0100 else 0
+    val <iterator> = values.iterator()
+    while (<iterator>.hasNext()) {
+      val value = <iterator>.next()
+      %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
+    }
+    %composer.endMovableGroup()
+    if (%dirty and 0b1110 == 0) {
+      %dirty = %dirty or 0b0010
+    }
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        values = intArrayOf(1)
+        %dirty = %dirty and 0b1110.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty and 0b1110.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(values)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    VarargWContent(values, content, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda%1963231897: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  val lambda%-168993022: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

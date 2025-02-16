@@ -4,6 +4,7 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
           original = KaExplicitReceiverValue:
             expression = b
@@ -16,15 +17,17 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
           returnType = kotlin.Unit
           symbol = kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/collections/MutableList.clear
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaSmartCastedReceiverValue:
           original = KaExplicitReceiverValue:
@@ -37,6 +40,7 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
           returnType = kotlin.text.StringBuilder
           symbol = kotlin/text/clear(<extension receiver>: kotlin.text.StringBuilder): kotlin.text.StringBuilder
           valueParameters = []
+          contextParameters = []
           callableId = kotlin/text/clear
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with clear>

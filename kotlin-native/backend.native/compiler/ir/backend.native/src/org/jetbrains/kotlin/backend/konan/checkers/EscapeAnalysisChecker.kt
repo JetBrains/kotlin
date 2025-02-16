@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -37,7 +37,7 @@ internal class EscapeAnalysisChecker(
         private val context: PhaseContext,
         private val symbols: KonanSymbols,
         private val irFile: IrFile,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     private fun reportWarning(location: IrElement, message: String) {
         context.report(CompilerMessageSeverity.STRONG_WARNING, location, irFile, message)
     }
@@ -48,7 +48,7 @@ internal class EscapeAnalysisChecker(
 
     // From DFGBuilder.kt
     private val symbolsHandledByDFG: Set<IrSymbol> = with(symbols) {
-        setOf(createUninitializedInstance, createUninitializedArray, reinterpret, initInstance)
+        setOf(createUninitializedInstance, createUninitializedArray, createEmptyString, reinterpret, initInstance)
     }
 
     private val IrSymbol.handledByDFG: Boolean

@@ -415,5 +415,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val generatedMethodReference: <ERROR TYPE REF: Unresolved reference: serializeFirstTarget> = Q|test/Serializer|::<Unresolved reference: serializeFirstTarget>#
-        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved reference: serializeFirstTarget>
+    public final [ResolvedTo(BODY_RESOLVE)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|

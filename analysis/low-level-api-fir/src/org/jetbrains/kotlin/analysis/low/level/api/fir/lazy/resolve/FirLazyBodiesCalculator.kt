@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -197,7 +197,7 @@ private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
     require(needCalculatingLazyBodyForConstructor(constructor))
 
     // TODO A temporary hack to avoid problems with lazy resolve of typealiased constructors; see KT-73481
-    val constructorPsi = (constructor.originalConstructorIfTypeAlias ?: constructor).psi
+    val constructorPsi = (constructor.typeAliasConstructorInfo?.originalConstructor ?: constructor).psi
 
     val newConstructor = revive<FirConstructor>(designation, constructorPsi)
 
@@ -725,6 +725,10 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
         return property
     }
 
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: PersistentList<FirDeclaration>): FirStatement {
+        return transformProperty(errorProperty, data)
+    }
+
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
         if (enumEntry.initializer is FirLazyExpression) {
             val designation = FirDesignation(data, enumEntry)
@@ -881,5 +885,9 @@ private sealed class FirLazyContractsCalculatorTransformer : FirTransformer<Pers
         }
 
         return property
+    }
+
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: PersistentList<FirDeclaration>): FirStatement {
+        return transformProperty(errorProperty, data)
     }
 }

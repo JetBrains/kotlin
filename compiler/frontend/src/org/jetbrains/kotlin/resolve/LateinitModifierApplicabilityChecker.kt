@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -30,8 +27,6 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DeclarationsChecker.Companion.hasAnyAccessorImplementation
-import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnsignedNumberType
 
@@ -39,8 +34,7 @@ object LateinitModifierApplicabilityChecker {
     fun checkLateinitModifierApplicability(
         trace: BindingTrace,
         ktDeclaration: KtCallableDeclaration,
-        descriptor: VariableDescriptor,
-        languageVersionSettings: LanguageVersionSettings
+        descriptor: VariableDescriptor
     ) {
         if (!ktDeclaration.hasModifier(KtTokens.LATEINIT_KEYWORD)) return
 
@@ -64,18 +58,11 @@ object LateinitModifierApplicabilityChecker {
                         "is not allowed on $variables of unsigned types"
                     )
                 )
-                !languageVersionSettings.supportsFeature(LanguageFeature.InlineLateinit) ->
+                else ->
                     trace.report(
                         Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
                             ktDeclaration,
                             "is not allowed on $variables of inline class types"
-                        )
-                    )
-                hasUnderlyingTypeForbiddenForLateinit(type) ->
-                    trace.report(
-                        Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
-                            ktDeclaration,
-                            "is not allowed on $variables of inline type with underlying type not suitable for lateinit declaration"
                         )
                     )
             }
@@ -141,26 +128,4 @@ object LateinitModifierApplicabilityChecker {
             }
         }
     }
-
-    private fun hasUnderlyingTypeForbiddenForLateinit(type: KotlinType): Boolean {
-
-        fun getUnderlyingType(type: KotlinType): KotlinType {
-            return (type.constructor.declarationDescriptor as ClassDescriptor).inlineClassRepresentation!!.underlyingType
-        }
-
-        fun isForbiddenForLateinit(type: KotlinType): Boolean {
-            if (type.isMarkedNullable || TypeUtils.isNullableType(type)) return true
-            if (KotlinBuiltIns.isPrimitiveType(type)) return true
-            if (type.isInlineClassType()) {
-                return isForbiddenForLateinit(getUnderlyingType(type))
-            }
-            return false
-        }
-
-        // prevent infinite recursion
-        if (type.isRecursiveInlineOrValueClassType()) return false
-        return isForbiddenForLateinit(getUnderlyingType(type))
-    }
-
-
 }

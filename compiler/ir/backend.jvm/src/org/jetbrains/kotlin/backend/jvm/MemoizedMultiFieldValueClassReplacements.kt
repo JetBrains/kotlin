@@ -18,15 +18,16 @@ import org.jetbrains.kotlin.ir.builders.irComposite
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -275,7 +276,7 @@ class MemoizedMultiFieldValueClassReplacements(
                         && function.nonDispatchParameters.any { it.type.needsMfvcFlattening() }
                         && run {
                     if (!function.isFakeOverride) return@run true
-                    val superDeclaration = findSuperDeclaration(function, false, context.config.jvmDefaultMode)
+                    val superDeclaration = findSuperDeclaration(function)
                     getReplacementFunction(superDeclaration) != null
                 } -> createMethodReplacement(function)
 

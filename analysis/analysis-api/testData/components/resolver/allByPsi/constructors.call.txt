@@ -43,6 +43,7 @@ KtConstructorDelegationCall(61,61): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -50,6 +51,7 @@ KtConstructorDelegationCall(61,61): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -59,6 +61,7 @@ KtConstructorDelegationReferenceExpression(61,61): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -66,6 +69,7 @@ KtConstructorDelegationReferenceExpression(61,61): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -93,6 +97,7 @@ KtConstructorDelegationCall(88,88): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -100,6 +105,7 @@ KtConstructorDelegationCall(88,88): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -109,6 +115,7 @@ KtConstructorDelegationReferenceExpression(88,88): ''
       argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -116,6 +123,7 @@ KtConstructorDelegationReferenceExpression(88,88): ''
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -176,10 +184,12 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -192,8 +202,10 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -206,10 +218,12 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -222,8 +236,10 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -237,6 +253,7 @@ KtNameReferenceExpression(176,178): 'ci'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -244,6 +261,7 @@ KtNameReferenceExpression(176,178): 'ci'
           receiverType = null
           returnType = kotlin.Int
           symbol = ci: kotlin.Int
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -275,10 +293,12 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -291,8 +311,10 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -305,10 +327,12 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
           receiverType = null
           returnType = kotlin.String
           symbol = s: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -321,8 +345,10 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -336,6 +362,7 @@ KtNameReferenceExpression(216,218): 'cs'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -343,6 +370,7 @@ KtNameReferenceExpression(216,218): 'cs'
           receiverType = null
           returnType = kotlin.String
           symbol = cs: kotlin.String
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -362,6 +390,7 @@ KtDotQualifiedExpression(245,257): 'super.call()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = super
           isSafeNavigation = false
@@ -372,6 +401,7 @@ KtDotQualifiedExpression(245,257): 'super.call()'
           returnType = kotlin.Unit
           symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = r/BaseClass.call
       typeArgumentsMapping = {}
 
@@ -387,6 +417,7 @@ KtCallExpression(251,257): 'call()'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = super
           isSafeNavigation = false
@@ -397,6 +428,7 @@ KtCallExpression(251,257): 'call()'
           returnType = kotlin.Unit
           symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = r/BaseClass.call
       typeArgumentsMapping = {}
 
@@ -406,6 +438,7 @@ KtNameReferenceExpression(251,255): 'call'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = super
           isSafeNavigation = false
@@ -416,6 +449,7 @@ KtNameReferenceExpression(251,255): 'call'
           returnType = kotlin.Unit
           symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
           valueParameters = []
+          contextParameters = []
           callableId = r/BaseClass.call
       typeArgumentsMapping = {}
 
@@ -443,10 +477,12 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -459,8 +495,10 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -473,10 +511,12 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -489,8 +529,10 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -539,6 +581,7 @@ KtConstructorDelegationCall(339,345): 'this()'
       argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -546,6 +589,7 @@ KtConstructorDelegationCall(339,345): 'this()'
           returnType = r.ChildWithPrimary
           symbol = <constructor>(): r.ChildWithPrimary
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -555,6 +599,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
       argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -562,6 +607,7 @@ KtConstructorDelegationReferenceExpression(339,343): 'this'
           returnType = r.ChildWithPrimary
           symbol = <constructor>(): r.ChildWithPrimary
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
 
@@ -649,10 +695,12 @@ KtConstructorDelegationCall(446,454): 'super(1)'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -665,8 +713,10 @@ KtConstructorDelegationCall(446,454): 'super(1)'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
@@ -681,10 +731,12 @@ KtConstructorDelegationReferenceExpression(446,451): 'super'
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -697,8 +749,10 @@ KtConstructorDelegationReferenceExpression(446,451): 'super'
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)

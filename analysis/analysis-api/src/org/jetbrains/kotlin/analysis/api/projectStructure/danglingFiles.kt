@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -27,11 +28,11 @@ public enum class KaDanglingFileResolutionMode {
 
     /**
      * Resolve only to declarations in the original file or module. Ignore all non-local declarations in the dangling file.
+     * The mode is only supported for single-file dangling file modules.
      */
     IGNORE_SELF
 }
 
-@OptIn(KaImplementationDetail::class)
 private val CONTEXT_MODULE_KEY = Key.create<KaModule>("CONTEXT_MODULE")
 
 /**
@@ -67,6 +68,36 @@ public var KtFile.contextModule: KaModule?
 public var KtCodeFragment.refinedContextModule: KaModule?
     get() = getUserData(CONTEXT_MODULE_KEY)
     set(value) = putUserData(CONTEXT_MODULE_KEY, value)
+
+private val EXPLICIT_MODULE_KEY = Key.create<KaModule>("EXPLICIT_MODULE")
+
+/**
+ * A module to be used for analyzing the given file.
+ * Currently, only [KaDanglingFileModule]s can be set as explicit modules.
+ *
+ * [explicitModule] can be useful for constructing dangling file modules consisting of more than one file:
+ * 1. Create all in-memory files;
+ * 2. Manually initiate a [KaDanglingFileModule], passing all created files.
+ * 3. Set the newly created module as an [explicitModule] to all of the created files.
+ *
+ * Use with extreme care – [explicitModule] overrides all other configuration.
+ * If you only need to provide the context module for an in-memory file, use [contextModule] instead.
+ *
+ * An explicit module can only be specified for an in-memory file.
+ */
+@KaExperimentalApi
+public var KtFile.explicitModule: KaModule?
+    get() = getUserData(EXPLICIT_MODULE_KEY)
+    set(value) {
+        @OptIn(KaPlatformInterface::class)
+        require(value is KaDanglingFileModule) { "Only dangling file modules can be set as explicit modules" }
+
+        val virtualFile = this.virtualFile
+        if (virtualFile != null) {
+            require(virtualFile is LightVirtualFile) { "'explicitModule' is only available for in-memory files" }
+        }
+        putUserData(EXPLICIT_MODULE_KEY, value)
+    }
 
 /**
  * Whether the [KtFile] is a *dangling* file.

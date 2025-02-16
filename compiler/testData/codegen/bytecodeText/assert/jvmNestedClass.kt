@@ -1,6 +1,4 @@
-// This test is ignored until KT-36794 is fixed.
-// IGNORE_BACKEND: JVM
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
+// ASSERTIONS_MODE: jvm
 
 class Outer {
     class Inner {

@@ -96,6 +96,18 @@ public class DecompiledKnmStubConsistencyK2TestGenerated extends AbstractDecompi
   }
 
   @Test
+  @TestMetadata("ContextParametersOnCallableMembers")
+  public void testContextParametersOnCallableMembers() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextParametersOnCallableMembers/");
+  }
+
+  @Test
+  @TestMetadata("ContextParametersOnTopLevelCallables")
+  public void testContextParametersOnTopLevelCallables() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextParametersOnTopLevelCallables/");
+  }
+
+  @Test
   @TestMetadata("ContextReceiversCallableMembers")
   public void testContextReceiversCallableMembers() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversCallableMembers/");
@@ -159,6 +171,12 @@ public class DecompiledKnmStubConsistencyK2TestGenerated extends AbstractDecompi
   @TestMetadata("Enum")
   public void testEnum() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Enum/");
+  }
+
+  @Test
+  @TestMetadata("FlexibleDnnType")
+  public void testFlexibleDnnType() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/FlexibleDnnType/");
   }
 
   @Test

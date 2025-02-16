@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorSer
 import org.jetbrains.kotlin.test.frontend.fir.handlers.KmpCompilationMode
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 open class LowLevelFirAnalyzerFacade(
     val firResolveSession: LLFirResolveSession,
@@ -66,8 +67,13 @@ class AnalysisApiFirDiagnosticCollectorService(testServices: TestServices) : Fir
             val facade = part.firAnalyzerFacade
             require(facade is LowLevelFirAnalyzerFacade)
             result += facade.runCheckers().mapValues { entry ->
-                entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.LOW_LEVEL_API) }
+                entry.value.mapNotNull {
+                    runIf(it.isValid) {
+                        DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.LOW_LEVEL_API)
+                    }
+                }
             }
+            collectSyntaxDiagnostics(part, result)
         }
         return result
     }

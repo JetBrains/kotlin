@@ -167,8 +167,8 @@ fun ControlFlowGraphBuilder.createLiteralExpressionNode(fir: FirLiteralExpressio
 fun ControlFlowGraphBuilder.createThrowExceptionNode(fir: FirThrowExpression): ThrowExceptionNode =
     ThrowExceptionNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createFinallyBlockExitNode(fir: FirTryExpression): FinallyBlockExitNode =
-    FinallyBlockExitNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createFinallyBlockExitNode(enterNode: FinallyBlockEnterNode): FinallyBlockExitNode =
+    FinallyBlockExitNode(currentGraph, enterNode.fir, enterNode, levelCounter)
 
 fun ControlFlowGraphBuilder.createFinallyBlockEnterNode(fir: FirTryExpression): FinallyBlockEnterNode =
     FinallyBlockEnterNode(currentGraph, fir, levelCounter)

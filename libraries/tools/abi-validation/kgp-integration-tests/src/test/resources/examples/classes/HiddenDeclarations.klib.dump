@@ -1,0 +1,11 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <testproject>
+final class examples.classes/VC { // examples.classes/VC|null[0]
+    final var prop // examples.classes/VC.prop|{}prop[0]
+}

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -38,22 +36,9 @@ abstract class MemoizedValueClassAbstractReplacements(
                 name.asString() == "remove" &&
                 hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, context.irBuiltIns.intType))
 
-    protected fun IrFunction.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod(): Boolean {
-        if (this !is IrSimpleFunction) return false
-        if (!this.isFakeOverride) return false
-        val parentClass = parentClassOrNull ?: return false
-        require(parentClass.isValue)
-
-        val overridden = resolveFakeOverride() ?: return false
-        if (!overridden.parentAsClass.isJvmInterface) return false
-        if (overridden.modality == Modality.ABSTRACT) return false
-
-        // We have a non-abstract interface member.
-        // It is a JVM default interface method if one of the following conditions are true:
-        // - it is a Java method,
-        // - it is a Kotlin function compiled to JVM default interface method.
-        return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.config.jvmDefaultMode)
-    }
+    protected fun IrFunction.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod(): Boolean =
+        this is IrSimpleFunction && isFakeOverride && modality != Modality.ABSTRACT &&
+                context.cachedDeclarations.getClassFakeOverrideReplacement(this) == ClassFakeOverrideReplacement.None
 
     protected abstract fun createStaticReplacement(function: IrFunction): IrSimpleFunction
     protected abstract fun createMethodReplacement(function: IrFunction): IrSimpleFunction
@@ -78,9 +63,9 @@ abstract class MemoizedValueClassAbstractReplacements(
             metadata = function.metadata
             function.metadata = null
         }
-        copyAttributes(function as? IrAttributeContainer)
 
         if (function is IrSimpleFunction) {
+            copyAttributes(function)
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val oldProperty = propertySymbol.owner

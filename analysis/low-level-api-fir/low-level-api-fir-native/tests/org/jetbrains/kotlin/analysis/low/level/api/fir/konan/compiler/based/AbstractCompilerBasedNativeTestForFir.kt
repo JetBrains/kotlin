@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.ReversedFirIdenticalChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
+import org.jetbrains.kotlin.konan.test.diagnostics.baseFirNativeDiagnosticTestConfiguration
+import org.jetbrains.kotlin.konan.test.diagnostics.baseNativeDiagnosticTestConfiguration
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.baseFirNativeDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.builders.baseNativeDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractLLFirNativeTestBase : AbstractLowLevelCompilerBasedTest() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
+    override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             globalDefaults {
                 targetPlatform = NativePlatforms.unspecifiedNativePlatform
@@ -32,20 +32,20 @@ abstract class AbstractLLFirNativeTestBase : AbstractLowLevelCompilerBasedTest()
 }
 
 abstract class AbstractLLFirNativeTest : AbstractLLFirNativeTestBase() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
+    override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             baseNativeDiagnosticTestConfiguration(::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve))
-            super.configureTest(builder)
+            super.configure(builder)
             useAfterAnalysisCheckers(::LLFirOnlyNonReversedTestSuppressor)
         }
     }
 }
 
 abstract class AbstractLLFirReversedNativeTest : AbstractLLFirNativeTestBase() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
+    override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             baseNativeDiagnosticTestConfiguration(::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder))
-            super.configureTest(builder)
+            super.configure(builder)
             useAfterAnalysisCheckers(::LLFirOnlyReversedTestSuppressor)
         }
     }

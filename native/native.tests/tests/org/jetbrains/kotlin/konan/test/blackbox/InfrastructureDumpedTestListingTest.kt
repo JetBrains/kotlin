@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 @FirPipeline
-@Tag("frontend-fir")
 @Tag("infrastructure")
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")

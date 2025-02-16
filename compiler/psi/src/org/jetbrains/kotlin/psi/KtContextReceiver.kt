@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
  * Deprecated in favor of context parameters.
@@ -35,4 +37,24 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
 
     fun name(): String? = labelName() ?: typeReference()?.nameForReceiverLabel()
+
+    /**
+     * Returns the owner declaration of the context receiver.
+     * The owner would be null in the case of context parameter on a functional type.
+     *
+     * @see KtContextReceiverList.ownerDeclaration
+     */
+    val ownerDeclaration: KtDeclaration?
+        get() {
+            val contextReceiverList = parent
+            requireWithAttachment(
+                contextReceiverList is KtContextReceiverList,
+                { "parent should be ${KtContextReceiverList::class.simpleName}" },
+            ) {
+                withPsiEntry("psi", this@KtContextReceiver)
+                withPsiEntry("parent", parent)
+            }
+
+            return contextReceiverList.ownerDeclaration
+        }
 }

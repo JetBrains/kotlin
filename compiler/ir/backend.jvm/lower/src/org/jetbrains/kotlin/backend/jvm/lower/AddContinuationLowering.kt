@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -88,7 +88,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
     private fun generateContinuationClassForNamedFunction(
         irFunction: IrFunction,
         dispatchReceiverParameter: IrValueParameter?,
-        attributeContainer: IrAttributeContainer,
+        attributeContainer: IrElement,
         capturesCrossinline: Boolean
     ): IrClass =
         context.irFactory.buildClass {
@@ -354,7 +354,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                     +generateContinuationClassForNamedFunction(
                         newFunction,
                         view.dispatchReceiverParameter,
-                        function as IrAttributeContainer,
+                        function,
                         capturesCrossinline
                     )
                     if (newFunction.body is IrExpressionBody) {
@@ -370,7 +370,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 
             private fun IrSimpleFunction.isCapturingCrossinline(): Boolean {
                 var capturesCrossinline = false
-                (this.originalBeforeInline ?: this).acceptVoid(object : IrElementVisitorVoid {
+                (this.originalBeforeInline ?: this).acceptVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }
@@ -488,7 +488,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
             it.putValueArgument(i + if (i >= continuationParameter.indexInOldValueParameters) 1 else 0, getValueArgument(i))
         }
         if (caller != null) {
-            val continuation = if (caller.origin == LoweredDeclarationOrigins.INLINE_LAMBDA)
+            val continuation = if (caller.origin == IrDeclarationOrigin.INLINE_LAMBDA)
                 IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, continuationParameter.type, JvmLoweredStatementOrigin.FAKE_CONTINUATION)
             else
                 IrGetValueImpl(

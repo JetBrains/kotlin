@@ -7,7 +7,7 @@ KaUsualClassType:
     classId: MyList
     nullability: NON_NULLABLE
     qualifiers: [
-      qualifier:
+      KaResolvedClassTypeQualifier:
         name: MyList
         symbol: KaTypeAliasSymbol(MyList)
         typeArguments: [
@@ -18,7 +18,7 @@ KaUsualClassType:
               classId: MyString
               nullability: NON_NULLABLE
               qualifiers: [
-                qualifier:
+                KaResolvedClassTypeQualifier:
                   name: MyString
                   symbol: KaTypeAliasSymbol(MyString)
                   typeArguments: []
@@ -29,7 +29,7 @@ KaUsualClassType:
             classId: kotlin/String
             nullability: NON_NULLABLE
             qualifiers: [
-              qualifier:
+              KaResolvedClassTypeQualifier:
                 name: String
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
@@ -47,7 +47,7 @@ KaUsualClassType:
           classId: MyString
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: MyString
               symbol: KaTypeAliasSymbol(MyString)
               typeArguments: []
@@ -58,7 +58,7 @@ KaUsualClassType:
         classId: kotlin/String
         nullability: NON_NULLABLE
         qualifiers: [
-          qualifier:
+          KaResolvedClassTypeQualifier:
             name: String
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
@@ -70,7 +70,7 @@ KaUsualClassType:
   classId: kotlin/collections/List
   nullability: NON_NULLABLE
   qualifiers: [
-    qualifier:
+    KaResolvedClassTypeQualifier:
       name: List
       symbol: KaNamedClassSymbol(kotlin/collections/List)
       typeArguments: [
@@ -81,7 +81,7 @@ KaUsualClassType:
             classId: MyString
             nullability: NON_NULLABLE
             qualifiers: [
-              qualifier:
+              KaResolvedClassTypeQualifier:
                 name: MyString
                 symbol: KaTypeAliasSymbol(MyString)
                 typeArguments: []
@@ -92,7 +92,7 @@ KaUsualClassType:
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
-            qualifier:
+            KaResolvedClassTypeQualifier:
               name: String
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
@@ -110,7 +110,7 @@ KaUsualClassType:
         classId: MyString
         nullability: NON_NULLABLE
         qualifiers: [
-          qualifier:
+          KaResolvedClassTypeQualifier:
             name: MyString
             symbol: KaTypeAliasSymbol(MyString)
             typeArguments: []
@@ -121,7 +121,7 @@ KaUsualClassType:
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
-        qualifier:
+        KaResolvedClassTypeQualifier:
           name: String
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []

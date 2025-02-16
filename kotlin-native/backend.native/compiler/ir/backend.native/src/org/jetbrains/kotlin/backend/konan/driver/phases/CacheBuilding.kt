@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 
 /**
  * Builds additional cache info (inline functions bodies and fields of classes).
@@ -25,7 +26,7 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
 ) { context, module ->
     // TODO: Use explicit parameter
     val parent = context.context
-    val moduleDeserializer = parent.irLinker.moduleDeserializers[module.descriptor]
+    val moduleDeserializer = parent.moduleDeserializerProvider.getDeserializerOrNull(module.descriptor.kotlinLibrary)
     if (moduleDeserializer == null) {
         require(module.descriptor.isFromCInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
     } else {

@@ -60,17 +60,18 @@ open class IncrementalFirJvmCompilerRunner(
     buildHistoryFile: File?,
     outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
+    classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
-    classpathChanges: ClasspathChanges
+    icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
 ) : IncrementalJvmCompilerRunner(
     workingDir,
     reporter,
-    false,
     buildHistoryFile,
     outputDirs,
     modulesApiHistory,
+    classpathChanges,
     kotlinSourceFilesExtensions,
-    classpathChanges
+    icFeatures,
 ) {
 
     override fun runCompiler(
@@ -84,6 +85,7 @@ open class IncrementalFirJvmCompilerRunner(
     ): Pair<ExitCode, Collection<File>> {
 //        val isIncremental = true // TODO
         val collector = GroupingMessageCollector(messageCollector, args.allWarningsAsErrors, args.reportAllWarnings)
+        val allSourcesWithJava = allSources + args.javaSources()
         // from K2JVMCompiler (~)
         val moduleName = args.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         val targetId = TargetId(moduleName, "java-production") // TODO: get rid of magic constant
@@ -133,7 +135,8 @@ open class IncrementalFirJvmCompilerRunner(
             val pluginOptions = args.pluginOptions?.toMutableList() ?: ArrayList()
             val pluginConfigurations = args.pluginConfigurations?.toList() ?: emptyList()
             // TODO: add scripting support when ready in FIR
-            val pluginLoadResult = PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration)
+            val pluginLoadResult =
+                PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration, rootDisposable)
             if (pluginLoadResult != ExitCode.OK) return pluginLoadResult to emptyList()
             // -- /plugins
 
@@ -143,6 +146,7 @@ open class IncrementalFirJvmCompilerRunner(
                 configureAdvancedJvmOptions(args)
                 configureKlibPaths(args)
                 configureJdkClasspathRoots()
+                configureJdkHome(args)
 
                 val destination = File(args.destination ?: ".")
                 if (destination.path.endsWith(".jar")) {
@@ -153,7 +157,7 @@ open class IncrementalFirJvmCompilerRunner(
                 addAll(JVMConfigurationKeys.MODULES, listOf(ModuleBuilder(targetId.name, destination.path, targetId.type)))
 
                 configureBaseRoots(args)
-                configureSourceRootsFromSources(allSources, commonSources, args.javaPackagePrefix)
+                configureSourceRootsFromSources(allSourcesWithJava, commonSources, args.javaPackagePrefix)
             }
             // - /configuration
 
@@ -181,7 +185,10 @@ open class IncrementalFirJvmCompilerRunner(
             val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
             val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
-            performanceManager?.notifyCompilerInitialized(0, 0, "${targetId.name}-${targetId.type}")
+            performanceManager?.apply {
+                targetDescription = "${targetId.name}-${targetId.type}"
+                notifyCompilerInitialized()
+            }
 
             // !! main class - maybe from cache?
             var mainClassFqName: FqName? = null
@@ -276,6 +283,7 @@ open class IncrementalFirJvmCompilerRunner(
                 projectEnvironment.project,
                 configuration,
                 messageCollector,
+                hasPendingErrors = false,
                 listOf(codegenOutput.generationState),
                 mainClassFqName
             )
@@ -340,3 +348,5 @@ fun CompilerConfiguration.configureSourceRootsFromSources(
         }
     }
 }
+
+private fun K2JVMCompilerArguments.javaSources(): List<File> = freeArgs.filter { it.endsWith(".java") }.map { File(it) }

@@ -1,0 +1,13 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <testproject>
+final class /Generated { // /Generated|null[0]
+    constructor <init>() // /Generated.<init>|<init>(){}[0]
+
+    final fun helloCreator(): kotlin/Int // /Generated.helloCreator|helloCreator(){}[0]
+}

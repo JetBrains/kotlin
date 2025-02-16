@@ -7,10 +7,12 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
+          contextParameters = []
           callableId = null)
       }
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -23,7 +25,9 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}

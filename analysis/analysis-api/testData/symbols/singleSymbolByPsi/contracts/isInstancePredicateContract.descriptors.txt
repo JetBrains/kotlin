@@ -5,6 +5,7 @@ KaNamedFunctionSymbol:
   ]
   callableId: /isInstancePredicateContract
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: [
     KaContractConditionalContractEffectDeclaration:

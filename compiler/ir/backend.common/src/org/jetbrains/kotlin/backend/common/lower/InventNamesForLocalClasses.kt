@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.getTmpVariablesForArguments
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
+import org.jetbrains.kotlin.backend.common.ir.getTmpVariablesForArguments
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.util.isFunctionInlining
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
-import kotlin.collections.set
 
 /**
  * Invents names for local classes and anonymous objects.
@@ -30,7 +30,7 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
     /** Makes it possible to do customizations for [IrClass] */
     protected open fun customizeNameInventorData(clazz: IrClass, data: NameBuilder): NameBuilder = data
 
-    protected abstract fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String)
+    protected abstract fun putLocalClassName(declaration: IrElement, localClassName: String)
 
     override fun lower(irFile: IrFile) {
         irFile.accept(NameInventor(), NameBuilder.EMPTY)
@@ -86,7 +86,7 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
         }
     }
 
-    private inner class NameInventor : IrElementVisitor<Unit, NameBuilder> {
+    private inner class NameInventor : IrVisitor<Unit, NameBuilder>() {
         private val anonymousClassesCount = mutableMapOf<String, Int>()
         private val localFunctionNames = mutableMapOf<IrFunctionSymbol, String>()
 
@@ -98,7 +98,7 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
             if (!data.processingInlinedFunction && inlinedBlock.isFunctionInlining()) {
                 inlinedBlock.getTmpVariablesForArguments().forEach { it.accept(this, data) }
 
-                val inlinedAt = inlinedBlock.inlineFunctionSymbol?.owner?.name?.asString() ?: "UNKNOWN"
+                val inlinedAt = inlinedBlock.inlinedFunctionSymbol?.owner?.name?.asString() ?: "UNKNOWN"
                 val newData = data.append("\$inlined\$$inlinedAt").copy(isLocal = true, processingInlinedFunction = true)
 
                 return inlinedBlock.getOriginalStatementsFromInlinedBlock().forEach { it.accept(this, newData) }

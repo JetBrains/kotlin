@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
@@ -35,7 +36,7 @@ internal inline fun <T : IrElement> T.deepCopyImpl(createTypeRemapper: (SymbolRe
 abstract class IrDeepCopyBase : IrElementTransformerVoid() {
     protected abstract fun IrType.remapType(): IrType
 
-    protected open fun <D : IrAttributeContainer> D.processAttributes(other: IrAttributeContainer?): D =
+    protected open fun <D : IrElement> D.processAttributes(other: IrElement) =
         copyAttributes(other)
 
     protected inline fun <reified T : IrElement> T.transform() =
@@ -46,15 +47,11 @@ abstract class IrDeepCopyBase : IrElementTransformerVoid() {
     }
 
     protected fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
-        assert(typeArguments.size == other.typeArguments.size) {
-            "Mismatching type arguments: ${typeArguments.size} vs ${other.typeArguments.size} "
-        }
-        for (i in typeArguments.indices) {
-            typeArguments[i] = other.typeArguments[i]?.remapType()
-        }
+        typeArguments.assignFrom(other.typeArguments) { it?.remapType() }
     }
 
     protected fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
+        rawCopyValueArgumentsFrom(original)
         for ((i, arg) in original.arguments.withIndex()) {
             arguments[i] = arg?.transform()
         }

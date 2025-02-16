@@ -29,6 +29,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /jvmField
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -60,7 +61,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: KtConstantInitializerValue(2)
+  initializer: KaConstantInitializerValue(2)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -209,6 +210,7 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
   callableId: /jvmFieldOnField
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -240,7 +242,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: true
-  initializer: KtConstantInitializerValue(4)
+  initializer: KaConstantInitializerValue(4)
   isActual: false
   isConst: false
   isDelegatedProperty: false

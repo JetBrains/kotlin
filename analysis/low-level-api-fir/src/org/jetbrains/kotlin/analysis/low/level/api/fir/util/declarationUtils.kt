@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,16 +17,21 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
@@ -142,16 +147,26 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         }
 
         is KtParameter -> {
-            val ownerFunction = ownerFunction ?: errorWithFirSpecificEntries(
-                "Containing function should be not null for KtParameter",
+            val ownerDeclaration = ownerDeclaration ?: errorWithFirSpecificEntries(
+                "Containing declaration should be not null for ${KtParameter::class.simpleName}",
                 psi = this,
             )
 
-            val firFunctionDeclaration = ownerFunction.findSourceNonLocalFirDeclarationByProvider(
+            val firDeclaration = ownerDeclaration.findSourceNonLocalFirDeclarationByProvider(
                 firDeclarationProvider,
-            ) as? FirFunction ?: return null
+            ) ?: return null
 
-            firFunctionDeclaration.valueParameters[parameterIndex()]
+            val parameters = if (isContextParameter) {
+                when (firDeclaration) {
+                    is FirRegularClass -> firDeclaration.contextParameters
+                    is FirCallableDeclaration -> firDeclaration.contextParameters
+                    else -> null
+                }
+            } else {
+                (firDeclaration as? FirFunction)?.valueParameters
+            }
+
+            parameters?.get(parameterIndex())
         }
 
         is KtTypeParameter -> {
@@ -269,4 +284,11 @@ internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.contai
         // File copy has a different file structure
         null
     }
+}
+
+fun findStringPlusSymbol(session: FirSession): FirNamedFunctionSymbol? {
+    val stringClassSymbol = session.builtinTypes.stringType.toRegularClassSymbol(session)
+    return stringClassSymbol?.declarationSymbols?.singleOrNull {
+        it is FirFunctionSymbol && it.callableId.callableName == OperatorNameConventions.PLUS
+    } as? FirNamedFunctionSymbol
 }

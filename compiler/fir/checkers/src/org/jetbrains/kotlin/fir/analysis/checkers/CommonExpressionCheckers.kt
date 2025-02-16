@@ -23,6 +23,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirRecursiveProblemChecker,
             FirOptInUsageAccessChecker,
             FirPrefixAndSuffixSyntaxChecker,
+            FirAnnotatedBinaryExpressionChecker,
             FirExpressionWithErrorTypeChecker,
         )
 
@@ -78,6 +79,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirProtectedConstructorNotInSuperCallChecker,
             FirOptionalExpectationExpressionChecker,
             FirParenthesizedLhsSetOperatorChecker,
+            FirCommonAtomicReferenceToPrimitiveCallChecker,
+            FirCommonAtomicArrayToPrimitiveCallChecker,
             FirGenericQualifierOnConstructorCallChecker,
         )
 

@@ -77,6 +77,7 @@ val commonTestOptIns = listOf(
     "kotlin.ExperimentalStdlibApi",
     "kotlin.io.encoding.ExperimentalEncodingApi",
     "kotlin.uuid.ExperimentalUuidApi",
+    "kotlin.time.ExperimentalTime",
 )
 
 kotlin {
@@ -418,10 +419,7 @@ kotlin {
             }
 
             prepareJsIrMainSources.configure {
-                // TODO: atomic builtins are moving from kotlin.concurrent to kotlin.concurrent.atomics package (see KT-73816),
-                // builtins from kotlin.concurrent package are kept till Atomic API is completely moved to kotlin.concurrent.atomics
-                // and built with the new bootstrap compiler which provides builtins from the new package.
-                val ignoredFileNames = setOf("Atomics.jvm.kt", "Atomics.kt", "AtomicArrays.jvm.kt", "AtomicArrays.kt")
+                val ignoredFileNames = setOf("Atomics.kt", "AtomicArrays.kt")
                 val unimplementedNativeBuiltIns =
                     (file(jvmBuiltinsDir).list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
                         .filterNot { ignoredFileNames.contains(it) }
@@ -489,10 +487,6 @@ kotlin {
                 val sources = unimplementedNativeBuiltIns
 
                 val excluded = listOf(
-                    // TODO: atomic builtins are moving from kotlin.concurrent to kotlin.concurrent.atomics package (see KT-73816),
-                    // builtins from kotlin.concurrent package are kept till Atomic API is completely moved to kotlin.concurrent.atomics
-                    // and built with the new bootstrap compiler which provides builtins from the new package.
-                    "Atomics.jvm.kt", "AtomicArrays.jvm.kt",
                     "Atomics.kt", "AtomicArrays.kt",
                     // Included with K/N collections
                     "Collections.kt", "Iterator.kt"
@@ -784,6 +778,9 @@ tasks {
         named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
             @Suppress("DEPRECATION")
             kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
+        }
+        named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
+            enabled = false  // Causes out-of-memory in CI: KTI-2150
         }
     }
     val wasmWasiNodeTest by existing {

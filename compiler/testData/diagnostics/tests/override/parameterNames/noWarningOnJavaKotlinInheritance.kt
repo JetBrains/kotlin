@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_TIER_SUGGESTION: Cannot serialize error type: ERROR CLASS: Symbol not found for JavaInterface
+// DISABLE_NEXT_PHASE_SUGGESTION: Cannot serialize error type: ERROR CLASS: Symbol not found for JavaInterface
 // FIR_IDENTICAL
 // MODULE: lib
 // FILE: JavaInterface.java

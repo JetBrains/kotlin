@@ -2,6 +2,7 @@ KtNameReferenceExpression(52,58): 'length'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
           original = KaExplicitReceiverValue:
             expression = a
@@ -14,6 +15,7 @@ KtNameReferenceExpression(52,58): 'length'
           receiverType = null
           returnType = kotlin.Int
           symbol = val length: kotlin.Int
+          contextParameters = []
           callableId = kotlin/String.length
       simpleAccess = Read
       typeArgumentsMapping = {}

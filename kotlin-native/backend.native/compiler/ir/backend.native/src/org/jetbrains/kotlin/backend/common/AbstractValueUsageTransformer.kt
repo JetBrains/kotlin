@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isBoxedArray
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -53,11 +51,8 @@ internal abstract class AbstractValueUsageTransformer(
     protected open fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression =
             this.useAsArgument(expression.symbol.owner.dispatchReceiverParameter!!)
 
-    protected open fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression =
-            this.useAsArgument(expression.symbol.owner.extensionReceiverParameter!!)
-
-    protected open fun IrExpression.useAsValueArgument(expression: IrFunctionAccessExpression,
-                                                       parameter: IrValueParameter
+    protected open fun IrExpression.useAsNonDispatchArgument(expression: IrFunctionAccessExpression,
+                                                             parameter: IrValueParameter
     ): IrExpression =
             this.useAsArgument(parameter)
 
@@ -97,11 +92,9 @@ internal abstract class AbstractValueUsageTransformer(
 
         with(expression) {
             dispatchReceiver = dispatchReceiver?.useAsDispatchReceiver(expression)
-            extensionReceiver = extensionReceiver?.useAsExtensionReceiver(expression)
-            for (index in symbol.owner.valueParameters.indices) {
-                val argument = getValueArgument(index) ?: continue
-                val parameter = symbol.owner.valueParameters[index]
-                putValueArgument(index, argument.useAsValueArgument(expression, parameter))
+            for (parameter in symbol.owner.nonDispatchParameters) {
+                val argument = arguments[parameter] ?: continue
+                arguments[parameter] = argument.useAsNonDispatchArgument(expression, parameter)
             }
         }
 
@@ -252,7 +245,7 @@ internal abstract class AbstractValueUsageTransformer(
     override fun visitFunction(declaration: IrFunction): IrStatement {
         declaration.transformChildrenVoid(this)
 
-        declaration.valueParameters.forEach { parameter ->
+        declaration.parameters.forEach { parameter ->
             val defaultValue = parameter.defaultValue
             if (defaultValue is IrExpressionBody) {
                 defaultValue.expression = defaultValue.expression.useAsArgument(parameter)
@@ -287,7 +280,7 @@ internal abstract class AbstractValueUsageTransformer(
         expression.transformChildrenVoid(this)
 
         expression.valueArguments.forEachIndexed { index, arg ->
-            expression.valueArguments[index] = arg.useAsArgument(expression.constructor.owner.valueParameters[index]) as IrConstantValue
+            expression.valueArguments[index] = arg.useAsArgument(expression.constructor.owner.parameters[index]) as IrConstantValue
         }
         return expression
     }

@@ -275,6 +275,7 @@ class CodeConformanceTest : TestCase() {
                     "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/native/GeneralNativeIT.kt",
                     "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinGradlePluginIT.kt",
                     "repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/plugins/CustomVariantPublishingDsl.kt",
+                    "libraries/tools/kotlin-gradle-plugin/src/functionalTest/kotlin/org/jetbrains/kotlin/gradle/unitTests/KotlinPublishingAdhocSoftwareComponentTest.kt"
                 )
             ) { _, source ->
                 gradleEagerAttributeMethodRegex.containsMatchIn(source)

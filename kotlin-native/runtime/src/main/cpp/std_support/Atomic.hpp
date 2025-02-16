@@ -108,6 +108,10 @@ public:
 
     // TODO implement fetch_*** functions for appropriate types
 
+    ALWAYS_INLINE T fetch_or(T value, std::memory_order order = std::memory_order_seq_cst) noexcept {
+        return __atomic_fetch_or(&ref_, value, builtinOrder(order));
+    }
+
 private:
     ALWAYS_INLINE static constexpr auto builtinOrder(std::memory_order stdOrder) {
         switch(stdOrder) {

@@ -14,9 +14,10 @@
 #include "AnyPage.hpp"
 #include "AtomicStack.hpp"
 #include "Cell.hpp"
-#include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
 #include "AllocationSize.hpp"
+#include "CustomLogging.hpp"
+#include "CustomFinalizerProcessor.hpp"
 
 namespace kotlin::alloc {
 
@@ -32,10 +33,6 @@ public:
         return cellCount() - 2;
     }
 
-    using GCSweepScope = gc::GCHandle::GCSweepScope;
-
-    static GCSweepScope currentGCSweepScope(gc::GCHandle& handle) noexcept { return handle.sweep(); }
-
     static NextFitPage* Create(uint32_t cellCount) noexcept;
 
     void Destroy() noexcept;
@@ -43,9 +40,41 @@ public:
     // Tries to allocate in current page, returns null if no free block in page is big enough
     uint8_t* TryAllocate(uint32_t blockSize) noexcept;
 
-    bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+    template<typename SweepTraits>
+    bool Sweep(typename SweepTraits::GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
+        CustomAllocDebug("NextFitPage@%p::Sweep()", this);
+        Cell* end = cells_ + NextFitPage::cellCount();
+        std::size_t aliveBytes = 0;
+        for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
+            if (block->isAllocated_) {
+                if (!SweepTraits::trySweepElement(block->data_, finalizerQueue, sweepHandle)) {
+                    aliveBytes += AllocationSize::cells(block->size_).inBytes();
+                } else {
+                    block->Deallocate();
+                }
+            }
+        }
+        Cell* maxBlock = cells_; // size 0 block
+        for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
+            if (block->isAllocated_) continue;
+            for (auto* next = block->Next(); next != end; next = block->Next()) {
+                if (next->isAllocated_) {
+                    break;
+                }
+                block->size_ += next->size_;
+                memset(next, 0, sizeof(*next));
+            }
+            if (block->size_ > maxBlock->size_) maxBlock = block;
+        }
+        curBlock_ = maxBlock;
 
-    // TODO: Do we need this, or should we implement Dump on top of GetAllocatedBlocks()?
+        RuntimeAssert(aliveBytes == GetAllocatedSizeBytes(),
+                      "Sweep counted %zu alive bytes, while GetAllocatedSizeBytes() returns %zu", aliveBytes, GetAllocatedSizeBytes());
+        allocatedSizeTracker_.afterSweep(aliveBytes);
+
+        return aliveBytes > 0;
+    }
+
     template <typename F>
     void TraverseAllocatedBlocks(F process) noexcept(noexcept(process(std::declval<uint8_t*>()))) {
         Cell* end = cells_ + cellCount();

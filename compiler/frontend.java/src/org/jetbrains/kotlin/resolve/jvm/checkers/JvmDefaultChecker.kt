@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.JvmDefaultMode.ALL_COMPATIBILITY
+import org.jetbrains.kotlin.config.JvmDefaultMode.ENABLE
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
@@ -43,7 +43,7 @@ class JvmDefaultChecker(project: Project) : DeclarationChecker {
         // 2. If it's mixed hierarchy with implicit override in base class and override one in inherited derived interface report error.
         // Otherwise the implicit class override would be used for dispatching method calls (but not more specialized)
         val performSpecializationCheck =
-            jvmDefaultMode == JvmDefaultMode.ALL_COMPATIBILITY && !descriptor.hasJvmDefaultNoCompatibilityAnnotation() &&
+            jvmDefaultMode == JvmDefaultMode.ENABLE && !descriptor.hasJvmDefaultNoCompatibilityAnnotation() &&
                     //TODO: maybe remove this check for JVM compatibility
                     !(descriptor.modality !== Modality.OPEN && descriptor.modality !== Modality.ABSTRACT || descriptor.isEffectivelyPrivateApi)
 
@@ -63,7 +63,7 @@ class JvmDefaultChecker(project: Project) : DeclarationChecker {
                 } else if (actualImplementation is PropertyDescriptor && inheritedMember is PropertyDescriptor) {
                     val getterImpl = actualImplementation.getter
                     val getterInherited = inheritedMember.getter
-                    if (getterImpl == null || getterInherited == null || jvmDefaultMode != ALL_COMPATIBILITY ||
+                    if (getterImpl == null || getterInherited == null || jvmDefaultMode != ENABLE ||
                         checkSpecializationInCompatibilityMode(
                             getterInherited, getterImpl, context, declaration, performSpecializationCheck,
                         )
@@ -98,7 +98,7 @@ class JvmDefaultChecker(project: Project) : DeclarationChecker {
 
         descriptor.annotations.findAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME)?.let { annotationDescriptor ->
             val reportOn = DescriptorToSourceUtils.getSourceFromAnnotation(annotationDescriptor) ?: declaration
-            if (jvmDefaultMode != JvmDefaultMode.ALL) {
+            if (jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION.on(reportOn))
                 return true
             } else if (!isInterface(descriptor)) {

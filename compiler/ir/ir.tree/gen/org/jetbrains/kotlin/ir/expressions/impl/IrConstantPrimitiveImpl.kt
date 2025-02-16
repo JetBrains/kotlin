@@ -10,7 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 import org.jetbrains.kotlin.ir.types.IrType
@@ -23,7 +23,5 @@ class IrConstantPrimitiveImpl internal constructor(
     override var type: IrType,
     override var value: IrConst,
 ) : IrConstantPrimitive() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
+    override var attributeOwnerId: IrElement = this
 }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.dependencyProvider
+import org.jetbrains.kotlin.test.services.transitiveFriendDependencies
 
 class FirModuleInfoProvider(private val testServices: TestServices) : TestService {
     val firSessionProvider = FirProjectSessionProvider()
@@ -39,19 +39,7 @@ class FirModuleInfoProvider(private val testServices: TestServices) : TestServic
     }
 
     fun getDependentFriendSourceModulesRecursively(module: TestModule): List<FirModuleData> {
-
-        fun getFriendTestModules(module: TestModule): List<TestModule> =
-            module.friendDependencies
-                .filter { it.kind == DependencyKind.Source }
-                .map { testServices.dependencyProvider.getTestModule(it.moduleName) }
-
-        val allModules = LinkedHashSet<TestModule>()
-        var newModules = getFriendTestModules(module)
-        while (newModules.isNotEmpty()) {
-            allModules += newModules
-            newModules = newModules.flatMap { getFriendTestModules(testServices.dependencyProvider.getTestModule(it.name)) }
-        }
-        return allModules.map { getCorrespondingModuleData(it) }
+        return module.transitiveFriendDependencies().map { getCorrespondingModuleData(it) }
     }
 
     fun getDependentDependsOnSourceModules(module: TestModule): List<FirModuleData> {
@@ -60,7 +48,7 @@ class FirModuleInfoProvider(private val testServices: TestServices) : TestServic
 
     private fun getDependentModulesImpl(dependencies: List<DependencyDescription>): List<FirModuleData> {
         return dependencies.filter { it.kind == DependencyKind.Source }.map {
-            getCorrespondingModuleData(testServices.dependencyProvider.getTestModule(it.moduleName))
+            getCorrespondingModuleData(it.dependencyModule)
         }
     }
 }

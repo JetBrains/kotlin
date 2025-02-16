@@ -64,10 +64,12 @@ KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = other
           isSafeNavigation = true
@@ -83,8 +85,10 @@ KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
@@ -92,6 +96,7 @@ KtNameReferenceExpression(79,84): 'other'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -99,6 +104,7 @@ KtNameReferenceExpression(79,84): 'other'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -112,10 +118,12 @@ KtCallExpression(86,98): 'equals(this)'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = other
           isSafeNavigation = true
@@ -131,8 +139,10 @@ KtCallExpression(86,98): 'equals(this)'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
@@ -145,10 +155,12 @@ KtNameReferenceExpression(86,92): 'equals'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = other
           isSafeNavigation = true
@@ -164,8 +176,10 @@ KtNameReferenceExpression(86,92): 'equals'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
@@ -239,6 +253,7 @@ KtNameReferenceExpression(168,169): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -246,6 +261,7 @@ KtNameReferenceExpression(168,169): 'm'
           receiverType = null
           returnType = MyClass?
           symbol = m: MyClass?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -257,6 +273,7 @@ KtNameReferenceExpression(173,175): 'm2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -264,6 +281,7 @@ KtNameReferenceExpression(173,175): 'm2'
           receiverType = null
           returnType = MyClass?
           symbol = m2: MyClass?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -281,6 +299,7 @@ KtNameReferenceExpression(188,189): 'f'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -288,6 +307,7 @@ KtNameReferenceExpression(188,189): 'f'
           receiverType = null
           returnType = MyClass?
           symbol = val f: MyClass?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -299,6 +319,7 @@ KtNameReferenceExpression(193,195): 'm2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -306,6 +327,7 @@ KtNameReferenceExpression(193,195): 'm2'
           receiverType = null
           returnType = MyClass?
           symbol = m2: MyClass?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -317,6 +339,7 @@ KtNameReferenceExpression(200,202): 'm2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -324,6 +347,7 @@ KtNameReferenceExpression(200,202): 'm2'
           receiverType = null
           returnType = MyClass?
           symbol = m2: MyClass?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
@@ -335,6 +359,7 @@ KtNameReferenceExpression(206,207): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -342,6 +367,7 @@ KtNameReferenceExpression(206,207): 'm'
           receiverType = null
           returnType = MyClass?
           symbol = m: MyClass?
+          contextParameters = []
           callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

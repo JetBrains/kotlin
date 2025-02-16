@@ -52,6 +52,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: test/E.values
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -94,6 +95,7 @@ KaNamedFunctionSymbol:
   annotations: []
   callableId: test/E.valueOf
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -162,6 +164,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: null
   callableId: test/E.entries
   compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []

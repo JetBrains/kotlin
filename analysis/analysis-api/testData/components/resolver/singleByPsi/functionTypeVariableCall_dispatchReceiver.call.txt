@@ -4,6 +4,7 @@ KtCallExpression(72,75): 'f()'
       argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = f
           isSafeNavigation = false
@@ -22,7 +23,9 @@ KtCallExpression(72,75): 'f()'
               receiverType = null
               returnType = kotlin.String
               symbol = p1: P1
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}

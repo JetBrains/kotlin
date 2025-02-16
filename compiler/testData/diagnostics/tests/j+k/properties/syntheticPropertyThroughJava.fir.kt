@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59550
-// LATEST_LV_DIFFERENCE
 // FILE: Base.kt
 abstract class Base(private val foo: String) {
     fun getFoo(): String = foo
@@ -14,8 +13,8 @@ public class Intermediate extends Base {
 }
 
 // FILE: main.kt
-class Final(val i: Intermediate) : Intermediate(i.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>foo<!>)
+class Final(val i: Intermediate) : Intermediate(i.<!FUNCTION_CALL_EXPECTED!>foo<!>)
 
 fun test(x: Final) {
-    x.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>foo<!>
+    x.<!FUNCTION_CALL_EXPECTED!>foo<!>
 }

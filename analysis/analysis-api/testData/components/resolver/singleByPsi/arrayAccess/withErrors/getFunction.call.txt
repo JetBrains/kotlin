@@ -8,10 +8,12 @@ KtArrayAccessExpression(44,48): '1[2]'
             receiverType = null
             returnType = kotlin.Int
             symbol = index: kotlin.Int
+            contextParameters = []
             callableId = null)
         }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
           dispatchReceiver = null
           extensionReceiver = KaExplicitReceiverValue:
             expression = 1
@@ -27,8 +29,10 @@ KtArrayAccessExpression(44,48): '1[2]'
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = index: kotlin.Int
+                contextParameters = []
                 callableId = null
             ]
+            contextParameters = []
             callableId = /get
         typeArgumentsMapping = {}
     ]

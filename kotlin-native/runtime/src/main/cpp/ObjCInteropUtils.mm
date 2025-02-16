@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
+#import "CompilerConstants.hpp"
 #import "Memory.h"
 #import "KString.h"
 #import "ObjCInteropUtils.h"
@@ -59,11 +60,28 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
     RETURN_OBJ(nullptr);
   }
 
-  CFStringRef immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
-
+  KRef result;
+  auto immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
   auto length = CFStringGetLength(immutableCopyOrSameStr);
-  auto result = CreateUninitializedUtf16String(length, OBJ_RESULT);
-  CFStringGetCharacters(immutableCopyOrSameStr, {0, length}, reinterpret_cast<UniChar*>(StringRawData(result)));
+  if (length == 0) RETURN_RESULT_OF0(TheEmptyString);
+
+  auto encoding = CFStringGetFastestEncoding(immutableCopyOrSameStr);
+  switch (encoding) {
+    case kCFStringEncodingASCII:
+    case kCFStringEncodingNonLossyASCII:
+    case kCFStringEncodingISOLatin1:
+      if (kotlin::compiler::latin1Strings()) {
+        result = CreateUninitializedString(StringEncoding::kLatin1, length, OBJ_RESULT);
+        CFStringGetBytes(immutableCopyOrSameStr, {0, length}, encoding, '?', false,
+          reinterpret_cast<UInt8*>(StringHeader::of(result)->data()), length, nullptr);
+        break;
+      }
+    default:
+      result = CreateUninitializedString(StringEncoding::kUTF16, length, OBJ_RESULT);
+      CFStringGetCharacters(immutableCopyOrSameStr, {0, length},
+        reinterpret_cast<UniChar*>(StringHeader::of(result)->data()));
+      break;
+  }
   result->SetAssociatedObject((void*)immutableCopyOrSameStr);
   RETURN_OBJ(result);
 }

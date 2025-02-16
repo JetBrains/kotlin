@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferReceiverParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
@@ -120,15 +116,7 @@ class FirCallCompleter(
                 val finalSubstitutor = readOnlyConstraintStorage
                     .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                 call.transformSingle(
-                    FirCallCompletionResultsWriterTransformer(
-                        session, components.scopeSession, finalSubstitutor,
-                        components.returnTypeCalculator,
-                        session.typeApproximator,
-                        components.dataFlowAnalyzer,
-                        components.integerLiteralAndOperatorApproximationTransformer,
-                        components.samResolver,
-                        components.context,
-                    ),
+                    createCompletionResultsWriter(finalSubstitutor),
                     null
                 )
             }
@@ -394,28 +382,43 @@ class FirCallCompleter(
             }
 
             if (contextParameters.isNotEmpty()) {
-                lambda.replaceContextParameters(
-                    contextParameters.map { contextParameterType ->
-                        buildValueParameter {
-                            resolvePhase = FirResolvePhase.BODY_RESOLVE
-                            source = lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
-                            containingDeclarationSymbol = lambda.symbol
-                            moduleData = session.moduleData
-                            origin = FirDeclarationOrigin.Source
-                            name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                            symbol = FirValueParameterSymbol(name)
-                            returnTypeRef = contextParameterType
-                                // TODO(KT-73150) investigate/test the need for approximation
-                                .approximateLambdaInputType(symbol, withPCLASession)
-                                .toFirResolvedTypeRef(lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
-                            valueParameterKind = if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
-                                FirValueParameterKind.ContextParameter
-                            } else {
-                                FirValueParameterKind.LegacyContextReceiver
+                if (lambda.isLambda) {
+                    lambda.replaceContextParameters(
+                        contextParameters.map { contextParameterType ->
+                            buildValueParameter {
+                                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                                source = lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
+                                containingDeclarationSymbol = lambda.symbol
+                                moduleData = session.moduleData
+                                origin = FirDeclarationOrigin.Source
+                                name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                                symbol = FirValueParameterSymbol(name)
+                                returnTypeRef = contextParameterType
+                                    .approximateLambdaInputType(symbol, withPCLASession)
+                                    .toFirResolvedTypeRef(lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
+                                valueParameterKind =
+                                    if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                                        FirValueParameterKind.ContextParameter
+                                    } else {
+                                        FirValueParameterKind.LegacyContextReceiver
+                                    }
                             }
                         }
+                    )
+                } else {
+                    check(lambda.contextParameters.size == contextParameters.size)
+                    lambda.contextParameters.forEachIndexed { index, parameter ->
+                        val contextParameterType = contextParameters[index]
+                        parameter.replaceReturnTypeRef(
+                            contextParameterType
+                                .approximateLambdaInputType(parameter.symbol, withPCLASession)
+                                .toFirResolvedTypeRef(
+                                    parameter.returnTypeRef.source
+                                        ?: parameter.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
+                                )
+                        )
                     }
-                )
+                }
             }
 
             val lookupTracker = session.lookupTracker
@@ -467,9 +470,9 @@ class FirCallCompleter(
                 val declarationsTransformer = transformer.declarationsTransformer!!
                 if (pclaInferenceSession != null) {
                     transformer.context.withInferenceSession(pclaInferenceSession) {
-                        declarationsTransformer.doTransformAnonymousFunction(
+                        declarationsTransformer.doTransformAnonymousFunctionBodyFromCallCompletion(
                             lambdaExpression,
-                            ResolutionMode.LambdaResolution(expectedReturnTypeRef)
+                            expectedReturnTypeRef,
                         )
 
                         applyResultsToMainCandidate()
@@ -477,9 +480,9 @@ class FirCallCompleter(
                 } else {
                     additionalConstraints =
                         transformer.context.inferenceSession.runLambdaCompletion(candidate, forOverloadByLambdaReturnType) {
-                            declarationsTransformer.doTransformAnonymousFunction(
+                            declarationsTransformer.doTransformAnonymousFunctionBodyFromCallCompletion(
                                 lambdaExpression,
-                                ResolutionMode.LambdaResolution(expectedReturnTypeRef)
+                                expectedReturnTypeRef,
                             )
                         }
                 }

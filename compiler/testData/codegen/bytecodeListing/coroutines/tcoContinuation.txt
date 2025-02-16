@@ -82,7 +82,15 @@ public final class TcoContinuationKt$foo$$inlined$flow$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
     enclosing method TcoContinuationKt$foo$$inlined$map$1$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+    field I$0: int
+    field I$1: int
     field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
+    field L$5: java.lang.Object
+    field L$6: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$foo$$inlined$map$1$2
@@ -129,7 +137,15 @@ public final class TcoContinuationKt$map$$inlined$transform$1$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class TcoContinuationKt$map$$inlined$transform$1$2$1 {
     enclosing method TcoContinuationKt$map$$inlined$transform$1$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+    field I$0: int
+    field I$1: int
     field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    field L$2: java.lang.Object
+    field L$3: java.lang.Object
+    field L$4: java.lang.Object
+    field L$5: java.lang.Object
+    field L$6: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$1$2

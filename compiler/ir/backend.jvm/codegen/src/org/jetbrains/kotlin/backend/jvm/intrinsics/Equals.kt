@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genAreEqualCall
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.NumberComparisonUtils
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
@@ -185,6 +185,20 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
             }
         }
 
+        class Ieee754Primitives : IntrinsicFunction(expression, signature, classCodegen, listOf(operandType, operandType)) {
+            override fun genInvokeInstruction(v: InstructionAdapter) {
+                val opcode = NumberComparisonUtils.getNumberCompareOpcode(KtTokens.EQEQ)
+                val branchJumpLabel = Label()
+                v.visitJumpInsn(NumberComparisonUtils.patchOpcode(opcode, v, KtTokens.EQEQ, operandType), branchJumpLabel)
+                val endLabel = Label()
+                v.iconst(1)
+                v.goTo(endLabel)
+                v.visitLabel(branchJumpLabel)
+                v.iconst(0)
+                v.visitLabel(endLabel)
+            }
+        }
+
         val arg0 = expression.getValueArgument(0)!!
         val arg1 = expression.getValueArgument(1)!!
 
@@ -208,12 +222,7 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
                 Ieee754AreEqual(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE)
 
             !arg0isNullable && !arg1isNullable ->
-                object : IntrinsicFunction(expression, signature, classCodegen, listOf(operandType, operandType)) {
-                    override fun genInvokeInstruction(v: InstructionAdapter) {
-                        StackValue.cmp(KtTokens.EQEQ, operandType, StackValue.onStack(operandType), StackValue.onStack(operandType))
-                            .put(Type.BOOLEAN_TYPE, v)
-                    }
-                }
+                Ieee754Primitives()
 
             arg0isNullable && !arg1isNullable ->
                 Ieee754AreEqual(boxedOperandType, operandType)

@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
@@ -50,18 +53,25 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         listOf(AdditionalFilesDirectives)
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {
+        val stdlibPath = File("./libraries/stdlib").canonicalPath
         return directories.flatMap { directory ->
             File(directory)
                 .also { check(it.exists()) { "$it path is not found" } }
                 .walkTopDown().mapNotNull { file ->
+                    val parentPath = file.parentFile.canonicalPath
+                    val relativePath = runIf(parentPath.startsWith(stdlibPath)) { parentPath.removePrefix("$stdlibPath/") }
                     file.takeUnless { it.isDirectory }
                         ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
-                        ?.toTestFile()
+                        ?.toTestFile(relativePath = relativePath)
                 }.toList()
         }
     }
 
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         return getTestFilesForEachDirectory(
             HELPERS_PATH,
             *UNSIGNED_PATH,

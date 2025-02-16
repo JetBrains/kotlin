@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.backend.wasm.WasmSymbols
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.ir.util.defaultValueForType
 
-class WasmSharedVariablesManager(val wasmSymbols: WasmSymbols) : SharedVariablesManager {
+class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariablesManager {
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val initializer = originalDeclaration.initializer ?: IrConstImpl.defaultValueForType(
             originalDeclaration.startOffset,
@@ -31,7 +31,7 @@ class WasmSharedVariablesManager(val wasmSymbols: WasmSymbols) : SharedVariables
             originalDeclaration.type
         )
 
-        val boxClass = wasmSymbols.findClosureBoxClass(originalDeclaration.type)
+        val boxClass = context.wasmSymbols.findClosureBoxClass(originalDeclaration.type)
         val constructorSymbol = boxClass.constructors.first()
 
         val irCall =
@@ -43,7 +43,7 @@ class WasmSharedVariablesManager(val wasmSymbols: WasmSymbols) : SharedVariables
                 typeArgumentsCount = boxClass.owner.typeParameters.size,
                 constructorTypeArgumentsCount = constructorSymbol.owner.typeParameters.size
             ).apply {
-                putValueArgument(0, initializer)
+                arguments[0] = initializer
             }
 
         return IrVariableImpl(
@@ -120,7 +120,7 @@ class WasmSharedVariablesManager(val wasmSymbols: WasmSymbols) : SharedVariables
                 symbol = sharedVariableSymbol,
                 origin = originalSet.origin
             )
-            it.putValueArgument(0, originalSet.value)
+            it.arguments[1] = originalSet.value
         }
 
         return propertySet

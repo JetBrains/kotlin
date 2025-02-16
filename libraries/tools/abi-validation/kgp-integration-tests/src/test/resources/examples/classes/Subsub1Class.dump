@@ -1,0 +1,5 @@
+public final class com/company/subsub1/Subsub1Class {
+	public fun <init> ()V
+	public final fun getProp ()I
+}
+

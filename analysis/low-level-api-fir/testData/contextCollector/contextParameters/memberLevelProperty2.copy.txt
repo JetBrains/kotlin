@@ -1,0 +1,49 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class B : R|kotlin/Any|
+                Type: one.B
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|one/B|
+    Element 8
+        Context parameters:
+            FirValueParameterSymbol b: R|one/B|
+                Type: one.B
+            FirValueParameterSymbol <unused var>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 9
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] memberLevelProperty2.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|one/A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|one/B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        context([ResolvedTo(BODY_RESOLVE)] b: R|one/B|, [ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/Int|)
+        public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit| {
+                [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = Int(1)
+            }
+
+    }

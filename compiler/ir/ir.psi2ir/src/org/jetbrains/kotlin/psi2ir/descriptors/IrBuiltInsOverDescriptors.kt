@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi2ir.descriptors
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -323,6 +324,15 @@ class IrBuiltInsOverDescriptors(
     override val longType = long.toIrType()
     override val longClass = builtIns.long.toIrSymbol()
 
+    override val ubyteClass = symbolFinder.findClass(UnsignedType.UBYTE.typeName, BUILT_INS_PACKAGE_FQ_NAME)
+    override val ubyteType by lazy { ubyteClass!!.typeWith() }
+    override val ushortClass = symbolFinder.findClass(UnsignedType.USHORT.typeName, BUILT_INS_PACKAGE_FQ_NAME)
+    override val ushortType by lazy { ushortClass!!.typeWith() }
+    override val uintClass = symbolFinder.findClass(UnsignedType.UINT.typeName, BUILT_INS_PACKAGE_FQ_NAME)
+    override val uintType by lazy { uintClass!!.typeWith() }
+    override val ulongClass = symbolFinder.findClass(UnsignedType.ULONG.typeName, BUILT_INS_PACKAGE_FQ_NAME)
+    override val ulongType by lazy { ulongClass!!.typeWith() }
+
     val float = builtIns.floatType
     override val floatType = float.toIrType()
     override val floatClass = builtIns.float.toIrSymbol()
@@ -441,7 +451,10 @@ class IrBuiltInsOverDescriptors(
     override val floatArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.FLOAT).toIrSymbol()
     override val doubleArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.DOUBLE).toIrSymbol()
     override val booleanArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BOOLEAN).toIrSymbol()
-
+    override val ubyteArray = symbolFinder.findClass(UnsignedType.UBYTE.arrayClassId.shortClassName, BUILT_INS_PACKAGE_FQ_NAME)
+    override val ushortArray = symbolFinder.findClass(UnsignedType.USHORT.arrayClassId.shortClassName, BUILT_INS_PACKAGE_FQ_NAME)
+    override val uintArray = symbolFinder.findClass(UnsignedType.UINT.arrayClassId.shortClassName, BUILT_INS_PACKAGE_FQ_NAME)
+    override val ulongArray = symbolFinder.findClass(UnsignedType.ULONG.arrayClassId.shortClassName, BUILT_INS_PACKAGE_FQ_NAME)
     override val primitiveArraysToPrimitiveTypes =
         PrimitiveType.entries.associate { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() to it }
     override val primitiveTypesToPrimitiveArrays = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
@@ -682,11 +695,6 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
             name,
             NoLookupLocation.FROM_BACKEND
         ) as? ClassDescriptor
-
-    fun findBuiltInClassDescriptor(descriptor: ClassDescriptor): ClassDescriptor? {
-        val packageFqName = descriptor.containingPackage() ?: return null
-        return findClassDescriptor(descriptor.name, packageFqName)
-    }
 
     private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
         return symbolTable.descriptorExtension.referenceClass(this)

@@ -1,0 +1,11 @@
+public final class foo/Foo {
+	public static final field Companion Lfoo/Foo$Companion;
+	public fun <init> ()V
+}
+
+public final class foo/Foo$Companion {
+}
+
+public abstract interface annotation class foo/HiddenProperty : java/lang/annotation/Annotation {
+}
+

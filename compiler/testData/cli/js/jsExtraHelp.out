@@ -49,15 +49,17 @@ where advanced options include:
                              -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
                              default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
+  -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
-  -Xcheck-sticky-phase-conditions
-                             Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
   -Xconsistent-data-class-copy-visibility
                              The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
   -Xcontext-parameters       Enable experimental context parameters.
   -Xcontext-receivers        Enable experimental context receivers.
+  -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
+                             Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
+                             The only observable effect is that a custom ABI version is written to KLIB manifest file.
   -Xwasm-debugger-custom-formatters
                              Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
@@ -80,13 +82,13 @@ where advanced options include:
   -Xexplicit-api={strict|warning|disable}
                              Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
                              Use the 'warning' level to issue warnings instead of errors.
-  -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
-                             Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code.
+  -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
                              Add sources to a specific fragment of a multiplatform compilation.
   -Xfragments=<fragment name> Declare all known fragments of a multiplatform compilation.
+  -Xwasm-generate-dwarf      Generate DWARF debug information.
   -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
@@ -108,9 +110,9 @@ where advanced options include:
   -Xmetadata-version         Change the metadata version of the generated binary files.
   -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
   -Xmulti-platform           Enable language support for multiplatform projects.
+  -Xnested-type-aliases      Enable experimental language support for nested type aliases.
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
-  -Xklib-no-double-inlining  Turn off double-inlining mode.
   -Xno-inline                Disable method inlining.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.

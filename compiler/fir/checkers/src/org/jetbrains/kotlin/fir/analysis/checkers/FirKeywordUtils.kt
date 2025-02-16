@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 // DO
 // - use this to retrieve modifiers on the source and confirm a certain modifier indeed appears
@@ -93,11 +95,12 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
         is KtPsiSourceElement -> {
             val modifierListOwner = psi as? KtModifierListOwner
 
-            // TODO: drop in the context of KT-72295
             // The check is required in the Analysis API mode as in this case property accessor
             // has the containing property as a source
             if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && modifierListOwner is KtProperty) {
-                return null
+                errorWithAttachment("Don't request modifiers on fake PSI of delegated property accessors, it's not the right PSI") {
+                    withPsiEntry("property", modifierListOwner)
+                }
             }
 
             modifierListOwner?.modifierList?.let { FirModifierList.FirPsiModifierList(it) }
@@ -113,9 +116,14 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
 
 operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
 
-fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
+fun FirElement.getModifierList(): FirModifierList? = when {
+    source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor && source?.elementType != KtNodeTypes.PROPERTY_ACCESSOR -> null
+    else -> source.getModifierList()
+}
 
-fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
+fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = getModifierList()?.get(token)
+
+fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in getModifierList()
 
 @OptIn(SymbolInternals::class)
 fun FirBasedSymbol<*>.hasModifier(token: KtModifierKeywordToken): Boolean = fir.hasModifier(token)

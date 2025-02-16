@@ -1,0 +1,332 @@
+Restored type is the same as the original one
+
+KaFlexibleType:
+  abbreviation: null
+  annotations: []
+  lowerBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: java/util/function/Function
+    nullability: NON_NULLABLE
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Function
+        symbol: KaNamedClassSymbol(java/util/function/Function)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NON_NULLABLE
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+            nullability: UNKNOWN
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NULLABLE
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaDefinitelyNotNullType:
+              abbreviation: null
+              annotations: []
+              nullability: NON_NULLABLE
+              original: KaTypeParameterType:
+                abbreviation: null
+                annotations: []
+                name: T
+                nullability: NON_NULLABLE
+                symbol: KaTypeParameterSymbol:
+                  annotations: []
+                  compilerVisibility: Local
+                  isActual: false
+                  isExpect: false
+                  isReified: false
+                  location: LOCAL
+                  modality: FINAL
+                  name: T
+                  origin: SOURCE
+                  upperBounds: []
+                  variance: INVARIANT
+                  visibility: LOCAL
+            nullability: UNKNOWN
+            upperBound: KaTypeParameterType:
+              abbreviation: null
+              annotations: []
+              name: T
+              nullability: NULLABLE
+              symbol: KaTypeParameterSymbol:
+                annotations: []
+                compilerVisibility: Local
+                isActual: false
+                isExpect: false
+                isReified: false
+                location: LOCAL
+                modality: FINAL
+                name: T
+                origin: SOURCE
+                upperBounds: []
+                variance: INVARIANT
+                visibility: LOCAL
+        ]
+    ]
+    symbol: KaNamedClassSymbol(java/util/function/Function)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+        nullability: UNKNOWN
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaDefinitelyNotNullType:
+          abbreviation: null
+          annotations: []
+          nullability: NON_NULLABLE
+          original: KaTypeParameterType:
+            abbreviation: null
+            annotations: []
+            name: T
+            nullability: NON_NULLABLE
+            symbol: KaTypeParameterSymbol:
+              annotations: []
+              compilerVisibility: Local
+              isActual: false
+              isExpect: false
+              isReified: false
+              location: LOCAL
+              modality: FINAL
+              name: T
+              origin: SOURCE
+              upperBounds: []
+              variance: INVARIANT
+              visibility: LOCAL
+        nullability: UNKNOWN
+        upperBound: KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: T
+          nullability: NULLABLE
+          symbol: KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: LOCAL
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+    ]
+  nullability: UNKNOWN
+  upperBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: java/util/function/Function
+    nullability: NULLABLE
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Function
+        symbol: KaNamedClassSymbol(java/util/function/Function)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NON_NULLABLE
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+            nullability: UNKNOWN
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NULLABLE
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaDefinitelyNotNullType:
+              abbreviation: null
+              annotations: []
+              nullability: NON_NULLABLE
+              original: KaTypeParameterType:
+                abbreviation: null
+                annotations: []
+                name: T
+                nullability: NON_NULLABLE
+                symbol: KaTypeParameterSymbol:
+                  annotations: []
+                  compilerVisibility: Local
+                  isActual: false
+                  isExpect: false
+                  isReified: false
+                  location: LOCAL
+                  modality: FINAL
+                  name: T
+                  origin: SOURCE
+                  upperBounds: []
+                  variance: INVARIANT
+                  visibility: LOCAL
+            nullability: UNKNOWN
+            upperBound: KaTypeParameterType:
+              abbreviation: null
+              annotations: []
+              name: T
+              nullability: NULLABLE
+              symbol: KaTypeParameterSymbol:
+                annotations: []
+                compilerVisibility: Local
+                isActual: false
+                isExpect: false
+                isReified: false
+                location: LOCAL
+                modality: FINAL
+                name: T
+                origin: SOURCE
+                upperBounds: []
+                variance: INVARIANT
+                visibility: LOCAL
+        ]
+    ]
+    symbol: KaNamedClassSymbol(java/util/function/Function)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+        nullability: UNKNOWN
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NULLABLE
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaDefinitelyNotNullType:
+          abbreviation: null
+          annotations: []
+          nullability: NON_NULLABLE
+          original: KaTypeParameterType:
+            abbreviation: null
+            annotations: []
+            name: T
+            nullability: NON_NULLABLE
+            symbol: KaTypeParameterSymbol:
+              annotations: []
+              compilerVisibility: Local
+              isActual: false
+              isExpect: false
+              isReified: false
+              location: LOCAL
+              modality: FINAL
+              name: T
+              origin: SOURCE
+              upperBounds: []
+              variance: INVARIANT
+              visibility: LOCAL
+        nullability: UNKNOWN
+        upperBound: KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: T
+          nullability: NULLABLE
+          symbol: KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: LOCAL
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+    ]

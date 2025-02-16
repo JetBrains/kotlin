@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.codegen
 
 import com.google.common.collect.Sets
-import org.jetbrains.kotlin.codegen.BranchedValue.Companion.FALSE
-import org.jetbrains.kotlin.codegen.BranchedValue.Companion.TRUE
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmStringConcat
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -44,34 +41,24 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
     private var paramSlots = 0
     private var justFlushed = false
 
-    @JvmOverloads
-    fun putValueOrProcessConstant(stackValue: StackValue, type: Type = stackValue.type, kotlinType: KotlinType? = stackValue.kotlinType) {
+    fun putValueOrProcessConstant(value: Any?, type: Type) {
         justFlushed = false
         if (mode == JvmStringConcat.INDY_WITH_CONSTANTS) {
-            when (stackValue) {
-                is StackValue.Constant -> {
-                    val value = stackValue.value
-                    if (value is String && (value.contains("\u0001") || value.contains("\u0002"))) {
-                        items.add(Item.constant(value)) //strings with special symbols generated via bootstrap
-                    } else if (value is Char && (value == 1.toChar() || value == 2.toChar())) {
-                        items.add(Item.constant(value.toString())) //strings with special symbols generated via bootstrap
-                    } else {
-                        items.add(Item.inlinedConstant(value.toString()))
-                    }
-                    return
+            when (value) {
+                is String if value.contains("\u0001") || value.contains("\u0002") -> {
+                    items.add(Item.constant(value)) //strings with special symbols generated via bootstrap
                 }
-                TRUE -> {
-                    items.add(Item.inlinedConstant(true.toString()))
-                    return
+                is Char if value == 1.toChar() || value == 2.toChar() -> {
+                    items.add(Item.constant(value.toString())) //strings with special symbols generated via bootstrap
                 }
-                FALSE -> {
-                    items.add(Item.inlinedConstant(false.toString()))
-                    return
+                else -> {
+                    items.add(Item.inlinedConstant(value.toString()))
                 }
             }
+        } else {
+            StackValue.Constant(value, type).put(type, null, mv)
+            invokeAppend(type)
         }
-        stackValue.put(type, kotlinType, mv)
-        invokeAppend(type)
     }
 
     fun invokeAppend(type: Type) {

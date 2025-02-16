@@ -7,3 +7,5 @@ expect <!CONFLICTING_OVERLOADS!>fun foo()<!>
 expect <!CONFLICTING_OVERLOADS!>fun foo()<!>
 
 expect fun foo(x: Int)
+
+// MODULE: m1-jvm()()(m1-common)

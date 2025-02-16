@@ -30,8 +30,8 @@ internal class IrSignaturesRenderer(private val output: Appendable, private val 
 
     private fun sortedSignatures(signatures: Set<IdSignature>) {
         signatures.asSequence()
-                .map { signature -> signature.render(individualSignatureRenderer) }
-                .sorted()
-                .forEach { signatureText -> output.append(signatureText).append('\n') }
+            .map { signature -> signature.render(individualSignatureRenderer) }
+            .sorted()
+            .forEach { signatureText -> output.append(signatureText).append('\n') }
     }
 }

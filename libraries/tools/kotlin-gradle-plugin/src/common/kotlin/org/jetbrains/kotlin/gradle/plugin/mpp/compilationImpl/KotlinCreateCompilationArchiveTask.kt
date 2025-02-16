@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
@@ -73,16 +74,17 @@ interface KotlinCompilationArchiveTasks {
 }
 
 internal val KotlinRegisterCompilationArchiveTasksExtension = KotlinProjectSetupAction {
-    if (!project.kotlinPropertiesProvider.createArchiveTasksForCustomCompilations) return@KotlinProjectSetupAction
-    project.extensions.add(
-        KotlinCompilationArchiveTasks::class.java,
-        "kotlinCompilationsArchiveTasks",
-        KotlinCompilationArchiveTasksImpl(project.currentBuild)
-    )
+    project.extraProperties.set(EXTRA_PROPERTIES_NAME, KotlinCompilationArchiveTasksImpl(project.currentBuild))
 }
 
 private val Project.kotlinCompilationArchiveTasksImplOrNull: KotlinCompilationArchiveTasksImpl?
-    get() = extensions.findByName("kotlinCompilationsArchiveTasks") as? KotlinCompilationArchiveTasksImpl?
+    get() = if (extraProperties.has(EXTRA_PROPERTIES_NAME)) {
+        extraProperties.get(EXTRA_PROPERTIES_NAME) as KotlinCompilationArchiveTasksImpl
+    } else {
+        null
+    }
+
+private const val EXTRA_PROPERTIES_NAME = "kotlinCompilationsArchiveTasks"
 
 internal val Project.kotlinCompilationArchiveTasksOrNull: KotlinCompilationArchiveTasks? get() = kotlinCompilationArchiveTasksImplOrNull
 
@@ -122,10 +124,7 @@ internal val KotlinCreateCompilationArchivesTask = KotlinCompilationSideEffect {
     if (!project.kotlinPropertiesProvider.createArchiveTasksForCustomCompilations) return@KotlinCompilationSideEffect
 
     val archiveTask = if (compilation.target.platformType == KotlinPlatformType.jvm) {
-        project.tasks.register(compilation.disambiguateName("jar"), Jar::class.java) { task ->
-            task.from(compilation.output.allOutputs)
-            task.archiveBaseName.convention(compilation.target.disambiguateName(compilation.name))
-        }
+        (compilation as KotlinJvmCompilation).registerJvmCompilationJarTask(project)
     } else {
         project.tasks.register(compilation.disambiguateName("klib"), Zip::class.java) { task ->
             task.from(compilation.output.allOutputs)
@@ -136,4 +135,20 @@ internal val KotlinCreateCompilationArchivesTask = KotlinCompilationSideEffect {
     }
 
     project.kotlinCompilationArchiveTasksImplOrNull?.store(compilation, archiveTask)
+}
+
+private fun KotlinJvmCompilation.registerJvmCompilationJarTask(
+    project: Project,
+): TaskProvider<Jar> = project.tasks.register(compilation.disambiguateName("jar"), Jar::class.java) { task ->
+    task.from(output.allOutputs)
+    task.archiveBaseName.convention(compilation.target.disambiguateName(compilation.name))
+
+    task.isPreserveFileTimestamps = false
+    task.isReproducibleFileOrder = true
+}
+
+internal fun KotlinJvmCompilation.registerArchiveTask(
+    project: Project
+) = registerJvmCompilationJarTask(project).also {
+    project.kotlinCompilationArchiveTasksImplOrNull?.store(this, it)
 }

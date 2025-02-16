@@ -18,6 +18,7 @@ class SubpuginsIT : KGPBaseTest() {
     @OtherGradlePluginTests
     @DisplayName("Subplugin example works as expected")
     @GradleTest
+    @BrokenOnMacosTest
     fun testGradleSubplugin(gradleVersion: GradleVersion) {
         project("kotlinGradleSubplugin", gradleVersion) {
             build("compileKotlin", "build") {

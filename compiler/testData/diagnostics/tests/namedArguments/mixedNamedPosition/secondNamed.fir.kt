@@ -14,7 +14,7 @@ fun reformat(
 ) {}
 
 fun main() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(b = "first", a = "a", "second") // prints "a, second"
-    <!INAPPLICABLE_CANDIDATE!>reformat<!>(normalizeCase = "first",str = "","second",false,true, 's' )
+    foo(b = "first", a = "a", <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>"second"<!>) // prints "a, second"
+    reformat(normalizeCase = "first",str = "",<!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>"second"<!>,<!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>false<!>,<!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>true<!>, <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>'s'<!> )
 }
 

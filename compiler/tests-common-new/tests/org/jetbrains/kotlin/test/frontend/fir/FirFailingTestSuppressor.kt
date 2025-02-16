@@ -21,11 +21,12 @@ class FirFailingTestSuppressor(testServices: TestServices) : AbstractFailingTest
 
     override fun hasFailure(failedAssertions: List<WrappedException>): Boolean {
         return failedAssertions.any {
-            when (it) {
-                is WrappedException.FromFacade -> it.facade is FirFrontendFacade
-                is WrappedException.FromHandler -> it.handler.artifactKind == FrontendKinds.FIR
-                else -> false
+            val kind = when (it) {
+                is WrappedException.FromFacade -> it.facade.outputKind
+                is WrappedException.FromHandler -> it.handler.artifactKind
+                else -> return@any false
             }
+            kind == FrontendKinds.FIR
         }
     }
 }

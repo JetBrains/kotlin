@@ -44,6 +44,7 @@ class FirDumpHandler(
             val currentModule = part.module
             byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
             if (FirDiagnosticsDirectives.FIR_DUMP !in currentModule.directives) return
+            if (FirDiagnosticsDirectives.SKIP_FIR_DUMP in currentModule.directives) return
             val builderForModule = dumper.builderForModule(currentModule)
             val firFiles = info.mainFirFiles
 

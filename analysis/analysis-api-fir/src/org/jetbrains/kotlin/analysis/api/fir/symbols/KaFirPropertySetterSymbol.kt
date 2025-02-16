@@ -63,7 +63,7 @@ internal class KaFirPropertySetterSymbol(
     }
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+        get() = withValidityAssertion { backingPsi ?: findPsi() }
 
     override val isExpect: Boolean
         get() = withValidityAssertion {
@@ -154,7 +154,7 @@ internal class KaFirPropertySetterSymbol(
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaPropertySetterSymbol>()
-            ?: KaBasePropertySetterSymbolPointer(owningKaProperty.createPointer())
+            ?: KaBasePropertySetterSymbolPointer(owningKaProperty.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)

@@ -45,7 +45,6 @@ object GenerateInRangeExpressionTestData {
         println("// $PREAMBLE_MESSAGE")
         println("// WITH_STDLIB")
         if (rangeExpressions.any { "..<" in it }) {
-            println("// DONT_TARGET_EXACT_BACKEND: JVM")
             println("// LANGUAGE: +RangeUntilOperator")
             println("@file:OptIn(ExperimentalStdlibApi::class)")
         }

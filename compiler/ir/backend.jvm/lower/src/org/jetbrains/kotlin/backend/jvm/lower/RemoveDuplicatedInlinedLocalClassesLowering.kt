@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.inline.AnonymousObjectTransformationInfo
@@ -19,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.NameUtils
@@ -57,7 +56,7 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
     private val capturedConstructors = context.mapping.capturedConstructors
 
     private fun removeUselessDeclarationsFromCapturedConstructors(irClass: IrClass, data: Data) {
-        irClass.parents.first { it !is IrFunction || it.origin != LoweredDeclarationOrigins.INLINE_LAMBDA }
+        irClass.parents.first { it !is IrFunction || it.origin != IrDeclarationOrigin.INLINE_LAMBDA }
             .accept(this, data.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false, modifyTree = false))
     }
 
@@ -73,7 +72,7 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
     }
 
     override fun visitBlock(expression: IrBlock, data: Data): IrExpression {
-        if (expression.origin == LoweredStatementOrigins.INLINE_ARGS_CONTAINER) {
+        if (expression.origin == IrStatementOrigin.INLINE_ARGS_CONTAINER) {
             return super.visitBlock(expression, data.copy(insideInlineBlock = true, classDeclaredOnCallSiteOrIsDefaultLambda = false))
         }
 

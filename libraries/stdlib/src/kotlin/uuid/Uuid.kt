@@ -37,10 +37,10 @@ import kotlin.internal.InlineOnly
  */
 @SinceKotlin("2.0")
 @ExperimentalUuidApi
-public class Uuid internal constructor(
+public class Uuid private constructor(
     @PublishedApi internal val mostSignificantBits: Long,
     @PublishedApi internal val leastSignificantBits: Long
-) : Serializable {
+) : Comparable<Uuid>, Serializable {
 
     /**
      * Executes the specified block of code, providing access to the uuid's bits in the form of two [Long] values.
@@ -113,6 +113,8 @@ public class Uuid internal constructor(
     /**
      * Returns the standard string representation of this uuid.
      *
+     * This function returns the same value as [toHexDashString].
+     *
      * The resulting string is in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
      * where 'x' represents a hexadecimal digit, also known as "hex-and-dash" format.
      * It is in lowercase and consists of 36 characters. Each hexadecimal digit
@@ -124,19 +126,41 @@ public class Uuid internal constructor(
      * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
      *
      * @see Uuid.parse
+     * @see Uuid.toHexDashString
      * @sample samples.uuid.Uuids.toStringSample
      */
     override fun toString(): String {
+        return toHexDashString()
+    }
+
+    /**
+     * Returns the standard hex-and-dash string representation of this uuid.
+     *
+     * The resulting string is in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+     * where 'x' represents a hexadecimal digit, also known as "hex-and-dash" format.
+     * It is in lowercase and consists of 36 characters. Each hexadecimal digit
+     * in the string sequentially represents the next 4 bits of the uuid, starting from the most
+     * significant 4 bits in the first digit to the least significant 4 bits in the last digit.
+     *
+     * This format is the standard textual representation of uuids and is compatible with
+     * uuid parsing logic found in most software environments. It is specified by
+     * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
+     *
+     * @see Uuid.parseHexDash
+     * @sample samples.uuid.Uuids.toHexDashString
+     */
+    @SinceKotlin("2.1")
+    public fun toHexDashString(): String {
         val bytes = ByteArray(36)
-        leastSignificantBits.formatBytesInto(bytes, 24, 6)
-        bytes[23] = '-'.code.toByte()
-        (leastSignificantBits ushr 48).formatBytesInto(bytes, 19, 2)
-        bytes[18] = '-'.code.toByte()
-        mostSignificantBits.formatBytesInto(bytes, 14, 2)
-        bytes[13] = '-'.code.toByte()
-        (mostSignificantBits ushr 16).formatBytesInto(bytes, 9, 2)
+        mostSignificantBits.formatBytesInto(bytes, 0, startIndex = 0, endIndex = 4)
         bytes[8] = '-'.code.toByte()
-        (mostSignificantBits ushr 32).formatBytesInto(bytes, 0, 4)
+        mostSignificantBits.formatBytesInto(bytes, 9, startIndex = 4, endIndex = 6)
+        bytes[13] = '-'.code.toByte()
+        mostSignificantBits.formatBytesInto(bytes, 14, startIndex = 6, endIndex = 8)
+        bytes[18] = '-'.code.toByte()
+        leastSignificantBits.formatBytesInto(bytes, 19, startIndex = 0, endIndex = 2)
+        bytes[23] = '-'.code.toByte()
+        leastSignificantBits.formatBytesInto(bytes, 24, startIndex = 2, endIndex = 8)
         return bytes.decodeToString()
     }
 
@@ -157,8 +181,8 @@ public class Uuid internal constructor(
      */
     public fun toHexString(): String {
         val bytes = ByteArray(32)
-        leastSignificantBits.formatBytesInto(bytes, 16, 8)
-        mostSignificantBits.formatBytesInto(bytes, 0, 8)
+        mostSignificantBits.formatBytesInto(bytes, 0, startIndex = 0, endIndex = 8)
+        leastSignificantBits.formatBytesInto(bytes, 16, startIndex = 0, endIndex = 8)
         return bytes.decodeToString()
     }
 
@@ -174,9 +198,25 @@ public class Uuid internal constructor(
      */
     public fun toByteArray(): ByteArray {
         val bytes = ByteArray(SIZE_BYTES)
-        mostSignificantBits.toByteArray(bytes, 0)
-        leastSignificantBits.toByteArray(bytes, 8)
+        bytes.setLongAt(0, mostSignificantBits)
+        bytes.setLongAt(8, leastSignificantBits)
         return bytes
+    }
+
+    /**
+     * Returns an unsigned byte array representation of this uuid.
+     *
+     * The returned array contains 16 unsigned bytes. Each byte in the array sequentially represents
+     * the next 8 bits of the uuid, starting from the most significant 8 bits
+     * in the first byte to the least significant 8 bits in the last byte.
+     *
+     * @see Uuid.fromUByteArray
+     * @sample samples.uuid.Uuids.toUByteArray
+     */
+    @SinceKotlin("2.1")
+    @ExperimentalUnsignedTypes
+    public fun toUByteArray(): UByteArray {
+        return UByteArray(storage = toByteArray())
     }
 
     /**
@@ -193,6 +233,35 @@ public class Uuid internal constructor(
         if (other !is Uuid) return false
         return mostSignificantBits == other.mostSignificantBits &&
                 leastSignificantBits == other.leastSignificantBits
+    }
+
+    /**
+     * Compares this uuid with the [other] uuid for lexical order.
+     *
+     * Returns zero if this uuid is lexically equal to the specified other uuid, a negative number
+     * if it's less than the other, or a positive number if it's greater than the other.
+     *
+     * This function compares the two 128-bit uuids bit by bit sequentially,
+     * starting from the most significant bit to the least significant.
+     * `this` uuid is considered less than `other` if, at the first position where corresponding bits
+     * of the two uuids differ, the bit in `this` is zero and the bit in `other` is one.
+     * Conversely, `this` is considered greater than `other` if, at the first differing position,
+     * the bit in `this` is one and the bit in `other` is zero.
+     * If no differing bits are found, the two uuids are considered equal.
+     *
+     * The result of the comparison of `this` and `other` uuids is equivalent to:
+     * ```kotlin
+     * this.toString().compareTo(other.toString())
+     * ```
+     *
+     * @sample samples.uuid.Uuids.compareTo
+     */
+    @SinceKotlin("2.1")
+    override fun compareTo(other: Uuid): Int {
+        return if (mostSignificantBits != other.mostSignificantBits)
+            mostSignificantBits.toULong().compareTo(other.mostSignificantBits.toULong())
+        else
+            leastSignificantBits.toULong().compareTo(other.leastSignificantBits.toULong())
     }
 
     override fun hashCode(): Int {
@@ -269,49 +338,90 @@ public class Uuid internal constructor(
                 "Expected exactly $SIZE_BYTES bytes, but was ${byteArray.truncateForErrorMessage(32)} of size ${byteArray.size}"
             }
 
-            return fromLongs(byteArray.toLong(startIndex = 0), byteArray.toLong(startIndex = 8))
+            return fromLongs(byteArray.getLongAt(index = 0), byteArray.getLongAt(index = 8))
         }
 
         /**
-         * Parses a uuid from the standard string representation as described in [Uuid.toString].
+         * Creates a uuid from an array containing 128 bits split into 16 unsigned bytes.
          *
-         * This function is case-insensitive, and for a valid [uuidString], the following property holds:
+         * Each unsigned byte in the [ubyteArray] sequentially represents
+         * the next 8 bits of the uuid, starting from the most significant 8 bits
+         * in the first byte to the least significant 8 bits in the last byte.
+         *
+         * @param ubyteArray A 16-byte array containing the uuid bits.
+         * @throws IllegalArgumentException If the size of the [ubyteArray] is not exactly 16.
+         * @return A new uuid based on the specified bits.
+         *
+         * @see Uuid.toUByteArray
+         * @sample samples.uuid.Uuids.fromUByteArray
+         */
+        @SinceKotlin("2.1")
+        @ExperimentalUnsignedTypes
+        public fun fromUByteArray(ubyteArray: UByteArray): Uuid {
+            return fromByteArray(ubyteArray.storage)
+        }
+
+        /**
+         * Parses a uuid from one of the supported string representations.
+         *
+         * This function supports parsing the standard hex-and-dash and the hexadecimal string representations.
+         * For details about the hex-and-dash format, refer to [toHexDashString].
+         * If parsing only the hex-and-dash format is desired, use [parseHexDash] instead.
+         * For details about the hexadecimal format, refer to [toHexString].
+         * If parsing only the hexadecimal format is desired, use [parseHex] instead.
+         *
+         * Note that this function is case-insensitive,
+         * meaning both lowercase and uppercase hexadecimal digits are considered valid.
+         * Additionally, support for more uuid formats may be introduced in the future.
+         * Therefore, users should not rely on the rejection of formats not currently supported.
+         *
+         * @param uuidString A string in one of the supported uuid formats.
+         * @throws IllegalArgumentException If the [uuidString] is not in a supported uuid format.
+         * @return A uuid equivalent to the specified uuid string.
+         *
+         * @see Uuid.parseHexDash
+         * @see Uuid.parseHex
+         * @sample samples.uuid.Uuids.parse
+         */
+        public fun parse(uuidString: String): Uuid {
+            return when (uuidString.length) {
+                36 -> uuidParseHexDash(uuidString)
+                32 -> uuidParseHex(uuidString)
+                else -> throw IllegalArgumentException(
+                    "Expected either a 36-char string in the standard hex-and-dash UUID format or a 32-char hexadecimal string, " +
+                            "but was \"${uuidString.truncateForErrorMessage(64)}\" of length ${uuidString.length}"
+                )
+            }
+        }
+
+        /**
+         * Parses a uuid from the standard hex-and-dash string representation as described in [Uuid.toHexDashString].
+         *
+         * This function is case-insensitive, and for a valid [hexDashString], the following property holds:
          * ```kotlin
-         * val uuid = Uuid.parse(uuidString)
-         * assertEquals(uuid.toString(), uuidString.lowercase())
+         * val uuid = Uuid.parseHexDash(hexDashString)
+         * assertEquals(uuid.toHexDashString(), hexDashString.lowercase())
          * ```
          *
-         * The standard textual representation of uuids is specified by
+         * The standard textual representation of uuids, also known as hex-and-dash format, is specified by
          * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
          *
-         * @param uuidString A string in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+         * @param hexDashString A string in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
          *   where each 'x' is a hexadecimal digit, either lowercase or uppercase.
-         * @throws IllegalArgumentException If the [uuidString] is not a 36-character string
+         * @throws IllegalArgumentException If the [hexDashString] is not a 36-character string
          *   in the standard uuid format.
          * @return A uuid equivalent to the specified uuid string.
          *
-         * @see Uuid.toString
-         * @sample samples.uuid.Uuids.parse
+         * @see Uuid.toHexDashString
+         * @sample samples.uuid.Uuids.parseHexDash
          */
-        @OptIn(ExperimentalStdlibApi::class)
-        public fun parse(uuidString: String): Uuid {
-            require(uuidString.length == 36) {
-                "Expected a 36-char string in the standard hex-and-dash UUID format, but was \"${uuidString.truncateForErrorMessage(64)}\" of length ${uuidString.length}"
+        @SinceKotlin("2.1")
+        public fun parseHexDash(hexDashString: String): Uuid {
+            require(hexDashString.length == 36) {
+                "Expected a 36-char string in the standard hex-and-dash UUID format, " +
+                        "but was \"${hexDashString.truncateForErrorMessage(64)}\" of length ${hexDashString.length}"
             }
-
-            val part1 = uuidString.hexToLong(startIndex = 0, endIndex = 8)
-            uuidString.checkHyphenAt(8)
-            val part2 = uuidString.hexToLong(startIndex = 9, endIndex = 13)
-            uuidString.checkHyphenAt(13)
-            val part3 = uuidString.hexToLong(startIndex = 14, endIndex = 18)
-            uuidString.checkHyphenAt(18)
-            val part4 = uuidString.hexToLong(startIndex = 19, endIndex = 23)
-            uuidString.checkHyphenAt(23)
-            val part5 = uuidString.hexToLong(startIndex = 24, endIndex = 36)
-
-            val msb = (part1 shl 32) or (part2 shl 16) or part3
-            val lsb = (part4 shl 48) or part5
-            return fromLongs(msb, lsb)
+            return uuidParseHexDash(hexDashString)
         }
 
         /**
@@ -330,15 +440,12 @@ public class Uuid internal constructor(
          * @see Uuid.toHexString
          * @sample samples.uuid.Uuids.parseHex
          */
-        @OptIn(ExperimentalStdlibApi::class)
         public fun parseHex(hexString: String): Uuid {
             require(hexString.length == 32) {
-                "Expected a 32-char hexadecimal string, but was \"${hexString.truncateForErrorMessage(64)}\" of length ${hexString.length}"
+                "Expected a 32-char hexadecimal string, " +
+                        "but was \"${hexString.truncateForErrorMessage(64)}\" of length ${hexString.length}"
             }
-
-            val msb = hexString.hexToLong(startIndex = 0, endIndex = 16)
-            val lsb = hexString.hexToLong(startIndex = 16, endIndex = 32)
-            return fromLongs(msb, lsb)
+            return uuidParseHex(hexString)
         }
 
         /**
@@ -381,6 +488,12 @@ public class Uuid internal constructor(
         /**
          * A [Comparator] that lexically orders uuids.
          *
+         * Note:
+         *   [Uuid] is a [Comparable] type, and its [compareTo] function establishes lexical order.
+         *   [LEXICAL_ORDER] was introduced when `Uuid`s were not comparable.
+         *   It is now deprecated and will be removed in a future release.
+         *   Instead, use [`naturalOrder<Uuid>()`][naturalOrder], which is equivalent to [LEXICAL_ORDER].
+         *
          * This comparator compares the given two 128-bit uuids bit by bit sequentially,
          * starting from the most significant bit to the least significant.
          * uuid `a` is considered less than `b` if, at the first position where corresponding bits
@@ -396,12 +509,10 @@ public class Uuid internal constructor(
          *
          * @sample samples.uuid.Uuids.lexicalOrder
          */
-        public val LEXICAL_ORDER: Comparator<Uuid> = Comparator { a, b ->
-            if (a.mostSignificantBits != b.mostSignificantBits)
-                a.mostSignificantBits.toULong().compareTo(b.mostSignificantBits.toULong())
-            else
-                a.leastSignificantBits.toULong().compareTo(b.leastSignificantBits.toULong())
-        }
+        @Deprecated("Use naturalOrder<Uuid>() instead", ReplaceWith("naturalOrder<Uuid>()", imports = ["kotlin.comparisons.naturalOrder"]))
+        @DeprecatedSinceKotlin(warningSince = "2.1")
+        public val LEXICAL_ORDER: Comparator<Uuid>
+            get() = naturalOrder()
     }
 }
 
@@ -420,39 +531,107 @@ internal fun uuidFromRandomBytes(randomBytes: ByteArray): Uuid {
     return Uuid.fromByteArray(randomBytes)
 }
 
-private fun ByteArray.toLong(startIndex: Int): Long {
-    return ((this[startIndex + 0].toLong() and 0xFF) shl 56) or
-            ((this[startIndex + 1].toLong() and 0xFF) shl 48) or
-            ((this[startIndex + 2].toLong() and 0xFF) shl 40) or
-            ((this[startIndex + 3].toLong() and 0xFF) shl 32) or
-            ((this[startIndex + 4].toLong() and 0xFF) shl 24) or
-            ((this[startIndex + 5].toLong() and 0xFF) shl 16) or
-            ((this[startIndex + 6].toLong() and 0xFF) shl 8) or
-            (this[startIndex + 7].toLong() and 0xFF)
+/**
+ * Extracts 8 bytes from this byte array starting at [index] to form a Long.
+ * The extraction is performed in a big-endian manner.
+ * Specifically, the byte at `index` becomes the highest byte,
+ * and the byte at `index + 7` becomes the lowest byte.
+ */
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun ByteArray.getLongAt(index: Int): Long
+
+internal fun ByteArray.getLongAtCommonImpl(index: Int): Long {
+    return ((this[index + 0].toLong() and 0xFF) shl 56) or
+            ((this[index + 1].toLong() and 0xFF) shl 48) or
+            ((this[index + 2].toLong() and 0xFF) shl 40) or
+            ((this[index + 3].toLong() and 0xFF) shl 32) or
+            ((this[index + 4].toLong() and 0xFF) shl 24) or
+            ((this[index + 5].toLong() and 0xFF) shl 16) or
+            ((this[index + 6].toLong() and 0xFF) shl 8) or
+            (this[index + 7].toLong() and 0xFF)
 }
 
+/**
+ * Formats this Long as hexadecimal and stores the resulting hexadecimal digits into [dst].
+ * Storage begins at [dstOffset] and proceeds forwards.
+ * Formatting starts from the byte at [startIndex] and continues up to [endIndex] (exclusive).
+ * The index of the highest byte in this Long is `0`, and the index of the lowest byte is `7`.
+ */
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int)
+
 @OptIn(ExperimentalStdlibApi::class)
-private fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, count: Int) {
-    var long = this
-    var dstIndex = dstOffset + 2 * count
-    repeat(count) {
-        val byte = (long and 0xFF).toInt()
+@ExperimentalUuidApi
+internal fun Long.formatBytesIntoCommonImpl(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int) {
+    var dstIndex = dstOffset
+    for (reversedIndex in 7 - startIndex downTo 8 - endIndex) {
+        val shift = reversedIndex shl 3
+        val byte = ((this shr shift) and 0xFF).toInt()
         val byteDigits = BYTE_TO_LOWER_CASE_HEX_DIGITS[byte]
-        dst[--dstIndex] = byteDigits.toByte()
-        dst[--dstIndex] = (byteDigits shr 8).toByte()
-        long = long shr 8
+        dst[dstIndex++] = (byteDigits shr 8).toByte()
+        dst[dstIndex++] = byteDigits.toByte()
     }
 }
 
-private fun String.checkHyphenAt(index: Int) {
+internal fun String.checkHyphenAt(index: Int) {
     require(this[index] == '-') { "Expected '-' (hyphen) at index $index, but was '${this[index]}'" }
 }
 
-private fun Long.toByteArray(dst: ByteArray, dstOffset: Int) {
-    for (index in 0 until 8) {
-        val shift = 8 * (7 - index)
-        dst[dstOffset + index] = (this ushr shift).toByte()
+/**
+ * Extracts bytes from the Long [value] and stores them into this byte array starting at [index].
+ * The bytes are stored in a big-endian manner.
+ * Specifically, the highest byte of `value` is stored at `index`,
+ * and the lowest byte is stored at `index + 7`.
+ */
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun ByteArray.setLongAt(index: Int, value: Long)
+
+internal fun ByteArray.setLongAtCommonImpl(index: Int, value: Long) {
+    var i = index
+    for (reversedIndex in 7 downTo 0) {
+        val shift = reversedIndex shl 3
+        this[i++] = (value shr shift).toByte()
     }
+}
+
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun uuidParseHexDash(hexDashString: String): Uuid
+
+@OptIn(ExperimentalStdlibApi::class)
+@ExperimentalUuidApi
+internal fun uuidParseHexDashCommonImpl(hexDashString: String): Uuid {
+    // xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    // 16 hex digits fit into a Long
+    val part1 = hexDashString.hexToLong(startIndex = 0, endIndex = 8)
+    hexDashString.checkHyphenAt(8)
+    val part2 = hexDashString.hexToLong(startIndex = 9, endIndex = 13)
+    hexDashString.checkHyphenAt(13)
+    val part3 = hexDashString.hexToLong(startIndex = 14, endIndex = 18)
+    hexDashString.checkHyphenAt(18)
+    val part4 = hexDashString.hexToLong(startIndex = 19, endIndex = 23)
+    hexDashString.checkHyphenAt(23)
+    val part5 = hexDashString.hexToLong(startIndex = 24, endIndex = 36)
+
+    val msb = (part1 shl 32) or (part2 shl 16) or part3
+    val lsb = (part4 shl 48) or part5
+    return Uuid.fromLongs(msb, lsb)
+}
+
+// Implement differently in JS to avoid bitwise operations with Longs
+@ExperimentalUuidApi
+internal expect fun uuidParseHex(hexString: String): Uuid
+
+@OptIn(ExperimentalStdlibApi::class)
+@ExperimentalUuidApi
+internal fun uuidParseHexCommonImpl(hexString: String): Uuid {
+    // 16 hex digits fit into a Long
+    val msb = hexString.hexToLong(startIndex = 0, endIndex = 16)
+    val lsb = hexString.hexToLong(startIndex = 16, endIndex = 32)
+    return Uuid.fromLongs(msb, lsb)
 }
 
 private fun String.truncateForErrorMessage(maxLength: Int): String {

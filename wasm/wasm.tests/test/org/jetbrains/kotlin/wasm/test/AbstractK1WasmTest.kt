@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 
 abstract class AbstractK1WasmTest(
     pathToTestDir: String,
@@ -76,11 +77,15 @@ open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner
 
-    override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForWasmBlackBoxCodegenTest()
-        defaultDirectives {
-            +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
-            +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
+            defaultDirectives {
+                +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+                +WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
+                +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
+            }
         }
     }
 }

@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import java.io.File
 
 class CodegenHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
@@ -25,10 +27,14 @@ class CodegenHelpersSourceFilesProvider(testServices: TestServices) : Additional
         listOf(CodegenTestDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         if (CodegenTestDirectives.WITH_HELPERS !in module.directives) return emptyList()
+        val targetBackend = testServices.defaultsProvider.targetBackend ?: return emptyList()
         return buildList {
-            val targetBackend = module.targetBackend ?: return@buildList
             val helpersPath = if (targetBackend.isIR) {
                 IR_BACKEND_PATH
             } else {

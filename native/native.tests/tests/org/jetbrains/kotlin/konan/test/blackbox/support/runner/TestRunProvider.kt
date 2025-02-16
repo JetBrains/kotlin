@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
@@ -232,7 +233,7 @@ class TestRunProvider(
 
     override fun close() {
         if (testCaseGroupProvider is Disposable) {
-            Disposer.dispose(testCaseGroupProvider)
+            disposeRootInWriteAction(testCaseGroupProvider)
         }
     }
 

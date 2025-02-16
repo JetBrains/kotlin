@@ -7,11 +7,15 @@
 #include <cstdint>
 #include <random>
 
+#include "CustomAllocatorTestSupport.hpp"
+#include "gtest/gtest.h"
+
 #include "CustomAllocator.hpp"
 #include "Memory.h"
-#include "gtest/gtest.h"
 #include "Heap.hpp"
 #include "TypeInfo.h"
+
+using namespace kotlin::alloc::test_support;
 
 namespace {
 
@@ -22,7 +26,7 @@ using CustomAllocator = typename kotlin::alloc::CustomAllocator;
 
 inline constexpr int MIN_BLOCK_SIZE = 2;
 
-TEST(CustomAllocTest, SmallAllocNonNull) {
+TEST_F(CustomAllocatorTest, SmallAllocNonNull) {
     const int N = 200;
     TypeInfo fakeTypes[N];
     for (int i = 1; i < N; ++i) {
@@ -38,7 +42,9 @@ TEST(CustomAllocTest, SmallAllocNonNull) {
     }
 }
 
-TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
+TEST_F(CustomAllocatorTest, SmallAllocSameFixedBlockPage) {
+    if (!kotlin::compiler::pagedAllocator()) GTEST_SKIP() << "Skipping for non-paged allocator";
+
     const int N = FixedBlockPage::cellCount() / FixedBlockPage::MAX_BLOCK_SIZE;
     for (int blocks = MIN_BLOCK_SIZE; blocks < FixedBlockPage::MAX_BLOCK_SIZE; ++blocks) {
         Heap heap;
@@ -53,7 +59,7 @@ TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
     }
 }
 
-TEST(CustomAllocTest, FixedBlockPageThreshold) {
+TEST_F(CustomAllocatorTest, FixedBlockPageThreshold) {
     std::list<TypeInfo> types;
     Heap heap;
     CustomAllocator ca(heap);
@@ -66,7 +72,7 @@ TEST(CustomAllocTest, FixedBlockPageThreshold) {
     }
 }
 
-TEST(CustomAllocTest, NextFitPageThreshold) {
+TEST_F(CustomAllocatorTest, NextFitPageThreshold) {
     std::list<TypeInfo> types;
     Heap heap;
     CustomAllocator ca(heap);
@@ -80,7 +86,9 @@ TEST(CustomAllocTest, NextFitPageThreshold) {
     }
 }
 
-TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
+TEST_F(CustomAllocatorTest, TwoAllocatorsDifferentPages) {
+    if (!kotlin::compiler::pagedAllocator()) GTEST_SKIP() << "Skipping for non-paged allocator";
+
     for (int blocks = MIN_BLOCK_SIZE; blocks < 2000; ++blocks) {
         Heap heap;
         CustomAllocator ca1(heap);
@@ -90,20 +98,6 @@ TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
         uint8_t* obj2 = reinterpret_cast<uint8_t*>(ca2.CreateObject(&fakeType));
         uintptr_t dist = abs(obj2 - obj1);
         EXPECT_GE(dist, FixedBlockPage::SIZE());
-    }
-}
-
-using Data = typename kotlin::mm::ExtraObjectData;
-
-TEST(CustomAllocTest, AllocExtraObjectNonNullZeroed) {
-    Heap heap;
-    CustomAllocator ca(heap);
-    for (int i = 1; i < 10; ++i) {
-        uint8_t* obj = reinterpret_cast<uint8_t*>(ca.CreateExtraObject());
-        EXPECT_TRUE(obj);
-        for (size_t j = 0; j < sizeof(Data); ++j) {
-            EXPECT_FALSE(obj[j]);
-        }
     }
 }
 

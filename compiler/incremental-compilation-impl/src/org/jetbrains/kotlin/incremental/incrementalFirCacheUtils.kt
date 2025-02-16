@@ -38,8 +38,8 @@ internal fun collectNewDirtySources(
     val globalSerializationBindings = JvmSerializationBindings()
 
     fun visitFirFiles(analyzedOutput: ModuleCompilerAnalyzedOutput) {
-        analyzedOutput.fir.forEach {
-            it.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
+        for (file in analyzedOutput.fir) {
+            file.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
                 inline fun withMetadataSerializer(
                     metadata: FirMetadataSource,
                     data: MutableList<MetadataSerializer>,
@@ -114,7 +114,7 @@ internal fun collectNewDirtySources(
                     val metadata = FirMetadataSource.Class(klass)
                     withMetadataSerializer(metadata, data) { serializer ->
                         klass.acceptChildren(this, data)
-                        serializer.serialize(metadata)?.let { (classProto, nameTable) ->
+                        serializer.serialize(metadata, FirMetadataSource.File(file))?.let { (classProto, nameTable) ->
                             caches.platformCache.saveFrontendClassToCache(
                                 klass.classId,
                                 classProto as ProtoBuf.Class,

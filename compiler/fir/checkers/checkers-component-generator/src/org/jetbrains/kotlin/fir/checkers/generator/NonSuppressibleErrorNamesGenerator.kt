@@ -24,8 +24,14 @@ fun generateNonSuppressibleErrorNamesFile(generationPath: File, packageName: Str
             printGeneratedMessage()
             println("val FIR_NON_SUPPRESSIBLE_ERROR_NAMES: Set<String> = setOf(")
 
-            val combinedDiagnostics =
-                DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST + JS_DIAGNOSTICS_LIST + NATIVE_DIAGNOSTICS_LIST + WEB_COMMON_DIAGNOSTICS_LIST + SYNTAX_DIAGNOSTIC_LIST
+            val combinedDiagnostics = DIAGNOSTICS_LIST +
+                    JVM_DIAGNOSTICS_LIST +
+                    JS_DIAGNOSTICS_LIST +
+                    NATIVE_DIAGNOSTICS_LIST +
+                    WEB_COMMON_DIAGNOSTICS_LIST +
+                    WASM_DIAGNOSTICS_LIST +
+                    SYNTAX_DIAGNOSTIC_LIST
+
             for (diagnostic in combinedDiagnostics.allDiagnostics) {
                 if (diagnostic is RegularDiagnosticData && diagnostic.severity == Severity.ERROR && !diagnostic.isSuppressible) {
                     println("    \"${diagnostic.name}\",")

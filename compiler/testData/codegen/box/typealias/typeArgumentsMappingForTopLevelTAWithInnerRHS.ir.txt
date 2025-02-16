@@ -1,113 +1,113 @@
 FILE fqName:<root> fileName:/typeArgumentsMappingForTopLevelTAWithInnerRHS.kt
   CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo<T of <root>.Foo>
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo<T of <root>.Foo>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo.Inner<T of <root>.Foo>
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo.Inner<T of <root>.Foo>
       PROPERTY name:p visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.String visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'p: kotlin.String declared in <root>.Foo.Inner.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> ($this:<root>.Foo.Inner<T of <root>.Foo>) returnType:kotlin.String
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo.Inner<T of <root>.Foo>
           correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.Foo.Inner<T of <root>.Foo>
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.String declared in <root>.Foo.Inner'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: <root>.Foo.Inner<T of <root>.Foo> declared in <root>.Foo.Inner.<get-p>' type=<root>.Foo.Inner<T of <root>.Foo> origin=null
-      CONSTRUCTOR visibility:public <> ($this:<root>.Foo<T of <root>.Foo>, p:kotlin.String) returnType:<root>.Foo.Inner<T of <root>.Foo> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Foo<T of <root>.Foo>
-        VALUE_PARAMETER name:p index:0 type:kotlin.String
+      CONSTRUCTOR visibility:public returnType:<root>.Foo.Inner<T of <root>.Foo> [primary]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo<T of <root>.Foo>
+        VALUE_PARAMETER kind:Regular name:p index:1 type:kotlin.String
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]' type=kotlin.Unit
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     CLASS CLASS name:Inner2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo.Inner2<T2 of <root>.Foo.Inner2, T of <root>.Foo>
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo.Inner2<T2 of <root>.Foo.Inner2, T of <root>.Foo>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:false
-      CONSTRUCTOR visibility:public <> ($this:<root>.Foo<T of <root>.Foo>) returnType:<root>.Foo.Inner2<T2 of <root>.Foo.Inner2, T of <root>.Foo> [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Foo<T of <root>.Foo>
+      CONSTRUCTOR visibility:public returnType:<root>.Foo.Inner2<T2 of <root>.Foo.Inner2, T of <root>.Foo> [primary]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo<T of <root>.Foo>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]' type=kotlin.Unit
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Foo<T of <root>.Foo> [primary]
+    CONSTRUCTOR visibility:public returnType:<root>.Foo<T of <root>.Foo> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:foo type:<root>.Foo<kotlin.String> [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo' type=<root>.Foo<kotlin.String> origin=null
-          <class: T>: kotlin.String
+          TYPE_ARG (of class) T: kotlin.String
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
-            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-p> (): kotlin.String declared in <root>.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
-                $this: CONSTRUCTOR_CALL 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=<root>.Foo.Inner<kotlin.String> origin=null
-                  $outer: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
-                  p: CONST String type=kotlin.String value="OK"
-              arg1: CONST String type=kotlin.String value="OK"
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL 'public final fun <get-p> (): kotlin.String declared in <root>.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
+                ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=<root>.Foo.Inner<kotlin.String> origin=null
+                  ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=IMPLICIT_ARGUMENT
+                  ARG p: CONST String type=kotlin.String value="OK"
+              ARG arg1: CONST String type=kotlin.String value="OK"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL"
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo.Inner2' type=<root>.Foo.Inner2<kotlin.Int, kotlin.String> origin=null
-          <class: T2>: kotlin.Int
-          $outer: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
+          TYPE_ARG (of class) T2: kotlin.Int
+          ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=IMPLICIT_ARGUMENT
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo.Inner2' type=<root>.Foo.Inner2<kotlin.Int, kotlin.String> origin=null
-          <class: T2>: kotlin.Int
-          $outer: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
+          TYPE_ARG (of class) T2: kotlin.Int
+          ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=IMPLICIT_ARGUMENT
       VAR name:aliasedInner type:kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> [val]
         FUNCTION_REFERENCE 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=null reflectionTarget=<same>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
-            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public final fun <get-p> (): kotlin.String declared in <root>.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
-                $this: CALL 'public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2' type=<root>.Foo.Inner<kotlin.String> origin=INVOKE
-                  $this: GET_VAR 'val aliasedInner: kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> declared in <root>.box' type=kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=VARIABLE_AS_FUNCTION
-                  p1: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
-                  p2: CONST String type=kotlin.String value="OK"
-              arg1: CONST String type=kotlin.String value="OK"
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL 'public final fun <get-p> (): kotlin.String declared in <root>.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
+                ARG <this>: CALL 'public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2' type=<root>.Foo.Inner<kotlin.String> origin=INVOKE
+                  ARG <this>: GET_VAR 'val aliasedInner: kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> declared in <root>.box' type=kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=VARIABLE_AS_FUNCTION
+                  ARG p1: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
+                  ARG p2: CONST String type=kotlin.String value="OK"
+              ARG arg1: CONST String type=kotlin.String value="OK"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL"
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

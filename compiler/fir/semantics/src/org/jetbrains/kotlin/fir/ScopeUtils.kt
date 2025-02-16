@@ -7,20 +7,15 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
-import org.jetbrains.kotlin.fir.resolve.outerType
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
+import org.jetbrains.kotlin.fir.scopes.scopeForTypeAlias
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 
 fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(
@@ -37,18 +32,7 @@ fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(
         is FirTypeAliasSymbol -> {
             val expandedType = resolvedExpandedTypeRef.coneType as? ConeClassLikeType ?: return null
             val expandedClass = expandedType.toRegularClassSymbol(session) ?: return null
-            val expandedTypeScope = expandedType.scope(
-                session, scopeSession,
-                CallableCopyTypeCalculator.DoNothing,
-                // Must be `STATUS`; otherwise we can't create substitution overrides for constructor symbols,
-                // which we need to map typealias arguments to the expanded type arguments, which happens when
-                // we request declared constructor symbols from the scope returned below.
-                // See: `LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated.testTypealiasAnnotationWithFixedTypeArgument`
-                requiredMembersPhase = FirResolvePhase.STATUS,
-            ) ?: return null
-
-            val outerType = outerType(expandedType, session) { it.getContainingDeclaration(session) }
-            expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, outerType)
+            expandedClass to this.fir.scopeForTypeAlias(session, scopeSession)
         }
         else -> null
     }
@@ -67,7 +51,7 @@ fun FirClassLikeSymbol<*>.getPrimaryConstructorSymbol(
 
     constructorsScope.processDeclaredConstructors {
         // Typealias constructors & SO override constructors of primary constructors are not marked as primary
-        val unwrappedConstructor = it.fir.originalConstructorIfTypeAlias?.unwrapSubstitutionOverrides() ?: it.fir
+        val unwrappedConstructor = it.fir.typeAliasConstructorInfo?.originalConstructor?.unwrapSubstitutionOverrides() ?: it.fir
         if (unwrappedConstructor.isPrimary && constructorSymbol == null) {
             constructorSymbol = it
         }

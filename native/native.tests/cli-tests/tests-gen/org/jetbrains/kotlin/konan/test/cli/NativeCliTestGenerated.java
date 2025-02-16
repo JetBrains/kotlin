@@ -64,9 +64,34 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     runTest("native/native.tests/cli-tests/testData/cli/llvmIrDumpDirectoryDoesntExist.args");
   }
 
+  @TestMetadata("reportPerf.args")
+  public void testReportPerf() {
+    runTest("native/native.tests/cli-tests/testData/cli/reportPerf.args");
+  }
+
+  @TestMetadata("reportPerfPsi.args")
+  public void testReportPerfPsi() {
+    runTest("native/native.tests/cli-tests/testData/cli/reportPerfPsi.args");
+  }
+
+  @TestMetadata("reportPerfWithError.args")
+  public void testReportPerfWithError() {
+    runTest("native/native.tests/cli-tests/testData/cli/reportPerfWithError.args");
+  }
+
   @TestMetadata("simple.args")
   public void testSimple() {
     runTest("native/native.tests/cli-tests/testData/cli/simple.args");
+  }
+
+  @TestMetadata("syntaxError_lt.args")
+  public void testSyntaxError_lt() {
+    runTest("native/native.tests/cli-tests/testData/cli/syntaxError_lt.args");
+  }
+
+  @TestMetadata("syntaxError_psi.args")
+  public void testSyntaxError_psi() {
+    runTest("native/native.tests/cli-tests/testData/cli/syntaxError_psi.args");
   }
 
   @TestMetadata("warningsSuppressionDisablesErrors_Native.args")

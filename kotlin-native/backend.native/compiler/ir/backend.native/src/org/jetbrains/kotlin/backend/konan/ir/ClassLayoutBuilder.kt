@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsDeserializer
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.ir.objcinterop.isObjCClassMethod
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -152,7 +153,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
         val root = context.irBuiltIns.anyClass.owner
         val immediateInheritors = mutableMapOf<IrClass, MutableList<IrClass>>()
         val allClasses = mutableListOf<IrClass>()
-        irModule.acceptVoid(object: IrElementVisitorVoid {
+        irModule.acceptVoid(object: IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -224,7 +225,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
                 val interfaceIndices = mutableMapOf<IrClass, Int>()
                 val interfaces = mutableListOf<IrClass>()
                 val forbidden = mutableListOf<MutableList<Int>>()
-                irModuleFragment.acceptVoid(object : IrElementVisitorVoid {
+                irModuleFragment.acceptVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }
@@ -515,10 +516,11 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             context.innerClassesSupport.getOuterThisField(irClass)
         else null
 
-        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(irClass)
-        if (moduleDeserializer != null)
-            return moduleDeserializer.deserializeClassFields(irClass, outerThisField?.toFieldInfo(llvm))
-
+        val moduleDeserializer = context.moduleDeserializerProvider.getDeserializerOrNull(irClass)
+        if (moduleDeserializer != null) {
+            val classFieldsDeserializer = ClassFieldsDeserializer(context.config.cachedLibraries, context.irBuiltIns, moduleDeserializer)
+            return classFieldsDeserializer.deserializeClassFields(irClass, outerThisField?.toFieldInfo(llvm))
+        }
         val declarations = irClass.declarations.toMutableList()
         outerThisField?.let {
             if (!declarations.contains(it))

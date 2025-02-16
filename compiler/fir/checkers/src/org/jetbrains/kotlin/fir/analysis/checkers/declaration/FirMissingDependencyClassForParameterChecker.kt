@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 
@@ -26,7 +26,7 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
         if (containingFunctionSymbol !is FirAnonymousFunctionSymbol) return
         if (declaration.returnTypeRef.source?.kind is KtRealSourceElementKind) return
 
-        val missingTypes = mutableSetOf<ConeKotlinType>()
+        val missingTypes = mutableSetOf<ConeClassLikeType>()
         considerType(declaration.returnTypeRef.coneType, missingTypes, context)
         reportMissingTypes(
             declaration.source, missingTypes, context, reporter,

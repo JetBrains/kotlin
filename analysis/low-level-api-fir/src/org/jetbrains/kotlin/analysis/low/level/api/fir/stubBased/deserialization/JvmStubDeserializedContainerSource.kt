@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-//required for LLFirDependenciesSymbolProvider#jvmClassName, to resolve ambiguities
+//required for LLDependenciesSymbolProvider#jvmClassName, to resolve ambiguities
 //todo check if moving builtins to stubs would solve the issue
 internal class JvmStubDeserializedContainerSource(classId: ClassId) : DeserializedContainerSourceWithJvmClassName {
     override val className = JvmClassName.byClassId(classId)

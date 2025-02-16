@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftEx
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportTaskParameters
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createSwiftExportedModule
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.konan.target.Distribution
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
@@ -57,7 +57,8 @@ internal abstract class SwiftExportTask @Inject constructor(
     fun run() {
         cleanup()
 
-        val swiftExportQueue = workerExecutor.classLoaderIsolation { workerSpec ->
+        // Run Swift Export with process isolation to avoid leakage for AA/IntelliJ classes. See KT-73438
+        val swiftExportQueue = workerExecutor.processIsolation { workerSpec ->
             workerSpec.classpath.from(swiftExportClasspath)
         }
 
@@ -80,7 +81,7 @@ internal abstract class SwiftExportTask @Inject constructor(
             workParameters.swiftModulesFile.set(parameters.swiftModulesFile)
             workParameters.swiftModules.set(swiftModules)
             workParameters.swiftExportSettings.set(parameters.swiftExportSettings)
-            workParameters.konanDistribution.set(kotlinNativeProvider.flatMap { it.konanDistribution })
+            workParameters.konanDistribution.set(kotlinNativeProvider.flatMap { it.bundleDirectory }.map { Distribution(it) })
         }
     }
 

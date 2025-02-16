@@ -4,6 +4,7 @@ KtNameReferenceExpression(118,120): 'AA'
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -11,6 +12,7 @@ KtNameReferenceExpression(118,120): 'AA'
           returnType = foo.bar.baz.AA.BB
           symbol = <constructor>(): foo.bar.baz.AA.BB
           valueParameters = []
+          contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

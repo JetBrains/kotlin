@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -153,6 +153,20 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     }
 
     /**
+     * <pre>
+     *   context(contextParameter: Int)
+     *   fun foo() {}
+     * </pre>
+     *
+     * @return true whether this [KtParameter] is a context parameter.
+     *
+     * @see KtContextReceiverList
+     */
+    public boolean isContextParameter() {
+        return getParent() instanceof KtContextReceiverList;
+    }
+
+    /**
      * For example,
      *   lambdaConsumer { lambdaParameter ->
      *     ...
@@ -192,12 +206,6 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return null;
     }
 
-    @NotNull
-    @Override
-    public List<KtContextReceiver> getContextReceivers() {
-        return Collections.emptyList();
-    }
-
     @Nullable
     @Override
     public KtTypeParameterList getTypeParameterList() {
@@ -227,6 +235,26 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         PsiElement parent = getParentByStub();
         if (!(parent instanceof KtParameterList)) return null;
         return ((KtParameterList) parent).getOwnerFunction();
+    }
+
+    /**
+     * @see KtParameterList#getOwnerFunction()
+     * @see KtContextReceiverList#getOwnerDeclaration()
+     *
+     * @return the parameter's owner declaration or null if it is from a functional type
+     */
+    @Nullable
+    public KtDeclaration getOwnerDeclaration() {
+        PsiElement parent = getParent();
+        if (parent instanceof KtParameterList) {
+            return ((KtParameterList) parent).getOwnerFunction();
+        }
+
+        if (parent instanceof KtContextReceiverList) {
+            return ((KtContextReceiverList) parent).getOwnerDeclaration();
+        }
+
+        return null;
     }
 
     @NotNull

@@ -11,18 +11,19 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.*
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfigurationName
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromGroupNameAndVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
+import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.namedDomainObjectSet
 import javax.inject.Inject
 
 interface SwiftExportedModuleMetadata {
@@ -48,6 +49,13 @@ interface SwiftExportAdvancedConfiguration {
     @get:Input
     @get:Optional
     val settings: MapProperty<String, String>
+
+    /**
+     * Specifies additional compiler arguments to be passed to the compiler.
+     */
+    @get:Input
+    @get:Optional
+    val freeCompilerArgs: ListProperty<String>
 }
 
 interface SwiftExportedModuleVersionMetadata : SwiftExportedModuleMetadata {
@@ -97,7 +105,7 @@ abstract class SwiftExportExtension @Inject constructor(
     /**
      * Configure Swift Export Advanced parameters.
      */
-    fun export(configure: Action<SwiftExportAdvancedConfiguration>) = configure {
+    fun configure(configure: Action<SwiftExportAdvancedConfiguration>) = configure {
         configure.execute(this)
     }
 

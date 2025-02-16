@@ -323,9 +323,14 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         return buildStringConcatenationCall {
-            argumentList = buildArgumentList { arguments += output.asReversed().map { getAsFirExpression<FirExpression>(it) } }
-            source = binaryExpression.toFirSourceElement()
+            val stringConcatenationSource = binaryExpression.toFirSourceElement()
+            argumentList = buildArgumentList {
+                arguments += output.asReversed().map { getAsFirExpression<FirExpression>(it) }
+                source = stringConcatenationSource
+            }
+            source = stringConcatenationSource
             interpolationPrefix = ""
+            isFoldedStrings = true
         }
     }
 
@@ -556,7 +561,7 @@ class LightTreeRawFirExpressionBuilder(
         val firAnnotationList = mutableListOf<FirAnnotation>()
         annotatedExpression.forEachChildren {
             when (it.tokenType) {
-                ANNOTATION -> firAnnotationList += declarationBuilder.convertAnnotation(it)
+                ANNOTATION -> declarationBuilder.convertAnnotationTo(it, firAnnotationList)
                 ANNOTATION_ENTRY -> firAnnotationList += declarationBuilder.convertAnnotationEntry(it)
                 BLOCK -> firExpression = declarationBuilder.convertBlockExpression(it)
                 else -> if (it.isExpression()) {

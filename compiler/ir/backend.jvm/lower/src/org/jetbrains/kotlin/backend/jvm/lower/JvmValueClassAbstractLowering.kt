@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.MemoizedValueClassAbstractReplacements
+import org.jetbrains.kotlin.backend.jvm.getRequiresMangling
+import org.jetbrains.kotlin.backend.jvm.ir.findInterfaceImplementation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.*
@@ -310,7 +313,6 @@ internal abstract class JvmValueClassAbstractLowering(
         super.visitDynamicOperatorExpression(expression)
 
     final override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression) = super.visitDynamicMemberExpression(expression)
-    final override fun visitErrorDeclaration(declaration: IrErrorDeclaration) = super.visitErrorDeclaration(declaration)
     final override fun visitErrorExpression(expression: IrErrorExpression) = super.visitErrorExpression(expression)
     final override fun visitErrorCallExpression(expression: IrErrorCallExpression) = super.visitErrorCallExpression(expression)
 

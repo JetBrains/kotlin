@@ -94,8 +94,9 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
 
     private fun getCustomParcelerTypes(annotations: List<FirAnnotation>, session: FirSession): Set<ConeKotlinType> =
         annotations.mapNotNullTo(mutableSetOf()) { annotation ->
-            if (annotation.fqName(session) in ParcelizeNames.TYPE_PARCELER_FQ_NAMES && annotation.typeArguments.size == 2) {
-                annotation.typeArguments[0].toConeTypeProjection().type?.fullyExpandedType(session)
+            val resolvedAnnotation = annotation.resolvedType.fullyExpandedType(session)
+            if (annotation.fqName(session) in ParcelizeNames.TYPE_PARCELER_FQ_NAMES && resolvedAnnotation.typeArguments.size == 2) {
+                resolvedAnnotation.typeArguments[0].type?.fullyExpandedType(session)
             } else {
                 null
             }
