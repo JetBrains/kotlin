@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.lower.NativeFunctionReferenceLowering
+import org.jetbrains.kotlin.backend.konan.lower.getAllClassSuperTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.objcinterop.getObjCMethodInfo
 import org.jetbrains.kotlin.ir.objcinterop.isObjCMetaClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -206,11 +207,10 @@ private fun KotlinToCCallBuilder.addVariadicArguments(
         with(irBuilder) {
             val argumentTypes = unwrapVariadicArguments(elements).map { it.type }
             argumentTypes.forEachIndexed { index, type ->
-                val untypedArgument = irCall(symbols.arrayGet[symbols.array]!!.owner).apply {
+                val argument = irCall(symbols.arrayGet[symbols.array]!!, symbols.any.defaultType.makeNullable()).apply {
                     dispatchReceiver = irGet(variable)
                     putValueArgument(0, irInt(index))
-                }
-                val argument = irAs(untypedArgument, type) // Note: this cast always succeeds.
+                }.implicitCastIfNeededTo(type)
                 addArgument(argument, type, variadic = true, parameter = null)
             }
         }
@@ -1345,7 +1345,13 @@ private fun KotlinToCCallBuilder.cValuesRefToPointer(
             .single { it.name.asString() == "getPointer" }
 
     irBuilder.irSafeTransform(value) {
-        irCall(getPointerFunction).apply {
+        val elementType = value.type.getAllClassSuperTypes()
+                .firstOrNull { it.isCValuesRef(symbols) }
+                ?.let { (it as IrSimpleType).arguments.single().typeOrNull }
+        val substitutionMap = mutableMapOf<IrTypeParameterSymbol, IrType>()
+        if (elementType != null)
+            substitutionMap[symbols.interopCPointer.owner.typeParameters.single().symbol] = elementType
+        irCall(getPointerFunction.symbol, symbols.interopCPointer.defaultType.substitute(substitutionMap)).apply {
             dispatchReceiver = it
             putValueArgument(0, bridgeCallBuilder.getMemScope())
         }

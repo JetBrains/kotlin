@@ -93,7 +93,7 @@ private fun addSubstitutedTypesFromReceiver(
     return receiverClassType
 }
 
-private fun IrType.getAllClassSuperTypes(): List<IrType> {
+internal fun IrType.getAllClassSuperTypes(): List<IrType> {
     val result = mutableListOf<IrType>()
     val visitedTypeParameters = mutableSetOf<IrTypeParameterSymbol>()
 
