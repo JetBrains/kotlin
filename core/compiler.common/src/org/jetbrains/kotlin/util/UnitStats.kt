@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
  * JSON serializer for using by third-party tools.
  * Also, it clarifies the collected measurements.
  */
-class UnitStats(
+data class UnitStats(
     /** Typically it should be a name of a module, but might be different
     if multiple `PerformanceManager` are used within the single module for handling multithreaded pipelines.
     In the last case, it should have a suffix like "(Child)".
@@ -34,12 +34,12 @@ class UnitStats(
     val backendStats: Time?,
 
     // Null in case of java or binary files not used
-    val findJavaClassStats: SideStats?,
-    val findKotlinClassStats: SideStats?,
+    val findJavaClassStats: SideStats? = null,
+    val findKotlinClassStats: SideStats? = null,
 
     // Null/empty if extended measurements are not enabled
-    val gcStats: List<GarbageCollectionStats>,
-    val jitTimeMillis: Long?,
+    val gcStats: List<GarbageCollectionStats> = listOf(),
+    val jitTimeMillis: Long? = null,
 
     // Deprecated stats (from performance counter)
     val extendedStats: List<String> = emptyList(),
@@ -63,7 +63,7 @@ enum class PlatformType {
 /**
  * [userNano] and [cpuNano] can be useful for measuring times in multithread environment.
  */
-class Time(val nano: Long, val userNano: Long, val cpuNano: Long) {
+data class Time(val nano: Long, val userNano: Long, val cpuNano: Long) {
     companion object {
         val ZERO = Time(0, 0, 0)
     }
