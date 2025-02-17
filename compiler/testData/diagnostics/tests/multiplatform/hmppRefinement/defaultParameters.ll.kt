@@ -16,4 +16,4 @@ fun bar() {
 }
 
 // MODULE: main()()(common2)
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>(a: Int) {}
+actual fun foo(a: Int) {}
