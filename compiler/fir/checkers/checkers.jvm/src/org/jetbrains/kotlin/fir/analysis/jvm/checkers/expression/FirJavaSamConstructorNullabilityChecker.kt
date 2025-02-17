@@ -58,6 +58,7 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
                         returnedExpressionType,
                         expectedReturnType,
                         true,
+                        context.session.typeContext.involvesCapturedTypes(returnedExpressionType, expectedReturnType),
                         context,
                     )
                 } else {

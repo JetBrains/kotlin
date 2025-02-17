@@ -33,3 +33,11 @@ interface DiagnosticWithParameters4Marker<A, B, C, D> : DiagnosticMarker {
     val c: C
     val d: D
 }
+
+interface DiagnosticWithParameters5Marker<A, B, C, D, E> : DiagnosticMarker {
+    val a: A
+    val b: B
+    val c: C
+    val d: D
+    val e: E
+}

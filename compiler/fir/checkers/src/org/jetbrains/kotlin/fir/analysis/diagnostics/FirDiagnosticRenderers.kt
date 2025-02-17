@@ -344,6 +344,10 @@ object FirDiagnosticRenderers {
         }
     }
 
+    val INVOLVES_CAPTURED_TYPES = Renderer { involvesCapturedTypes: Boolean ->
+        if (involvesCapturedTypes) " Note that captured types are always distinct from each other, and satisfy only trivial bounds." else ""
+    }
+
     val FOR_OPTIONAL_OPERATOR = Renderer { it: String? ->
         if (!it.isNullOrBlank()) " for operator '$it'" else ""
     }

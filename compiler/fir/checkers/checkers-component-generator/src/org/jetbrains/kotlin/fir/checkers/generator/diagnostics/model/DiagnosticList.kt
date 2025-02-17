@@ -135,7 +135,7 @@ sealed class DiagnosticBuilder(
     abstract fun build(): DiagnosticData
 
     companion object {
-        const val MAX_DIAGNOSTIC_PARAMETER_COUNT = 4
+        const val MAX_DIAGNOSTIC_PARAMETER_COUNT = 5
     }
 }
 

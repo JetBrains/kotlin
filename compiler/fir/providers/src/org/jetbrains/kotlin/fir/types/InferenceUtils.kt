@@ -52,3 +52,7 @@ fun ConeTypeContext.isTypeMismatchDueToNullability(
         expectedType.withNullability(nullable = true, this)
     )
 }
+
+fun ConeTypeContext.involvesCapturedTypes(
+    vararg types: ConeKotlinType
+): Boolean = types.any { it.hasCapture() }

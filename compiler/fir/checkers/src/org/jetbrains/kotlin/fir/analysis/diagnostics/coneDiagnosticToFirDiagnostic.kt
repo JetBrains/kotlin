@@ -200,7 +200,9 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds)
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
     is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source)
-    is ConeNoInferTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(source, lowerType, upperType, false)
+    is ConeNoInferTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(
+        source, lowerType, upperType, false, lowerType.hasCapture() || upperType.hasCapture()
+    )
     is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, "dynamic type")
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
@@ -335,17 +337,19 @@ private fun mapInapplicableCandidateError(
             }
 
             is UnitReturnTypeLambdaContradictsExpectedType -> {
+                val actualType = rootCause.lambda.typeRef.coneType.substituteTypeVariableTypes(
+                    diagnostic.candidate,
+                    typeContext,
+                )
+                val expectedType = rootCause.wholeLambdaExpectedType.substituteTypeVariableTypes(
+                    diagnostic.candidate,
+                    typeContext,
+                )
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.sourceForFunctionExpression ?: rootCause.lambda.source ?: source,
-                    rootCause.lambda.typeRef.coneType.substituteTypeVariableTypes(
-                        diagnostic.candidate,
-                        typeContext,
-                    ),
-                    rootCause.wholeLambdaExpectedType.substituteTypeVariableTypes(
-                        diagnostic.candidate,
-                        typeContext,
-                    ),
-                    false // not isMismatchDueToNullability
+                    actualType, expectedType,
+                    false, // not isMismatchDueToNullability
+                    actualType.hasCapture() || expectedType.hasCapture()
                 )
             }
 
@@ -486,11 +490,12 @@ private fun diagnosticForArgumentTypeMismatch(
 ): KtDiagnostic {
     val symbol = candidate.symbol as FirCallableSymbol
     val receiverType = (candidate.chosenExtensionReceiver ?: candidate.dispatchReceiver)?.expression?.resolvedType
+    val involvesCapturedTypes = expectedType.contains { it is ConeCapturedType } || actualType.contains { it is ConeCapturedType }
 
     return when {
         anonymousFunctionIfReturnExpression != null ->
             FirErrors.RETURN_TYPE_MISMATCH.createOn(
-                source, expectedType, actualType, anonymousFunctionIfReturnExpression, isMismatchDueToNullability
+                source, expectedType, actualType, anonymousFunctionIfReturnExpression, isMismatchDueToNullability, involvesCapturedTypes
             )
         expectedType is ConeCapturedType && expectedType.isBasedOnStarOrOut() && receiverType != null ->
             FirErrors.MEMBER_PROJECTED_OUT.createOn(
@@ -503,7 +508,8 @@ private fun diagnosticForArgumentTypeMismatch(
             source,
             actualType,
             expectedType,
-            isMismatchDueToNullability
+            isMismatchDueToNullability,
+            involvesCapturedTypes
         )
     }
 }
@@ -611,11 +617,14 @@ private fun ConstraintSystemError.toDiagnostic(
                         else
                             upperConeType.withNullability(nullable = true, typeContext)
 
+                    val substitutedUpperConeType = upperConeType.substituteTypeVariableTypes(candidate, typeContext)
+                    val substitutedInferredType = inferredType.substituteTypeVariableTypes(candidate, typeContext)
                     FirErrors.TYPE_MISMATCH.createOn(
                         qualifiedAccessSource ?: source,
-                        upperConeType.substituteTypeVariableTypes(candidate, typeContext),
-                        inferredType.substituteTypeVariableTypes(candidate, typeContext),
-                        typeMismatchDueToNullability
+                        substitutedUpperConeType,
+                        substitutedInferredType,
+                        typeMismatchDueToNullability,
+                        substitutedUpperConeType.hasCapture() || substitutedInferredType.hasCapture(),
                     )
                 }
 
@@ -842,4 +851,16 @@ private fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     d: D
 ): KtDiagnosticWithParameters4<A, B, C, D> {
     return on(element.requireNotNull(), a, b, c, d, positioningStrategy = null)
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+private fun <A, B, C, D, E> KtDiagnosticFactory5<A, B, C, D, E>.createOn(
+    element: KtSourceElement?,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E
+): KtDiagnosticWithParameters5<A, B, C, D, E> {
+    return on(element.requireNotNull(), a, b, c, d, e, positioningStrategy = null)
 }

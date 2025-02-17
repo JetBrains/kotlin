@@ -55,7 +55,14 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
         }
         if (getterReturnType != property.returnTypeRef.coneType) {
             val getterReturnTypeSource = getterReturnTypeRef.source
-            reporter.reportOn(getterReturnTypeSource, FirErrors.WRONG_GETTER_RETURN_TYPE, propertyType, getterReturnType, context)
+            reporter.reportOn(
+                getterReturnTypeSource,
+                FirErrors.WRONG_GETTER_RETURN_TYPE,
+                propertyType,
+                getterReturnType,
+                context.session.typeContext.involvesCapturedTypes(propertyType, getterReturnType),
+                context
+            )
         }
     }
 
@@ -100,7 +107,14 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
         }
 
         if (valueSetterType.withAttributes(ConeAttributes.Empty) != propertyType.withAttributes(ConeAttributes.Empty) && !valueSetterType.hasError()) {
-            reporter.reportOn(valueSetterTypeSource, FirErrors.WRONG_SETTER_PARAMETER_TYPE, propertyType, valueSetterType, context)
+            reporter.reportOn(
+                valueSetterTypeSource,
+                FirErrors.WRONG_SETTER_PARAMETER_TYPE,
+                propertyType,
+                valueSetterType,
+                context.session.typeContext.involvesCapturedTypes(propertyType, valueSetterType),
+                context
+            )
         }
 
         val setterReturnType = setter.returnTypeRef.coneType.fullyExpandedType(context.session)

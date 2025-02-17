@@ -61,6 +61,18 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
         put(factory, KtDiagnosticWithParameters4Renderer(message, rendererA, rendererB, rendererC, rendererD))
     }
 
+    fun <A, B, C, D, E> put(
+        factory: KtDiagnosticFactory5<A, B, C, D, E>,
+        message: String,
+        rendererA: DiagnosticParameterRenderer<A>?,
+        rendererB: DiagnosticParameterRenderer<B>?,
+        rendererC: DiagnosticParameterRenderer<C>?,
+        rendererD: DiagnosticParameterRenderer<D>?,
+        rendererE: DiagnosticParameterRenderer<E>?
+    ) {
+        put(factory, KtDiagnosticWithParameters5Renderer(message, rendererA, rendererB, rendererC, rendererD, rendererE))
+    }
+
     fun put(factory: KtDiagnosticFactoryForDeprecation0, message: String) {
         put(factory.errorFactory, SimpleKtDiagnosticRenderer(message))
         put(factory.warningFactory, SimpleKtDiagnosticRenderer(factory.warningMessage(message)))

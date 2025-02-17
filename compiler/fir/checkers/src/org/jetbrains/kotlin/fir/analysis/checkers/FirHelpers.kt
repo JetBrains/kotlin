@@ -543,6 +543,7 @@ fun checkTypeMismatch(
                 lValueType,
                 rValueType,
                 context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType),
+                context.session.typeContext.involvesCapturedTypes(lValueType, rValueType),
                 context
             )
         }
@@ -555,7 +556,11 @@ fun checkTypeMismatch(
             if (rValueType.isUnit) {
                 reporter.reportOn(source, FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT, context)
             } else {
-                reporter.reportOn(source, FirErrors.RESULT_TYPE_MISMATCH, lValueType, rValueType, context)
+                reporter.reportOn(
+                    source, FirErrors.RESULT_TYPE_MISMATCH, lValueType, rValueType,
+                    context.session.typeContext.isTypeMismatchDueToNullability(lValueType, rValueType),
+                    context
+                )
             }
         }
         else -> {
@@ -565,6 +570,7 @@ fun checkTypeMismatch(
                 lValueType,
                 rValueType,
                 context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType),
+                context.session.typeContext.involvesCapturedTypes(lValueType, rValueType),
                 context
             )
         }
@@ -604,6 +610,7 @@ private fun reportReturnTypeMismatchInLambda(
                 expression.resolvedType,
                 rValue.anonymousFunction,
                 context.session.typeContext.isTypeMismatchDueToNullability(expression.resolvedType, expectedReturnType),
+                context.session.typeContext.involvesCapturedTypes(expression.resolvedType, expectedReturnType),
                 context
             )
         }
@@ -631,6 +638,7 @@ internal fun checkCondition(condition: FirExpression, context: CheckerContext, r
             FirErrors.CONDITION_TYPE_MISMATCH,
             coneType,
             coneType.isNullableBoolean,
+            context.session.typeContext.involvesCapturedTypes(coneType),
             context
         )
     }

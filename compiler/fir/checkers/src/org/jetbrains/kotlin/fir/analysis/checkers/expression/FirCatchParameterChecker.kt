@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.involvesCapturedTypes
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.types.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -60,6 +61,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                         coneType,
                         session.builtinTypes.throwableType.coneType
                     ),
+                    context.session.typeContext.involvesCapturedTypes(coneType),
                     context
                 )
             }

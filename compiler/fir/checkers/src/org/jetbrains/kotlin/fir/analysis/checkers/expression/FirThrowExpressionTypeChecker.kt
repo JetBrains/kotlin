@@ -25,6 +25,7 @@ object FirThrowExpressionTypeChecker : FirThrowExpressionChecker(MppCheckerKind.
                 expectedType,
                 actualType,
                 context.session.typeContext.isTypeMismatchDueToNullability(expectedType, actualType),
+                context.session.typeContext.involvesCapturedTypes(expectedType, actualType),
                 context,
             )
         }

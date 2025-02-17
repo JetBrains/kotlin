@@ -126,13 +126,17 @@ fun checkUpperBoundViolated(
                 ) {
                     if (isReportExpansionError && argumentTypeRef == null) {
                         reporter.reportOn(
-                            argumentSource, FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION, upperBound, argumentType, context
+                            argumentSource, FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION, upperBound, argumentType,
+                            context.session.typeContext.involvesCapturedTypes(upperBound, argumentType),
+                            context
                         )
                     } else {
                         val extraMessage = if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
                         reporter.reportOn(
                             argumentSource, FirErrors.UPPER_BOUND_VIOLATED,
-                            upperBound, argumentType, extraMessage, context
+                            upperBound, argumentType, extraMessage,
+                            context.session.typeContext.involvesCapturedTypes(upperBound, argumentType),
+                            context
                         )
                     }
                 } else {

@@ -192,6 +192,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                         diagnostic.candidate.callInfo.name,
                         componentType,
                         expectedType,
+                        context.session.typeContext.involvesCapturedTypes(componentType, expectedType),
                         context
                     )
                 } else {

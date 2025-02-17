@@ -219,7 +219,9 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         // This check ensures K2 reports the same diagnostics as K1 used to.
         expression.source?.kind !is KtRealSourceElementKind -> reportOn(
             expression.source, getSourceLessInapplicabilityDiagnostic(forceWarning),
-            lUserType, rUserType, context,
+            lUserType, rUserType,
+            context.session.typeContext.involvesCapturedTypes(lUserType, rUserType),
+            context,
         )
         applicability == Applicability.GENERALLY_INAPPLICABLE -> reportOn(
             expression.source, getGeneralInapplicabilityDiagnostic(forceWarning),

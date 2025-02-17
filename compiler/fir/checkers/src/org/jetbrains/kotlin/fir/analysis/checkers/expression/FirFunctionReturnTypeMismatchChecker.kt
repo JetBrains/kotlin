@@ -111,6 +111,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
                         returnExpressionType,
                         targetElement,
                         isDueToNullability,
+                        context.session.typeContext.involvesCapturedTypes(returnExpressionType, functionReturnType),
                         context
                     )
                 }
@@ -131,6 +132,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
                 returnExpressionType,
                 targetElement,
                 false,
+                context.session.typeContext.involvesCapturedTypes(returnExpressionType, functionReturnType),
                 context
             )
         }

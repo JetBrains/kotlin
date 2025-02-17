@@ -60,6 +60,15 @@ sealed class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnostic(), Diagnosti
     abstract override val factory: KtDiagnosticFactory4<A, B, C, D>
 }
 
+sealed class KtDiagnosticWithParameters5<A, B, C, D, E> : KtDiagnostic(), DiagnosticWithParameters5Marker<A, B, C, D, E> {
+    abstract override val a: A
+    abstract override val b: B
+    abstract override val c: C
+    abstract override val d: D
+    abstract override val e: E
+    abstract override val factory: KtDiagnosticFactory5<A, B, C, D, E>
+}
+
 // ------------------------------ psi diagnostics ------------------------------
 
 interface KtPsiDiagnostic : DiagnosticMarker {
@@ -151,6 +160,22 @@ data class KtPsiDiagnosticWithParameters4<A, B, C, D>(
     }
 }
 
+data class KtPsiDiagnosticWithParameters5<A, B, C, D, E>(
+    override val element: KtPsiSourceElement,
+    override val a: A,
+    override val b: B,
+    override val c: C,
+    override val d: D,
+    override val e: E,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory5<A, B, C, D, E>,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
+) : KtDiagnosticWithParameters5<A, B, C, D, E>(), KtPsiDiagnostic {
+    init {
+        checkPsiTypeConsistency()
+    }
+}
+
 // ------------------------------ light tree diagnostics ------------------------------
 
 interface KtLightDiagnostic : DiagnosticMarker {
@@ -206,6 +231,18 @@ data class KtLightDiagnosticWithParameters4<A, B, C, D>(
     override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters4<A, B, C, D>(), KtLightDiagnostic
 
+data class KtLightDiagnosticWithParameters5<A, B, C, D, E>(
+    override val element: KtLightSourceElement,
+    override val a: A,
+    override val b: B,
+    override val c: C,
+    override val d: D,
+    override val e: E,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory5<A, B, C, D, E>,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
+) : KtDiagnosticWithParameters5<A, B, C, D, E>(), KtLightDiagnostic
+
 // ------------------------------ light tree diagnostics ------------------------------
 
 interface KtOffsetsOnlyDiagnostic : DiagnosticMarker {
@@ -260,3 +297,15 @@ data class KtOffsetsOnlyDiagnosticWithParameters4<A, B, C, D>(
     override val factory: KtDiagnosticFactory4<A, B, C, D>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters4<A, B, C, D>(), KtOffsetsOnlyDiagnostic
+
+data class KtOffsetsOnlyDiagnosticWithParameters5<A, B, C, D, E>(
+    override val element: AbstractKtSourceElement,
+    override val a: A,
+    override val b: B,
+    override val c: C,
+    override val d: D,
+    override val e: E,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory5<A, B, C, D, E>,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy
+) : KtDiagnosticWithParameters5<A, B, C, D, E>(), KtOffsetsOnlyDiagnostic

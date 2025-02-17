@@ -647,6 +647,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR by error<PsiElement>() {
@@ -656,17 +657,20 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val THROWABLE_TYPE_MISMATCH by error<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val CONDITION_TYPE_MISMATCH by error<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val ARGUMENT_TYPE_MISMATCH by error<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
             parameter<Boolean>("isMismatchDueToNullability")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val MEMBER_PROJECTED_OUT by error<PsiElement> {
@@ -709,11 +713,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val RESULT_TYPE_MISMATCH by error<KtExpression> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error<KtLambdaExpression>()
@@ -790,10 +796,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedUpperBound")
             parameter<ConeKotlinType>("actualUpperBound")
             parameter<String>("extraMessage")
+            parameter<Boolean>("involvesCapturedTypes")
         }
         val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION by error<PsiElement> {
             parameter<ConeKotlinType>("expectedUpperBound")
             parameter<ConeKotlinType>("actualUpperBound")
+            parameter<Boolean>("involvesCapturedTypes")
         }
         val TYPE_ARGUMENTS_NOT_ALLOWED by error<PsiElement> {
             parameter<String>("place")
@@ -890,6 +898,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<FirFunction>("targetFunction")
             parameter<Boolean>("isMismatchDueToNullability")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val IMPLICIT_NOTHING_RETURN_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
@@ -930,11 +939,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INCOMPATIBLE_TYPES by error<KtElement> {
             parameter<ConeKotlinType>("typeA")
             parameter<ConeKotlinType>("typeB")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val INCOMPATIBLE_TYPES_WARNING by warning<KtElement> {
             parameter<ConeKotlinType>("typeA")
             parameter<ConeKotlinType>("typeB")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val TYPE_VARIANCE_CONFLICT_ERROR by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
@@ -1378,6 +1389,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val WRONG_SETTER_PARAMETER_TYPE by error<KtElement> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<Boolean>("involvesCapturedTypes")
         }
         val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER by deprecationError<KtProperty>(
             LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate,
@@ -1390,6 +1402,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
+            parameter<Boolean>("involvesCapturedTypes")
         }
         val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
@@ -1397,6 +1410,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val WRONG_GETTER_RETURN_TYPE by error<KtElement> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<Boolean>("involvesCapturedTypes")
         }
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
         val PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION by error<KtExpression>()
@@ -1521,6 +1535,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("componentFunctionName")
             parameter<ConeKotlinType>("destructingType")
             parameter<ConeKotlinType>("expectedType")
+            parameter<Boolean>("involvesCapturedTypes")
         }
     }
 
@@ -1713,6 +1728,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("delegateFunction")
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<Boolean>("involvesCapturedTypes")
         }
 
         val UNDERSCORE_IS_RESERVED by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)

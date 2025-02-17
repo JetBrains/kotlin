@@ -134,6 +134,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                         "getValue",
                         propertyType,
                         returnType,
+                        context.session.typeContext.involvesCapturedTypes(propertyType, returnType),
                         context
                     )
                 }

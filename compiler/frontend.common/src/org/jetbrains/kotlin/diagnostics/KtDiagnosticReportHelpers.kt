@@ -64,6 +64,20 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy), context)
 }
 
+fun <A, B, C, D, E> DiagnosticReporter.reportOn(
+    source: AbstractKtSourceElement?,
+    factory: KtDiagnosticFactory5<A, B, C, D, E>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    context: DiagnosticContext,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+) {
+    report(factory.on(source.requireNotNull(), a, b, c, d, e, positioningStrategy), context)
+}
+
 fun AbstractKtSourceElement?.requireNotNull(): AbstractKtSourceElement =
     requireNotNull(this) { "source must not be null" }
 

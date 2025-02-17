@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.involvesCapturedTypes
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.typeContext
 
 object FirDelegateFieldTypeMismatchChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     @SymbolInternals
@@ -39,6 +41,7 @@ object FirDelegateFieldTypeMismatchChecker : FirRegularClassChecker(MppCheckerKi
                     field.returnTypeRef.coneType,
                     initializer.resolvedType,
                     false,
+                    context.session.typeContext.involvesCapturedTypes(field.returnTypeRef.coneType, initializer.resolvedType),
                     context,
                 )
             }

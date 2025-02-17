@@ -210,6 +210,53 @@ class KtDiagnosticFactory4<A, B, C, D>(
     }
 }
 
+class KtDiagnosticFactory5<A, B, C, D, E>(
+    name: String,
+    severity: Severity,
+    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    psiType: KClass<*>
+) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType) {
+    override val ktRenderer: KtDiagnosticRenderer = KtDiagnosticWithParameters5Renderer(
+        "{0}, {1}, {2}, {3}, {4}",
+        KtDiagnosticRenderers.TO_STRING,
+        KtDiagnosticRenderers.TO_STRING,
+        KtDiagnosticRenderers.TO_STRING,
+        KtDiagnosticRenderers.TO_STRING,
+        KtDiagnosticRenderers.TO_STRING
+    )
+
+    @InternalDiagnosticFactoryMethod
+    fun on(
+        element: AbstractKtSourceElement,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        e: E,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?
+    ): KtDiagnosticWithParameters5<A, B, C, D, E> {
+        return when (element) {
+            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters5(
+                element, a, b, c, d, e, severity, this, positioningStrategy ?: defaultPositioningStrategy
+            )
+            is KtLightSourceElement -> KtLightDiagnosticWithParameters5(
+                element,
+                a,
+                b,
+                c,
+                d,
+                e,
+                severity,
+                this,
+                positioningStrategy ?: defaultPositioningStrategy
+            )
+            else -> KtOffsetsOnlyDiagnosticWithParameters5(
+                element, a, b, c, d, e, severity, this, positioningStrategy ?: defaultPositioningStrategy
+            )
+        }
+    }
+}
+
 // ------------------------------ factories for deprecation ------------------------------
 
 sealed class KtDiagnosticFactoryForDeprecation<F : AbstractKtDiagnosticFactory>(

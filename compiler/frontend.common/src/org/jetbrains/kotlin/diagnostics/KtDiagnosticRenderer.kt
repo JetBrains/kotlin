@@ -104,3 +104,25 @@ class KtDiagnosticWithParameters4Renderer<A, B, C, D>(
         )
     }
 }
+
+class KtDiagnosticWithParameters5Renderer<A, B, C, D, E>(
+    message: String,
+    private val rendererForA: DiagnosticParameterRenderer<A>?,
+    private val rendererForB: DiagnosticParameterRenderer<B>?,
+    private val rendererForC: DiagnosticParameterRenderer<C>?,
+    private val rendererForD: DiagnosticParameterRenderer<D>?,
+    private val rendererForE: DiagnosticParameterRenderer<E>?,
+) : AbstractKtDiagnosticWithParametersRenderer(message) {
+    override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
+        require(diagnostic is KtDiagnosticWithParameters5<*, *, *, *, *>)
+        val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c, diagnostic.d, diagnostic.e)
+        @Suppress("UNCHECKED_CAST")
+        return arrayOf(
+            renderParameter(diagnostic.a as A, rendererForA, context),
+            renderParameter(diagnostic.b as B, rendererForB, context),
+            renderParameter(diagnostic.c as C, rendererForC, context),
+            renderParameter(diagnostic.d as D, rendererForD, context),
+            renderParameter(diagnostic.e as E, rendererForE, context),
+        )
+    }
+}
