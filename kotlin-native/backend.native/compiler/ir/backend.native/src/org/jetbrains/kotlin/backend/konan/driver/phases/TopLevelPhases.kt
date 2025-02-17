@@ -255,7 +255,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
 
         if (performanceManager != null) {
             fragments.forEach {
-                performanceManager.addMeasurementResults(it.performanceManager)
+                performanceManager.addOtherUnitStats(it.performanceManager?.unitStats)
             }
         }
     }

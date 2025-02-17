@@ -191,7 +191,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         try {
             konanDriver.run()
         } finally {
-            mainPerfManager?.addMeasurementResults(childPerfManager)
+            mainPerfManager?.addOtherUnitStats(childPerfManager?.unitStats)
         }
     }
 
