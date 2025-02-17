@@ -40,6 +40,7 @@ public:
         std::unique_lock guard(deallocMutex_);
         // Can be safely called with any thread state.
         raw_->dispose();
+        raw_ = nullptr; // Null out, just in case.
     }
 
     mm::ExternalRCRefImpl* get() const noexcept { return static_cast<mm::ExternalRCRefImpl*>(raw_); }
