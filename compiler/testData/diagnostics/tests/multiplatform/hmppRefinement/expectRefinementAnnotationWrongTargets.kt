@@ -14,5 +14,5 @@ expect class Foo {
 
 // MODULE: main()()(common)
 actual class Foo {
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun foo() {}
+    actual fun foo() {}
 }

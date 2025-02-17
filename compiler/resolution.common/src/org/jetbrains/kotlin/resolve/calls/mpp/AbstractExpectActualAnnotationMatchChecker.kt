@@ -23,6 +23,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.OptionalExpectation,
         StandardClassIds.Annotations.RequireKotlin,
         StandardClassIds.Annotations.SinceKotlin,
+        StandardClassIds.Annotations.ExperimentalExpectRefinement,
         StandardClassIds.Annotations.Suppress,
         StandardClassIds.Annotations.WasExperimental,
         StandardClassIds.Annotations.ActualizeByJvmBuiltinProvider,
