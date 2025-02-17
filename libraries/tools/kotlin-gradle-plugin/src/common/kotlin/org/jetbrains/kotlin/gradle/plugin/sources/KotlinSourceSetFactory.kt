@@ -95,15 +95,13 @@ internal class DefaultKotlinSourceSetFactory(
         dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
             project.configurations.maybeCreateResolvable(metadataName).apply {
                 attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
+                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
                 attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 isVisible = false
 
                 if (configurationName != null) {
                     extendsFrom(project.configurations.maybeCreateDependencyScope(configurationName))
                 }
-
-                setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
             }
         }
     }
