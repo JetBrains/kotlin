@@ -88,7 +88,7 @@ class CacheBuilder(
 
     private val KotlinLibrary.isCacheableExternalLibrary: Boolean
         get() {
-            val isAutoCacheable = autoCacheableFrom.any { libraryFile.canonicalFile.startsWith(it.canonicalFile) }
+            val isAutoCacheable = autoCacheableFrom.any { libraryFile.absolutePath.startsWith(it.absolutePath) }
             return if (explicitCachesOnly) {
                 isAutoCacheable
             } else {
