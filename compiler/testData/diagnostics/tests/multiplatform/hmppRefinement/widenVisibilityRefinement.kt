@@ -1,0 +1,24 @@
+// FIR_IDENTICAL
+// SKIP_K1
+// WITH_STDLIB
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: BACKEND
+// MODULE: common
+expect internal <!CONFLICTING_OVERLOADS!>fun foo()<!>
+expect class Foo {
+    internal fun foo()
+}
+
+// MODULE: intermediate()()(common)
+@ExperimentalExpectRefinement
+expect public fun foo()
+@ExperimentalExpectRefinement
+expect class Foo {
+    public fun foo()
+}
+
+// MODULE: main()()(intermediate)
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, AMBIGUOUS_EXPECTS!>actual<!> public fun foo() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, AMBIGUOUS_EXPECTS!>actual<!> class Foo {
+    actual public fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
+}

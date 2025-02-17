@@ -1,13 +1,16 @@
+// FIR_IDENTICAL
+// SKIP_K1
+// WITH_STDLIB
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-expect fun foo()
-expect class Foo
+expect class Foo {
+    fun foo()
+}
 
 // MODULE: intermediate()()(common)
-expect fun foo()
+@ExperimentalExpectRefinement
 expect class Foo
 
 // MODULE: main()()(intermediate)
-<!AMBIGUOUS_EXPECTS!>actual<!> fun foo() {}
 <!AMBIGUOUS_EXPECTS!>actual<!> class Foo
