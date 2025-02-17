@@ -26,7 +26,10 @@ kotlin {
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
 
-    useJUnitPlatform()
+    val testTags = findProperty("kotlin.native.tests.tags")?.toString()
+    useJUnitPlatform{
+        testTags?.let { includeTags(it) }
+    }
     val testProjectKlib = configurations.create("testProjectKlib") {
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))

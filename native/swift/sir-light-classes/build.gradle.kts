@@ -25,7 +25,8 @@ dependencies {
     testImplementation(project(":compiler:tests-common", "tests-jar"))
 }
 
-nativeTest("test", null)
+val testTags = findProperty("kotlin.native.tests.tags")?.toString()
+nativeTest("test", testTags)
 
 sourceSets {
     "main" { projectDefault() }

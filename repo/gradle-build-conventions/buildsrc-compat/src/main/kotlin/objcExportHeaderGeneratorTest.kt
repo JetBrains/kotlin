@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import java.io.File
+import kotlin.toString
 
 /*
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -79,9 +80,12 @@ fun Project.nativeTestWithExternalDependencies(
                 }
             }
         }
+
+    val testTags = findProperty("kotlin.native.tests.tags")?.toString()
+
     return nativeTest(
         taskName = taskName,
-        tag = null,
+        tag = testTags,
         requirePlatformLibs = requirePlatformLibs,
     ) {
         /**
