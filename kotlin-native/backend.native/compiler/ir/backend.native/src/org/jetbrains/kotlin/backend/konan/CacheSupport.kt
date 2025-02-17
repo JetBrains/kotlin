@@ -117,6 +117,7 @@ class CacheSupport(
 
         val ignoreCachedLibraries = ignoreCacheReason != null
         CachedLibraries(
+                configuration = configuration,
                 target = target,
                 allLibraries = allLibraries,
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,

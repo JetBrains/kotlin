@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -86,13 +87,17 @@ class CacheBuilder(
     }
 
     private val KotlinLibrary.isExternal
-        get() = autoCacheableFrom.any { libraryFile.absolutePath.startsWith(it.absolutePath) }
+        get() = autoCacheableFrom.any { libraryFile.canonicalFile.startsWith(it.canonicalFile) }
 
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
         val icedLibraries = mutableListOf<KotlinLibrary>()
 
         allLibraries.forEach { library ->
+            // For MinGW target avoid compiling caches for anything except stdlib.
+            if (konanConfig.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
+                return@forEach
+            }
             val isSubjectOfIC = !library.isDefault && !library.isExternal && !library.isNativeStdlib
             val cache = konanConfig.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
             cache?.let {
