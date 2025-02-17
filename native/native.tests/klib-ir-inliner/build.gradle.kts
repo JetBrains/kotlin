@@ -30,7 +30,9 @@ nativeTest(
     "test",
     null,
     allowParallelExecution = true,
-)
+) {
+    dependsOn(":tools:binary-compatibility-validator:check")
+}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
