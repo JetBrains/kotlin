@@ -13,9 +13,15 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 /**
  * [KotlinModificationTrackerFactory] creates modification trackers for select modification events.
  *
- * Further modification tracking is implemented with a subscription-based mechanism based on [KotlinModificationEvent]. Modification
- * trackers make the most sense when there are many, possibly short-lived objects that need to be notified of a change. In such cases,
- * subscriber management in the message bus adds too much overhead.
+ * In K2 mode, the modification trackers created by this factory must be incremented on specific [KotlinModificationEvent]s. In that sense,
+ * they can be viewed as a facade for modification events, for the use case when there are many, possibly short-lived objects that need to
+ * be notified of a change. In such cases, listener and subscriber management has too much overhead, making modification trackers the
+ * preferred solution.
+ *
+ * ### Implementation Notes
+ *
+ * [KotlinModificationTrackerByEventFactoryBase] can be inherited from to implement this platform component based on published modification
+ * events.
  */
 public interface KotlinModificationTrackerFactory : KotlinPlatformComponent {
     /**

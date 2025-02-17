@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
+import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
@@ -38,7 +38,7 @@ abstract class AnalysisApiTestConfigurator {
     open fun prepareFilesInModule(ktTestModule: KtTestModule, testServices: TestServices) {}
 
     open fun doGlobalModuleStateModification(project: Project) {
-        KotlinGlobalModificationService.getInstance(project).publishGlobalModuleStateModification()
+        project.publishGlobalModuleStateModificationEvent()
     }
 
     open fun computeTestDataPath(path: Path): Path = path

@@ -10,7 +10,8 @@ import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiEnumConstant
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
+import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
+import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtFile
@@ -45,11 +46,10 @@ abstract class AbstractSymbolLightClassesEqualityTestBase(
     }
 
     private fun invalidateCaches(project: Project) {
-        val globalModificationService = KotlinGlobalModificationService.getInstance(project)
         if (isTestAgainstCompiledCode) {
-            globalModificationService.publishGlobalModuleStateModification()
+            project.publishGlobalModuleStateModificationEvent()
         } else {
-            globalModificationService.publishGlobalSourceOutOfBlockModification()
+            project.publishGlobalSourceOutOfBlockModificationEvent()
         }
     }
 

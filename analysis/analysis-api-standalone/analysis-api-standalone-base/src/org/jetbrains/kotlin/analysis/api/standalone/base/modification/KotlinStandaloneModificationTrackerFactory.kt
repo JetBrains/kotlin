@@ -6,31 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.modification
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
-import com.intellij.openapi.util.SimpleModificationTracker
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerByEventFactoryBase
 
-class KotlinStandaloneModificationTrackerFactory : KotlinModificationTrackerFactory {
-    private val projectWide = SimpleModificationTracker()
-    private val librariesWide = SimpleModificationTracker()
-
-    override fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker {
-        return projectWide
-    }
-
-    override fun createLibrariesWideModificationTracker(): ModificationTracker {
-        return librariesWide
-    }
-
-    internal fun incrementModificationsCount(includeBinaryTrackers: Boolean) {
-        projectWide.incModificationCount()
-        if (includeBinaryTrackers) {
-            librariesWide.incModificationCount()
-        }
-    }
-
-    companion object {
-        fun getInstance(project: Project): KotlinStandaloneModificationTrackerFactory =
-            KotlinModificationTrackerFactory.getInstance(project) as KotlinStandaloneModificationTrackerFactory
-    }
-}
+class KotlinStandaloneModificationTrackerFactory(project: Project) : KotlinModificationTrackerByEventFactoryBase(project)
