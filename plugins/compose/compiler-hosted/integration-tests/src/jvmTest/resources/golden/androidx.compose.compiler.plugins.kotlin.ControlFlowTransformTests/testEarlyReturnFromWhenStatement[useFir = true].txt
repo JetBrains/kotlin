@@ -35,9 +35,9 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
       sourceInformationMarkerEnd(%composer)
       tmp0_group
     }
-    val <when-subject> = state.value
+    val tmp0_subject = state.value
     when {
-      <when-subject> == true -> {
+      tmp0_subject == true -> {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<Text(t...>")
         val tmp1_return = Text("true", %composer, 0b0110)
