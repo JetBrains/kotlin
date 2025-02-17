@@ -93,6 +93,23 @@ internal class SirVariableFromKtSymbol(
         get() = !ktSymbol.isTopLevel && !(ktSymbol is KaPropertySymbol && ktSymbol.isStatic)
 }
 
+internal class SirProtocolVariableFromKtSymbol(
+    ktSymbol: KaVariableSymbol,
+    ktModule: KaModule,
+    sirSession: SirSession,
+    parent: SirExtension,
+) : SirAbstractVariableFromKtSymbol(ktSymbol, ktModule, sirSession) {
+    init {
+        assert(parent.extendedType is SirProtocol)
+    }
+
+    override val isInstance: Boolean = !(ktSymbol is KaPropertySymbol && ktSymbol.isStatic)
+
+    override var parent: SirDeclarationParent
+        get() = parent
+        set(_) = Unit
+}
+
 @OptIn(KaExperimentalApi::class)
 internal class SirEnumEntriesStaticPropertyFromKtSymbol(
     ktSymbol: KaPropertySymbol,

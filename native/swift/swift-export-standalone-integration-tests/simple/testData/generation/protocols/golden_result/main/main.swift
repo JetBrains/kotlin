@@ -111,3 +111,21 @@ public func nullable(
 ) -> (any main.Foeble)? {
     return switch __root___nullable__TypesOfArguments__anyU20main_Foeble_opt___(value.map { it in it.__externalRCRef() } ?? 0) { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res) as! any main.Foeble; }
 }
+public extension main.Barable where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension main.Bazzable where Self : KotlinRuntimeSupport._KotlinBridged {
+}
+public extension main.Foeble where Self : KotlinRuntimeSupport._KotlinBridged {
+    public var baz: Swift.Int32 {
+        get {
+            return Foeble_baz_get(self.__externalRCRef())
+        }
+    }
+    public func bar(
+        arg: Swift.Int32
+    ) -> Swift.Int32 {
+        return Foeble_bar__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
+    }
+}
+public extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {
+}

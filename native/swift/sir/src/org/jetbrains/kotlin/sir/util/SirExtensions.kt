@@ -44,7 +44,9 @@ val SirType.isNever: Boolean get() = this is SirNominalType && this.typeDeclarat
 fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () -> T): T {
     val child = producer()
     child.parent = this
-    declarations += child
+    if (!declarations.contains(child)) {
+        declarations += child
+    }
     return child
 }
 

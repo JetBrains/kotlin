@@ -1,3 +1,5 @@
+public protocol my_protocol {
+}
 public extension Swift.Int32 {
 }
 private extension Swift.Int32 {
@@ -27,6 +29,10 @@ public extension Test.my_enum {
 public extension MyDependencyModule.my_external_enum {
     public class Foo {
     }
+}
+public extension Test.my_enum: Test.my_protocol where Self == Test.my_protocol {
+}
+public extension Test.my_enum: Test.my_protocol where Self.NestedType1.NestedType2 == Test.my_protocol, Self.NestedType1.NestedType2 : Test.my_protocol {
 }
 public enum my_enum {
 }

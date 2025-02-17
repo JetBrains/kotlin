@@ -23,11 +23,20 @@ public class SirDeclarationFromKtSymbolProvider(
         when (val ktSymbol = this@toSir) {
             is KaNamedClassSymbol -> {
                 if (ktSymbol.classKind == KaClassKind.INTERFACE) {
-                    SirProtocolFromKtSymbol(
+                    val protocol = SirProtocolFromKtSymbol(
                         ktSymbol = ktSymbol,
                         ktModule = ktModule,
                         sirSession = sirSession,
-                    ).let(SirTranslationResult::RegularInterface)
+                    )
+                    SirTranslationResult.RegularInterface(
+                        declaration = protocol,
+                        bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(
+                            ktSymbol = ktSymbol,
+                            ktModule = ktModule,
+                            sirSession = sirSession,
+                            targetProtocol = protocol,
+                        )
+                    )
                 } else {
                     createSirClassFromKtSymbol(
                         ktSymbol = ktSymbol,

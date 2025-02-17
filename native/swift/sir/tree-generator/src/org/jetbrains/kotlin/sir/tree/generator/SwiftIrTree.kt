@@ -62,12 +62,18 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("modality", modalityKind)
     }
 
+    val constrainedDeclaration by sealedElement {
+        +listField("constraints", typeConstraintType)
+    }
+
     val extension: Element by element {
         customParentInVisitor = declaration
         parent(declaration)
         parent(mutableDeclarationContainer)
+        parent(constrainedDeclaration)
 
         +field("extendedType", typeType)
+        +listField("protocols", protocol)
     }
 
     val named by sealedElement {
