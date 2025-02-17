@@ -49603,6 +49603,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("optInDifferentModules.kt")
+      public void testOptInDifferentModules() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/optInDifferentModules.kt");
+      }
+
+      @Test
       @TestMetadata("overridableCheck.kt")
       public void testOverridableCheck() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overridableCheck.kt");
