@@ -11,6 +11,7 @@ import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -29,6 +30,9 @@ class LanguageSettingsTests {
 
     @Test
     fun languageSettingsSyncToCompilerOptions() {
+        val targetApiVersion = LanguageVersion.FIRST_NON_DEPRECATED
+        val targetLanguageVersion = LanguageVersion.LATEST_STABLE
+
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
                 jvm()
@@ -43,8 +47,8 @@ class LanguageSettingsTests {
 
                 sourceSets.configureEach {
                     it.languageSettings {
-                        apiVersion = "1.7"
-                        languageVersion = "1.8"
+                        apiVersion = targetApiVersion.versionString
+                        languageVersion = targetLanguageVersion.versionString
                     }
                 }
             }
@@ -66,15 +70,17 @@ class LanguageSettingsTests {
         ).forEach { taskName ->
             val compileTask = project.tasks.getByName(taskName) as KotlinCompilationTask<*>
             with(compileTask.compilerOptions) {
-                @Suppress("DEPRECATION")
-                assertEquals(apiVersion.orNull, KotlinVersion.KOTLIN_1_7)
-                assertEquals(languageVersion.orNull, KotlinVersion.KOTLIN_1_8)
+                assertEquals(apiVersion.orNull, targetApiVersion.asKotlinVersion())
+                assertEquals(languageVersion.orNull, targetLanguageVersion.asKotlinVersion())
             }
         }
     }
 
     @Test
     fun compilerOptionsSyncToLanguageSettings() {
+        val targetApiVersion = LanguageVersion.FIRST_NON_DEPRECATED
+        val targetLanguageVersion = LanguageVersion.LATEST_STABLE
+
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
                 jvm()
@@ -91,9 +97,8 @@ class LanguageSettingsTests {
 
             tasks.withType<KotlinCompilationTask<*>>().all {
                 it.compilerOptions {
-                    @Suppress("DEPRECATION")
-                    apiVersion.set(KotlinVersion.KOTLIN_1_7)
-                    languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                    apiVersion.set(targetApiVersion.asKotlinVersion())
+                    languageVersion.set(targetLanguageVersion.asKotlinVersion())
                 }
             }
         }
@@ -113,8 +118,8 @@ class LanguageSettingsTests {
             "iosArm64Main",
         ).forEach { sourceSetName ->
             with(project.multiplatformExtension.sourceSets.getByName(sourceSetName).languageSettings) {
-                assertEquals("1.7", apiVersion)
-                assertEquals("1.8", languageVersion)
+                assertEquals(targetApiVersion.versionString, apiVersion)
+                assertEquals(targetLanguageVersion.versionString, languageVersion)
             }
         }
     }
@@ -261,3 +266,5 @@ class LanguageSettingsTests {
             }
     }
 }
+
+internal fun LanguageVersion.asKotlinVersion() = KotlinVersion.fromVersion(versionString)
