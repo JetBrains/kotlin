@@ -10,7 +10,7 @@
 
 // MODULE: intermediate()()(common)
 @ExperimentalExpectRefinement
-expect class Foo
+expect class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS{METADATA}!>Foo<!>
 
 // MODULE: main()()(intermediate)
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, AMBIGUOUS_EXPECTS!>actual<!> class Foo
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class Foo

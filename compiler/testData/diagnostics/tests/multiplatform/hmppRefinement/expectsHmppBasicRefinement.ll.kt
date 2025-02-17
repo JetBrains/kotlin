@@ -20,5 +20,5 @@ expect fun foo()
 expect class Foo
 
 // MODULE: main()()(intermediate2)
-<!AMBIGUOUS_EXPECTS!>actual<!> fun foo() {}
-<!AMBIGUOUS_EXPECTS!>actual<!> class Foo
+actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>() {}
+actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!>
