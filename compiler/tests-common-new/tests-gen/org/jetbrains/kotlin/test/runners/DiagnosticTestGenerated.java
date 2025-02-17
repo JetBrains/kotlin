@@ -49885,6 +49885,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("optInDifferentModules.kt")
+      public void testOptInDifferentModules() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/optInDifferentModules.kt");
+      }
+
+      @Test
       @TestMetadata("overridableCheck.kt")
       public void testOverridableCheck() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overridableCheck.kt");
