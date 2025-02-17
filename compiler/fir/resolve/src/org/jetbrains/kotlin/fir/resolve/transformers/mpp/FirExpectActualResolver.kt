@@ -52,36 +52,40 @@ object FirExpectActualResolver {
                                 actualSymbol is FirConstructorSymbol -> expectContainingClass?.getConstructors(expectScopeSession)
                                 actualSymbol.isStatic -> expectContainingClass?.getStaticCallablesForExpectClass(actualSymbol.name)
                                 else -> expectContainingClass?.getCallablesForExpectClass(actualSymbol.name)
-                            }.orEmpty()
-                        }
-                        else -> {
-                            val scope = FirPackageMemberScope(callableId.packageName, useSiteSession, useSiteSession.dependenciesSymbolProvider)
-                            mutableListOf<FirCallableSymbol<*>>().apply {
-                                scope.processFunctionsByName(callableId.callableName) { add(it) }
-                                scope.processPropertiesByName(callableId.callableName) { add(it) }
+                            }.orEmpty().filter { expectSymbol ->
+                                // Don't match with private fake overrides
+                                !expectSymbol.isFakeOverride(expectContainingClass) || expectSymbol.visibility != Visibilities.Private
                             }
                         }
-                    }
-                    val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
-                    candidates.filter { expectSymbol ->
-                        actualSymbol != expectSymbol &&
-                                (expectContainingClass != null && expectSymbol.visibility != Visibilities.Private /*match non-private fake overrides*/ ||
-                                        expectSymbol.isExpect && expectSymbol.moduleData in transitiveDependsOn)
-                    }.groupBy { expectDeclaration ->
-                        AbstractExpectActualMatcher.getCallablesMatchingCompatibility(
-                            expectDeclaration,
-                            actualSymbol as CallableSymbolMarker,
-                            expectContainingClass,
-                            actualContainingClass,
-                            context
-                        )
-                    }.let {
-                        // If there is a compatible entry, return a map only containing it
-                        when (val compatibleSymbols = it[ExpectActualMatchingCompatibility.MatchedSuccessfully]) {
-                            null -> it
-                            else -> mapOf(ExpectActualMatchingCompatibility.MatchedSuccessfully to compatibleSymbols)
+                        else -> {
+                            val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
+                            val scope = FirPackageMemberScope(callableId.packageName, useSiteSession, useSiteSession.dependenciesSymbolProvider)
+                            mutableListOf<FirCallableSymbol<*>>()
+                                .apply {
+                                    scope.processFunctionsByName(callableId.callableName) { add(it) }
+                                    scope.processPropertiesByName(callableId.callableName) { add(it) }
+                                }
+                                .filter { expectSymbol -> expectSymbol.isExpect && expectSymbol.moduleData in transitiveDependsOn }
                         }
                     }
+                    candidates
+                        .filter { expectSymbol -> actualSymbol != expectSymbol }
+                        .groupBy { expectDeclaration ->
+                            AbstractExpectActualMatcher.getCallablesMatchingCompatibility(
+                                expectDeclaration,
+                                actualSymbol as CallableSymbolMarker,
+                                expectContainingClass,
+                                actualContainingClass,
+                                context
+                            )
+                        }
+                        .let {
+                            // If there is a compatible entry, return a map only containing it
+                            when (val compatibleSymbols = it[ExpectActualMatchingCompatibility.MatchedSuccessfully]) {
+                                null -> it
+                                else -> mapOf(ExpectActualMatchingCompatibility.MatchedSuccessfully to compatibleSymbols)
+                            }
+                        }
                 }
                 is FirClassLikeSymbol<*> -> {
                     val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
