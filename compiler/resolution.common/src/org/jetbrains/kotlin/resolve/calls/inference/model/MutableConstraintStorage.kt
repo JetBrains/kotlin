@@ -182,7 +182,7 @@ class MutableVariableWithConstraints private constructor(
     }
 
     // This method should be used only when constraint system has state COMPLETION
-    internal fun removeConstrains(shouldRemove: (Constraint) -> Boolean) {
+    internal fun removeConstraints(shouldRemove: (Constraint) -> Boolean) {
         mutableConstraints.removeAll(shouldRemove)
         if (simplifiedConstraints !== mutableConstraints) {
             simplifiedConstraints = null
