@@ -111,6 +111,7 @@ public val KtFile.isDangling: Boolean
         contextModule != null -> true
         virtualFile?.analysisContextModule != null -> false
         !isPhysical -> true
+        originalFile != this -> true
         analysisContext != null -> true
         doNotAnalyze != null -> true
         else -> false
