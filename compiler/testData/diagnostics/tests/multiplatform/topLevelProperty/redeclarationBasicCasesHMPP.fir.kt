@@ -10,7 +10,7 @@ expect val x1: Int
 <!AMBIGUOUS_ACTUALS{JVM}!>expect<!> val x3: Int
 
 // MODULE: intermediate()()(common)
-expect val x1: Int
+expect val <!EXPECT_REFINEMENT_ANNOTATION_MISSING!>x1<!>: Int
 
 val <!ACTUAL_MISSING, ACTUAL_MISSING{METADATA}, REDECLARATION!>x2<!> = 2
 

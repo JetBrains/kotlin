@@ -3007,6 +3007,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KaSymbol>>
     }
 
+    interface ExpectRefinementAnnotationWrongTarget : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectRefinementAnnotationWrongTarget::class
+    }
+
     interface AmbiguousExpects : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = AmbiguousExpects::class
         val declaration: KaSymbol
@@ -3021,6 +3025,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ActualMissing : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ActualMissing::class
+    }
+
+    interface ExpectRefinementAnnotationMissing : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectRefinementAnnotationMissing::class
     }
 
     interface ExpectActualClassifiersAreInBetaWarning : KaFirDiagnostic<KtClassLikeDeclaration> {
