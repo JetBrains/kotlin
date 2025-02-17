@@ -28,7 +28,9 @@ import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -91,6 +93,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.replaceAnonymousTypeWithSuperType
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -1563,7 +1566,21 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private fun convertFirType(type: ConeKotlinType): JCExpression? {
         val fqName = when (type) {
             is ConeErrorType -> (type.diagnostic as? ConeUnresolvedError)?.qualifier
-            is ConeLookupTagBasedType -> (type.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.asString()
+            is ConeLookupTagBasedType -> {
+                val classId = (type.lookupTag as? ConeClassLikeLookupTag)?.classId ?: return null
+                val fqName = classId.asSingleFqName()
+                if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+                    val primitiveType = PrimitiveType.getByShortName(classId.relativeClassName.asString())
+                    if (primitiveType != null) {
+                        return treeMaker.Type(Type.getType(JvmPrimitiveType.get(primitiveType).desc))
+                    }
+                    val primitiveArrayType = PrimitiveType.getByShortArrayName(classId.relativeClassName.asString())
+                    if (primitiveArrayType != null) {
+                        return treeMaker.Type(Type.getType("[" + JvmPrimitiveType.get(primitiveArrayType).desc))
+                    }
+                }
+                JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName()?.asString() ?: fqName.asString()
+            }
             else -> null
         } ?: return null
         return treeMaker.FqName(fqName)

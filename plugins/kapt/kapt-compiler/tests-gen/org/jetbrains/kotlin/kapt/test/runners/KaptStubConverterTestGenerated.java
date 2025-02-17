@@ -90,6 +90,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("annotationsWithClassLiterals.kt")
+  public void testAnnotationsWithClassLiterals() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/annotationsWithClassLiterals.kt");
+  }
+
+  @Test
   @TestMetadata("annotationsWithConstants.kt")
   public void testAnnotationsWithConstants() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/annotationsWithConstants.kt");
