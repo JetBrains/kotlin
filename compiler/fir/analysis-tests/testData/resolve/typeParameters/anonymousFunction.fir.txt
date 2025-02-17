@@ -12,6 +12,11 @@ FILE: anonymousFunction.kt
         lval anon4: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         }
 
+        lval anon5: R|(ERROR CLASS: Symbol not found for T) -> ERROR CLASS: Symbol not found for T| = fun <anonymous>(x: <ERROR TYPE REF: Symbol not found for T>): <ERROR TYPE REF: Symbol not found for T> <inline=Unknown>  {
+            lval y: <ERROR TYPE REF: Symbol not found for T> = R|<local>/x|
+            ^ R|<local>/y|
+        }
+
     }
     public abstract interface I : R|kotlin/Any| {
     }
