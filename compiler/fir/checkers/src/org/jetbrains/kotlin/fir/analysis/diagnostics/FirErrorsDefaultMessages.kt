@@ -717,6 +717,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
@@ -724,6 +725,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_CONTEXT_LISTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ONLY_TOP_LEVEL_EXPECT_DECLARATIONS_CAN_BE_ANNOTATED_WITH_EXPECT_REFINEMENT_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
@@ -2465,6 +2467,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL,
             FirPlatformIncompatibilityDiagnosticRenderer.TEXT
         )
+        map.put(
+            ONLY_TOP_LEVEL_EXPECT_DECLARATIONS_CAN_BE_ANNOTATED_WITH_EXPECT_REFINEMENT_ANNOTATION,
+            "Only top-level 'expect' declarations can be annotated with '@ExperimentalExpectRefinement' annotation."
+        )
         map.put(AMBIGUOUS_EXPECTS, "''{0}'' has several compatible expect declarations in modules {1}.", SYMBOL, COLLECTION(MODULE_DATA))
         map.put(
             NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS,
@@ -2473,6 +2479,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirIncompatibleExpectedActualClassScopesRenderer.TEXT
         )
         map.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'.")
+        map.put(
+            EXPECT_REFINEMENT_ANNOTATION_MISSING,
+            "Expect refinement is an experimental feature. Please mark the declaration with '@ExperimentalExpectRefinement' annotation."
+        )
         map.put(
             EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING,
             "'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. " +
