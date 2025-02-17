@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
@@ -156,6 +158,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 
         val source = declaration.source
         if (!declaration.hasActualModifier() &&
+            // todo The presence of @ExperimentalExpectRefinement annotation will be checked by a separate checker
+            !declaration.isExpect &&
             ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap &&
             (actualContainingClass == null || requireActualModifier(symbol, actualContainingClass, context.session)) &&
             expectedSingleCandidate != null &&

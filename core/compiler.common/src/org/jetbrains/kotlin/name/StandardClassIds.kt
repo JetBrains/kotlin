@@ -203,6 +203,7 @@ object StandardClassIds {
         val Target = "Target".annotationId()
         val Repeatable = "Repeatable".annotationId()
         val MustBeDocumented = "MustBeDocumented".annotationId()
+        val ExperimentalExpectRefinement = "ExperimentalExpectRefinement".baseId()
 
         val Volatile = "Volatile".concurrentId()
 
