@@ -94,7 +94,7 @@ class CacheBuilder(
         val icedLibraries = mutableListOf<KotlinLibrary>()
 
         allLibraries.forEach { library ->
-            // Avoid compiling caches for anything expect stdlib for MinGW target.
+            // For MinGW target avoid compiling caches for anything except stdlib.
             if (konanConfig.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
                 return@forEach
             }
