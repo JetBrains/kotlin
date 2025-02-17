@@ -5,7 +5,7 @@ plugins {
 val testArtifacts by configurations.creating
 
 dependencies {
-    api("org.jetbrains.kotlinx:binary-compatibility-validator:0.15.1")
+    api("org.jetbrains.kotlinx:binary-compatibility-validator:0.17.0")
     api(libs.kotlinx.metadataJvm)
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
         runtimeOnly(project(":kotlin-compiler-embeddable"))
