@@ -18,7 +18,7 @@ abstract class AbstractMetadataSerializer<T>(
     val environment: KotlinCoreEnvironment,
     definedMetadataVersion: BuiltInsBinaryVersion? = null
 ) {
-    protected val metadataVersion =
+    protected val metadataVersion: BuiltInsBinaryVersion =
         definedMetadataVersion ?: configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion
         ?: BuiltInsBinaryVersion.INSTANCE
 

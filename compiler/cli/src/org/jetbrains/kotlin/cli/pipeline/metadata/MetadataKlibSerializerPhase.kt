@@ -1,39 +1,42 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.metadata
+package org.jetbrains.kotlin.cli.pipeline.metadata
 
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.cli.common.metadataDestinationDirectory
+import org.jetbrains.kotlin.cli.metadata.buildKotlinMetadataLibrary
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
+import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
-import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import java.io.File
 
+object MetadataKlibSerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataSerializationArtifact>(
+    name = "MetadataKlibSerializerPhase",
+    preActions = setOf(PerformanceNotifications.GenerationStarted),
+    postActions = setOf(PerformanceNotifications.GenerationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+) {
+    override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact? {
+        val (firResult, configuration, _, _) = input
+        val metadataVersion = input.metadataVersion
+        val destDir = configuration.metadataDestinationDirectory!!
 
-/**
- * Produces metadata klib using K2 compiler
- */
-internal open class FirKlibMetadataSerializer(
-    configuration: CompilerConfiguration,
-    environment: KotlinCoreEnvironment
-) : AbstractFirMetadataSerializer(configuration, environment) {
-    override fun serialize(analysisResult: List<ModuleCompilerAnalyzedOutput>, destDir: File): OutputInfo? {
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
+        val analysisResult = firResult.outputs
         for (output in analysisResult) {
             val (session, scopeSession, fir) = output
 
-            val languageVersionSettings = environment.configuration.languageVersionSettings
+            val languageVersionSettings = configuration.languageVersionSettings
             for (firFile in fir) {
                 val packageFragment = serializeSingleFirFile(
                     firFile,
@@ -72,6 +75,11 @@ internal open class FirKlibMetadataSerializer(
         val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames)
 
         buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
-        return null
+
+        return MetadataSerializationArtifact(
+            outputInfo = null,
+            configuration,
+            destDir.canonicalPath
+        )
     }
 }
