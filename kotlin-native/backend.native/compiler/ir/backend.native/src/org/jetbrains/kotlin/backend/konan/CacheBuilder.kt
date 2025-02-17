@@ -49,7 +49,6 @@ class CacheBuilder(
 ) {
     private val configuration = konanConfig.configuration
     private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!.map { File(it) }
-    private val explicitCachesOnly = configuration.getBoolean(KonanConfigKeys.EXPLICIT_CACHES_ONLY)
     private val icEnabled = configuration.get(CommonConfigurationKeys.INCREMENTAL_COMPILATION)!!
     private val includedLibraries = configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty().toSet()
     private val generateTestRunner = configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER)
@@ -86,31 +85,21 @@ class CacheBuilder(
         override fun toString() = "${library.uniqueName}|$file"
     }
 
-    private val KotlinLibrary.isCacheableExternalLibrary: Boolean
-        get() {
-            val isAutoCacheable = autoCacheableFrom.any { libraryFile.absolutePath.startsWith(it.absolutePath) }
-            return if (explicitCachesOnly) {
-                isAutoCacheable
-            } else {
-                isDefault || isNativeStdlib || isAutoCacheable
-            }
-        }
+    private val KotlinLibrary.isExternal
+        get() = autoCacheableFrom.any { libraryFile.absolutePath.startsWith(it.absolutePath) }
 
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
         val icedLibraries = mutableListOf<KotlinLibrary>()
 
         allLibraries.forEach { library ->
-            val isSubjectOfIC = !library.isCacheableExternalLibrary
+            val isSubjectOfIC = !library.isDefault && !library.isExternal && !library.isNativeStdlib
             val cache = konanConfig.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
             cache?.let {
                 caches[library] = it
                 cacheRootDirectories[library] = it.rootDirectory
             }
             if (isSubjectOfIC) {
-                if (icEnabled && (library.isNativeStdlib || library.isDefault)) {
-                    error("Unexpected attempt to cache the standard library or default one: ${library.libraryName}")
-                }
                 icedLibraries += library
             } else {
                 if (cache == null) externalLibrariesToCache += library
