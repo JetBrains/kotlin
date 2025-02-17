@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -44,7 +45,7 @@ internal class CEnumByValueFunctionGenerator(
     ): IrFunction {
         val byValueFunctionDescriptor = companionIrClass.descriptor.findDeclarationByName<FunctionDescriptor>("byValue")!!
         val byValueIrFunction = createFunction(byValueFunctionDescriptor)
-        val irValueParameter = byValueIrFunction.valueParameters.first()
+        val irValueParameter = byValueIrFunction.parameters.filter { it.kind ==  IrParameterKind.Regular }.first()
         // val values: Array<E> = values()
         // var i: Int = 0
         // val size: Int = values.size
@@ -70,13 +71,13 @@ internal class CEnumByValueFunctionGenerator(
                     val lessFunctionSymbol = irBuiltIns.lessFunByOperandType.getValue(irBuiltIns.intClass)
                     +irWhile().also { loop ->
                         loop.condition = irCall(lessFunctionSymbol, irBuiltIns.booleanType).also { irCall ->
-                            irCall.putValueArgument(0, irGet(inductionVariable))
-                            irCall.putValueArgument(1, valuesSize)
+                            irCall.arguments[0] = irGet(inductionVariable)
+                            irCall.arguments[1] = valuesSize
                         }
                         loop.body = irBlock {
                             val entry = irTemporary(irCall(getElementFn, byValueIrFunction.returnType).also { irCall ->
-                                irCall.dispatchReceiver = irGet(values)
-                                irCall.putValueArgument(0, irGet(inductionVariable))
+                                irCall.arguments[0] = irGet(values)
+                                irCall.arguments[1] = irGet(inductionVariable)
                             }, isMutable = true)
                             val valueGetter = entry.type.getClass()!!.getPropertyGetter("value")!!
                             val entryValue = irGet(irValueParameter.type, irGet(entry), valueGetter)

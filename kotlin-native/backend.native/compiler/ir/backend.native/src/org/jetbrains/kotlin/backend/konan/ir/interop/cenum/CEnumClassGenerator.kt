@@ -102,7 +102,7 @@ internal class CEnumClassGenerator(
             ).also {
                 postLinkageSteps.add {
                     it.initializer = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
-                        irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[0]))
+                        irExprBody(irGet(irClass.primaryConstructor!!.parameters[0]))
                     }
                 }
             }
@@ -135,7 +135,7 @@ internal class CEnumClassGenerator(
                             symbol = constructorSymbol,
                             typeArgumentsCount = 0,
                     ).also {
-                        it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
+                        it.arguments[0] = extractEnumEntryValue(entryDescriptor)
                     },
             )
         }

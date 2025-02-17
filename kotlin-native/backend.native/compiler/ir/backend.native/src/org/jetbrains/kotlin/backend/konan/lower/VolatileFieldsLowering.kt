@@ -45,8 +45,8 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     private val symbols = context.ir.symbols
     private val irBuiltins = context.irBuiltIns
     private fun IrBuilderWithScope.irByteToBool(expression: IrExpression) = irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!).apply {
-        putValueArgument(0, expression)
-        putValueArgument(1, irByte(1))
+        arguments[0] = expression
+        arguments[1] = irByte(1)
     }
     private fun IrBuilderWithScope.irBoolToByte(expression: IrExpression) = irWhen(irBuiltins.byteType, listOf(
         irBranch(expression, irByte(1)),
@@ -181,7 +181,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
 
 
             private fun unsupported(message: String) = builder.irCall(context.ir.symbols.throwIllegalArgumentExceptionWithMessage).apply {
-                putValueArgument(0, builder.irString(message))
+                arguments[0] = builder.irString(message)
             }
 
             override fun visitGetField(expression: IrGetField): IrExpression {
@@ -230,7 +230,8 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     it in intrinsicMap || it == IntrinsicType.ATOMIC_GET_FIELD || it == IntrinsicType.ATOMIC_SET_FIELD
                 } ?: return expression
                 builder.at(expression)
-                val reference = getConstPropertyReference(expression.extensionReceiver, null)
+                val extensionReceiver = expression.arguments[expression.symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }]
+                val reference = getConstPropertyReference(extensionReceiver, null)
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = (reference.reflectionTargetSymbol as? IrPropertySymbol)?.owner
                 val backingField = property?.backingField
@@ -244,16 +245,18 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                 }
                 return builder.irCall(function).apply {
                     dispatchReceiver = reference.boundValues.singleOrNull()
-                    for (index in 0 until expression.valueArgumentsCount) {
-                        putValueArgument(index, expression.getValueArgument(index))
+                    val replacementParams = function.parameters.filter { it.kind == IrParameterKind.Regular }
+                    val originalParams = expression.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular }
+                    for ((from, to) in originalParams.zip(replacementParams)) {
+                        arguments[to] = expression.arguments[from]
                     }
                 }.let {
                     if (intrinsicType == IntrinsicType.ATOMIC_GET_FIELD || intrinsicType == IntrinsicType.ATOMIC_SET_FIELD) {
                         return it
                     }
                     if (backingField.requiresBooleanConversion()) {
-                        for (arg in 0 until it.valueArgumentsCount) {
-                            it.putValueArgument(arg, builder.irBoolToByte(it.getValueArgument(arg)!!))
+                        for (param in function.parameters.filter { it.kind == IrParameterKind.Regular }) {
+                            it.arguments[param] = builder.irBoolToByte(it.arguments[param]!!)
                         }
                         if (intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE_FIELD || intrinsicType == IntrinsicType.GET_AND_SET_FIELD) {
                             builder.irByteToBool(it)
