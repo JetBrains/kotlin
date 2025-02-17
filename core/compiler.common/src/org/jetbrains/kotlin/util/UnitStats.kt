@@ -61,24 +61,22 @@ enum class PlatformType {
 }
 
 /**
- * Currently it holds only `System.nanoTime()` but later it can be adopted to hold User or CPU time as well
- * that might be useful for time measurements in multithread mode.
+ * [userNano] and [cpuNano] can be useful for measuring times in multithread environment.
  */
-@JvmInline
-value class Time(val nano: Long) {
+class Time(val nano: Long, val userNano: Long, val cpuNano: Long) {
     companion object {
-        val ZERO = Time(0)
+        val ZERO = Time(0, 0, 0)
     }
 
     val millis: Long
         get() = TimeUnit.NANOSECONDS.toMillis(nano)
 
     operator fun plus(other: Time): Time {
-        return Time(nano + other.nano)
+        return Time(nano + other.nano, userNano + other.userNano, cpuNano + other.cpuNano)
     }
 
     operator fun minus(other: Time): Time {
-        return Time(nano - other.nano)
+        return Time(nano - other.nano,  userNano - other.userNano, cpuNano - other.cpuNano)
     }
 }
 
