@@ -74,6 +74,25 @@ public fun __root___OBJECT_WITH_INTERFACE_INHERITANCE_get(): kotlin.native.inter
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___list__TypesOfArguments__Swift_Array_anyU20main_Foeble___")
+public fun __root___list__TypesOfArguments__Swift_Array_anyU20main_Foeble___(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __value = interpretObjCPointer<kotlin.collections.List<Foeble>>(value)
+    val _result = list(__value)
+    return _result.objcPtr()
+}
+
+@ExportedBridge("__root___list_get")
+public fun __root___list_get(): kotlin.native.internal.NativePtr {
+    val _result = list
+    return _result.objcPtr()
+}
+
+@ExportedBridge("__root___list_set__TypesOfArguments__Swift_Array_anyU20main_Foeble___")
+public fun __root___list_set__TypesOfArguments__Swift_Array_anyU20main_Foeble___(newValue: kotlin.native.internal.NativePtr): Unit {
+    val __newValue = interpretObjCPointer<kotlin.collections.List<Foeble>>(newValue)
+    list = __newValue
+}
+
 @ExportedBridge("__root___normal__TypesOfArguments__anyU20main_Foeble__")
 public fun __root___normal__TypesOfArguments__anyU20main_Foeble__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as Foeble

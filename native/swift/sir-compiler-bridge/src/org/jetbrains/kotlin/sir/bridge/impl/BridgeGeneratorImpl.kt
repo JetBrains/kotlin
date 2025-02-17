@@ -393,6 +393,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
         is Bridge.AsOptionalWrapper -> Bridge.AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
         is Bridge.AsOptionalNothing -> Bridge.AsObjCBridgedOptional(bridge.swiftType)
         is Bridge.AsObject,
+        is Bridge.AsExistential,
         is Bridge.AsOpaqueObject,
             -> Bridge.AsObjCBridged(bridge.swiftType, CType.id)
         else -> bridge
