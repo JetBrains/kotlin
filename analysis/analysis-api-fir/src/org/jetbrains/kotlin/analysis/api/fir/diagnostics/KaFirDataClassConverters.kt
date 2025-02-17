@@ -4299,6 +4299,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET) { firDiagnostic ->
+        ExpectRefinementAnnotationWrongTargetImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.AMBIGUOUS_EXPECTS) { firDiagnostic ->
         AmbiguousExpectsImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
@@ -4327,6 +4333,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.ACTUAL_MISSING) { firDiagnostic ->
         ActualMissingImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING) { firDiagnostic ->
+        ExpectRefinementAnnotationMissingImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
