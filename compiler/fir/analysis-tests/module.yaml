@@ -213,4 +213,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals,org.jetbrains.kotlin.types.model.K2Only,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals, -opt-in, org.jetbrains.kotlin.types.model.K2Only, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

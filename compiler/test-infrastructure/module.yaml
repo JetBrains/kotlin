@@ -18,7 +18,7 @@ settings:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi, -Xskip-prerelease-check, -Xwhen-guards]
 
 
-test-dependencies:
+dependencies:
   - org.fusesource.jansi:jansi:2.4.0
   - com.jetbrains.intellij.platform:util-rt:233.13135.128
   - com.jetbrains.intellij.platform:util-class-loader:233.13135.128

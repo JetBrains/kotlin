@@ -21,7 +21,7 @@ package org.jetbrains.kotlin.incremental.snapshots
  *
  * Does not take into account the path of the file as its intended usage is within [FileSnapshotMap] which has file path as the key.
  */
-internal class FileSnapshot(
+class FileSnapshot(
     val length: Long,
     val hash: ByteArray
 ) {

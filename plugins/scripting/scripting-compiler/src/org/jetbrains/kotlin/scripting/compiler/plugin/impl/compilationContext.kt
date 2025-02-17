@@ -83,7 +83,7 @@ fun createIsolatedCompilationContext(
     ).applyConfigure()
 }
 
-internal fun createCompilationContextFromEnvironment(
+fun createCompilationContextFromEnvironment(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     environment: KotlinCoreEnvironment,
     messageCollector: ScriptDiagnosticsMessageCollector
@@ -185,7 +185,7 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
     }
 }
 
-internal fun CompilerConfiguration.updateWithCompilerOptions(
+fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
     validate: (K2JVMCompilerArguments) -> Boolean = {
         validateArguments(it.errors)?.let { throw Exception("Error parsing arguments: $it") } ?: true

@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.name.FqName
 
-internal sealed class ChangesEither {
-    internal class Known(
+sealed class ChangesEither {
+    class Known(
         val lookupSymbols: Collection<LookupSymbol> = emptyList(),
         val fqNames: Collection<FqName> = emptyList()
     ) : ChangesEither()
 
-    internal class Unknown(val reason: BuildAttribute) : ChangesEither()
+    class Unknown(val reason: BuildAttribute) : ChangesEither()
 }

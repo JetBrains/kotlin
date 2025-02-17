@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
-internal fun getClasspathChanges(
+fun getClasspathChanges(
     classpath: List<File>,
     changedFiles: ChangedFiles.DeterminableFiles.Known,
     lastBuildInfo: BuildInfo,

@@ -255,4 +255,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals,org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals,org.jetbrains.kotlin.analysis.api.KaImplementationDetail,org.jetbrains.kotlin.analysis.api.KaExperimentalApi,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals, -opt-in, org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals, -opt-in, org.jetbrains.kotlin.analysis.api.KaImplementationDetail, -opt-in, org.jetbrains.kotlin.analysis.api.KaExperimentalApi, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

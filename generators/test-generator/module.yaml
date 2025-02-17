@@ -18,7 +18,7 @@ settings:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
 
 
-test-dependencies:
+dependencies:
   - org.jetbrains.kotlin:kotlin-stdlib:2.1.20-dev-6663
   - org.junit.jupiter:junit-jupiter-api:5.10.1
   - junit:junit:4.13.2
@@ -60,6 +60,6 @@ test-dependencies:
   - ./../../core/util.runtime
   - ./../../compiler/test-infrastructure-utils
 
-test-settings:
-  kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+#test-settings:
+#  kotlin:
+#    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

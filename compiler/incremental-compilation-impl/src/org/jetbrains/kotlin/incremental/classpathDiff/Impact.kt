@@ -13,7 +13,7 @@ import java.util.*
  * A common interface for all types of impact among classes. For example, if class B extends class A, then class A impacts class B, because
  * if class A has changed, a source file that references class B will need to be recompiled (even though class B has not changed).
  */
-internal sealed interface Impact {
+sealed interface Impact {
 
     /** Provides an [ImpactedSymbolsResolver] to compute the set of [ProgramSymbol]s impacted by a given set of [ProgramSymbol]s. */
     fun getResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactedSymbolsResolver
@@ -32,7 +32,7 @@ internal sealed interface Impact {
  * This is typically used when computing classpath changes: If class A has changed, and it impacts class B, then a source file that
  * references class B will need to be recompiled (even though class B has not changed).
  */
-internal interface ImpactedSymbolsResolver {
+interface ImpactedSymbolsResolver {
     fun getImpactedClasses(classId: ClassId): Set<ClassId>
     fun getImpactedClassMembers(classMembers: ClassMembers): Set<ClassMembers>
 }
@@ -46,7 +46,7 @@ internal interface ImpactedSymbolsResolver {
  * class A will need to be retained in the shrunk classpath snapshot because the classpath changes computation will need to see class A
  * (see [ImpactedSymbolsResolver]).
  */
-internal interface ImpactingClassesResolver {
+interface ImpactingClassesResolver {
     fun getImpactingClasses(classId: ClassId): Set<ClassId>
 }
 
@@ -55,7 +55,7 @@ internal interface ImpactingClassesResolver {
  *   1. [SupertypesInheritorsImpact]
  *   2. [ConstantsInCompanionObjectsImpact]
  */
-internal object AllImpacts : Impact {
+object AllImpacts : Impact {
 
     private val allImpacts = listOf(SupertypesInheritorsImpact, ConstantsInCompanionObjectsImpact)
 
@@ -222,7 +222,7 @@ private object ConstantsInCompanionObjectsImpact : Impact {
     }
 }
 
-internal object BreadthFirstSearch {
+object BreadthFirstSearch {
 
     /**
      * Finds the set of nodes that are *transitively* reachable from the given set of nodes.

@@ -144,7 +144,7 @@ object ClasspathSnapshotShrinker {
  * snapshotting), even though it seems more efficient to do so. For correctness, we need to look at the entire classpath first, remove
  * duplicate classes, and then remove inaccessible classes.
  */
-internal fun ClasspathSnapshot.removeDuplicateAndInaccessibleClasses(): List<AccessibleClassSnapshot> {
+fun ClasspathSnapshot.removeDuplicateAndInaccessibleClasses(): List<AccessibleClassSnapshot> {
     return getNonDuplicateClassSnapshots().filterIsInstance<AccessibleClassSnapshot>()
 }
 
@@ -189,7 +189,7 @@ private sealed class ShrinkMode {
     object NonIncremental : ShrinkMode()
 }
 
-internal fun shrinkAndSaveClasspathSnapshot(
+fun shrinkAndSaveClasspathSnapshot(
     compilationWasIncremental: Boolean,
     classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
     lookupStorage: LookupStorage,

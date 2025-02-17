@@ -145,7 +145,7 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
             }
         }
 
-        internal const val MAX_DIFFS_ENTRIES: Int = 10
+        const val MAX_DIFFS_ENTRIES: Int = 10
 
         @set:TestOnly
         var CURRENT_VERSION: Int = 0

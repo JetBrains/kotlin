@@ -123,10 +123,10 @@ class InMemoryCacheWithEviction<KEY, VALUE>(
     }
 
     @VisibleForTesting
-    internal enum class EntryState { STRONG_REF, SOFT_REF, ABSENT }
+    enum class EntryState { STRONG_REF, SOFT_REF, ABSENT }
 
     @VisibleForTesting
-    internal fun getEntryState(key: KEY): EntryState {
+    fun getEntryState(key: KEY): EntryState {
         return readLock {
             cache[key]?.let {
                 synchronized(it) {

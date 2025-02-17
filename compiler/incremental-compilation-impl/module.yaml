@@ -338,6 +338,7 @@ test-dependencies:
   - ./../../js/js.translator
   - ./../ir/serialization.native
   - ./../ir/ir.objcinterop
+  - ../../build-common-tests
 
 test-settings:
   kotlin:

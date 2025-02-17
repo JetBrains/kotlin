@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental.snapshots
 import java.io.File
 import java.security.MessageDigest
 
-internal val File.md5: ByteArray
+val File.md5: ByteArray
     get() {
         val messageDigest = MessageDigest.getInstance("MD5")
         val buffer = ByteArray(4048)

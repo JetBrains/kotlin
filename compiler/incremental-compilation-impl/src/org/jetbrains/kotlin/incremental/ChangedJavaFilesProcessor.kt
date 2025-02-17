@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import java.io.File
 import java.util.*
 
-internal class ChangedJavaFilesProcessor(
+class ChangedJavaFilesProcessor(
     private val reporter: ICReporter,
     private val psiFileFactory: (File) -> PsiFile?
 ) {

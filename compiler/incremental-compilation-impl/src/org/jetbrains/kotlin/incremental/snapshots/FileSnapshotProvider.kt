@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.incremental.snapshots
 
 import java.io.File
 
-internal interface FileSnapshotProvider {
+interface FileSnapshotProvider {
     operator fun get(file: File): FileSnapshot
 }
 
-internal class SimpleFileSnapshotProviderImpl : FileSnapshotProvider {
+class SimpleFileSnapshotProviderImpl : FileSnapshotProvider {
     override fun get(file: File): FileSnapshot {
         assert(!file.isDirectory)
         val length = file.length()

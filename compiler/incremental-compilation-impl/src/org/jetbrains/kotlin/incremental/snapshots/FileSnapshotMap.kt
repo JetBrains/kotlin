@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.storage.AbstractBasicMap
 import java.io.File
 
-internal class FileSnapshotMap(
+class FileSnapshotMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
 ) : AbstractBasicMap<File, FileSnapshot>(

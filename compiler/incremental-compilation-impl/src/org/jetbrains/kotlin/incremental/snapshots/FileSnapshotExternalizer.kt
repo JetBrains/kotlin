@@ -20,7 +20,7 @@ import com.intellij.util.io.DataExternalizer
 import java.io.DataInput
 import java.io.DataOutput
 
-internal object FileSnapshotExternalizer : DataExternalizer<FileSnapshot> {
+object FileSnapshotExternalizer : DataExternalizer<FileSnapshot> {
     override fun save(out: DataOutput, value: FileSnapshot) {
         out.writeLong(value.length)
         out.writeInt(value.hash.size)

@@ -78,6 +78,7 @@ modules:
 - plugins/parcelize/parcelize-runtime
 - plugins/scripting/scripting-compiler-impl
 - plugins/scripting/scripting-compiler
+- plugins/scripting/scripting-compiler-tests
 - plugins/scripting/test-script-definition
 - plugins/scripting/scripting-ide-services-embeddable
 - plugins/scripting/scripting-compiler-embeddable
@@ -190,6 +191,7 @@ modules:
 - libraries/kotlinx-metadata/klib
 #- benchmarks
 - generators
+- generators/generators-tests
 - generators/test-generator
 - generators/analysis-api-generator
 - generators/ide-iml-to-gradle-generator
@@ -293,6 +295,7 @@ modules:
 - compiler/tests-mutes
 - compiler/android-tests
 - compiler/incremental-compilation-impl
+- compiler/incremental-compilation-impl-tests
 - compiler/resolution.common
 - compiler/tests-compiler-utils
 - compiler/build-tools/kotlin-build-tools-jdk-utils
@@ -302,6 +305,7 @@ modules:
 - compiler
 - compiler/frontend.common.jvm
 - build-common
+- build-common-tests
 - repo/codebase-tests
 - repo/artifacts-tests
 - test-instrumenter

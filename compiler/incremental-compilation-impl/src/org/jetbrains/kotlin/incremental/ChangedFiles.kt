@@ -11,7 +11,7 @@ import java.io.Serializable
 /**
  * Represents the changes in source files, which could either be known, to be computed, or unknown.
  *
- * An internal analogue of [org.jetbrains.kotlin.buildtools.api.SourcesChanges]
+ * An analogue of [org.jetbrains.kotlin.buildtools.api.SourcesChanges]
  */
 sealed class ChangedFiles : Serializable {
     sealed class DeterminableFiles : ChangedFiles() {

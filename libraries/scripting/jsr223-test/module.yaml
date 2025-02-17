@@ -47,7 +47,8 @@ test-dependencies:
   - ./../../../compiler/cli
   - ./../../../core/util.runtime
   - ./../../../compiler/test-infrastructure-utils
-  - ./../../../plugins/scripting/scripting-compiler
+#  - ./../../../plugins/scripting/scripting-compiler
+  - ./../../../plugins/scripting/scripting-compiler-tests
   - ./../scripting-jvm
   - org.jetbrains.kotlin:kotlin-script-runtime:2.1.20-dev-6663
   - ./../common

@@ -100,6 +100,7 @@ test-dependencies:
   - ./..
   - ./../../../compiler/daemon/daemon-common
   - ./../../../build-common
+  - ./../../../build-common-tests
   - ./../../../compiler/cli/cli-js
   - ./../../../compiler/cli
   - ./../../../compiler/fir/fir-entrypoint
@@ -210,6 +211,7 @@ test-dependencies:
   - ./../../../core/compiler.common.web
   - ./../../../compiler/ir/serialization.native
   - ./../../../compiler/ir/ir.objcinterop
+  - ./../../../compiler/incremental-compilation-impl-tests
 
 test-settings:
   kotlin:

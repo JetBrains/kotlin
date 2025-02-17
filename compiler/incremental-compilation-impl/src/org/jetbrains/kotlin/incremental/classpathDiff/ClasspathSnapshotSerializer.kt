@@ -67,12 +67,12 @@ object ClasspathEntrySnapshotExternalizer : DataExternalizer<ClasspathEntrySnaps
     }
 }
 
-internal object ClassSnapshotExternalizer : DataExternalizer<ClassSnapshot> by DelegateDataExternalizer(
+object ClassSnapshotExternalizer : DataExternalizer<ClassSnapshot> by DelegateDataExternalizer(
     types = listOf(AccessibleClassSnapshot::class.java, InaccessibleClassSnapshot::class.java),
     typesExternalizers = listOf(AccessibleClassSnapshotExternalizer, InaccessibleClassSnapshotExternalizer)
 )
 
-internal object AccessibleClassSnapshotExternalizer : DataExternalizer<AccessibleClassSnapshot> by DelegateDataExternalizer(
+object AccessibleClassSnapshotExternalizer : DataExternalizer<AccessibleClassSnapshot> by DelegateDataExternalizer(
     types = listOf(KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java),
     typesExternalizers = listOf(KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer)
 )
@@ -154,7 +154,7 @@ private object MultifileClassKotlinClassSnapshotExternalizer : DataExternalizer<
     }
 }
 
-internal object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> {
+object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> {
 
     override fun save(output: DataOutput, info: KotlinClassInfo) {
         ClassIdExternalizer.save(output, info.classId)
@@ -215,7 +215,7 @@ private object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapsho
     }
 }
 
-internal object JavaClassMemberLevelSnapshotExternalizer : DataExternalizer<JavaClassMemberLevelSnapshot> {
+object JavaClassMemberLevelSnapshotExternalizer : DataExternalizer<JavaClassMemberLevelSnapshot> {
 
     override fun save(output: DataOutput, snapshot: JavaClassMemberLevelSnapshot) {
         JavaElementSnapshotExternalizer.save(output, snapshot.classAbiExcludingMembers)

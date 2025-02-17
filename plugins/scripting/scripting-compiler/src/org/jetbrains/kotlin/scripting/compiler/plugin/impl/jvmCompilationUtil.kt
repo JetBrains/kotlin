@@ -72,7 +72,7 @@ inline fun <T> withMessageCollector(
     }
 }
 
-internal fun getScriptKtFile(
+fun getScriptKtFile(
     script: SourceCode,
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     project: Project,

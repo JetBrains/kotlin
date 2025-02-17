@@ -117,7 +117,7 @@ class LookupSymbolSet(lookupSymbols: Iterable<LookupSymbol>) {
     }
 }
 
-internal fun ProgramSymbol.toLookupSymbol(): LookupSymbol {
+fun ProgramSymbol.toLookupSymbol(): LookupSymbol {
     return when (this) {
         is ClassSymbol -> classId.asSingleFqName().let {
             LookupSymbol(name = it.shortName().asString(), scope = it.parent().asString())
@@ -143,7 +143,7 @@ internal fun ProgramSymbol.toLookupSymbol(): LookupSymbol {
  *
  * Note: It's okay to over-approximate the result.
  */
-internal fun Collection<LookupSymbol>.toProgramSymbolSet(allClasses: Iterable<AccessibleClassSnapshot>): ProgramSymbolSet {
+fun Collection<LookupSymbol>.toProgramSymbolSet(allClasses: Iterable<AccessibleClassSnapshot>): ProgramSymbolSet {
     // Use LookupSymbolSet for efficiency
     val lookupSymbols = LookupSymbolSet(this)
 
@@ -178,7 +178,7 @@ internal fun Collection<LookupSymbol>.toProgramSymbolSet(allClasses: Iterable<Ac
     return collector.getResult()
 }
 
-internal fun ProgramSymbolSet.toChangesEither(): ChangesEither.Known {
+fun ProgramSymbolSet.toChangesEither(): ChangesEither.Known {
     val lookupSymbols = mutableSetOf<LookupSymbol>()
     val fqNames = mutableSetOf<FqName>()
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
-internal fun collectNewDirtySources(
+fun collectNewDirtySources(
     analysisResults: FirResult,
     targetId: TargetId,
     configuration: CompilerConfiguration,

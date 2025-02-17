@@ -357,4 +357,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xconsistent-data-class-copy-visibility, -Xcontext-receivers, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xconsistent-data-class-copy-visibility, -Xcontext-receivers, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xexplicit-api=disable, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
