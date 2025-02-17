@@ -1,0 +1,5 @@
+error: warnings found and -Werror specified
+compiler/testData/cli/jvm/XsupressWarnings/warningLevelAndWerror.kt:3:16: warning: [REDUNDANT_PROJECTION] Projection is redundant: the corresponding type parameter of 'Out<out Int>' has the same variance.
+fun foo(x: Out<out Int>): Out<String> {
+               ^^^
+COMPILATION_ERROR

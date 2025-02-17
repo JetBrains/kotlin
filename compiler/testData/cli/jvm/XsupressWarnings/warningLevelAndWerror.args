@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/warningLevelAndWerror.kt
+-d
+$TEMP_DIR$
+-Xrender-internal-diagnostic-names
+-Xwarning-level=REDUNDANT_PROJECTION\:warning
+-Werror

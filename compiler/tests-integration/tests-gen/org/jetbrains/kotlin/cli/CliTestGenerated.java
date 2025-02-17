@@ -1227,6 +1227,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/XsupressWarnings/suppressAllWarningsJvm.args");
     }
 
+    @TestMetadata("warningLevelAndNowarn.args")
+    public void testWarningLevelAndNowarn() {
+      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningLevelAndNowarn.args");
+    }
+
+    @TestMetadata("warningLevelAndWerror.args")
+    public void testWarningLevelAndWerror() {
+      runTest("compiler/testData/cli/jvm/XsupressWarnings/warningLevelAndWerror.args");
+    }
+
     @TestMetadata("warningSuppression.args")
     public void testWarningSuppression() {
       runTest("compiler/testData/cli/jvm/XsupressWarnings/warningSuppression.args");
