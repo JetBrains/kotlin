@@ -21,7 +21,7 @@ internal class WasmFunctionInlining(
             context = context,
             inlineFunctionResolver = WasmInlineFunctionResolver(context, inlineMode),
             produceOuterThisFields = false,
-        ).inline(irModule)
+        ).lower(irModule)
 
         irModule.patchDeclarationParents()
     }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -35,20 +34,106 @@ open class FunctionInlining(
     private val insertAdditionalImplicitCasts: Boolean = true,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val produceOuterThisFields: Boolean = true,
-) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
+) : ModuleLoweringPass, FileLoweringPass {
+    class WrapperResolver(
+        val cached: Map<IrFunctionSymbol, IrFunction>,
+        val delegate: InlineFunctionResolver,
+    ) : InlineFunctionResolver by delegate {
+        override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+            return cached[symbol] ?: delegate.getFunctionDeclaration(symbol)
+        }
+    }
+
+    private fun lower(container: IrElement) {
+        val dependencies = mutableMapOf<IrFunctionSymbol, MutableList<IrFunctionSymbol>>()
+        container.acceptChildrenVoid(object : IrVisitorVoid() {
+            val insideInlineFunction = mutableListOf<IrFunctionSymbol>()
+            override fun visitFunction(declaration: IrFunction) {
+                if (inlineFunctionResolver.needsInlining(declaration.symbol)) {
+                    insideInlineFunction.add(declaration.symbol)
+                    super.visitFunction(declaration)
+                    insideInlineFunction.removeLast()
+                } else {
+                    super.visitFunction(declaration)
+                }
+            }
+
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+                super.visitFunctionAccess(expression)
+                val callee = expression.symbol as? IrSimpleFunctionSymbol ?: return
+                if (inlineFunctionResolver.needsInlining(callee)) {
+                    for (callSite in insideInlineFunction) {
+                        dependencies.getOrPut(callSite) { mutableListOf() }.add(callee)
+                    }
+                }
+            }
+        })
+        val cache = mutableMapOf<IrFunctionSymbol, IrFunction>()
+        val inProgress = mutableSetOf<IrFunctionSymbol>()
+        val resolver = WrapperResolver(cache, inlineFunctionResolver)
+        val inlineTransformer = FunctionInliningTransformer(
+            context,
+            resolver,
+            insertAdditionalImplicitCasts,
+            regenerateInlinedAnonymousObjects,
+            produceOuterThisFields,
+        )
+
+        val inliningOrder = mutableListOf<IrFunctionSymbol>()
+
+        fun computeOrder(callee: IrFunctionSymbol) {
+            if (cache.containsKey(callee) || callee !in dependencies.keys) return
+            if (!inProgress.add(callee)) {
+                TODO("Report recursive inlining")
+            }
+            for (dep in dependencies[callee] ?: emptyList()) {
+                computeOrder(dep)
+            }
+            inliningOrder.add(callee)
+            inProgress.remove(callee)
+        }
+
+        for (callee in dependencies.keys) {
+            computeOrder(callee)
+        }
+
+        for (callee in inliningOrder) {
+            val result = callee.owner.deepCopyWithSymbols(callee.owner.parent)
+            result.transformChildrenVoid(inlineTransformer)
+            // TODO: run erasure on result
+            cache[callee] = result // visible to future inlines in this loop
+        }
+
+        container.transformChildrenVoid(inlineTransformer)
+    }
+
+    override fun lower(irModule: IrModuleFragment) {
+        lower(irModule as IrElement)
+    }
+
+    override fun lower(irFile: IrFile) {
+        lower(irFile as IrElement)
+    }
+
+    fun lower(irFunction: IrFunction) {
+        lower(irFunction.body as IrElement)
+        for (parameter in irFunction.parameters) {
+            parameter.defaultValue?.let(::lower)
+        }
+    }
+}
+
+class FunctionInliningTransformer(
+    val context: LoweringContext,
+    private val inlineFunctionResolver: InlineFunctionResolver,
+    private val insertAdditionalImplicitCasts: Boolean = true,
+    private val regenerateInlinedAnonymousObjects: Boolean = false,
+    private val produceOuterThisFields: Boolean = true,
+) : IrElementTransformerVoidWithContext() {
     init {
         require(!produceOuterThisFields || context is CommonBackendContext) {
             "The inliner can generate outer fields only with param `context` of type `CommonBackendContext`"
         }
-    }
-
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        // TODO container: IrSymbolDeclaration
-        withinScope(container) {
-            irBody.accept(this, null)
-        }
-
-        irBody.patchDeclarationParents(container as? IrDeclarationParent ?: container.parent)
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
@@ -59,8 +144,6 @@ open class FunctionInlining(
             else -> super.visitDeclaration(declaration)
         }
     }
-
-    fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
@@ -80,16 +163,6 @@ open class FunctionInlining(
                 return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.typeArguments[0]!!)
             }
             return expression
-        }
-
-        withinScope(actualCallee) {
-            actualCallee.body?.transformChildrenVoid()
-            actualCallee.parameters.forEachIndexed { index, param ->
-                if (expression.arguments[index] == null) {
-                    // Default values can recursively reference [callee] - transform only needed.
-                    param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, null)
-                }
-            }
         }
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()

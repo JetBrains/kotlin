@@ -54,18 +54,27 @@ enum class InlineMode {
     ALL_FUNCTIONS,
 }
 
-abstract class InlineFunctionResolver(val inlineMode: InlineMode) {
-    open val callInlinerStrategy: CallInlinerStrategy
+interface InlineFunctionResolver {
+    val inlineMode: InlineMode
+    val callInlinerStrategy: CallInlinerStrategy
+    val allowExternalInlining: Boolean
+    fun needsInlining(symbol: IrFunctionSymbol): Boolean
+    fun needsInlining(expression: IrFunctionAccessExpression): Boolean
+    fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
+}
+
+abstract class AbstractInlineFunctionResolver(override val inlineMode: InlineMode) : InlineFunctionResolver {
+    override val callInlinerStrategy: CallInlinerStrategy
         get() = CallInlinerStrategy.DEFAULT
-    open val allowExternalInlining: Boolean
+    override val allowExternalInlining: Boolean
         get() = false
 
-    open fun needsInlining(symbol: IrFunctionSymbol) =
+    override fun needsInlining(symbol: IrFunctionSymbol) =
         symbol.isBound && symbol.owner.isInline && (allowExternalInlining || !symbol.owner.isExternal)
 
-    open fun needsInlining(expression: IrFunctionAccessExpression) = needsInlining(expression.symbol)
+    override fun needsInlining(expression: IrFunctionAccessExpression) = needsInlining(expression.symbol)
 
-    open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (shouldExcludeFunctionFromInlining(symbol)) return null
 
         val owner = symbol.owner
@@ -80,7 +89,7 @@ abstract class InlineFunctionResolver(val inlineMode: InlineMode) {
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
     inlineMode: InlineMode,
-) : InlineFunctionResolver(inlineMode) {
+) : AbstractInlineFunctionResolver(inlineMode) {
     final override val allowExternalInlining: Boolean
         get() = context.allowExternalInlining
 

@@ -20,12 +20,15 @@ import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
+import org.jetbrains.kotlin.ir.inline.AbstractInlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
+import org.jetbrains.kotlin.ir.inline.FunctionInliningTransformer
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import kotlin.collections.*
 
@@ -146,9 +149,9 @@ internal class PreCodegenInliner(
                     }
 
                     if (functionsToInline.isNotEmpty()) {
-                        val inliner = FunctionInlining(
+                        val inliner = FunctionInliningTransformer(
                                 context,
-                                inlineFunctionResolver = object : InlineFunctionResolver(inlineMode = InlineMode.ALL_FUNCTIONS) {
+                                inlineFunctionResolver = object : AbstractInlineFunctionResolver(inlineMode = InlineMode.ALL_FUNCTIONS) {
                                     override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol) =
                                             symbol.owner !in functionsToInline
 
@@ -157,7 +160,7 @@ internal class PreCodegenInliner(
                                     }
                                 },
                         )
-                        inliner.lower(irBody, irFunction)
+                        irFunction.transform(inliner, null)
 
                         // KT-72336: This is not entirely correct since coroutinesLivenessAnalysisPhase could be turned off.
                         LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.inline.AbstractInlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.InlineMode
@@ -27,13 +29,13 @@ class JvmIrInliner(context: JvmBackendContext) : FunctionInlining(
 ) {
     private val enabled = context.config.enableIrInliner
 
-    override fun lower(irFile: IrFile) {
+    override fun lower(irModule: IrModuleFragment) {
         if (enabled) {
-            super.lower(irFile)
+            super.lower(irModule)
         }
     }
 }
 
-class JvmInlineFunctionResolver(private val context: JvmBackendContext) : InlineFunctionResolver(InlineMode.ALL_INLINE_FUNCTIONS) {
+class JvmInlineFunctionResolver(private val context: JvmBackendContext) : AbstractInlineFunctionResolver(InlineMode.ALL_INLINE_FUNCTIONS) {
     override fun needsInlining(symbol: IrFunctionSymbol): Boolean = symbol.owner.isInlineFunctionCall(context)
 }

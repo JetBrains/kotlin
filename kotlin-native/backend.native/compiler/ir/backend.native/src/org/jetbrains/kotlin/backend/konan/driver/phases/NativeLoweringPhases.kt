@@ -363,11 +363,11 @@ private val syntheticAccessorGenerationPhase = createFileLoweringPhase(
 /**
  * The second phase of inlining (inline all functions).
  */
-internal val inlineAllFunctionsPhase = createFileLoweringPhase(
-        lowering = { context: Context ->
-            NativeIrInliner(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
-        },
+internal val inlineAllFunctionsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "InlineAllFunctions",
+        op = { context: NativeGenerationState, module ->
+            NativeIrInliner(context.context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS).lower(module)
+        }
 )
 
 private val interopPhase = createFileLoweringPhase(

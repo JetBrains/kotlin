@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
 
 annotation class PhaseDescription(
     val name: String,
-    val prerequisite: Array<KClass<out FileLoweringPass>> = [],
+    val prerequisite: Array<KClass<out ModuleLoweringPass>> = [],
 )
 
 fun <Context : LoweringContext> createFilePhases(
