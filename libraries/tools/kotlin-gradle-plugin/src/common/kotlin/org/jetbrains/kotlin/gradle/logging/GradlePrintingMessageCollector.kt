@@ -48,6 +48,9 @@ internal class GradlePrintingMessageCollector(
                     logger.warn(renderedMessage)
                 }
             }
+            CompilerMessageSeverity.FIXED_WARNING -> {
+                logger.warn(renderedMessage)
+            }
             CompilerMessageSeverity.INFO -> {
                 logger.info(renderedMessage)
             }

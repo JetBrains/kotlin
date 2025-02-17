@@ -199,7 +199,7 @@ fun <D : Diagnostic> DiagnosticSink.reportFromPlugin(diagnostic: D, ext: Default
 
     when (diagnostic.severity) {
         Severity.ERROR -> report(Errors.PLUGIN_ERROR.on(diagnostic.psiElement, renderedDiagnostic))
-        Severity.WARNING -> report(Errors.PLUGIN_WARNING.on(diagnostic.psiElement, renderedDiagnostic))
+        Severity.WARNING, Severity.FIXED_WARNING -> report(Errors.PLUGIN_WARNING.on(diagnostic.psiElement, renderedDiagnostic))
         Severity.INFO -> report(Errors.PLUGIN_INFO.on(diagnostic.psiElement, renderedDiagnostic))
     }
 }

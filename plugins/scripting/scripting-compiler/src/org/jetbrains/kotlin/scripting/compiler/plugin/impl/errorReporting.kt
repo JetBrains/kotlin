@@ -92,6 +92,7 @@ class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: Mess
 private fun CompilerMessageSeverity.toScriptingSeverity(): ScriptDiagnostic.Severity? = when (this) {
     CompilerMessageSeverity.EXCEPTION,
     CompilerMessageSeverity.ERROR -> ScriptDiagnostic.Severity.ERROR
+    CompilerMessageSeverity.FIXED_WARNING,
     CompilerMessageSeverity.STRONG_WARNING,
     CompilerMessageSeverity.WARNING -> ScriptDiagnostic.Severity.WARNING
     CompilerMessageSeverity.INFO -> ScriptDiagnostic.Severity.INFO
@@ -214,7 +215,7 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
     val (diagnosticCode, scriptSeverity) = when (severity) {
         Severity.INFO -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.INFO
         Severity.ERROR -> ScriptDiagnostic.unspecifiedError to ScriptDiagnostic.Severity.ERROR
-        Severity.WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
+        Severity.WARNING, Severity.FIXED_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
     }
 
     val renderer = RootDiagnosticRendererFactory(this)

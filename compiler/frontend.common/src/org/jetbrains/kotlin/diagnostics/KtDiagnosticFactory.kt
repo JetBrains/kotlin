@@ -30,7 +30,7 @@ sealed class AbstractKtDiagnosticFactory(
     protected fun getEffectiveSeverity(languageVersionSettings: LanguageVersionSettings): Severity? {
         return when (languageVersionSettings.getFlag(AnalysisFlags.warningLevels)[name]) {
             WarningLevel.Error -> Severity.ERROR
-            WarningLevel.Warning -> Severity.WARNING
+            WarningLevel.Warning -> Severity.FIXED_WARNING
             WarningLevel.Disabled -> null
             null -> severity
         }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * This class is assumed to be read-only (all the modifications are assumed to happen on CheckerContextForProvider side)
@@ -69,6 +70,8 @@ abstract class CheckerContext : DiagnosticContext {
             Severity.INFO -> allInfosSuppressed
             Severity.WARNING -> allWarningsSuppressed
             Severity.ERROR -> allErrorsSuppressed
+            // diagnostic factory cannot have FIXED_WARNING severity
+            Severity.FIXED_WARNING -> shouldNotBeCalled()
         }
 
         return suppressedByAll || name in suppressedDiagnostics

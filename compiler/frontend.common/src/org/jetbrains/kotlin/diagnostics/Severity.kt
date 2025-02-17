@@ -8,5 +8,10 @@ package org.jetbrains.kotlin.diagnostics
 enum class Severity {
     INFO,
     ERROR,
-    WARNING
+    WARNING,
+
+    /**
+     * see [org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.FIXED_WARNING]
+     */
+    FIXED_WARNING,
 }
