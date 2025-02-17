@@ -11,15 +11,15 @@ public interface JavaClass<B, S extends JavaClass<B, S>> {
 
 // FILE: test.kt
 fun test(a: BodySpec<List<*>, *>, k: WithDnn<*>, j: JavaClass<List<*>, *>) {
-    a.value<<!UPPER_BOUND_VIOLATED!>BodySpec<List<*>, *><!>>()
-    a.value<<!UPPER_BOUND_VIOLATED!>BodySpec<*, *><!>>()
-    a.value<<!UPPER_BOUND_VIOLATED!>BodySpec<Int, *><!>>()
+    a.value<<!UPPER_BOUND_VIOLATED_CAPTURED_TYPE!>BodySpec<List<*>, *><!>>()
+    a.value<<!UPPER_BOUND_VIOLATED_CAPTURED_TYPE!>BodySpec<*, *><!>>()
+    a.value<<!UPPER_BOUND_VIOLATED_CAPTURED_TYPE!>BodySpec<Int, *><!>>()
     a.value()
 
-    k.bar<<!UPPER_BOUND_VIOLATED!>WithDnn<*><!>>()
+    k.bar<<!UPPER_BOUND_VIOLATED_CAPTURED_TYPE!>WithDnn<*><!>>()
     k.bar()
 
-    j.value<<!UPPER_BOUND_VIOLATED!>JavaClass<*,*><!>>()
+    j.value<<!UPPER_BOUND_VIOLATED_CAPTURED_TYPE!>JavaClass<*,*><!>>()
     j.value()
 }
 

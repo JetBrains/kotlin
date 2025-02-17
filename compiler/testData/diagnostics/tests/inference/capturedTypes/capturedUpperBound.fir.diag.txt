@@ -1,9 +1,9 @@
-/test.kt:(117,137): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+/test.kt:(117,137): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)', but captured types satisfy only trivial bounds. Consider removing the explicit type arguments.
 
-/test.kt:(153,167): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+/test.kt:(153,167): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)', but captured types satisfy only trivial bounds. Consider removing the explicit type arguments.
 
-/test.kt:(183,199): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+/test.kt:(183,199): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)', but captured types satisfy only trivial bounds. Consider removing the explicit type arguments.
 
-/test.kt:(228,238): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & Any'. Consider removing the explicit type arguments.
+/test.kt:(228,238): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & Any', but captured types satisfy only trivial bounds. Consider removing the explicit type arguments.
 
-/test.kt:(267,281): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)!'. Consider removing the explicit type arguments.
+/test.kt:(267,281): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)!', but captured types satisfy only trivial bounds. Consider removing the explicit type arguments.

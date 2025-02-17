@@ -795,8 +795,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UPPER_BOUND_VIOLATED by error<PsiElement> {
             parameter<ConeKotlinType>("expectedUpperBound")
             parameter<ConeKotlinType>("actualUpperBound")
-            parameter<String>("extraMessage")
             parameter<Boolean>("involvesCapturedTypes")
+        }
+        val UPPER_BOUND_VIOLATED_CAPTURED_TYPE by error<PsiElement> {
+            parameter<ConeKotlinType>("expectedUpperBound")
+            parameter<ConeKotlinType>("actualUpperBound")
         }
         val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION by error<PsiElement> {
             parameter<ConeKotlinType>("expectedUpperBound")

@@ -737,6 +737,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_LAMBDA_EXP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_CAPTURED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USAGE_IS_NOT_INLINABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_CALL_ON_NOT_NULL
@@ -1503,7 +1504,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             TYPE_MISMATCH,
-            "Type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.",
+            "Type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.{3}",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
@@ -1516,21 +1517,21 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             THROWABLE_TYPE_MISMATCH,
-            "Throwable type mismatch: actual type is ''{0}''.",
+            "Throwable type mismatch: actual type is ''{0}''.{2}",
             RENDER_TYPE,
             NOT_RENDERED,
             INVOLVES_CAPTURED_TYPES
         )
         map.put(
             CONDITION_TYPE_MISMATCH,
-            "Condition type mismatch: inferred type is ''{0}'' but ''Boolean'' was expected.",
+            "Condition type mismatch: inferred type is ''{0}'' but ''Boolean'' was expected.{2}",
             RENDER_TYPE,
             NOT_RENDERED,
             INVOLVES_CAPTURED_TYPES
         )
         map.put(
             ARGUMENT_TYPE_MISMATCH,
-            "Argument type mismatch: actual type is ''{0}'', but ''{1}'' was expected.",
+            "Argument type mismatch: actual type is ''{0}'', but ''{1}'' was expected.{3}",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
@@ -1545,7 +1546,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ASSIGNMENT_TYPE_MISMATCH,
-            "Assignment type mismatch: actual type is ''{1}'', but ''{0}'' was expected.",
+            "Assignment type mismatch: actual type is ''{1}'', but ''{0}'' was expected.{3}",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
@@ -1553,7 +1554,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             RESULT_TYPE_MISMATCH,
-            "Function return type mismatch: actual type is ''{1}'', but ''{0}'' was expected.",
+            "Function return type mismatch: actual type is ''{1}'', but ''{0}'' was expected.{2}",
             RENDER_TYPE,
             RENDER_TYPE,
             INVOLVES_CAPTURED_TYPES
@@ -1640,12 +1641,17 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Type argument is not within its bounds: must be subtype of ''{0}''.{2}",
             RENDER_TYPE,
             RENDER_TYPE,
-            OPTIONAL_SENTENCE,
             INVOLVES_CAPTURED_TYPES
         )
         map.put(
+            UPPER_BOUND_VIOLATED_CAPTURED_TYPE,
+            "Type argument is not within its bounds: must be subtype of ''{0}'', but captured types satisfy only trivial bounds. Consider removing the explicit type arguments.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+        )
+        map.put(
             UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
-            "Type argument is not within its bounds: must be subtype of ''{0}''.",
+            "Type argument is not within its bounds: must be subtype of ''{0}''.{2}",
             RENDER_TYPE,
             RENDER_TYPE,
             INVOLVES_CAPTURED_TYPES
@@ -1735,8 +1741,18 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE
         )
         map.put(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, "Extension function type cannot be used as an upper bound.")
-        map.put(INCOMPATIBLE_TYPES, "Incompatible types ''{0}'' and ''{1}''.", RENDER_TYPE, RENDER_TYPE, INVOLVES_CAPTURED_TYPES)
-        map.put(INCOMPATIBLE_TYPES_WARNING, "Potentially incompatible types ''{0}'' and ''{1}''.", RENDER_TYPE, RENDER_TYPE, INVOLVES_CAPTURED_TYPES)
+        map.put(
+            INCOMPATIBLE_TYPES,
+            "Incompatible types ''{0}'' and ''{1}''.{2}",
+            RENDER_TYPE, RENDER_TYPE, INVOLVES_CAPTURED_TYPES
+        )
+        map.put(
+            INCOMPATIBLE_TYPES_WARNING,
+            "Potentially incompatible types ''{0}'' and ''{1}''.{2}",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            INVOLVES_CAPTURED_TYPES
+        )
         map.put(
             SMARTCAST_IMPOSSIBLE,
             "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}.",
@@ -1806,7 +1822,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             RETURN_TYPE_MISMATCH,
-            "Return type mismatch: expected ''{0}'', actual ''{1}''.",
+            "Return type mismatch: expected ''{0}'', actual ''{1}''.{4}",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
@@ -2335,7 +2351,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VAL_WITH_SETTER, "A 'val' property cannot have a setter.")
         map.put(
             WRONG_SETTER_PARAMETER_TYPE,
-            "Setter parameter type must be equal to the type of the property, i.e. ''{0}''.",
+            "Setter parameter type must be equal to the type of the property, i.e. ''{0}''.{2}",
             RENDER_TYPE,
             RENDER_TYPE,
             INVOLVES_CAPTURED_TYPES
@@ -2347,7 +2363,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INITIALIZER_TYPE_MISMATCH,
-            "Initializer type mismatch: expected ''{0}'', actual ''{1}''.",
+            "Initializer type mismatch: expected ''{0}'', actual ''{1}''.{3}",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
@@ -2361,7 +2377,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be 'Unit'.")
         map.put(
             WRONG_GETTER_RETURN_TYPE,
-            "Getter return type must be equal to the type of the property, i.e. ''{0}''.",
+            "Getter return type must be equal to the type of the property, i.e. ''{0}''.{2}",
             RENDER_TYPE,
             RENDER_TYPE,
             INVOLVES_CAPTURED_TYPES
@@ -2564,7 +2580,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
-            "Function ''{0}()'' returns ''{1}'', but ''{2}'' is expected.",
+            "Function ''{0}()'' returns ''{1}'', but ''{2}'' is expected.{3}",
             TO_STRING,
             RENDER_TYPE,
             RENDER_TYPE,
@@ -2748,7 +2764,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
-            "Function ''{0}'' of property delegate is expected to return ''{1}'', but returns ''{2}''.",
+            "Function ''{0}'' of property delegate is expected to return ''{1}'', but returns ''{2}''.{3}",
             TO_STRING,
             RENDER_TYPE,
             RENDER_TYPE,
