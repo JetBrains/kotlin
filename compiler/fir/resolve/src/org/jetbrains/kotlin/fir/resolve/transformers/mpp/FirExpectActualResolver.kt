@@ -61,13 +61,18 @@ object FirExpectActualResolver {
                                 }
                         }
                         else -> {
-                            val scope = FirPackageMemberScope(callableId.packageName, useSiteSession, useSiteSession.dependenciesSymbolProvider)
+                            val scope =
+                                FirPackageMemberScope(callableId.packageName, useSiteSession, useSiteSession.dependenciesSymbolProvider)
                             mutableListOf<FirCallableSymbol<*>>()
                                 .apply {
                                     scope.processFunctionsByName(callableId.callableName) { add(it) }
                                     scope.processPropertiesByName(callableId.callableName) { add(it) }
                                 }
                                 .filter { expectSymbol -> expectSymbol.isExpect && expectSymbol.moduleData in transitiveDependsOn }
+                                .filterContainedInTheFirstWaveOfDependsOnDominatorTree(
+                                    graphStartingNode = actualSymbol.moduleData,
+                                    transitiveDependsOn.size
+                                ) { it.moduleData }
                         }
                     }
                     candidates
@@ -96,6 +101,10 @@ object FirExpectActualResolver {
                         .filter { it.isExpect && it.moduleData in transitiveDependsOn }
                         .filterIsInstance<FirRegularClassSymbol>()
                         .distinct()
+                        .filterContainedInTheFirstWaveOfDependsOnDominatorTree(
+                            graphStartingNode = actualSymbol.moduleData,
+                            transitiveDependsOn.size
+                        ) { it.moduleData }
                         .groupBy { AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol = it, actualSymbol, context) }
                 }
                 else -> emptyMap()
@@ -103,4 +112,65 @@ object FirExpectActualResolver {
             return result
         }
     }
+}
+
+/**
+ * [graphStartingNode] is list of modules where we should start the graph traversal from.
+ * The result of the function is List of elements from the receiver
+ * that are reachable from [graphStartingNode] without going through other elements from the receiver.
+ * (an interesting observation that the result of the function is the same whether you run the algorithm on the graph itself or its dominator tree)
+ *
+ * Note: the algorithm forbids expect-actual relations that could theoretically be allowed.
+ * For example:
+ * ```
+ *   module1     (actual class Foo)
+ *   |     ↓
+ *   |  module2  (expect class Foo)
+ *   ↓     ↓
+ *   module3     (expect class Foo)
+ * ```
+ *
+ * The current algorithm forbids such configuration.
+ *
+ * ## Alternative
+ *
+ * An alternative less strict algorithm that should allow all reasonable configurations is:
+ * 1. Filter modules to keep only those that contain expect declarations
+ * 2. Expects are in "the first wave" of the topologically sorted graph
+ *
+ * Please note that the first step is important to ban configurations like this:
+ * ```
+ *      module1      (actual class Foo)
+ *      ↓     |
+ *   module2  ↓      (nothing in module2)
+ *      ↓  module3   (expect class Foo)
+ *   module4         (expect class Foo)
+ * ```
+ * Otherwise, `module2` and `module3` are in "the first wave" of topologically sorted graph
+ */
+private fun <T : Any> Iterable<T>.filterContainedInTheFirstWaveOfDependsOnDominatorTree(
+    graphStartingNode: FirModuleData,
+    wholeGraphSize: Int,
+    moduleSelector: (T) -> FirModuleData,
+): List<T> {
+    val modulesOfInterest: Map<FirModuleData, List<T>> = groupBy(moduleSelector)
+    // In happy cases (the majority of the cases), only 1 expect declaration is available;
+    // Otherwise, an `AMBIGUOUS_EXPECTS` diagnostic is reported.
+    val result: MutableList<T> = ArrayList(1)
+    val visited: MutableSet<FirModuleData> = HashSet(wholeGraphSize)
+    fun dfs(module: FirModuleData) {
+        if (!visited.add(module)) return
+        val data = modulesOfInterest[module]
+        if (data != null) {
+            // We found a node/module of interest (a module that contains an "expect" declaration in it),
+            // stop there and don't visit everything that is "transitively reachable further"
+            result.addAll(data)
+        } else {
+            for (dependency in module.dependsOnDependencies) {
+                dfs(dependency)
+            }
+        }
+    }
+    dfs(graphStartingNode)
+    return result
 }

@@ -1,7 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_K1
 // WITH_STDLIB
-// IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 expect class Foo {
@@ -24,8 +23,8 @@ expect class Foo {
 }
 
 // MODULE: main()()(intermediate2)
-<!AMBIGUOUS_EXPECTS!>actual<!> class Foo {
-    actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
-    actual fun <!ACTUAL_WITHOUT_EXPECT!>bar<!>() {}
-    actual fun <!ACTUAL_WITHOUT_EXPECT!>baz<!>() {}
+actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> {
+    actual fun foo() {}
+    actual fun bar() {}
+    actual fun baz() {}
 }

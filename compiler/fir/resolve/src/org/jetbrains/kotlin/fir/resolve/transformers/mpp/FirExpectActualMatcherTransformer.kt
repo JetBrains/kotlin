@@ -94,7 +94,6 @@ open class FirExpectActualMatcherTransformer(
     // ------------------------------------------------------
 
     fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
-        if (memberDeclaration.isExpect) return
         val actualSymbol = memberDeclaration.symbol
 
         // Regardless of whether any `expect` symbols are found for `memberDeclaration`, it must be assigned an `expectForActual` map.

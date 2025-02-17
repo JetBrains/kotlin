@@ -11,10 +11,10 @@ expect class Foo {
 // MODULE: intermediate()()(common)
 @ExperimentalExpectRefinement
 expect class Foo {
-    fun foo()
+    fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>()
 }
 
 // MODULE: main()()(intermediate)
-<!AMBIGUOUS_EXPECTS!>actual<!> class Foo {
-    actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
+actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> {
+    actual fun foo() {}
 }
