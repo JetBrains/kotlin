@@ -8,7 +8,7 @@ inline fun <reified T: Any> javaClass(): Class<T> = T::class.java
 
 fun box() {
     val a = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, UNSUPPORTED!>arrayOf<!>(null!!)
-    val b = <!UNSUPPORTED("Array<Nothing?> isn't supported in JVM")!>Array<!><Nothing?>(5) { null!! }
+    val b = <!UNSUPPORTED("'Array<Nothing?>' is not supported on the JVM.")!>Array<!><Nothing?>(5) { null!! }
     val c = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo<!>() { null!! }
     val d = foo<Any> { null!! }
     val e = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo<!> { "1" <!CAST_NEVER_SUCCEEDS!>as<!> Nothing }

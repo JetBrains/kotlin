@@ -25,7 +25,7 @@ object FirArrayOfNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
         /** Ignore vararg, see varargOfNothing.kt test */
         val isVararg = (context.containingDeclarations.lastOrNull() as? FirValueParameter)?.isVararg ?: false
         if (!isVararg && fullyExpandedType.isArrayOfNothing(context.languageVersionSettings)) {
-            reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
+            reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "Invalid array type.", context)
         }
     }
 }

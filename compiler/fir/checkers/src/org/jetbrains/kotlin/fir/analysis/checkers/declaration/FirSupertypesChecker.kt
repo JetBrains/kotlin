@@ -229,7 +229,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 reporter.reportOn(
                     source,
                     FirErrors.UNSUPPORTED,
-                    "named parameter in function type in supertype position",
+                    "Named parameter in function type as supertype is unsupported.",
                     context
                 )
             }
@@ -266,7 +266,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 reporter.reportOn(
                     subDeclaration.source,
                     FirErrors.UNSUPPORTED,
-                    "Delegation without primary constructor is not supported",
+                    "Delegation without primary constructor is unsupported.",
                     context
                 )
             }

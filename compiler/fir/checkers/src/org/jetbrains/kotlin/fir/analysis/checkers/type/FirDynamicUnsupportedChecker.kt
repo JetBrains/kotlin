@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 object FirDynamicUnsupportedChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    const val MESSAGE: String = "Dynamic type is only supported in Kotlin JS."
+
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         // It's assumed this checker is only called
         // by a platform that disallows dynamics
         if (typeRef.source != null && typeRef.coneType is ConeDynamicType) {
-            reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "dynamic type", context)
+            reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, MESSAGE, context)
         }
     }
 }

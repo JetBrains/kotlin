@@ -26,7 +26,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
             reporter.reportOn(
                 expression.source,
                 FirErrors.UNSUPPORTED,
-                "Collection literals outside of annotations",
+                "Collection literals outside of annotations are unsupported.",
                 context
             )
         }

@@ -31,7 +31,7 @@ object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(M
     ) {
         val fullyExpandedType = type.fullyExpandedType(context.session)
         if (fullyExpandedType.isArrayOfNothing(context.languageVersionSettings)) {
-            reporter.reportOn(source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
+            reporter.reportOn(source, FirErrors.UNSUPPORTED, "Expression cannot have a type of 'Array<Nothing>'.", context)
         } else {
             for (typeArg in fullyExpandedType.typeArguments) {
                 val typeArgType = typeArg.type ?: continue

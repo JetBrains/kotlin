@@ -28,6 +28,6 @@ object FirJsReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
     }
 
     override fun report(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
-        reporter.reportOn(source, FirErrors.UNSUPPORTED, "This reflection API is not supported yet in JavaScript", context)
+        reporter.reportOn(source, FirErrors.UNSUPPORTED, "This reflection API is not supported in Kotlin JS.", context)
     }
 }

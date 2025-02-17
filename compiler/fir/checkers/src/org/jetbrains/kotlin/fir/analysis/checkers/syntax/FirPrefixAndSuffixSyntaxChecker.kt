@@ -119,6 +119,6 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
 
 
     private fun report(source: KtSourceElement, context: CheckerContext, reporter: DiagnosticReporter) {
-        reporter.reportOn(source, FirErrors.UNSUPPORTED, "literal prefixes and suffixes", context)
+        reporter.reportOn(source, FirErrors.UNSUPPORTED, "Literals must be surrounded by whitespace.", context)
     }
 }

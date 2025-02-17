@@ -4,6 +4,6 @@
 
 /topLevelTypeAliasesOnly.fir.kt:(193,215): error: The feature "nested type aliases" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xnested-type-aliases', but note that no stability guarantees are provided.
 
-/topLevelTypeAliasesOnly.fir.kt:(248,277): error: Unsupported [Local type aliases].
+/topLevelTypeAliasesOnly.fir.kt:(248,277): error: Local type aliases are unsupported.
 
-/topLevelTypeAliasesOnly.fir.kt:(313,334): error: Unsupported [Local type aliases].
+/topLevelTypeAliasesOnly.fir.kt:(313,334): error: Local type aliases are unsupported.

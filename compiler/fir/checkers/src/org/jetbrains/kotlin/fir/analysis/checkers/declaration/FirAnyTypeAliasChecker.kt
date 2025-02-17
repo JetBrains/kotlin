@@ -31,7 +31,7 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.isTopLevel) {
             if (declaration.isLocal) {
-                reporter.reportOn(declaration.source, FirErrors.UNSUPPORTED, "Local type aliases", context)
+                reporter.reportOn(declaration.source, FirErrors.UNSUPPORTED, "Local type aliases are unsupported.", context)
             } else if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NestedTypeAliases)) {
                 reporter.reportOn(
                     declaration.source,
