@@ -1156,7 +1156,7 @@ private class InteropTransformer(
                 IntrinsicType.BLOCK_PTR_TO_FUNCTION_OBJECT -> {
                     generateWithStubs {
                         val blockPtr = expression.arguments.single()!!
-                        val functionType = expression.getTypeArgument(0)!!
+                        val functionType = expression.typeArguments[0]!!
                         convertBlockPtrToKotlinFunction(builder, blockPtr, functionType)
                     }
                 }

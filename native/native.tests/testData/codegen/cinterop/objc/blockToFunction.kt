@@ -26,9 +26,9 @@ import kotlin.test.*
 
 fun box(): String {
     val blockPtr = getBlockPtr(1)!!
-    val kotlinFun = convertBlockPtrToKotlinFunction<(NativePtr)->NativePtr>(blockPtr.rawValue)
-    val result = kotlinFun(NativePtr.NULL + 4)
-    if (result != NativePtr.NULL + 8) return "FAIL: $result"
+    val kotlinFun = convertBlockPtrToKotlinFunction<(COpaquePointer?)->COpaquePointer?>(blockPtr.rawValue)
+    val result = kotlinFun((NativePtr.NULL + 4).toLong().toCPointer())
+    if (result?.getRawValue() != NativePtr.NULL + 8) return "FAIL: $result"
 
     return "OK"
 }
