@@ -3612,6 +3612,11 @@ internal class ActualWithoutExpectImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ActualWithoutExpect
 
+internal class ExpectRefinementAnnotationWrongTargetImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectRefinementAnnotationWrongTarget
+
 internal class AmbiguousExpectsImpl(
     override val declaration: KaSymbol,
     override val modules: List<FirModuleData>,
@@ -3630,6 +3635,11 @@ internal class ActualMissingImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ActualMissing
+
+internal class ExpectRefinementAnnotationMissingImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectRefinementAnnotationMissing
 
 internal class ExpectActualClassifiersAreInBetaWarningImpl(
     firDiagnostic: KtPsiDiagnostic,

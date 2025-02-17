@@ -1468,6 +1468,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Map<out ExpectActualCompatibility<Symbol>, Collection<Symbol>>>("compatibility")
         }
 
+        val EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET by error<KtNamedDeclaration>(
+            PositioningStrategy.DECLARATION_NAME
+        )
+
         val AMBIGUOUS_EXPECTS by error<KtNamedDeclaration>(PositioningStrategy.EXPECT_ACTUAL_MODIFIER) {
             parameter<Symbol>("declaration")
             parameter<Collection<FirModuleData>>("modules")
@@ -1479,6 +1483,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ACTUAL_MISSING by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME)
+
+        val EXPECT_REFINEMENT_ANNOTATION_MISSING by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
 
         val EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING by warning<KtClassLikeDeclaration>(PositioningStrategy.EXPECT_ACTUAL_MODIFIER)
 
