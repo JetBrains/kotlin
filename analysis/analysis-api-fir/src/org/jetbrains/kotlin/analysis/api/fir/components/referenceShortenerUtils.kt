@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
  * Compares [existingCall] and [candidateCall] by their dispatch and extension receivers,
@@ -46,7 +48,18 @@ internal fun areReceiversEquivalent(existingCall: FirQualifiedAccessExpression, 
  * It may be a class, an object, an anonymous function with extension receiver, and so on.
  */
 private fun FirExpression.boundSymbolForReceiverExpression(): FirBasedSymbol<*>? = when (this) {
-    is FirThisReceiverExpression -> calleeReference.boundSymbol as FirBasedSymbol<*>
+    is FirThisReceiverExpression -> {
+        val boundSymbol = calleeReference.boundSymbol
+        requireWithAttachment(
+            boundSymbol is FirBasedSymbol<*>,
+            { "boundSymbol should be ${FirBasedSymbol::class.simpleName}, but actual is ${boundSymbol?.let { it::class.simpleName }}" },
+        ) {
+            withFirEntry("expression", this@boundSymbolForReceiverExpression)
+            withFirEntry("calleeReference", calleeReference)
+        }
+
+        boundSymbol
+    }
 
     is FirResolvedQualifier -> {
         if (resolvedToCompanionObject) {
