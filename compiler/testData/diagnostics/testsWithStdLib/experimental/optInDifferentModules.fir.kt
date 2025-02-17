@@ -36,8 +36,8 @@ val x = 2
 
 class MyDto(
     val property1: Int,
-    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@UnusedSince(AppVersion.V0_2_0)<!> val property2: Int,
-    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@UnusedSince(AppVersion.V0_2_5)<!> val property3: Int,
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@UnusedSince(AppVersion.<!OPT_IN_USAGE_ERROR!>V0_2_0<!>)<!> val property2: Int,
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@UnusedSince(AppVersion.<!OPT_IN_USAGE_ERROR!>V0_2_5<!>)<!> val property3: Int,
 )
 
 fun bar() {

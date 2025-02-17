@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.getPropertySignature
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -193,6 +194,18 @@ class JvmBinaryAnnotationDeserializer(
         val index = parameterIndex + computeJvmParameterIndexShift(classProto, callableProto)
         val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
         return findJvmBinaryClassAndLoadMemberAnnotations(paramSignature)
+    }
+
+    override fun loadEnumEntryAnnotations(
+        classId: ClassId,
+        enumEntryProto: ProtoBuf.EnumEntry,
+        nameResolver: NameResolver,
+    ): List<FirAnnotation> {
+        val signature = MemberSignature.fromFieldNameAndDesc(
+            nameResolver.getString(enumEntryProto.name),
+            ClassMapperLite.mapClass(classId.asString())
+        )
+        return findJvmBinaryClassAndLoadMemberAnnotations(signature)
     }
 
     override fun loadExtensionReceiverParameterAnnotations(

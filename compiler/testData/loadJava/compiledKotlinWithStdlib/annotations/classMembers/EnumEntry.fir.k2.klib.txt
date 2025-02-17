@@ -17,10 +17,10 @@ public final annotation class Bnno : R|kotlin/Annotation| {
 public final enum class Eee : R|kotlin/Enum<test/Eee>| {
     private constructor(): R|test/Eee|
 
-    public final static enum entry Entry1: R|test/Eee|
+    @R|test/Anno|() public final static enum entry Entry1: R|test/Eee|
     public final static enum entry Entry2: R|test/Eee|
-    public final static enum entry Entry3: R|test/Eee|
-    public final static enum entry Entry4: R|test/Eee|
+    @R|test/Anno|(value = String(3)) @R|test/Bnno|() public final static enum entry Entry3: R|test/Eee|
+    @R|test/Anno|(value = String(4), x = Int(4)) public final static enum entry Entry4: R|test/Eee|
     public final static fun values(): R|kotlin/Array<test/Eee>| {
     }
 
