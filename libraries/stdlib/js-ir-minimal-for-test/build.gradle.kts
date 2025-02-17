@@ -156,8 +156,8 @@ kotlin {
 
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
     compilerOptions {
-        compilerOptions.languageVersion = KotlinVersion.KOTLIN_2_0
-        compilerOptions.apiVersion = KotlinVersion.KOTLIN_2_0
+        compilerOptions.languageVersion = KotlinVersion.KOTLIN_2_2
+        compilerOptions.apiVersion = KotlinVersion.KOTLIN_2_2
         compilerOptions.freeCompilerArgs.addAll(
             listOf(
                 "-Xallow-kotlin-package",
