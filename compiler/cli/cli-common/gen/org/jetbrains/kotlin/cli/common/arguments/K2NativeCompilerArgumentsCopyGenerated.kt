@@ -29,7 +29,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.dumpSyntheticAccessorsTo = from.dumpSyntheticAccessorsTo
     to.emitLazyObjCHeader = from.emitLazyObjCHeader
     to.enableAssertions = from.enableAssertions
-    to.explicitCachesOnly = from.explicitCachesOnly
     to.exportKDoc = from.exportKDoc
     to.exportedLibraries = from.exportedLibraries?.copyOf()
     to.externalDependencies = from.externalDependencies

@@ -106,12 +106,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
                 // just pass auto cacheable directory which will force the compiler to select and use proper system cache directory.
                 when (targets.testTarget) {
                     // MinGW platform libraries are not cacheable due to historical reasons, so we cache only stdlib.
-                    KonanTarget.MINGW_X64 -> add(
-                        listOf(
-                            "-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}/common",
-                            "-Xexplicit-caches-only"
-                        )
-                    )
+                    KonanTarget.MINGW_X64 -> add("-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}/common")
                     else -> add("-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}")
                 }
                 add("-Xbackend-threads=1") // The tests are run in parallel already, don't add more here.
