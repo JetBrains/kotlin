@@ -258,12 +258,25 @@ sealed class CacheMode {
             }
         }
 
+        // TODO: This is a fragile function as at approximates compiler behavior.
+        //  It makes sense to extract it to some common code shared between tests and compiler.
         fun computeCacheDirName(
             testTarget: KonanTarget,
             cacheKind: String,
             debuggable: Boolean,
-            partialLinkageEnabled: Boolean
-        ) = "$testTarget${if (debuggable) "-g" else ""}$cacheKind${if (partialLinkageEnabled) "-pl" else ""}"
+            partialLinkageEnabled: Boolean,
+            gcType: GCType,
+        ) = buildString {
+            append(testTarget)
+            if (debuggable) append("-g")
+            append(cacheKind)
+            when (gcType) {
+                // PMCS is the current default. This line will break when GC is going to be switched to CMS.
+                GCType.UNSPECIFIED -> append("-gcpmcs")
+                else -> append("-gc${gcType.name.lowercase()}")
+            }
+            if (partialLinkageEnabled) append("-pl")
+        }
     }
 }
 

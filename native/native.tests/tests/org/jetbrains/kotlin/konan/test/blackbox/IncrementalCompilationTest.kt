@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.test.TestMetadata
@@ -529,7 +530,8 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             testRunSettings.get<KotlinNativeTargets>().testTarget,
             "STATIC",
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG,
-            partialLinkageEnabled = false
+            partialLinkageEnabled = false,
+            testRunSettings.get<GCType>()
         )
 
     private fun getLibraryFileCache(libName: String, libFileRelativePath: String, fqName: String): File {
