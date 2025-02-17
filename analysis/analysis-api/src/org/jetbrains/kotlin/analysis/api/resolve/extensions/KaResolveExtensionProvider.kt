@@ -26,7 +26,7 @@ public abstract class KaResolveExtensionProvider {
      * - Consider caching the results for subsequent invocations.
      * - Avoid using Kotlin resolution, as this function is called during session initialization, so Analysis API access is forbidden.
      * - Avoid using [KaModule.contentScope] of [module], as [KaResolveExtensionProvider.provideExtensionsFor] is used to
-     *   lazily calculate this property in [KaContentScopeProvider] using [KaResolveExtensionToContentScopeRefinerBridge].
+     *   lazily calculate this property.
      */
     public abstract fun provideExtensionsFor(module: KaModule): List<KaResolveExtension>
 
