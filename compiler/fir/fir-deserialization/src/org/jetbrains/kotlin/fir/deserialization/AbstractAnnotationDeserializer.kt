@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -158,6 +159,14 @@ abstract class AbstractAnnotationDeserializer(
         return valueParameterProto.loadAnnotations(protocol.parameterAnnotation, valueParameterProto.flags, nameResolver)
     }
 
+    open fun loadEnumEntryAnnotations(
+        classId: ClassId,
+        enumEntryProto: ProtoBuf.EnumEntry,
+        nameResolver: NameResolver,
+    ): List<FirAnnotation> {
+        return enumEntryProto.loadAnnotations(protocol.enumEntryAnnotation, -1, nameResolver)
+    }
+
     open fun loadExtensionReceiverParameterAnnotations(
         containerSource: DeserializedContainerSource?,
         callableProto: MessageLite,
@@ -197,7 +206,7 @@ abstract class AbstractAnnotationDeserializer(
         nameResolver: NameResolver,
         useSiteTarget: AnnotationUseSiteTarget? = null
     ): List<FirAnnotation> {
-        if (extension == null || !Flags.HAS_ANNOTATIONS.get(flags)) return emptyList()
+        if (extension == null || flags >= 0 && !Flags.HAS_ANNOTATIONS.get(flags)) return emptyList()
         val annotations = getExtension(extension)
         return annotations.map { deserializeAnnotation(it, nameResolver, useSiteTarget) }
     }
