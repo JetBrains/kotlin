@@ -13,4 +13,4 @@ expect class Foo {
 expect class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!>
 
 // MODULE: main()()(intermediate)
-actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!>
+actual class Foo
