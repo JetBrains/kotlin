@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestFile
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.util.*
@@ -58,9 +58,10 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         val namesToModulesWithFiles =
             namesToModules.map { (name, module) ->
                 // Empty modules still contain dummy files that have "module_" prefix
-                val virtualFiles = module.files.filter { !it.name.startsWith("module_") }.sortedBy { it.name }.map { it.virtualFile }
-                val testFiles = module.testModule.files.filter { !it.name.startsWith("module_") }.sortedBy { it.name }
-                name to TestModuleWithFiles(module, testFiles.zip(virtualFiles).map { KtTestFile(it.first, it.second) })
+                val testFiles = module.testFiles.filter { !it.testFile.name.startsWith("module_") }.map { ktTestFile ->
+                    KtTestFileWithVirtualFile(ktTestFile, ktTestFile.psiFile?.virtualFile ?: error("No virtual file found for $ktTestFile"))
+                }
+                name to TestModuleWithFiles(module, testFiles)
             }.toMap()
 
         val workingModules = namesToModulesWithFiles.filter { isWorkingModule(it.key) }.toSortedMap()
@@ -86,7 +87,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         }
 
         testServices.assertions.assertTrue(workingModules.flatMap { it.value.files }
-                                               .none { it.testFile.directives.contains(Directives.ADDED) }) {
+                                               .none { it.ktTestFile.testFile.directives.contains(Directives.ADDED) }) {
             "Files from working modules cannot have 'ADDED' directive, add it to the corresponding refiner"
         }
 
@@ -97,7 +98,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
 
         val enlargementScopes =
             refinerModules.map { (moduleName, module) ->
-                moduleName to module.files.filter { file -> file.testFile.directives.contains(Directives.ADDED) }
+                moduleName to module.files.filter { file -> file.ktTestFile.testFile.directives.contains(Directives.ADDED) }
                     .map { file ->
                         val baseScope = baseContentScopes[moduleName] ?: error("module '$moduleName' not found")
                         baseScope.firstOrNull { it.name == file.virtualFile.name } ?: file.virtualFile
@@ -107,7 +108,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         val restrictionScopes = workingModules.entries.zip(refinerModules.entries) { workingModule, refiner ->
             workingModule.key to workingModule.value.files + refiner.value.files
         }.associate { (moduleName, files) ->
-            moduleName to files.filter { file -> file.testFile.directives.contains(Directives.SHADOWED) }
+            moduleName to files.filter { file -> file.ktTestFile.testFile.directives.contains(Directives.SHADOWED) }
                 .map { file ->
                     val baseScope = baseContentScopes[moduleName] ?: error("module '$moduleName' not found")
                     baseScope.firstOrNull { it.name == file.virtualFile.name } ?: file.virtualFile
@@ -134,7 +135,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
             val expectedContentScope = computedContentScopes[moduleName] ?: TreeSet()
             moduleName to ModuleData(
                 moduleName,
-                testModuleWithFiles.testModule,
+                testModuleWithFiles,
                 inputBaseContentScope,
                 expectedContentScope,
                 inputEnlargementScope,
@@ -143,7 +144,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         }.toMap()
 
         moduleData.forEach {
-            it.value.dependencies.addAll(it.value.testModule.testModule.allDependencies.mapNotNull { dependencyDescription ->
+            it.value.dependencies.addAll(it.value.moduleWithFiles.ktTestModule.testModule.allDependencies.mapNotNull { dependencyDescription ->
                 val name = dependencyDescription.dependencyModule.name
                 moduleData[name]
             })
@@ -167,7 +168,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         val stringBuilder = StringBuilder()
 
         moduleData.forEach { (currentModuleName, currentModuleData) ->
-            val contentScope = currentModuleData.testModule.ktModule.contentScope
+            val contentScope = currentModuleData.moduleWithFiles.ktTestModule.ktModule.contentScope
             currentModuleData.expectedContentScope.forEach {
                 testServices.assertions.assertTrue(contentScope.contains(it)) { "File ${it.name} should be in scope" }
             }
@@ -193,14 +194,16 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         val stringBuilder = StringBuilder()
 
         moduleData.forEach { (currentModuleName, currentModuleData) ->
-            val mockResolutionScope = buildSet<VirtualFile> {
+            val mockResolutionScope = buildSet {
                 addAll(currentModuleData.expectedContentScope)
                 addAll(currentModuleData.dependencies.flatMap { it.expectedContentScope })
             }
 
+            val kaModule = currentModuleData.moduleWithFiles.ktTestModule.ktModule
+
             val mainModuleResolutionScope =
-                KaResolutionScopeProvider.getInstance(currentModuleData.testModule.ktModule.project)
-                    .getResolutionScope(currentModuleData.testModule.ktModule)
+                KaResolutionScopeProvider.getInstance(kaModule.project)
+                    .getResolutionScope(kaModule)
 
             mockResolutionScope.forEach {
                 testServices.assertions.assertTrue(mainModuleResolutionScope.contains(it)) { "File ${it.name} should be in scope" }
@@ -233,7 +236,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
 
     private data class ModuleData(
         val name: String,
-        val testModule: KtTestModule,
+        val moduleWithFiles: TestModuleWithFiles,
         val inputBaseContentScope: List<VirtualFile>,
         val expectedContentScope: TreeSet<VirtualFile>,
         val inputEnlargementScope: List<VirtualFile>,
@@ -241,14 +244,14 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         val dependencies: MutableList<ModuleData> = mutableListOf()
     )
 
-    private data class KtTestFile(
-        val testFile: TestFile,
+    private data class KtTestFileWithVirtualFile(
+        val ktTestFile: KtTestFile<*>,
         val virtualFile: VirtualFile
     )
 
     private data class TestModuleWithFiles(
-        val testModule: KtTestModule,
-        val files: List<KtTestFile>
+        val ktTestModule: KtTestModule,
+        val files: List<KtTestFileWithVirtualFile>
     )
 
     private fun isWorkingModule(moduleName: String): Boolean = !moduleName.endsWith(REFINER_MODULE_SUFFIX)
