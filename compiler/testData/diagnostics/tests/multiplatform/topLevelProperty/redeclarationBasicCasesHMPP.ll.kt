@@ -17,7 +17,7 @@ val <!ACTUAL_MISSING!>x2<!> = 2
 actual val x3 = 3
 
 // MODULE: main()()(intermediate)
-<!AMBIGUOUS_EXPECTS!>actual<!> val x1 = 1
+actual val x1 = 1
 
 actual val x2 = 2
 
