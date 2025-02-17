@@ -1,0 +1,33 @@
+FILE: Example.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval v1: R|Bar<ERROR CLASS: Cannot infer argument for type parameter T, out Foo<ERROR CLASS: Uninferred type c: ConeTypeVariableTypeConstructor(T), *>>| = R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>()
+        R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|><Inapplicable(INAPPLICABLE): /Bar.multiply>#|(R|<local>/v1|)
+        lval v2: R|Bar<kotlin/String, ERROR CLASS: Cannot infer argument for type parameter Q>| = R|/doX<CS errors: /doX>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter Q>>()
+        R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|>|(R|<local>/v2|)
+        lval v3: R|Bar<ERROR CLASS: Cannot infer argument for type parameter T, out Foo<ERROR CLASS: Uninferred type c: ConeTypeVariableTypeConstructor(T), *>>| = R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>()
+        R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|><Inapplicable(INAPPLICABLE): /Bar.multiply>#|(R|<local>/v3|)
+        lval v4: R|Bar<kotlin/String, ERROR CLASS: Cannot infer argument for type parameter Q>| = R|/doX<CS errors: /doX>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter Q>>(String())
+        R|/doX<CS errors: /doX>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|CapturedType(*)|>().R|SubstitutionOverride</Bar.multiply: R|kotlin/Int|>|(R|<local>/v4|)
+    }
+    public final fun <T, Q : R|Foo<T, Q>|> doX(): R|Bar<T, Q>| {
+        ^doX R|kotlin/TODO|()
+    }
+    public final fun <T, Q : R|Foo<T, Q>|> doX(t: R|T|): R|Bar<T, Q>| {
+        ^doX R|kotlin/TODO|()
+    }
+    public final class Foo<T, Q : R|Foo<T, Q>|> : R|kotlin/Any| {
+        public constructor<T, Q : R|Foo<T, Q>|>(): R|Foo<T, Q>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Bar<N, Q : R|Foo<N, Q>|> : R|kotlin/Any| {
+        public constructor<N, Q : R|Foo<N, Q>|>(): R|Bar<N, Q>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun multiply(other: R|Bar<N, Q>|): R|kotlin/Int| {
+            ^multiply Int(1)
+        }
+
+    }

@@ -57819,6 +57819,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/manyCapturedTypes.nkt");
     }
 
+    @Test
+    @TestMetadata("uninferredTypeVariableTypeInInferenceFromSelfUpperBound.nkt")
+    public void testUninferredTypeVariableTypeInInferenceFromSelfUpperBound() {
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/uninferredTypeVariableTypeInInferenceFromSelfUpperBound.nkt");
+    }
+
     @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla")
     @TestDataPath("$PROJECT_ROOT")

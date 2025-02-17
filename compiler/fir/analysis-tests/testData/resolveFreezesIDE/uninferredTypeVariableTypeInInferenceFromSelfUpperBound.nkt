@@ -1,0 +1,25 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FILE: Example.kt
+
+fun test() {
+    val v1 = <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>()
+    <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(<!ARGUMENT_TYPE_MISMATCH!>v1<!>)
+
+    val v2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>doX<!><String, <!CANNOT_INFER_PARAMETER_TYPE!>_<!>>()
+    <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(v2)
+
+    val v3 = doX<<!CANNOT_INFER_PARAMETER_TYPE!>_<!>, _>()
+    <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(<!ARGUMENT_TYPE_MISMATCH!>v3<!>)
+
+    val v4 = <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>doX<!>("")
+    <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(v4)
+}
+
+fun <T, Q : Foo<T, Q>> doX(): Bar<T, Q> = TODO()
+fun <T, Q : Foo<T, Q>> doX(t: T): Bar<T, Q> = TODO()
+
+class Foo<T, Q : Foo<T, Q>>
+
+class Bar<N, Q : Foo<N, Q>> {
+    fun multiply(other: Bar<N, Q>) = 1
+}
