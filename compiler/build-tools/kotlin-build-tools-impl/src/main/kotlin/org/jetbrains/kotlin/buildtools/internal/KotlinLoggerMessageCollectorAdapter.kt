@@ -20,7 +20,7 @@ internal class KotlinLoggerMessageCollectorAdapter(internal val kotlinLogger: Ko
         val renderedMessage = messageRenderer.render(severity, message, location) // TODO: move rendering to the KotlinLogger side
         when (severity) {
             CompilerMessageSeverity.EXCEPTION, CompilerMessageSeverity.ERROR -> kotlinLogger.error(renderedMessage)
-            CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING -> kotlinLogger.warn(renderedMessage)
+            CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> kotlinLogger.warn(renderedMessage)
             CompilerMessageSeverity.INFO -> kotlinLogger.info(renderedMessage)
             CompilerMessageSeverity.OUTPUT, CompilerMessageSeverity.LOGGING -> kotlinLogger.debug(renderedMessage)
         }
