@@ -28411,12 +28411,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
-      @TestMetadata("platformRedeclarationOfExpect.kt")
-      public void testPlatformRedeclarationOfExpect() {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/platformRedeclarationOfExpect.kt");
-      }
-
-      @Test
       @TestMetadata("privateExpectFakeOverride.kt")
       public void testPrivateExpectFakeOverride() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/privateExpectFakeOverride.kt");
@@ -30072,12 +30066,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
-        @TestMetadata("expectsHmppRedeclaration.kt")
-        public void testExpectsHmppRedeclaration() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/expectsHmppRedeclaration.kt");
-        }
-
-        @Test
         @TestMetadata("hmppModalityClash.kt")
         public void testHmppModalityClash() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/hmppModalityClash.kt");
@@ -30221,6 +30209,94 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
               runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasedAsKClassArg.kt");
             }
           }
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement")
+      @TestDataPath("$PROJECT_ROOT")
+      public class HmppRefinement {
+        @Test
+        @TestMetadata("actualWithoutExpect.kt")
+        public void testActualWithoutExpect() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/actualWithoutExpect.kt");
+        }
+
+        @Test
+        @TestMetadata("addNewMembersRefinement.kt")
+        public void testAddNewMembersRefinement() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/addNewMembersRefinement.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInHmppRefinement() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("defaultParameters.kt")
+        public void testDefaultParameters() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/defaultParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("doubleActuals.kt")
+        public void testDoubleActuals() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/doubleActuals.kt");
+        }
+
+        @Test
+        @TestMetadata("expectRefinementAnnotationMissing.kt")
+        public void testExpectRefinementAnnotationMissing() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/expectRefinementAnnotationMissing.kt");
+        }
+
+        @Test
+        @TestMetadata("expectRefinementAnnotationWrongTargets.kt")
+        public void testExpectRefinementAnnotationWrongTargets() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/expectRefinementAnnotationWrongTargets.kt");
+        }
+
+        @Test
+        @TestMetadata("expectsConflictingOverloads.kt")
+        public void testExpectsConflictingOverloads() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/expectsConflictingOverloads.kt");
+        }
+
+        @Test
+        @TestMetadata("expectsHmppBasicRefinement.kt")
+        public void testExpectsHmppBasicRefinement() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/expectsHmppBasicRefinement.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidRefinement_dropMember.kt")
+        public void testInvalidRefinement_dropMember() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/invalidRefinement_dropMember.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidRefinement_incorrectDependsOnGraph.kt")
+        public void testInvalidRefinement_incorrectDependsOnGraph() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/invalidRefinement_incorrectDependsOnGraph.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidRefinement_returnType.kt")
+        public void testInvalidRefinement_returnType() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/invalidRefinement_returnType.kt");
+        }
+
+        @Test
+        @TestMetadata("unrelatedExpects.kt")
+        public void testUnrelatedExpects() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/unrelatedExpects.kt");
+        }
+
+        @Test
+        @TestMetadata("widenVisibilityRefinement.kt")
+        public void testWidenVisibilityRefinement() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/widenVisibilityRefinement.kt");
         }
       }
 
