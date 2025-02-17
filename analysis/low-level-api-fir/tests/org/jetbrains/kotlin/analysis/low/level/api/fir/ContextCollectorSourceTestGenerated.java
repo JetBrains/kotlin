@@ -792,6 +792,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("anonymousFunctionLocalVarType.kt")
+    public void testAnonymousFunctionLocalVarType() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/anonymousFunctionLocalVarType.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionParameterType.kt")
+    public void testAnonymousFunctionParameterType() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/anonymousFunctionParameterType.kt");
+    }
+
+    @Test
     @TestMetadata("declaredInClass_fromContextReceiver.kt")
     public void testDeclaredInClass_fromContextReceiver() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/typeParameters/declaredInClass_fromContextReceiver.kt");
