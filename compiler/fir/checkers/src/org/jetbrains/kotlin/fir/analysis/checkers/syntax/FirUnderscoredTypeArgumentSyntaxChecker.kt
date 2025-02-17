@@ -22,6 +22,8 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
     override fun isApplicable(element: FirFunctionCall, source: KtSourceElement): Boolean =
         element.typeArguments.isNotEmpty()
 
+    private const val MESSAGE = "Underscore type arguments cannot be annotated."
+
     override fun checkPsi(
         element: FirFunctionCall,
         source: KtPsiSourceElement,
@@ -38,7 +40,7 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
             for (annotation in typeReference.annotationEntries) {
                 reporter.reportOn(
                     annotation.toKtPsiSourceElement(), FirErrors.UNSUPPORTED,
-                    "annotations on an underscored type argument", context
+                    MESSAGE, context
                 )
             }
         }
@@ -60,7 +62,7 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
             for (annotation in annotations) {
                 reporter.reportOn(
                     source.buildChildSourceElement(annotation), FirErrors.UNSUPPORTED,
-                    "annotations on an underscored type argument", context
+                    MESSAGE, context
                 )
             }
         }

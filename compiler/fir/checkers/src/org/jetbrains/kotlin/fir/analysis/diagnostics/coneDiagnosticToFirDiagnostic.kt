@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDynamicUnsupportedChecker
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -204,7 +205,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
     is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source)
     is ConeNoInferTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(source, lowerType, upperType, false)
-    is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, "dynamic type")
+    is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, FirDynamicUnsupportedChecker.MESSAGE)
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }

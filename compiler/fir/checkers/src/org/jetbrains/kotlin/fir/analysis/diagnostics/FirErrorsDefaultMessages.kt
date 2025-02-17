@@ -818,7 +818,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     // # - The new diagnostic differs from the old FE's one
     override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         // Meta-errors
-        map.put(UNSUPPORTED, "Unsupported [{0}].", TO_STRING)
+        map.put(UNSUPPORTED, "{0}", TO_STRING)
         map.put(UNSUPPORTED_FEATURE, "{0}", LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED))
         map.put(UNSUPPORTED_SUSPEND_TEST, "'suspend' functions annotated with '@kotlin.test.Test' are unsupported.")
         map.put(NEW_INFERENCE_ERROR, "New inference error [{0}].", STRING)

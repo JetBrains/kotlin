@@ -46,7 +46,7 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
         reporter.reportOn(
             keyword,
             FirErrors.UNSUPPORTED,
-            "val or var on parameter in function type",
+            "Function type parameters cannot be 'val' or 'var'.",
             context
         )
     }
@@ -57,7 +57,7 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
             reporter.reportOn(
                 modifier.source,
                 FirErrors.UNSUPPORTED,
-                "modifier on parameter in function type",
+                "Function type parameters cannot have modifiers.",
                 context
             )
         }
@@ -81,7 +81,7 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
             reporter.reportOn(
                 ann,
                 FirErrors.UNSUPPORTED,
-                "annotation on parameter in function type",
+                "Function type parameters cannot have annotations.",
                 context
             )
         }

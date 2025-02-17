@@ -73,7 +73,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
                 reporter.reportOn(
                     expression.source,
                     FirErrors.UNSUPPORTED,
-                    "suspend function calls in a context of default parameter value",
+                    "Suspend function call in default parameter value is unsupported.",
                     context
                 )
             }
@@ -330,7 +330,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         context: CheckerContext,
     ) {
         if (symbol.callableId == StandardClassIds.Callables.coroutineContext) {
-            reporter.reportOn(expression.calleeReference.source, FirErrors.UNSUPPORTED, "Callable reference to suspend property", context)
+            reporter.reportOn(expression.calleeReference.source, FirErrors.UNSUPPORTED, "Callable reference to suspend property is unsupported.", context)
         }
     }
 }

@@ -76,10 +76,10 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                 containingDeclaration is FirRegularClassSymbol && containingDeclaration.classId == StandardClassIds.Array
     }
 
-    private fun ConeKotlinType.cannotBeReified(languageVersionSettings: LanguageVersionSettings) = when (this) {
+    private fun ConeKotlinType.cannotBeReified(languageVersionSettings: LanguageVersionSettings): Boolean = when (this) {
         is ConeCapturedType -> true
         is ConeDynamicType -> true
-        else -> isUnsupportedNothingAsReifiedOrInArray(languageVersionSettings)
+        else -> unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings) != null
     }
 
     private fun checkArgumentAndReport(

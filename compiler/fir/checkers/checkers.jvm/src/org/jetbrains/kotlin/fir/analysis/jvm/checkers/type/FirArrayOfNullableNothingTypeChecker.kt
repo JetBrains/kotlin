@@ -33,7 +33,7 @@ object FirArrayOfNullableNothingTypeChecker : FirResolvedTypeRefChecker(MppCheck
             if (lastContainingDeclaration !is FirTypeAlias ||
                 lastContainingDeclaration.expandedConeType?.isMalformedExpandedType(context, allowNullableNothing = false) == true
             ) {
-                reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "Array<Nothing?> isn't supported in JVM", context)
+                reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "'Array<Nothing?>' is not supported on the JVM.", context)
             }
         }
     }

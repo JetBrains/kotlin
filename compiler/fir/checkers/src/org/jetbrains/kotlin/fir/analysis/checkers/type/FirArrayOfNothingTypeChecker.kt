@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.isArrayOfNothing
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.unsupportedArrayOfNothingKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -24,8 +24,11 @@ object FirArrayOfNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
 
         /** Ignore vararg, see varargOfNothing.kt test */
         val isVararg = (context.containingDeclarations.lastOrNull() as? FirValueParameter)?.isVararg ?: false
-        if (!isVararg && fullyExpandedType.isArrayOfNothing(context.languageVersionSettings)) {
-            reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
+        if (!isVararg) {
+            val arrayOfNothingKind = fullyExpandedType.unsupportedArrayOfNothingKind(context.languageVersionSettings)
+            if (arrayOfNothingKind != null) {
+                reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "'${arrayOfNothingKind.representation}' is an invalid array type.", context)
+            }
         }
     }
 }

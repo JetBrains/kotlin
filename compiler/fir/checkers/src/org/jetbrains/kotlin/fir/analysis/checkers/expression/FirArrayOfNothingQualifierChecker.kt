@@ -30,8 +30,9 @@ object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(M
         reporter: DiagnosticReporter,
     ) {
         val fullyExpandedType = type.fullyExpandedType(context.session)
-        if (fullyExpandedType.isArrayOfNothing(context.languageVersionSettings)) {
-            reporter.reportOn(source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
+        val arrayOfNothingKind = fullyExpandedType.unsupportedArrayOfNothingKind(context.languageVersionSettings)
+        if (arrayOfNothingKind != null) {
+            reporter.reportOn(source, FirErrors.UNSUPPORTED, "Expression cannot have a type of '${arrayOfNothingKind.representation}'.", context)
         } else {
             for (typeArg in fullyExpandedType.typeArguments) {
                 val typeArgType = typeArg.type ?: continue
@@ -41,16 +42,21 @@ object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(M
     }
 }
 
-internal fun ConeKotlinType.isArrayOfNothing(languageVersionSettings: LanguageVersionSettings): Boolean {
-    if (!this.isArrayTypeOrNullableArrayType) return false
-    val typeParameterType = typeArguments.firstOrNull()?.type ?: return false
-    return typeParameterType.isUnsupportedNothingAsReifiedOrInArray(languageVersionSettings)
+internal fun ConeKotlinType.unsupportedArrayOfNothingKind(languageVersionSettings: LanguageVersionSettings): ArrayOfNothingKind? {
+    if (!this.isArrayTypeOrNullableArrayType) return null
+    val typeParameterType = typeArguments.firstOrNull()?.type ?: return null
+    return typeParameterType.unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings)
 }
 
-internal fun ConeKotlinType.isUnsupportedNothingAsReifiedOrInArray(languageVersionSettings: LanguageVersionSettings): Boolean {
+enum class ArrayOfNothingKind(val representation: String) {
+    ArrayOfNothing("Array<Nothing>"),
+    ArrayOfNullableNothing("Array<Nothing?>"),
+}
+
+internal fun ConeKotlinType.unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings: LanguageVersionSettings): ArrayOfNothingKind? {
     return when {
-        isNothing -> true
-        isNullableNothing -> !languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition)
-        else -> false
+        isNothing -> ArrayOfNothingKind.ArrayOfNothing
+        isNullableNothing && !languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition) -> ArrayOfNothingKind.ArrayOfNullableNothing
+        else -> null
     }
 }

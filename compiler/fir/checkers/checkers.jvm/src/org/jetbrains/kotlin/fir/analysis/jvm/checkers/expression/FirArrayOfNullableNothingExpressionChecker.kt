@@ -36,7 +36,7 @@ object FirArrayOfNullableNothingExpressionChecker : FirQualifiedAccessExpression
     ) {
         val fullyExpandedType = type.fullyExpandedType(context.session)
         if (fullyExpandedType.isArrayOfNullableNothing()) {
-            reporter.reportOn(source, FirErrors.UNSUPPORTED, "Array<Nothing?> isn't supported in JVM", context)
+            reporter.reportOn(source, FirErrors.UNSUPPORTED, "'Array<Nothing?>' is not supported on the JVM.", context)
         } else {
             for (typeArg in fullyExpandedType.typeArguments) {
                 val typeArgType = typeArg.type ?: continue
