@@ -222,6 +222,7 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
             CompilerMessageSeverity.EXCEPTION -> log.error(locMessage)
             CompilerMessageSeverity.ERROR,
             CompilerMessageSeverity.STRONG_WARNING,
+            CompilerMessageSeverity.FIXED_WARNING,
             CompilerMessageSeverity.WARNING,
             CompilerMessageSeverity.INFO,
             -> log.info(locMessage)

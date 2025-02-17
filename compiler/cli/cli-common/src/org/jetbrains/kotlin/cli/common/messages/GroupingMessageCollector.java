@@ -61,21 +61,21 @@ public class GroupingMessageCollector implements MessageCollector {
 
     @Override
     public boolean hasErrors() {
-        return delegate.hasErrors() || hasExplicitErrors() || (treatWarningsAsErrors && hasWarnings());
+        return delegate.hasErrors() || hasExplicitErrors() || (treatWarningsAsErrors && hasRegularWarnings());
     }
 
     private boolean hasExplicitErrors() {
         return groupedMessages.entries().stream().anyMatch(entry -> entry.getValue().severity.isError());
     }
 
-    private boolean hasWarnings() {
-        return groupedMessages.entries().stream().anyMatch(entry -> entry.getValue().severity.isWarning());
+    private boolean hasRegularWarnings() {
+        return groupedMessages.entries().stream().anyMatch(entry -> entry.getValue().severity.isRegularWarning());
     }
 
     public void flush() {
         boolean hasExplicitErrors = hasExplicitErrors();
 
-        if (treatWarningsAsErrors && !hasExplicitErrors && hasWarnings()) {
+        if (treatWarningsAsErrors && !hasExplicitErrors && hasRegularWarnings()) {
             report(CompilerMessageSeverity.ERROR, "warnings found and -Werror specified", null);
         }
 
