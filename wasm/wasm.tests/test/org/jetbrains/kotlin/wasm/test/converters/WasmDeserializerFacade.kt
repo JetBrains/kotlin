@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -95,7 +94,6 @@ class WasmDeserializerFacade(
         return IrBackendInput.WasmDeserializedFromKlibBackendInput(
             moduleInfo,
             irPluginContext = pluginContext,
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector),
             klib = inputArtifact.outputFile,
         )
     }

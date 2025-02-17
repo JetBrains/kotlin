@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -72,7 +71,6 @@ class NativeDeserializerFacade(
         return NativeDeserializedFromKlibBackendInput(
             moduleInfo,
             irPluginContext = pluginContext,
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector),
             klib = inputArtifact.outputFile,
         )
     }

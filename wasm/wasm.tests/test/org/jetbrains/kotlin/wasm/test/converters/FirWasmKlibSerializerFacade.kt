@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
@@ -51,6 +53,7 @@ class FirWasmKlibSerializerFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
         val outputFile = WasmEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         // TODO: consider avoiding repeated libraries resolution
@@ -61,7 +64,7 @@ class FirWasmKlibSerializerFacade(
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
-                inputArtifact.diagnosticReporter,
+                diagnosticReporter,
                 inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
                 libraries.map { it.library },
@@ -100,6 +103,6 @@ class FirWasmKlibSerializerFacade(
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
         testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile.path, moduleDescriptor, lib)
 
-        return BinaryArtifacts.KLib(outputFile, inputArtifact.diagnosticReporter)
+        return BinaryArtifacts.KLib(outputFile, diagnosticReporter)
     }
 }

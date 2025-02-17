@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
@@ -46,13 +48,14 @@ class JsKlibSerializerFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
         val outputFile = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         if (firstTimeCompilation) {
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
-                inputArtifact.diagnosticReporter,
+                diagnosticReporter,
                 inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
                 JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
@@ -90,6 +93,6 @@ class JsKlibSerializerFacade(
         }
         testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile.path, moduleDescriptor, lib)
 
-        return BinaryArtifacts.KLib(outputFile, inputArtifact.diagnosticReporter)
+        return BinaryArtifacts.KLib(outputFile, diagnosticReporter)
     }
 }

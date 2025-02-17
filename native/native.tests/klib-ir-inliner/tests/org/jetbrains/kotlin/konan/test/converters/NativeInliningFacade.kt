@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.inline.konan.nativeLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -33,17 +35,18 @@ class NativeInliningFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
         val phaseConfig = PhaseConfig()
         val transformedModule = PhaseEngine(
             phaseConfig,
             PhaserState(),
-            NativePreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration, inputArtifact.diagnosticReporter)
+            NativePreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration, diagnosticReporter)
         ).runPreSerializationLoweringPhases(
             nativeLoweringsOfTheFirstPhase,
             inputArtifact.irModuleFragment,
         )
 
-        return inputArtifact.copy(irModuleFragment = transformedModule)
+        return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = diagnosticReporter)
     }
 }
 

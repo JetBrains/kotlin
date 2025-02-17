@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticCollectorHolder
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -22,7 +24,7 @@ import org.jetbrains.kotlin.test.model.ResultingArtifact
 import java.io.File
 
 // IR backend (JVM, JS, Native, Wasm)
-abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
+abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>(), DiagnosticCollectorHolder {
     override val kind: BackendKind<IrBackendInput>
         get() = BackendKinds.IrBackend
 
@@ -52,8 +54,6 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
      */
     abstract val irMangler: KotlinMangler.IrMangler
 
-    abstract val diagnosticReporter: BaseDiagnosticsCollector
-
     sealed class JsIrBackendInput : IrBackendInput()
 
     data class JsIrAfterFrontendBackendInput(
@@ -71,8 +71,8 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
         val moduleInfo: IrModuleInfo,
         val klib: File,
         override val irPluginContext: IrPluginContext,
-        override val diagnosticReporter: BaseDiagnosticsCollector,
     ) : JsIrBackendInput() {
+        override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
 
@@ -100,9 +100,8 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
         val moduleInfo: IrModuleInfo,
         val klib: File,
         override val irPluginContext: IrPluginContext,
-        override val diagnosticReporter: BaseDiagnosticsCollector,
     ) : WasmBackendInput() {
-
+        override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
 
@@ -157,8 +156,8 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
         val moduleInfo: IrModuleInfo,
         val klib: File,
         override val irPluginContext: IrPluginContext,
-        override val diagnosticReporter: BaseDiagnosticsCollector,
     ) : NativeBackendInput() {
+        override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
 
