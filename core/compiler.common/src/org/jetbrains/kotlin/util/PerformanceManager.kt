@@ -12,6 +12,7 @@ import java.io.File
 import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
+import java.lang.management.ThreadMXBean
 import java.util.SortedMap
 import kotlin.collections.set
 
@@ -21,12 +22,13 @@ import kotlin.collections.set
  */
 abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presentableName: String) {
     private lateinit var thread: Thread
+    private lateinit var threadMXBean: ThreadMXBean
 
     init {
         initializeCurrentThread()
     }
 
-    private fun currentTime(): Time = Time(System.nanoTime())
+    private fun currentTime(): Time = Time(System.nanoTime(), threadMXBean.currentThreadUserTime, threadMXBean.currentThreadCpuTime)
 
     private var currentPhaseType: PhaseType = PhaseType.Initialization
     private var phaseStartTime: Time? = currentTime()
@@ -61,6 +63,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     fun initializeCurrentThread() {
         thread = Thread.currentThread()
+        threadMXBean = ManagementFactory.getThreadMXBean().also { it.isThreadCpuTimeEnabled = true }
     }
 
     val unitStats: UnitStats by lazy {
