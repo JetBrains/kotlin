@@ -86,8 +86,8 @@ kotlin {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
-                        languageVersion = KotlinVersion.KOTLIN_2_0
-                        apiVersion = KotlinVersion.KOTLIN_2_0
+                        languageVersion = KotlinVersion.KOTLIN_2_2
+                        apiVersion = KotlinVersion.KOTLIN_2_2
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(

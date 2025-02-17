@@ -155,8 +155,8 @@ kotlin {
 
 @Suppress("DEPRECATION")
 tasks.withType<KotlinCompile<*>>().configureEach {
-    kotlinOptions.languageVersion = "2.0"
-    kotlinOptions.apiVersion = "2.0"
+    kotlinOptions.languageVersion = "2.2"
+    kotlinOptions.apiVersion = "2.2"
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xexpect-actual-classes",
