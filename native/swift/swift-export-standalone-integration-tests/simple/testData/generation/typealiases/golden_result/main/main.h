@@ -67,6 +67,8 @@ uintptr_t __root___OPEN_CLASS_init_allocate();
 
 void __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
+void __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(NSNumber * (^block)(void));
+
 int32_t __root___increment__TypesOfArguments__Swift_Int32__(int32_t integer);
 
 uintptr_t typealiases_Foo_init_allocate();

@@ -234,6 +234,12 @@ public fun __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(_
     kotlin.native.internal.initInstance(____kt, OPEN_CLASS())
 }
 
+@ExportedBridge("__root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__")
+public fun __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
+    val __block = interpretObjCPointer<Function0<kotlin.Unit>>(block)
+    consume_closure(__block)
+}
+
 @ExportedBridge("__root___increment__TypesOfArguments__Swift_Int32__")
 public fun __root___increment__TypesOfArguments__Swift_Int32__(integer: Int): Int {
     val __integer = integer

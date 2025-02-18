@@ -70,7 +70,10 @@ typealias inhertanceSingleProto = INHERITANCE_SINGLE_PROTO
 object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
 typealias objectWithInterfaceInheritance = OBJECT_WITH_INTERFACE_INHERITANCE
 
+// FILE: functional_types.kt
 
+typealias closure = () -> Unit
+fun consume_closure(block: closure): Unit = TODO()
 
 // FILE: should_be_ignored.kt
 import typealiases.Foo
@@ -118,8 +121,6 @@ data object DATA_OBJECT_WITH_PACKAGE {
     var variable: Int = 5
 }
 typealias dataObjectWithPackage = DATA_OBJECT_WITH_PACKAGE
-
-typealias closure = () -> Unit
 
 typealias nullable_primitive = Int?
 typealias nullable_class = Foo?

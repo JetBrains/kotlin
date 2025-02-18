@@ -7,6 +7,7 @@ public typealias DefaultInteger = main.RegularInteger
 public typealias RegularInteger = Swift.Int32
 public typealias ShouldHaveNoAnnotation = Swift.Int32
 public typealias abstractClss = main.ABSTRACT_CLASS
+public typealias closure = () -> Swift.Void
 public typealias dataClass = main.DATA_CLASS
 public typealias dataClassWithRef = main.DATA_CLASS_WITH_REF
 public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
@@ -251,6 +252,17 @@ open class SEALED: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRef: __externalRCRef)
     }
+}
+public func consume_closure(
+    block: @escaping main.closure
+) -> Swift.Void {
+    return __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__({
+        let originalBlock = block
+        return {
+            originalBlock()
+            return 0
+        }
+    }())
 }
 public func increment(
     integer: main.DefaultInteger
