@@ -364,7 +364,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 )
             }
 
-            testClass<AbstractLLFirScriptDiagnosticCompilerTestDataTest> {
+            testClass<AbstractLLScriptWithCustomDefDiagnosticsTest> {
                 scriptDiagnosticsInit()
             }
 
