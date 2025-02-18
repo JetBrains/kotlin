@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -51,15 +52,15 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
     abstract fun getFunctionSignature(function: IrSimpleFunction): Any
 
     /**
-     * Usually just returns [irFunction]'s value parameters, but special transformations may be required if,
+     * Usually just returns [irFunction]'s parameters, but special transformations may be required if,
      * for example, we're dealing with an external function, and that function contains a vararg,
      * which we must extract and convert to an array.
      */
-    protected open fun extractValueParameters(
+    protected open fun extractParameters(
         blockBodyBuilder: IrBlockBodyBuilder,
         irFunction: IrSimpleFunction,
         bridge: IrSimpleFunction
-    ): List<IrValueDeclaration> = irFunction.valueParameters
+    ): List<IrValueDeclaration> = irFunction.parameters
 
     // Should dispatch receiver type be casted inside a bridge.
     open val shouldCastDispatchReceiver: Boolean = false
@@ -155,33 +156,32 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
 
         irFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
-                val valueParameters = extractValueParameters(this, irFunction, bridge)
+                val extractedParameters = extractParameters(this, irFunction, bridge)
                 if (specialMethodInfo != null) {
-                    valueParameters.take(specialMethodInfo.argumentsToCheck).forEachIndexed { index, valueDeclaration ->
-                        +irIfThen(
-                            context.irBuiltIns.unitType,
-                            irNot(irIs(irGet(valueDeclaration), delegateTo.valueParameters[index].type)),
-                            irReturn(specialMethodInfo.defaultValueGenerator(irFunction))
-                        )
-                    }
+                    extractedParameters
+                        .map { it as? IrValueParameter ?: compilationException("Expected a value parameter", it) }
+                        .filter { it.kind != IrParameterKind.DispatchReceiver }
+                        .take(specialMethodInfo.argumentsToCheck)
+                        .forEach { parameter ->
+                            +irIfThen(
+                                context.irBuiltIns.unitType,
+                                irNot(irIs(irGet(parameter), delegateTo.parameters[parameter.indexInParameters].type)),
+                                irReturn(specialMethodInfo.defaultValueGenerator(irFunction))
+                            )
+                        }
                 }
 
                 val call = irCall(delegateTo.symbol)
-                val dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
+                for (delegateParam in delegateTo.parameters) {
+                    if ((delegateTo.isSuspend xor irFunction.isSuspend) && delegateParam.indexInParameters == extractedParameters.lastIndex) {
+                        break
+                    }
 
-                call.dispatchReceiver = if (shouldCastDispatchReceiver)
-                    irCastIfNeeded(dispatchReceiver, delegateTo.dispatchReceiverParameter!!.type)
-                else
-                    dispatchReceiver
-
-                irFunction.extensionReceiverParameter?.let {
-                    call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
-                }
-
-                val toTake = valueParameters.size - if (call.isSuspend xor irFunction.isSuspend) 1 else 0
-
-                valueParameters.subList(0, toTake).forEachIndexed { i, valueParameter ->
-                    call.putValueArgument(i, irCastIfNeeded(irGet(valueParameter), delegateTo.valueParameters[i].type))
+                    var argument: IrExpression = irGet(extractedParameters[delegateParam.indexInParameters])
+                    if (delegateParam.kind != IrParameterKind.DispatchReceiver || shouldCastDispatchReceiver) {
+                        argument = irCastIfNeeded(argument, delegateParam.type)
+                    }
+                    call.arguments[delegateParam] = argument
                 }
 
                 +irReturn(call)

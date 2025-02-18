@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isVararg
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<JsIrBackendContext>(context) {
 
@@ -45,27 +48,27 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
             else -> JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
         }
 
-    override fun extractValueParameters(
+    override fun extractParameters(
         blockBodyBuilder: IrBlockBodyBuilder,
         irFunction: IrSimpleFunction,
         bridge: IrSimpleFunction
     ): List<IrValueDeclaration> {
 
         if (!bridge.isEffectivelyExternal())
-            return super.extractValueParameters(blockBodyBuilder, irFunction, bridge)
+            return super.extractParameters(blockBodyBuilder, irFunction, bridge)
 
-        val varargIndex = bridge.valueParameters.indexOfFirst { it.varargElementType != null }
+        val varargIndex = bridge.parameters.indexOfFirst { it.isVararg }
 
         if (varargIndex == -1)
-            return super.extractValueParameters(blockBodyBuilder, irFunction, bridge)
+            return super.extractParameters(blockBodyBuilder, irFunction, bridge)
 
         return blockBodyBuilder.run {
 
             // The number of parameters after the vararg
-            val numberOfTrailingParameters = bridge.valueParameters.size - (varargIndex + 1)
+            val numberOfTrailingParameters = bridge.parameters.size - (varargIndex + 1)
 
             val getTotalNumberOfArguments = irCall(jsArrayLength).apply {
-                putValueArgument(0, irCall(jsArguments))
+                arguments[0] = irCall(jsArguments)
                 type = context.irBuiltIns.intType
             }
 
@@ -91,7 +94,7 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
 
             val trailingParametersVars = createVarsForTrailingParameters(bridge, numberOfTrailingParameters, firstTrailingParameterIndexVar)
 
-            irFunction.valueParameters + varargArrayVar + trailingParametersVars
+            irFunction.parameters + varargArrayVar + trailingParametersVars
         }
     }
 
@@ -99,15 +102,15 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
         bridge: IrSimpleFunction,
         numberOfTrailingParameters: Int,
         firstTrailingParameterIndexVar: Lazy<IrVariable>
-    ) = bridge.valueParameters.takeLast(numberOfTrailingParameters).mapIndexed { index, trailingParameter ->
+    ) = bridge.parameters.takeLast(numberOfTrailingParameters).mapIndexed { index, trailingParameter ->
         val parameterIndex = if (index == 0)
             irGet(firstTrailingParameterIndexVar.value)
         else
             calculator.add(irGet(firstTrailingParameterIndexVar.value), irInt(index))
         createTmpVariable(
             irCall(jsArrayGet).apply {
-                putValueArgument(0, irCall(jsArguments))
-                putValueArgument(1, parameterIndex)
+                arguments[0] = irCall(jsArguments)
+                arguments[1] = parameterIndex
             },
             nameHint = trailingParameter.name.asString(),
             irType = trailingParameter.type
@@ -120,11 +123,12 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
         numberOfTrailingParameters: Int,
         firstTrailingParameterIndexVar: Lazy<IrVariable>
     ): IrVariable {
-        val varargElement = bridge.valueParameters[varargIndex]
+        val varargElement = bridge.parameters[varargIndex]
         val sliceIntrinsicArgs = mutableListOf<IrExpression>(irCall(jsArguments))
         var sliceIntrinsic = jsArrayLike2Array
         if (varargIndex != 0 || numberOfTrailingParameters > 0) {
-            sliceIntrinsicArgs.add(irInt(varargIndex))
+            val nonDispatchVarargIndex = varargIndex - if (bridge.dispatchReceiverParameter != null) 1 else 0
+            sliceIntrinsicArgs.add(irInt(nonDispatchVarargIndex))
             sliceIntrinsic = jsSliceArrayLikeFromIndex
         }
         if (numberOfTrailingParameters > 0) {
@@ -134,7 +138,7 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
 
         val varargCopiedAsArray = irCall(sliceIntrinsic).apply {
             typeArguments[0] = varargElement.varargElementType!!
-            sliceIntrinsicArgs.forEachIndexed(this::putValueArgument)
+            arguments.assignFrom(sliceIntrinsicArgs)
         }.let { arrayExpr ->
             val arrayInfo =
                 InlineClassArrayInfo(this@JsBridgesConstruction.context, varargElement.varargElementType!!, varargElement.type)
@@ -142,7 +146,7 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
             if (primitiveType != null) {
                 arrayInfo.boxArrayIfNeeded(
                     irCall(primitiveToLiteralConstructor.getValue(primitiveType)).apply {
-                        putValueArgument(0, arrayExpr)
+                        arguments[0] = arrayExpr
                         type = varargElement.type
                     }
                 )
