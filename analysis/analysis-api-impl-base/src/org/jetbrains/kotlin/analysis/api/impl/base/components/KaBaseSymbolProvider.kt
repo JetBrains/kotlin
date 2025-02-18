@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
@@ -47,7 +48,10 @@ abstract class KaBaseSymbolProvider<T : KaSession> : KaBaseSessionComponent<T>()
     protected inline fun <T : PsiElement, R> T.createPsiBasedSymbolWithValidityAssertion(builder: () -> R): R = withValidityAssertion {
         with(analysisSession) {
             if (!canBeAnalysed() && !Registry.`is`("kotlin.analysis.unrelatedSymbolCreation.allowed", false)) {
-                throw KaBaseIllegalPsiException(this, this@createPsiBasedSymbolWithValidityAssertion)
+                // TODO: drop this suppression for libraries as soon as KT-74960 is fixed
+                if (useSiteModule !is KaLibrarySourceModule) {
+                    throw KaBaseIllegalPsiException(this, this@createPsiBasedSymbolWithValidityAssertion)
+                }
             }
         }
 
