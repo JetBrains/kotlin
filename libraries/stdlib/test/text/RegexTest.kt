@@ -55,6 +55,24 @@ class RegexTest {
         assertEquals(null, p.find(input, input.length))
     }
 
+    @Test fun matchLazyResult() {
+        val p = "\\d+".toRegex()
+        val input = "123"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
+    @Test fun matchAlternateResult() {
+        val p = ".|\\d+".toRegex()
+        val input = "123"
+
+        assertTrue(input matches p)
+        assertTrue(p matches input)
+        assertTrue(p in input)
+    }
+
     @Test fun matchEscapeSurrogatePair() {
         if (!supportsEscapeAnyCharInRegex) return
 
@@ -330,7 +348,6 @@ class RegexTest {
         assertEquals(listOf("test", "", "Line"), matchedValues)
     }
 
-
     @Test fun matchEntire() {
         val regex = "(\\d)(\\w)".toRegex()
 
@@ -339,6 +356,44 @@ class RegexTest {
             assertEquals("3c", m.value)
             assertEquals(3, m.groups.size)
             assertEquals(listOf("3c", "3", "c"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+    }
+
+    @Test fun matchEntireAnchored() {
+        val regex = "^(?:a|b)$".toRegex()
+
+        assertNull(regex.matchEntire("ac"))
+        assertNull(regex.matchEntire("ab"))
+        assertNotNull(regex.matchEntire("a")) { m ->
+            assertEquals("a", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("a"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+        assertNotNull(regex.matchEntire("b")) { m ->
+            assertEquals("b", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("b"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+    }
+
+    @Test fun matchEntireSeeminglyAnchored() {
+        val regex = "^a|b$".toRegex()
+
+        assertNull(regex.matchEntire("ac"))
+        assertNull(regex.matchEntire("ab"))
+        assertNotNull(regex.matchEntire("a")) { m ->
+            assertEquals("a", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("a"), m.groups.map { it!!.value })
+            assertNull(m.next())
+        }
+        assertNotNull(regex.matchEntire("b")) { m ->
+            assertEquals("b", m.value)
+            assertEquals(1, m.groups.size)
+            assertEquals(listOf("b"), m.groups.map { it!!.value })
             assertNull(m.next())
         }
     }
