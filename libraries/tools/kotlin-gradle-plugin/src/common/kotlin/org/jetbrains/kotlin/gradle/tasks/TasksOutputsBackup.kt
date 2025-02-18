@@ -41,7 +41,7 @@ internal class TaskOutputsBackup(
         // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
-            if (outputPath.isDirectory && !outputPath.isEmptyDirectory) {
+            if (outputPath.isDirectory) {
                 val snapshotFile = File(snapshotsDir.get().asFile, index.asSnapshotArchiveName)
                 logger.debug("Packing $outputPath as $snapshotFile to make a backup")
                 compressDirectoryToZip(
@@ -53,8 +53,8 @@ internal class TaskOutputsBackup(
                 val markerFile = File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile)
                 markerFile.parentFile.mkdirs()
                 markerFile.createNewFile()
-            } else {
-                val snapshotFile = snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile }
+            } else { // it's not a directory, but it exists -> it's a file
+                val snapshotFile = snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile }.get()
                 logger.debug("Copying $outputPath as $snapshotFile to make a backup")
                 fileSystemOperations.copy { spec ->
                     spec.from(outputPath)
@@ -71,11 +71,11 @@ internal class TaskOutputsBackup(
 
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             val snapshotDir = snapshotsDir.get().file(index.asSnapshotDirectoryName).asFile
-            if (snapshotDir.isDirectory) {
+            if (snapshotDir.isFile) {
                 logger.debug("Copying files from $snapshotDir into ${outputPath.parentFile} to restore from backup")
                 fileSystemOperations.copy { spec ->
                     spec.from(snapshotDir)
-                    spec.into(outputPath.parentFile)
+                    spec.into(outputPath)
                 }
             } else if (snapshotsDir.get().file(index.asNotExistsMarkerFile).asFile.exists()) {
                 // do nothing
