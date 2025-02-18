@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.AbstractIrCustomScriptCodegenTest
-import org.jetbrains.kotlin.codegen.AbstractKaptModeBytecodeShapeTest
 import org.jetbrains.kotlin.codegen.fir.*
 import org.jetbrains.kotlin.codegen.ir.AbstractIrCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrScriptCodegenTest
@@ -112,10 +111,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("psi", testMethod = "doParsingTest", pattern = "^(.*)\\.kts?$")
                 model("parseCodeFragment/expression", testMethod = "doExpressionCodeFragmentParsingTest", extension = "kt")
                 model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
-            }
-
-            testClass<AbstractKaptModeBytecodeShapeTest> {
-                model("codegen/kapt", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractLoadJavaTest> {
