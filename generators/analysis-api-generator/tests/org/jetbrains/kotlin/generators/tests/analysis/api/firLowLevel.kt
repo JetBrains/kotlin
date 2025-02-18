@@ -418,7 +418,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             modelInit()
         }
 
-        testClass<AbstractLLFirBlackBoxCodegenBasedTest> {
+        testClass<AbstractLLBlackBoxTest> {
             model(
                 "codegen/box",
                 excludeDirs = listOf(
@@ -438,7 +438,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             )
         }
 
-        testClass<AbstractLLFirBlackBoxCodegenBasedTest>(suiteTestClassName = "LLFirBlackBoxModernJdkCodegenBasedTestGenerated") {
+        testClass<AbstractLLBlackBoxTest>(suiteTestClassName = "LLFirBlackBoxModernJdkCodegenBasedTestGenerated") {
             model("codegen/boxModernJdk")
         }
 
