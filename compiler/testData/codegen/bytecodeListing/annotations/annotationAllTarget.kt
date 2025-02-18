@@ -20,6 +20,4 @@ object O {
     @all:Default @all:Prop @all:Function var y = 0
         get() = field
         set(param) { field = param }
-
-    @all:Default @all:Prop @all:Function val z by lazy { 0 }
 }

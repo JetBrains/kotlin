@@ -143,15 +143,15 @@ class My(
         get() = 6
         set(param) {}
 
-    @all:ParamProperty
-    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:ParamField<!>
-    @all:PropertyField
-    @all:ParamPropertyField
-    @all:GetterSetter
-    @all:ParamGetter
-    @all:ParamGetterSetter
-    @all:Default
-    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:Inapplicable<!>
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamProperty
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamField
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:PropertyField
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamPropertyField
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:GetterSetter
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamGetter
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamGetterSetter
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:Inapplicable
     val delegatedVal: Int by lazy { 7 }
 
     @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default

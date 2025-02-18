@@ -326,6 +326,12 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                                     FirErrors.INAPPLICABLE_ALL_TARGET,
                                     context
                                 )
+                            } else if (annotated.delegate != null) {
+                                reporter.reportOn(
+                                    annotation.source,
+                                    FirErrors.INAPPLICABLE_ALL_TARGET,
+                                    context
+                                )
                             } else if (KotlinTarget.PROPERTY !in applicableTargets) {
                                 reporter.reportOn(
                                     annotation.source,

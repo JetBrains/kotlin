@@ -1193,7 +1193,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations can only be applied to primary constructor parameters.")
         map.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''.", TO_STRING)
         map.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration.")
-        map.put(INAPPLICABLE_ALL_TARGET, "'@all:' annotations can only be applied to non-local properties.")
+        map.put(INAPPLICABLE_ALL_TARGET, "'@all:' annotations cannot be applied to local or delegated properties.")
         map.put(
             INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION,
             "Multiple annotation syntax with '@all:' use-site target is forbidden, use '@all:A1 @all:A2 ...' instead."
