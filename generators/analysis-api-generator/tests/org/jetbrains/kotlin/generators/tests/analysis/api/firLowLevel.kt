@@ -368,7 +368,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 scriptDiagnosticsInit()
             }
 
-            testClass<AbstractLLFirPreresolvedReversedScriptDiagnosticCompilerTestDataTest>() {
+            testClass<AbstractLLReversedScriptWithCustomDefDiagnosticsTest>() {
                 scriptDiagnosticsInit()
             }
         }
