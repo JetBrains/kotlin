@@ -30,14 +30,21 @@ public class GroupingMessageCollector implements MessageCollector {
     private final MessageCollector delegate;
     private final boolean treatWarningsAsErrors;
     private final boolean reportAllWarnings;
+    private final boolean suppressVersionWarnings;
 
     // Note that the key in this map can be null
     private final Multimap<CompilerMessageSourceLocation, Message> groupedMessages = LinkedHashMultimap.create();
 
-    public GroupingMessageCollector(@NotNull MessageCollector delegate, boolean treatWarningsAsErrors, boolean reportAllWarnings) {
+    public GroupingMessageCollector(
+            @NotNull MessageCollector delegate,
+            boolean treatWarningsAsErrors,
+            boolean reportAllWarnings,
+            boolean suppressVersionWarnings
+    ) {
         this.delegate = delegate;
         this.treatWarningsAsErrors = treatWarningsAsErrors;
         this.reportAllWarnings = reportAllWarnings;
+        this.suppressVersionWarnings = suppressVersionWarnings;
     }
 
     @Override
@@ -83,7 +90,12 @@ public class GroupingMessageCollector implements MessageCollector {
                 CollectionsKt.sortedWith(groupedMessages.keySet(), Comparator.nullsFirst(CompilerMessageLocationComparator.INSTANCE));
         for (CompilerMessageSourceLocation location : sortedKeys) {
             for (Message message : groupedMessages.get(location)) {
-                if (!hasExplicitErrors || reportAllWarnings || message.severity.isError() || message.severity == CompilerMessageSeverity.STRONG_WARNING) {
+                boolean isDeprecatedLVMessage = message.message.matches("Language version .* is deprecated and its support will be removed in a future version of Kotlin");
+                if (
+                    !hasExplicitErrors || reportAllWarnings || message.severity.isError() ||
+                    message.severity == CompilerMessageSeverity.STRONG_WARNING ||
+                    isDeprecatedLVMessage && !suppressVersionWarnings
+                ) {
                     delegate.report(message.severity, message.message, message.location);
                 }
             }
