@@ -103,10 +103,16 @@ class FromZipIrLibraryImpl(zipped: IrLibraryLayoutImpl, zipFileSystem: FileSyste
 fun KotlinLibraryLayoutImpl.extract(file: File): File = extract(this.klib, file)
 
 private fun extract(zipFile: File, file: File) = zipFile.withZipFileSystem { zipFileSystem ->
-    val temporary = org.jetbrains.kotlin.konan.file.createTempFile(file.name)
-    zipFileSystem.file(file).copyTo(temporary)
-    temporary.deleteOnExit()
-    temporary
+    val innerFile = zipFileSystem.file(file)
+    if (innerFile.exists) {
+        val temporary = org.jetbrains.kotlin.konan.file.createTempFile(file.name)
+        innerFile.copyTo(temporary)
+        temporary.deleteOnExit()
+        temporary
+    } else {
+        // return deliberately nonexistent file name zipFile.name + ! + file.name
+        File(zipFile.path + "!" + file.path)
+    }
 }
 
 fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = extractDir(this.klib, directory)
@@ -154,6 +160,8 @@ class ExtractingIrLibraryImpl(val zipped: IrLibraryLayoutImpl) :
     override val irFiles: File by lazy { zipped.extract(zipped.irFiles) }
 
     override val irDebugInfo: File by lazy { zipped.extract(zipped.irDebugInfo) }
+
+    override val irFileEntries: File by lazy { zipped.extract(zipped.irFileEntries) }
 }
 
 internal fun zippedKotlinLibraryChecks(klibFile: File) {

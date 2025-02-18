@@ -51,6 +51,7 @@ class JvmIrSerializerSession(
 
         serializeAuxTables(proto)
         proto.fileFacadeFqName = fileClassFqName.asString()
+        protoIrFileEntryArray.forEach(proto::addFileEntry)
 
         return proto.build()
     }
@@ -64,6 +65,7 @@ class JvmIrSerializerSession(
         }
         serializeAuxTables(proto)
         proto.fileFacadeFqName = fileClassFqName.asString()
+        protoIrFileEntryArray.forEach(proto::addFileEntry)
 
         return proto.build()
     }

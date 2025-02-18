@@ -704,6 +704,20 @@ public final class JvmIr {
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getFileFacadeFqNameBytes();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry> 
+        getFileEntryList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+     */
+    org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+     */
+    int getFileEntryCount();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.jvm.serialization.proto.ClassOrFile}
@@ -811,6 +825,14 @@ public final class JvmIr {
               fileFacadeFqName_ = bs;
               break;
             }
+            case 66: {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+                fileEntry_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry>();
+                mutable_bitField0_ |= 0x00000080;
+              }
+              fileEntry_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -836,6 +858,9 @@ public final class JvmIr {
         }
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
           debugInfo_ = debugInfo_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+          fileEntry_ = java.util.Collections.unmodifiableList(fileEntry_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -1103,6 +1128,41 @@ public final class JvmIr {
       }
     }
 
+    public static final int FILE_ENTRY_FIELD_NUMBER = 8;
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry> fileEntry_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry> getFileEntryList() {
+      return fileEntry_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder> 
+        getFileEntryOrBuilderList() {
+      return fileEntry_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+     */
+    public int getFileEntryCount() {
+      return fileEntry_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry(int index) {
+      return fileEntry_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder getFileEntryOrBuilder(
+        int index) {
+      return fileEntry_.get(index);
+    }
+
     private void initFields() {
       declaration_ = java.util.Collections.emptyList();
       type_ = java.util.Collections.emptyList();
@@ -1111,6 +1171,7 @@ public final class JvmIr {
       body_ = java.util.Collections.emptyList();
       debugInfo_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       fileFacadeFqName_ = "";
+      fileEntry_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1146,6 +1207,12 @@ public final class JvmIr {
           return false;
         }
       }
+      for (int i = 0; i < getFileEntryCount(); i++) {
+        if (!getFileEntry(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -1173,6 +1240,9 @@ public final class JvmIr {
       }
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeBytes(7, getFileFacadeFqNameBytes());
+      }
+      for (int i = 0; i < fileEntry_.size(); i++) {
+        output.writeMessage(8, fileEntry_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -1220,6 +1290,10 @@ public final class JvmIr {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeBytesSize(7, getFileFacadeFqNameBytes());
+      }
+      for (int i = 0; i < fileEntry_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(8, fileEntry_.get(i));
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -1329,6 +1403,8 @@ public final class JvmIr {
         bitField0_ = (bitField0_ & ~0x00000020);
         fileFacadeFqName_ = "";
         bitField0_ = (bitField0_ & ~0x00000040);
+        fileEntry_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -1386,6 +1462,11 @@ public final class JvmIr {
           to_bitField0_ |= 0x00000001;
         }
         result.fileFacadeFqName_ = fileFacadeFqName_;
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          fileEntry_ = java.util.Collections.unmodifiableList(fileEntry_);
+          bitField0_ = (bitField0_ & ~0x00000080);
+        }
+        result.fileEntry_ = fileEntry_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -1457,6 +1538,16 @@ public final class JvmIr {
           fileFacadeFqName_ = other.fileFacadeFqName_;
           
         }
+        if (!other.fileEntry_.isEmpty()) {
+          if (fileEntry_.isEmpty()) {
+            fileEntry_ = other.fileEntry_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+          } else {
+            ensureFileEntryIsMutable();
+            fileEntry_.addAll(other.fileEntry_);
+          }
+          
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -1487,6 +1578,12 @@ public final class JvmIr {
         }
         for (int i = 0; i < getBodyCount(); i++) {
           if (!getBody(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getFileEntryCount(); i++) {
+          if (!getFileEntry(i).isInitialized()) {
             
             return false;
           }
@@ -2272,6 +2369,131 @@ public final class JvmIr {
   bitField0_ |= 0x00000040;
         fileFacadeFqName_ = value;
         
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry> fileEntry_ =
+        java.util.Collections.emptyList();
+      private void ensureFileEntryIsMutable() {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+          fileEntry_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry>(fileEntry_);
+          bitField0_ |= 0x00000080;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry> getFileEntryList() {
+        return java.util.Collections.unmodifiableList(fileEntry_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public int getFileEntryCount() {
+        return fileEntry_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry(int index) {
+        return fileEntry_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder setFileEntry(
+          int index, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFileEntryIsMutable();
+        fileEntry_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder setFileEntry(
+          int index, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder builderForValue) {
+        ensureFileEntryIsMutable();
+        fileEntry_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder addFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFileEntryIsMutable();
+        fileEntry_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder addFileEntry(
+          int index, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFileEntryIsMutable();
+        fileEntry_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder addFileEntry(
+          org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder builderForValue) {
+        ensureFileEntryIsMutable();
+        fileEntry_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder addFileEntry(
+          int index, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder builderForValue) {
+        ensureFileEntryIsMutable();
+        fileEntry_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder addAllFileEntry(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry> values) {
+        ensureFileEntryIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, fileEntry_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder clearFileEntry() {
+        fileEntry_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 8;</code>
+       */
+      public Builder removeFileEntry(int index) {
+        ensureFileEntryIsMutable();
+        fileEntry_.remove(index);
+
         return this;
       }
 

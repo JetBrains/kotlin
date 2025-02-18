@@ -134,7 +134,8 @@ private class LibraryDeserializer(
             val packageFQN = fileReader.deserializeFqName(proto.fqNameList)
             packageName = AbiCompoundName(packageFQN)
 
-            val fileName = if (proto.hasFileEntry() && proto.fileEntry.hasName()) proto.fileEntry.name else "<unknown>"
+            val fileEntry = library.fileEntry(proto, fileIndex)
+            val fileName = if (fileEntry.hasName()) fileEntry.name else "<unknown>"
 
             val fileSignature = FileSignature(
                 id = Any(), // Just an unique object.

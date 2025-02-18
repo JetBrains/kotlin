@@ -158,6 +158,9 @@ open class IrFileSerializer(
     private val protoStringMap = hashMapOf<String, Int>()
     protected val protoStringArray = arrayListOf<String>()
 
+    private val protoIrFileEntryMap = hashMapOf<ProtoFileEntryDeduplicationKey, Int>()
+    protected val protoIrFileEntryArray = arrayListOf<ProtoFileEntry>()
+
     // The same signature could be used multiple times in a file
     // so use this index to store signature only once.
     private val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
@@ -428,13 +431,13 @@ open class IrFileSerializer(
         val nullability: SimpleTypeNullability?,
         val arguments: List<IrTypeArgumentDeduplicationKey>?,
         val annotations: List<IrConstructorCall>,
-        val abbreviation: IrTypeAbbreviation?
+        val abbreviation: IrTypeAbbreviation?,
     )
 
     private data class IrTypeArgumentDeduplicationKey(
         val kind: IrTypeArgumentKind,
         val variance: Variance?,
-        val type: IrTypeDeduplicationKey?
+        val type: IrTypeDeduplicationKey?,
     )
 
     private val IrType.toIrTypeDeduplicationKey: IrTypeDeduplicationKey
@@ -512,7 +515,7 @@ open class IrFileSerializer(
 
         val proto = ProtoInlinedFunctionBlock.newBuilder()
         inlinedFunctionBlock.inlinedFunctionSymbol?.let { proto.setInlinedFunctionSymbol(serializeIrSymbol(it)) }
-        proto.inlinedFunctionFileEntry = serializeFileEntry(inlinedFunctionBlock.inlinedFunctionFileEntry)
+        proto.inlinedFunctionFileEntryId = serializeFileEntryId(inlinedFunctionBlock.inlinedFunctionFileEntry)
         proto.base = serializeBlock(inlinedFunctionBlock)
         proto.inlinedFunctionStartOffset = inlinedFunctionBlock.inlinedFunctionStartOffset
         proto.inlinedFunctionEndOffset = inlinedFunctionBlock.inlinedFunctionEndOffset
@@ -641,7 +644,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrLocalDelegatedPropertyReference(
-        callable: IrLocalDelegatedPropertyReference
+        callable: IrLocalDelegatedPropertyReference,
     ): ProtoLocalDelegatedPropertyReference {
         val proto = ProtoLocalDelegatedPropertyReference.newBuilder()
             .setDelegate(serializeIrSymbol(callable.delegate))
@@ -1379,6 +1382,22 @@ open class IrFileSerializer(
 
 // ---------- Top level ------------------------------------------------------
 
+    // This class is needed solely to have generated `equals()` and `hashCode()` for `FileEntry`, to compare objects by value.
+    // For correct deduplication, it must have the same fields as `FileEntry` in `KotlinIr.proto`.
+    // TODO: KT-74258: bump Protobuf version to >3.x to have generated `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`
+    data class ProtoFileEntryDeduplicationKey(
+        val name: String,
+        val lineStartOffsetList: List<Int>,
+    )
+
+    private fun serializeFileEntryId(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): Int {
+        val proto = serializeFileEntry(entry, includeLineStartOffsets)
+        return protoIrFileEntryMap.getOrPut(ProtoFileEntryDeduplicationKey(proto.name, proto.lineStartOffsetList)) {
+            protoIrFileEntryArray.add(proto)
+            protoIrFileEntryArray.size - 1
+        }
+    }
+
     private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry =
         ProtoFileEntry.newBuilder()
             .setName(entry.matchAndNormalizeFilePath())
@@ -1484,12 +1503,13 @@ open class IrFileSerializer(
             proto.addDeclarationId(sigIndex)
         }
 
-        proto.setFileEntry(
-            serializeFileEntry(
-                file.fileEntry,
-                includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
-            )
-        )
+        val includeLineStartOffsets = !(settings.publicAbiOnly && protoBodyArray.isEmpty())
+        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
+            // KLIBs with ABI version >= 2.2.0 have `fileEntries.knf` file with `file entries` table.
+            proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
+        } else {
+            proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
+        }
 
         // TODO: is it Konan specific?
 
@@ -1514,6 +1534,7 @@ open class IrFileSerializer(
             declarations = IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrMemoryStringWriter(protoDebugInfoArray).writeIntoMemory(),
             backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
+            fileEntries = IrMemoryArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory(),
         )
     }
 

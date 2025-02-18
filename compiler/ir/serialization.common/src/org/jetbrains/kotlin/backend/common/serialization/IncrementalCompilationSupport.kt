@@ -27,6 +27,7 @@ class ICData(val icData: List<SerializedIrFile>, val containsErrorCode: Boolean)
 
 class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override val hasIr get() = true
+    override val hasFileEntriesTable get() = true
 
     private inline fun <K, R : IrTableReader<K>> Array<R?>.itemBytes(fileIndex: Int, key: K, factory: () -> R): ByteArray {
         val reader = this[fileIndex] ?: factory().also { this[fileIndex] = it }
@@ -52,6 +53,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     private val indexedStrings = arrayOfNulls<IrArrayMemoryReader>(icData.size)
     private val indexedDebugInfos = arrayOfNulls<IrArrayMemoryReader?>(icData.size)
     private val indexedBodies = arrayOfNulls<IrArrayMemoryReader>(icData.size)
+    private val indexedFileEntries = arrayOfNulls<IrArrayMemoryReader>(icData.size)
 
     override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
         indexedDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
@@ -83,6 +85,11 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
             icData[fileIndex].debugInfo?.let { IrArrayMemoryReader(it) }
         }
 
+    override fun fileEntry(index: Int, fileIndex: Int): ByteArray? =
+        indexedFileEntries.itemNullableBytes(fileIndex, index) {
+            IrArrayMemoryReader(icData[fileIndex].fileEntries)
+        }
+
     override fun file(index: Int): ByteArray = icData[index].fileData
 
     override fun fileCount(): Int = icData.size
@@ -96,6 +103,8 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun declarations(fileIndex: Int): ByteArray = icData[fileIndex].declarations
 
     override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
+
+    override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
 }
 
 class CurrentModuleWithICDeserializer(

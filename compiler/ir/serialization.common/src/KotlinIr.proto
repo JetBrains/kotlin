@@ -16,7 +16,8 @@ message FileEntry {
 
 message IrFile {
   repeated int32 declaration_id = 1 [packed=true];
-  required FileEntry file_entry = 2;
+  optional FileEntry file_entry = 2; // Required: either `file_entry` or `file_entry_id` is present.
+  optional int32 file_entry_id = 7;  // Required: either `file_entry` or `file_entry_id` is present.
   repeated int32 fq_name = 3 [packed=true];
   repeated IrConstructorCall annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
@@ -151,10 +152,11 @@ message IrReturnableBlock {
 
 message IrInlinedFunctionBlock {
   optional int64 inlined_function_symbol = 1;
-  required FileEntry inlined_function_file_entry = 2;
+  optional FileEntry inlined_function_file_entry = 2; // Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
   required IrBlock base = 3;
   required int32 inlined_function_start_offset = 4;
   required int32 inlined_function_end_offset = 5;
+  optional int32 inlined_function_file_entry_id = 6;  // Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
 }
 
 message MemberAccessCommon {

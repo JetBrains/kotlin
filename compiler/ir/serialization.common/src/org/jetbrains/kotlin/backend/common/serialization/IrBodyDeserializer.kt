@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchEx
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
@@ -163,6 +164,16 @@ class IrBodyDeserializer(
         }
     }
 
+    private fun IrLibraryFile.fileEntry(proto: ProtoInlinedFunctionBlock): FileEntry =
+        if (proto.hasInlinedFunctionFileEntryId()) {
+            fileEntry(proto.inlinedFunctionFileEntryId) ?: error("Invalid KLib: cannot read file entry by its index")
+        } else {
+            require(proto.hasInlinedFunctionFileEntry()) {
+                "Invalid KLib: either fileEntry or fileEntryId must be present in serialized IrInlinedFunctionBlock"
+            }
+            proto.inlinedFunctionFileEntry
+        }
+
     private fun deserializeInlinedFunctionBlock(
         proto: ProtoInlinedFunctionBlock,
         start: Int,
@@ -172,7 +183,7 @@ class IrBodyDeserializer(
         val inlinedFunctionSymbol = runIf(proto.hasInlinedFunctionSymbol()) {
             deserializeTypedSymbol<IrFunctionSymbol>(proto.inlinedFunctionSymbol, FUNCTION_SYMBOL)
         }
-        val inlinedFunctionFileEntry = deserializeFileEntry(proto.inlinedFunctionFileEntry)
+        val inlinedFunctionFileEntry = deserializeFileEntry(libraryFile.fileEntry(proto))
         return withDeserializedBlock(proto.base) { origin, statements ->
             IrInlinedFunctionBlockImpl(
                 start, end,

@@ -72,6 +72,10 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     val irDebugInfo
         get() = File(irDir, IR_DEBUG_INFO_FILE_NAME)
 
+    // Please check `hasFileEntriesTable` before getter invocation, otherwise it may crash in override getter
+    val irFileEntries
+        get() = File(irDir, IR_FILE_ENTRIES_FILE_NAME)
+
     fun irDeclarations(file: File): File = File(file, IR_DECLARATIONS_FILE_NAME)
     fun irTypes(file: File): File = File(file, IR_TYPES_FILE_NAME)
     fun irSignatures(file: File): File = File(file, IR_SIGNATURES_FILE_NAME)
@@ -79,6 +83,7 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     fun irBodies(file: File): File = File(file, IR_BODIES_FILE_NAME)
     fun irFile(file: File): File = File(file, IR_FILES_FILE_NAME)
     fun irDebugInfo(file: File): File = File(file, IR_DEBUG_INFO_FILE_NAME)
+    fun irFileEntries(file: File): File = File(file, IR_FILE_ENTRIES_FILE_NAME)
 
     companion object {
         const val IR_DECLARATIONS_FILE_NAME = "irDeclarations.knd"
@@ -88,5 +93,6 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         const val IR_BODIES_FILE_NAME = "bodies.knb"
         const val IR_FILES_FILE_NAME = "files.knf"
         const val IR_DEBUG_INFO_FILE_NAME = "debugInfo.knd"
+        const val IR_FILE_ENTRIES_FILE_NAME = "fileEntries.knf"
     }
 }

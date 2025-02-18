@@ -92,6 +92,11 @@ abstract class IrLibraryImpl(
             it.irDir.exists
         }
     }
+    override val hasFileEntriesTable: Boolean by lazy {
+        access.inPlace { it: IrKotlinLibraryLayout ->
+            it.irFileEntries.exists
+        }
+    }
 }
 
 class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibraryImpl(_access) {
@@ -108,6 +113,8 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
     override fun body(index: Int, fileIndex: Int) = bodies.tableItemBytes(fileIndex, index)
 
     override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.tableItemBytes(fileIndex, index)
+
+    override fun fileEntry(index: Int, fileIndex: Int) = fileEntries?.tableItemBytes(fileIndex, index)
 
     override fun file(index: Int) = files.tableItemBytes(index)
 
@@ -150,6 +157,12 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
         }
     }
 
+    private val fileEntries: IrMultiArrayFileReader? by lazy {
+        access.realFiles {
+            it.irFileEntries.let { feFile -> if (feFile.exists) IrMultiArrayFileReader(feFile) else null }
+        }
+    }
+
     private val files: IrArrayFileReader by lazy {
         IrArrayFileReader(access.realFiles {
             it.irFiles
@@ -174,6 +187,10 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
 
     override fun bodies(fileIndex: Int): ByteArray {
         return bodies.tableItemBytes(fileIndex)
+    }
+
+    override fun fileEntries(fileIndex: Int): ByteArray? {
+        return fileEntries?.tableItemBytes(fileIndex)
     }
 }
 
@@ -260,6 +277,21 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
         return dataReader?.tableItemBytes(index)
     }
 
+    private val fileToIrFileEntryMap = mutableMapOf<Int, IrArrayFileReader?>()
+    override fun fileEntry(index: Int, fileIndex: Int): ByteArray? {
+        val dataReader = fileToIrFileEntryMap.getOrPut(fileIndex) {
+            val fileDirectory = directories[fileIndex]
+            access.realFiles {
+                it.irFileEntries(fileDirectory).let { diFile ->
+                    if (diFile.exists) {
+                        IrArrayFileReader(diFile)
+                    } else null
+                }
+            }
+        }
+        return dataReader?.tableItemBytes(index)
+    }
+
     override fun file(index: Int): ByteArray {
         return access.realFiles {
             it.irFile(directories[index]).readBytes()
@@ -287,6 +319,10 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
     }
 
     override fun bodies(fileIndex: Int): ByteArray {
+        TODO("Not yet implemented")
+    }
+
+    override fun fileEntries(fileIndex: Int): ByteArray? {
         TODO("Not yet implemented")
     }
 }

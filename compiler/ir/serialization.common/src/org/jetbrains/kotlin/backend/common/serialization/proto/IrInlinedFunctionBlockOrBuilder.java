@@ -17,11 +17,19 @@ public interface IrInlinedFunctionBlockOrBuilder extends
   long getInlinedFunctionSymbol();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   *
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
    */
   boolean hasInlinedFunctionFileEntry();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   *
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getInlinedFunctionFileEntry();
 
@@ -51,4 +59,21 @@ public interface IrInlinedFunctionBlockOrBuilder extends
    * <code>required int32 inlined_function_end_offset = 5;</code>
    */
   int getInlinedFunctionEndOffset();
+
+  /**
+   * <code>optional int32 inlined_function_file_entry_id = 6;</code>
+   *
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
+   */
+  boolean hasInlinedFunctionFileEntryId();
+  /**
+   * <code>optional int32 inlined_function_file_entry_id = 6;</code>
+   *
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
+   */
+  int getInlinedFunctionFileEntryId();
 }

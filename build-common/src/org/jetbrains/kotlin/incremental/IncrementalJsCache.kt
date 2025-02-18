@@ -132,8 +132,8 @@ open class IncrementalJsCache(
         }
 
         for ((srcFile, irData) in incrementalResults.irFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos) = irData
-            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos)
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries) = irData
+            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries)
         }
     }
 
@@ -263,6 +263,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.fqn)
         output.writeArray(value.fileMetadata)
         value.debugInfo?.let { output.writeArray(it) }
+        output.writeArray(value.fileEntries)
     }
 
     private fun DataOutput.writeArray(array: ByteArray) {
@@ -298,8 +299,9 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val fqn = input.readArray()
         val fileMetadata = input.readArray()
         val debugInfos = input.readArrayOrNull()
+        val fileEntries = input.readArray()
 
-        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos)
+        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries)
     }
 }
 
@@ -334,9 +336,10 @@ private class IrTranslationResultMap(
         fqn: ByteArray,
         newFileMetadata: ByteArray,
         debugInfos: ByteArray?,
+        fileEntries: ByteArray,
     ) {
         this[sourceFile] =
-            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos)
+            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries)
     }
 }
 

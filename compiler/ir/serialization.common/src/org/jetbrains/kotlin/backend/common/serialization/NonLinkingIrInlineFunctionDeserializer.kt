@@ -155,8 +155,9 @@ class NonLinkingIrInlineFunctionDeserializer(
         private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library, fileIndex))
 
         private val dummyFileSymbol = IrFileSymbolImpl().apply {
+            val fileEntry = library.fileEntry(fileProto, fileIndex)
             IrFileImpl(
-                fileEntry = NaiveSourceBasedFileEntryImpl(fileProto.fileEntry.name),
+                fileEntry = NaiveSourceBasedFileEntryImpl(fileEntry.name),
                 symbol = this,
                 packageFqName = FqName(irInterner.string(fileReader.deserializeFqName(fileProto.fqNameList)))
             )

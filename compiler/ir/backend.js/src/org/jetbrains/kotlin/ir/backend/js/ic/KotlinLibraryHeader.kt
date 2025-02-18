@@ -55,6 +55,7 @@ internal class KotlinLoadedLibraryHeader(
                 override fun string(index: Int): ByteArray = library.string(index, it)
                 override fun body(index: Int): ByteArray = err()
                 override fun debugInfo(index: Int): ByteArray? = null
+                override fun fileEntry(index: Int): ByteArray? = library.fileEntry(index, it)
             }), null, irInterner)
 
             put(sourceFiles[it], deserializer)
@@ -74,7 +75,7 @@ internal class KotlinLoadedLibraryHeader(
         val extReg = ExtensionRegistryLite.newInstance()
         val sources = (0 until library.fileCount()).map {
             val fileProto = IrFile.parseFrom(library.file(it).codedInputStream, extReg)
-            fileProto.fileEntry.name
+            library.fileEntry(fileProto, it).name
         }
         KotlinSourceFile.fromSources(sources)
     }

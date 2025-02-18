@@ -22,4 +22,5 @@ message ClassOrFile {
   repeated XStatementOrExpression body = 5;
   repeated string debug_info = 6;
   required string file_facade_fq_name = 7;
+  repeated common.serialization.proto.FileEntry file_entry = 8;
 }
