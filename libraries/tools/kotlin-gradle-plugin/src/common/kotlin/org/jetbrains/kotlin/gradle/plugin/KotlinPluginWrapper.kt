@@ -172,7 +172,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(
             this,
-            true,
         )
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
 
