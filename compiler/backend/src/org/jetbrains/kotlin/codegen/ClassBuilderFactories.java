@@ -27,9 +27,7 @@ import java.io.StringWriter;
 public class ClassBuilderFactories {
     public static ClassBuilderFactory TEST = new TestClassBuilderFactory();
 
-    public static class TestClassBuilderFactory implements ClassBuilderFactory {
-        public TestClassBuilderFactory() {}
-
+    private static class TestClassBuilderFactory implements ClassBuilderFactory {
         @NotNull
         @Override
         public ClassBuilderMode getClassBuilderMode() {

@@ -145,7 +145,6 @@
 /compiler/testData/codegen/customScript/ "Kotlin Frontend"
 /compiler/testData/codegen/helpers/ "Kotlin JVM"
 /compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
-/compiler/testData/codegen/kapt/ "Kotlin JVM"
 /compiler/testData/codegen/notNullAssertions/ "Kotlin JVM"
 /compiler/testData/codegen/outerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/properties/ "Kotlin JVM"

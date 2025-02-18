@@ -307,7 +307,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         try {
             GenerationState generationState = GenerationUtils.compileFiles(
-                    myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory(),
+                    myFiles.getPsiFiles(), myEnvironment, ClassBuilderFactories.TEST,
                     new NoScopeRecordCliBindingTrace(myEnvironment.getProject())
             );
             classFileFactory = generationState.getFactory();
@@ -318,7 +318,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             boolean ignoreDexing = myFiles.getPsiFiles().stream().anyMatch(
                 it -> InTextDirectivesUtils.isDirectiveDefined(it.getText(), "IGNORE_DEXING")
             );
-            if (verifyWithDex() && D8Checker.RUN_D8_CHECKER && !ignoreDexing) {
+            if (D8Checker.RUN_D8_CHECKER && !ignoreDexing) {
                 D8Checker.check(classFileFactory);
             }
         }
@@ -359,10 +359,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         }
     }
 
-    protected boolean verifyWithDex() {
-        return true;
-    }
-
     @NotNull
     protected Method generateFunction() {
         Class<?> aClass = generateFacadeClass();
@@ -384,10 +380,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
         setCustomDefaultJvmTarget(configuration);
         configureIrFir(configuration);
-    }
-
-    protected ClassBuilderFactory getClassBuilderFactory() {
-        return ClassBuilderFactories.TEST;
     }
 
     private static void setCustomDefaultJvmTarget(CompilerConfiguration configuration) {
