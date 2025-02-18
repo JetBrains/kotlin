@@ -42,3 +42,17 @@ FILE: RedundantSingleExpressionStringTemplateChecker.kt
         public final fun copy(short_name: R|kotlin/String| = this@R|/ProductGroup|.R|/ProductGroup.short_name|, parent: R|ProductGroup?| = this@R|/ProductGroup|.R|/ProductGroup.parent|): R|ProductGroup|
 
     }
+    private final fun checkStartAndEnd(len: R|kotlin/Int|, start: R|kotlin/Int|, end: R|kotlin/Int|): R|kotlin/Unit| {
+        when () {
+            CMP(<, R|<local>/start|.R|kotlin/Int.compareTo|(Int(0))) || CMP(>, R|<local>/end|.R|kotlin/Int.compareTo|(R|<local>/len|)) ->  {
+                throw R|java/lang/ArrayIndexOutOfBoundsException.ArrayIndexOutOfBoundsException|(<strcat>(String(start < 0 || end > len.), String( start=)).R|kotlin/String.plus|(R|<local>/start|).R|kotlin/String.plus|(String(, end=)).R|kotlin/String.plus|(R|<local>/end|).R|kotlin/String.plus|(String(, len=)).R|kotlin/String.plus|(R|<local>/len|))
+            }
+        }
+
+        when () {
+            CMP(>, R|<local>/start|.R|kotlin/Int.compareTo|(R|<local>/end|)) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|(<strcat>(String(start > end: ), R|<local>/start|, String( > ), R|<local>/end|))
+            }
+        }
+
+    }

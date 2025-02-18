@@ -46,8 +46,11 @@ object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCa
     }
 
     private fun PsiElement.stringParentChildrenCount(): Int? {
-        if (parent is KtStringTemplateExpression) return parent?.children?.size
-        return parent.stringParentChildrenCount()
+        return when (val parent = parent) {
+            is KtStringTemplateExpression -> return parent.children.size
+            null -> null
+            else -> parent.stringParentChildrenCount()
+        }
     }
 
     private fun LighterASTNode.stringParentChildrenCount(source: KtLightSourceElement): Int? {
