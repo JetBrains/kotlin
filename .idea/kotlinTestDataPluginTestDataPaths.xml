@@ -136,13 +136,6 @@
             </array>
           </value>
         </entry>
-        <entry key="DiagnosticCompilerTest.*TestdataTestGenerated">
-          <value>
-            <array>
-              <option value="AA" />
-            </array>
-          </value>
-        </entry>
         <entry key="Fir.*BlackBoxInlineCodegenWithBytecodeInliner.*">
           <value>
             <array>
@@ -331,14 +324,7 @@
             </array>
           </value>
         </entry>
-        <entry key="LL.*BoxCodegen.*">
-          <value>
-            <array>
-              <option value="AA" />
-            </array>
-          </value>
-        </entry>
-        <entry key="LLFirPreresolved.*TestGenerated">
+        <entry key="LL.*Generated">
           <value>
             <array>
               <option value="AA" />
