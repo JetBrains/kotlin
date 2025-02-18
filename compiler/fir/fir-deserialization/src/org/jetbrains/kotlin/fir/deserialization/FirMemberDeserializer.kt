@@ -322,12 +322,14 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 }
                 this.symbol = FirPropertyAccessorSymbol()
                 dispatchReceiverType = c.dispatchReceiver
-                valueParameters += local.memberDeserializer.valueParameters(
+                local.memberDeserializer.addValueParametersTo(
                     listOf(proto.setterValueParameter),
                     symbol,
                     proto,
                     AbstractAnnotationDeserializer.CallableKind.PROPERTY_SETTER,
-                    classProto
+                    classProto,
+                    kind = FirValueParameterKind.Regular,
+                    destination = valueParameters,
                 )
                 this.propertySymbol = propertySymbol
             }.apply {
@@ -606,12 +608,14 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             dispatchReceiverType = c.dispatchReceiver
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
-            valueParameters += local.memberDeserializer.valueParameters(
+            local.memberDeserializer.addValueParametersTo(
                 proto.valueParameterList,
                 symbol,
                 proto,
                 AbstractAnnotationDeserializer.CallableKind.OTHERS,
-                classProto
+                classProto,
+                kind = FirValueParameterKind.Regular,
+                destination = valueParameters,
             )
             annotations +=
                 c.annotationDeserializer.loadFunctionAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
@@ -691,13 +695,15 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.typeParameters +=
                 typeParameters.filterIsInstance<FirTypeParameter>()
                     .map { buildConstructedClassTypeParameterRef { this.symbol = it.symbol } }
-            valueParameters += local.memberDeserializer.valueParameters(
+            local.memberDeserializer.addValueParametersTo(
                 proto.valueParameterList,
                 symbol,
                 proto,
                 AbstractAnnotationDeserializer.CallableKind.OTHERS,
                 classProto,
-                addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
+                kind = FirValueParameterKind.Regular,
+                addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum,
+                destination = valueParameters,
             )
             annotations +=
                 c.annotationDeserializer.loadConstructorAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
@@ -720,20 +726,22 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return null
     }
 
-    private fun valueParameters(
+    private fun addValueParametersTo(
         valueParameters: List<ProtoBuf.ValueParameter>,
-        functionSymbol: FirFunctionSymbol<*>,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
         callableProto: MessageLite,
         callableKind: AbstractAnnotationDeserializer.CallableKind,
         classProto: ProtoBuf.Class?,
-        addDefaultValue: Boolean = false
-    ): List<FirValueParameter> {
-        return valueParameters.mapIndexed { index, proto ->
+        kind: FirValueParameterKind,
+        addDefaultValue: Boolean = false,
+        destination: MutableList<FirValueParameter>,
+    ) {
+        valueParameters.mapIndexedTo(destination) { index, proto ->
             val flags = if (proto.hasFlags()) proto.flags else 0
             val name = c.nameResolver.getName(proto.name)
             buildValueParameter {
                 moduleData = c.moduleData
-                this.containingDeclarationSymbol = functionSymbol
+                this.containingDeclarationSymbol = containingDeclarationSymbol
                 origin = FirDeclarationOrigin.Library
                 returnTypeRef = proto.type(c.typeTable).toTypeRef(c)
                 this.name = name
@@ -756,8 +764,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     callableKind,
                     index,
                 )
+                valueParameterKind = kind
             }
-        }.toList()
+        }
     }
 
     private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirResolvedTypeRef =
