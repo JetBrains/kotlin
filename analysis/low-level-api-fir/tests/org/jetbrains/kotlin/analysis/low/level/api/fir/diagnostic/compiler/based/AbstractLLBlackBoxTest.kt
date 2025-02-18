@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractLLFirBlackBoxCodegenBasedTest : AbstractLLBlackBoxTestBase() {
+abstract class AbstractLLBlackBoxTest : AbstractLLBlackBoxTestBase() {
     override fun facade(): Constructor<LowLevelFirFrontendFacade> {
         return ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve)
     }
