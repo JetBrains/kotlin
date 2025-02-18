@@ -330,7 +330,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
-        testClass<AbstractDiagnosticCompilerTestDataTest>(suiteTestClassName = "DiagnosticCompilerTestFirTestdataTestGenerated") {
+        testClass<AbstractLLDiagnosticsTest>(suiteTestClassName = "DiagnosticCompilerTestFirTestdataTestGenerated") {
             modelInit()
         }
 
@@ -342,7 +342,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         "analysis/low-level-api-fir/tests",
         "analysis/low-level-api-fir/testData",
     ) {
-        testClass<AbstractDiagnosticCompilerTestDataTest>(suiteTestClassName = "DiagnosticCompilerTestAATestdataTestGenerated") {
+        testClass<AbstractLLDiagnosticsTest>(suiteTestClassName = "DiagnosticCompilerTestAATestdataTestGenerated") {
             model("compilerLikeAnalysis", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
         testClass<AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest>(suiteTestClassName = "LLFirPreresolvedReversedDiagnosticCompilerAATestDataTestGenerated") {
@@ -410,7 +410,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             )
         }
 
-        testClass<AbstractDiagnosticCompilerTestDataTest>(suiteTestClassName = "DiagnosticCompilerTestFE10TestdataTestGenerated") {
+        testClass<AbstractLLDiagnosticsTest>(suiteTestClassName = "DiagnosticCompilerTestFE10TestdataTestGenerated") {
             modelInit()
         }
 

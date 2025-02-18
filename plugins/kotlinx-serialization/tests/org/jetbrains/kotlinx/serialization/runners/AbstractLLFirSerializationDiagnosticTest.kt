@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlinx.serialization.runners
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosticCompilerTestDataTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-abstract class AbstractLLFirSerializationDiagnosticTest : AbstractDiagnosticCompilerTestDataTest() {
+abstract class AbstractLLFirSerializationDiagnosticTest : AbstractLLDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureSerializationFirPsiDiagnosticTest()
