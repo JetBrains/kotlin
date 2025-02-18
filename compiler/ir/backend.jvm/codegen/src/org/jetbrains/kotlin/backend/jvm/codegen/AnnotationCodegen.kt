@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
@@ -33,9 +32,11 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
@@ -180,8 +181,8 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private fun genAnnotationArguments(annotation: IrConstructorCall, annotationVisitor: AnnotationVisitor) {
         val annotationClass = annotation.annotationClass
-        for (param in annotation.symbol.owner.valueParameters) {
-            val value = annotation.getValueArgument(param.indexInOldValueParameters)
+        for (param in annotation.symbol.owner.parameters) {
+            val value = annotation.arguments[param]
             if (value != null)
                 genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
             else if (param.defaultValue != null)
@@ -319,7 +320,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 return annotationRetentionMap[retention]!!
             }
             irClass.getAnnotation(FqName(java.lang.annotation.Retention::class.java.name))?.let { retentionAnnotation ->
-                val value = retentionAnnotation.getValueArgument(0)
+                val value = retentionAnnotation.arguments[0]
                 if (value is IrDeclarationReference) {
                     val symbol = value.symbol
                     if (symbol is IrEnumEntrySymbol) {
