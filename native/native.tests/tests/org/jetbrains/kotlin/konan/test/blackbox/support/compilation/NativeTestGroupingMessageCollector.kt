@@ -22,6 +22,7 @@ internal class NativeTestGroupingMessageCollector(
     delegate,
     /*treatWarningsAsErrors =*/ false,
     /*reportAllWarnings =*/ true, // Any warning that survived to this place is actually a strong_warning, and it should not be suppressed.
+    /*suppressVersionWarnings*/ false,
 ) {
     private var hasWarningsWithRaisedSeverity: Boolean = false
 

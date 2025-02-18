@@ -22,6 +22,7 @@ dependencies {
 }
 
 compileKotlin.kotlinOptions.allWarningsAsErrors = true
+compileKotlin.kotlinOptions.freeCompilerArgs += ["-Xsuppress-version-warnings"]
 
 kotlin {
     jvmToolchain(11)
