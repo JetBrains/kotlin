@@ -110,7 +110,7 @@ fun main(args: Array<String>) {
                     model("codegen")
                 }
 
-                testClass<AbstractLLFirSerializationBlackBoxCodegenBasedTest> {
+                testClass<AbstractLLSerializationBlackBoxTest> {
                     blackBoxModelInit()
                 }
 
