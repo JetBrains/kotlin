@@ -7,9 +7,11 @@ public typealias DefaultInteger = main.RegularInteger
 public typealias RegularInteger = Swift.Int32
 public typealias ShouldHaveNoAnnotation = Swift.Int32
 public typealias abstractClss = main.ABSTRACT_CLASS
+public typealias closure = () -> Swift.Void
 public typealias dataClass = main.DATA_CLASS
 public typealias dataClassWithRef = main.DATA_CLASS_WITH_REF
 public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
+public typealias deeper_closure_typealias = main.closure
 public typealias enumClass = main.ENUM
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
 public typealias never = Swift.Never
@@ -252,10 +254,58 @@ open class SEALED: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public var block: main.closure {
+    get {
+        return {
+            let nativeBlock = __root___block_get()
+            return { nativeBlock!() }
+        }()
+    }
+    set {
+        return __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__({
+            let originalBlock = newValue
+            return {
+                originalBlock()
+                return 0
+            }
+        }())
+    }
+}
+public func consume_closure(
+    block: @escaping main.closure
+) -> Swift.Void {
+    return __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__({
+        let originalBlock = block
+        return {
+            originalBlock()
+            return 0
+        }
+    }())
+}
+public func deeper_closure_typealiase(
+    block: @escaping main.deeper_closure_typealias
+) -> main.deeper_closure_typealias {
+    return {
+        let nativeBlock = __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__({
+        let originalBlock = block
+        return {
+            originalBlock()
+            return 0
+        }
+    }())
+        return { nativeBlock!() }
+    }()
+}
 public func increment(
     integer: main.DefaultInteger
 ) -> main.RegularInteger {
     return __root___increment__TypesOfArguments__Swift_Int32__(integer)
+}
+public func produce_closure() -> main.closure {
+    return {
+        let nativeBlock = __root___produce_closure()
+        return { nativeBlock!() }
+    }()
 }
 public extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo
