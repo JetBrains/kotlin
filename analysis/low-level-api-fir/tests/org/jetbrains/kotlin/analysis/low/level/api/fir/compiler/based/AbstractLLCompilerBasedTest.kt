@@ -47,7 +47,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 
-abstract class AbstractLowLevelCompilerBasedTest : AbstractKotlinCompilerTest() {
+abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
     private var _disposable: Disposable? = null
     protected val disposable: Disposable get() = _disposable!!
 
