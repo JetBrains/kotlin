@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import com.intellij.lang.LighterASTTokenNode
+import com.intellij.psi.TokenType
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirElement
@@ -43,11 +42,15 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
+import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -404,7 +407,9 @@ private fun mapInapplicableCandidateError(
 
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source)
-            is TooManyArguments -> FirErrors.TOO_MANY_ARGUMENTS.createOn(rootCause.argument.source ?: source, rootCause.function.symbol)
+            is TooManyArguments ->
+                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument)
+                    ?: FirErrors.TOO_MANY_ARGUMENTS.createOn(rootCause.argument.source ?: source, rootCause.function.symbol)
             is NoValueForParameter -> FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
                 qualifiedAccessSource ?: source,
                 rootCause.valueParameter.symbol
@@ -420,7 +425,9 @@ private fun mapInapplicableCandidateError(
             )
 
             is InapplicableNullableReceiver -> mapInapplicableNullableReceiver(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
-            is ManyLambdaExpressionArguments -> FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(rootCause.argument.source ?: source)
+            is ManyLambdaExpressionArguments ->
+                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument)
+                    ?: FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(rootCause.argument.source ?: source)
             is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.createOn(source, rootCause.function)
             is OperatorCallOfNonOperatorFunction ->
                 FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, rootCause.function.name.asString())
@@ -475,6 +482,31 @@ private fun mapInapplicableCandidateError(
     } else {
         diagnostics
     }
+}
+
+private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression): KtSimpleDiagnostic? {
+    return when (val argumentSource = argument.source) {
+        is KtPsiSourceElement if argumentSource.psi.let { it is KtLambdaExpression && it.isTrailingLambdaOnNewLine }
+            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource)
+        is KtLightSourceElement if argumentSource.isTrailingLambdaOnNewLine()
+            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource)
+        else
+            -> null
+    }
+}
+
+private fun KtLightSourceElement.isTrailingLambdaOnNewLine(): Boolean {
+    val parent = treeStructure.getParent(this.lighterASTNode)
+    if (parent?.tokenType == KtStubElementTypes.LAMBDA_ARGUMENT) {
+        var prevSibling = parent.getPreviousSibling(treeStructure)
+        while (prevSibling != null && prevSibling.tokenType !is KtStubElementType<*, *>) {
+            if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling is LighterASTTokenNode && prevSibling.text.contains("\n")) {
+                return true
+            }
+            prevSibling = prevSibling.getPreviousSibling(treeStructure)
+        }
+    }
+    return false
 }
 
 private fun diagnosticForArgumentTypeMismatch(

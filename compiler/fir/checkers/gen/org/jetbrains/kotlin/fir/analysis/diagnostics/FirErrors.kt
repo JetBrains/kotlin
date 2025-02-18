@@ -448,6 +448,7 @@ object FirErrors {
     val NON_VARARG_SPREAD: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_VARARG_SPREAD", ERROR, SourceElementPositioningStrategies.DEFAULT, LeafPsiElement::class)
     val ARGUMENT_PASSED_TWICE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ARGUMENT_PASSED_TWICE", ERROR, SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT, KtValueArgument::class)
     val TOO_MANY_ARGUMENTS: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("TOO_MANY_ARGUMENTS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val NO_VALUE_FOR_PARAMETER: KtDiagnosticFactory1<FirValueParameterSymbol> = KtDiagnosticFactory1("NO_VALUE_FOR_PARAMETER", ERROR, SourceElementPositioningStrategies.VALUE_ARGUMENTS, KtElement::class)
     val NAMED_PARAMETER_NOT_FOUND: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NAMED_PARAMETER_NOT_FOUND", ERROR, SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT, KtValueArgument::class)
     val NAME_FOR_AMBIGUOUS_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAME_FOR_AMBIGUOUS_PARAMETER", ERROR, SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT, KtValueArgument::class)

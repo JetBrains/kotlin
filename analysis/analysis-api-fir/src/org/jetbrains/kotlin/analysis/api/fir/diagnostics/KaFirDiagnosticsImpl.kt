@@ -1882,6 +1882,11 @@ internal class TooManyArgumentsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TooManyArguments
 
+internal class UnexpectedTrailingLambdaOnANewLineImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnexpectedTrailingLambdaOnANewLine
+
 internal class NoValueForParameterImpl(
     override val violatedParameter: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,

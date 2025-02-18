@@ -593,7 +593,7 @@ class PSICallResolver(
                     if (i == 0) continue
                     val lambdaExpression = externalLambdaArguments[i].getLambdaExpression() ?: continue
 
-                    if (lambdaExpression.isTrailingLambdaOnNewLIne) {
+                    if (lambdaExpression.isTrailingLambdaOnNewLine) {
                         context.trace.report(Errors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.on(lambdaExpression))
                     }
                     context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(lambdaExpression))

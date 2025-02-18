@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,6 +108,22 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
 
     @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins
     public boolean shouldChangeModificationCount(PsiElement place) {
+        return false;
+    }
+
+    public final boolean isTrailingLambdaOnNewLine() {
+        PsiElement parent = getParent();
+
+        if (parent instanceof KtLambdaArgument) {
+            PsiElement prevSibling = parent.getPrevSibling();
+            while (prevSibling != null && !(prevSibling instanceof KtElement)) {
+                if (prevSibling instanceof PsiWhiteSpace && prevSibling.textContains('\n')) {
+                    return true;
+                }
+                prevSibling = prevSibling.getPrevSibling();
+            }
+        }
+
         return false;
     }
 }
