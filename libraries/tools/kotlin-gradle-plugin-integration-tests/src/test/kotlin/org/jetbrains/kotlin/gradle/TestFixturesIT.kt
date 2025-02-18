@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
@@ -17,6 +19,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test fixtures can access internals of the main source set in Kotlin/JVM projects")
     @JvmGradlePluginTests
     @GradleTest
+    @TestMetadata(JVM_TEST_FIXTURES_PROJECT_NAME)
     fun testInternalAccessInJvmProject(gradleVersion: GradleVersion) {
         project(JVM_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             kotlinSourcesDir("testFixtures").resolve("Netherlands.kt").appendText(
@@ -34,6 +37,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test fixtures can access internals of the main JVM source set in KMP projects")
     @MppGradlePluginTests
     @GradleTest
+    @TestMetadata(MPP_TEST_FIXTURES_PROJECT_NAME)
     fun testInternalAccessInMppProjectWithJava(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -53,6 +57,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test fixtures can access internals of the main JVM source set in Kotlin MPP projects")
     @MppGradlePluginTests
     @GradleTest
+    @TestMetadata(MPP_TEST_FIXTURES_PROJECT_NAME)
     fun testInternalAccessInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -72,6 +77,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test code can access internals of the test fixtures source set in Kotlin/JVM projects")
     @JvmGradlePluginTests
     @GradleTest
+    @TestMetadata(JVM_TEST_FIXTURES_PROJECT_NAME)
     fun testInternalAccessFromTestsInJvmProject(gradleVersion: GradleVersion) {
         project(JVM_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             kotlinSourcesDir("testFixtures").resolve("Netherlands.kt").appendText(
@@ -96,6 +102,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("JVM test code can access internals of the test fixtures source set in Kotlin MPP projects")
     @MppGradlePluginTests
     @GradleTest
+    @TestMetadata(MPP_TEST_FIXTURES_PROJECT_NAME)
     fun testInternalAccessFromTestsInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -122,6 +129,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in JVM project")
     @MppGradlePluginTests
     @GradleTest
+    @TestMetadata(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME)
     fun testTestFixturesAndFunctionalTestsInJvmProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -139,6 +147,7 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in Multiplatform project")
     @MppGradlePluginTests
     @GradleTest
+    @TestMetadata(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME)
     fun testTestFixturesAndFunctionalTestsInMppProject(gradleVersion: GradleVersion) {
         project(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
             applyJavaPluginIfRequired(gradleVersion)
@@ -150,6 +159,35 @@ class TestFixturesIT : KGPBaseTest() {
                 assertOutputContains("src/testFixtures OK!")
                 assertOutputContains("src/functionalTest OK!")
             }
+        }
+    }
+
+    @Disabled("KT-75188")
+    @DisplayName("KT-75188: Test fixtures can access internals of the main source set in Kotlin/JVM projects with Groovy")
+    @JvmGradlePluginTests
+    @GradleTest
+    @TestMetadata(JVM_TEST_FIXTURES_PROJECT_NAME)
+    fun testInternalAccessInJvmProjectWithGroovy(gradleVersion: GradleVersion) {
+        project(JVM_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
+            buildScriptInjection {
+                project.plugins.apply("groovy")
+            }
+            kotlinSourcesDir("testFixtures").resolve("Netherlands.kt").appendText(
+                //language=kt
+                """
+
+                    internal fun isCityFromNetherlands(city: City) = city.isNetherlands()
+                """.trimIndent()
+            )
+
+            kotlinSourcesDir("test").resolve("Tests.kt").modify {
+                it.replace(
+                    "assertEquals(true, AMSTERDAM.isNetherlands())",
+                    "assertEquals(AMSTERDAM.isNetherlands(), isCityFromNetherlands(AMSTERDAM))"
+                )
+            }
+
+            build("compileTestKotlin")
         }
     }
 
