@@ -25,14 +25,15 @@ public final class FieldKt {
 @kotlin.Metadata
 public final class Foo$DefaultImpls {
     // source: 'field.kt'
-    public static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: Foo, @org.jetbrains.annotations.NotNull p1: Result): java.lang.Object
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: Foo, @org.jetbrains.annotations.NotNull p1: Result): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface Foo {
     // source: 'field.kt'
-    public abstract @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: Result): java.lang.Object
+    public synthetic static method access$getValue$jd(p0: Foo, p1: Result): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: Result): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 

@@ -1,5 +1,6 @@
 // MODULE: lib
 // MODULE_KIND: LibraryBinary
+// COMPILER_ARGUMENTS: -jvm-default=disable
 // FILE: p3/a.kt
 package p3
 
@@ -26,6 +27,7 @@ interface KtInterfaceB {
 }
 
 // MODULE: main(lib, lib2)
+// COMPILER_ARGUMENTS: -jvm-default=disable
 // FILE: main.kt
 package home
 

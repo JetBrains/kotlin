@@ -25,14 +25,16 @@ public final class Component1Kt {
 @kotlin.Metadata
 public final class Foo$DefaultImpls {
     // source: 'component1.kt'
-    public static @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Foo, @org.jetbrains.annotations.NotNull p1: Result, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Foo, @org.jetbrains.annotations.NotNull p1: Result, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface Foo {
     // source: 'component1.kt'
-    public abstract @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Result, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method access$component1$jd(p0: Foo, p1: Result, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method component1$suspendImpl(p0: Foo, p1: Result, p2: kotlin.coroutines.Continuation): java.lang.Object
+    public @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Result, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 

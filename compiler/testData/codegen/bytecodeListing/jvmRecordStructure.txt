@@ -1,14 +1,15 @@
 @kotlin.Metadata
 public final class KI$DefaultImpls {
     // source: 'jvmRecordStructure.kt'
-    public static @org.jetbrains.annotations.NotNull method getX(@org.jetbrains.annotations.NotNull p0: KI): java.lang.String
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getX(@org.jetbrains.annotations.NotNull p0: KI): java.lang.String
     public final inner class KI$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface KI {
     // source: 'jvmRecordStructure.kt'
-    public abstract @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+    public synthetic static method access$getX$jd(p0: KI): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getX(): java.lang.String
     public abstract method getY(): java.lang.Object
     public final inner class KI$DefaultImpls
 }
