@@ -474,7 +474,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             modelInit()
         }
 
-        testClass<AbstractLLReversedSpecTest>(suiteTestClassName = "PreFirIdeSpecTestGenerated") {
+        testClass<AbstractLLReversedSpecTest> {
             modelInit()
         }
     }
