@@ -1,0 +1,95 @@
+FILE: test.kt
+    @R|kotlin/annotation/Target|() public final annotation class NoTargets : R|kotlin/Annotation| {
+        public constructor(): R|NoTargets| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|java/lang/annotation/Target|(value = vararg(Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.RECORD_COMPONENT|)) @R|kotlin/annotation/Target|() public final annotation class ComponentOnly : R|kotlin/Annotation| {
+        public constructor(): R|ComponentOnly| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|java/lang/annotation/Target|(value = vararg(*<implicitArrayOf>(Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.RECORD_COMPONENT|, Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.FIELD|))) @R|kotlin/annotation/Target|() public final annotation class TargetsOnlyInJava : R|kotlin/Annotation| {
+        public constructor(): R|TargetsOnlyInJava| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/jvm/JvmRecord|() public final data class Some : R|java/lang/Record| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/Int|, c: R|kotlin/Int|, @R|JavaParamComponent|() d: R|kotlin/Int|, e: R|kotlin/Int|): R|Some| {
+            super<R|java/lang/Record|>()
+        }
+
+        @R|NoTargets|() public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        @R|ComponentOnly|() public final val b: R|kotlin/Int| = R|<local>/b|
+            public get(): R|kotlin/Int|
+
+        @R|TargetsOnlyInJava|() public final val c: R|kotlin/Int| = R|<local>/c|
+            public get(): R|kotlin/Int|
+
+        public final val d: R|kotlin/Int| = R|<local>/d|
+            public get(): R|kotlin/Int|
+
+        @R|JavaMethodComponent|() public final val e: R|kotlin/Int| = R|<local>/e|
+            public get(): R|kotlin/Int|
+
+        @R|JavaParamComponent|() public final val f: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/Some|.R|/Some.a|.R|kotlin/Int.plus|(this@R|/Some|.R|/Some.b|)
+            }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/Int|
+
+        public final operator fun component3(): R|kotlin/Int|
+
+        public final operator fun component4(): R|kotlin/Int|
+
+        public final operator fun component5(): R|kotlin/Int|
+
+        public final fun copy(a: R|kotlin/Int| = this@R|/Some|.R|/Some.a|, b: R|kotlin/Int| = this@R|/Some|.R|/Some.b|, c: R|kotlin/Int| = this@R|/Some|.R|/Some.c|, @R|JavaParamComponent|() d: R|kotlin/Int| = this@R|/Some|.R|/Some.d|, e: R|kotlin/Int| = this@R|/Some|.R|/Some.e|): R|Some|
+
+    }
+    @R|kotlin/jvm/JvmRecord|() public final data class Else : R|java/lang/Record| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/Int|, c: R|kotlin/Int|, @ALL:R|JavaParamComponent|() d: R|kotlin/Int|, e: R|kotlin/Int|): R|Else| {
+            super<R|java/lang/Record|>()
+        }
+
+        @ALL:R|NoTargets|() public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        @ALL:R|ComponentOnly|() public final val b: R|kotlin/Int| = R|<local>/b|
+            public get(): R|kotlin/Int|
+
+        @ALL:R|TargetsOnlyInJava|() public final val c: R|kotlin/Int| = R|<local>/c|
+            public get(): R|kotlin/Int|
+
+        public final val d: R|kotlin/Int| = R|<local>/d|
+            public get(): R|kotlin/Int|
+
+        public final val e: R|kotlin/Int| = R|<local>/e|
+            @R|JavaMethodComponent|() public get(): R|kotlin/Int|
+
+        @ALL:R|JavaParamComponent|() public final val f: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/Else|.R|/Else.a|.R|kotlin/Int.plus|(this@R|/Else|.R|/Else.b|)
+            }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/Int|
+
+        public final operator fun component3(): R|kotlin/Int|
+
+        public final operator fun component4(): R|kotlin/Int|
+
+        public final operator fun component5(): R|kotlin/Int|
+
+        public final fun copy(a: R|kotlin/Int| = this@R|/Else|.R|/Else.a|, b: R|kotlin/Int| = this@R|/Else|.R|/Else.b|, c: R|kotlin/Int| = this@R|/Else|.R|/Else.c|, @R|JavaParamComponent|() d: R|kotlin/Int| = this@R|/Else|.R|/Else.d|, e: R|kotlin/Int| = this@R|/Else|.R|/Else.e|): R|Else|
+
+    }
