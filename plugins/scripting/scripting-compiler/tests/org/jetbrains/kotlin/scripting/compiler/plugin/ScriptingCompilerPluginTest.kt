@@ -215,7 +215,8 @@ class ScriptingCompilerPluginTest : TestCase() {
                     K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                     K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                     CommonCompilerArguments::languageVersion.cliArgument,
-                    if (isK2) "2.0" else "1.9"
+                    if (isK2) "2.0" else "1.9",
+                    CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 )
 
                 Assert.assertEquals(ExitCode.OK, exitCode)

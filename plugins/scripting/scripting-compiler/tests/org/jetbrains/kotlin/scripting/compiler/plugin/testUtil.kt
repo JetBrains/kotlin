@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -66,6 +67,7 @@ fun runWithKotlinLauncherScript(
             add(classpath.joinToString(File.pathSeparator))
         }
         getBaseCompilerArgumentsFromProperty()?.let { addAll(it) }
+        add(CommonCompilerArguments::suppressVersionWarnings.cliArgument)
         addAll(compilerArgs)
     }
 
