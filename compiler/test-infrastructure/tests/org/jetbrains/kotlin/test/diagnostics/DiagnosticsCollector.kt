@@ -3,10 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.diagnostics.impl
+package org.jetbrains.kotlin.test.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+
+
+interface DiagnosticsCollectorHolder {
+    val diagnosticReporter: BaseDiagnosticsCollector
+}
 
 object DiagnosticsCollectorStub : BaseDiagnosticsCollector() {
     override val diagnostics: List<KtDiagnostic>

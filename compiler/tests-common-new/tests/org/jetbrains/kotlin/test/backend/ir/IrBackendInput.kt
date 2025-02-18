@@ -13,18 +13,18 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticCollectorHolder
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorHolder
+import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import java.io.File
 
 // IR backend (JVM, JS, Native, Wasm)
-abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>(), DiagnosticCollectorHolder {
+abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>(), DiagnosticsCollectorHolder {
     override val kind: BackendKind<IrBackendInput>
         get() = BackendKinds.IrBackend
 
@@ -53,6 +53,8 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
      * @see org.jetbrains.kotlin.ir.util.IdSignature
      */
     abstract val irMangler: KotlinMangler.IrMangler
+
+    abstract override val diagnosticReporter: BaseDiagnosticsCollector
 
     sealed class JsIrBackendInput : IrBackendInput()
 

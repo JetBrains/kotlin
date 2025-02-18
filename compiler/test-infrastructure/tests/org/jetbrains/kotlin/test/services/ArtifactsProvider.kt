@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticCollectorHolder
+import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorHolder
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
@@ -42,7 +42,7 @@ class ArtifactsProvider(
         artifact: ResultingArtifact<OutputArtifact>,
     ) {
         val artifacts = artifactsByModule.getMap(module)
-        if (artifact is DiagnosticCollectorHolder) {
+        if (artifact is DiagnosticsCollectorHolder) {
             checkDistinctDiagnosticReporter(artifacts, artifact.diagnosticReporter)
         }
         artifacts[artifact.kind] = artifact
@@ -64,7 +64,7 @@ class ArtifactsProvider(
 
     private fun checkDistinctDiagnosticReporter(artifacts: Map<*, ResultingArtifact<*>>, diagnosticReporter: BaseDiagnosticsCollector) {
         val existingReporters = artifacts.values.mapNotNull {
-            (it as? DiagnosticCollectorHolder)?.diagnosticReporter
+            (it as? DiagnosticsCollectorHolder)?.diagnosticReporter
         }.toSet()
         require(!existingReporters.contains(diagnosticReporter)) {
             "In test pipelines, diagnostics reporter from previous resulting artifact must not be reused for next resulting artifact. " +
