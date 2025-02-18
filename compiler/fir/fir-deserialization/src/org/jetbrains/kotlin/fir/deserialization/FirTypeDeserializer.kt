@@ -156,7 +156,7 @@ class FirTypeDeserializer(
                     upperBound?.classId == StandardClassIds.Any
 
             return if (isDynamic) {
-                flexibleTypeFactory.createDynamicType(proto, lowerBound!!, upperBound!!)
+                flexibleTypeFactory.createDynamicType(proto, lowerBound, upperBound)
             } else {
                 flexibleTypeFactory.createFlexibleType(proto, lowerBound!!, upperBound!!)
             }
