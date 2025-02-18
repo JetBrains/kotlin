@@ -75,6 +75,9 @@ class BodyResolveContext(
     @set:PrivateForInline
     var containers: ArrayDeque<FirDeclaration> = ArrayDeque()
 
+    val topContainerForTypeResolution: FirDeclaration?
+        get() = containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction }
+
     @PrivateForInline
     val whenSubjectImportingScopes: ArrayDeque<FirWhenSubjectImportingScope?> = ArrayDeque()
 

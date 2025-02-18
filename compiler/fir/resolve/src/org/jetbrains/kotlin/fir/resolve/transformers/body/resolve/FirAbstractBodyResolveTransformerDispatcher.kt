@@ -102,7 +102,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
                     components.createCurrentScopeList(),
                     context.containingClassDeclarations,
                     context.file,
-                    context.containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction },
+                    context.topContainerForTypeResolution,
                 )
             )
         }
