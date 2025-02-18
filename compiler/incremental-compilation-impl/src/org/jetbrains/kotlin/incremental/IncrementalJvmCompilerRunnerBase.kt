@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -52,10 +51,10 @@ abstract class IncrementalJvmCompilerRunnerBase(
     override val shouldStoreFullFqNamesInLookupCache = true
 
     protected val messageCollector = MessageCollectorImpl()
-    internal val javaInteropCoordinator = JavaInteropCoordinator(
+    internal val javaInteropCoordinator = JavaInteropCoordinator.getImplementation(
         icFeatures.usePreciseJavaTracking,
+        reporter,
         messageCollector,
-        reporter
     )
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
