@@ -6744,9 +6744,21 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("combinationOfAllNotAllAndDefaultTarget.kt")
+      public void testCombinationOfAllNotAllAndDefaultTarget() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/combinationOfAllNotAllAndDefaultTarget.kt");
+      }
+
+      @Test
       @TestMetadata("multipleAnnotationsWithAllUseSiteTarget.kt")
       public void testMultipleAnnotationsWithAllUseSiteTarget() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/multipleAnnotationsWithAllUseSiteTarget.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleAnnotationsWithDefaultTarget.kt")
+      public void testMultipleAnnotationsWithDefaultTarget() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/multipleAnnotationsWithDefaultTarget.kt");
       }
     }
 

@@ -1,0 +1,22 @@
+FILE: multipleAnnotationsWithDefaultTarget.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final annotation class ParamPropertyField : R|kotlin/Annotation| {
+        public constructor(): R|ParamPropertyField| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class WithoutExplicitTarget : R|kotlin/Annotation| {
+        public constructor(): R|WithoutExplicitTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class MultipleTargets : R|kotlin/Any| {
+        public constructor(@R|ParamPropertyField|() @R|WithoutExplicitTarget|() value: R|kotlin/String|): R|MultipleTargets| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|ParamPropertyField|() @R|WithoutExplicitTarget|() public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+    }

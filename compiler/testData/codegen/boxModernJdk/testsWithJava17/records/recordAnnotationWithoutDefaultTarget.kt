@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-73256, KT-74382 (not supported in K1)
-// LANGUAGE: +AnnotationAllUseSiteTarget +PropertyParamAnnotationDefaultTargetMode
+// LANGUAGE: +AnnotationAllUseSiteTarget -PropertyParamAnnotationDefaultTargetMode
 
 // FILE: JavaFieldComponent.java
 
@@ -18,15 +18,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.RECORD_COMPONENT, ElementType.PARAMETER })
 public @interface JavaParamComponent {
-}
-
-// FILE: JavaMethodComponent.java
-
-import java.lang.annotation.*;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.RECORD_COMPONENT, ElementType.METHOD })
-public @interface JavaMethodComponent {
 }
 
 // FILE: JavaParamFieldComponent.java
@@ -97,8 +88,7 @@ data class Some(
     @JavaParamFieldComponent val c: Int,
     @JavaDefault val d: Int,
     @field:JavaDefault val e: Int,
-    @get:JavaMethodComponent val f: Int,
-    @JavaWithKotlinTarget val g: Int,
+    @JavaWithKotlinTarget val f: Int
 )
 
 @JvmRecord
@@ -112,8 +102,7 @@ data class Else(
     @all:JavaFieldComponent val a: Int,
     @all:JavaParamFieldComponent val c: Int,
     @all:JavaDefault val d: Int,
-    @all:JavaMethodComponent val f: Int,
-    @all:JavaWithKotlinTarget val g: Int,
+    @all:JavaWithKotlinTarget val e: Int
 )
 
 fun box(): String {
@@ -146,8 +135,8 @@ fun box(): String {
     if (someComponents[8].annotations.isNotEmpty()) {
         return "FAIL: record component annotation for '@JavaParamComponent val b' found, but it should not be so"
     }
-    if (someComponents[9].annotations.isEmpty()) {
-        return "FAIL: no record component annotation for '@JavaParamFieldComponent val c' found"
+    if (someComponents[9].annotations.isNotEmpty()) {
+        return "FAIL: record component annotation for '@JavaParamFieldComponent val c' found, but it should not be so"
     }
     if (someComponents[10].annotations.isNotEmpty()) {
         return "FAIL: record component annotation for '@JavaDefault val d' found, but it should not be so"
@@ -155,12 +144,9 @@ fun box(): String {
     if (someComponents[11].annotations.isEmpty()) {
         return "FAIL: no record component annotation for '@field:JavaDefault val e' found"
     }
-    if (someComponents[12].annotations.isNotEmpty()) {
-        return "FAIL: record component annotation for '@get:JavaMethodComponent val f' found, but it should not be so"
-    }
 
-    if (someComponents[13].annotations.isEmpty()) {
-        return "FAIL: no record component annotation for '@JavaWithKotlinTarget val g' found"
+    if (someComponents[12].annotations.isNotEmpty()) {
+        return "FAIL: record component annotation for '@JavaWithKotlinTarget val f' found"
     }
 
     val elseComponents = Else::class.java.recordComponents
@@ -192,11 +178,9 @@ fun box(): String {
     if (elseComponents[8].annotations.isEmpty()) {
         return "FAIL: no record component annotation for '@all:JavaDefault val d' found"
     }
-    if (elseComponents[9].annotations.isNotEmpty()) {
-        return "FAIL: record component annotation for '@all:JavaMethodComponent val f' found, but it should not be so"
-    }
-    if (elseComponents[10].annotations.isEmpty()) {
-        return "FAIL: no record component annotation for '@JavaWithKotlinTarget val g' found"
+
+    if (elseComponents[9].annotations.isEmpty()) {
+        return "FAIL: no record component annotation for '@JavaWithKotlinTarget val e' found"
     }
 
     return "OK"
