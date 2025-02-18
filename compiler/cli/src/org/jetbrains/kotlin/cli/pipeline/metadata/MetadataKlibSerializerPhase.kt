@@ -25,7 +25,7 @@ object MetadataKlibSerializerPhase : PipelinePhase<MetadataFrontendPipelineArtif
     preActions = setOf(PerformanceNotifications.BackendStarted),
     postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact? {
+    override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
         val (firResult, configuration, _, _) = input
         val metadataVersion = input.metadataVersion
         val destDir = configuration.metadataDestinationDirectory!!

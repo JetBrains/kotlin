@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade.Companion.shouldRunFirFrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendFacade
@@ -44,25 +45,32 @@ class FirCliJvmFacade(testServices: TestServices) : FrontendFacade<FirOutputArti
             .associateBy { "<${it.name}>"}
         val testFirOutputs = firOutputs.map {
             val correspondingModule = modulesFromTheSameStructure.getValue(it.session.moduleData.name.asString())
-            val testFilePerFirFile = correspondingModule.files.mapNotNull { testFile ->
-                val firFile = it.fir.firstOrNull { firFile ->
-                    val path = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile).canonicalPath
-                    val normalizedPath = FileUtil.toSystemIndependentName(path)
-                    normalizedPath == firFile.sourceFile?.path
-                } ?: return@mapNotNull null
-                testFile to firFile
-            }
-            FirOutputPartForDependsOnModule(
-                module = correspondingModule,
-                session = it.session,
-                scopeSession = it.scopeSession,
-                firAnalyzerFacade = null,
-                firFiles = testFilePerFirFile.toMap()
-            )
+            it.toTestOutputPart(correspondingModule, testServices)
         }
 
         return FirCliBasedJvmOutputArtifact(output, testFirOutputs)
     }
+}
+
+fun ModuleCompilerAnalyzedOutput.toTestOutputPart(
+    correspondingModule: TestModule,
+    testServices: TestServices,
+): FirOutputPartForDependsOnModule {
+    val testFilePerFirFile = correspondingModule.files.mapNotNull { testFile ->
+        val firFile = fir.firstOrNull { firFile ->
+            val path = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(testFile).canonicalPath
+            val normalizedPath = FileUtil.toSystemIndependentName(path)
+            normalizedPath == firFile.sourceFile?.path
+        } ?: return@mapNotNull null
+        testFile to firFile
+    }
+    return FirOutputPartForDependsOnModule(
+        module = correspondingModule,
+        session = session,
+        scopeSession = scopeSession,
+        firAnalyzerFacade = null,
+        firFiles = testFilePerFirFile.toMap()
+    )
 }
 
 class FirCliBasedJvmOutputArtifact(
