@@ -41,58 +41,60 @@ import org.jetbrains.kotlin.name.Name
 import java.io.File
 import kotlin.getValue
 
-/**
- * Common state and logic of IncrementalCompilerRunner related to preciseJavaTracking
- * and other ways to handle kotlin+java projects
- */
-internal class JavaInteropCoordinator(
-    private val usePreciseJavaTracking: Boolean,
+private class CoarseJavaInteropCoordinator(
+    reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     messageCollector: MessageCollector,
+) : JavaInteropCoordinator(messageCollector) {
+    private val javaFilesProcessor =
+        ChangedJavaFilesProcessor(reporter) { getPsiJavaFile(it) }
+
+    override fun analyzeChangesInJavaSources(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: DeterminableFiles.Known,
+        mutableDirtyFiles: DirtyFilesContainer
+    ): CompilationMode.Rebuild? {
+        val javaFilesChanges = javaFilesProcessor.process(changedFiles)
+        val affectedJavaSymbols = when (javaFilesChanges) {
+            is ChangesEither.Known -> javaFilesChanges.lookupSymbols
+            is ChangesEither.Unknown -> return CompilationMode.Rebuild(javaFilesChanges.reason)
+        }
+        mutableDirtyFiles.addByDirtySymbols(affectedJavaSymbols)
+        return null
+    }
+
+    override fun getAdditionalDirtyLookupSymbols(): Iterable<LookupSymbol> {
+        return javaFilesProcessor.allChangedSymbols
+    }
+}
+
+private class PreciseJavaInteropCoordinator(
     private val reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
-) {
+    messageCollector: MessageCollector,
+) : JavaInteropCoordinator(messageCollector) {
     private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
 
-    fun hasChangedUntrackedJavaClasses(): Boolean = changedUntrackedJavaClasses.isNotEmpty()
+    override fun hasChangedUntrackedJavaClasses(): Boolean = changedUntrackedJavaClasses.isNotEmpty()
 
-    private val compilerConfiguration: CompilerConfiguration by lazy {
-        val filterMessageCollector = FilteringMessageCollector(messageCollector) { !it.isError }
-        CompilerConfiguration().apply {
-            this.messageCollector = filterMessageCollector
-            configureJdkClasspathRoots()
-        }
+    override fun makeJavaClassesTracker(platformCache: IncrementalJvmCache): JavaClassesTracker? {
+        val changesTracker = JavaClassesTrackerImpl(
+            platformCache, changedUntrackedJavaClasses.toSet(),
+            compilerConfiguration.languageVersionSettings,
+        )
+        changedUntrackedJavaClasses.clear()
+        return changesTracker
     }
 
-    private val psiFileProvider = object {
-        fun javaFile(file: File): PsiFile? =
-            psiFileFactory.createFileFromText(file.nameWithoutExtension, JavaLanguage.INSTANCE, file.readText())
-
-        private val psiFileFactory: PsiFileFactory by lazy {
-            val rootDisposable =
-                Disposer.newDisposable("Disposable for PSI file factory of ${IncrementalJvmCompilerRunner::class.simpleName}")
-            val configuration = compilerConfiguration
-            val environment =
-                KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-            val project = environment.project
-            PsiFileFactory.getInstance(project)
-        }
+    override fun analyzeChangesInJavaSources(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: DeterminableFiles.Known,
+        mutableDirtyFiles: DirtyFilesContainer
+    ): CompilationMode.Rebuild? {
+        val rebuildReason = processChangedJava(changedFiles, caches)
+        if (rebuildReason != null) return CompilationMode.Rebuild(rebuildReason)
+        return null
     }
 
-
-    private var javaFilesProcessor =
-        if (!usePreciseJavaTracking)
-            ChangedJavaFilesProcessor(reporter) { psiFileProvider.javaFile(it) }
-        else
-            null
-
-    private fun processChangedUntrackedJavaClass(psiClass: PsiClass, classId: ClassId) {
-        changedUntrackedJavaClasses.add(classId)
-        for (innerClass in psiClass.innerClasses) {
-            val name = innerClass.name ?: continue
-            processChangedUntrackedJavaClass(innerClass, classId.createNestedClassId(Name.identifier(name)))
-        }
-    }
-
-    fun processChangedJava(changedFiles: DeterminableFiles.Known, caches: IncrementalJvmCachesManager): BuildAttribute? {
+    private fun processChangedJava(changedFiles: DeterminableFiles.Known, caches: IncrementalJvmCachesManager): BuildAttribute? {
         val javaFiles = (changedFiles.modified + changedFiles.removed).filter(File::isJavaFile)
 
         for (javaFile in javaFiles) {
@@ -103,7 +105,7 @@ internal class JavaInteropCoordinator(
                     return BuildAttribute.JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED
                 }
 
-                val psiFile = psiFileProvider.javaFile(javaFile)
+                val psiFile = getPsiJavaFile(javaFile)
                 if (psiFile !is PsiJavaFile) {
                     reporter.info { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
                     return BuildAttribute.JAVA_CHANGE_UNEXPECTED_PSI
@@ -125,38 +127,71 @@ internal class JavaInteropCoordinator(
         return null
     }
 
-    fun getAdditionalDirtyLookupSymbols(): Iterable<LookupSymbol> {
-        return javaFilesProcessor?.allChangedSymbols ?: emptyList()
-    }
-
-    fun makeJavaClassesTracker(platformCache: IncrementalJvmCache): JavaClassesTracker? {
-        if (!usePreciseJavaTracking) {
-            return null
+    private fun processChangedUntrackedJavaClass(psiClass: PsiClass, classId: ClassId) {
+        changedUntrackedJavaClasses.add(classId)
+        for (innerClass in psiClass.innerClasses) {
+            val name = innerClass.name ?: continue
+            processChangedUntrackedJavaClass(innerClass, classId.createNestedClassId(Name.identifier(name)))
         }
-        val changesTracker = JavaClassesTrackerImpl(
-            platformCache, changedUntrackedJavaClasses.toSet(),
-            compilerConfiguration.languageVersionSettings,
-        )
-        changedUntrackedJavaClasses.clear()
-        return changesTracker
+    }
+}
+
+/**
+ * Common logic of IncrementalCompilerRunner related to kotlin+java interop
+ */
+internal sealed class JavaInteropCoordinator(
+    messageCollector: MessageCollector,
+) {
+    protected val compilerConfiguration: CompilerConfiguration by lazy {
+        val filterMessageCollector = FilteringMessageCollector(messageCollector) { !it.isError }
+        CompilerConfiguration().apply {
+            this.messageCollector = filterMessageCollector
+            configureJdkClasspathRoots()
+        }
     }
 
-    fun analyzeChangesInJavaSources(
+    private val psiFileFactory: PsiFileFactory by lazy {
+        val rootDisposable =
+            Disposer.newDisposable("Disposable for PSI file factory of ${IncrementalJvmCompilerRunner::class.simpleName}")
+        val configuration = compilerConfiguration
+        val environment =
+            KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val project = environment.project
+        PsiFileFactory.getInstance(project)
+    }
+
+    protected fun getPsiJavaFile(file: File): PsiFile? =
+        psiFileFactory.createFileFromText(file.nameWithoutExtension, JavaLanguage.INSTANCE, file.readText())
+
+    /**
+     * Unfortunately different JavaInterop implementations interface with ICRunner differently,
+     * so some APIs are valid for PreciseJavaTracking and others are valid for the non-precise one.
+     * Still, it's useful to have a defined api boundary, even if it's more like two boundaries.
+     */
+
+    open fun hasChangedUntrackedJavaClasses(): Boolean = false
+
+    open fun getAdditionalDirtyLookupSymbols(): Iterable<LookupSymbol> = emptyList()
+
+    open fun makeJavaClassesTracker(platformCache: IncrementalJvmCache): JavaClassesTracker? = null
+
+    abstract fun analyzeChangesInJavaSources(
         caches: IncrementalJvmCachesManager,
         changedFiles: DeterminableFiles.Known,
         mutableDirtyFiles: DirtyFilesContainer
-    ): CompilationMode.Rebuild? {
-        if (!usePreciseJavaTracking) {
-            val javaFilesChanges = javaFilesProcessor!!.process(changedFiles)
-            val affectedJavaSymbols = when (javaFilesChanges) {
-                is ChangesEither.Known -> javaFilesChanges.lookupSymbols
-                is ChangesEither.Unknown -> return CompilationMode.Rebuild(javaFilesChanges.reason)
+    ): CompilationMode.Rebuild?
+
+    companion object {
+        fun getImplementation(
+            usePreciseJavaTracking: Boolean,
+            reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+            messageCollector: MessageCollector,
+        ): JavaInteropCoordinator {
+            return if (usePreciseJavaTracking) {
+                PreciseJavaInteropCoordinator(reporter, messageCollector)
+            } else {
+                CoarseJavaInteropCoordinator(reporter, messageCollector)
             }
-            mutableDirtyFiles.addByDirtySymbols(affectedJavaSymbols)
-        } else {
-            val rebuildReason = processChangedJava(changedFiles, caches)
-            if (rebuildReason != null) return CompilationMode.Rebuild(rebuildReason)
         }
-        return null
     }
 }
