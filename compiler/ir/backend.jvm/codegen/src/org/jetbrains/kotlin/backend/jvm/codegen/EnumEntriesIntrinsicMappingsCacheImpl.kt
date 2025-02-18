@@ -84,7 +84,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(private val context: JvmBackendConte
                     +irSetField(
                         null, field,
                         irCall(backendContext.symbols.createEnumEntries).apply {
-                            putValueArgument(0, irCall(enumValues))
+                            arguments[0] = irCall(enumValues)
                         }
                     )
                 }
