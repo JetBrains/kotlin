@@ -330,7 +330,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
-        testClass<AbstractLLDiagnosticsTest>(suiteTestClassName = "DiagnosticCompilerTestFirTestdataTestGenerated") {
+        testClass<AbstractLLDiagnosticsTest>(suiteTestClassName = "LLDiagnosticsFirTestGenerated") {
             modelInit()
         }
 
