@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
@@ -304,7 +302,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 }
 
 private fun translateCallArguments(expression: IrCall, context: JsGenerationContext): List<JsExpression> {
-    return translateCallArguments(expression, context, IrElementToJsExpressionTransformer(), false)
+    return translateCallArguments(expression, context, IrElementToJsExpressionTransformer(), false).map { it.jsArgument }
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.add(functionSymbol: IrSymbol, t: IrCallTransformer) {
