@@ -72,7 +72,7 @@ internal class TaskOutputsBackup(
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             val snapshotDir = snapshotsDir.get().file(index.asSnapshotDirectoryName).asFile
             if (snapshotDir.isFile) {
-                logger.debug("Copying files from $snapshotDir into ${outputPath.parentFile} to restore from backup")
+                logger.debug("Copying file from $snapshotDir into $outputPath to restore from backup")
                 fileSystemOperations.copy { spec ->
                     spec.from(snapshotDir)
                     spec.into(outputPath)
