@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.utils.bind
  * The function `one` will be resolved first.
  * The function `two` will be resolved after that.
  *
- * A counterpart for [AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest].
+ * A counterpart for [AbstractLLReversedDiagnosticsTest].
  *
- * @see AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest
+ * @see AbstractLLReversedDiagnosticsTest
  */
 abstract class AbstractLLDiagnosticsTest : AbstractLLCompilerBasedTest() {
     override fun configure(builder: TestConfigurationBuilder) {

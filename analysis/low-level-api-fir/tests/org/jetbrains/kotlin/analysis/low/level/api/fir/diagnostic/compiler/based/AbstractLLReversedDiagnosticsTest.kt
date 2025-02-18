@@ -19,7 +19,21 @@ import org.jetbrains.kotlin.test.utils.llFirTestDataFile
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
-abstract class AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest : AbstractLLCompilerBasedTest() {
+/**
+ * Checks diagnostics in the test data with reversed resolution order.
+ * Example:
+ * ```kotlin
+ * fun one() = 0
+ * fun two() = true
+ * ```
+ * The function `two` will be resolved first.
+ * The function `one` will be resolved after that.
+ *
+ * A counterpart for [AbstractLLDiagnosticsTest].
+ *
+ * @see AbstractLLDiagnosticsTest
+ */
+abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             baseFirDiagnosticTestConfiguration(
