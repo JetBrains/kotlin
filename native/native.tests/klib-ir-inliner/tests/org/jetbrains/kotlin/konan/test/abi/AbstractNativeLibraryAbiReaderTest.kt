@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.konan.test.abi
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.ClassicFrontend2NativeIrConverter
 import org.jetbrains.kotlin.konan.test.ClassicNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
 import org.jetbrains.kotlin.library.abi.AbstractLibraryAbiReaderTest
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -17,18 +19,19 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.model.BackendFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.IrInliningFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
@@ -37,6 +40,9 @@ import org.junit.jupiter.api.Tag
 @Tag("klib")
 abstract class AbstractNativeLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractLibraryAbiReaderTest<FrontendOutput>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
+
+    override val preserializerFacade: Constructor<IrInliningFacade<IrBackendInput>>
+        get() = ::NativeInliningFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
@@ -67,6 +73,10 @@ open class AbstractFirNativeLibraryAbiReaderTest : AbstractNativeLibraryAbiReade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         configureFirParser(FirParser.LightTree)
+        defaultDirectives {
+            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+        }
+
         super.configure(builder)
     }
 }

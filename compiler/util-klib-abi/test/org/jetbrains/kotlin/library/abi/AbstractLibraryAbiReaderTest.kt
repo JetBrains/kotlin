@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.library.abi
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -17,9 +19,11 @@ import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -44,6 +48,7 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
     abstract val frontend: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
     abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+    abstract val preserializerFacade: Constructor<IrInliningFacade<IrBackendInput>>
     abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -72,6 +77,9 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
         facadeStep(converter)
         irHandlersStep()
 
+        facadeStep(preserializerFacade)
+        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+
         facadeStep(backendFacade)
         klibArtifactsHandlersStep {
             useHandlers(::KlibAbiDumpHandler)
@@ -81,6 +89,9 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
 
 abstract class AbstractJsLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractLibraryAbiReaderTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
+
+    override val preserializerFacade: Constructor<IrInliningFacade<IrBackendInput>>
+        get() = ::JsIrInliningFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
@@ -106,6 +117,9 @@ open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<Fi
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         configureFirParser(FirParser.LightTree)
+        defaultDirectives {
+            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+        }
         super.configure(builder)
     }
 }
