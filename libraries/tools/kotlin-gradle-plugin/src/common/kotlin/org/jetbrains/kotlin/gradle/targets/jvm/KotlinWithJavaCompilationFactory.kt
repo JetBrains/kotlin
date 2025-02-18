@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationLanguageSettingsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
@@ -48,6 +49,12 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
                 KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options(compilerOptions, kotlinOptions)
             },
             compilationAssociator = KotlinJvmCompilationAssociator,
+            compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
+                friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
+                    DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,
+                    DefaultKotlinCompilationFriendPathsResolver.AdditionalJvmFriendArtifactResolver
+                )
+            ),
             compilationOutputFactory = { _, compilationName ->
                 KotlinWithJavaCompilationOutput(project.javaSourceSets.maybeCreate(compilationName))
             },

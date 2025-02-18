@@ -9,7 +9,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
@@ -162,8 +161,7 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
-    @Disabled("KT-75188")
-    @DisplayName("KT-75188: Test fixtures can access internals of the main source set in Kotlin/JVM projects with Groovy")
+    @DisplayName("KT-75188: Test code can access internals of the test fixtures source set in Kotlin/JVM projects with Groovy")
     @JvmGradlePluginTests
     @GradleTest
     @TestMetadata(JVM_TEST_FIXTURES_PROJECT_NAME)
