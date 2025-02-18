@@ -19,7 +19,21 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractDiagnosticCompilerTestDataTest : AbstractLLCompilerBasedTest() {
+/**
+ * Checks diagnostics in the test data with regular resolution order.
+ * Example:
+ * ```kotlin
+ * fun one() = 0
+ * fun two() = true
+ * ```
+ * The function `one` will be resolved first.
+ * The function `two` will be resolved after that.
+ *
+ * A counterpart for [AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest].
+ *
+ * @see AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest
+ */
+abstract class AbstractLLDiagnosticsTest : AbstractLLCompilerBasedTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             baseFirDiagnosticTestConfiguration(

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testData/compilerLikeAnalysis")
 @TestDataPath("$PROJECT_ROOT")
-public class DiagnosticCompilerTestAATestdataTestGenerated extends AbstractDiagnosticCompilerTestDataTest {
+public class DiagnosticCompilerTestAATestdataTestGenerated extends AbstractLLDiagnosticsTest {
   @Test
   public void testAllFilesPresentInCompilerLikeAnalysis() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/compilerLikeAnalysis"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
