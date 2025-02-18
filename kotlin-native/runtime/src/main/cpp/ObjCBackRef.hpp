@@ -40,7 +40,9 @@ public:
         std::unique_lock guard(deallocMutex_);
         // Can be safely called with any thread state.
         raw_->dispose();
-        raw_ = nullptr; // Null out, just in case.
+        // Null out to make `ref`, `retain`, `release`, `tryRetain` safe to call after the destructor.
+        // This can happen in both objc import and export. See the methods for more explanation.
+        raw_ = nullptr;
     }
 
     mm::ExternalRCRefImpl* get() const noexcept { return static_cast<mm::ExternalRCRefImpl*>(raw_); }
@@ -48,7 +50,16 @@ public:
     // Return the underlying object.
     // The result is only safe to use, when reference count is >0, or there is a guarantee
     // that the object is in roots in some other way (e.g. on stack)
-    KRef ref() const noexcept { return raw_->ref(); }
+    KRef ref() const noexcept {
+        // In objc import if KtClass inherits from ObjCClass
+        // calling [self retain] inside [ObjCClass dealloc] and then passing the retained
+        // reference back to Kotlin will lead to
+        // this->ref() being called after this->~ObjCBackRef()
+        if (auto ref = raw_) {
+            return ref->ref();
+        }
+        return nullptr;
+    }
 
     KRef operator*() const noexcept { return ref(); }
 
@@ -56,7 +67,7 @@ public:
     void retain() noexcept {
         // In objc import if KtClass inherits from ObjCClass
         // calling [self retain] inside [ObjCClass dealloc] will lead to
-        // this->retain() being called after this->dispose()
+        // this->retain() being called after this->~ObjCBackRef()
         if (auto ref = raw_) {
             // Can be safely called with any thread state.
             ref->retainRef();
@@ -67,7 +78,7 @@ public:
     void release() noexcept {
         // In objc import if KtClass inherits from ObjCClass
         // calling [self release] inside [ObjCClass dealloc] will lead to
-        // this->release() being called after this->dispose()
+        // this->release() being called after this->~ObjCBackRef()
         if (auto ref = raw_) {
             // Can be safely called with any thread state.
             ref->releaseRef();
@@ -86,7 +97,7 @@ public:
         CalledFromNativeGuard threadStateGuard;
         // In objc export if ObjCClass is objc_setAssociatedObject with KtClass
         // calling [KtClass _tryRetain] inside [ObjCClass dealloc] will lead to
-        // this->tryRetain() being called after this->dispose()
+        // this->tryRetain() being called after this->~ObjCBackRef()
         if (auto ref = raw_) {
             ObjHolder holder;
             if (ref->tryRef(holder.slot())) {
