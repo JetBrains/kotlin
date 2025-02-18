@@ -1,4 +1,4 @@
-// JVM_DEFAULT_MODE: enable
+// JVM_DEFAULT_MODE: disable
 // FILE: I.kt
 
 interface I {
@@ -10,7 +10,7 @@ interface I {
 interface J : I
 
 // @I$DefaultImpls.class:
-// 2 foo\$default
+// 1 foo\$default
 
 // @J$DefaultImpls.class:
 // 0 foo\$default

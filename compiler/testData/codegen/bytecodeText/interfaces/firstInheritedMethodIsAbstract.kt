@@ -1,3 +1,5 @@
+// JVM_DEFAULT_MODE: enable
+
 interface A {
     fun foo(): String
 }
@@ -10,6 +12,9 @@ interface C : A, B {
     override fun foo(): String = super<B>.foo()
 }
 
-// There's no 'foo' in A$DefaultImpls, proguard and other tools may fail if we generate calls to it
+// In the 'enable' mode, methods from DefaultImpls should never be called.
 // 0 INVOKESTATIC A\$DefaultImpls.foo
-// 1 INVOKESTATIC B\$DefaultImpls.foo
+// 0 INVOKESTATIC B\$DefaultImpls.foo
+
+// There are two calls to B.foo: one is a supercall from C.foo, another is a non-virtual call from B.access$getFoo$jd (which is called from DefaultImpls).
+// 2 INVOKESPECIAL B.foo

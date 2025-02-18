@@ -1,3 +1,4 @@
+// JVM_DEFAULT_MODE: enable
 // WITH_STDLIB
 
 interface I<T> {
@@ -7,4 +8,3 @@ interface I<T> {
 class C : I<Result<Boolean>> {
     override fun foo(): Result<Boolean> = TODO()
 }
-

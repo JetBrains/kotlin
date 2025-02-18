@@ -3,6 +3,7 @@
 // WITH_STDLIB
 
 // MODULE: lib
+// JVM_DEFAULT_MODE: disable
 // FILE: 1.kt
 interface KInterface  {
     fun call(): List<String> {

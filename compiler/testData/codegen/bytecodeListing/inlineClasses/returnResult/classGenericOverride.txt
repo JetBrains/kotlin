@@ -9,13 +9,14 @@ public final class C {
 @kotlin.Metadata
 public final class I$DefaultImpls {
     // source: 'classGenericOverride.kt'
-    public static method foo(@org.jetbrains.annotations.NotNull p0: I): java.lang.Object
+    public deprecated static @java.lang.Deprecated method foo(@org.jetbrains.annotations.NotNull p0: I): java.lang.Object
     public final inner class I$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I {
     // source: 'classGenericOverride.kt'
-    public abstract method foo(): java.lang.Object
+    public synthetic static method access$foo$jd(p0: I): java.lang.Object
+    public method foo(): java.lang.Object
     public final inner class I$DefaultImpls
 }
