@@ -126,10 +126,8 @@ open class LocalDeclarationsLowering(
     }
 
     // Need to keep LocalFunctionContext.index
-    private fun IrSymbolOwner.getOrCreateScopeWithCounter(): ScopeWithCounter {
-        if (scopeWithCounter == null) scopeWithCounter = ScopeWithCounter(this)
-        return scopeWithCounter!!
-    }
+    private fun IrSymbolOwner.getOrCreateScopeWithCounter(): ScopeWithCounter =
+        scopeWithCounter ?: ScopeWithCounter(this).also { scopeWithCounter = it }
 
     abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
