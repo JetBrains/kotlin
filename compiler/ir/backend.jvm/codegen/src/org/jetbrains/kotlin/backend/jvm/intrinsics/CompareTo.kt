@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.NumberComparisonUtils
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.receiverAndArgs
@@ -56,7 +57,7 @@ object CompareTo : IntrinsicMethod() {
         classCodegen: ClassCodegen
     ): IntrinsicFunction {
         val callee = expression.symbol.owner
-        val calleeParameter = callee.dispatchReceiverParameter ?: callee.extensionReceiverParameter!!
+        val calleeParameter = callee.dispatchReceiverParameter ?: callee.parameters.single { it.kind == IrParameterKind.ExtensionReceiver }
         val parameterType = comparisonOperandType(
             classCodegen.typeMapper.mapType(calleeParameter.type),
             signature.valueParameters.single().asmType,
