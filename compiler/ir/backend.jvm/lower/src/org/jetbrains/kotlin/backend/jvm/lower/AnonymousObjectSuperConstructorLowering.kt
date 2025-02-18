@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
  * Moves evaluation of anonymous object super constructor arguments to call site. Specifically, transforms code like this:
@@ -89,8 +90,8 @@ internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCo
 
         fun IrDelegatingConstructorCall.transform(lift: List<IrVariable>) = apply {
             val remapping = lift.associateWith { addArgument(it.initializer!!) }
-            for (i in symbol.owner.valueParameters.indices) {
-                putValueArgument(i, getValueArgument(i)?.transform(remapping))
+            for (parameter in symbol.owner.parameters) {
+                arguments[parameter] = arguments[parameter]?.transform(remapping)
             }
         }
 
@@ -118,15 +119,11 @@ internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCo
                     objectConstructorCall.startOffset, objectConstructorCall.endOffset, objectConstructorCall.type,
                     objectConstructorCall.symbol, classTypeParametersCount, objectConstructorCall.origin
                 ).apply {
-                    for (i in 0 until objectConstructorCall.valueArgumentsCount)
-                        putValueArgument(i, objectConstructorCall.getValueArgument(i))
+                    arguments.assignFrom(objectConstructorCall.arguments)
                     // Avoid complex expressions between `new` and `<init>`, as the inliner gets confused if
                     // an argument to `<init>` is an anonymous object. Put them in variables instead.
                     // See KT-21781 for an example; in short, it looks like `object : S({ ... })` in an inline function.
-                    for ((i, argument) in newArguments.withIndex()) {
-                        argument.patchDeclarationParents(currentDeclarationParent)
-                        putValueArgument(i + objectConstructorCall.valueArgumentsCount, irGet(irTemporary(argument)))
-                    }
+                    arguments += newArguments.map { irGet(irTemporary(it.patchDeclarationParents(currentDeclarationParent))) }
                 }
             }
         }
