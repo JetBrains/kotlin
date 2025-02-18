@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 
-abstract class AbstractLLFirSerializationBlackBoxCodegenBasedTest : AbstractLLBlackBoxTest() {
+abstract class AbstractLLSerializationBlackBoxTest : AbstractLLBlackBoxTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForKotlinxSerialization()
