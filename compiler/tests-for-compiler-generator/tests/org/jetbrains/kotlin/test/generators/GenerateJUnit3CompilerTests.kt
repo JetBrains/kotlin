@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.cli.AbstractCliTest
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AbstractIrCustomScriptCodegenTest
+import org.jetbrains.kotlin.codegen.AbstractKaptModeBytecodeShapeTest
 import org.jetbrains.kotlin.codegen.fir.*
-import org.jetbrains.kotlin.codegen.ir.*
+import org.jetbrains.kotlin.codegen.ir.AbstractIrCheckLocalVariablesTableTest
+import org.jetbrains.kotlin.codegen.ir.AbstractIrScriptCodegenTest
+import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteSignatureTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByAstTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
@@ -29,7 +32,8 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirLightTreeCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirPsiCompileJavaAgainstKotlinTest
-import org.jetbrains.kotlin.jvm.compiler.ir.*
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinWithJavacIntegrationTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
@@ -108,24 +112,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("psi", testMethod = "doParsingTest", pattern = "^(.*)\\.kts?$")
                 model("parseCodeFragment/expression", testMethod = "doExpressionCodeFragmentParsingTest", extension = "kt")
                 model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
-            }
-
-            testClass<AbstractLightAnalysisModeTest> {
-                // "ranges/stepped" is excluded because it contains hundreds of generated tests and only have a box() method.
-                // There isn't much to be gained from running light analysis tests on them.
-                model(
-                    "codegen/box",
-                    targetBackend = TargetBackend.JVM_IR,
-                    skipIgnored = true,
-                    excludeDirs = listOf(
-                        "ranges/stepped",
-                        "compileKotlinAgainstKotlin",
-                        "testsWithJava9",
-                        "testsWithJava15",
-                        "testsWithJava17",
-                        "multiplatform/k2",
-                    )
-                )
             }
 
             testClass<AbstractKaptModeBytecodeShapeTest> {

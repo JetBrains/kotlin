@@ -11,7 +11,6 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class BytecodeListingTextCollectingVisitor(
     val filter: Filter,
-    val allClasses: Map<Type, ClassNode>,
     val withSignatures: Boolean,
     val withAnnotations: Boolean = true,
     val sortDeclarations: Boolean = true,
@@ -33,15 +32,13 @@ class BytecodeListingTextCollectingVisitor(
                     }
                 }
 
-            val allClasses = classes.associateBy { Type.getObjectType(it.name) }
-
             return classes.mapNotNull { node ->
                 val visitor = BytecodeListingTextCollectingVisitor(
-                    filter, allClasses, withSignatures, withAnnotations = withAnnotations, sortDeclarations = sortDeclarations
+                    filter, withSignatures, withAnnotations = withAnnotations, sortDeclarations = sortDeclarations
                 )
                 node.accept(visitor)
 
-                if (!filter.shouldWriteClass(node)) null else visitor.text
+                if (!filter.shouldWriteClass(node.name)) null else visitor.text
             }.joinToString("\n\n", postfix = "\n")
         }
 
@@ -73,29 +70,15 @@ class BytecodeListingTextCollectingVisitor(
             )
     }
 
-    interface Filter {
-        fun shouldWriteClass(node: ClassNode): Boolean
-        fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean
-        fun shouldWriteField(access: Int, name: String, desc: String): Boolean
-        fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int): Boolean
-        val shouldTransformAnonymousTypes: Boolean
+    fun interface Filter {
+        fun shouldWriteClass(name: String): Boolean
 
         object EMPTY : Filter {
-            override fun shouldWriteClass(node: ClassNode) = true
-            override fun shouldWriteMethod(access: Int, name: String, desc: String) = true
-            override fun shouldWriteField(access: Int, name: String, desc: String) = true
-            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int) = true
-            override val shouldTransformAnonymousTypes: Boolean get() = false
+            override fun shouldWriteClass(name: String) = true
         }
 
         object ForCodegenTests : Filter {
-            override fun shouldWriteClass(node: ClassNode): Boolean = !node.name.startsWith("helpers/")
-            override fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean = true
-            override fun shouldWriteField(access: Int, name: String, desc: String): Boolean = true
-            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int): Boolean =
-                !name.startsWith("helpers/")
-
-            override val shouldTransformAnonymousTypes: Boolean get() = false
+            override fun shouldWriteClass(name: String): Boolean = !name.startsWith("helpers/")
         }
     }
 
@@ -193,11 +176,7 @@ class BytecodeListingTextCollectingVisitor(
     }
 
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-        if (!filter.shouldWriteMethod(access, name, desc)) {
-            return null
-        }
-
-        val returnType = transformAnonymousTypeIfNeeded(Type.getReturnType(desc)).className
+        val returnType = Type.getReturnType(desc).className
         val parameterTypes = Type.getArgumentTypes(desc).map { it.className }
         val methodAnnotations = arrayListOf<String>()
         val parameterAnnotations = hashMapOf<Int, MutableList<String>>()
@@ -245,11 +224,7 @@ class BytecodeListingTextCollectingVisitor(
     }
 
     override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-        if (!filter.shouldWriteField(access, name, desc)) {
-            return null
-        }
-
-        val type = transformAnonymousTypeIfNeeded(Type.getType(desc)).className
+        val type = Type.getType(desc).className
         val fieldSignature = if (withSignatures) "<$signature> " else ""
         val fieldDeclaration = Declaration("field $fieldSignature$name: $type")
         declarationsInsideClass.add(fieldDeclaration)
@@ -353,9 +328,7 @@ class BytecodeListingTextCollectingVisitor(
     }
 
     override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
-        if (!filter.shouldWriteInnerClass(name, outerName, innerName, access)) {
-            return
-        }
+        if (!filter.shouldWriteClass(name)) return
 
         when {
             innerName == null -> {
@@ -375,21 +348,5 @@ class BytecodeListingTextCollectingVisitor(
                 declarationsInsideClass.add(Declaration("inner (unrecognized) class $name $outerName $innerName"))
             }
         }
-    }
-
-    private fun transformAnonymousTypeIfNeeded(type: Type): Type {
-        if (filter.shouldTransformAnonymousTypes) {
-            val node = allClasses[type]
-            if (node != null && isAnonymousClass(node)) {
-                return Type.getObjectType(node.interfaces.singleOrNull() ?: node.superName)
-            }
-        }
-
-        return type
-    }
-
-    private fun isAnonymousClass(node: ClassNode): Boolean {
-        val innerClassAttr = node.innerClasses.find { it.name == node.name }
-        return innerClassAttr != null && innerClassAttr.innerName == null && innerClassAttr.outerName == null
     }
 }

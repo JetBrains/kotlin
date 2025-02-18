@@ -52,14 +52,9 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.targetPlatform
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.File
 import java.util.jar.JarFile
@@ -228,12 +223,9 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             ClassNode(Opcodes.API_VERSION).also { classReader.accept(it, ClassReader.SKIP_CODE) }
         }
 
-        val allClasses = classes.associateBy { Type.getObjectType(it.name) }
-
         return classes.joinToString("\n\n") { node ->
             val visitor = BytecodeListingTextCollectingVisitor(
                 BytecodeListingTextCollectingVisitor.Filter.EMPTY,
-                allClasses,
                 withSignatures = false,
                 withAnnotations = false,
                 sortDeclarations = true
