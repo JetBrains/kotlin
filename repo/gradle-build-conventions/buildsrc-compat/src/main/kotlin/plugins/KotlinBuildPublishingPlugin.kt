@@ -97,8 +97,8 @@ var Project.mainPublicationName: String
         project.extra.set(KotlinBuildPublishingPlugin.MAIN_PUBLICATION_NAME_PROPERTY, value)
     }
 
-private fun humanReadableName(name: String) =
-    name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
+private fun humanReadableName(name: Provider<String>) =
+    name.map { it.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) } }
 
 fun MavenPublication.configureKotlinPomAttributes(
     project: Project,
@@ -116,9 +116,11 @@ fun MavenPublication.configureKotlinPomAttributes(
     val publication = this
     pom {
         this.packaging = packaging
-        name.set(explicitName.orElse(humanReadableName(publication.artifactId)))
-        description.set(explicitDescription.orElse(project.description ?: humanReadableName(publication.artifactId)))
-        url.set("https://kotlinlang.org/")
+        name = explicitName.orElse(humanReadableName(publication.artifactId))
+        description = explicitDescription
+            .orElse(project.provider { project.description })
+            .orElse(humanReadableName(publication.artifactId))
+        url = "https://kotlinlang.org/"
         licenses {
             license {
                 name.set("The Apache License, Version 2.0")
@@ -181,7 +183,7 @@ fun Project.configureDefaultPublishing(
                 )
 
                 setUrl(repoUrl)
-                if (url.scheme != "file" && username != null && password != null) {
+                if (url.get().scheme != "file" && username != null && password != null) {
                     credentials {
                         this.username = username
                         this.password = password

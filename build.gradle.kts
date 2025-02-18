@@ -752,7 +752,7 @@ tasks {
     }
 
     register<Delete>("cleanupArtifacts") {
-        delete = setOf(artifactsDir)
+        targetFiles.setFrom(artifactsDir)
     }
 
     fun aggregateLibsTask(name: String, projectTask: String, projects: List<String>) =
@@ -1073,7 +1073,7 @@ tasks {
     register<Exec>("mvnInstall") {
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
-        commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests")
+        commandLine(getMvnwCmd() + listOf("clean", "install", "-DskipTests"))
         doFirst {
             environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
         }
@@ -1081,11 +1081,13 @@ tasks {
     register<Exec>("mvnPublish") {
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
-        commandLine = getMvnwCmd() + listOf(
-            "clean", "deploy", "--activate-profiles=noTest",
-            "-Dinvoker.skip=true", "-DskipTests",
-            "-Ddeploy-snapshot-repo=local",
-            "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}"
+        commandLine(
+            getMvnwCmd() + listOf(
+                "clean", "deploy", "--activate-profiles=noTest",
+                "-Dinvoker.skip=true", "-DskipTests",
+                "-Ddeploy-snapshot-repo=local",
+                "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}"
+            )
         )
         doFirst {
             environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
@@ -1101,7 +1103,7 @@ tasks {
         }
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
-        commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true")
+        commandLine(getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true"))
         val jdk8Home = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
             environment("JDK_1_8", jdk8Home.get())

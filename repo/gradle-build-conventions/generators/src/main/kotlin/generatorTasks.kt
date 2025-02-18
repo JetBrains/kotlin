@@ -71,7 +71,7 @@ fun Project.generatedSourcesTask(
         workingDir = rootDir
         classpath = generatorClasspath
         mainClass.set(generatorMainClass)
-        systemProperties["line.separator"] = "\n"
+        systemProperty("line.separator", "\n")
         args(argsProvider(generationRoot))
 
         @Suppress("NAME_SHADOWING")
