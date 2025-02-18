@@ -161,7 +161,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     }
 
     @NotNull
-    public static CodegenTestFiles loadMultiFiles(@NotNull List<TestFile> files, @NotNull Project project) {
+    private static CodegenTestFiles loadMultiFiles(@NotNull List<TestFile> files, @NotNull Project project) {
         Collections.sort(files);
 
         List<KtFile> ktFiles = new ArrayList<>(files.size());
@@ -578,7 +578,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     }
 
     @Nullable
-    protected File writeJavaFiles(@NotNull List<TestFile> files) {
+    private File writeJavaFiles(@NotNull List<TestFile> files) {
         List<TestFile> javaFiles = CollectionsKt.filter(files, file -> file.name.endsWith(".java"));
         if (javaFiles.isEmpty()) return null;
 
