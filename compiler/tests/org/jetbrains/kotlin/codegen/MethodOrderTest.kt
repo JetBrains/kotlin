@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import java.util.*
 
 open class MethodOrderTest : CodegenTestCase() {
     fun testDelegatedMethod() {
@@ -156,6 +156,16 @@ open class MethodOrderTest : CodegenTestCase() {
                 "visitElement(LIrElement;Ljava/lang/Object;)Ljava/lang/Object;",
             )
         )
+    }
+
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
+        if (!useFir) {
+            // Force language version 1.9 if K1 is used, otherwise the K1 compiler will pretend that it has all new language features
+            // enabled, in particular JvmDefaultEnableByDefault, which makes it report an error
+            // EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE in `testBridgeOrder`.
+            configuration.languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_9, ApiVersion.KOTLIN_1_9)
+        }
     }
 
     private fun doTest(sourceText: String, classSuffix: String, expectedOrder: List<String>) {
