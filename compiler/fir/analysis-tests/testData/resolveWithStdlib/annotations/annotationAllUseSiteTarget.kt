@@ -6,6 +6,9 @@
 @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
 package p
 
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class ParamOnly
+
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
 annotation class ParamProperty
 
@@ -34,6 +37,7 @@ annotation class Inapplicable
 
 @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
 class My(
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:ParamOnly<!>
     @all:ParamProperty
     @all:ParamField
     @all:PropertyField
@@ -45,6 +49,7 @@ class My(
     <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:Inapplicable<!>
     val valFromConstructor: Int,
 
+    @all:ParamOnly
     @all:ParamProperty
     @all:ParamField
     @all:PropertyField
@@ -59,6 +64,7 @@ class My(
     @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
     param: Int,
 ) {
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:ParamOnly<!>
     @all:ParamProperty
     @all:ParamField
     @all:PropertyField
@@ -70,6 +76,7 @@ class My(
     <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:Inapplicable<!>
     val valInside: Int = 0
 
+    @all:ParamOnly
     @all:ParamProperty
     @all:ParamField
     @all:PropertyField
@@ -81,6 +88,7 @@ class My(
     <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:Inapplicable<!>
     var varInside: Int = 1
 
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:ParamOnly<!>
     @all:ParamProperty
     @all:ParamField
     @all:PropertyField
@@ -93,6 +101,7 @@ class My(
     val valWithGetter: Int = 2
         get() = field
 
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:ParamOnly<!>
     @all:ParamProperty
     <!WRONG_ANNOTATION_TARGET!>@all:ParamField<!>
     @all:PropertyField
@@ -105,6 +114,7 @@ class My(
     val valWithoutField: Int
         get() = 3
 
+    @all:ParamOnly
     @all:ParamProperty
     @all:ParamField
     @all:PropertyField
@@ -117,6 +127,7 @@ class My(
     var varWithSetter: Int = 4
         set(param) {}
 
+    @all:ParamOnly
     @all:ParamProperty
     @all:ParamField
     @all:PropertyField
@@ -130,6 +141,7 @@ class My(
         get() = field
         set(param) {}
 
+    @all:ParamOnly
     @all:ParamProperty
     <!WRONG_ANNOTATION_TARGET!>@all:ParamField<!>
     @all:PropertyField
@@ -143,6 +155,7 @@ class My(
         get() = 6
         set(param) {}
 
+    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamOnly
     @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamProperty
     @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamField
     @<!INAPPLICABLE_ALL_TARGET!>all<!>:PropertyField
