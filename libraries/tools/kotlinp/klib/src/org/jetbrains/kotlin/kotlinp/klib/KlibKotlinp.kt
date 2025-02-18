@@ -71,7 +71,7 @@ class KlibKotlinp(
         clazz.klibEnumEntries.forEach { enumEntry ->
             appendLine()
             appendSignature { enumEntrySignature(enumEntry) }
-            appendAnnotations(hasAnnotations = null, enumEntry.annotations)
+            appendAnnotations(enumEntry.annotations)
             appendLine(enumEntry.name, ",")
         }
     }
