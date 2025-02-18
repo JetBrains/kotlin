@@ -29,7 +29,7 @@ import java.io.File
  * to prevent missed broken analysis (e.g., contract violation).
  * This test case does not interact with the backend at all.
  */
-abstract class AbstractLLFirBlackBoxCodegenBasedTestBase : AbstractLLCompilerBasedTest() {
+abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
     abstract fun facade(): Constructor<LowLevelFirFrontendFacade>
     abstract fun facadeSpecificSuppressor(): Constructor<AfterAnalysisChecker>
 
