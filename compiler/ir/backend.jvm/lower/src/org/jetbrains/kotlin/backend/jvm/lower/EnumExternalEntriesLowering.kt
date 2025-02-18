@@ -117,7 +117,7 @@ internal class EnumExternalEntriesLowering(private val context: JvmBackendContex
                 context.createIrBuilder(field.symbol).run {
                     irExprBody(
                         irCall(this@EnumExternalEntriesLowering.context.symbols.createEnumEntries).apply {
-                            putValueArgument(0, irCall(enumValues))
+                            arguments[0] = irCall(enumValues)
                         }
                     )
                 }
