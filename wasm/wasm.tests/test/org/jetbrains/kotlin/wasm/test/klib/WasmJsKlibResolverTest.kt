@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.js.testOld.klib.JsKlibResolverTest
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -16,12 +18,10 @@ import java.io.PrintStream
 class WasmJsKlibResolverTest : JsKlibResolverTest() {
     // TODO: Move to helpers in compiler/tests-common-new/tests/org/jetbrains/kotlin/test/services/KotlinStandardLibrariesPathProvider.kt
     private fun fullWasmJsStdlib(): File {
-        val path = "kotlin.wasm-js.stdlib.path"
-        val property = System.getProperty(path)
-        assert(property != null) { "property '$path' was not found " }
-        val file = File(property)
-        assert(file.exists()) { "$path not found" }
-        return file
+        val stdlibPath = WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS)
+        return File(stdlibPath).also {
+            assert(it.exists()) { "stdlib is not found at $stdlibPath" }
+        }
     }
 
     override fun compileKlib(
