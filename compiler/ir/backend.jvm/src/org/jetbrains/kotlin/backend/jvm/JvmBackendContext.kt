@@ -77,7 +77,7 @@ class JvmBackendContext(
 
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
-    override val symbols = JvmSymbols(this@JvmBackendContext)
+    override val symbols = JvmSymbols(this)
 
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, symbols, irBuiltIns, irFactory)
 
