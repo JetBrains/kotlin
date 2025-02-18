@@ -44,11 +44,11 @@ import org.jetbrains.kotlin.kapt.cli.KaptCliOption
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption.*
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption.Companion.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
+import org.jetbrains.kotlin.kapt.util.ReplaceWithSupertypeAnonymousTypeTransformer
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.jvm.ReplaceWithSupertypeAnonymousTypeTransformer
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.types.KotlinType
