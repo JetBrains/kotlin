@@ -1,28 +1,29 @@
 @kotlin.Metadata
 public final class I1$DefaultImpls {
     // source: 'kt62788.kt'
-    public static @MyAnnotation method foo(@org.jetbrains.annotations.NotNull p0: I1): void
+    public deprecated static @java.lang.Deprecated @MyAnnotation method foo(@org.jetbrains.annotations.NotNull p0: I1): void
     public final inner class I1$DefaultImpls
-    public final inner class MyInterface$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I1 {
     // source: 'kt62788.kt'
+    public synthetic static method access$foo$jd(p0: I1): void
     public final inner class I1$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class I2$DefaultImpls {
     // source: 'kt62788.kt'
-    public static method foo(@org.jetbrains.annotations.NotNull p0: I2): void
+    public deprecated static @java.lang.Deprecated method foo(@org.jetbrains.annotations.NotNull p0: I2): void
     public final inner class I2$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I2 {
     // source: 'kt62788.kt'
-    public abstract method foo(): void
+    public synthetic static method access$foo$jd(p0: I2): void
+    public method foo(): void
     public final inner class I2$DefaultImpls
 }
 
@@ -38,19 +39,19 @@ public final class MyClass {
     // source: 'kt62788.kt'
     public method <init>(): void
     public @MyAnnotation method foo(): void
-    public final inner class I2$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class MyInterface$DefaultImpls {
     // source: 'kt62788.kt'
-    public static @MyAnnotation method foo(@org.jetbrains.annotations.NotNull p0: MyInterface): void
+    public deprecated static @java.lang.Deprecated @MyAnnotation method foo(@org.jetbrains.annotations.NotNull p0: MyInterface): void
     public final inner class MyInterface$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface MyInterface {
     // source: 'kt62788.kt'
-    public abstract @MyAnnotation method foo(): void
+    public synthetic static method access$foo$jd(p0: MyInterface): void
+    public @MyAnnotation method foo(): void
     public final inner class MyInterface$DefaultImpls
 }

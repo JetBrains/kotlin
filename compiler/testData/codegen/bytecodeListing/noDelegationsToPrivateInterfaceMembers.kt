@@ -1,3 +1,5 @@
+// JVM_DEFAULT_MODE: enable
+
 interface A {
     // There must be no delegation methods for 'log' and 'bar' in C as they are private
     private val log: String get() = "O"

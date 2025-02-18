@@ -11,14 +11,15 @@ public interface KFoo2 {
 @kotlin.Metadata
 public final class KFoo3$DefaultImpls {
     // source: 'javaDefaultInterfaceMember.kt'
-    public static method foo(@org.jetbrains.annotations.NotNull p0: KFoo3): void
+    public deprecated static @java.lang.Deprecated method foo(@org.jetbrains.annotations.NotNull p0: KFoo3): void
     public final inner class KFoo3$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface KFoo3 {
     // source: 'javaDefaultInterfaceMember.kt'
-    public abstract method foo(): void
+    public synthetic static method access$foo$jd(p0: KFoo3): void
+    public method foo(): void
     public final inner class KFoo3$DefaultImpls
 }
 
@@ -127,5 +128,4 @@ public final class TestFoo3 {
     public method toString(): java.lang.String
     public static method toString-impl(p0: int): java.lang.String
     public synthetic final method unbox-impl(): int
-    public final inner class KFoo3$DefaultImpls
 }
