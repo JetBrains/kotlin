@@ -53,7 +53,7 @@ class NonSourceErrorMessagesHandler(testServices: TestServices) : AfterAnalysisC
 
         val assertions = testServices.assertions
         if (resultingDump.isEmpty()) {
-            if (outFile == firOutFile) {
+            if (outFile == firOutFile || defaultOutFile.exists()) {
                 assertions.assertEqualsToFile(firOutFile, "")
             } else {
                 assertions.assertFileDoesntExist(outFile, CHECK_COMPILER_OUTPUT)
