@@ -354,7 +354,7 @@ open class SymbolTable(
         privateSymbolFactory: () -> IrSimpleFunctionSymbol,
     ): IrSimpleFunctionSymbol {
         return when {
-            signature.isPubliclyVisible -> functionSlice.referenced(signature) { publicSymbolFactory() }
+            signature.isPubliclyVisible || signature is IdSignature.FileLocalSignature -> functionSlice.referenced(signature) { publicSymbolFactory() }
             else -> privateSymbolFactory().also {
                 it.privateSignature = signature
             }

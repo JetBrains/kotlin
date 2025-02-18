@@ -1,16 +1,12 @@
-// SKIP_UNBOUND_IR_SERIALIZATION
-// ^^^ Muted until KT-72296 is fixed.
-
 // FILE: 1.kt
-open class C {
-    fun o() = "O"
-    val k = "K"
+open class A {
+    fun a() = "OK"
 }
 
-inline fun inlineFun(): String {
-    val cc = object : C() {}
-    return cc.o() + cc.k
+inline fun foo(): String {
+    class B : A()
+    return B().a()
 }
 
 // FILE: 2.kt
-fun box() = inlineFun()
+fun box() = foo()
