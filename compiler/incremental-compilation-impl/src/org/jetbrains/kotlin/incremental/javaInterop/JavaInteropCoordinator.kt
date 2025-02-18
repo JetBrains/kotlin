@@ -24,22 +24,15 @@ import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
-import org.jetbrains.kotlin.incremental.ChangesEither
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.CompilationMode
-import org.jetbrains.kotlin.incremental.IncrementalJvmCache
-import org.jetbrains.kotlin.incremental.IncrementalJvmCachesManager
-import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
-import org.jetbrains.kotlin.incremental.JavaClassesTrackerImpl
-import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
-import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.io.File
-import kotlin.getValue
 
 private class CoarseJavaInteropCoordinator(
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
