@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -357,6 +356,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("with native dependencies downloader")
     @NativeGradlePluginTests
     @GradleTest
+    @OsCondition(
+        // disabled on Windows because of tmp dir problem KT-62761
+        supportedOn = [OS.LINUX, OS.MAC],
+        enabledOnCI = [OS.LINUX],
+    )
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     fun testNativeBundleDownloadForConfigurationCache(gradleVersion: GradleVersion, @TempDir konanDirTemp: Path) {
         nativeProject(
