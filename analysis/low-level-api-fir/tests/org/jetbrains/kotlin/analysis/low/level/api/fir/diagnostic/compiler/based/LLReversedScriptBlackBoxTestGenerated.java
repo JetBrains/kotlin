@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/script")
 @TestDataPath("$PROJECT_ROOT")
-public class LLFirReversedScriptBlackBoxCodegenBasedTestGenerated extends AbstractLLFirReversedScriptBlackBoxCodegenBasedTest {
+public class LLReversedScriptBlackBoxTestGenerated extends AbstractLLReversedScriptBlackBoxTest {
   @Test
   @TestMetadata("adder.kts")
   public void testAdder() {
