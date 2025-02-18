@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -59,7 +60,7 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
         blockBodyBuilder: IrBlockBodyBuilder,
         irFunction: IrSimpleFunction,
         bridge: IrSimpleFunction
-    ): List<IrValueDeclaration> = irFunction.valueParameters
+    ): List<IrValueDeclaration> = irFunction.nonDispatchParameters
 
     // Should dispatch receiver type be casted inside a bridge.
     open val shouldCastDispatchReceiver: Boolean = false
@@ -157,31 +158,30 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
             statements += context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
                 val valueParameters = extractValueParameters(this, irFunction, bridge)
                 if (specialMethodInfo != null) {
-                    valueParameters.take(specialMethodInfo.argumentsToCheck).forEachIndexed { index, valueDeclaration ->
+                    valueParameters.take(specialMethodInfo.argumentsToCheck).forEach { valueDeclaration ->
+                        if (valueDeclaration !is IrValueParameter) {
+                            compilationException("Expected a value parameter", valueDeclaration)
+                        }
                         +irIfThen(
                             context.irBuiltIns.unitType,
-                            irNot(irIs(irGet(valueDeclaration), delegateTo.valueParameters[index].type)),
+                            irNot(irIs(irGet(valueDeclaration), delegateTo.parameters[valueDeclaration.indexInParameters].type)),
                             irReturn(specialMethodInfo.defaultValueGenerator(irFunction))
                         )
                     }
                 }
 
                 val call = irCall(delegateTo.symbol)
-                val dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
+                val dispatchReceiver = irGet(irFunction.parameters[0])
 
-                call.dispatchReceiver = if (shouldCastDispatchReceiver)
-                    irCastIfNeeded(dispatchReceiver, delegateTo.dispatchReceiverParameter!!.type)
+                call.arguments[0] = if (shouldCastDispatchReceiver)
+                    irCastIfNeeded(dispatchReceiver, delegateTo.parameters[0].type)
                 else
                     dispatchReceiver
-
-                irFunction.extensionReceiverParameter?.let {
-                    call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
-                }
 
                 val toTake = valueParameters.size - if (call.isSuspend xor irFunction.isSuspend) 1 else 0
 
                 valueParameters.subList(0, toTake).forEachIndexed { i, valueParameter ->
-                    call.putValueArgument(i, irCastIfNeeded(irGet(valueParameter), delegateTo.valueParameters[i].type))
+                    call.arguments[i + 1] = irCastIfNeeded(irGet(valueParameter), delegateTo.parameters[i + 1].type)
                 }
 
                 +irReturn(call)
