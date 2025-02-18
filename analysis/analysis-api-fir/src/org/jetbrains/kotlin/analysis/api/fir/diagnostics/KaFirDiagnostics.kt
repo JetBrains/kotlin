@@ -1571,6 +1571,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val function: KaCallableSymbol
     }
 
+    interface UnexpectedTrailingLambdaOnANewLine : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnexpectedTrailingLambdaOnANewLine::class
+    }
+
     interface NoValueForParameter : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NoValueForParameter::class
         val violatedParameter: KaSymbol
