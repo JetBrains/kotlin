@@ -451,7 +451,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 model("codegen/script", pattern = TestGeneratorUtil.KTS)
             }
 
-            testClass<AbstractLLFirScriptBlackBoxCodegenBasedTest> {
+            testClass<AbstractLLScriptBlackBoxTest> {
                 scriptBlackBoxInit()
             }
 
