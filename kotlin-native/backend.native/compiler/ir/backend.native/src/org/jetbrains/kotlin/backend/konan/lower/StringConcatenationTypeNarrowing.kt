@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.shallowCopy
@@ -41,20 +42,27 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
     private val nameAppend = Name.identifier("append")
 
     private val appendNullableStringFunction = stringBuilder.functions.single {  // StringBuilder.append(String?)
-        it.name == nameAppend &&
-                it.parameters.size == 2 &&
-                it.parameters[1].type.isNullableString()
+        it.name == nameAppend && it.hasShape(
+                dispatchReceiver = true,
+                regularParameters = 1,
+                parameterTypes = listOf(context.irBuiltIns.stringType.makeNullable())
+        )
     }
+
     private val appendAnyFunction = stringBuilder.functions.single {  // StringBuilder.append(Any?)
-        it.name == nameAppend &&
-                it.parameters.size == 2 &&
-                it.parameters[1].type.isNullableAny()
+        it.name == nameAppend && it.hasShape(
+                dispatchReceiver = true,
+                regularParameters = 1,
+                parameterTypes = listOf(context.irBuiltIns.anyNType)
+        )
     }
 
     private val plusImplFunction = string.functions.single { // external fun String.plusImpl(String)
-        it.name == namePlusImpl &&
-                it.parameters.size == 2 &&
-                it.parameters[1].type.isString()
+        it.name == namePlusImpl && it.hasShape(
+                dispatchReceiver = true,
+                regularParameters = 1,
+                parameterTypes = listOf(context.irBuiltIns.stringType)
+        )
     }
 
     override fun lower(irFile: IrFile) {
