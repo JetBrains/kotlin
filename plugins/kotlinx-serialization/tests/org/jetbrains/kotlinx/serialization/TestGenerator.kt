@@ -99,7 +99,7 @@ fun main(args: Array<String>) {
                     diagnosticsModelInit()
                 }
 
-                testClass<AbstractLLFirReversedSerializationDiagnosticTest> {
+                testClass<AbstractLLReversedSerializationDiagnosticsTest> {
                     diagnosticsModelInit()
                 }
             }
