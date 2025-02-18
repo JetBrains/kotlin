@@ -166,6 +166,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 PrintingMessageCollector(diagnosticsFullTextPrintStream, MessageRenderer.SYSTEM_INDEPENDENT_RELATIVE_PATHS, true),
                 false,
                 false,
+                false,
             )
 
         val actualText = StringBuilder()
