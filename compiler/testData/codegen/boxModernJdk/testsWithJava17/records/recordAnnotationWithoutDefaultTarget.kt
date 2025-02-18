@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-73256, KT-74382 (not supported in K1)
-// LANGUAGE: +AnnotationAllUseSiteTarget +PropertyParamAnnotationDefaultTargetMode
+// LANGUAGE: +AnnotationAllUseSiteTarget -PropertyParamAnnotationDefaultTargetMode
 
 // FILE: JavaFieldComponent.java
 
@@ -135,8 +135,8 @@ fun box(): String {
     if (someComponents[8].annotations.isNotEmpty()) {
         return "FAIL: record component annotation for '@JavaParamComponent val b' found, but it should not be so"
     }
-    if (someComponents[9].annotations.isEmpty()) {
-        return "FAIL: no record component annotation for '@JavaParamFieldComponent val c' found"
+    if (someComponents[9].annotations.isNotEmpty()) {
+        return "FAIL: record component annotation for '@JavaParamFieldComponent val c' found, but it should not be so"
     }
     if (someComponents[10].annotations.isNotEmpty()) {
         return "FAIL: record component annotation for '@JavaDefault val d' found, but it should not be so"
@@ -145,8 +145,8 @@ fun box(): String {
         return "FAIL: no record component annotation for '@field:JavaDefault val e' found"
     }
 
-    if (someComponents[12].annotations.isEmpty()) {
-        return "FAIL: no record component annotation for '@JavaWithKotlinTarget val f' found"
+    if (someComponents[12].annotations.isNotEmpty()) {
+        return "FAIL: record component annotation for '@JavaWithKotlinTarget val f' found"
     }
 
     val elseComponents = Else::class.java.recordComponents
