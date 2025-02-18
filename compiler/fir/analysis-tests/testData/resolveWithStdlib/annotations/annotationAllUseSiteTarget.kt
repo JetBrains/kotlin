@@ -37,7 +37,7 @@ annotation class Inapplicable
 
 @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
 class My(
-    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:ParamOnly<!>
+    @all:ParamOnly
     @all:ParamProperty
     @all:ParamField
     @all:PropertyField

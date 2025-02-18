@@ -66,7 +66,7 @@ FILE: annotationAllUseSiteTarget.kt
             super<R|kotlin/Any|>()
         }
 
-        @ALL:R|p/ParamOnly|() @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|() @ALL:R|p/Inapplicable|() field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final val valFromConstructor: R|kotlin/Int| = R|<local>/valFromConstructor|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|() @ALL:R|p/Inapplicable|() field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final val valFromConstructor: R|kotlin/Int| = R|<local>/valFromConstructor|
             @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int|
 
         @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|() @ALL:R|p/Inapplicable|() field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final var varFromConstructor: R|kotlin/Int| = R|<local>/varFromConstructor|

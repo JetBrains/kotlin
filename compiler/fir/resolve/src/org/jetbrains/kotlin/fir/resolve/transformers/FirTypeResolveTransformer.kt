@@ -653,6 +653,10 @@ open class FirTypeResolveTransformer(
                 if (annotated.isVar && SETTER_PARAMETER in allowedTargets) {
                     annotated.setter?.valueParameters?.firstOrNull()?.addAnnotationWithoutUseSiteTarget(this)
                 }
+                if (CONSTRUCTOR_PARAMETER in allowedTargets && annotated.fromPrimaryConstructor == true) {
+                    // It's already on a constructor parameter, but we set the flag to prevent reporting an error
+                    addedSomewhere = true
+                }
                 // If annotation isn't applicable anywhere or the property is delegated, we keep it at property to report an error later
                 PROPERTY in allowedTargets || !addedSomewhere || annotated.delegate != null
             }
