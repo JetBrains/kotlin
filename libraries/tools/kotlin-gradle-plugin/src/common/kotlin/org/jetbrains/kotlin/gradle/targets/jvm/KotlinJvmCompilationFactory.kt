@@ -6,6 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationSourceSetsContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationSourceSetsContainerFactory.DefaultDefaultSourceSetNaming
@@ -24,6 +25,12 @@ open class KotlinJvmCompilationFactory internal constructor(
         KotlinCompilationImplFactory(
             compilationSourceSetsContainerFactory = DefaultKotlinCompilationSourceSetsContainerFactory(
                 defaultSourceSetNaming = sourceSetsNaming,
+            ),
+            compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
+                friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
+                    DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,
+                    DefaultKotlinCompilationFriendPathsResolver.AdditionalJvmFriendArtifactResolver
+                )
             ),
             compilerOptionsFactory = KotlinJvmCompilerOptionsFactory,
             compilationAssociator = KotlinJvmCompilationAssociator,
