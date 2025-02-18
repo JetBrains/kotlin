@@ -114,7 +114,7 @@ fun main(args: Array<String>) {
                     blackBoxModelInit()
                 }
 
-                testClass<AbstractLLFirReversedSerializationBlackBoxCodegenBasedTest> {
+                testClass<AbstractLLReversedSerializationBlackBoxTest> {
                     blackBoxModelInit()
                 }
             }
