@@ -42,7 +42,9 @@ open class SirNominalType : SirType {
         this.parent = parent
         this.attributes = if (typeDeclaration is SirTypealias && typeDeclaration.type is SirFunctionalType) {
             attributes + listOf(SirAttribute.Escaping)
-        } else { attributes }
+        } else {
+            attributes
+        }
     }
 
     override fun equals(other: Any?): Boolean {
