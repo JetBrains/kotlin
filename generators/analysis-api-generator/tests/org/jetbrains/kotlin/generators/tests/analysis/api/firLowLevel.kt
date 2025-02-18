@@ -386,7 +386,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 scriptCustomDefBackBoxInit()
             }
 
-            testClass<AbstractLLFirReversedCustomDefScriptBlackBoxCodegenBasedTest>() {
+            testClass<AbstractLLReversedScriptWithCustomDefBlackBoxTest>() {
                 scriptCustomDefBackBoxInit()
             }
         }
