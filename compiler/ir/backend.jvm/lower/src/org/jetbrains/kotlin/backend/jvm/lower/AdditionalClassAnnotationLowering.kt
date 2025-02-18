@@ -17,11 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -71,11 +67,8 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
             IrConstructorCallImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.retentionConstructor.returnType, symbols.retentionConstructor.symbol, 0
             ).apply {
-                putValueArgument(
-                    0,
-                    IrGetEnumValueImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.retentionPolicyEnum.defaultType, javaRetentionPolicy.symbol
-                    )
+                arguments[0] = IrGetEnumValueImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.retentionPolicyEnum.defaultType, javaRetentionPolicy.symbol
                 )
             }
     }
@@ -105,7 +98,7 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
             IrConstructorCallImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.targetConstructor.returnType, symbols.targetConstructor.symbol, 0
             ).apply {
-                putValueArgument(0, vararg)
+                arguments[0] = vararg
             }
     }
 
@@ -133,13 +126,13 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
             IrConstructorCallImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.repeatableConstructor.returnType, symbols.repeatableConstructor.symbol, 0
             ).apply {
-                putValueArgument(0, containerReference)
+                arguments[0] = containerReference
             }
     }
 
     private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-        val index = symbol.owner.valueParameters.find { it.name == name }?.indexInOldValueParameters ?: return null
-        return getValueArgument(index)
+        val parameter = symbol.owner.parameters.find { it.name == name } ?: return null
+        return arguments[parameter]
     }
 
     private fun IrClass.applicableTargetSet(): Set<KotlinTarget>? {
