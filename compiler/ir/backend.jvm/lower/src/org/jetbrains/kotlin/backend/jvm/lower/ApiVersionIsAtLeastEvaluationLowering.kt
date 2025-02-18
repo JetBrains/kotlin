@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isTopLevelInPackage
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
@@ -79,11 +79,6 @@ internal class ApiVersionIsAtLeastEvaluationLowering(val context: JvmBackendCont
     private val IrFunction.isApiVersionIsAtLeast: Boolean
         get() {
             return isTopLevelInPackage("apiVersionIsAtLeast", StandardNames.KOTLIN_INTERNAL_FQ_NAME)
-                    && valueParameters.size == 3
-                    && valueParameters[0].type.isInt()
-                    && valueParameters[1].type.isInt()
-                    && valueParameters[2].type.isInt()
-                    && dispatchReceiverParameter == null
-                    && extensionReceiverParameter == null
+                    && hasShape(regularParameters = 3, parameterTypes = List(3) { context.irBuiltIns.intType })
         }
 }
