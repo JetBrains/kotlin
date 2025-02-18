@@ -8,7 +8,7 @@ package org.jetbrains.kotlinx.serialization.runners
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLReversedDiagnosticsTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-abstract class AbstractLLFirReversedSerializationDiagnosticTest : AbstractLLReversedDiagnosticsTest() {
+abstract class AbstractLLReversedSerializationDiagnosticsTest : AbstractLLReversedDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureSerializationFirPsiDiagnosticTest()
