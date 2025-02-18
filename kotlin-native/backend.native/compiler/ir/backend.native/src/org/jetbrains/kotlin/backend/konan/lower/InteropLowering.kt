@@ -47,52 +47,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
-private fun addSubstitutedTypesFromReceiver(
-        callee: IrFunction, receiver: IrExpression?, substitutionMap: MutableMap<IrTypeParameterSymbol, IrType>
-): IrType? {
-    val receiverClass = callee.parentClassOrNull
-    val receiverType = receiver?.type
-    if (receiverType == null || receiverClass == null || receiverType.makeNotNull().isNothing()
-            || callee is IrConstructor
-    ) {
-        return null
-    }
-
-    callee as IrSimpleFunction
-    val allClassSuperTypes = receiverType.getAllClassSuperTypes()
-    val receiverClassType = allClassSuperTypes.firstOrNull { it.classOrFail == receiverClass.symbol }
-            ?: receiverType.takeIf {
-                callee.resolveFakeOverrideMaybeAbstract()!!.parentAsClass == receiverType.classOrNull?.owner
-                        || callee.allOverriddenFunctions.any { it.isFromAny() }
-            }
-            ?: error("Can't find ${receiverClass.render()} in the super types of ${receiverType.render()}: " +
-                    "[${allClassSuperTypes.joinToString { it.render() }}]\n${receiver.dump()}\n${callee.dump()}")
-
-    val typeParameters = mutableListOf<IrTypeParameter>()
-    var irClass: IrClass = receiverClassType.classOrFail.owner
-    while (true) {
-        typeParameters.addAll(irClass.typeParameters)
-        if (!irClass.isInner) break
-        irClass = irClass.parentAsClass
-    }
-    val typeParametersFromClassCount = typeParameters.size
-    var irFunction = irClass.parent as? IrFunction
-    while (irFunction != null) {
-        typeParameters.addAll(irFunction.typeParameters)
-        irFunction = irFunction.parent as? IrFunction
-    }
-    val arguments = (receiverClassType as IrSimpleType).arguments
-    check(arguments.size >= typeParametersFromClassCount) {
-        "Expected at least ${arguments.size} type parameters: ${receiverClassType.render()}"
-    }
-    for (index in 0..<kotlin.math.min(typeParameters.size, arguments.size)) {
-        val parameter = typeParameters[index]
-        substitutionMap[parameter.symbol] = arguments[index].typeOrNull ?: parameter.defaultType.eraseTypeParameters()
-    }
-
-    return receiverClassType
-}
-
 internal fun IrType.getAllClassSuperTypes(): List<IrType> {
     val result = mutableListOf<IrType>()
     val visitedTypeParameters = mutableSetOf<IrTypeParameterSymbol>()
@@ -158,6 +112,7 @@ private abstract class BaseInteropIrTransformer(
 ) : IrBuildingTransformer(generationState.context) {
     protected val context = generationState.context
     protected val symbols = context.ir.symbols
+    protected val irBuiltIns = context.irBuiltIns
 
     protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
             owner: IrDeclarationContainer,
@@ -261,8 +216,20 @@ private abstract class BaseInteropIrTransformer(
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         expression.transformChildrenVoid()
 
+        val boundArguments = expression.arguments.filterNotNull()
+        val callee = expression.symbol.owner
+        val functionType = expression.type as? IrSimpleType ?: error("Expected an IrSimpleType: ${expression.type.render()}")
+        val expectedTypeArgumentsSize = callee.parameters.size - boundArguments.size + 1
+        check(functionType.arguments.size == expectedTypeArgumentsSize) {
+            "Expected $expectedTypeArgumentsSize arguments: ${functionType.render()}"
+        }
+        val parameterTypes = boundArguments.map { it.type } + functionType.arguments.dropLast(1).mapIndexed { index, typeArgument ->
+            typeArgument.typeOrNull ?: callee.parameters[index + boundArguments.size].type.erasedUpperBound.defaultType
+        }
+        val returnType = functionType.arguments.last().typeOrNull ?: callee.returnType.erasedUpperBound.defaultType
+
         builder.at(expression)
-        val trampoline = tryBuildTrampoline(expression.symbol.owner, expression.arguments.firstOrNull())
+        val trampoline = tryBuildTrampoline(callee, parameterTypes, returnType)
         return if (trampoline == null)
             expression
         else builder.irBlock {
@@ -281,10 +248,33 @@ private abstract class BaseInteropIrTransformer(
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
         expression.transformChildrenVoid()
 
+        val boundArguments = expression.arguments.filterNotNull()
+        val getter = expression.getter?.owner
+        val setter = expression.setter?.owner
+        val setterParametersSize = getter?.parameters?.size?.plus(1) // fun receiver.<get-prop>(): R
+                ?: setter?.parameters?.size // fun receiver.<set-prop>(value: R): Unit
+                ?: return expression // No accessors - nothing to change.
+        val functionType = expression.type as? IrSimpleType ?: error("Expected an IrSimpleType: ${expression.type.render()}")
+        val expectedTypeArgumentsSize = setterParametersSize - boundArguments.size
+        check(functionType.arguments.size == expectedTypeArgumentsSize) {
+            "Expected $expectedTypeArgumentsSize arguments: ${functionType.render()}"
+        }
+        val calleeParameters = getter?.parameters ?: setter!!.parameters
+        val parameterTypes = boundArguments.map { it.type } + functionType.arguments
+                .dropLast(1)
+                .mapIndexed { index, typeArgument ->
+                    typeArgument.typeOrNull ?: calleeParameters[index + boundArguments.size].type.erasedUpperBound.defaultType
+                }
+        val propertyType = functionType.arguments.last().typeOrNull
+                ?: (getter?.returnType ?: setter!!.parameters.last().type).erasedUpperBound.defaultType
+
         builder.at(expression)
-        val receiver = expression.arguments.firstOrNull()
-        val getterTrampoline = expression.getter?.let { tryBuildTrampoline(it.owner, receiver) }
-        val setterTrampoline = expression.setter?.let { tryBuildTrampoline(it.owner, receiver) }
+        val getterTrampoline = expression.getter?.let {
+            tryBuildTrampoline(it.owner, parameterTypes, propertyType)
+        }
+        val setterTrampoline = expression.setter?.let {
+            tryBuildTrampoline(it.owner, parameterTypes + listOf(propertyType), irBuiltIns.unitType)
+        }
         return if (getterTrampoline == null && setterTrampoline == null)
             expression
         else builder.irBlock {
@@ -300,12 +290,7 @@ private abstract class BaseInteropIrTransformer(
         }
     }
 
-    private fun tryBuildTrampoline(callee: IrFunction, receiver: IrExpression?): IrSimpleFunction? {
-        val typeParametersContainer = when (callee) {
-            is IrSimpleFunction -> callee
-            is IrConstructor -> callee.constructedClass
-        }
-
+    private fun tryBuildTrampoline(callee: IrFunction, parameterTypes: List<IrType>, returnType: IrType): IrSimpleFunction? {
         val trampoline = context.irFactory.buildFun {
             startOffset = builder.startOffset
             endOffset = builder.endOffset
@@ -313,16 +298,9 @@ private abstract class BaseInteropIrTransformer(
             visibility = DescriptorVisibilities.LOCAL
         }
         trampoline.parent = builder.parent
-        trampoline.copyTypeParametersFrom(typeParametersContainer)
-        val typeParametersMap = typeParametersContainer.typeParameters.zip(trampoline.typeParameters).toMap()
-
-        val substitutionMap = mutableMapOf<IrTypeParameterSymbol, IrType>()
-        addSubstitutedTypesFromReceiver(callee, receiver, substitutionMap)
-
-        trampoline.returnType = callee.returnType.remapTypeParameters(typeParametersContainer, trampoline, typeParametersMap).substitute(substitutionMap)
-        trampoline.parameters = callee.parameters.map {
-            val remappedType = it.type.remapTypeParameters(typeParametersContainer, trampoline, typeParametersMap).substitute(substitutionMap)
-            it.copyTo(trampoline, origin = IrDeclarationOrigin.DEFINED, kind = IrParameterKind.Regular, type = remappedType)
+        trampoline.returnType = returnType
+        trampoline.parameters = callee.parameters.mapIndexed { index, parameter ->
+            parameter.copyTo(trampoline, origin = IrDeclarationOrigin.DEFINED, kind = IrParameterKind.Regular, type = parameterTypes[index])
         }
 
         val localBuilder = context.createIrBuilder(trampoline.symbol, trampoline.startOffset, trampoline.endOffset)
