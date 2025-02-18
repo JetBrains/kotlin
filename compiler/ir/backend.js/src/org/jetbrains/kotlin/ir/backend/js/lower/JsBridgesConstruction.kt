@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.varargParameterIndex
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStableJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.jsFunctionSignature
 import org.jetbrains.kotlin.ir.builders.*
@@ -55,7 +54,7 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
         if (!bridge.isEffectivelyExternal())
             return super.extractValueParameters(blockBodyBuilder, irFunction, bridge)
 
-        val varargIndex = bridge.varargParameterIndex()
+        val varargIndex = bridge.valueParameters.indexOfFirst { it.varargElementType != null }
 
         if (varargIndex == -1)
             return super.extractValueParameters(blockBodyBuilder, irFunction, bridge)

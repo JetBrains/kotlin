@@ -233,7 +233,7 @@ fun translateCall(
         return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) memoryOptimizedPlus arguments } ?: arguments)
     }
 
-    val varargParameterIndex = function.varargParameterIndex()
+    val varargParameterIndex = function.valueParameters.indexOfFirst { it.varargElementType != null }
     val isExternalVararg = function.isEffectivelyExternal() && varargParameterIndex != -1
 
     val symbolName = when (jsDispatchReceiver) {
@@ -398,11 +398,6 @@ fun argumentsWithVarargAsSingleArray(
     }
 }
 
-/**
- * Returns the index of the vararg parameter of the function if there is one, otherwise returns -1.
- */
-fun IrFunction.varargParameterIndex() = valueParameters.indexOfFirst { it.varargElementType != null }
-
 fun translateCallArguments(
     expression: IrMemberAccessExpression<IrFunctionSymbol>,
     context: JsGenerationContext,
@@ -412,7 +407,7 @@ fun translateCallArguments(
     val size = expression.valueArgumentsCount
 
     val function = expression.symbol.owner
-    val varargParameterIndex = function.realOverrideTarget.varargParameterIndex()
+    val varargParameterIndex = function.realOverrideTarget.valueParameters.indexOfFirst { it.varargElementType != null }
 
     val validWithNullArgs = expression.validWithNullArgs()
     val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context.staticContext) }
