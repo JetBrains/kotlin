@@ -173,7 +173,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(
             this,
-            true,
             project.kotlinPropertiesProvider.mppResourcesResolutionStrategy == KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration
         )
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)

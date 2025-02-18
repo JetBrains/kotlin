@@ -225,7 +225,6 @@ object KotlinUsages {
 
     internal fun setupAttributesMatchingStrategy(
         attributesSchema: AttributesSchema,
-        isKotlinGranularMetadata: Boolean,
         isKotlinResourcesCompatibilityRuleEnabled: Boolean,
     ) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
@@ -235,10 +234,8 @@ object KotlinUsages {
             strategy.compatibilityRules.add(KotlinCinteropCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinCinteropDisambiguation::class.java)
 
-            if (isKotlinGranularMetadata) {
-                strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
-                strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
-            }
+            strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
+            strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
 
             // Only enable resources compatibility rule when resources configuration is used, so that for variant reselection klibs aren't selected
             if (isKotlinResourcesCompatibilityRuleEnabled) {
