@@ -1033,6 +1033,12 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       public void testContractOnContextParameter() {
         runTest("compiler/testData/loadJava/compiledKotlin/contextParameters/contractOnContextParameter.kt");
       }
+
+      @Test
+      @TestMetadata("simpleContextParameters.kt")
+      public void testSimpleContextParameters() {
+        runTest("compiler/testData/loadJava/compiledKotlin/contextParameters/simpleContextParameters.kt");
+      }
     }
 
     @Nested

@@ -15977,6 +15977,20 @@ public final class ProtoBuf {
     int getContextReceiverTypeId(int index);
 
     /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> 
+        getContextParameterList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter getContextParameter(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+     */
+    int getContextParameterCount();
+
+    /**
      * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter value_parameter = 6;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> 
@@ -16143,9 +16157,9 @@ public final class ProtoBuf {
               break;
             }
             case 50: {
-              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+              if (!((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
                 valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter>();
-                mutable_bitField0_ |= 0x00000400;
+                mutable_bitField0_ |= 0x00000800;
               }
               valueParameter_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.PARSER, extensionRegistry));
               break;
@@ -16194,6 +16208,14 @@ public final class ProtoBuf {
               input.popLimit(limit);
               break;
             }
+            case 98: {
+              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+                contextParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter>();
+                mutable_bitField0_ |= 0x00000400;
+              }
+              contextParameter_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.PARSER, extensionRegistry));
+              break;
+            }
             case 242: {
               org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.Builder subBuilder = null;
               if (((bitField0_ & 0x00000080) == 0x00000080)) {
@@ -16208,9 +16230,9 @@ public final class ProtoBuf {
               break;
             }
             case 248: {
-              if (!((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
+              if (!((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00001000;
+                mutable_bitField0_ |= 0x00002000;
               }
               versionRequirement_.add(input.readInt32());
               break;
@@ -16218,9 +16240,9 @@ public final class ProtoBuf {
             case 250: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00001000) == 0x00001000) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00002000) == 0x00002000) && input.getBytesUntilLimit() > 0) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00001000;
+                mutable_bitField0_ |= 0x00002000;
               }
               while (input.getBytesUntilLimit() > 0) {
                 versionRequirement_.add(input.readInt32());
@@ -16242,9 +16264,9 @@ public final class ProtoBuf {
               break;
             }
             case 266: {
-              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+              if (!((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
                 compilerPluginData_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.CompilerPluginData>();
-                mutable_bitField0_ |= 0x00004000;
+                mutable_bitField0_ |= 0x00008000;
               }
               compilerPluginData_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.CompilerPluginData.PARSER, extensionRegistry));
               break;
@@ -16260,7 +16282,7 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
           typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
         }
-        if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+        if (((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
           valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
         }
         if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
@@ -16269,10 +16291,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
           contextReceiverTypeId_ = java.util.Collections.unmodifiableList(contextReceiverTypeId_);
         }
-        if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
+        if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+          contextParameter_ = java.util.Collections.unmodifiableList(contextParameter_);
+        }
+        if (((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
           versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
-        if (((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+        if (((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
           compilerPluginData_ = java.util.Collections.unmodifiableList(compilerPluginData_);
         }
         try {
@@ -16529,6 +16554,41 @@ public final class ProtoBuf {
     }
     private int contextReceiverTypeIdMemoizedSerializedSize = -1;
 
+    public static final int CONTEXT_PARAMETER_FIELD_NUMBER = 12;
+    private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> contextParameter_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> getContextParameterList() {
+      return contextParameter_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameterOrBuilder> 
+        getContextParameterOrBuilderList() {
+      return contextParameter_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+     */
+    public int getContextParameterCount() {
+      return contextParameter_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter getContextParameter(int index) {
+      return contextParameter_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameterOrBuilder getContextParameterOrBuilder(
+        int index) {
+      return contextParameter_.get(index);
+    }
+
     public static final int VALUE_PARAMETER_FIELD_NUMBER = 6;
     private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> valueParameter_;
     /**
@@ -16674,6 +16734,7 @@ public final class ProtoBuf {
       receiverTypeId_ = 0;
       contextReceiverType_ = java.util.Collections.emptyList();
       contextReceiverTypeId_ = java.util.Collections.emptyList();
+      contextParameter_ = java.util.Collections.emptyList();
       valueParameter_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
       versionRequirement_ = java.util.Collections.emptyList();
@@ -16710,6 +16771,12 @@ public final class ProtoBuf {
       }
       for (int i = 0; i < getContextReceiverTypeCount(); i++) {
         if (!getContextReceiverType(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getContextParameterCount(); i++) {
+        if (!getContextParameter(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -16789,6 +16856,9 @@ public final class ProtoBuf {
       for (int i = 0; i < contextReceiverTypeId_.size(); i++) {
         output.writeInt32NoTag(contextReceiverTypeId_.get(i));
       }
+      for (int i = 0; i < contextParameter_.size(); i++) {
+        output.writeMessage(12, contextParameter_.get(i));
+      }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         output.writeMessage(30, typeTable_);
       }
@@ -16864,6 +16934,10 @@ public final class ProtoBuf {
               .computeInt32SizeNoTag(dataSize);
         }
         contextReceiverTypeIdMemoizedSerializedSize = dataSize;
+      }
+      for (int i = 0; i < contextParameter_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(12, contextParameter_.get(i));
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -17000,16 +17074,18 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000100);
         contextReceiverTypeId_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000200);
-        valueParameter_ = java.util.Collections.emptyList();
+        contextParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000400);
-        typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
+        valueParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000800);
-        versionRequirement_ = java.util.Collections.emptyList();
+        typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00001000);
-        contract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00002000);
-        compilerPluginData_ = java.util.Collections.emptyList();
+        contract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00004000);
+        compilerPluginData_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00008000);
         return this;
       }
 
@@ -17077,26 +17153,31 @@ public final class ProtoBuf {
         }
         result.contextReceiverTypeId_ = contextReceiverTypeId_;
         if (((bitField0_ & 0x00000400) == 0x00000400)) {
-          valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
+          contextParameter_ = java.util.Collections.unmodifiableList(contextParameter_);
           bitField0_ = (bitField0_ & ~0x00000400);
         }
+        result.contextParameter_ = contextParameter_;
+        if (((bitField0_ & 0x00000800) == 0x00000800)) {
+          valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
+          bitField0_ = (bitField0_ & ~0x00000800);
+        }
         result.valueParameter_ = valueParameter_;
-        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+        if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
           to_bitField0_ |= 0x00000080;
         }
         result.typeTable_ = typeTable_;
-        if (((bitField0_ & 0x00001000) == 0x00001000)) {
+        if (((bitField0_ & 0x00002000) == 0x00002000)) {
           versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
-          bitField0_ = (bitField0_ & ~0x00001000);
+          bitField0_ = (bitField0_ & ~0x00002000);
         }
         result.versionRequirement_ = versionRequirement_;
-        if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
+        if (((from_bitField0_ & 0x00004000) == 0x00004000)) {
           to_bitField0_ |= 0x00000100;
         }
         result.contract_ = contract_;
-        if (((bitField0_ & 0x00004000) == 0x00004000)) {
+        if (((bitField0_ & 0x00008000) == 0x00008000)) {
           compilerPluginData_ = java.util.Collections.unmodifiableList(compilerPluginData_);
-          bitField0_ = (bitField0_ & ~0x00004000);
+          bitField0_ = (bitField0_ & ~0x00008000);
         }
         result.compilerPluginData_ = compilerPluginData_;
         result.bitField0_ = to_bitField0_;
@@ -17156,10 +17237,20 @@ public final class ProtoBuf {
           }
           
         }
+        if (!other.contextParameter_.isEmpty()) {
+          if (contextParameter_.isEmpty()) {
+            contextParameter_ = other.contextParameter_;
+            bitField0_ = (bitField0_ & ~0x00000400);
+          } else {
+            ensureContextParameterIsMutable();
+            contextParameter_.addAll(other.contextParameter_);
+          }
+          
+        }
         if (!other.valueParameter_.isEmpty()) {
           if (valueParameter_.isEmpty()) {
             valueParameter_ = other.valueParameter_;
-            bitField0_ = (bitField0_ & ~0x00000400);
+            bitField0_ = (bitField0_ & ~0x00000800);
           } else {
             ensureValueParameterIsMutable();
             valueParameter_.addAll(other.valueParameter_);
@@ -17172,7 +17263,7 @@ public final class ProtoBuf {
         if (!other.versionRequirement_.isEmpty()) {
           if (versionRequirement_.isEmpty()) {
             versionRequirement_ = other.versionRequirement_;
-            bitField0_ = (bitField0_ & ~0x00001000);
+            bitField0_ = (bitField0_ & ~0x00002000);
           } else {
             ensureVersionRequirementIsMutable();
             versionRequirement_.addAll(other.versionRequirement_);
@@ -17185,7 +17276,7 @@ public final class ProtoBuf {
         if (!other.compilerPluginData_.isEmpty()) {
           if (compilerPluginData_.isEmpty()) {
             compilerPluginData_ = other.compilerPluginData_;
-            bitField0_ = (bitField0_ & ~0x00004000);
+            bitField0_ = (bitField0_ & ~0x00008000);
           } else {
             ensureCompilerPluginDataIsMutable();
             compilerPluginData_.addAll(other.compilerPluginData_);
@@ -17223,6 +17314,12 @@ public final class ProtoBuf {
         }
         for (int i = 0; i < getContextReceiverTypeCount(); i++) {
           if (!getContextReceiverType(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getContextParameterCount(); i++) {
+          if (!getContextParameter(i).isInitialized()) {
             
             return false;
           }
@@ -17933,12 +18030,137 @@ public final class ProtoBuf {
         return this;
       }
 
+      private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> contextParameter_ =
+        java.util.Collections.emptyList();
+      private void ensureContextParameterIsMutable() {
+        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+          contextParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter>(contextParameter_);
+          bitField0_ |= 0x00000400;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> getContextParameterList() {
+        return java.util.Collections.unmodifiableList(contextParameter_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public int getContextParameterCount() {
+        return contextParameter_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter getContextParameter(int index) {
+        return contextParameter_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder setContextParameter(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureContextParameterIsMutable();
+        contextParameter_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder setContextParameter(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.Builder builderForValue) {
+        ensureContextParameterIsMutable();
+        contextParameter_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder addContextParameter(org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureContextParameterIsMutable();
+        contextParameter_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder addContextParameter(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureContextParameterIsMutable();
+        contextParameter_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder addContextParameter(
+          org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.Builder builderForValue) {
+        ensureContextParameterIsMutable();
+        contextParameter_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder addContextParameter(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.Builder builderForValue) {
+        ensureContextParameterIsMutable();
+        contextParameter_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder addAllContextParameter(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> values) {
+        ensureContextParameterIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, contextParameter_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder clearContextParameter() {
+        contextParameter_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000400);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 12;</code>
+       */
+      public Builder removeContextParameter(int index) {
+        ensureContextParameterIsMutable();
+        contextParameter_.remove(index);
+
+        return this;
+      }
+
       private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> valueParameter_ =
         java.util.Collections.emptyList();
       private void ensureValueParameterIsMutable() {
-        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+        if (!((bitField0_ & 0x00000800) == 0x00000800)) {
           valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter>(valueParameter_);
-          bitField0_ |= 0x00000400;
+          bitField0_ |= 0x00000800;
          }
       }
 
@@ -18044,7 +18266,7 @@ public final class ProtoBuf {
        */
       public Builder clearValueParameter() {
         valueParameter_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000800);
 
         return this;
       }
@@ -18063,7 +18285,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
        */
       public boolean hasTypeTable() {
-        return ((bitField0_ & 0x00000800) == 0x00000800);
+        return ((bitField0_ & 0x00001000) == 0x00001000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
@@ -18080,7 +18302,7 @@ public final class ProtoBuf {
         }
         typeTable_ = value;
 
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
@@ -18090,14 +18312,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.Builder builderForValue) {
         typeTable_ = builderForValue.build();
 
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
        */
       public Builder mergeTypeTable(org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable value) {
-        if (((bitField0_ & 0x00000800) == 0x00000800) &&
+        if (((bitField0_ & 0x00001000) == 0x00001000) &&
             typeTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance()) {
           typeTable_ =
             org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.newBuilder(typeTable_).mergeFrom(value).buildPartial();
@@ -18105,7 +18327,7 @@ public final class ProtoBuf {
           typeTable_ = value;
         }
 
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
@@ -18114,15 +18336,15 @@ public final class ProtoBuf {
       public Builder clearTypeTable() {
         typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00001000);
         return this;
       }
 
       private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
       private void ensureVersionRequirementIsMutable() {
-        if (!((bitField0_ & 0x00001000) == 0x00001000)) {
+        if (!((bitField0_ & 0x00002000) == 0x00002000)) {
           versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
-          bitField0_ |= 0x00001000;
+          bitField0_ |= 0x00002000;
          }
       }
       /**
@@ -18207,7 +18429,7 @@ public final class ProtoBuf {
        */
       public Builder clearVersionRequirement() {
         versionRequirement_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00001000);
+        bitField0_ = (bitField0_ & ~0x00002000);
         
         return this;
       }
@@ -18217,7 +18439,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Contract contract = 32;</code>
        */
       public boolean hasContract() {
-        return ((bitField0_ & 0x00002000) == 0x00002000);
+        return ((bitField0_ & 0x00004000) == 0x00004000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Contract contract = 32;</code>
@@ -18234,7 +18456,7 @@ public final class ProtoBuf {
         }
         contract_ = value;
 
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00004000;
         return this;
       }
       /**
@@ -18244,14 +18466,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.metadata.ProtoBuf.Contract.Builder builderForValue) {
         contract_ = builderForValue.build();
 
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00004000;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Contract contract = 32;</code>
        */
       public Builder mergeContract(org.jetbrains.kotlin.metadata.ProtoBuf.Contract value) {
-        if (((bitField0_ & 0x00002000) == 0x00002000) &&
+        if (((bitField0_ & 0x00004000) == 0x00004000) &&
             contract_ != org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance()) {
           contract_ =
             org.jetbrains.kotlin.metadata.ProtoBuf.Contract.newBuilder(contract_).mergeFrom(value).buildPartial();
@@ -18259,7 +18481,7 @@ public final class ProtoBuf {
           contract_ = value;
         }
 
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00004000;
         return this;
       }
       /**
@@ -18268,16 +18490,16 @@ public final class ProtoBuf {
       public Builder clearContract() {
         contract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00004000);
         return this;
       }
 
       private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.CompilerPluginData> compilerPluginData_ =
         java.util.Collections.emptyList();
       private void ensureCompilerPluginDataIsMutable() {
-        if (!((bitField0_ & 0x00004000) == 0x00004000)) {
+        if (!((bitField0_ & 0x00008000) == 0x00008000)) {
           compilerPluginData_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.CompilerPluginData>(compilerPluginData_);
-          bitField0_ |= 0x00004000;
+          bitField0_ |= 0x00008000;
          }
       }
 
@@ -18383,7 +18605,7 @@ public final class ProtoBuf {
        */
       public Builder clearCompilerPluginData() {
         compilerPluginData_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00004000);
+        bitField0_ = (bitField0_ & ~0x00008000);
 
         return this;
       }
@@ -18548,6 +18770,20 @@ public final class ProtoBuf {
      * <code>repeated int32 context_receiver_type_id = 13 [packed = true];</code>
      */
     int getContextReceiverTypeId(int index);
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> 
+        getContextParameterList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter getContextParameter(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+     */
+    int getContextParameterCount();
 
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.ValueParameter setter_value_parameter = 6;</code>
@@ -18801,10 +19037,18 @@ public final class ProtoBuf {
               input.popLimit(limit);
               break;
             }
+            case 114: {
+              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+                contextParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter>();
+                mutable_bitField0_ |= 0x00000400;
+              }
+              contextParameter_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.PARSER, extensionRegistry));
+              break;
+            }
             case 248: {
-              if (!((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
+              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00002000;
+                mutable_bitField0_ |= 0x00004000;
               }
               versionRequirement_.add(input.readInt32());
               break;
@@ -18812,9 +19056,9 @@ public final class ProtoBuf {
             case 250: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00002000) == 0x00002000) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000) && input.getBytesUntilLimit() > 0) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00002000;
+                mutable_bitField0_ |= 0x00004000;
               }
               while (input.getBytesUntilLimit() > 0) {
                 versionRequirement_.add(input.readInt32());
@@ -18823,9 +19067,9 @@ public final class ProtoBuf {
               break;
             }
             case 258: {
-              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+              if (!((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
                 compilerPluginData_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.CompilerPluginData>();
-                mutable_bitField0_ |= 0x00004000;
+                mutable_bitField0_ |= 0x00008000;
               }
               compilerPluginData_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.CompilerPluginData.PARSER, extensionRegistry));
               break;
@@ -18847,10 +19091,13 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
           contextReceiverTypeId_ = java.util.Collections.unmodifiableList(contextReceiverTypeId_);
         }
-        if (((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
-          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+        if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+          contextParameter_ = java.util.Collections.unmodifiableList(contextParameter_);
         }
         if (((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+        }
+        if (((mutable_bitField0_ & 0x00008000) == 0x00008000)) {
           compilerPluginData_ = java.util.Collections.unmodifiableList(compilerPluginData_);
         }
         try {
@@ -19109,6 +19356,41 @@ public final class ProtoBuf {
     }
     private int contextReceiverTypeIdMemoizedSerializedSize = -1;
 
+    public static final int CONTEXT_PARAMETER_FIELD_NUMBER = 14;
+    private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> contextParameter_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> getContextParameterList() {
+      return contextParameter_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameterOrBuilder> 
+        getContextParameterOrBuilderList() {
+      return contextParameter_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+     */
+    public int getContextParameterCount() {
+      return contextParameter_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter getContextParameter(int index) {
+      return contextParameter_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameterOrBuilder getContextParameterOrBuilder(
+        int index) {
+      return contextParameter_.get(index);
+    }
+
     public static final int SETTER_VALUE_PARAMETER_FIELD_NUMBER = 6;
     private org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter setterValueParameter_;
     /**
@@ -19258,6 +19540,7 @@ public final class ProtoBuf {
       receiverTypeId_ = 0;
       contextReceiverType_ = java.util.Collections.emptyList();
       contextReceiverTypeId_ = java.util.Collections.emptyList();
+      contextParameter_ = java.util.Collections.emptyList();
       setterValueParameter_ = org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance();
       getterFlags_ = 0;
       setterFlags_ = 0;
@@ -19294,6 +19577,12 @@ public final class ProtoBuf {
       }
       for (int i = 0; i < getContextReceiverTypeCount(); i++) {
         if (!getContextReceiverType(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getContextParameterCount(); i++) {
+        if (!getContextParameter(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -19366,6 +19655,9 @@ public final class ProtoBuf {
       }
       for (int i = 0; i < contextReceiverTypeId_.size(); i++) {
         output.writeInt32NoTag(contextReceiverTypeId_.get(i));
+      }
+      for (int i = 0; i < contextParameter_.size(); i++) {
+        output.writeMessage(14, contextParameter_.get(i));
       }
       for (int i = 0; i < versionRequirement_.size(); i++) {
         output.writeInt32(31, versionRequirement_.get(i));
@@ -19444,6 +19736,10 @@ public final class ProtoBuf {
               .computeInt32SizeNoTag(dataSize);
         }
         contextReceiverTypeIdMemoizedSerializedSize = dataSize;
+      }
+      for (int i = 0; i < contextParameter_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(14, contextParameter_.get(i));
       }
       {
         int dataSize = 0;
@@ -19572,16 +19868,18 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000100);
         contextReceiverTypeId_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000200);
-        setterValueParameter_ = org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance();
+        contextParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000400);
-        getterFlags_ = 0;
+        setterValueParameter_ = org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000800);
-        setterFlags_ = 0;
+        getterFlags_ = 0;
         bitField0_ = (bitField0_ & ~0x00001000);
-        versionRequirement_ = java.util.Collections.emptyList();
+        setterFlags_ = 0;
         bitField0_ = (bitField0_ & ~0x00002000);
-        compilerPluginData_ = java.util.Collections.emptyList();
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00004000);
+        compilerPluginData_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00008000);
         return this;
       }
 
@@ -19648,26 +19946,31 @@ public final class ProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000200);
         }
         result.contextReceiverTypeId_ = contextReceiverTypeId_;
-        if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
+        if (((bitField0_ & 0x00000400) == 0x00000400)) {
+          contextParameter_ = java.util.Collections.unmodifiableList(contextParameter_);
+          bitField0_ = (bitField0_ & ~0x00000400);
+        }
+        result.contextParameter_ = contextParameter_;
+        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
           to_bitField0_ |= 0x00000080;
         }
         result.setterValueParameter_ = setterValueParameter_;
-        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+        if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
           to_bitField0_ |= 0x00000100;
         }
         result.getterFlags_ = getterFlags_;
-        if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
+        if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
           to_bitField0_ |= 0x00000200;
         }
         result.setterFlags_ = setterFlags_;
-        if (((bitField0_ & 0x00002000) == 0x00002000)) {
+        if (((bitField0_ & 0x00004000) == 0x00004000)) {
           versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
-          bitField0_ = (bitField0_ & ~0x00002000);
+          bitField0_ = (bitField0_ & ~0x00004000);
         }
         result.versionRequirement_ = versionRequirement_;
-        if (((bitField0_ & 0x00004000) == 0x00004000)) {
+        if (((bitField0_ & 0x00008000) == 0x00008000)) {
           compilerPluginData_ = java.util.Collections.unmodifiableList(compilerPluginData_);
-          bitField0_ = (bitField0_ & ~0x00004000);
+          bitField0_ = (bitField0_ & ~0x00008000);
         }
         result.compilerPluginData_ = compilerPluginData_;
         result.bitField0_ = to_bitField0_;
@@ -19727,6 +20030,16 @@ public final class ProtoBuf {
           }
           
         }
+        if (!other.contextParameter_.isEmpty()) {
+          if (contextParameter_.isEmpty()) {
+            contextParameter_ = other.contextParameter_;
+            bitField0_ = (bitField0_ & ~0x00000400);
+          } else {
+            ensureContextParameterIsMutable();
+            contextParameter_.addAll(other.contextParameter_);
+          }
+          
+        }
         if (other.hasSetterValueParameter()) {
           mergeSetterValueParameter(other.getSetterValueParameter());
         }
@@ -19739,7 +20052,7 @@ public final class ProtoBuf {
         if (!other.versionRequirement_.isEmpty()) {
           if (versionRequirement_.isEmpty()) {
             versionRequirement_ = other.versionRequirement_;
-            bitField0_ = (bitField0_ & ~0x00002000);
+            bitField0_ = (bitField0_ & ~0x00004000);
           } else {
             ensureVersionRequirementIsMutable();
             versionRequirement_.addAll(other.versionRequirement_);
@@ -19749,7 +20062,7 @@ public final class ProtoBuf {
         if (!other.compilerPluginData_.isEmpty()) {
           if (compilerPluginData_.isEmpty()) {
             compilerPluginData_ = other.compilerPluginData_;
-            bitField0_ = (bitField0_ & ~0x00004000);
+            bitField0_ = (bitField0_ & ~0x00008000);
           } else {
             ensureCompilerPluginDataIsMutable();
             compilerPluginData_.addAll(other.compilerPluginData_);
@@ -19787,6 +20100,12 @@ public final class ProtoBuf {
         }
         for (int i = 0; i < getContextReceiverTypeCount(); i++) {
           if (!getContextReceiverType(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getContextParameterCount(); i++) {
+          if (!getContextParameter(i).isInitialized()) {
             
             return false;
           }
@@ -20489,12 +20808,137 @@ public final class ProtoBuf {
         return this;
       }
 
+      private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> contextParameter_ =
+        java.util.Collections.emptyList();
+      private void ensureContextParameterIsMutable() {
+        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+          contextParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter>(contextParameter_);
+          bitField0_ |= 0x00000400;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> getContextParameterList() {
+        return java.util.Collections.unmodifiableList(contextParameter_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public int getContextParameterCount() {
+        return contextParameter_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter getContextParameter(int index) {
+        return contextParameter_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder setContextParameter(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureContextParameterIsMutable();
+        contextParameter_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder setContextParameter(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.Builder builderForValue) {
+        ensureContextParameterIsMutable();
+        contextParameter_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder addContextParameter(org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureContextParameterIsMutable();
+        contextParameter_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder addContextParameter(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureContextParameterIsMutable();
+        contextParameter_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder addContextParameter(
+          org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.Builder builderForValue) {
+        ensureContextParameterIsMutable();
+        contextParameter_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder addContextParameter(
+          int index, org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.Builder builderForValue) {
+        ensureContextParameterIsMutable();
+        contextParameter_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder addAllContextParameter(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter> values) {
+        ensureContextParameterIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, contextParameter_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder clearContextParameter() {
+        contextParameter_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000400);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.ValueParameter context_parameter = 14;</code>
+       */
+      public Builder removeContextParameter(int index) {
+        ensureContextParameterIsMutable();
+        contextParameter_.remove(index);
+
+        return this;
+      }
+
       private org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter setterValueParameter_ = org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.ValueParameter setter_value_parameter = 6;</code>
        */
       public boolean hasSetterValueParameter() {
-        return ((bitField0_ & 0x00000400) == 0x00000400);
+        return ((bitField0_ & 0x00000800) == 0x00000800);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.ValueParameter setter_value_parameter = 6;</code>
@@ -20511,7 +20955,7 @@ public final class ProtoBuf {
         }
         setterValueParameter_ = value;
 
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
@@ -20521,14 +20965,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.Builder builderForValue) {
         setterValueParameter_ = builderForValue.build();
 
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.ValueParameter setter_value_parameter = 6;</code>
        */
       public Builder mergeSetterValueParameter(org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter value) {
-        if (((bitField0_ & 0x00000400) == 0x00000400) &&
+        if (((bitField0_ & 0x00000800) == 0x00000800) &&
             setterValueParameter_ != org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance()) {
           setterValueParameter_ =
             org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.newBuilder(setterValueParameter_).mergeFrom(value).buildPartial();
@@ -20536,7 +20980,7 @@ public final class ProtoBuf {
           setterValueParameter_ = value;
         }
 
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
@@ -20545,7 +20989,7 @@ public final class ProtoBuf {
       public Builder clearSetterValueParameter() {
         setterValueParameter_ = org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
 
@@ -20566,7 +21010,7 @@ public final class ProtoBuf {
        * </pre>
        */
       public boolean hasGetterFlags() {
-        return ((bitField0_ & 0x00000800) == 0x00000800);
+        return ((bitField0_ & 0x00001000) == 0x00001000);
       }
       /**
        * <code>optional int32 getter_flags = 7;</code>
@@ -20602,7 +21046,7 @@ public final class ProtoBuf {
        * </pre>
        */
       public Builder setGetterFlags(int value) {
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         getterFlags_ = value;
         
         return this;
@@ -20623,7 +21067,7 @@ public final class ProtoBuf {
        * </pre>
        */
       public Builder clearGetterFlags() {
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00001000);
         getterFlags_ = 0;
         
         return this;
@@ -20634,7 +21078,7 @@ public final class ProtoBuf {
        * <code>optional int32 setter_flags = 8;</code>
        */
       public boolean hasSetterFlags() {
-        return ((bitField0_ & 0x00001000) == 0x00001000);
+        return ((bitField0_ & 0x00002000) == 0x00002000);
       }
       /**
        * <code>optional int32 setter_flags = 8;</code>
@@ -20646,7 +21090,7 @@ public final class ProtoBuf {
        * <code>optional int32 setter_flags = 8;</code>
        */
       public Builder setSetterFlags(int value) {
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00002000;
         setterFlags_ = value;
         
         return this;
@@ -20655,7 +21099,7 @@ public final class ProtoBuf {
        * <code>optional int32 setter_flags = 8;</code>
        */
       public Builder clearSetterFlags() {
-        bitField0_ = (bitField0_ & ~0x00001000);
+        bitField0_ = (bitField0_ & ~0x00002000);
         setterFlags_ = 0;
         
         return this;
@@ -20663,9 +21107,9 @@ public final class ProtoBuf {
 
       private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
       private void ensureVersionRequirementIsMutable() {
-        if (!((bitField0_ & 0x00002000) == 0x00002000)) {
+        if (!((bitField0_ & 0x00004000) == 0x00004000)) {
           versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
-          bitField0_ |= 0x00002000;
+          bitField0_ |= 0x00004000;
          }
       }
       /**
@@ -20750,7 +21194,7 @@ public final class ProtoBuf {
        */
       public Builder clearVersionRequirement() {
         versionRequirement_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00004000);
         
         return this;
       }
@@ -20758,9 +21202,9 @@ public final class ProtoBuf {
       private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.CompilerPluginData> compilerPluginData_ =
         java.util.Collections.emptyList();
       private void ensureCompilerPluginDataIsMutable() {
-        if (!((bitField0_ & 0x00004000) == 0x00004000)) {
+        if (!((bitField0_ & 0x00008000) == 0x00008000)) {
           compilerPluginData_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.CompilerPluginData>(compilerPluginData_);
-          bitField0_ |= 0x00004000;
+          bitField0_ |= 0x00008000;
          }
       }
 
@@ -20866,7 +21310,7 @@ public final class ProtoBuf {
        */
       public Builder clearCompilerPluginData() {
         compilerPluginData_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00004000);
+        bitField0_ = (bitField0_ & ~0x00008000);
 
         return this;
       }

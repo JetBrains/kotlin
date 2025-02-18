@@ -476,6 +476,8 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsFunctionContextReceiverTypeId(old, new)) return false
 
+        if (!checkEqualsFunctionContextParameter(old, new)) return false
+
         if (!checkEqualsFunctionValueParameter(old, new)) return false
 
         if (!checkEqualsFunctionVersionRequirement(old, new)) return false
@@ -589,6 +591,8 @@ open class ProtoCompareGenerated(
         if (!checkEqualsPropertyContextReceiverType(old, new)) return false
 
         if (!checkEqualsPropertyContextReceiverTypeId(old, new)) return false
+
+        if (!checkEqualsPropertyContextParameter(old, new)) return false
 
         if (old.hasSetterValueParameter() != new.hasSetterValueParameter()) return false
         if (old.hasSetterValueParameter()) {
@@ -1606,6 +1610,16 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsFunctionContextParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
+        if (old.contextParameterCount != new.contextParameterCount) return false
+
+        for(i in 0..old.contextParameterCount - 1) {
+            if (!checkEquals(old.getContextParameter(i), new.getContextParameter(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsFunctionValueParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
         if (old.valueParameterCount != new.valueParameterCount) return false
 
@@ -1661,6 +1675,16 @@ open class ProtoCompareGenerated(
 
         for(i in 0..old.contextReceiverTypeIdCount - 1) {
             if (!checkEquals(oldTypeTable.getType(old.getContextReceiverTypeId(i)), newTypeTable.getType(new.getContextReceiverTypeId(i)))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsPropertyContextParameter(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.contextParameterCount != new.contextParameterCount) return false
+
+        for(i in 0..old.contextParameterCount - 1) {
+            if (!checkEquals(old.getContextParameter(i), new.getContextParameter(i))) return false
         }
 
         return true
@@ -2109,6 +2133,10 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
+    for(i in 0..contextParameterCount - 1) {
+        hashCode = 31 * hashCode + getContextParameter(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     for(i in 0..valueParameterCount - 1) {
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -2203,6 +2231,10 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     for(i in 0..contextReceiverTypeIdCount - 1) {
         hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextParameterCount - 1) {
+        hashCode = 31 * hashCode + getContextParameter(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasSetterValueParameter()) {

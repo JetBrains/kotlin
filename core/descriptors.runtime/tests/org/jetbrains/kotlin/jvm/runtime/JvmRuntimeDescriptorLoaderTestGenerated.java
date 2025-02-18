@@ -1004,6 +1004,11 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
       public void testContractOnContextParameter() {
         runTest("compiler/testData/loadJava/compiledKotlin/contextParameters/contractOnContextParameter.kt");
       }
+
+      @TestMetadata("simpleContextParameters.kt")
+      public void testSimpleContextParameters() {
+        runTest("compiler/testData/loadJava/compiledKotlin/contextParameters/simpleContextParameters.kt");
+      }
     }
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/contextReceivers")
