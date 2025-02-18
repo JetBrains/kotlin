@@ -5,6 +5,7 @@
 // FILE: main.kt
 package app
 
+@ExperimentalExpectRefinement // Test misconfiguration in the infra.
 expect class Foo() {
     val text: String
 }
