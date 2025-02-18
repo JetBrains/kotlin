@@ -1439,12 +1439,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Test
-    @TestMetadata("defaultInterfaceMethodsInInlineClass.kt")
-    public void testDefaultInterfaceMethodsInInlineClass() {
-      runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMethodsInInlineClass.kt");
-    }
-
-    @Test
     @TestMetadata("genericChild.kt")
     public void testGenericChild() {
       runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/genericChild.kt");
@@ -1571,6 +1565,18 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
       @Test
       public void testAllFilesPresentInDefaultInterfaceMembers() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("genericSubstitutionJvmDefaultDisable.kt")
+      public void testGenericSubstitutionJvmDefaultDisable() {
+        runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/genericSubstitutionJvmDefaultDisable.kt");
+      }
+
+      @Test
+      @TestMetadata("genericSubstitutionJvmDefaultEnable.kt")
+      public void testGenericSubstitutionJvmDefaultEnable() {
+        runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/genericSubstitutionJvmDefaultEnable.kt");
       }
 
       @Test
