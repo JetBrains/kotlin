@@ -93,6 +93,8 @@ object AnalysisFlags {
     val returnValueCheckerMode by AnalysisFlag.Delegates.ReturnValueCheckerDisabledByDefault
 
     val lenientMode by AnalysisFlag.Delegates.Boolean
+
+    val hierarchicalMultiplatformCompilation by AnalysisFlag.Delegates.Boolean(defaultValue = false)
 }
 
 @Deprecated(

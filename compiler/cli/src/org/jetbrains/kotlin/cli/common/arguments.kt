@@ -9,6 +9,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -261,7 +262,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         if (rawFragmentRefines?.isNotEmpty() == true) {
             reportError("-Xfragment-refines flag is specified but there is only one module declared")
         }
-        return HmppCliModuleStructure(modules, emptyMap())
+        return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap())
     }
 
     val duplicatedModules = modules.filter { module -> modules.count { it.name == module.name } > 1 }
@@ -273,7 +274,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleByName = modules.associateBy { it.name }
 
-    val dependenciesMap = rawFragmentRefines.orEmpty().mapNotNull { rawFragmentRefinesEdge ->
+    val sourceDependencies: Map<HmppCliModule, List<HmppCliModule>> = rawFragmentRefines.orEmpty().mapNotNull { rawFragmentRefinesEdge ->
         val split = rawFragmentRefinesEdge.split(":")
         if (split.size != 2) {
             reportError(
@@ -302,15 +303,31 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         valueTransform = { it.second }
     )
 
-    modules = DFS.topologicalOrder(modules) { dependenciesMap[it].orEmpty() }.asReversed()
+    modules = DFS.topologicalOrder(modules) { sourceDependencies[it].orEmpty() }.asReversed()
 
     modules.forEachIndexed { i, module ->
-        val dependencies = dependenciesMap[module].orEmpty()
+        val dependencies = sourceDependencies[module].orEmpty()
         val previousModules = modules.subList(0, i)
         if (dependencies.any { it !in previousModules }) {
             reportError("There is a cycle in dependencies of module `${module.name}`")
         }
     }
 
-    return HmppCliModuleStructure(modules, dependenciesMap)
+    if (arguments.fragmentDependencies != null && !arguments.separateKmpCompilationScheme) {
+        reportError("${CommonCompilerArguments::fragmentDependencies.cliArgument} flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
+    }
+
+    val moduleDependencies = buildMap<HmppCliModule, MutableList<String>> {
+        for (argument in arguments.fragmentDependencies.orEmpty()) {
+            val (moduleName, dependency) = argument.split(":", limit = 2)
+            val module = moduleByName[moduleName] ?: run {
+                reportError("Module `$moduleName` not found in ${CommonCompilerArguments::fragments.cliArgument} arguments")
+                continue
+            }
+            val dependencies = getOrPut(module) { mutableListOf() }
+            dependencies += dependency
+        }
+    }
+
+    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies)
 }

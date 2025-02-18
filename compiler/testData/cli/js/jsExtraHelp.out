@@ -159,6 +159,13 @@ where advanced options include:
                              Add sources to a specific fragment of a multiplatform compilation.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
+  -Xfragment-dependency=<fragment name>:<path>
+                             Declare common klib dependencies for the specific fragment.
+                             This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
+                             The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+
+  -Xseparate-kmp-compilation=<fragment name>:<path>
+                             Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xdont-warn-on-error-suppression

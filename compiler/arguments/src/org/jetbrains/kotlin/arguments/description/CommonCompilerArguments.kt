@@ -745,6 +745,31 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
 
     compilerArgument {
+        name = "Xfragment-dependency"
+        compilerName = "fragmentDependencies"
+        valueDescription = "<fragment name>:<path>".asReleaseDependent()
+        description = """Declare common klib dependencies for the specific fragment.
+This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+""".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+
+        stubLifecycle()
+    }
+
+
+    compilerArgument {
+        name = "Xseparate-kmp-compilation"
+        compilerName = "separateKmpCompilationScheme"
+        valueDescription = "<fragment name>:<path>".asReleaseDependent()
+        description = "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        stubLifecycle()
+    }
+
+
+    compilerArgument {
         name = "Xignore-const-optimization-errors"
         description = "Ignore all compilation exceptions while optimizing some constant expressions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

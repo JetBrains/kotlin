@@ -464,7 +464,7 @@ object SessionConstructionUtils {
         val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
 
         for ((index, module) in hmppModuleStructure.modules.withIndex()) {
-            val dependencies = hmppModuleStructure.dependenciesMap[module]
+            val dependencies = hmppModuleStructure.sourceDependencies[module]
                 ?.map { moduleDataForHmppModule.getValue(it) }
                 .orEmpty()
             val moduleName = if (index == hmppModuleStructure.modules.lastIndex) {
