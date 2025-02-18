@@ -1,7 +1,7 @@
-context(<unused var>: R|test/A|)
+context(<unused var>@R|test/A|)
 public final fun g(): R|kotlin/Unit|
 
-context(<unused var>: R|test/B|)
+context(<unused var>@R|test/B|)
 public final val h: R|kotlin/Int|
     public get(): R|kotlin/Int|
 
@@ -11,12 +11,12 @@ public abstract interface A : R|kotlin/Any| {
 public abstract interface B : R|kotlin/Any| {
 }
 
-context(<unused var>: R|test/A|)
+context(<unused var>@R|test/A|)
 public final class C : R|kotlin/Any| {
-    context(<unused var>: R|test/B|)
+    context(<unused var>@R|test/B|)
     public final fun f(): R|kotlin/Unit|
 
-    context(<unused var>: R|test/A|)
+    context(<unused var>@R|test/A|)
     public constructor(): R|test/C|
 
 }

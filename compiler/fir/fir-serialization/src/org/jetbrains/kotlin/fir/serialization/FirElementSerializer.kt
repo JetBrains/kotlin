@@ -660,6 +660,13 @@ class FirElementSerializer private constructor(
             } else {
                 builder.addContextReceiverType(local.typeProto(contextParameter.returnTypeRef))
             }
+            builder.addContextParameter(
+                local.valueParameterProto(
+                    contextParameter,
+                    additionalAnnotations = emptyList(),
+                    declaresDefaultValue = false
+                )
+            )
         }
 
         val receiverParameter = property.receiverParameter
@@ -746,6 +753,13 @@ class FirElementSerializer private constructor(
             } else {
                 builder.addContextReceiverType(local.typeProto(contextParameter.returnTypeRef))
             }
+            builder.addContextParameter(
+                local.valueParameterProto(
+                    contextParameter,
+                    additionalAnnotations = emptyList(),
+                    declaresDefaultValue = false
+                )
+            )
         }
 
         val receiverParameter = function.receiverParameter
@@ -895,8 +909,6 @@ class FirElementSerializer private constructor(
         function: FirFunction,
         additionalAnnotations: List<FirAnnotation> = emptyList(),
     ): ProtoBuf.ValueParameter.Builder = whileAnalysing(session, parameter) {
-        val builder = ProtoBuf.ValueParameter.newBuilder()
-
         val declaresDefaultValue = if (
             stdLibCompilation &&
             function is FirConstructor &&
@@ -906,6 +918,16 @@ class FirElementSerializer private constructor(
         } else {
             function.itOrExpectHasDefaultParameterValue(index)
         }
+
+        return valueParameterProto(parameter, additionalAnnotations, declaresDefaultValue)
+    }
+
+    private fun valueParameterProto(
+        parameter: FirValueParameter,
+        additionalAnnotations: List<FirAnnotation>,
+        declaresDefaultValue: Boolean,
+    ): ProtoBuf.ValueParameter.Builder {
+        val builder = ProtoBuf.ValueParameter.newBuilder()
 
         val flags = Flags.getValueParameterFlags(
             additionalAnnotations.isNotEmpty()

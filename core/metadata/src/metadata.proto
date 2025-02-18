@@ -337,6 +337,8 @@ message Function {
   repeated Type context_receiver_type = 10;
   repeated int32 context_receiver_type_id = 11 [packed = true, (type_id_in_table) = true];
 
+  repeated ValueParameter context_parameter = 13;
+
   repeated ValueParameter value_parameter = 6;
 
   optional TypeTable type_table = 30;
@@ -383,6 +385,8 @@ message Property {
 
   repeated Type context_receiver_type = 12;
   repeated int32 context_receiver_type_id = 13 [packed = true, (type_id_in_table) = true];
+
+  repeated ValueParameter context_parameter = 17;
 
   optional ValueParameter setter_value_parameter = 6;
 

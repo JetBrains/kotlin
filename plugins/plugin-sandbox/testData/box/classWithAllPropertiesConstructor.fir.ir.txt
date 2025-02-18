@@ -188,9 +188,9 @@ FILE fqName:<root> fileName:/Derived.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
     FUN FAKE_OVERRIDE name:hasContext visibility:public modality:FINAL returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
-      VALUE_PARAMETER kind:Context name:<unused var> index:1 type:kotlin.String
+      VALUE_PARAMETER kind:Context name:c index:1 type:kotlin.String
       overridden:
-        public final fun hasContext (<unused var>: kotlin.String): kotlin.Unit declared in <root>.Base
+        public final fun hasContext (c: kotlin.String): kotlin.Unit declared in <root>.Base
     FUN FAKE_OVERRIDE name:hasExtension visibility:public modality:FINAL returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
       VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.String
@@ -271,9 +271,9 @@ FILE fqName:<root> fileName:/main.kt
                       CALL 'public final fun hasExtension (<this>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
                         ARG <this>(index:0): GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=IMPLICIT_ARGUMENT
                         ARG <this>(index:1): GET_VAR '$this$with: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=IMPLICIT_ARGUMENT
-                      CALL 'public final fun hasContext (<unused var>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
+                      CALL 'public final fun hasContext (c: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
                         ARG <this>: GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=IMPLICIT_ARGUMENT
-                        ARG <unused var>: GET_VAR '$this$with: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=IMPLICIT_ARGUMENT
+                        ARG c: GET_VAR '$this$with: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=IMPLICIT_ARGUMENT
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         WHEN type=kotlin.String origin=IF
           BRANCH

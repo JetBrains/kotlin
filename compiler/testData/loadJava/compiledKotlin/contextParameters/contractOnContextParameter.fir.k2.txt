@@ -1,6 +1,6 @@
-context(<unused var>: R|kotlin/String?|)
+context(a: R|kotlin/String?|)
 public final fun validate(): R|kotlin/Unit|
     [R|Contract description]
      <
-        Returns(WILDCARD) -> <unused var> != null
+        Returns(WILDCARD) -> a != null
     >
