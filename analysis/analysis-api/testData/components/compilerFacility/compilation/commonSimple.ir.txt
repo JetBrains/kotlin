@@ -1,6 +1,8 @@
 MODULE_FRAGMENT
   FILE fqName:app fileName:main.kt
     CLASS CLASS name:Foo modality:FINAL visibility:public [expect] superTypes:[kotlin.Any]
+      annotations:
+        ExperimentalExpectRefinement
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:app.Foo
       CONSTRUCTOR visibility:public returnType:app.Foo [primary,expect]
       PROPERTY name:text visibility:public modality:FINAL [expect,val]
