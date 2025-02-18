@@ -24,28 +24,12 @@ class SirFunctionalType(
     override val attributes: List<SirAttribute> = emptyList(),
 ) : SirType
 
-open class SirNominalType : SirType {
-
-    val typeDeclaration: SirNamedDeclaration
-    val typeArguments: List<SirType>
-    val parent: SirNominalType?
-    final override val attributes: List<SirAttribute>
-
-    constructor(
-        typeDeclaration: SirNamedDeclaration,
-        typeArguments: List<SirType> = emptyList(),
-        parent: SirNominalType? = null,
-        attributes: List<SirAttribute> = emptyList(),
-    ) {
-        this.typeDeclaration = typeDeclaration
-        this.typeArguments = typeArguments
-        this.parent = parent
-        this.attributes = if (typeDeclaration is SirTypealias && typeDeclaration.type is SirFunctionalType) {
-            attributes + listOf(SirAttribute.Escaping)
-        } else {
-            attributes
-        }
-    }
+open class SirNominalType(
+    val typeDeclaration: SirNamedDeclaration,
+    val typeArguments: List<SirType> = emptyList(),
+    val parent: SirNominalType? = null,
+    override val attributes: List<SirAttribute> = emptyList(),
+) : SirType {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

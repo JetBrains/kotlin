@@ -9,14 +9,15 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirFunctionalType
+import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypealias
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.SirAndKaSession
 import org.jetbrains.sir.lightclasses.extensions.withSessions
-import org.jetbrains.sir.lightclasses.nodes.SirInitFromKtSymbol
 
 @OptIn(KaExperimentalApi::class)
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
@@ -35,14 +36,17 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = createParameterType(ktSymbol, parameter)
                 .let {
-                    if (it is SirFunctionalType) {
-                        return@let SirFunctionalType(
-                            parameterTypes = it.parameterTypes,
-                            returnType = it.returnType,
-                            attributes = it.attributes + listOf(SirAttribute.Escaping)
+                    when (it) {
+                        is SirFunctionalType -> SirFunctionalType(
+                            it.parameterTypes,
+                            it.returnType,
+                            it.attributes + listOf(SirAttribute.Escaping)
                         )
-                    } else {
-                        it
+                        is SirNominalType -> (it.typeDeclaration as? SirTypealias)
+                            ?.takeIf { it.type is SirFunctionalType }
+                            ?.let { SirNominalType(it, attributes = listOf(SirAttribute.Escaping)) }
+                            ?: it
+                        else -> it
                     }
                 }
             SirParameter(argumentName = parameter.name.asString(), type = sirType, origin = KotlinParameterOrigin.ValueParameter(parameter))

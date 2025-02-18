@@ -253,6 +253,23 @@ open class SEALED: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public var block: main.closure {
+    get {
+        return {
+            let nativeBlock = __root___block_get()
+            return { nativeBlock!() }
+        }()
+    }
+    set {
+        return __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__({
+            let originalBlock = newValue
+            return {
+                originalBlock()
+                return 0
+            }
+        }())
+    }
+}
 public func consume_closure(
     block: @escaping main.closure
 ) -> Swift.Void {
@@ -268,6 +285,12 @@ public func increment(
     integer: main.DefaultInteger
 ) -> main.RegularInteger {
     return __root___increment__TypesOfArguments__Swift_Int32__(integer)
+}
+public func produce_closure() -> main.closure {
+    return {
+        let nativeBlock = __root___produce_closure()
+        return { nativeBlock!() }
+    }()
 }
 public extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo

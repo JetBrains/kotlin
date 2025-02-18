@@ -74,6 +74,8 @@ typealias objectWithInterfaceInheritance = OBJECT_WITH_INTERFACE_INHERITANCE
 
 typealias closure = () -> Unit
 fun consume_closure(block: closure): Unit = TODO()
+fun produce_closure(): closure = TODO()
+var block: closure = { }
 
 // FILE: should_be_ignored.kt
 import typealiases.Foo
