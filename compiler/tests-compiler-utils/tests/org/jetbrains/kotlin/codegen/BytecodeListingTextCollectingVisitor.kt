@@ -7,41 +7,14 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.KtAssert
 import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class BytecodeListingTextCollectingVisitor(
     val filter: Filter,
     val withSignatures: Boolean,
-    val withAnnotations: Boolean = true,
-    val sortDeclarations: Boolean = true,
+    val withAnnotations: Boolean,
+    val sortDeclarations: Boolean,
 ) : ClassVisitor(Opcodes.API_VERSION) {
     companion object {
-        @JvmOverloads
-        fun getText(
-            factory: ClassFileFactory,
-            filter: Filter = Filter.EMPTY,
-            withSignatures: Boolean = false,
-            withAnnotations: Boolean = true,
-            sortDeclarations: Boolean = true,
-        ): String {
-            val classes = factory.getClassFiles()
-                .sortedBy { it.relativePath }
-                .map {
-                    ClassNode(Opcodes.API_VERSION).also { node ->
-                        ClassReader(it.asByteArray()).accept(node, ClassReader.SKIP_CODE)
-                    }
-                }
-
-            return classes.mapNotNull { node ->
-                val visitor = BytecodeListingTextCollectingVisitor(
-                    filter, withSignatures, withAnnotations = withAnnotations, sortDeclarations = sortDeclarations
-                )
-                node.accept(visitor)
-
-                if (!filter.shouldWriteClass(node.name)) null else visitor.text
-            }.joinToString("\n\n", postfix = "\n")
-        }
-
         private val CLASS_OR_FIELD_OR_METHOD = setOf(ModifierTarget.CLASS, ModifierTarget.FIELD, ModifierTarget.METHOD)
         private val CLASS_OR_METHOD = setOf(ModifierTarget.CLASS, ModifierTarget.METHOD)
         private val FIELD_ONLY = setOf(ModifierTarget.FIELD)

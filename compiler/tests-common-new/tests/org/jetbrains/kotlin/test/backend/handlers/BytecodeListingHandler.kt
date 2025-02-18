@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
+import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DONT_SORT_DECLARATIONS
@@ -22,6 +23,9 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -36,13 +40,28 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
         irDumpEnabled = irDumpEnabled || DUMP_IR in module.directives
         firDumpEnabled = firDumpEnabled || FIR_DUMP in module.directives
         if (CHECK_BYTECODE_LISTING !in module.directives) return
-        val dump = BytecodeListingTextCollectingVisitor.getText(
-            info.classFileFactory,
-            BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests,
-            withSignatures = WITH_SIGNATURES in module.directives,
-            withAnnotations = IGNORE_ANNOTATIONS !in module.directives,
-            sortDeclarations = DONT_SORT_DECLARATIONS !in module.directives,
-        )
+
+        val classes = info.classFileFactory.getClassFiles()
+            .sortedBy { it.relativePath }
+            .map {
+                ClassNode(Opcodes.API_VERSION).also { node ->
+                    ClassReader(it.asByteArray()).accept(node, ClassReader.SKIP_CODE)
+                }
+            }
+
+        val filter = BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests
+        val dump = classes.mapNotNull { node ->
+            val visitor = BytecodeListingTextCollectingVisitor(
+                filter,
+                withSignatures = WITH_SIGNATURES in module.directives,
+                withAnnotations = IGNORE_ANNOTATIONS !in module.directives,
+                sortDeclarations = DONT_SORT_DECLARATIONS !in module.directives,
+            )
+            node.accept(visitor)
+
+            if (!filter.shouldWriteClass(node.name)) null else visitor.text
+        }.joinToString("\n\n", postfix = "\n")
+
         multiModuleInfoDumper.builderForModule(module).append(dump)
     }
 
