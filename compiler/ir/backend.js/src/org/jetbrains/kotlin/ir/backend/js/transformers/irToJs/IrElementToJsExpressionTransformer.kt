@@ -209,7 +209,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return when {
             klass.isEffectivelyExternal() -> {
                 val refForExternalClass = klass.getClassRef(context.staticContext)
-                val varargParameterIndex = expression.symbol.owner.varargParameterIndex()
+                val varargParameterIndex = expression.symbol.owner.valueParameters.indexOfFirst { it.varargElementType != null }
                 if (varargParameterIndex == -1) {
                     JsNew(refForExternalClass, arguments)
                 } else {
