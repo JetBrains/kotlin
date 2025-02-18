@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
-abstract class AbstractLLFirScriptDiagnosticCompilerTestDataTest : AbstractDiagnosticCompilerTestDataTest() {
+abstract class AbstractLLFirScriptDiagnosticCompilerTestDataTest : AbstractLLDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCustomScriptDefinitions()
