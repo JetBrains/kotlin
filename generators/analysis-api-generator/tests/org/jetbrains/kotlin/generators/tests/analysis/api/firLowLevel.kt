@@ -442,7 +442,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("codegen/boxModernJdk")
         }
 
-        testClass<AbstractLLReversedBlackBoxTest>(suiteTestClassName = "LLFirReversedBlackBoxModernJdkCodegenBasedTestGenerated") {
+        testClass<AbstractLLReversedBlackBoxTest>(suiteTestClassName = "LLReversedBlackBoxModernJdkTestGenerated") {
             model("codegen/boxModernJdk")
         }
 

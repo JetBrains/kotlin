@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxModernJdk")
 @TestDataPath("$PROJECT_ROOT")
-public class LLFirReversedBlackBoxModernJdkCodegenBasedTestGenerated extends AbstractLLReversedBlackBoxTest {
+public class LLReversedBlackBoxModernJdkTestGenerated extends AbstractLLReversedBlackBoxTest {
   @Test
   public void testAllFilesPresentInBoxModernJdk() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk"), Pattern.compile("^(.+)\\.kt$"), null, true);
