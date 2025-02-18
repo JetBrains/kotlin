@@ -428,7 +428,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             )
         }
 
-        testClass<AbstractLLFirReversedBlackBoxCodegenBasedTest> {
+        testClass<AbstractLLReversedBlackBoxTest> {
             model(
                 "codegen/box",
                 excludeDirs = listOf(
@@ -442,7 +442,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("codegen/boxModernJdk")
         }
 
-        testClass<AbstractLLFirReversedBlackBoxCodegenBasedTest>(suiteTestClassName = "LLFirReversedBlackBoxModernJdkCodegenBasedTestGenerated") {
+        testClass<AbstractLLReversedBlackBoxTest>(suiteTestClassName = "LLFirReversedBlackBoxModernJdkCodegenBasedTestGenerated") {
             model("codegen/boxModernJdk")
         }
 

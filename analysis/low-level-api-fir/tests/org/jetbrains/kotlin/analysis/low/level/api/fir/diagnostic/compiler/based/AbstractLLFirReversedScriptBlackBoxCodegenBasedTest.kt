@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.ScriptingPluginEnvironmentConfigurator
 
-abstract class AbstractLLFirReversedScriptBlackBoxCodegenBasedTest : AbstractLLFirReversedBlackBoxCodegenBasedTest() {
+abstract class AbstractLLFirReversedScriptBlackBoxCodegenBasedTest : AbstractLLReversedBlackBoxTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useConfigurators(::ScriptingPluginEnvironmentConfigurator)
