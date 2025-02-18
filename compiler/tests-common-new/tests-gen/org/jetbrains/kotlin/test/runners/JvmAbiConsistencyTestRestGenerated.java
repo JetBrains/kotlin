@@ -6515,6 +6515,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         }
 
         @Test
+        @TestMetadata("recordAnnotationWithoutDefaultTarget.kt")
+        public void testRecordAnnotationWithoutDefaultTarget() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordAnnotationWithoutDefaultTarget.kt");
+        }
+
+        @Test
         @TestMetadata("recordDifferentPropertyOverride.kt")
         public void testRecordDifferentPropertyOverride() {
           runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/recordDifferentPropertyOverride.kt");
