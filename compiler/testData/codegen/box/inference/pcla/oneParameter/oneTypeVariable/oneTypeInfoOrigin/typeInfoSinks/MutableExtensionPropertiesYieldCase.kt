@@ -3,9 +3,6 @@
 
 // JVM_ABI_K1_K2_DIFF: KT-61909
 
-// IGNORE_LIGHT_ANALYSIS
-// REASON: unexpected red code (false-positive NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER in testYield)
-
 fun box(): String {
     testYield()
     return "OK"

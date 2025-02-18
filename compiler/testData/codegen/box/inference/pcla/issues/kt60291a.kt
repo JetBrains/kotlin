@@ -1,7 +1,6 @@
 // ISSUE: KT-60291
 // WITH_STDLIB
 
-// IGNORE_LIGHT_ANALYSIS
 // IGNORE_BACKEND_K1: ANY
 // REASON: red code (see corresponding diagnostic test)
 

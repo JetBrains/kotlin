@@ -3,7 +3,6 @@
 // TARGET_BACKEND: JVM
 // NULLABILITY_ANNOTATIONS: @io.reactivex.rxjava3.annotations:strict
 // LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// IGNORE_LIGHT_ANALYSIS
 
 // FILE: MyBiConsumer.java
 import io.reactivex.rxjava3.annotations.NonNull;

@@ -1,8 +1,6 @@
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-52838
 
-// IGNORE_LIGHT_ANALYSIS
-
 fun box(): String {
     build {
         this as DerivedBuildee<*>
