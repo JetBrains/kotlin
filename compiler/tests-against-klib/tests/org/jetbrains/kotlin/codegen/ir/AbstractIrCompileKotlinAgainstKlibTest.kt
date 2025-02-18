@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.Paths
-import java.util.*
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTest() {
@@ -26,9 +25,9 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     lateinit var klibPath: String
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        outputDir = javaSourcesOutputDirectory
+        outputDir = KtTestUtil.tmpDir("java-files")
         klibName = wholeFile.nameWithoutExtension
-        klibPath = Paths.get(outputDir.toString(), klibName + ".klib").toString()
+        klibPath = Paths.get(outputDir.toString(), "$klibName.klib").toString()
 
         val classpath: MutableList<File> = ArrayList()
         classpath.add(KtTestUtil.getAnnotationsJar())
@@ -84,9 +83,5 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         if (exitCode != ExitCode.OK) {
             throw Exception(output)
         }
-    }
-
-    companion object {
-        const val TIMEOUT_SECONDS = 10L
     }
 }

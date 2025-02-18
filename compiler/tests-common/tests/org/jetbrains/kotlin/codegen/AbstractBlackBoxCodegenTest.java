@@ -31,7 +31,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     ) throws Exception {
         boolean isIgnored = isIgnoredTarget(wholeFile);
 
-        compile(files, !isIgnored, false);
+        compile(files, !isIgnored);
 
         try {
             blackBox(!isIgnored, unexpectedBehaviour);
@@ -60,7 +60,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             try {
                 Method method = getBoxMethodOrNull(aClass);
                 if (method != null) {
-                    callBoxMethodAndCheckResult(generatedClassLoader, aClass, method, unexpectedBehaviour);
+                    callBoxMethodAndCheckResult(generatedClassLoader, method, unexpectedBehaviour);
                     return;
                 }
             }
