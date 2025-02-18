@@ -563,11 +563,11 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                         is MultiFieldValueClassMapping -> MultiFieldValueClassMapping(
                             expectedParameterStructure.rootMfvcNode,
                             substitutionMap,
-                            expectedParameterStructure.valueParameters.map { it.copy() }
+                            expectedParameterStructure.parameters.map { it.copy() }
                         )
                     }
                     add(parameterStructure)
-                    valueParametersAsMutableList.addAll(parameterStructure.valueParameters)
+                    valueParametersAsMutableList.addAll(parameterStructure.parameters)
                 }
                 valueParameters = valueParametersAsMutableList
             }
@@ -633,11 +633,11 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         require(parametersStructure.size == original.parameters.size) {
             "Wrong value parameters structure: $parametersStructure"
         }
-        require(parametersStructure.sumOf { it.valueParameters.size } == replacement.parameters.size) {
+        require(parametersStructure.sumOf { it.parameters.size } == replacement.parameters.size) {
             "Wrong value parameters structure: $parametersStructure"
         }
         val old2newList = original.parameters.zip(
-            parametersStructure.scan(0) { partial: Int, templates: RemappedParameter -> partial + templates.valueParameters.size }
+            parametersStructure.scan(0) { partial: Int, templates: RemappedParameter -> partial + templates.parameters.size }
                 .zipWithNext { start: Int, finish: Int -> replacement.parameters.slice(start until finish) }
         )
         for (i in old2newList.indices) {
@@ -1018,7 +1018,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         val parameter2expression = typedArgumentList(originalFunction, original)
         val structure = originalFunction.parameterTemplateStructureOfThisOldMfvcBidingFunction!!
         require(parameter2expression.size == structure.size)
-        require(structure.sumOf { it.valueParameters.size } == replacement.parameters.size)
+        require(structure.sumOf { it.parameters.size } == replacement.parameters.size)
         val newArguments: List<IrExpression?> =
             makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure)
         val resultExpression = makeMemberAccessExpression(replacement.symbol).apply {
@@ -1051,7 +1051,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
     private fun IrBlockBuilder.makeNewArguments(
         oldArguments: List<IrExpression?>, structure: List<RemappedParameter>
     ): List<IrExpression?> {
-        val argumentSizes: List<Int> = structure.map { argTemplate -> argTemplate.valueParameters.size }
+        val argumentSizes: List<Int> = structure.map { argTemplate -> argTemplate.parameters.size }
         val newArguments = (oldArguments zip argumentSizes).flatMapIndexed { index, (oldArgument, parametersCount) ->
             when {
                 oldArgument == null -> List(parametersCount) { null }

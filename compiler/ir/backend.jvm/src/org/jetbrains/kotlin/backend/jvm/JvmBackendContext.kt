@@ -165,16 +165,16 @@ class JvmBackendContext(
             when (oldRemapping) {
                 is RegularMapping -> parametersMapping[oldRemapping.valueParameter]?.let(::RegularMapping)
                 is MultiFieldValueClassMapping -> {
-                    val newParameters = oldRemapping.valueParameters.map { parametersMapping[it] }
+                    val newParameters = oldRemapping.parameters.map { parametersMapping[it] }
                     when {
                         newParameters.all { it == null } -> null
-                        newParameters.none { it == null } -> oldRemapping.copy(valueParameters = newParameters.map { it!! })
+                        newParameters.none { it == null } -> oldRemapping.copy(parameters = newParameters.map { it!! })
                         else -> error("Illegal new parameters:\n${newParameters.joinToString("\n") { it?.dump() ?: "null" }}")
                     }
                 }
             }
         }
-        val remappedParameters = newRemapsFromOld.flatMap { remap -> remap.valueParameters.map { it to remap } }.toMap()
+        val remappedParameters = newRemapsFromOld.flatMap { remap -> remap.parameters.map { it to remap } }.toMap()
         val newBinding = newFunction.parameters.map { remappedParameters[it] ?: RegularMapping(it) }.distinct()
         newFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction = newBinding
     }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind.DispatchReceiver
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -138,7 +139,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                 original != null && MethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(original)
             }
             if (remove != null) {
-                remove.valueParameters.last().let {
+                remove.parameters.last().let {
                     it.type = it.type.makeNullable()
                 }
             }
@@ -390,10 +391,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // However, we cannot link in the new function as the new accessor for the property, since there might still
             // be references to the original fake override stub.
             copyCorrespondingPropertyFrom(irFunction)
-            dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
-            valueParameters = irFunction.valueParameters.map { param ->
-                param.copyTo(this, type = param.type)
-            }
+            thisReceiver?.let { parameters += it.copyTo(this, type = defaultType) }
+            parameters += irFunction.nonDispatchParameters.map { it.copyTo(this, type = it.type) }
             overriddenSymbols = irFunction.overriddenSymbols.toList()
         }
 
@@ -529,7 +528,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         } else {
             // If the signature of this method will be changed in the output to take a boxed argument instead of a primitive,
             // rewrite the argument so that code will be generated for a boxed argument and not a primitive.
-            valueParameters.forEachIndexed { i, p ->
+            nonDispatchParameters.forEachIndexed { i, p ->
                 if (AsmUtil.isPrimitive(context.defaultTypeMapper.mapType(p.type)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
                     p.type = p.type.makeNullable()
                 }
@@ -547,7 +546,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     ) {
         val visibleTypeParameters = collectVisibleTypeParameters(this)
         parameters = from.parameters.map { param ->
-            if (param.kind == IrParameterKind.DispatchReceiver) {
+            if (param.kind == DispatchReceiver) {
                 // This is a workaround for a bug affecting fake overrides. Sometimes we encounter fake overrides
                 // with dispatch receivers pointing at a superclass instead of the current class.
                 irClass.thisReceiver!!.copyTo(this, type = irClass.defaultType)
@@ -586,7 +585,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                     val argument = irGet(param).let { argument ->
                         if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
                     }
-                    putArgument(targetParam, argument)
+                    arguments[targetParam] = argument
                 }
             } else {
                 this@irBlock.addBoxedAndUnboxedMfvcArguments(target, bridge, this)
@@ -596,7 +595,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
     private fun getStructure(function: IrSimpleFunction): List<MemoizedMultiFieldValueClassReplacements.RemappedParameter>? {
         val structure = function.parameterTemplateStructureOfThisNewMfvcBidingFunction ?: return null
-        require(structure.sumOf { it.valueParameters.size } == function.parameters.size) {
+        require(structure.sumOf { it.parameters.size } == function.parameters.size) {
             "Bad parameters structure: $structure"
         }
 
@@ -615,7 +614,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             }
         for ((parameter, argument) in parameters2arguments) {
             if (argument != null) {
-                irCall.putArgument(parameter, argument)
+                irCall.arguments[parameter] = argument
             }
         }
     }
