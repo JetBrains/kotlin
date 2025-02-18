@@ -11,7 +11,6 @@ import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.test.KtAssert;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -37,11 +36,6 @@ import java.util.List;
 
 public class CodegenTestUtil {
     private CodegenTestUtil() {
-    }
-
-    @NotNull
-    public static ClassFileFactory generateFiles(@NotNull KotlinCoreEnvironment environment, @NotNull CodegenTestFiles files) {
-        return GenerationUtils.compileFiles(files.getPsiFiles(), environment).getFactory();
     }
 
     public static void assertThrows(
