@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 
 @ThreadSafeMutableState
-internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
+class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
     override fun startResolvingPhase(phase: FirResolvePhase) {}
     override fun finishResolvingPhase(phase: FirResolvePhase) {}
 

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
  *
  * @see FirDesignation
  */
-internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
+sealed class LLFirResolveTarget(val designation: FirDesignation) {
     /**
      * [FirFile] where the targets are located.
      * Can be null if [target] does not belong to any file.
@@ -60,12 +60,12 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
         goToTarget(visitor)
     }
 
-    private fun goToTarget(visitor: LLFirResolveTargetVisitor) {
+    fun goToTarget(visitor: LLFirResolveTargetVisitor) {
         val pathIterator = path.iterator()
         goToTarget(pathIterator, visitor)
     }
 
-    private fun goToTarget(
+    fun goToTarget(
         pathIterator: Iterator<FirDeclaration>,
         visitor: LLFirResolveTargetVisitor,
     ) {
@@ -124,7 +124,7 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
 
     protected open fun toStringAdditionalSuffix(): String? = null
 
-    private fun toStringForTarget(): String = when (val fir = target) {
+    fun toStringForTarget(): String = when (val fir = target) {
         is FirConstructor -> "constructor"
         is FirClassLikeDeclaration -> fir.symbol.name.asString()
         is FirCallableDeclaration -> fir.symbol.name.asString()

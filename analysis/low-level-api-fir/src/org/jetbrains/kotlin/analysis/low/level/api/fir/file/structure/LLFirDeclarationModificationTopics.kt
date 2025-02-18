@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * @see org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
  * @see LLFirDeclarationModificationService
  * */
-internal object LLFirDeclarationModificationTopics {
+object LLFirDeclarationModificationTopics {
     val IN_BLOCK_MODIFICATION: Topic<LLFirInBlockModificationListener> = Topic(
         /* listenerClass = */ LLFirInBlockModificationListener::class.java,
         /* broadcastDirection = */ Topic.BroadcastDirection.TO_CHILDREN,

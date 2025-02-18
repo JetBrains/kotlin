@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
  * @see FileStructure
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.LLFirStructureElementDiagnosticsCollector
  */
-internal sealed class FileStructureElement(
+sealed class FileStructureElement(
     val declaration: FirDeclaration,
     val diagnostics: FileStructureElementDiagnostics,
 ) {
@@ -41,8 +41,8 @@ internal sealed class FileStructureElement(
     }
 }
 
-internal class KtToFirMapping(firElement: FirDeclaration) {
-    private val mapping = FirElementsRecorder.recordElementsFrom(
+class KtToFirMapping(firElement: FirDeclaration) {
+    val mapping = FirElementsRecorder.recordElementsFrom(
         firElement = firElement,
         recorder = FileStructureElement.recorderFor(firElement),
     )
@@ -129,7 +129,7 @@ internal class KtToFirMapping(firElement: FirDeclaration) {
     }
 }
 
-internal class RootScriptStructureElement(
+class RootScriptStructureElement(
     file: FirFile,
     script: FirScript,
     moduleComponents: LLFirModuleResolveComponents,
@@ -151,12 +151,12 @@ internal class RootScriptStructureElement(
     }
 }
 
-internal fun <T, R> visitScriptDependentElements(script: FirScript, visitor: FirVisitor<T, R>, data: R) {
+fun <T, R> visitScriptDependentElements(script: FirScript, visitor: FirVisitor<T, R>, data: R) {
     script.annotations.forEach { it.accept(visitor, data) }
     script.receivers.forEach { it.accept(visitor, data) }
 }
 
-internal class ClassDeclarationStructureElement(
+class ClassDeclarationStructureElement(
     file: FirFile,
     clazz: FirRegularClass,
     moduleComponents: LLFirModuleResolveComponents,
@@ -170,7 +170,7 @@ internal class ClassDeclarationStructureElement(
         )
     ),
 ) {
-    class Recorder(private val firClass: FirRegularClass) : FirElementsRecorder() {
+    class Recorder(val firClass: FirRegularClass) : FirElementsRecorder() {
         override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
         }
 
@@ -208,7 +208,7 @@ internal class ClassDeclarationStructureElement(
     }
 }
 
-internal class DeclarationStructureElement(
+class DeclarationStructureElement(
     file: FirFile,
     declaration: FirDeclaration,
     moduleComponents: LLFirModuleResolveComponents,
@@ -237,7 +237,7 @@ internal class DeclarationStructureElement(
     }
 }
 
-internal class RootStructureElement(
+class RootStructureElement(
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElement(

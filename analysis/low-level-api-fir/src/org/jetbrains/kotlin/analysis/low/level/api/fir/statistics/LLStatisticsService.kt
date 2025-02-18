@@ -25,20 +25,20 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLSymb
  * This class is the only IntelliJ project service registered for low-level API statistics collection. The single entry point simplifies
  * handling of whether statistics are enabled (see [KaStatisticsService.areStatisticsEnabled]).
  */
-class LLStatisticsService(internal val project: Project) : Disposable {
-    internal val scheduler: LLStatisticsScheduler = LLStatisticsScheduler(this)
+class LLStatisticsService(val project: Project) : Disposable {
+    val scheduler: LLStatisticsScheduler = LLStatisticsScheduler(this)
 
     val analysisSessions: LLAnalysisSessionStatistics = LLAnalysisSessionStatistics(this)
 
-    internal val symbolProviders: LLSymbolProviderStatistics = LLSymbolProviderStatistics(this)
+    val symbolProviders: LLSymbolProviderStatistics = LLSymbolProviderStatistics(this)
 
-    internal val domains: List<LLStatisticsDomain> = listOf(analysisSessions, symbolProviders)
+    val domains: List<LLStatisticsDomain> = listOf(analysisSessions, symbolProviders)
 
-    internal val openTelemetry: OpenTelemetry
+    val openTelemetry: OpenTelemetry
         get() = KotlinOpenTelemetryProvider.getInstance(project)?.openTelemetry
             ?: error("${LLStatisticsService::class.simpleName} should not be used when OpenTelemetry is not available.")
 
-    private var hasStarted: Boolean = false
+    var hasStarted: Boolean = false
 
     /**
      * Schedules periodic updates and information gathering if statistics collection is [enabled][KaStatisticsService.areStatisticsEnabled].

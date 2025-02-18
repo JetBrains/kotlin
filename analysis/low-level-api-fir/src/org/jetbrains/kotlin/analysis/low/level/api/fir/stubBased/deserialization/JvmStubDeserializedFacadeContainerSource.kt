@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-internal class JvmStubDeserializedFacadeContainerSource(
+class JvmStubDeserializedFacadeContainerSource(
     override val className: JvmClassName,
     override val facadeClassName: JvmClassName?
 ) : DeserializedContainerSourceWithJvmClassName, FacadeClassSource {

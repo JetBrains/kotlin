@@ -23,7 +23,7 @@ interface LLDiagnosticProvider {
     fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic>
 }
 
-internal object LLEmptyDiagnosticProvider : LLDiagnosticProvider {
+object LLEmptyDiagnosticProvider : LLDiagnosticProvider {
     override fun collectDiagnostics(file: KtFile, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         return emptyList()
     }
@@ -33,9 +33,9 @@ internal object LLEmptyDiagnosticProvider : LLDiagnosticProvider {
     }
 }
 
-internal class LLSourceDiagnosticProvider(
-    private val moduleProvider: LLModuleProvider,
-    private val sessionProvider: LLSessionProvider
+class LLSourceDiagnosticProvider(
+    val moduleProvider: LLModuleProvider,
+    val sessionProvider: LLSessionProvider
 ) : LLDiagnosticProvider {
     override fun collectDiagnostics(file: KtFile, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         val module = moduleProvider.getModule(file)

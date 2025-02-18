@@ -40,15 +40,15 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class StubBasedFirTypeDeserializer(
-    private val moduleData: FirModuleData,
-    private val annotationDeserializer: StubBasedAnnotationDeserializer,
-    private val parent: StubBasedFirTypeDeserializer?,
-    private val containingSymbol: FirBasedSymbol<*>?,
+class StubBasedFirTypeDeserializer(
+    val moduleData: FirModuleData,
+    val annotationDeserializer: StubBasedAnnotationDeserializer,
+    val parent: StubBasedFirTypeDeserializer?,
+    val containingSymbol: FirBasedSymbol<*>?,
     owner: KtTypeParameterListOwner?,
     initialOrigin: FirDeclarationOrigin
 ) {
-    private val typeParametersByName: Map<String, FirTypeParameterSymbol>
+    val typeParametersByName: Map<String, FirTypeParameterSymbol>
 
     val ownTypeParameters: List<FirTypeParameterSymbol>
         get() = typeParametersByName.values.toList()
@@ -97,7 +97,7 @@ internal class StubBasedFirTypeDeserializer(
         }
     }
 
-    private fun computeClassifier(classId: ClassId?): ConeClassLikeLookupTag? {
+    fun computeClassifier(classId: ClassId?): ConeClassLikeLookupTag? {
         return classId?.toLookupTag()
     }
 
@@ -162,7 +162,7 @@ internal class StubBasedFirTypeDeserializer(
         }
     }
 
-    private fun deserializeClassType(typeBean: KotlinClassTypeBean): ConeClassLikeType {
+    fun deserializeClassType(typeBean: KotlinClassTypeBean): ConeClassLikeType {
         val projections = typeBean.arguments.map { typeArgumentBean ->
             val kind = typeArgumentBean.projectionKind
             if (kind == KtProjectionKind.STAR) {
@@ -187,7 +187,7 @@ internal class StubBasedFirTypeDeserializer(
         )
     }
 
-    private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
+    fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
         val unwrappedTypeElement = typeReference.typeElement?.unwrapNullability()
         if (unwrappedTypeElement is KtDynamicType) {
             return ConeDynamicType.create(moduleData.session)
@@ -200,12 +200,12 @@ internal class StubBasedFirTypeDeserializer(
         }
     }
 
-    private fun deserializeFunctionType(typeReference: KtTypeReference, type: KtFunctionType, attributes: ConeAttributes): ConeKotlinType {
+    fun deserializeFunctionType(typeReference: KtTypeReference, type: KtFunctionType, attributes: ConeAttributes): ConeKotlinType {
         val stub = (type.stub ?: loadStubByElement(type)) as? KotlinFunctionTypeStubImpl
         return simpleTypeOrError(typeReference, attributes.withAbbreviation(stub?.abbreviatedType))
     }
 
-    private fun deserializeUserType(typeReference: KtTypeReference, type: KtUserType, attributes: ConeAttributes): ConeKotlinType {
+    fun deserializeUserType(typeReference: KtTypeReference, type: KtUserType, attributes: ConeAttributes): ConeKotlinType {
         val stub = (type.stub ?: loadStubByElement(type)) as? KotlinUserTypeStubImpl
         val coneType = simpleTypeOrError(typeReference, attributes.withAbbreviation(stub?.abbreviatedType))
 
@@ -221,18 +221,18 @@ internal class StubBasedFirTypeDeserializer(
         }
     }
 
-    private fun ConeAttributes.withAbbreviation(abbreviatedType: KotlinClassTypeBean?): ConeAttributes {
+    fun ConeAttributes.withAbbreviation(abbreviatedType: KotlinClassTypeBean?): ConeAttributes {
         if (abbreviatedType == null) return this
         return add(AbbreviatedTypeAttribute(deserializeClassType(abbreviatedType)))
     }
 
-    private fun typeParameterSymbol(typeParameterName: String): ConeTypeParameterLookupTag? =
+    fun typeParameterSymbol(typeParameterName: String): ConeTypeParameterLookupTag? =
         typeParametersByName[typeParameterName]?.toLookupTag() ?: parent?.typeParameterSymbol(typeParameterName)
 
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    private fun simpleType(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType? {
+    fun simpleType(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType? {
         val constructor = typeSymbol(typeReference) ?: return null
         val isNullable = typeReference.typeElement is KtNullableType
         if (constructor is ConeTypeParameterLookupTag) {
@@ -276,17 +276,17 @@ internal class StubBasedFirTypeDeserializer(
         )
     }
 
-    private fun simpleTypeOrError(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType =
+    fun simpleTypeOrError(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType =
         simpleType(typeReference, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
 
-    private fun KtFunctionType.isSuspend(): Boolean {
+    fun KtFunctionType.isSuspend(): Boolean {
         val parent = parent as? KtElementImplStub<*>
             ?: error("Expected parent of KtTypeElement to have type KtElementImplStub<*>, but actual $parent")
         val modifiers = parent.getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
         return modifiers.any { it.hasSuspendModifier() }
     }
 
-    private fun typeSymbol(typeReference: KtTypeReference): ConeClassifierLookupTag? {
+    fun typeSymbol(typeReference: KtTypeReference): ConeClassifierLookupTag? {
         val typeElement = typeReference.typeElement?.unwrapNullability()
         if (typeElement is KtFunctionType) {
             val arity = (if (typeElement.receiver != null) 1 else 0) + typeElement.parameters.size
@@ -305,7 +305,7 @@ internal class StubBasedFirTypeDeserializer(
     }
 
 
-    private fun typeArgument(projection: KtTypeProjection): ConeTypeProjection {
+    fun typeArgument(projection: KtTypeProjection): ConeTypeProjection {
         if (projection.projectionKind == KtProjectionKind.STAR) {
             return ConeStarProjection
         }
@@ -314,7 +314,7 @@ internal class StubBasedFirTypeDeserializer(
         return typeArgument(type, projection.projectionKind)
     }
 
-    private fun typeArgument(
+    fun typeArgument(
         type: ConeKotlinType,
         projectionKind: KtProjectionKind
     ): ConeTypeProjection {
@@ -334,7 +334,7 @@ internal class StubBasedFirTypeDeserializer(
  * It relies on [org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl.isClassRef],
  * which is set during cls analysis only.
  */
-internal fun KtUserType.classId(): ClassId {
+fun KtUserType.classId(): ClassId {
     val packageFragments = mutableListOf<String>()
     val classFragments = mutableListOf<String>()
 

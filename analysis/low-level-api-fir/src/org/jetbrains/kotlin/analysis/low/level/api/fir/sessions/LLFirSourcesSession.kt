@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
-internal class LLFirSourcesSession @PrivateSessionConstructor constructor(
+class LLFirSourcesSession @PrivateSessionConstructor constructor(
     ktModule: KaSourceModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,

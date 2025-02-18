@@ -17,14 +17,14 @@ import java.lang.ref.SoftReference
  */
 @LLFirInternals
 class CleanableSoftValueReferenceCache<K : Any, V : Any>(
-    private val getCleaner: (V) -> ValueReferenceCleaner<V>,
+    val getCleaner: (V) -> ValueReferenceCleaner<V>,
 ) : CleanableValueReferenceCache<K, V>() {
     override fun createReference(key: K, value: V): ReferenceWithCleanup<K, V> {
         return SoftReferenceWithCleanup(key, value, getCleaner(value), referenceQueue)
     }
 }
 
-private class SoftReferenceWithCleanup<K, V>(
+class SoftReferenceWithCleanup<K, V>(
     override val key: K,
     value: V,
     override val cleaner: ValueReferenceCleaner<V>,

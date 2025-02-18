@@ -396,7 +396,9 @@ test-dependencies:
   - ./../../compiler/ir/serialization.native
   - ./../../libraries/tools/kotlinp
   - ./../../compiler/ir/ir.objcinterop
+  - ../analysis-api-impl-base-tests
+  - ../low-level-api-fir-tests
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.analysis.api.KaPlatformInterface,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xexplicit-api=disable, -opt-in, org.jetbrains.kotlin.analysis.api.KaPlatformInterface, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

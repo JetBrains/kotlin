@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyRes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.FirSession
 
-internal class LLFirGlobalResolveComponents(val project: Project) {
+class LLFirGlobalResolveComponents(val project: Project) {
     companion object {
         fun getInstance(project: Project): LLFirGlobalResolveComponents {
             return project.getService(LLFirGlobalResolveComponents::class.java)
@@ -22,6 +22,6 @@ internal class LLFirGlobalResolveComponents(val project: Project) {
         }
     }
 
-    internal val checker: LLFirLazyResolveContractChecker = LLFirLazyResolveContractChecker()
-    internal val lockProvider: LLFirLockProvider = LLFirLockProvider(checker)
+    val checker: LLFirLazyResolveContractChecker = LLFirLazyResolveContractChecker()
+    val lockProvider: LLFirLockProvider = LLFirLockProvider(checker)
 }

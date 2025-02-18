@@ -47,10 +47,10 @@ import java.util.concurrent.ConcurrentHashMap
  * @see FileStructureElement
  * @see LLFirDeclarationModificationService
  */
-internal class FileStructure private constructor(
-    private val ktFile: KtFile,
-    private val firFile: FirFile,
-    private val moduleComponents: LLFirModuleResolveComponents,
+class FileStructure constructor(
+    val ktFile: KtFile,
+    val firFile: FirFile,
+    val moduleComponents: LLFirModuleResolveComponents,
 ) {
     companion object {
         fun build(
@@ -67,14 +67,14 @@ internal class FileStructure private constructor(
          *
          * @see getNonLocalContainingOrThisDeclaration
          */
-        private fun findNonLocalContainer(element: KtElement): KtDeclaration? {
+        fun findNonLocalContainer(element: KtElement): KtDeclaration? {
             return element.getNonLocalContainingOrThisDeclaration(KtDeclaration::isAutonomousDeclaration)
         }
     }
 
-    private val firProvider = firFile.moduleData.session.firProvider
+    val firProvider = firFile.moduleData.session.firProvider
 
-    private val structureElements = ConcurrentHashMap<KtElement, FileStructureElement>()
+    val structureElements = ConcurrentHashMap<KtElement, FileStructureElement>()
 
     /**
      * Must be called only under write-lock.
@@ -100,14 +100,14 @@ internal class FileStructure private constructor(
         return structureElements.getOrPut(container) { createStructureElement(container) }
     }
 
-    private fun addStructureElementForTo(element: KtElement, result: MutableCollection<FileStructureElement>) {
+    fun addStructureElementForTo(element: KtElement, result: MutableCollection<FileStructureElement>) {
         checkCanceled()
         LLFirDiagnosticVisitor.suppressAndLogExceptions {
             result += getStructureElementFor(element)
         }
     }
 
-    private fun getContainerKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtElement {
+    fun getContainerKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtElement {
         val declaration = getStructureKtElement(element, nonLocalContainer)
         val container: KtElement
         if (declaration != null) {
@@ -124,7 +124,7 @@ internal class FileStructure private constructor(
         return container
     }
 
-    private fun getStructureKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtDeclaration? {
+    fun getStructureKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtDeclaration? {
         val container = if (nonLocalContainer?.isAutonomousDeclaration == true)
             nonLocalContainer
         else {
@@ -141,7 +141,7 @@ internal class FileStructure private constructor(
         return resultedContainer ?: container
     }
 
-    private fun KtClassOrObject.isPartOfSuperClassCall(element: KtElement): Boolean {
+    fun KtClassOrObject.isPartOfSuperClassCall(element: KtElement): Boolean {
         for (entry in superTypeListEntries) {
             if (entry !is KtSuperTypeCallEntry) continue
 
@@ -163,7 +163,7 @@ internal class FileStructure private constructor(
         }
     }
 
-    private fun MutableCollection<KtPsiDiagnostic>.collectDiagnosticsFromStructureElements(
+    fun MutableCollection<KtPsiDiagnostic>.collectDiagnosticsFromStructureElements(
         structureElements: Collection<FileStructureElement>,
         diagnosticCheckerFilter: DiagnosticCheckerFilter,
     ) {
@@ -205,7 +205,7 @@ internal class FileStructure private constructor(
         return structureElements.toList().asReversed()
     }
 
-    private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
+    fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
         val firDeclaration = declaration.findSourceNonLocalFirDeclaration(firFile, firProvider)
         return FileElementFactory.createFileStructureElement(
             firDeclaration = firDeclaration,
@@ -214,7 +214,7 @@ internal class FileStructure private constructor(
         )
     }
 
-    private fun createDanglingModifierListStructure(container: KtModifierList): FileStructureElement {
+    fun createDanglingModifierListStructure(container: KtModifierList): FileStructureElement {
         val firDanglingModifierList = container.findSourceByTraversingWholeTree(
             moduleComponents.firFileBuilder,
             firFile,
@@ -224,7 +224,7 @@ internal class FileStructure private constructor(
         return DeclarationStructureElement(firFile, firDanglingModifierList, moduleComponents)
     }
 
-    private fun createStructureElement(container: KtElement): FileStructureElement = when {
+    fun createStructureElement(container: KtElement): FileStructureElement = when {
         container is KtCodeFragment -> {
             val firCodeFragment = firFile.codeFragment
             firCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)

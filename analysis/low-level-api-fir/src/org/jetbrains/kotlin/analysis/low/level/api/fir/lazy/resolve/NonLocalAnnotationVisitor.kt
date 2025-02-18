@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * @see processAnnotation
  * @see RecursiveNonLocalAnnotationVisitor
  */
-internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
+abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
     abstract fun processAnnotation(annotation: FirAnnotation, data: T)
 
     /**
@@ -79,7 +79,7 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
         visitResolvedTypeRef(errorTypeRef, data)
     }
 
-    private fun visitTypeAnnotations(resolvedTypeRef: FirResolvedTypeRef, data: T) {
+    fun visitTypeAnnotations(resolvedTypeRef: FirResolvedTypeRef, data: T) {
         resolvedTypeRef.coneType.forEachType { coneType ->
             for (typeArgumentAnnotation in coneType.typeAnnotations) {
                 typeArgumentAnnotation.accept(this, data)

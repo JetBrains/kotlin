@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.psi
  * Must be called in a write action.
  * @return **false** if it is not in-block modification
  */
-internal fun invalidateAfterInBlockModification(declaration: FirDeclaration): Boolean = when (declaration) {
+fun invalidateAfterInBlockModification(declaration: FirDeclaration): Boolean = when (declaration) {
     is FirSimpleFunction -> declaration.inBodyInvalidation()
     is FirPropertyAccessor -> declaration.inBodyInvalidation()
     is FirProperty -> declaration.inBodyInvalidation()
@@ -44,13 +44,13 @@ internal fun invalidateAfterInBlockModification(declaration: FirDeclaration): Bo
  *
  * @return **false** if it is an out-of-block change
  */
-private fun FirSimpleFunction.inBodyInvalidation(): Boolean {
+fun FirSimpleFunction.inBodyInvalidation(): Boolean {
     val body = body ?: return false
     invalidateBody(body)
     return true
 }
 
-private fun FirFunction.invalidateBody(body: FirBlock): FirResolvePhase? {
+fun FirFunction.invalidateBody(body: FirBlock): FirResolvePhase? {
     // the body is not yet resolved, so there is nothing to invalidate
     if (body is FirLazyBlock) return null
     val newPhase = phaseWithoutBody
@@ -82,7 +82,7 @@ private fun FirFunction.invalidateBody(body: FirBlock): FirResolvePhase? {
  *
  * @return **false** if it is an out-of-block change
  */
-private fun FirProperty.inBodyInvalidation(): Boolean {
+fun FirProperty.inBodyInvalidation(): Boolean {
     val initializerState = invalidateInitializer()
     val delegateState = invalidateDelegate()
     when {
@@ -114,7 +114,7 @@ private fun FirProperty.inBodyInvalidation(): Boolean {
  *
  * @return **false** if it is an out-of-block change
  */
-private fun FirPropertyAccessor.inBodyInvalidation(): Boolean {
+fun FirPropertyAccessor.inBodyInvalidation(): Boolean {
     val body = body ?: return false
     val newPhase = invalidateBody(body) ?: return true
 
@@ -131,7 +131,7 @@ private fun FirPropertyAccessor.inBodyInvalidation(): Boolean {
     return true
 }
 
-private fun FirCodeFragment.inBodyInvalidation(): Boolean {
+fun FirCodeFragment.inBodyInvalidation(): Boolean {
     if (block is FirLazyBlock) {
         return true
     }
@@ -142,18 +142,18 @@ private fun FirCodeFragment.inBodyInvalidation(): Boolean {
     return true
 }
 
-private fun FirProperty.invalidateInitializer(): PropertyExpressionState =
+fun FirProperty.invalidateInitializer(): PropertyExpressionState =
     replaceWithLazyExpressionIfNeeded(::initializer, ::replaceInitializer)
 
-private fun FirProperty.invalidateDelegate(): PropertyExpressionState = replaceWithLazyExpressionIfNeeded(::delegate, ::replaceDelegate)
+fun FirProperty.invalidateDelegate(): PropertyExpressionState = replaceWithLazyExpressionIfNeeded(::delegate, ::replaceDelegate)
 
-private enum class PropertyExpressionState {
+enum class PropertyExpressionState {
     ABSENT,
     LAZY,
     CALCULATED,
 }
 
-private inline fun replaceWithLazyExpressionIfNeeded(
+inline fun replaceWithLazyExpressionIfNeeded(
     expressionGetter: () -> FirExpression?,
     replaceExpression: (FirExpression) -> Unit,
 ): PropertyExpressionState {
@@ -166,7 +166,7 @@ private inline fun replaceWithLazyExpressionIfNeeded(
     return PropertyExpressionState.CALCULATED
 }
 
-private val FirDeclaration.phaseWithoutBody: FirResolvePhase
+val FirDeclaration.phaseWithoutBody: FirResolvePhase
     get() {
         val phaseBeforeBody = if (hasLegacyContract) {
             FirResolvePhase.CONTRACTS.previous
@@ -177,10 +177,10 @@ private val FirDeclaration.phaseWithoutBody: FirResolvePhase
         return minOf(phaseBeforeBody, resolvePhase)
     }
 
-private val FirDeclaration.hasLegacyContract: Boolean
+val FirDeclaration.hasLegacyContract: Boolean
     get() = this is FirFunction && body?.statements?.firstOrNull() is FirContractCallBlock
 
-private fun FirDeclaration.decreasePhase(newPhase: FirResolvePhase) {
+fun FirDeclaration.decreasePhase(newPhase: FirResolvePhase) {
     @OptIn(ResolveStateAccess::class)
     resolveState = newPhase.asResolveState()
 }

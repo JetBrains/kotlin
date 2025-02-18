@@ -8,23 +8,23 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 
 @DslMarker
-internal annotation class StateKeeperDsl
+annotation class StateKeeperDsl
 
 /**
  * Post-processors run after arrangers, but before the action block.
  * It is a work-around for cases when an arranger cannot properly tweak the state by itself
  * (for instance, when such tweak depends on a non-local mutation).
  */
-internal typealias PostProcessor = () -> Unit
+typealias PostProcessor = () -> Unit
 
 @StateKeeperDsl
-internal interface StateKeeperBuilder {
+interface StateKeeperBuilder {
     fun register(state: PreservedState)
 }
 
 @JvmInline
 @StateKeeperDsl
-internal value class StateKeeperScope<Owner : Any, Context : Any>(private val owner: Owner) {
+value class StateKeeperScope<Owner : Any, Context : Any>(val owner: Owner) {
     /**
      * Defines an entity state preservation rule.
      *
@@ -93,7 +93,7 @@ internal value class StateKeeperScope<Owner : Any, Context : Any>(private val ow
  * Registers a given [entity] using the delegate [keeper].
  * Does nothing if the [entity] is `null`.
  */
-internal fun <Entity : Any, Context : Any> StateKeeperBuilder.entity(
+fun <Entity : Any, Context : Any> StateKeeperBuilder.entity(
     entity: Entity?,
     keeper: StateKeeper<Entity, Context>,
     context: Context,
@@ -109,7 +109,7 @@ internal fun <Entity : Any, Context : Any> StateKeeperBuilder.entity(
  * Registers a given [entity] using the building [block].
  * Does nothing if the [entity] is `null`.
  */
-internal inline fun <Entity : Any, Context : Any> StateKeeperBuilder.entity(
+inline fun <Entity : Any, Context : Any> StateKeeperBuilder.entity(
     entity: Entity?,
     context: Context,
     block: StateKeeperScope<Entity, Context>.(Entity, Context) -> Unit,
@@ -124,7 +124,7 @@ internal inline fun <Entity : Any, Context : Any> StateKeeperBuilder.entity(
  * Does nothing if the [list] is `null`.
  * Skips `null` elements in the [list].
  */
-internal fun <Entity : Any, Context : Any> StateKeeperBuilder.entityList(
+fun <Entity : Any, Context : Any> StateKeeperBuilder.entityList(
     list: List<Entity?>?,
     keeper: StateKeeper<Entity, Context>,
     context: Context,
@@ -143,7 +143,7 @@ internal fun <Entity : Any, Context : Any> StateKeeperBuilder.entityList(
  * Does nothing if the [list] is `null`.
  * Skips `null` elements in the [list].
  */
-internal inline fun <Entity : Any, Context : Any> StateKeeperBuilder.entityList(
+inline fun <Entity : Any, Context : Any> StateKeeperBuilder.entityList(
     list: List<Entity?>?,
     context: Context,
     block: StateKeeperScope<Entity, Context>.(Entity, Context) -> Unit,
@@ -165,7 +165,7 @@ internal inline fun <Entity : Any, Context : Any> StateKeeperBuilder.entityList(
  *  The function collects rules for each individual owner separately.
  *  Nested owners can be handled inside [entity] or [entityList] blocks.
  */
-internal fun <Owner : Any, Context : Any> stateKeeper(
+fun <Owner : Any, Context : Any> stateKeeper(
     block: StateKeeperScope<Owner, Context>.(StateKeeperBuilder, Owner, Context) -> Unit,
 ): StateKeeper<Owner, Context> = StateKeeper { owner, context ->
     val states = mutableListOf<PreservedState>()
@@ -180,8 +180,8 @@ internal fun <Owner : Any, Context : Any> stateKeeper(
     block(scope, builder, owner, context)
 
     object : PreservedState {
-        private var isPostProcessed = false
-        private var isRestored = false
+        var isPostProcessed = false
+        var isRestored = false
 
         override fun postProcess() {
             if (isPostProcessed) {
@@ -231,7 +231,7 @@ internal fun <Owner : Any, Context : Any> stateKeeper(
  * }
  * ```
  */
-internal class StateKeeper<in Owner : Any, Context : Any>(val provider: (Owner, Context) -> PreservedState) {
+class StateKeeper<in Owner : Any, Context : Any>(val provider: (Owner, Context) -> PreservedState) {
     /**
      * Backs up the [owner] state by calling providers, and potentially tweaks the object state with arrangers.
      * Note that post-processors are not run during preparation.
@@ -244,7 +244,7 @@ internal class StateKeeper<in Owner : Any, Context : Any>(val provider: (Owner, 
 /**
  * State preserved by a [StateKeeper].
  */
-internal interface PreservedState {
+interface PreservedState {
     /**
      * Performs post-processing of the state, according to supplied [PostProcessor]s.
      * This function must be called before the potentially failing action block.
@@ -258,7 +258,7 @@ internal interface PreservedState {
     fun restore()
 }
 
-internal inline fun <Target : FirElementWithResolveState, Context : Any, Result> resolveWithKeeper(
+inline fun <Target : FirElementWithResolveState, Context : Any, Result> resolveWithKeeper(
     target: Target,
     context: Context,
     keeper: StateKeeper<Target, Context>,

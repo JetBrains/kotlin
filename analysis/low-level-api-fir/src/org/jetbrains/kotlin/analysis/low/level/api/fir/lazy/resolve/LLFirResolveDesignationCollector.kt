@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.isCopyCreatedInScope
  * @see LLFirResolveTarget
  * @see shouldBeResolved
  */
-internal object LLFirResolveDesignationCollector {
+object LLFirResolveDesignationCollector {
     fun getDesignationToResolve(target: FirElementWithResolveState): LLFirResolveTarget? {
         return getDesignationToResolve(target, FirDesignation::asResolveTarget)
     }
@@ -38,7 +38,7 @@ internal object LLFirResolveDesignationCollector {
         return getDesignationToResolve(target, ::LLFirWholeElementResolveTarget)
     }
 
-    private fun getDesignationToResolve(
+    fun getDesignationToResolve(
         target: FirElementWithResolveState,
         resolveTarget: (FirDesignation) -> LLFirResolveTarget,
     ): LLFirResolveTarget? {
@@ -47,7 +47,7 @@ internal object LLFirResolveDesignationCollector {
         return llResolveTarget
     }
 
-    private fun getFirDesignationToResolve(target: FirElementWithResolveState): FirDesignation? {
+    fun getFirDesignationToResolve(target: FirElementWithResolveState): FirDesignation? {
         if (!target.shouldBeResolved()) {
             return null
         }
@@ -66,12 +66,12 @@ internal object LLFirResolveDesignationCollector {
     /**
      * @see isLazyResolvable
      */
-    private fun FirElementWithResolveState.shouldBeResolved() = when (this) {
+    fun FirElementWithResolveState.shouldBeResolved() = when (this) {
         is FirDeclaration -> shouldBeResolved()
         else -> throwUnexpectedFirElementError(this)
     }
 
-    private fun FirDeclaration.shouldBeResolved(): Boolean {
+    fun FirDeclaration.shouldBeResolved(): Boolean {
         if (!origin.isLazyResolvable) {
             @OptIn(ResolveStateAccess::class)
             check(resolvePhase == FirResolvePhase.BODY_RESOLVE) {

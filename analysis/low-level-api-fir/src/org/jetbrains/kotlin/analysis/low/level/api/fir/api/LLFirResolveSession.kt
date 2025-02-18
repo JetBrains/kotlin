@@ -73,30 +73,30 @@ abstract class LLFirResolveSession(
      * @see getOrBuildFirFile
      * @see org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder.getOrBuildFirFor
      */
-    internal abstract fun getOrBuildFirFor(element: KtElement): FirElement?
+    abstract fun getOrBuildFirFor(element: KtElement): FirElement?
 
     /**
      * Get or build or get cached [FirFile] for requested file in undefined phase
      */
-    internal abstract fun getOrBuildFirFile(ktFile: KtFile): FirFile
+    abstract fun getOrBuildFirFile(ktFile: KtFile): FirFile
 
     /**
      * @see LLDiagnosticProvider.getDiagnostics
      */
-    internal fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
+    fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         return diagnosticProvider.getDiagnostics(element, filter)
     }
 
     /**
      * @see LLDiagnosticProvider.collectDiagnostics
      */
-    internal fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
+    fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
         return diagnosticProvider.collectDiagnostics(ktFile, filter)
     }
 
     abstract fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*>
 
-    internal abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
+    abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
 }
 
 fun LLFirResolveSession.getModule(element: PsiElement): KaModule {

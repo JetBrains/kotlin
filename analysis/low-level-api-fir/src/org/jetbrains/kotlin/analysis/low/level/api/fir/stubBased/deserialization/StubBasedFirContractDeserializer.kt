@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
 
-internal class StubBasedFirContractDeserializer(
-    private val simpleFunction: FirSimpleFunction,
-    private val typeDeserializer: StubBasedFirTypeDeserializer,
+class StubBasedFirContractDeserializer(
+    val simpleFunction: FirSimpleFunction,
+    val typeDeserializer: StubBasedFirTypeDeserializer,
 ) {
     fun loadContract(function: KtNamedFunction): FirContractDescription? {
         val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function) ?: return null
@@ -131,7 +131,7 @@ internal class StubBasedFirContractDeserializer(
             )
         }
 
-        private fun getParameterName(parameterIndex: Int): String {
+        fun getParameterName(parameterIndex: Int): String {
             return if (parameterIndex < 0) "this" else simpleFunction.valueParameters[parameterIndex].name.asString()
         }
 

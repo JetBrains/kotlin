@@ -21,17 +21,22 @@ modules:
 - analysis/decompiled/decompiler-to-stubs
 - analysis/decompiled/decompiler-js
 - analysis/decompiled/decompiler-to-file-stubs
+- analysis/decompiled/decompiler-to-file-stubs-tests
 - analysis/decompiled/decompiler-native
+- analysis/decompiled/decompiler-native-tests
 - analysis/symbol-light-classes
 - analysis/analysis-api-fir
+- analysis/analysis-api-fir-tests
 - analysis/analysis-api-fir/analysis-api-fir-generator
 - analysis/low-level-api-fir/tests-jdk11
 - analysis/low-level-api-fir
+- analysis/low-level-api-fir-tests
 - analysis/analysis-internal-utils
 - analysis/analysis-test-framework
 - analysis/analysis-tools/deprecated-k1-frontend-internals-for-ide-generated
 - analysis/analysis-tools/deprecated-k1-frontend-internals-for-ide-generator
 - analysis/analysis-api-impl-base
+- analysis/analysis-api-impl-base-tests
 - analysis/light-classes-base
 - analysis/analysis-api-standalone
 - analysis/analysis-api-standalone/analysis-api-standalone-base
@@ -50,7 +55,7 @@ modules:
 - native/swift/sir/tree-generator-native
 - native/swift/sir
 - native/swift/swift-export-ide
-- native/swift/swift-export-standalone
+#- native/swift/swift-export-standalone
 - native/swift/sir-providers
 - native/swift/swift-export-embeddable
 - native/swift/sir-light-classes
@@ -65,7 +70,7 @@ modules:
 - prepare/compiler-prepare
 - prepare/kotlin-compiler-internal-test-framework
 - plugins/atomicfu/atomicfu-compiler-embeddable
-- plugins/atomicfu/atomicfu-compiler
+#- plugins/atomicfu/atomicfu-compiler
 - plugins/jvm-abi-gen/embeddable
 - plugins/jvm-abi-gen
 - plugins/plugins-interactions-testing
@@ -113,6 +118,7 @@ modules:
 - plugins/kotlinx-serialization/kotlinx-serialization.k2
 - plugins/plugin-sandbox/plugin-sandbox-ic-test
 - plugins/plugin-sandbox
+- plugins/plugin-sandbox-tests
 - plugins/noarg/noarg.cli
 - plugins/noarg/noarg.k1
 - plugins/noarg/noarg.backend
@@ -191,9 +197,9 @@ modules:
 - libraries/kotlinx-metadata/klib
 #- benchmarks
 - generators
-- generators/generators-tests
+#- generators/generators-tests
 - generators/test-generator
-- generators/analysis-api-generator
+#- generators/analysis-api-generator
 - generators/ide-iml-to-gradle-generator
 - generators/tree-generator-common
 - compiler/frontend.common
@@ -230,6 +236,7 @@ modules:
 - compiler/fir/raw-fir/light-tree2fir
 - compiler/fir/raw-fir/raw-fir.common
 - compiler/fir/raw-fir/psi2fir
+- compiler/fir/raw-fir/psi2fir-tests
 - compiler/fir/fir-serialization
 - compiler/fir/modularized-tests
 - compiler/resolution.common.jvm
@@ -271,7 +278,7 @@ modules:
 - compiler/cli/cli-runner
 - compiler/cli
 - compiler/plugin-api
-- compiler/tests-for-compiler-generator
+#- compiler/tests-for-compiler-generator
 - compiler/util-klib
 - compiler/container
 - compiler/tests-java8
@@ -280,7 +287,7 @@ modules:
 - compiler/daemon/daemon-common
 - compiler/daemon/daemon-tests
 - compiler/daemon
-- compiler/tests-different-jdk
+#- compiler/tests-different-jdk
 - compiler/tests-integration
 - compiler/frontend.common-psi
 - compiler/frontend.java

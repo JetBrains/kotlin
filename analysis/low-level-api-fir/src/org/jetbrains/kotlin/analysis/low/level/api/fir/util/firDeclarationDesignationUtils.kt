@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
-internal fun FirElementWithResolveState.checkPhase(requiredResolvePhase: FirResolvePhase) {
+fun FirElementWithResolveState.checkPhase(requiredResolvePhase: FirResolvePhase) {
     @OptIn(ResolveStateAccess::class)
     val declarationResolveState = resolveState
     checkWithAttachment(

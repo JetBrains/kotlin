@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 
-internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
+inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
     while (true) {
         checkCanceled()
         if (tryLock(lockingIntervalMs, TimeUnit.MILLISECONDS)) {
@@ -33,14 +33,14 @@ internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: (
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun checkCanceled() {
+inline fun checkCanceled() {
     ProgressManager.checkCanceled()
 }
 
-internal val FirElement.isErrorElement
+val FirElement.isErrorElement
     get() = this is FirDiagnosticHolder
 
-internal val FirDeclaration.ktDeclaration: KtDeclaration
+val FirDeclaration.ktDeclaration: KtDeclaration
     get() {
         val psi = psi
             ?: errorWithFirSpecificEntries("PSI element was not found", fir = this)
@@ -55,11 +55,11 @@ internal val FirDeclaration.ktDeclaration: KtDeclaration
         }
     }
 
-internal val FirDeclaration.containingKtFileIfAny: KtFile?
+val FirDeclaration.containingKtFileIfAny: KtFile?
     get() = psi?.containingFile as? KtFile
 
 
 
-internal fun KtDeclaration.isNonAnonymousClassOrObject() =
+fun KtDeclaration.isNonAnonymousClassOrObject() =
     this is KtClassOrObject
             && !this.isObjectLiteral()

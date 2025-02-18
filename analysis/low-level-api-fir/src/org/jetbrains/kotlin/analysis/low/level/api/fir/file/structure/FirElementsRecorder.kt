@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement, FirElement>>() {
-    private fun cache(psi: KtElement, fir: FirElement, cache: MutableMap<KtElement, FirElement>) {
+open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement, FirElement>>() {
+    fun cache(psi: KtElement, fir: FirElement, cache: MutableMap<KtElement, FirElement>) {
         val existingFir = cache[psi]
         if (existingFir != null && existingFir !== fir) {
             when {
@@ -136,7 +136,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         cache(psi, element, cache)
     }
 
-    private fun KtSourceElement.isSourceForInvertedInOperator(fir: FirElement) =
+    fun KtSourceElement.isSourceForInvertedInOperator(fir: FirElement) =
         kind == KtFakeSourceElementKind.DesugaredInvertedContains
                 && fir is FirResolvedNamedReference && fir.name == OperatorNameConventions.CONTAINS
 
@@ -148,7 +148,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
      * On the other hand, if the PSI is the left operand of an assignment or the base expression of a unary expression, we take the read FIR
      * element so the user of the Analysis API is able to retrieve such read calls reliably.
      */
-    private fun KtSourceElement.isSourceForCompoundAccess(fir: FirElement): Boolean {
+    fun KtSourceElement.isSourceForCompoundAccess(fir: FirElement): Boolean {
         val psi = psi
         val parentPsi = psi?.parent
         if (kind !is KtFakeSourceElementKind.DesugaredAugmentedAssign && kind !is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
@@ -164,7 +164,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
 
     // After desugaring, we also have FirBlock with the same source element.
     // We need to filter it out to map this source element to set/plusAssign call, so we check `is FirFunctionCall`
-    private fun KtSourceElement.isSourceForArrayAugmentedAssign(fir: FirElement): Boolean {
+    fun KtSourceElement.isSourceForArrayAugmentedAssign(fir: FirElement): Boolean {
         return kind is KtFakeSourceElementKind.DesugaredAugmentedAssign && (fir is FirFunctionCall || fir is FirThisReceiverExpression)
     }
 
@@ -174,19 +174,19 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     // to smart cast expressions, which will affect the
     // `org.jetbrains.kotlin.idea.highlighting.highlighters.ExpressionsSmartcastHighlighter#highlightExpression`
     // function in intellij.git
-    private fun KtSourceElement.isSourceForSmartCasts(fir: FirElement) =
+    fun KtSourceElement.isSourceForSmartCasts(fir: FirElement) =
         (kind is KtFakeSourceElementKind.SmartCastExpression) && fir is FirSmartCastExpression && !fir.originalExpression.isImplicitThisReceiver
 
-    private val FirExpression.isImplicitThisReceiver get() = this is FirThisReceiverExpression && this.isImplicit
+    val FirExpression.isImplicitThisReceiver get() = this is FirThisReceiverExpression && this.isImplicit
 
-    private fun FirElement.isReadInCompoundCall(): Boolean {
+    fun FirElement.isReadInCompoundCall(): Boolean {
         if (this is FirPropertyAccessExpression) return true
         if (this !is FirFunctionCall) return false
         val name = (calleeReference as? FirResolvedNamedReference)?.name ?: getFallbackCompoundCalleeName()
         return name == OperatorNameConventions.GET
     }
 
-    private fun FirElement.isWriteInCompoundCall(): Boolean {
+    fun FirElement.isWriteInCompoundCall(): Boolean {
         if (this is FirVariableAssignment) return true
         if (this !is FirFunctionCall) return false
         val name = (calleeReference as? FirResolvedNamedReference)?.name ?: getFallbackCompoundCalleeName()
@@ -198,30 +198,30 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
      * example, if the callee reference is a [FirErrorNamedReference] with an unresolved name `plusAssign`, the operation element type from
      * the source will be `KtTokens.PLUSEQ`, which can be transformed to `plusAssign`.
      */
-    private fun FirElement.getFallbackCompoundCalleeName(): Name? {
+    fun FirElement.getFallbackCompoundCalleeName(): Name? {
         val psi = source.psi as? KtOperationExpression ?: return null
         val operationReference = psi.operationReference
         return operationReference.getAssignmentOperationName() ?: operationReference.getReferencedNameAsName()
     }
 
-    private fun KtSimpleNameExpression.getAssignmentOperationName(): Name? {
+    fun KtSimpleNameExpression.getAssignmentOperationName(): Name? {
         val firOperation = getReferencedNameElementType().toFirOperationOrNull() ?: return null
         return FirOperationNameConventions.ASSIGNMENTS[firOperation]
     }
 
-    private val FirLiteralExpression.isConverted: Boolean
+    val FirLiteralExpression.isConverted: Boolean
         get() {
             val firSourcePsi = this.source?.psi ?: return false
             return firSourcePsi is KtPrefixExpression && firSourcePsi.operationToken == KtTokens.MINUS
         }
 
-    private val FirLiteralExpression.ktConstantExpression: KtConstantExpression?
+    val FirLiteralExpression.ktConstantExpression: KtConstantExpression?
         get() {
             val firSourcePsi = this.source?.psi
             return firSourcePsi?.findDescendantOfType()
         }
 
-    private fun ConstantValueKind.reverseConverted(original: FirLiteralExpression): FirLiteralExpression? {
+    fun ConstantValueKind.reverseConverted(original: FirLiteralExpression): FirLiteralExpression? {
         val value = original.value as? Number ?: return null
         val convertedValue: Any = when (this) {
             ConstantValueKind.Byte -> value.toByte().unaryMinus()
@@ -242,7 +242,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         }
     }
 
-    private fun recordTypeQualifiers(resolvedTypeRef: FirResolvedTypeRef, data: MutableMap<KtElement, FirElement>) {
+    fun recordTypeQualifiers(resolvedTypeRef: FirResolvedTypeRef, data: MutableMap<KtElement, FirElement>) {
         val userTypeRef = resolvedTypeRef.delegatedTypeRef as? FirUserTypeRef ?: return
         val qualifiers = userTypeRef.qualifier
         if (qualifiers.size <= 1) return

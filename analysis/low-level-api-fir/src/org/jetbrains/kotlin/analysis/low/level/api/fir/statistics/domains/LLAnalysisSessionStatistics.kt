@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.getMeter
  * Statistics for analysis sessions and `analyze` calls.
  */
 class LLAnalysisSessionStatistics(statisticsService: LLStatisticsService) : LLStatisticsDomain {
-    private val meter = statisticsService.openTelemetry.getMeter(LLStatisticsScopes.AnalysisSessions)
+    val meter = statisticsService.openTelemetry.getMeter(LLStatisticsScopes.AnalysisSessions)
 
     val analyzeCallCounter: LongCounter = meter.counterBuilder(LLStatisticsScopes.AnalysisSessions.Analyze.Invocations.name).build()
 

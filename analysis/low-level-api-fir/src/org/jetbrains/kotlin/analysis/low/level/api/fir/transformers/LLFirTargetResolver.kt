@@ -65,16 +65,16 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * @see LLFirLockProvider
  * @see FirResolvePhase
  */
-internal sealed class LLFirTargetResolver(
+sealed class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
     val resolverPhase: FirResolvePhase,
 ) : LLFirResolveTargetVisitor {
     val resolveTargetSession: LLFirSession get() = resolveTarget.session
     val resolveTargetScopeSession: ScopeSession get() = resolveTargetSession.getScopeSession()
-    private val lockProvider: LLFirLockProvider get() = LLFirGlobalResolveComponents.getInstance(resolveTargetSession).lockProvider
-    private val requiresJumpingLock: Boolean get() = resolverPhase.isItAllowedToCallLazyResolveToTheSamePhase
+    val lockProvider: LLFirLockProvider get() = LLFirGlobalResolveComponents.getInstance(resolveTargetSession).lockProvider
+    val requiresJumpingLock: Boolean get() = resolverPhase.isItAllowedToCallLazyResolveToTheSamePhase
 
-    private val _containingDeclarations = mutableListOf<FirDeclaration>()
+    val _containingDeclarations = mutableListOf<FirDeclaration>()
 
     val containingDeclarations: List<FirDeclaration> get() = _containingDeclarations
 
@@ -134,7 +134,7 @@ internal sealed class LLFirTargetResolver(
      * @see resolveDataClassMemberDependencies
      * @see skipDependencyTargetResolutionStep
      */
-    private fun resolveDependencies(target: FirElementWithResolveState) {
+    fun resolveDependencies(target: FirElementWithResolveState) {
         if (skipDependencyTargetResolutionStep) return
 
         val originalDeclaration = (target as? FirCallableDeclaration)?.originalIfFakeOverrideOrDelegated()
@@ -165,7 +165,7 @@ internal sealed class LLFirTargetResolver(
         }
     }
 
-    private fun resolveDataClassMemberDependencies(function: FirSimpleFunction) {
+    fun resolveDataClassMemberDependencies(function: FirSimpleFunction) {
         when {
             /**
              * componentN method shares the return type with the corresponding property
@@ -333,7 +333,7 @@ internal sealed class LLFirTargetResolver(
         }
     }
 
-    private fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
+    fun updatePhaseForDeclarationInternals(target: FirElementWithResolveState) {
         LLFirPhaseUpdater.updateDeclarationInternalsPhase(
             target = target,
             newPhase = resolverPhase,
@@ -350,7 +350,7 @@ internal sealed class LLFirTargetResolver(
         lockProvider.withReadLock(target, resolverPhase, action)
     }
 
-    private fun checkThatResolvedAtLeastToPreviousPhase(target: FirElementWithResolveState) {
+    fun checkThatResolvedAtLeastToPreviousPhase(target: FirElementWithResolveState) {
         when (val previousPhase = resolverPhase.previous) {
             FirResolvePhase.IMPORTS -> {}
             else -> {

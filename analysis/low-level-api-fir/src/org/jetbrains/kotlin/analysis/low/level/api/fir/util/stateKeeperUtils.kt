@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyExpression
 
-internal fun blockGuard(fir: FirBlock): FirBlock {
+fun blockGuard(fir: FirBlock): FirBlock {
     if (isLazyStatement(fir)) {
         return fir
     }
@@ -24,7 +24,7 @@ internal fun blockGuard(fir: FirBlock): FirBlock {
     return buildLazyBlock()
 }
 
-internal fun expressionGuard(fir: FirExpression): FirExpression {
+fun expressionGuard(fir: FirExpression): FirExpression {
     if (isLazyStatement(fir)) {
         return fir
     }
@@ -34,7 +34,7 @@ internal fun expressionGuard(fir: FirExpression): FirExpression {
     }
 }
 
-internal fun contractDescriptionGuard(fir: FirContractDescription): FirContractDescription = when (fir) {
+fun contractDescriptionGuard(fir: FirContractDescription): FirContractDescription = when (fir) {
     is FirRawContractDescription -> buildRawContractDescription {
         source = fir.source
         fir.rawEffects.mapTo(rawEffects) {
@@ -45,11 +45,11 @@ internal fun contractDescriptionGuard(fir: FirContractDescription): FirContractD
     else -> fir
 }
 
-private fun isLazyStatement(fir: FirStatement): Boolean {
+fun isLazyStatement(fir: FirStatement): Boolean {
     return fir is FirLazyExpression || fir is FirLazyBlock
 }
 
-private val SPECIAL_BODY_CALLABLE_SOURCE_KINDS = setOf(
+val SPECIAL_BODY_CALLABLE_SOURCE_KINDS = setOf(
     KtFakeSourceElementKind.DefaultAccessor,
     KtFakeSourceElementKind.ImplicitConstructor,
     KtFakeSourceElementKind.PropertyFromParameter,
@@ -58,7 +58,7 @@ private val SPECIAL_BODY_CALLABLE_SOURCE_KINDS = setOf(
 )
 
 @OptIn(SuspiciousFakeSourceCheck::class)
-internal fun isCallableWithSpecialBody(fir: FirCallableDeclaration): Boolean {
+fun isCallableWithSpecialBody(fir: FirCallableDeclaration): Boolean {
     val source = fir.source as? KtFakePsiSourceElement ?: return false
     return source.kind in SPECIAL_BODY_CALLABLE_SOURCE_KINDS
 }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLImplicitBo
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 
-internal object PersistentCheckerContextFactory {
+object PersistentCheckerContextFactory {
     fun createEmptyPersistenceCheckerContext(sessionHolder: SessionHolder): PersistentCheckerContext {
         val returnTypeCalculator = LLFirReturnTypeCalculatorWithJump(
             scopeSession = sessionHolder.scopeSession,

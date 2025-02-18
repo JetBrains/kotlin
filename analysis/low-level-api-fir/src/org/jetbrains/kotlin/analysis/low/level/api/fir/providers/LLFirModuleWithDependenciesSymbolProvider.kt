@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal class LLFirModuleWithDependenciesSymbolProvider(
+class LLFirModuleWithDependenciesSymbolProvider(
     session: FirSession,
     val providers: List<FirSymbolProvider>,
     val dependencyProvider: LLFirDependenciesSymbolProvider,
@@ -143,7 +143,7 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         providers.any { it.hasPackage(fqName) }
 }
 
-internal class LLFirDependenciesSymbolProvider(
+class LLFirDependenciesSymbolProvider(
     session: FirSession,
     val computeProviders: () -> List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
@@ -161,7 +161,7 @@ internal class LLFirDependenciesSymbolProvider(
         }
     }
 
-    private val expectBuiltinPostProcessor by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    val expectBuiltinPostProcessor by lazy(LazyThreadSafetyMode.PUBLICATION) {
         ExpectBuiltinPostProcessor.createIfNeeded(session, providers)
     }
 
@@ -207,7 +207,7 @@ internal class LLFirDependenciesSymbolProvider(
 
     override fun hasPackage(fqName: FqName): Boolean = providers.any { it.hasPackage(fqName) }
 
-    private fun <S : FirCallableSymbol<*>> addNewSymbolsConsideringJvmFacades(
+    fun <S : FirCallableSymbol<*>> addNewSymbolsConsideringJvmFacades(
         destination: MutableList<S>,
         newSymbols: List<S>,
         facades: MutableSet<JvmClassName>,
@@ -238,7 +238,7 @@ internal class LLFirDependenciesSymbolProvider(
  *
  * The workaround is expected to become unnecessary with KT-68154, when `actual` builtins become part of the JVM stdlib.
  */
-private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirSymbolProvider) {
+class ExpectBuiltinPostProcessor(val builtinSymbolProvider: FirSymbolProvider) {
     fun actualizeExpectBuiltin(classId: ClassId, symbol: FirClassLikeSymbol<*>): FirClassLikeSymbol<*> {
         if (!symbol.isExpect) return symbol
         if (!classId.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return symbol
@@ -248,7 +248,7 @@ private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirS
         return builtinSymbolProvider.getClassLikeSymbolByClassId(classId) ?: symbol
     }
 
-    private fun isActualizeBuiltinsAnnotation(annotation: FirAnnotation): Boolean {
+    fun isActualizeBuiltinsAnnotation(annotation: FirAnnotation): Boolean {
         if (annotation !is FirAnnotationCall) return false
         val reference = annotation.calleeReference as? FirNamedReference ?: return false
 
@@ -265,7 +265,7 @@ private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirS
     }
 
     companion object {
-        private val isEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val isEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
             Registry.`is`("kotlin.analysis.jvmBuiltinActualizationForStdlibSources", true)
         }
 
@@ -293,17 +293,17 @@ private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirS
             return ExpectBuiltinPostProcessor(builtinSymbolProvider)
         }
 
-        private val FirSymbolProvider.hasStdlibSourceSession: Boolean
+        val FirSymbolProvider.hasStdlibSourceSession: Boolean
             get() = when (this) {
                 is LLCombinedSymbolProvider<*> -> providers.any { it.hasStdlibSourceSession }
                 is FirCompositeSymbolProvider -> providers.any { it.hasStdlibSourceSession }
                 else -> session.isStdlibSourceSession
             }
 
-        private val FirSession.isStdlibSourceSession: Boolean
+        val FirSession.isStdlibSourceSession: Boolean
             get() = languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
 
-        private fun searchBuiltinSymbolProvider(providers: List<FirSymbolProvider>): FirSymbolProvider? =
+        fun searchBuiltinSymbolProvider(providers: List<FirSymbolProvider>): FirSymbolProvider? =
             providers.firstNotNullOfOrNull { provider ->
                 when (provider) {
                     is FirCompositeSymbolProvider -> searchBuiltinSymbolProvider(provider.providers)
@@ -321,5 +321,5 @@ private class ExpectBuiltinPostProcessor(private val builtinSymbolProvider: FirS
 /**
  * Every [LLFirSession] has [LLFirModuleWithDependenciesSymbolProvider] as a symbol provider
  */
-internal val LLFirSession.symbolProvider: LLFirModuleWithDependenciesSymbolProvider
+val LLFirSession.symbolProvider: LLFirModuleWithDependenciesSymbolProvider
     get() = (this as FirSession).symbolProvider as LLFirModuleWithDependenciesSymbolProvider

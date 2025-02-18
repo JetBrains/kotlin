@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
-internal open class LLFirDiagnosticVisitor(
+open class LLFirDiagnosticVisitor(
     context: CheckerContextForProvider,
     components: DiagnosticCollectorComponents,
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
-    private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
+    val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
 
     override fun visitNestedElements(element: FirElement) {
         if (element is FirDeclaration) {
@@ -103,7 +103,7 @@ internal open class LLFirDiagnosticVisitor(
      * It suffices to commit pending diagnostics for directly nested declarations, because checkers can only report diagnostics on directly
      * accessible children. For example, a file checker can report a diagnostic on a top-level class, but not its member function.
      */
-    private fun commitPendingDiagnosticsOnNestedDeclarations(element: FirElement) {
+    fun commitPendingDiagnosticsOnNestedDeclarations(element: FirElement) {
         val declarationContainer = when (element) {
             // Script `FirFile`s can be checked by file checkers, which report diagnostics on the declarations inside the `FirScript`, so we
             // have to unwrap the script from the file to commit the diagnostics on the script's declarations.

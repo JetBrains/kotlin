@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
  * [LLFirResolveTarget] representing all declarations in [target] recursively.
  * All of them are going to be resolved.
  */
-internal class LLFirWholeElementResolveTarget(designation: FirDesignation) : LLFirResolveTarget(designation) {
+class LLFirWholeElementResolveTarget(designation: FirDesignation) : LLFirResolveTarget(designation) {
     override fun visitTargetElement(
         element: FirElementWithResolveState,
         visitor: LLFirResolveTargetVisitor,

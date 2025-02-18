@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class StubBasedFirDeserializationContext(
+class StubBasedFirDeserializationContext(
     val moduleData: FirModuleData,
     val packageFqName: FqName,
     val relativeClassName: FqName?,
@@ -186,9 +186,9 @@ internal class StubBasedFirDeserializationContext(
     }
 }
 
-internal class StubBasedFirMemberDeserializer(
-    private val c: StubBasedFirDeserializationContext,
-    private val initialOrigin: FirDeclarationOrigin
+class StubBasedFirMemberDeserializer(
+    val c: StubBasedFirDeserializationContext,
+    val initialOrigin: FirDeclarationOrigin
 ) {
 
     fun loadTypeAlias(typeAlias: KtTypeAlias, aliasSymbol: FirTypeAliasSymbol): FirTypeAlias {
@@ -223,7 +223,7 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    private fun loadPropertyGetter(
+    fun loadPropertyGetter(
         getter: KtPropertyAccessor,
         classSymbol: FirClassSymbol<*>?,
         returnTypeRef: FirTypeRef,
@@ -256,7 +256,7 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    private fun loadPropertySetter(
+    fun loadPropertySetter(
         setter: KtPropertyAccessor,
         classSymbol: FirClassSymbol<*>?,
         propertySymbol: FirPropertySymbol,
@@ -431,7 +431,7 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    private fun loadContextReceiver(contextReceiver: KtContextReceiver, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
+    fun loadContextReceiver(contextReceiver: KtContextReceiver, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
         return buildValueParameter {
             this.moduleData = c.moduleData
             this.origin = initialOrigin
@@ -447,7 +447,7 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    private fun loadContextReceiver(parameter: KtParameter, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
+    fun loadContextReceiver(parameter: KtParameter, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
         return buildValueParameter {
             this.moduleData = c.moduleData
             this.origin = initialOrigin
@@ -463,7 +463,7 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    internal fun createContextReceiversForClass(
+    fun createContextReceiversForClass(
         classOrObject: KtClassOrObject,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ): List<FirValueParameter> {
@@ -631,7 +631,7 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    private fun valueParameters(
+    fun valueParameters(
         valueParameters: List<KtParameter>,
         functionSymbol: FirFunctionSymbol<*>,
         addDefaultValue: Boolean = false
@@ -669,7 +669,7 @@ internal class StubBasedFirMemberDeserializer(
         }.toList()
     }
 
-    private fun KtTypeReference.toTypeRef(context: StubBasedFirDeserializationContext): FirTypeRef =
+    fun KtTypeReference.toTypeRef(context: StubBasedFirDeserializationContext): FirTypeRef =
         context.typeDeserializer.typeRef(this)
 
     fun loadEnumEntry(

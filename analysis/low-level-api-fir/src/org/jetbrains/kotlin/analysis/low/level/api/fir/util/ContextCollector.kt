@@ -136,7 +136,7 @@ object ContextCollector {
         return null
     }
 
-    private fun isValidTarget(declaration: KtDeclaration): Boolean {
+    fun isValidTarget(declaration: KtDeclaration): Boolean {
         if (declaration.isAutonomousDeclaration) {
             return true
         }
@@ -178,8 +178,8 @@ object ContextCollector {
     }
 }
 
-private class DesignationInterceptor(val designation: FirDesignation) : () -> FirElement? {
-    private val targetIterator = iterator {
+class DesignationInterceptor(val designation: FirDesignation) : () -> FirElement? {
+    val targetIterator = iterator {
         yieldAll(designation.path)
         yield(designation.target)
     }
@@ -187,11 +187,11 @@ private class DesignationInterceptor(val designation: FirDesignation) : () -> Fi
     override fun invoke(): FirElement? = if (targetIterator.hasNext()) targetIterator.next() else null
 }
 
-private class ContextCollectorVisitor(
-    private val bodyHolder: SessionHolder,
-    private val shouldCollectBodyContext: Boolean,
-    private val filter: (PsiElement) -> FilterResponse,
-    private val designationPathInterceptor: DesignationInterceptor?,
+class ContextCollectorVisitor(
+    val bodyHolder: SessionHolder,
+    val shouldCollectBodyContext: Boolean,
+    val filter: (PsiElement) -> FilterResponse,
+    val designationPathInterceptor: DesignationInterceptor?,
 ) : FirDefaultVisitorVoid() {
     fun collect(file: FirFile) {
         if (designationPathInterceptor != null) {
@@ -207,25 +207,25 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private data class ContextKey(val element: PsiElement, val kind: ContextKind)
+    data class ContextKey(val element: PsiElement, val kind: ContextKind)
 
     operator fun get(element: PsiElement, kind: ContextKind): Context? {
         val key = ContextKey(element, kind)
         return result[key]
     }
 
-    private var isActive = true
+    var isActive = true
 
-    private val parents = ArrayList<FirElement>()
+    val parents = ArrayList<FirElement>()
 
-    private val context = BodyResolveContext(
+    val context = BodyResolveContext(
         returnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
         dataFlowAnalyzerContext = DataFlowAnalyzerContext(bodyHolder.session)
     )
 
-    private val result = HashMap<ContextKey, Context>()
+    val result = HashMap<ContextKey, Context>()
 
-    private fun getSessionHolder(declaration: FirDeclaration): SessionHolder {
+    fun getSessionHolder(declaration: FirDeclaration): SessionHolder {
         return when (val session = declaration.moduleData.session) {
             bodyHolder.session -> bodyHolder
             else -> SessionHolderImpl(session, bodyHolder.scopeSession)
@@ -244,7 +244,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private fun dumpContext(fir: FirElement, kind: ContextKind) {
+    fun dumpContext(fir: FirElement, kind: ContextKind) {
         ProgressManager.checkCanceled()
 
         if (kind == ContextKind.BODY && !shouldCollectBodyContext) {
@@ -269,7 +269,7 @@ private class ContextCollectorVisitor(
     }
 
     @OptIn(ImplicitValue.ImplicitValueInternals::class)
-    private fun computeContext(fir: FirElement, kind: ContextKind): Context {
+    fun computeContext(fir: FirElement, kind: ContextKind): Context {
         val implicitReceiverStack = context.towerDataContext.implicitValueStorage
 
         val smartCasts = mutableMapOf<RealVariable, Set<ConeKotlinType>>()
@@ -312,7 +312,7 @@ private class ContextCollectorVisitor(
         return Context(towerDataContextSnapshot, smartCasts)
     }
 
-    private fun getClosestControlFlowNode(fir: FirElement, kind: ContextKind): CFGNode<*>? {
+    fun getClosestControlFlowNode(fir: FirElement, kind: ContextKind): CFGNode<*>? {
         val selfNode = getControlFlowNode(fir, kind)
         if (selfNode != null) {
             return selfNode
@@ -329,7 +329,7 @@ private class ContextCollectorVisitor(
         return null
     }
 
-    private val nodesCache = HashMap<FirControlFlowGraphOwner, Map<FirElement, CFGNode<*>>>()
+    val nodesCache = HashMap<FirControlFlowGraphOwner, Map<FirElement, CFGNode<*>>>()
 
     /**
      * Returns the first occurrence of an [element] inside the [flow]
@@ -338,7 +338,7 @@ private class ContextCollectorVisitor(
      * @param element an [FirElement] to search
      * @param flow an [ControlFlowGraph] from [container]
      */
-    private fun findNode(container: FirControlFlowGraphOwner, element: FirElement, flow: ControlFlowGraph): CFGNode<*>? {
+    fun findNode(container: FirControlFlowGraphOwner, element: FirElement, flow: ControlFlowGraph): CFGNode<*>? {
         val map = nodesCache.getOrPut(container) { buildDeclarationNodesMapping(flow) }
         return map[element]
     }
@@ -346,7 +346,7 @@ private class ContextCollectorVisitor(
     /**
      * @see findNode
      */
-    private fun buildDeclarationNodesMapping(
+    fun buildDeclarationNodesMapping(
         flow: ControlFlowGraph,
     ): Map<FirElement, CFGNode<*>> = HashMap<FirElement, CFGNode<*>>().apply {
         for (node in flow.nodes) {
@@ -358,7 +358,7 @@ private class ContextCollectorVisitor(
         }
     }.ifEmpty(::emptyMap)
 
-    private fun getControlFlowNode(fir: FirElement, kind: ContextKind): CFGNode<*>? {
+    fun getControlFlowNode(fir: FirElement, kind: ContextKind): CFGNode<*>? {
         for (container in context.containers.asReversed()) {
             val cfgOwner = container as? FirControlFlowGraphOwner ?: continue
             val cfgReference = cfgOwner.controlFlowGraphReference ?: continue
@@ -382,7 +382,7 @@ private class ContextCollectorVisitor(
         return null
     }
 
-    private fun isAcceptedControlFlowNode(node: CFGNode<*>): Boolean = when {
+    fun isAcceptedControlFlowNode(node: CFGNode<*>): Boolean = when {
         node is ClassExitNode -> false
 
         // TODO Remove as soon as KT-61728 is fixed
@@ -541,7 +541,7 @@ private class ContextCollectorVisitor(
      * to the [context] allows to not collect incorrect contexts for them later on.
      */
     @OptIn(PrivateForInline::class)
-    private fun Processor.processClassHeader(regularClass: FirRegularClass) {
+    fun Processor.processClassHeader(regularClass: FirRegularClass) {
         context.withTypeParametersOf(regularClass) {
             processList(regularClass.contextParameters)
             processList(regularClass.typeParameters)
@@ -550,7 +550,7 @@ private class ContextCollectorVisitor(
     }
 
     @OptIn(PrivateForInline::class)
-    private fun Processor.processFileHeader(file: FirFile) {
+    fun Processor.processFileHeader(file: FirFile) {
         process(file.packageDirective)
         processList(file.imports)
         processList(file.annotations)
@@ -561,7 +561,7 @@ private class ContextCollectorVisitor(
      *
      * N.B. Anonymous classes cannot have its own explicit type parameters, so we do not process them.
      */
-    private fun Processor.processAnonymousObjectHeader(anonymousObject: FirAnonymousObject) {
+    fun Processor.processAnonymousObjectHeader(anonymousObject: FirAnonymousObject) {
         processList(anonymousObject.superTypeRefs)
     }
 
@@ -693,7 +693,7 @@ private class ContextCollectorVisitor(
      * We need to disable the context cleanup for local properties
      * to preserve the implicit receivers introduced by the [addReceiversFromExtensions].
      */
-    private fun BodyResolveContext.forPropertyInitializerIfNonLocal(property: FirProperty, f: () -> Unit) {
+    fun BodyResolveContext.forPropertyInitializerIfNonLocal(property: FirProperty, f: () -> Unit) {
         if (!property.isLocal) {
             forPropertyInitializer(f)
         } else {
@@ -701,7 +701,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private fun FirExpression.unwrap(): FirExpression? {
+    fun FirExpression.unwrap(): FirExpression? {
         return when (this) {
             is FirCheckNotNullCall -> argument.unwrap()
             is FirSafeCallExpression -> (selector as? FirExpression)?.unwrap()
@@ -847,7 +847,7 @@ private class ContextCollectorVisitor(
     }
 
     @ContextCollectorDsl
-    private fun Processor.processSignatureAnnotations(declaration: FirDeclaration) {
+    fun Processor.processSignatureAnnotations(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             onActive {
                 process(annotation)
@@ -855,14 +855,14 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private inline fun withProcessor(parent: FirElement, block: Processor.() -> Unit) {
+    inline fun withProcessor(parent: FirElement, block: Processor.() -> Unit) {
         withParent(parent) {
             Processor(this).block()
         }
     }
 
-    private class Processor(private val delegate: FirVisitorVoid) {
-        private val elementsToSkip = HashSet<FirElement>()
+    class Processor(val delegate: FirVisitorVoid) {
+        val elementsToSkip = HashSet<FirElement>()
 
         @ContextCollectorDsl
         fun process(element: FirElement?) {
@@ -887,7 +887,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private class FilteringVisitor(val delegate: FirVisitorVoid, val elementsToSkip: Set<FirElement>) : FirVisitorVoid() {
+    class FilteringVisitor(val delegate: FirVisitorVoid, val elementsToSkip: Set<FirElement>) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             if (element !in elementsToSkip) {
                 element.accept(delegate)
@@ -900,7 +900,7 @@ private class ContextCollectorVisitor(
      *
      * If the designation is over, then allows the [block] code to take control.
      */
-    private fun withInterceptor(block: () -> Unit) {
+    fun withInterceptor(block: () -> Unit) {
         val target = designationPathInterceptor?.invoke()
         if (target != null) {
             target.accept(this)
@@ -909,7 +909,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private inline fun withParent(parent: FirElement, block: () -> Unit) {
+    inline fun withParent(parent: FirElement, block: () -> Unit) {
         parents.add(parent)
         try {
             block()
@@ -918,13 +918,13 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private inline fun onActive(block: () -> Unit) {
+    inline fun onActive(block: () -> Unit) {
         if (isActive) {
             block()
         }
     }
 
-    private inline fun onActiveBody(block: () -> Unit) {
+    inline fun onActiveBody(block: () -> Unit) {
         if (isActive || shouldCollectBodyContext) {
             block()
         }
@@ -932,4 +932,4 @@ private class ContextCollectorVisitor(
 }
 
 @DslMarker
-private annotation class ContextCollectorDsl
+annotation class ContextCollectorDsl

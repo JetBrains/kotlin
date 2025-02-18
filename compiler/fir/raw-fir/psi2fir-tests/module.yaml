@@ -193,6 +193,7 @@ dependencies:
   - ./../../../../js/js.translator
   - ./../../../ir/serialization.native
   - ./../../../ir/ir.objcinterop
+  - ../psi2fir
 
 settings:
   kotlin:

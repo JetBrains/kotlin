@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-internal object FirLazyBodiesCalculator {
+object FirLazyBodiesCalculator {
     fun calculateBodies(designation: FirDesignation) {
         designation.target.transformSingle(
             FirTargetLazyBodiesCalculatorTransformer,
@@ -97,7 +97,7 @@ internal object FirLazyBodiesCalculator {
         firAnnotationCall.argumentList.arguments.any { it is FirLazyExpression }
 }
 
-private inline fun <reified T : FirDeclaration> revive(
+inline fun <reified T : FirDeclaration> revive(
     designation: FirDesignation,
     psi: PsiElement? = designation.target.psi,
 ): T {
@@ -111,7 +111,7 @@ private inline fun <reified T : FirDeclaration> revive(
     ) as T
 }
 
-private fun replaceLazyValueParameters(target: FirFunction, copy: FirFunction) {
+fun replaceLazyValueParameters(target: FirFunction, copy: FirFunction) {
     val targetParameters = target.valueParameters
     val copyParameters = copy.valueParameters
     require(targetParameters.size == copyParameters.size)
@@ -133,7 +133,7 @@ private fun replaceLazyValueParameters(target: FirFunction, copy: FirFunction) {
  * In the case of a false positive the redundant [FirContractCallBlock] should be unwrapped to allow the body be processed
  * correctly by other transformers and checkers.
  */
-private fun replaceLazyBody(target: FirFunction, copy: FirFunction, isContractResolved: Boolean = true) {
+fun replaceLazyBody(target: FirFunction, copy: FirFunction, isContractResolved: Boolean = true) {
     if (target.body !is FirLazyBlock) return
 
     val newBody = copy.body
@@ -147,7 +147,7 @@ private fun replaceLazyBody(target: FirFunction, copy: FirFunction, isContractRe
     target.replaceBody(newBody)
 }
 
-private fun replaceLazyDelegatedConstructor(target: FirConstructor, copy: FirConstructor) {
+fun replaceLazyDelegatedConstructor(target: FirConstructor, copy: FirConstructor) {
     val targetCall = target.delegatedConstructor
     val copyCall = copy.delegatedConstructor
 
@@ -168,21 +168,21 @@ private fun replaceLazyDelegatedConstructor(target: FirConstructor, copy: FirCon
     }
 }
 
-private fun replaceLazyInitializer(target: FirVariable, copy: FirVariable) {
+fun replaceLazyInitializer(target: FirVariable, copy: FirVariable) {
     if (target.initializer is FirLazyExpression) {
         target.replaceInitializer(copy.initializer)
     }
 }
 
-private fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
+fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
     if (target.delegate is FirLazyExpression) {
         target.replaceDelegate(copy.delegate)
     }
 }
 
-private val FirCallableDeclaration.originalPsi: PsiElement? get() = unwrapFakeOverridesOrDelegated().psi
+val FirCallableDeclaration.originalPsi: PsiElement? get() = unwrapFakeOverridesOrDelegated().psi
 
-private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
+fun calculateLazyBodiesForFunction(designation: FirDesignation) {
     val simpleFunction = designation.target as FirSimpleFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
 
@@ -192,7 +192,7 @@ private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
     replaceLazyValueParameters(simpleFunction, newSimpleFunction)
 }
 
-private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
+fun calculateLazyBodyForConstructor(designation: FirDesignation) {
     val constructor = designation.target as FirConstructor
     require(needCalculatingLazyBodyForConstructor(constructor))
 
@@ -206,7 +206,7 @@ private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
     replaceLazyValueParameters(constructor, newConstructor)
 }
 
-private fun calculateLazyBodyForProperty(designation: FirDesignation) {
+fun calculateLazyBodyForProperty(designation: FirDesignation) {
     val firProperty = designation.target as FirProperty
     if (!needCalculatingLazyBodyForProperty(firProperty)) return
     if (firProperty.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
@@ -238,7 +238,7 @@ private fun calculateLazyBodyForProperty(designation: FirDesignation) {
     }
 }
 
-private fun calculateLazyBodyForResultProperty(firProperty: FirProperty, designation: FirDesignation) {
+fun calculateLazyBodyForResultProperty(firProperty: FirProperty, designation: FirDesignation) {
     val newInitializer = revive<FirAnonymousInitializer>(designation)
     val body = newInitializer.body
     requireWithAttachment(body != null, { "${FirAnonymousInitializer::class.simpleName} without body" }) {
@@ -265,7 +265,7 @@ private fun calculateLazyBodyForResultProperty(firProperty: FirProperty, designa
  *
  * @see org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
  */
-private fun rebindDelegate(newTarget: FirProperty, oldTarget: FirProperty) {
+fun rebindDelegate(newTarget: FirProperty, oldTarget: FirProperty) {
     val delegate = newTarget.delegate ?: return
     requireWithAttachment(
         delegate is FirWrappedDelegateExpression,
@@ -294,7 +294,7 @@ private fun rebindDelegate(newTarget: FirProperty, oldTarget: FirProperty) {
  * @see org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
  * @see rebindDelegate
  */
-private fun rebindDelegatedAccessorBody(newTarget: FirPropertyAccessor, oldTarget: FirPropertyAccessor) {
+fun rebindDelegatedAccessorBody(newTarget: FirPropertyAccessor, oldTarget: FirPropertyAccessor) {
     if (newTarget.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return
     val body = newTarget.body
     requireWithAttachment(
@@ -310,7 +310,7 @@ private fun rebindDelegatedAccessorBody(newTarget: FirPropertyAccessor, oldTarge
     rebindReturnExpression(returnExpression = returnExpression, newTarget = newTarget, oldTarget = oldTarget)
 }
 
-private fun rebindReturnExpression(returnExpression: FirStatement, newTarget: FirPropertyAccessor, oldTarget: FirPropertyAccessor) {
+fun rebindReturnExpression(returnExpression: FirStatement, newTarget: FirPropertyAccessor, oldTarget: FirPropertyAccessor) {
     requireWithAttachment(returnExpression is FirReturnExpression, { "Unexpected single statement" }) {
         withFirSymbolEntry("newTarget", newTarget.propertySymbol)
         withFirSymbolEntry("oldTarget", oldTarget.propertySymbol)
@@ -321,7 +321,7 @@ private fun rebindReturnExpression(returnExpression: FirStatement, newTarget: Fi
     rebindFunctionCall(functionCall, newTarget, oldTarget)
 }
 
-private fun rebindFunctionCall(functionCall: FirExpression, newTarget: FirPropertyAccessor, oldTarget: FirPropertyAccessor) {
+fun rebindFunctionCall(functionCall: FirExpression, newTarget: FirPropertyAccessor, oldTarget: FirPropertyAccessor) {
     requireWithAttachment(functionCall is FirFunctionCall, { "Unexpected result expression ${functionCall::class.simpleName}" }) {
         withFirSymbolEntry("newTarget", newTarget.propertySymbol)
         withFirSymbolEntry("oldTarget", oldTarget.propertySymbol)
@@ -348,7 +348,7 @@ private fun rebindFunctionCall(functionCall: FirExpression, newTarget: FirProper
  *
  * @see org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
  */
-private fun rebindThisRef(
+fun rebindThisRef(
     expression: FirExpression,
     newTarget: FirPropertySymbol,
     oldTarget: FirPropertySymbol,
@@ -392,7 +392,7 @@ private fun rebindThisRef(
     })
 }
 
-private fun rebindArgumentList(
+fun rebindArgumentList(
     argumentList: FirArgumentList,
     newTarget: FirPropertySymbol,
     oldTarget: FirPropertySymbol,
@@ -429,7 +429,7 @@ private fun rebindArgumentList(
  *
  * @see org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
  */
-private fun rebindSetterParameter(expression: FirExpression, newPropertySymbol: FirPropertySymbol, oldPropertySymbol: FirPropertySymbol) {
+fun rebindSetterParameter(expression: FirExpression, newPropertySymbol: FirPropertySymbol, oldPropertySymbol: FirPropertySymbol) {
     requireWithAttachment(
         expression is FirPropertyAccessExpression,
         { "Unexpected third argument: ${expression::class.simpleName}" }) {
@@ -462,7 +462,7 @@ private fun rebindSetterParameter(expression: FirExpression, newPropertySymbol: 
     })
 }
 
-private fun FirQualifiedAccessExpression.resolvedCalleeReference(
+fun FirQualifiedAccessExpression.resolvedCalleeReference(
     newPropertySymbol: FirPropertySymbol,
     oldPropertySymbol: FirPropertySymbol,
 ): FirResolvedNamedReference {
@@ -484,7 +484,7 @@ private fun FirQualifiedAccessExpression.resolvedCalleeReference(
  *
  * @see org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
  */
-private fun rebindPropertyRef(
+fun rebindPropertyRef(
     expression: FirExpression,
     newPropertySymbol: FirPropertySymbol,
     oldPropertySymbol: FirPropertySymbol,
@@ -532,7 +532,7 @@ private fun rebindPropertyRef(
  *
  * @see org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
  */
-private fun rebindDelegateAccess(expression: FirExpression?, newPropertySymbol: FirPropertySymbol, oldPropertySymbol: FirPropertySymbol) {
+fun rebindDelegateAccess(expression: FirExpression?, newPropertySymbol: FirPropertySymbol, oldPropertySymbol: FirPropertySymbol) {
     requireWithAttachment(
         expression is FirPropertyAccessExpression,
         { "Unexpected delegate accessor expression: ${expression?.let { it::class.simpleName }}" },
@@ -579,7 +579,7 @@ private fun rebindDelegateAccess(expression: FirExpression?, newPropertySymbol: 
     }
 }
 
-private fun calculateLazyInitializerForEnumEntry(designation: FirDesignation) {
+fun calculateLazyInitializerForEnumEntry(designation: FirDesignation) {
     val enumEntry = designation.target as FirEnumEntry
     require(enumEntry.initializer is FirLazyExpression)
 
@@ -587,7 +587,7 @@ private fun calculateLazyInitializerForEnumEntry(designation: FirDesignation) {
     enumEntry.replaceInitializer(newEnumEntry.initializer)
 }
 
-private fun calculateLazyBodyForAnonymousInitializer(designation: FirDesignation) {
+fun calculateLazyBodyForAnonymousInitializer(designation: FirDesignation) {
     val initializer = designation.target as FirAnonymousInitializer
     require(initializer.body is FirLazyBlock)
 
@@ -595,7 +595,7 @@ private fun calculateLazyBodyForAnonymousInitializer(designation: FirDesignation
     initializer.replaceBody(newInitializer.body)
 }
 
-private fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor): Boolean {
+fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor): Boolean {
     if (needCalculatingLazyBodyForFunction(firConstructor) || firConstructor.delegatedConstructor is FirLazyDelegatedConstructorCall) {
         return true
     }
@@ -610,7 +610,7 @@ private fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor
     return false
 }
 
-private fun calculateLazyBodiesForField(designation: FirDesignation) {
+fun calculateLazyBodiesForField(designation: FirDesignation) {
     val field = designation.target as FirField
     require(field.initializer is FirLazyExpression)
 
@@ -621,18 +621,18 @@ private fun calculateLazyBodiesForField(designation: FirDesignation) {
     field.replaceInitializer(newField.initializer)
 }
 
-private fun needCalculatingLazyBodyForFunction(firFunction: FirFunction): Boolean {
+fun needCalculatingLazyBodyForFunction(firFunction: FirFunction): Boolean {
     return firFunction.body is FirLazyBlock || firFunction.valueParameters.any { it.defaultValue is FirLazyExpression }
 }
 
-private fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
+fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
     firProperty.getter?.let { needCalculatingLazyBodyForFunction(it) } == true
             || firProperty.setter?.let { needCalculatingLazyBodyForFunction(it) } == true
             || firProperty.initializer is FirLazyExpression
             || firProperty.delegate is FirLazyExpression
             || firProperty.getExplicitBackingField()?.initializer is FirLazyExpression
 
-private fun calculateLazyBodyForCodeFragment(designation: FirDesignation) {
+fun calculateLazyBodyForCodeFragment(designation: FirDesignation) {
     val codeFragment = designation.target as FirCodeFragment
     require(codeFragment.block is FirLazyBlock)
 
@@ -645,7 +645,7 @@ private fun calculateLazyBodyForCodeFragment(designation: FirDesignation) {
  *
  * @see LazyAnnotationCalculatorVisitor
  */
-private object RecursiveLazyAnnotationCalculatorVisitor : RecursiveNonLocalAnnotationVisitor<FirSession>() {
+object RecursiveLazyAnnotationCalculatorVisitor : RecursiveNonLocalAnnotationVisitor<FirSession>() {
     override fun processAnnotation(annotation: FirAnnotation, data: FirSession) {
         calculateAnnotationCallIfNeeded(annotation, data)
     }
@@ -654,28 +654,28 @@ private object RecursiveLazyAnnotationCalculatorVisitor : RecursiveNonLocalAnnot
 /**
  * Calculates all non-local lazy annotations on a provided declaration.
  */
-private object LazyAnnotationCalculatorVisitor : NonLocalAnnotationVisitor<FirSession>() {
+object LazyAnnotationCalculatorVisitor : NonLocalAnnotationVisitor<FirSession>() {
     override fun processAnnotation(annotation: FirAnnotation, data: FirSession) {
         calculateAnnotationCallIfNeeded(annotation, data)
     }
 }
 
-private fun calculateAnnotationCallIfNeeded(annotation: FirAnnotation, session: FirSession) {
+fun calculateAnnotationCallIfNeeded(annotation: FirAnnotation, session: FirSession) {
     if (annotation !is FirAnnotationCall || !FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation)) return
 
     val newArgumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, session)
     annotation.replaceArgumentList(newArgumentList)
 }
 
-private object FirAllLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer() {
+object FirAllLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer() {
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E {
         return recursiveTransformation(element, data)
     }
 }
 
-private object FirTargetLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer()
+object FirTargetLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer()
 
-private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
+sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E = element
 
     override fun transformField(field: FirField, data: PersistentList<FirDeclaration>): FirStatement {
@@ -756,7 +756,7 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
     }
 }
 
-private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recursiveTransformation(
+fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recursiveTransformation(
     element: E,
     data: PersistentList<FirDeclaration>,
 ): E {
@@ -773,7 +773,7 @@ private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recu
 }
 
 @OptIn(ExperimentalContracts::class)
-private fun needCalculatingLazyContractsForFunction(function: FirFunction): Boolean {
+fun needCalculatingLazyContractsForFunction(function: FirFunction): Boolean {
     contract {
         returns(true) implies (function is FirContractDescriptionOwner)
     }
@@ -796,18 +796,18 @@ private fun needCalculatingLazyContractsForFunction(function: FirFunction): Bool
     }
 }
 
-private fun needCalculatingLazyContractsForProperty(property: FirProperty): Boolean {
+fun needCalculatingLazyContractsForProperty(property: FirProperty): Boolean {
     return property.getter?.let(::needCalculatingLazyContractsForFunction) == true ||
             property.setter?.let(::needCalculatingLazyContractsForFunction) == true
 }
 
-private object FirAllLazyContractsCalculatorTransformer : FirLazyContractsCalculatorTransformer() {
+object FirAllLazyContractsCalculatorTransformer : FirLazyContractsCalculatorTransformer() {
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E {
         return recursiveTransformation(element, data)
     }
 }
 
-private fun calculateLazyContractsForFunction(designation: FirDesignation) {
+fun calculateLazyContractsForFunction(designation: FirDesignation) {
     val function = designation.target as FirFunction
     require(needCalculatingLazyContractsForFunction(function))
 
@@ -820,7 +820,7 @@ private fun calculateLazyContractsForFunction(designation: FirDesignation) {
     replaceLazyContracts(target = function, copy = newFunction)
 }
 
-private fun calculateLazyContractsForProperty(designation: FirDesignation) {
+fun calculateLazyContractsForProperty(designation: FirDesignation) {
     val property = designation.target as FirProperty
     require(needCalculatingLazyContractsForProperty(property))
 
@@ -836,7 +836,7 @@ private fun calculateLazyContractsForProperty(designation: FirDesignation) {
     }
 }
 
-private fun <F> replaceLazyContracts(target: F, copy: F) where F : FirFunction, F : FirContractDescriptionOwner {
+fun <F> replaceLazyContracts(target: F, copy: F) where F : FirFunction, F : FirContractDescriptionOwner {
     val contractDescription = copy.contractDescription
     target.replaceContractDescription(contractDescription)
 
@@ -845,9 +845,9 @@ private fun <F> replaceLazyContracts(target: F, copy: F) where F : FirFunction, 
     }
 }
 
-private object FirTargetLazyContractsCalculatorTransformer : FirLazyContractsCalculatorTransformer()
+object FirTargetLazyContractsCalculatorTransformer : FirLazyContractsCalculatorTransformer()
 
-private sealed class FirLazyContractsCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
+sealed class FirLazyContractsCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E = element
 
     override fun transformSimpleFunction(

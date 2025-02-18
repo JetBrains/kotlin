@@ -16,15 +16,15 @@ abstract class LLFirResolvableModuleSession(
     ktModule: KaModule,
     builtinTypes: BuiltinTypes
 ) : LLFirModuleSession(ktModule, builtinTypes, Kind.Source) {
-    internal abstract val moduleComponents: LLFirModuleResolveComponents
+    abstract val moduleComponents: LLFirModuleResolveComponents
 
     final override fun getScopeSession(): ScopeSession {
         return moduleComponents.scopeSessionProvider.getScopeSession()
     }
 }
 
-internal val FirElementWithResolveState.llFirResolvableSession: LLFirResolvableModuleSession?
+val FirElementWithResolveState.llFirResolvableSession: LLFirResolvableModuleSession?
     get() = llFirSession as? LLFirResolvableModuleSession
 
-internal val FirBasedSymbol<*>.llFirResolvableSession: LLFirResolvableModuleSession?
+val FirBasedSymbol<*>.llFirResolvableSession: LLFirResolvableModuleSession?
     get() = fir.llFirResolvableSession

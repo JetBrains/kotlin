@@ -22,21 +22,21 @@ import org.jetbrains.kotlin.utils.topologicalSort
  * For KMP dependencies, the IDE gives false positive errors when a project is correctly configured (expect-actual), which is worse.
  * - Dependencies from a single KMP project/library normally imported as a single sequential block anyway
  */
-class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
-    private val groupsByModules = mutableMapOf<KaModule, KmpGroup>()
-    private val originalPositions = mutableMapOf<KaModule, Int>()
+class KmpModuleSorter constructor(val modules: List<KaModule>) {
+    val groupsByModules = mutableMapOf<KaModule, KmpGroup>()
+    val originalPositions = mutableMapOf<KaModule, Int>()
 
     // Signals corrupted state. When set, original positions will be used for recovery
     var hasErrors = false
-        private set
+        set
 
-    private fun sort(): List<KaModule> {
+    fun sort(): List<KaModule> {
         groupModules()
         val sorted = sortModules()
         return if (hasErrors) modules else sorted
     }
 
-    private fun groupModules() {
+    fun groupModules() {
         for ((index, module) in modules.withIndex()) {
             originalPositions[module] = index
             val group = findOrCreateRootKmpGroup(module)
@@ -45,7 +45,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
         }
     }
 
-    private fun sortModules(): List<KaModule> {
+    fun sortModules(): List<KaModule> {
         val sortedModules = arrayOfNulls<KaModule>(modules.size)
         modules.forEachIndexed { index, module ->
             val group = groupsByModules[module]
@@ -60,7 +60,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
     }
 
     // The group of the root source set, e.g., commonMain
-    private fun findOrCreateRootKmpGroup(
+    fun findOrCreateRootKmpGroup(
         module: KaModule,
     ): KmpGroup {
         groupsByModules[module]?.let { return it }
@@ -76,7 +76,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
         return groupsByModules.getOrPut(root) { KmpGroup() }
     }
 
-    private fun getOriginalPositionOrSetCorrupted(module: KaModule): Int {
+    fun getOriginalPositionOrSetCorrupted(module: KaModule): Int {
         val originalPosition = originalPositions[module]
         if (originalPosition == null) hasErrors = true
         return originalPosition ?: 0
@@ -85,15 +85,15 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
     /**
      * Modules, corresponding to source sets of the same KMP project.
      */
-    private inner class KmpGroup() {
-        private val modules = mutableListOf<KaModule>()
-        private val sortedModules by lazy {
+    inner class KmpGroup() {
+        val modules = mutableListOf<KaModule>()
+        val sortedModules by lazy {
             topologicalSort(modules) { directDependsOnDependencies }.also {
                 if (it.size != modules.size) hasErrors = true
             }
         }
 
-        private val oldReplacedModulesBySortedModules by lazy { sortedModules.zip(modules).toMap() }
+        val oldReplacedModulesBySortedModules by lazy { sortedModules.zip(modules).toMap() }
 
         fun addModule(module: KaModule) {
             modules.add(module)

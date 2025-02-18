@@ -47,17 +47,17 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  * [packageProviderForKotlinPackages] should be the package provider combined from all [providers] which allow `kotlin` packages (see
  * [LLFirProvider.SymbolProvider.allowKotlinPackage]). It may be `null` if no such provider exists. See [getPackage] for a use case.
  */
-internal class LLFirCombinedKotlinSymbolProvider private constructor(
+class LLFirCombinedKotlinSymbolProvider constructor(
     session: FirSession,
     project: Project,
     providers: List<LLFirKotlinSymbolProvider>,
-    private val declarationProvider: KotlinDeclarationProvider,
-    private val packageProvider: KotlinPackageProvider,
-    private val packageProviderForKotlinPackages: KotlinPackageProvider?,
+    val declarationProvider: KotlinDeclarationProvider,
+    val packageProvider: KotlinPackageProvider,
+    val packageProviderForKotlinPackages: KotlinPackageProvider?,
 ) : LLFirSelectingCombinedSymbolProvider<LLFirKotlinSymbolProvider>(session, project, providers) {
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
-    private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {
+    val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {
         it
             .maximumSize(500)
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCacheStatsCounter)
@@ -70,7 +70,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
     }
 
     @OptIn(FirSymbolProviderInternals::class)
-    private fun computeClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+    fun computeClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val candidates = declarationProvider.getAllClassesByClassId(classId) + declarationProvider.getAllTypeAliasesByClassId(classId)
         val (ktClass, provider) = selectFirstElementInClasspathOrder(candidates) { it } ?: return null
         return provider.getClassLikeSymbolByClassId(classId, ktClass)
@@ -172,5 +172,5 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
 /**
  * Callables are provided very rarely (compared to functions/properties individually), so it's okay to hit indices twice here.
  */
-private fun KotlinDeclarationProvider.getTopLevelCallables(callableId: CallableId): List<KtCallableDeclaration> =
+fun KotlinDeclarationProvider.getTopLevelCallables(callableId: CallableId): List<KtCallableDeclaration> =
     getTopLevelFunctions(callableId) + getTopLevelProperties(callableId)

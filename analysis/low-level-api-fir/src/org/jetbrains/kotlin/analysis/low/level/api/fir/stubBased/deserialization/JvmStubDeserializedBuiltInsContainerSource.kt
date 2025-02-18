@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  *
  * See for KTIJ-27124 for an example of an issue in IR lowerings.
  */
-internal class JvmStubDeserializedBuiltInsContainerSource(val facadeClassName: JvmClassName) : DeserializedContainerSource {
+class JvmStubDeserializedBuiltInsContainerSource(val facadeClassName: JvmClassName) : DeserializedContainerSource {
     override val incompatibility: IncompatibleVersionErrorData<*>?
         get() = null
 

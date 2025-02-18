@@ -11,8 +11,8 @@ import java.util.*
 /**
  * Maps [FirResolvePhase] to the associated [LLFirTargetResolver].
  */
-internal object LLFirLazyPhaseResolverByPhase {
-    private val byPhase = EnumMap<FirResolvePhase, LLFirLazyResolver>(FirResolvePhase::class.java).apply {
+object LLFirLazyPhaseResolverByPhase {
+    val byPhase = EnumMap<FirResolvePhase, LLFirLazyResolver>(FirResolvePhase::class.java).apply {
         this[FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] = LLFirCompilerAnnotationsLazyResolver
         this[FirResolvePhase.COMPANION_GENERATION] = LLFirGeneratedCompanionObjectLazyResolver
         this[FirResolvePhase.SUPER_TYPES] = LLFirSupertypeLazyResolver

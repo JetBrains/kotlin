@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import org.jetbrains.kotlin.fir.caches.FirCache
 
-internal interface FirCacheWithInvalidation<K : Any, V, CONTEXT> {
+interface FirCacheWithInvalidation<K : Any, V, CONTEXT> {
     /**
      * Drops the incorrect value from the cache and add a new value instead.
      */
@@ -26,7 +26,7 @@ internal interface FirCacheWithInvalidation<K : Any, V, CONTEXT> {
  *
  * @return not-null [VALUE] in case of [FirCacheWithInvalidation] cache.
  */
-internal fun <KEY : Any, VALUE, CONTEXT> FirCache<KEY, VALUE, CONTEXT>.getNotNullValueForNotNullContext(
+fun <KEY : Any, VALUE, CONTEXT> FirCache<KEY, VALUE, CONTEXT>.getNotNullValueForNotNullContext(
     key: KEY,
     context: CONTEXT,
 ): VALUE {

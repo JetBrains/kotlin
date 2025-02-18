@@ -118,7 +118,7 @@ fun FirDesignation.toSequence(includeTarget: Boolean): Sequence<FirElementWithRe
     if (includeTarget) yield(target)
 }
 
-private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWithResolveState): FirDesignation? {
+fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWithResolveState): FirDesignation? {
     if (target !is FirDeclaration) {
         unexpectedElementError<FirDeclaration>(target)
     }
@@ -182,7 +182,7 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
     }
 }
 
-private fun collectDesignationPathWithContainingClass(
+fun collectDesignationPathWithContainingClass(
     providedFile: FirFile?,
     target: FirDeclaration,
     containingClassId: ClassId?,
@@ -212,7 +212,7 @@ private fun collectDesignationPathWithContainingClass(
     return FirDesignation(patchedPath, target)
 }
 
-private fun collectDesignationPathWithContainingClassFallback(
+fun collectDesignationPathWithContainingClassFallback(
     target: FirDeclaration,
     containingClassId: ClassId?,
 ): List<FirDeclaration>? {
@@ -263,7 +263,7 @@ private fun collectDesignationPathWithContainingClassFallback(
     This implementation is certainly inefficient, however there seem to be no better way to implement designation collection for
     anonymous outer classes unless FIR tree gets a way to get an element parent.
  */
-private fun collectDesignationPathWithTreeTraversal(target: FirDeclaration): List<FirRegularClass>? {
+fun collectDesignationPathWithTreeTraversal(target: FirDeclaration): List<FirRegularClass>? {
     val containingFile = target.getContainingFile() ?: return null
 
     val path = mutableListOf<FirRegularClass>()
@@ -295,7 +295,7 @@ private fun collectDesignationPathWithTreeTraversal(target: FirDeclaration): Lis
     return result
 }
 
-private fun getTargetSession(target: FirDeclaration): FirSession {
+fun getTargetSession(target: FirDeclaration): FirSession {
     if (target is FirCallableDeclaration) {
         val containingSymbol = target.containingClassLookupTag()?.toSymbol(target.moduleData.session)
         if (containingSymbol != null) {
@@ -307,7 +307,7 @@ private fun getTargetSession(target: FirDeclaration): FirSession {
     return target.moduleData.session
 }
 
-private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): FirRegularClass? {
+fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): FirRegularClass? {
     if (!classId.packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) {
         return null
     }
@@ -374,11 +374,11 @@ fun FirElementWithResolveState.tryCollectDesignation(providedFile: FirFile? = nu
     return designation?.takeIf { it.fileOrNull != null }
 }
 
-internal fun patchDesignationPathIfNeeded(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration> {
+fun patchDesignationPathIfNeeded(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration> {
     return patchDesignationPathForCopy(target, targetPath) ?: targetPath
 }
 
-private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration>? {
+fun patchDesignationPathForCopy(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration>? {
     val targetModule = target.llFirModuleData.ktModule
 
     if (targetModule is KaDanglingFileModule && targetModule.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF) {

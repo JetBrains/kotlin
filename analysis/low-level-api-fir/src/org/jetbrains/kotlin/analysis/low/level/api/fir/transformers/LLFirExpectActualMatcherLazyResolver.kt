@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
-internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
+object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirExpectActualMatchingTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
@@ -42,11 +42,11 @@ internal object LLFirExpectActualMatcherLazyResolver : LLFirLazyResolver(FirReso
  * @see FirExpectActualMatcherTransformer
  * @see FirResolvePhase.EXPECT_ACTUAL_MATCHING
  */
-private class LLFirExpectActualMatchingTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
+class LLFirExpectActualMatchingTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
     target,
     FirResolvePhase.EXPECT_ACTUAL_MATCHING
 ) {
-    private val enabled = resolveTargetSession.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+    val enabled = resolveTargetSession.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
@@ -58,7 +58,7 @@ private class LLFirExpectActualMatchingTargetResolver(target: LLFirResolveTarget
         action()
     }
 
-    private val transformer = object : FirExpectActualMatcherTransformer(resolveTargetSession, resolveTargetScopeSession) {
+    val transformer = object : FirExpectActualMatcherTransformer(resolveTargetSession, resolveTargetScopeSession) {
         override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
             transformMemberDeclaration(regularClass)
             return regularClass
@@ -72,7 +72,7 @@ private class LLFirExpectActualMatchingTargetResolver(target: LLFirResolveTarget
     }
 }
 
-private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when {
+fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when {
     // We shouldn't try to calculate expect/actual mapping for fake declarations
     this is FirCallableDeclaration && isCopyCreatedInScope -> false
     this is FirEnumEntry -> true

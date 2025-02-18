@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.ifEmpty
 
-internal class FirElementFinder : FirSessionComponent {
+class FirElementFinder : FirSessionComponent {
     companion object {
         fun findClassifierWithClassId(
             firFile: FirFile,
@@ -89,14 +89,14 @@ internal class FirElementFinder : FirSessionComponent {
         /**
          * @see collectDesignationPath
          */
-        private val FirDesignation.declarationTarget: FirDeclaration get() = target as FirDeclaration
+        val FirDesignation.declarationTarget: FirDeclaration get() = target as FirDeclaration
 
         /**
          * @return [FirDesignation] where [FirDesignation.target] is [FirDeclaration]
          *
          * @see declarationTarget
          */
-        private fun collectDesignationPath(
+        fun collectDesignationPath(
             firFile: FirFile,
             containerClassId: ClassId?,
             targetDeclarationName: Name?,
@@ -140,14 +140,14 @@ internal class FirElementFinder : FirSessionComponent {
         }
     }
 
-    private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<FirFile, FirFileStructureNode>()
+    val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<FirFile, FirFileStructureNode>()
 
-    private fun buildRootFileStructureNode(firFile: FirFile): FirFileStructureNode = cache.getOrPut(firFile) {
+    fun buildRootFileStructureNode(firFile: FirFile): FirFileStructureNode = cache.getOrPut(firFile) {
         FirFileStructureNode.build(firFile)
     }
 }
 
-private val FirSession.firElementFinder: FirElementFinder by FirSession.sessionComponentAccessor()
+val FirSession.firElementFinder: FirElementFinder by FirSession.sessionComponentAccessor()
 
 /**
  * This class represents non-local declarations from a [FirFile] in a tree-like structure.
@@ -192,7 +192,7 @@ private val FirSession.firElementFinder: FirElementFinder by FirSession.sessionC
  * @see mappingName
  * @see FirElementFinder
  */
-private sealed class FirFileStructureNode(val element: FirDeclaration) {
+sealed class FirFileStructureNode(val element: FirDeclaration) {
     /**
      * Represents a [FirDeclaration] which can have non-local nested declarations.
      * Currently, it is [FirFile], [FirScript] and [FirRegularClass].
@@ -200,12 +200,12 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
      * @param element a container declaration.
      * @param elements nested [FirFileStructureNode] nodes based on the [element] directly nested declarations grouped by [mappingName].
      */
-    private class Container(element: FirDeclaration, val elements: Map<Name, List<FirFileStructureNode>>) : FirFileStructureNode(element)
+    class Container(element: FirDeclaration, val elements: Map<Name, List<FirFileStructureNode>>) : FirFileStructureNode(element)
 
     /**
      * Represents a [FirDeclaration] which cannot have non-local nested declarations.
      */
-    private class Leaf(element: FirDeclaration) : FirFileStructureNode(element)
+    class Leaf(element: FirDeclaration) : FirFileStructureNode(element)
 
     /**
      * ```kotlin
@@ -252,7 +252,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
      * result path: [FirFile] -> [FirScript] -> [FirRegularClass] -> [FirRegularClass] -> [FirDeclaration]
      * path index:  0            1              2                    3                    4
      */
-    private fun find(
+    fun find(
         pathSegments: List<Name>,
         pathIndex: Int,
         resultPath: MutableList<FirDeclaration>,
@@ -329,7 +329,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
         /**
          * [LinkedHashMap] is used to preserve the original declarations order.
          */
-        private fun convertDeclarations(
+        fun convertDeclarations(
             declarations: List<FirDeclaration>,
             destination: LinkedHashMap<Name, MutableList<FirFileStructureNode>> = linkedMapOf(),
         ): Map<Name, List<FirFileStructureNode>> = declarations.groupByTo(

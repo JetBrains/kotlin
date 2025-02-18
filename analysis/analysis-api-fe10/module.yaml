@@ -52,6 +52,7 @@ dependencies:
   - ../../compiler/backend-common
   - ../../compiler/frontend
   - ../analysis-api-impl-base
+  - ../analysis-api-impl-base-tests
   - ../analysis-internal-utils
   - ../kt-references
   - ../../compiler/backend.common.jvm

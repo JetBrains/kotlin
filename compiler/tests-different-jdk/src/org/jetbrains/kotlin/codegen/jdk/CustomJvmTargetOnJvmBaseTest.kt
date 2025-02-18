@@ -11,9 +11,6 @@ import org.junit.platform.suite.api.ExcludeTags
 import org.junit.platform.suite.api.IncludeClassNamePatterns
 import org.junit.platform.suite.api.SelectClasses
 import org.junit.platform.suite.api.Suite
-import runners.codegen.IrBlackBoxCodegenTestGenerated
-import runners.codegen.IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated
-import runners.codegen.IrCompileKotlinAgainstInlineKotlinTestGenerated
 
 /*
  * NB: ALL NECESSARY FLAGS ARE PASSED THROUGH Gradle

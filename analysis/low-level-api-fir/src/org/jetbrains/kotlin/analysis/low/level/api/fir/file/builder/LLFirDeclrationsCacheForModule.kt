@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap
  * Caches the [KtFile] to [FirFile] mapping of a [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule].
  */
 @ThreadSafe
-internal abstract class ModuleFileCache {
+abstract class ModuleFileCache {
     abstract val moduleComponents: LLFirModuleResolveComponents
 
     /**
@@ -32,8 +32,8 @@ internal abstract class ModuleFileCache {
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
 }
 
-internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleResolveComponents) : ModuleFileCache() {
-    private val ktFileToFirFile: ConcurrentMap<KtFile, FirFile> = MapMaker().weakKeys().makeMap()
+class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleResolveComponents) : ModuleFileCache() {
+    val ktFileToFirFile: ConcurrentMap<KtFile, FirFile> = MapMaker().weakKeys().makeMap()
     override fun fileCached(file: KtFile, createValue: () -> FirFile): FirFile =
         ktFileToFirFile.computeIfAbsent(file) { createValue() }
 

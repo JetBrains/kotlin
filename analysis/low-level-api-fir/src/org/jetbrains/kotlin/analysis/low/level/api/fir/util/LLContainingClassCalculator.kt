@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-internal object LLContainingClassCalculator {
+object LLContainingClassCalculator {
     /**
      * Returns a containing class symbol for the given symbol, computing it solely from the source information
      * and information inside FIR nodes.
@@ -133,7 +133,7 @@ internal object LLContainingClassCalculator {
         return null
     }
 
-    private fun canHaveContainingClassSymbol(symbol: FirBasedSymbol<*>): Boolean = when (symbol) {
+    fun canHaveContainingClassSymbol(symbol: FirBasedSymbol<*>): Boolean = when (symbol) {
         is FirValueParameterSymbol, is FirAnonymousFunctionSymbol -> false
         is FirPropertySymbol -> !symbol.isLocal
         is FirNamedFunctionSymbol -> !symbol.isLocal
@@ -141,7 +141,7 @@ internal object LLContainingClassCalculator {
         else -> false
     }
 
-    private fun computeContainingClass(symbol: FirBasedSymbol<*>, psi: PsiElement?): FirClassLikeSymbol<*>? {
+    fun computeContainingClass(symbol: FirBasedSymbol<*>, psi: PsiElement?): FirClassLikeSymbol<*>? {
         if (psi !is KtClassOrObject) {
             return null
         }

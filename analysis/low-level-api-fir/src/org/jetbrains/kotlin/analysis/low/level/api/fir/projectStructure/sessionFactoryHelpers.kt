@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSetti
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 
 @SessionConfiguration
-internal fun LLFirSession.registerIdeComponents(project: Project, languageVersionSettings: LanguageVersionSettings) {
+fun LLFirSession.registerIdeComponents(project: Project, languageVersionSettings: LanguageVersionSettings) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
@@ -52,7 +52,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
 }
 
 @SessionConfiguration
-private fun LLFirSession.registerResolveExtensionTool() {
+fun LLFirSession.registerResolveExtensionTool() {
     val resolveExtensionTool = createResolveExtensionTool() ?: return
 
     // `KaResolveExtension`s are disposables meant to be tied to the lifetime of the `LLFirSession`.
@@ -61,21 +61,21 @@ private fun LLFirSession.registerResolveExtensionTool() {
     register(LLFirResolveExtensionTool::class, resolveExtensionTool)
 }
 
-private fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {
+fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {
     val extensions = KaResolveExtensionProvider.provideExtensionsFor(ktModule)
     if (extensions.isEmpty()) return null
     return LLFirNonEmptyResolveExtensionTool(this, extensions)
 }
 
 
-internal inline fun createCompositeSymbolProvider(
+inline fun createCompositeSymbolProvider(
     session: FirSession,
     createSubProviders: MutableList<FirSymbolProvider>.() -> Unit
 ): FirCompositeSymbolProvider =
     FirCompositeSymbolProvider(session, buildList(createSubProviders))
 
 @SessionConfiguration
-internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KaSourceModule) {
+fun FirSession.registerCompilerPluginExtensions(project: Project, module: KaSourceModule) {
     FirSessionConfigurator(this).apply {
         FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
 
@@ -85,12 +85,12 @@ internal fun FirSession.registerCompilerPluginExtensions(project: Project, modul
     }.configure()
 }
 
-private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensionRegistrarAdapter) {
+fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensionRegistrarAdapter) {
     registerExtensions((registrar as FirExtensionRegistrar).configure())
 }
 
 @SessionConfiguration
-internal fun LLFirSession.registerCompilerPluginServices(
+fun LLFirSession.registerCompilerPluginServices(
     project: Project,
     module: KaSourceModule
 ) {

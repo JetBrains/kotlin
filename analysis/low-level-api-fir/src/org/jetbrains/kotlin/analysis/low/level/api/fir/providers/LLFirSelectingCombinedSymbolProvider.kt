@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.mapToIndex
  *
  * Classpath order must be preserved with [selectFirstElementInClasspathOrder] in case a single result is required.
  */
-internal abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider>(
+abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider>(
     session: FirSession,
     project: Project,
     override val providers: List<PROVIDER>,
@@ -36,15 +36,15 @@ internal abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbo
     /**
      * [KaModule] precedence must be checked in case of multiple candidates to preserve classpath order.
      */
-    private val modulePrecedenceMap: Map<KaModule, Int> = providers.map { it.session.llFirModuleData.ktModule }.mapToIndex()
+    val modulePrecedenceMap: Map<KaModule, Int> = providers.map { it.session.llFirModuleData.ktModule }.mapToIndex()
 
     /**
      * Cache [KotlinProjectStructureProvider] to avoid service access when getting [KaModule]s.
      */
     @KaCachedService
-    private val projectStructureProvider: KotlinProjectStructureProvider = KotlinProjectStructureProvider.getInstance(project)
+    val projectStructureProvider: KotlinProjectStructureProvider = KotlinProjectStructureProvider.getInstance(project)
 
-    private val contextualModule = session.llFirModuleData.ktModule
+    val contextualModule = session.llFirModuleData.ktModule
 
     protected fun getModule(element: PsiElement): KaModule {
         return projectStructureProvider.getModule(element, contextualModule)

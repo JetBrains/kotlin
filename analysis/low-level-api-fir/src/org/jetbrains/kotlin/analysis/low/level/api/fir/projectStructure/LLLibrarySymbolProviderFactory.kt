@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
  * [LLLibrarySymbolProviderFactory] creates symbol providers in accordance with [KotlinPlatformSettings.deserializedDeclarationsOrigin].
  * Its implementations should be lightweight as the factory is neither a service nor cached.
  */
-internal interface LLLibrarySymbolProviderFactory {
+interface LLLibrarySymbolProviderFactory {
     fun createJvmLibrarySymbolProvider(
         session: LLFirSession,
         firJavaFacade: FirJavaFacade,

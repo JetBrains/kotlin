@@ -33,7 +33,7 @@ import kotlin.let
  * [LLSealedInheritorsProvider] is the LL FIR implementation of [SealedClassInheritorsProvider] for both the IDE and Standalone mode.
  */
 @OptIn(SealedClassInheritorsProviderInternals::class)
-internal class LLSealedInheritorsProvider(private val project: Project) : SealedClassInheritorsProvider() {
+class LLSealedInheritorsProvider(val project: Project) : SealedClassInheritorsProvider() {
     val cache = ConcurrentHashMap<ClassId, List<ClassId>>()
 
     override fun getSealedClassInheritors(firClass: FirRegularClass): List<ClassId> {
@@ -69,7 +69,7 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
      *  - KMP libraries are not yet supported.
      *    See KT-65591.
      */
-    private fun searchInheritors(firClass: FirClass): List<ClassId> {
+    fun searchInheritors(firClass: FirClass): List<ClassId> {
         val ktClass = firClass.psi as? KtClass ?: return emptyList()
 
         val ktModule = when (val classKtModule = firClass.llFirModuleData.ktModule) {
@@ -88,7 +88,7 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
         return searchInScope(ktClass, firClass.classId, scope)
     }
 
-    private fun searchInScope(ktClass: KtClass, classId: ClassId, scope: GlobalSearchScope): List<ClassId> =
+    fun searchInScope(ktClass: KtClass, classId: ClassId, scope: GlobalSearchScope): List<ClassId> =
         KotlinDirectInheritorsProvider.getInstance(project)
             .getDirectKotlinInheritors(ktClass, scope, includeLocalInheritors = false)
             .mapNotNull { it.getClassId() }

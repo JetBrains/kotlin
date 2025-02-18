@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 
-internal object LLFirConstantEvaluationLazyResolver : LLFirLazyResolver(FirResolvePhase.CONSTANT_EVALUATION) {
+object LLFirConstantEvaluationLazyResolver : LLFirLazyResolver(FirResolvePhase.CONSTANT_EVALUATION) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirConstantEvaluationTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {}
@@ -24,7 +24,7 @@ internal object LLFirConstantEvaluationLazyResolver : LLFirLazyResolver(FirResol
  *
  * @see FirResolvePhase.CONSTANT_EVALUATION
  */
-private class LLFirConstantEvaluationTargetResolver(resolveTarget: LLFirResolveTarget) : LLFirTargetResolver(
+class LLFirConstantEvaluationTargetResolver(resolveTarget: LLFirResolveTarget) : LLFirTargetResolver(
     resolveTarget,
     FirResolvePhase.CONSTANT_EVALUATION,
 ) {

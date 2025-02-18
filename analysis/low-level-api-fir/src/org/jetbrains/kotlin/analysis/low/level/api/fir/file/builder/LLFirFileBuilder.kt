@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.utils.ThreadSafe
  * Responsble for building [FirFile] by [KtFile]
  */
 @ThreadSafe
-internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponents) {
-    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(moduleComponents.session.project) }
+class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponents) {
+    val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(moduleComponents.session.project) }
 
     fun buildRawFirFileWithCaching(ktFile: KtFile): FirFile = moduleComponents.cache.fileCached(ktFile) {
         val contextualModule = moduleComponents.module

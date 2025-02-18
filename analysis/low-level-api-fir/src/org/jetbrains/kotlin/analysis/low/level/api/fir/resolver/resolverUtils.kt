@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolve
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.types.SmartcastStability
 
-internal fun createStubBodyResolveComponents(firSession: FirSession): FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents {
+fun createStubBodyResolveComponents(firSession: FirSession): FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents {
     val scopeSession = ScopeSession()
 
     // This transformer is not intended for actual transformations and created here only to simplify access to resolve components
@@ -36,7 +36,7 @@ internal fun createStubBodyResolveComponents(firSession: FirSession): FirAbstrac
     )
 }
 
-internal open class StubBodyResolveTransformerComponents(
+open class StubBodyResolveTransformerComponents(
     session: FirSession,
     scopeSession: ScopeSession,
     transformer: FirBodyResolveTransformer,

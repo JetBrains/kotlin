@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.name.Name
  * heuristics are checked only once.
  */
 @OptIn(FirSymbolProviderInternals::class)
-internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
+class LLFirCombinedSyntheticFunctionSymbolProvider constructor(
     session: FirSession,
     override val providers: List<FirSyntheticFunctionInterfaceProviderBase>,
 ) : LLCombinedSymbolProvider<FirSyntheticFunctionInterfaceProviderBase>(session) {
-    private val combinedPackageNames: Set<FqName> = providers.flatMapTo(mutableSetOf()) { it.getFunctionKindPackageNames() }
+    val combinedPackageNames: Set<FqName> = providers.flatMapTo(mutableSetOf()) { it.getFunctionKindPackageNames() }
 
     // `FirCompositeSymbolNamesProvider` defines `mayHaveSyntheticFunctionTypes` and `mayHaveSyntheticFunctionType` correctly, which is
     // needed for consistency should this symbol provider be part of another composite symbol provider.

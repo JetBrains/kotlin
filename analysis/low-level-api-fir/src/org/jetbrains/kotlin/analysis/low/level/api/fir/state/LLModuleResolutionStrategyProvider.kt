@@ -46,7 +46,7 @@ enum class LLModuleResolutionStrategy {
 /**
  * A resolution strategy that treats all modules but the [useSiteModule] as [LLModuleResolutionStrategy.STATIC].
  */
-internal class LLSimpleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
+class LLSimpleResolutionStrategyProvider(val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
             useSiteModule -> LLModuleResolutionStrategy.LAZY

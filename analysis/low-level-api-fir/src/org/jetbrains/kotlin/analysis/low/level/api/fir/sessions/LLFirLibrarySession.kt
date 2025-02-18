@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 /**
  * [org.jetbrains.kotlin.fir.FirSession] responsible for all libraries analysing module transitively depends on
  */
-internal class LLFirLibrarySession @PrivateSessionConstructor constructor(
+class LLFirLibrarySession @PrivateSessionConstructor constructor(
     ktModule: KaModule,
     builtinTypes: BuiltinTypes,
 ) : LLFirLibraryLikeSession(ktModule, builtinTypes)

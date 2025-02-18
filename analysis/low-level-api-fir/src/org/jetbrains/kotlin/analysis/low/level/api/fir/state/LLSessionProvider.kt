@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 class LLSessionProvider(
     val useSiteModule: KaModule,
-    private val useSiteSessionFactory: (KaModule) -> LLFirSession
+    val useSiteSessionFactory: (KaModule) -> LLFirSession
 ) {
     /**
      * The [LLFirSession] must be strongly reachable from the resolvable session and ultimately the `KaFirSession` so that soft
@@ -40,7 +40,7 @@ class LLSessionProvider(
         return getSession(module, preferBinary = false) as LLFirResolvableModuleSession
     }
 
-    private fun getSession(module: KaModule, preferBinary: Boolean): LLFirSession {
+    fun getSession(module: KaModule, preferBinary: Boolean): LLFirSession {
         if (module == useSiteModule) {
             return useSiteSession
         }

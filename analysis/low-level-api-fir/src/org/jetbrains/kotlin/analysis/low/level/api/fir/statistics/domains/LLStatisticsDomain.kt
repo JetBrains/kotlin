@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains
 
 /**
- * An [LLStatisticsDomain] encapsulates the meters, update logic, and any additional internal state required to support statistics
+ * An [LLStatisticsDomain] encapsulates the meters, update logic, and any additional state required to support statistics
  * collection and reporting in a specific area of concern.
  */
 interface LLStatisticsDomain {

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 
-internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
+fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
     provider: FirProvider,
 ): FirDeclaration = findSourceNonLocalFirDeclaration(
@@ -39,7 +39,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
 /**
  * 'Non-local' stands for not local classes/functions/etc.
  */
-internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, provider: FirProvider): FirDeclaration {
+fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, provider: FirProvider): FirDeclaration {
     // TODO test what way faster
     if (isPhysical) {
         // do not request providers with non-physical psi in order not to leak them there and
@@ -98,7 +98,7 @@ fun collectUseSiteContainers(element: PsiElement, resolveSession: LLFirResolveSe
     return FirElementFinder.findPathToDeclarationWithTarget(firFile, containingDeclaration)
 }
 
-internal fun KtElement.findSourceByTraversingWholeTree(
+fun KtElement.findSourceByTraversingWholeTree(
     firFileBuilder: LLFirFileBuilder,
     containerFirFile: FirFile?,
 ): FirDeclaration? {
@@ -114,7 +114,7 @@ internal fun KtElement.findSourceByTraversingWholeTree(
     )
 }
 
-private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
+fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
     firDeclarationProvider: (KtDeclaration) -> FirDeclaration?,
 ): FirDeclaration? {
     val candidate = when (this) {
@@ -180,11 +180,11 @@ fun FirAnonymousInitializer.containingClassIdOrNull(): ClassId? =
 val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")
 var KtDeclaration.originalDeclaration by UserDataProperty(ORIGINAL_DECLARATION_KEY)
 
-private val ORIGINAL_KT_FILE_KEY = com.intellij.openapi.util.Key<KtFile>("ORIGINAL_KT_FILE_KEY")
+val ORIGINAL_KT_FILE_KEY = com.intellij.openapi.util.Key<KtFile>("ORIGINAL_KT_FILE_KEY")
 var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 
-private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
+fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
     return if (provider is LLFirProvider) {
         provider.getFirClassifierByDeclaration(this)
     } else {
@@ -203,7 +203,7 @@ val FirFile.codeFragment: FirCodeFragment
 val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
 
-internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     for (property in parameters) {
         action(property)
     }
@@ -213,17 +213,17 @@ internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Uni
     }
 }
 
-internal inline fun FirRegularClass.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+inline fun FirRegularClass.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     declarations.forEach(action)
 }
 
-internal inline fun FirFile.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+inline fun FirFile.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     declarations.forEach(action)
 }
 
-internal val FirDeclaration.isDeclarationContainer: Boolean get() = this is FirRegularClass || this is FirScript || this is FirFile
+val FirDeclaration.isDeclarationContainer: Boolean get() = this is FirRegularClass || this is FirScript || this is FirFile
 
-internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     when (this) {
         is FirRegularClass -> forEachDeclaration(action)
         is FirScript -> forEachDeclaration(action)
@@ -235,7 +235,7 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
 /**
  * Some "local" declarations are not local from the lazy resolution perspective.
  */
-internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
+val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
     get() = when {
         // Destructuring declaration container should be treated as a non-local as it is a top-level script declaration
         fir.origin == FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer -> false
@@ -258,7 +258,7 @@ val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
 val PsiElement.parentsCodeFragmentAware: Sequence<PsiElement>
     get() = parentsWithSelfCodeFragmentAware.drop(1)
 
-internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.containingFile): T? {
+fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.containingFile): T? {
     val originalFile = containingFile.originalFile.takeIf { it !== containingFile }
         ?: (containingFile as? KtFile)?.analysisContext?.containingFile
         ?: return null

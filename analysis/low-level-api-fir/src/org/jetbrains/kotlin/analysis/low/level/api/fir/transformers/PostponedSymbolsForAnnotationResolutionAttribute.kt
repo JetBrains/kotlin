@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
-private object PostponedSymbolsForAnnotationResolutionKey : FirDeclarationDataKey()
+object PostponedSymbolsForAnnotationResolutionKey : FirDeclarationDataKey()
 
 /**
  * During [implicit type][org.jetbrains.kotlin.fir.declarations.FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE] phase we can
@@ -38,7 +38,7 @@ private object PostponedSymbolsForAnnotationResolutionKey : FirDeclarationDataKe
  * @see LLFirImplicitBodyTargetResolver
  * @see LLFirAnnotationArgumentsTargetResolver
  */
-internal var FirCallableDeclaration.postponedSymbolsForAnnotationResolution: Collection<FirBasedSymbol<*>>?
+var FirCallableDeclaration.postponedSymbolsForAnnotationResolution: Collection<FirBasedSymbol<*>>?
         by FirDeclarationDataRegistry.data(PostponedSymbolsForAnnotationResolutionKey)
 
 /**
@@ -57,7 +57,7 @@ internal var FirCallableDeclaration.postponedSymbolsForAnnotationResolution: Col
  *
  * @return true if this symbol shouldn't be processed as the owner of an annotation call
  */
-internal fun FirBasedSymbol<*>.cannotResolveAnnotationsOnDemand(): Boolean {
+fun FirBasedSymbol<*>.cannotResolveAnnotationsOnDemand(): Boolean {
     return this is FirCallableSymbol<*> && isLocalForLazyResolutionPurposes
 }
 
@@ -66,7 +66,7 @@ internal fun FirBasedSymbol<*>.cannotResolveAnnotationsOnDemand(): Boolean {
  *
  * @see postponedSymbolsForAnnotationResolution
  */
-internal fun FirDeclaration.forEachDeclarationWhichCanHavePostponedSymbols(action: (FirCallableDeclaration) -> Unit) {
+fun FirDeclaration.forEachDeclarationWhichCanHavePostponedSymbols(action: (FirCallableDeclaration) -> Unit) {
     when (this) {
         is FirCallableDeclaration -> action(this)
         else -> {}
@@ -78,7 +78,7 @@ internal fun FirDeclaration.forEachDeclarationWhichCanHavePostponedSymbols(actio
  *
  * @see postponedSymbolsForAnnotationResolution
  */
-internal fun FirBasedSymbol<*>.unwrapSymbolToPostpone(): FirBasedSymbol<*> = when (this) {
+fun FirBasedSymbol<*>.unwrapSymbolToPostpone(): FirBasedSymbol<*> = when (this) {
     is FirValueParameterSymbol -> containingDeclarationSymbol
     is FirReceiverParameterSymbol -> containingDeclarationSymbol
     else -> this
@@ -90,6 +90,6 @@ internal fun FirBasedSymbol<*>.unwrapSymbolToPostpone(): FirBasedSymbol<*> = whe
  * @see unwrapSymbolToPostpone
  * @see cannotResolveAnnotationsOnDemand
  */
-internal fun FirBasedSymbol<*>.symbolToPostponeIfCanBeResolvedOnDemand(): FirBasedSymbol<*>? {
+fun FirBasedSymbol<*>.symbolToPostponeIfCanBeResolvedOnDemand(): FirBasedSymbol<*>? {
     return unwrapSymbolToPostpone().takeUnless { it.cannotResolveAnnotationsOnDemand() }
 }

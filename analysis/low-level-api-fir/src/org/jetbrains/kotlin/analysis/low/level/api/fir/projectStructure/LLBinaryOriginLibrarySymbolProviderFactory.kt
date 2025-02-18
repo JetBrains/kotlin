@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.util.Logger as KLogger
 /**
  * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.BINARIES][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.BINARIES].
  */
-internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProviderFactory {
+object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
         session: LLFirSession,
         firJavaFacade: FirJavaFacade,
@@ -148,7 +148,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
         )
     }
 
-    private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
+    fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
         val ktLibraryModule = ktModule as? KaLibraryModule ?: return emptyList()
 
         return ktLibraryModule.binaryRoots
@@ -156,7 +156,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
             .mapNotNull { it.tryResolveAsKLib() }
     }
 
-    private fun Path.tryResolveAsKLib(): KotlinLibrary? {
+    fun Path.tryResolveAsKLib(): KotlinLibrary? {
         return try {
             val konanFile = File(absolutePathString())
             ToolingSingleFileKlibResolveStrategy.tryResolve(konanFile, IntellijLogBasedLogger)
@@ -167,9 +167,9 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
         }
     }
 
-    private val LOG = Logger.getInstance(LLBinaryOriginLibrarySymbolProviderFactory::class.java)
+    val LOG = Logger.getInstance(LLBinaryOriginLibrarySymbolProviderFactory::class.java)
 
-    private object IntellijLogBasedLogger : KLogger {
+    object IntellijLogBasedLogger : KLogger {
         override fun log(message: String) {
             LOG.info(message)
         }

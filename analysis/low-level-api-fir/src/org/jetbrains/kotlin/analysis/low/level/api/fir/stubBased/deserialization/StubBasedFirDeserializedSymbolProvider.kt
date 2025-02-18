@@ -50,15 +50,15 @@ typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
  *
  * Same as [JvmClassFileBasedSymbolProvider], resulting fir elements are already resolved.
  */
-internal open class StubBasedFirDeserializedSymbolProvider(
+open class StubBasedFirDeserializedSymbolProvider(
     session: LLFirSession,
-    private val deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
+    val deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
     scope: GlobalSearchScope,
     // A workaround for KT-63718. It should be removed with KT-64236.
     isFallbackDependenciesProvider: Boolean,
 ) : LLFirKotlinSymbolProvider(session) {
-    private val kotlinScopeProvider: FirKotlinScopeProvider get() = session.kotlinScopeProvider
-    private val moduleData: LLFirModuleData get() = session.llFirModuleData
+    val kotlinScopeProvider: FirKotlinScopeProvider get() = session.kotlinScopeProvider
+    val moduleData: LLFirModuleData get() = session.llFirModuleData
 
     final override val declarationProvider = session.project.createDeclarationProvider(
         scope,
@@ -70,7 +70,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     override val symbolNamesProvider: FirSymbolNamesProvider =
         LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider, allowKotlinPackage)
 
-    private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
+    val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
             createValue = { classId, context -> findAndDeserializeTypeAlias(classId, context) },
             postCompute = { _, symbol, postProcessor ->
@@ -80,13 +80,13 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             }
         )
 
-    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, StubBasedFirDeserializationContext?> =
+    val classCache: FirCache<ClassId, FirRegularClassSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCache(
             createValue = { classId, context -> findAndDeserializeClass(classId, context) }
         )
 
-    private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
-    private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
+    val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
+    val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
     final override val packageProvider = session.project.createPackageProvider(scope)
 
@@ -108,7 +108,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         }
     }
 
-    private fun findAndDeserializeTypeAlias(
+    fun findAndDeserializeTypeAlias(
         classId: ClassId,
         context: StubBasedFirDeserializationContext?,
     ): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
@@ -133,7 +133,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         return null to null
     }
 
-    private fun findAndDeserializeClass(
+    fun findAndDeserializeClass(
         classId: ClassId,
         parentContext: StubBasedFirDeserializationContext?,
     ): FirRegularClassSymbol? {
@@ -168,7 +168,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         return null
     }
 
-    private fun loadFunctionsByCallableId(
+    fun loadFunctionsByCallableId(
         callableId: CallableId,
         foundFunctions: Collection<KtNamedFunction>?,
     ): List<FirNamedFunctionSymbol> {
@@ -198,7 +198,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         }
     }
 
-    private fun loadPropertiesByCallableId(callableId: CallableId, foundProperties: Collection<KtProperty>?): List<FirPropertySymbol> {
+    fun loadPropertiesByCallableId(callableId: CallableId, foundProperties: Collection<KtProperty>?): List<FirPropertySymbol> {
         val topLevelProperties = foundProperties ?: declarationProvider.getTopLevelProperties(callableId)
 
         return buildList {
@@ -221,14 +221,14 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         }
     }
 
-    private fun getClass(classId: ClassId, parentContext: StubBasedFirDeserializationContext? = null): FirRegularClassSymbol? =
+    fun getClass(classId: ClassId, parentContext: StubBasedFirDeserializationContext? = null): FirRegularClassSymbol? =
         if (parentContext?.classLikeDeclaration != null) {
             classCache.getNotNullValueForNotNullContext(classId, parentContext)
         } else {
             classCache.getValue(classId, parentContext)
         }
 
-    private fun getTypeAlias(classId: ClassId, context: StubBasedFirDeserializationContext? = null): FirTypeAliasSymbol? {
+    fun getTypeAlias(classId: ClassId, context: StubBasedFirDeserializationContext? = null): FirTypeAliasSymbol? {
         if (!classId.relativeClassName.isOneSegmentFQN()) return null
         return typeAliasCache.getValue(classId, context)
     }
@@ -240,7 +240,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         destination += propertyCache.getCallablesWithoutContext(callableId)
     }
 
-    private fun <C : FirCallableSymbol<*>, CONTEXT> FirCache<CallableId, List<C>, CONTEXT?>.getCallablesWithoutContext(
+    fun <C : FirCallableSymbol<*>, CONTEXT> FirCache<CallableId, List<C>, CONTEXT?>.getCallablesWithoutContext(
         id: CallableId,
     ): List<C> {
         if (!symbolNamesProvider.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
@@ -309,7 +309,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         return getClass(classId) ?: getTypeAlias(classId)
     }
 
-    private fun getCachedClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? {
+    fun getCachedClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? {
         return classCache.getValueIfComputed(classId) ?: typeAliasCache.getValueIfComputed(classId)
     }
 

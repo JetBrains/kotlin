@@ -14,7 +14,7 @@ abstract class LLFirLibraryLikeSession(
     ktModule: KaModule,
     builtinTypes: BuiltinTypes,
 ) : LLFirSession(ktModule, builtinTypes, Kind.Library) {
-    private val scopeSessionProvider = LLFirScopeSessionProvider.create(project, invalidationTrackers = emptyList())
+    val scopeSessionProvider = LLFirScopeSessionProvider.create(project, invalidationTrackers = emptyList())
 
     override fun getScopeSession(): ScopeSession {
         return scopeSessionProvider.getScopeSession()

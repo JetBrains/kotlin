@@ -392,6 +392,7 @@ test-dependencies:
   - ./../../../plugins/assign-plugin/assign-plugin.k2
   - ./../../../plugins/plugin-sandbox
   - ./../../../analysis/decompiled/decompiler-native
+  - ./../../../analysis/decompiled/decompiler-native-tests
   - ./../../../core/compiler.common.wasm
   - ./../../../core/compiler.common.web
   - ./../../../analysis/decompiled/decompiler-to-stubs

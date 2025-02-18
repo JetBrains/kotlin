@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * @see LLFirLazyResolverRunner
  * @see LLFirTargetResolver
  */
-internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
+sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
     fun resolve(target: LLFirResolveTarget) {
         val resolver = createTargetResolver(target)
         requireWithAttachment(
@@ -52,7 +52,7 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
      */
     protected abstract fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState)
 
-    private fun checkNestedDeclarationsAreResolved(target: FirElementWithResolveState) {
+    fun checkNestedDeclarationsAreResolved(target: FirElementWithResolveState) {
         if (target !is FirDeclaration) return
 
         checkFunctionParametersAreResolved(target)
@@ -61,7 +61,7 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         checkReceiversAreResolved(target)
     }
 
-    private fun checkReceiversAreResolved(declaration: FirDeclaration) {
+    fun checkReceiversAreResolved(declaration: FirDeclaration) {
         when (declaration) {
             is FirCallableDeclaration -> {
                 declaration.receiverParameter?.let(::checkIsResolved)
@@ -74,7 +74,7 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         }
     }
 
-    private fun checkVariableSubDeclarationsAreResolved(declaration: FirDeclaration) {
+    fun checkVariableSubDeclarationsAreResolved(declaration: FirDeclaration) {
         if (declaration !is FirVariable) return
 
         declaration.getter?.let(::checkIsResolved)
@@ -82,13 +82,13 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         declaration.backingField?.let(::checkIsResolved)
     }
 
-    private fun checkFunctionParametersAreResolved(declaration: FirDeclaration) {
+    fun checkFunctionParametersAreResolved(declaration: FirDeclaration) {
         if (declaration !is FirFunction) return
 
         declaration.valueParameters.forEach(::checkIsResolved)
     }
 
-    private fun checkTypeParametersAreResolved(declaration: FirDeclaration) {
+    fun checkTypeParametersAreResolved(declaration: FirDeclaration) {
         if (declaration !is FirTypeParameterRefsOwner) return
 
         for (parameter in declaration.typeParameters) {

@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
  * in [session] with the same [ClassId], it creates a new [FirJavaClass] manually and caches it in [conflictsPsiClassToFirClassCache]
  * to ensure equal results with later invocations on the same [PsiClass].
  */
-class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSessionComponent {
-    private val conflictsPsiClassToFirClassCache =
+class LLFirFirClassByPsiClassProvider(val session: LLFirSession) : FirSessionComponent {
+    val conflictsPsiClassToFirClassCache =
         session.firCachesFactory.createCache<PsiClass, FirRegularClassSymbol, ConflictsPsiClassToFirClassCacheContext> { psiClass, (javaFacade, parent) ->
             val classId = psiClass.classIdOrThrowError()
             val symbol = FirRegularClassSymbol(classId)
@@ -55,7 +55,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
             javaFacade.convertJavaClassToFir(symbol, parent, javaClass).symbol
         }
 
-    private data class ConflictsPsiClassToFirClassCacheContext(
+    data class ConflictsPsiClassToFirClassCacheContext(
         val javaFacade: FirJavaFacade,
         val parentClass: FirRegularClassSymbol?,
     )
@@ -97,7 +97,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
         return firClassSymbol
     }
 
-    private fun ExceptionAttachmentBuilder.candidateAttachment(name: String, candidate: PsiElement?) {
+    fun ExceptionAttachmentBuilder.candidateAttachment(name: String, candidate: PsiElement?) {
         withEntryGroup(name) {
             withClassEntry("psiElementClass", candidate)
             withEntry("path", candidate?.containingFile?.virtualFile?.path)
@@ -105,17 +105,17 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
         }
     }
 
-    private fun createFirClassFromFirProvider(psiClass: PsiClass): FirRegularClassSymbol {
+    fun createFirClassFromFirProvider(psiClass: PsiClass): FirRegularClassSymbol {
         val javaAwareSymbolProvider = getFirJavaAwareSymbolProvider()
         return javaAwareSymbolProvider.getClassSymbolByPsiClass(psiClass)
     }
 
-    private fun getFirJavaAwareSymbolProvider(): FirJavaAwareSymbolProvider {
+    fun getFirJavaAwareSymbolProvider(): FirJavaAwareSymbolProvider {
         session.nullableJavaSymbolProvider?.let { return it }
         return session.symbolProvider.providers.firstIsInstance<FirJavaAwareSymbolProvider>()
     }
 
-    internal fun FirJavaAwareSymbolProvider.getClassSymbolByPsiClass(psiClass: PsiClass): FirRegularClassSymbol {
+    fun FirJavaAwareSymbolProvider.getClassSymbolByPsiClass(psiClass: PsiClass): FirRegularClassSymbol {
         require(this is FirSymbolProvider)
         val classId = psiClass.classIdOrThrowError()
         val result = getClassLikeSymbolByClassId(classId)
@@ -129,7 +129,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
         return conflictsPsiClassToFirClassCache.getValue(psiClass, ConflictsPsiClassToFirClassCacheContext(javaFacade, parentClass))
     }
 
-    private fun PsiClass.classIdOrThrowError(): ClassId =
+    fun PsiClass.classIdOrThrowError(): ClassId =
         classId
             ?: errorWithAttachment("No classId for non-local class") {
                 withPsiEntry("psiClass", this@classIdOrThrowError, session.ktModule)
@@ -137,6 +137,6 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
             }
 }
 
-internal val FirSession.nullableJavaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
+val FirSession.nullableJavaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
 
 val LLFirSession.firClassByPsiClassProvider: LLFirFirClassByPsiClassProvider by FirSession.sessionComponentAccessor()

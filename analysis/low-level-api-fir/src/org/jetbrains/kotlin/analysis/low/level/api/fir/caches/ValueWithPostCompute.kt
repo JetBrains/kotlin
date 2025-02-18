@@ -15,22 +15,22 @@ import java.util.concurrent.locks.ReentrantLock
  * only thread that initiated the calculating may see the value,
  * other threads will have to wait until that value is calculated
  */
-internal class ValueWithPostCompute<KEY, VALUE, DATA>(
+class ValueWithPostCompute<KEY, VALUE, DATA>(
     /**
      * We need at least one final field to be written in constructor to guarantee safe initialization of our [ValueWithPostCompute]
      */
-    private val key: KEY,
+    val key: KEY,
     calculate: (KEY) -> Pair<VALUE, DATA>,
     postCompute: (KEY, VALUE, DATA) -> Unit,
 ) {
-    private var _calculate: ((KEY) -> Pair<VALUE, DATA>)? = calculate
-    private var _postCompute: ((KEY, VALUE, DATA) -> Unit)? = postCompute
+    var _calculate: ((KEY) -> Pair<VALUE, DATA>)? = calculate
+    var _postCompute: ((KEY, VALUE, DATA) -> Unit)? = postCompute
 
     /**
      * [lock] being volatile ensures the consistent reads between [lock] and [value] in different threads.
      */
     @Volatile
-    private var lock: ReentrantLock? = ReentrantLock()
+    var lock: ReentrantLock? = ReentrantLock()
 
     /**
      * can be in one of the following three states:
@@ -86,7 +86,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
 
     @Suppress("UNCHECKED_CAST")
     // should be called under a synchronized section
-    private fun computeValueWithoutLock(): VALUE {
+    fun computeValueWithoutLock(): VALUE {
         // if we entered synchronized section that's mean that the value is not yet calculated and was not started to be calculated
         // or the some other thread calculated the value while we were waiting to acquire the lock
 
@@ -129,8 +129,8 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         else -> value as VALUE
     }
 
-    private class ValueIsPostComputingNow(val value: Any?, val threadId: Long)
-    private object ValueIsNotComputed
+    class ValueIsPostComputingNow(val value: Any?, val threadId: Long)
+    object ValueIsNotComputed
 }
 
-private const val LOCKING_INTERVAL_MS = 50L
+const val LOCKING_INTERVAL_MS = 50L

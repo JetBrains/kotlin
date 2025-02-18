@@ -39,13 +39,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 
-internal class LLFirProviderHelper(
+class LLFirProviderHelper(
     firSession: LLFirSession,
-    private val firFileBuilder: LLFirFileBuilder,
+    val firFileBuilder: LLFirFileBuilder,
     canContainKotlinPackage: Boolean,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?
 ) {
-    private val extensionTool: LLFirResolveExtensionTool? = firSession.llResolveExtensionTool
+    val extensionTool: LLFirResolveExtensionTool? = firSession.llResolveExtensionTool
 
     val searchScope: GlobalSearchScope =
         firSession.ktModule.contentScope.run {
@@ -74,7 +74,7 @@ internal class LLFirProviderHelper(
     val allowKotlinPackage: Boolean = canContainKotlinPackage ||
             firSession.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
-    private val classifierByClassId: FirCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> =
+    val classifierByClassId: FirCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> =
         firSession.firCachesFactory.createCache { classId, context ->
             computeClassifierByClassId(classId, context)
         }
@@ -88,7 +88,7 @@ internal class LLFirProviderHelper(
      * It can be called with some [classId] and a non-null [context] **if and only if** the returned value
      * is going to be the same for the `null` context.
      */
-    private fun computeClassifierByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeDeclaration? {
+    fun computeClassifierByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeDeclaration? {
         require(context == null || context.isPhysical)
         val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
 
@@ -101,12 +101,12 @@ internal class LLFirProviderHelper(
             }
     }
 
-    private val functionsByCallableId: FirCache<CallableId, List<FirNamedFunctionSymbol>, Collection<KtFile>?> =
+    val functionsByCallableId: FirCache<CallableId, List<FirNamedFunctionSymbol>, Collection<KtFile>?> =
         firSession.firCachesFactory.createCache { callableId, context ->
             computeCallableSymbolsByCallableId<FirNamedFunctionSymbol>(callableId, context)
         }
 
-    private val propertiesByCallableId: FirCache<CallableId, List<FirPropertySymbol>, Collection<KtFile>?> =
+    val propertiesByCallableId: FirCache<CallableId, List<FirPropertySymbol>, Collection<KtFile>?> =
         firSession.firCachesFactory.createCache { callableId, context ->
             computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context)
         }
@@ -120,7 +120,7 @@ internal class LLFirProviderHelper(
      * It can be called with some [callableId] and a non-null [context] **if and only if** the returned value
      * is going to be the same for the `null` context.
      */
-    private inline fun <reified TYPE : FirCallableSymbol<*>> computeCallableSymbolsByCallableId(
+    inline fun <reified TYPE : FirCallableSymbol<*>> computeCallableSymbolsByCallableId(
         callableId: CallableId,
         context: Collection<KtFile>?,
     ): List<TYPE> {
@@ -219,7 +219,7 @@ internal class LLFirProviderHelper(
         return propertiesByCallableId.getValue(callableId, callableFiles)
     }
 
-    private inline fun <reified TYPE : FirCallableSymbol<*>> FirFile.collectCallableSymbolsOfTypeTo(list: MutableList<TYPE>, name: Name) {
+    inline fun <reified TYPE : FirCallableSymbol<*>> FirFile.collectCallableSymbolsOfTypeTo(list: MutableList<TYPE>, name: Name) {
         declarations.mapNotNullTo(list) { declaration ->
             if (declaration is FirCallableDeclaration && declaration.symbol.callableId.callableName == name) {
                 declaration.symbol as? TYPE
@@ -233,5 +233,5 @@ internal class LLFirProviderHelper(
     }
 }
 
-private fun ClassId.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
-private fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+fun ClassId.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)

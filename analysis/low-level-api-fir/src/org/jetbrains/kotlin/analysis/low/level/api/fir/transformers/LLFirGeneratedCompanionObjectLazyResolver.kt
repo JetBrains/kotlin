@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompanionGenerationTransformer
 
-internal object LLFirGeneratedCompanionObjectLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPANION_GENERATION) {
+object LLFirGeneratedCompanionObjectLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPANION_GENERATION) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirCompanionGenerationTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {}
@@ -26,11 +26,11 @@ internal object LLFirGeneratedCompanionObjectLazyResolver : LLFirLazyResolver(Fi
  * @see FirCompanionGenerationTransformer
  * @see FirResolvePhase.COMPANION_GENERATION
  */
-private class LLFirCompanionGenerationTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
+class LLFirCompanionGenerationTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
     target,
     FirResolvePhase.COMPANION_GENERATION,
 ) {
-    private val transformer: FirCompanionGenerationTransformer = FirCompanionGenerationTransformer(resolveTargetSession)
+    val transformer: FirCompanionGenerationTransformer = FirCompanionGenerationTransformer(resolveTargetSession)
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         if (target !is FirRegularClass) return

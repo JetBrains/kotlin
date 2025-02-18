@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtFile
 /**
  * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.STUBS][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.STUBS].
  */
-internal object LLStubBasedLibrarySymbolProviderFactory : LLLibrarySymbolProviderFactory {
+object LLStubBasedLibrarySymbolProviderFactory : LLLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
         session: LLFirSession,
         firJavaFacade: FirJavaFacade,
@@ -114,13 +114,13 @@ internal object LLStubBasedLibrarySymbolProviderFactory : LLLibrarySymbolProvide
     }
 }
 
-private class StubBasedBuiltInsSymbolProvider(session: LLFirSession) : StubBasedFirDeserializedSymbolProvider(
+class StubBasedBuiltInsSymbolProvider(session: LLFirSession) : StubBasedFirDeserializedSymbolProvider(
     session,
     BuiltinsDeserializedContainerSourceProvider,
     BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(session.project),
     isFallbackDependenciesProvider = false,
 ), LLBuiltinSymbolProviderMarker {
-    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
+    val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
         session,
         session.moduleData,
         session.kotlinScopeProvider

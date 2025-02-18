@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 
-internal class LLFirLibraryOrLibrarySourceResolvableModuleSession(
+class LLFirLibraryOrLibrarySourceResolvableModuleSession(
     ktModule: KaModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,

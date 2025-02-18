@@ -110,6 +110,7 @@ test-dependencies:
   - ./../tests-common-new
   - ./../../generators/test-generator
   - ./../fir/raw-fir/psi2fir
+  - ./../fir/raw-fir/psi2fir-tests
   - ./../fir/raw-fir/light-tree2fir
   - ./../../plugins/scripting/scripting-compiler
   - ./../ir/ir.tree

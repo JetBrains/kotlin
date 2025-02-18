@@ -23,13 +23,13 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @LLFirInternals
 abstract class CleanableValueReferenceCache<K : Any, V : Any> {
-    private val backingMap = ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>()
+    val backingMap = ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>()
 
     protected val referenceQueue = ReferenceQueue<V>()
 
-    internal abstract fun createReference(key: K, value: V): ReferenceWithCleanup<K, V>
+    abstract fun createReference(key: K, value: V): ReferenceWithCleanup<K, V>
 
-    private fun processQueue() {
+    fun processQueue() {
         while (true) {
             val ref = referenceQueue.poll() ?: break
             check(ref is ReferenceWithCleanup<*, *>)
@@ -227,7 +227,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
 
     override fun toString(): String = "${this::class.simpleName} size:$size"
 
-    private fun ReferenceWithCleanup<K, V>.performCleanup() {
+    fun ReferenceWithCleanup<K, V>.performCleanup() {
         cleaner.cleanUp(get())
     }
 }

@@ -36,11 +36,11 @@ import org.jetbrains.kotlin.name.Name
  *
  * [javaClassFinder] must have a scope which combines the scopes of the individual [providers].
  */
-internal class LLFirCombinedJavaSymbolProvider private constructor(
+class LLFirCombinedJavaSymbolProvider constructor(
     session: FirSession,
     project: Project,
     providers: List<JavaSymbolProvider>,
-    private val javaClassFinder: JavaClassFinder,
+    val javaClassFinder: JavaClassFinder,
 ) : LLFirSelectingCombinedSymbolProvider<JavaSymbolProvider>(session, project, providers) {
     /**
      * The purpose of this cache is to avoid index access for frequently accessed `ClassId`s, including failures. Because Java symbol
@@ -50,7 +50,7 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
      * resulted in less time spent in [computeClassLikeSymbolByClassId] in local benchmarks. Cache sizes of 5000 and 10000 were tried in
      * performance tests, but didn't affect performance. A cache size of 2500 is a good middle ground with a small memory footprint.
      */
-    private val classCache: NullableCaffeineCache<ClassId, FirRegularClassSymbol> = NullableCaffeineCache {
+    val classCache: NullableCaffeineCache<ClassId, FirRegularClassSymbol> = NullableCaffeineCache {
         it
             .maximumSize(2500)
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCacheStatsCounter)
@@ -66,7 +66,7 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         classCache.get(classId) { computeClassLikeSymbolByClassId(it) }
 
-    private fun computeClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
+    fun computeClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         val javaClasses = javaClassFinder.findClasses(classId).filterNot(JavaClass::hasMetadataAnnotation)
         if (javaClasses.isEmpty()) return null
 

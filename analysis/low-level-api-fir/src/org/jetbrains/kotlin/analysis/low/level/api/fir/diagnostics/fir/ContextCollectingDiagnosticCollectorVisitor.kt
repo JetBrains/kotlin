@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-private class ContextCollectingDiagnosticCollectorVisitor private constructor(
+class ContextCollectingDiagnosticCollectorVisitor constructor(
     sessionHolder: SessionHolder,
     designation: FirDesignation,
 ) : AbstractDiagnosticCollectorVisitor(
@@ -65,7 +65,7 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     }
 }
 
-internal object PersistenceContextCollector {
+object PersistenceContextCollector {
     fun collectContext(
         sessionHolder: SessionHolder,
         firFile: FirFile,

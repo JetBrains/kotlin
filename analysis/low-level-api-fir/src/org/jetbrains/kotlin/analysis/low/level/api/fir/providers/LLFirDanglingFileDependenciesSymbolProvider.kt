@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
-class LLFirDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbolProvider) : FirSymbolProvider(delegate.session) {
+class LLFirDanglingFileDependenciesSymbolProvider(val delegate: FirSymbolProvider) : FirSymbolProvider(delegate.session) {
     override val symbolNamesProvider: FirSymbolNamesProvider
         get() = delegate.symbolNamesProvider
 
@@ -55,7 +55,7 @@ class LLFirDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbo
     // afterwards, is not designed for compiling ambiguous (and non-completed) calls.
     // The code below scans for declaration duplicates, and chooses one from the first class input for each individual name and signature.
     // Non-library declarations are returned as is.
-    private fun <T : FirCallableSymbol<*>> filterSymbols(symbols: List<T>): List<T> {
+    fun <T : FirCallableSymbol<*>> filterSymbols(symbols: List<T>): List<T> {
         if (symbols.size < 2) {
             return symbols
         }
@@ -101,9 +101,9 @@ class LLFirDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbo
         return symbols
     }
 
-    private data class CandidateSignature(val callableId: CallableId, val signature: FirCallableSignature)
+    data class CandidateSignature(val callableId: CallableId, val signature: FirCallableSignature)
 
-    private fun getSymbolRootFile(virtualFile: VirtualFile, packageFqName: FqName): VirtualFile? {
+    fun getSymbolRootFile(virtualFile: VirtualFile, packageFqName: FqName): VirtualFile? {
         val packageFqNameSegments = packageFqName.pathSegments().asReversed()
         val nestingLevel = packageFqNameSegments.size
 

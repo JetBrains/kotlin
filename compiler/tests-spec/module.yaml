@@ -10,14 +10,14 @@ repositories:
   - https://download.jetbrains.com/teamcity-repository
   
 
-dependencies:
-  - org.jsoup:jsoup:1.17.2
-  - org.junit.vintage:junit-vintage-engine:5.10.1
-  - org.junit.platform:junit-platform-engine:1.10.1
-  - junit:junit:4.13.2
-  - org.junit.platform:junit-platform-commons:1.10.1
-  - org.opentest4j:opentest4j:1.3.0
-  - org.hamcrest:hamcrest-core:1.3
+#dependencies:
+#  - org.jsoup:jsoup:1.17.2
+#  - org.junit.vintage:junit-vintage-engine:5.10.1
+#  - org.junit.platform:junit-platform-engine:1.10.1
+#  - junit:junit:4.13.2
+#  - org.junit.platform:junit-platform-commons:1.10.1
+#  - org.opentest4j:opentest4j:1.3.0
+#  - org.hamcrest:hamcrest-core:1.3
 
 module:
   layout: gradle-jvm
@@ -27,7 +27,7 @@ settings:
     freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
 
 
-test-dependencies:
+dependencies:
   - org.jsoup:jsoup:1.17.2
   - com.google.code.gson:gson:2.11.0
   - com.jetbrains.intellij.platform:util-jdom:233.13135.128
@@ -235,6 +235,6 @@ test-dependencies:
   - ./../../js/js.translator
   - ./../ir/ir.objcinterop
 
-test-settings:
-  kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+#test-settings:
+#  kotlin:
+#    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

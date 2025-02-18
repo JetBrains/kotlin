@@ -30,7 +30,7 @@ val FirBasedSymbol<*>.llFirModuleData: LLFirModuleData
     get() = fir.llFirModuleData
 
 
-class LLFirModuleData private constructor(val ktModule: KaModule) : FirModuleData() {
+class LLFirModuleData constructor(val ktModule: KaModule) : FirModuleData() {
     constructor(session: LLFirSession) : this(session.ktModule) {
         bindSession(session)
     }

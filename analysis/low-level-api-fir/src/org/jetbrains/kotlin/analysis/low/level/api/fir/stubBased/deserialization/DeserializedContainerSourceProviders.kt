@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-internal interface DeserializedContainerSourceProvider {
+interface DeserializedContainerSourceProvider {
     fun getFacadeContainerSource(
         file: KtFile,
         stubOrigin: KotlinStubOrigin?,
@@ -25,7 +25,7 @@ internal interface DeserializedContainerSourceProvider {
 
 // Currently, `null` is returned for KLIBs to avoid incorrect application of JVM file facade logic and overload filtering.
 // We might want to provide non-`null` container source for all types of binaries in the future.
-internal object NullDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
+object NullDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
     override fun getFacadeContainerSource(
         file: KtFile,
         stubOrigin: KotlinStubOrigin?,
@@ -35,7 +35,7 @@ internal object NullDeserializedContainerSourceProvider : DeserializedContainerS
     override fun getClassContainerSource(classId: ClassId): DeserializedContainerSource? = null
 }
 
-internal object JvmDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
+object JvmDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
     override fun getFacadeContainerSource(
         file: KtFile,
         stubOrigin: KotlinStubOrigin?,
@@ -65,7 +65,7 @@ internal object JvmDeserializedContainerSourceProvider : DeserializedContainerSo
     }
 }
 
-internal object BuiltinsDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
+object BuiltinsDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
     override fun getFacadeContainerSource(
         file: KtFile,
         stubOrigin: KotlinStubOrigin?,
@@ -85,7 +85,7 @@ internal object BuiltinsDeserializedContainerSourceProvider : DeserializedContai
     }
 }
 
-internal object JvmAndBuiltinsDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
+object JvmAndBuiltinsDeserializedContainerSourceProvider : DeserializedContainerSourceProvider {
     override fun getFacadeContainerSource(
         file: KtFile,
         stubOrigin: KotlinStubOrigin?,

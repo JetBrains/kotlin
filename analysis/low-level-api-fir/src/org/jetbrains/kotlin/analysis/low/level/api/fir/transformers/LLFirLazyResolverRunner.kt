@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
  * @see LLFirLazyResolver
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
  */
-internal object LLFirLazyResolverRunner {
+object LLFirLazyResolverRunner {
     /**
      * Runs [resolver][LLFirLazyResolver] associated with [phase] for [target].
      *

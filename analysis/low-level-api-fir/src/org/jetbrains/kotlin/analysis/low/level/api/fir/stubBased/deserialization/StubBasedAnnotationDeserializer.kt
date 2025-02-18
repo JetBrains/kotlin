@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class StubBasedAnnotationDeserializer(
-    private val session: FirSession,
+    val session: FirSession,
 ) {
     fun loadAnnotations(
         ktAnnotated: KtAnnotated,
@@ -42,7 +42,7 @@ class StubBasedAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it) }
     }
 
-    private val constantCache = mutableMapOf<CallableId, FirExpression>()
+    val constantCache = mutableMapOf<CallableId, FirExpression>()
 
     fun loadConstant(property: KtProperty, callableId: CallableId, isUnsigned: Boolean): FirExpression? {
         if (!property.hasModifier(KtTokens.CONST_KEYWORD)) return null
@@ -61,7 +61,7 @@ class StubBasedAnnotationDeserializer(
         return resolveValue(property, resultValue)
     }
 
-    private fun deserializeAnnotation(
+    fun deserializeAnnotation(
         ktAnnotation: KtAnnotationEntry
     ): FirAnnotation {
         return deserializeAnnotation(
@@ -79,7 +79,7 @@ class StubBasedAnnotationDeserializer(
         return userType.classId()
     }
 
-    private fun deserializeAnnotation(
+    fun deserializeAnnotation(
         ktAnnotation: PsiElement,
         classId: ClassId,
         valueArguments: Map<Name, ConstantValue<*>>?,
@@ -101,7 +101,7 @@ class StubBasedAnnotationDeserializer(
         }
     }
 
-    private fun resolveValue(
+    fun resolveValue(
         sourceElement: PsiElement,
         value: ConstantValue<*>
     ): FirExpression {
@@ -158,7 +158,7 @@ class StubBasedAnnotationDeserializer(
         }
     }
 
-    private fun inferArrayValueType(values: List<ConstantValue<*>>): ConeClassLikeType? {
+    fun inferArrayValueType(values: List<ConstantValue<*>>): ConeClassLikeType? {
         if (values.isNotEmpty()) {
             val firstValue = values.first()
 
@@ -196,7 +196,7 @@ class StubBasedAnnotationDeserializer(
         return null
     }
 
-    private fun const(
+    fun const(
         kind: ConstantValueKind,
         value: Any?,
         typeRef: FirResolvedTypeRef,
@@ -210,7 +210,7 @@ class StubBasedAnnotationDeserializer(
         ).apply { this.replaceConeTypeOrNull(typeRef.coneType) }
     }
 
-    private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression =
+    fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression =
         buildEnumEntryDeserializedAccessExpression {
             enumClassId = classId
             enumEntryName = entryName

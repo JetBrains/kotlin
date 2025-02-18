@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionPro
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 
-internal class LLFirModuleResolveComponents(
+class LLFirModuleResolveComponents(
     val module: KaModule,
     val globalResolveComponents: LLFirGlobalResolveComponents,
     val scopeProvider: FirScopeProvider

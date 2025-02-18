@@ -12,7 +12,7 @@ interface LLScopeSessionProvider {
     fun getScopeSession(session: LLFirSession): ScopeSession
 }
 
-internal object LLDefaultScopeSessionProvider : LLScopeSessionProvider {
+object LLDefaultScopeSessionProvider : LLScopeSessionProvider {
     override fun getScopeSession(session: LLFirSession): ScopeSession {
         return session.getScopeSession()
     }

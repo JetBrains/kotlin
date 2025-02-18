@@ -59,14 +59,14 @@ abstract class LLFirSession(
      */
     @Volatile
     var isValid: Boolean = true
-        internal set
+        set
 
     /**
      * Creates a [ModificationTracker] which tracks the validity of this session via [isValid].
      */
     fun createValidityTracker(): ModificationTracker = LLFirSessionValidityModificationTracker(WeakReference(this))
 
-    private val lazyDisposable: Lazy<Disposable> = lazy {
+    val lazyDisposable: Lazy<Disposable> = lazy {
         val disposable = Disposer.newDisposable()
 
         // `LLFirSessionCache` is used as a disposable parent so that disposal is triggered after the Kotlin plugin is unloaded. We don't
@@ -93,7 +93,7 @@ abstract class LLFirSession(
     /**
      * A [Disposable] that has already been requested with [requestDisposable], or `null` otherwise.
      */
-    internal val requestedDisposableOrNull: Disposable?
+    val requestedDisposableOrNull: Disposable?
         get() = if (lazyDisposable.isInitialized()) lazyDisposable.value else null
 
     override fun toString(): String {
@@ -107,10 +107,10 @@ abstract class LLFirSession(
  * Similarly, by convention, the [LLFirSession] doesn't keep a strong reference to the validity tracker, to avoid overly complicated
  * reference cycles (from the developer's perspective).
  */
-private class LLFirSessionValidityModificationTracker(private val sessionRef: WeakReference<LLFirSession>) : ModificationTrackerWithInvalidationReason {
+class LLFirSessionValidityModificationTracker(val sessionRef: WeakReference<LLFirSession>) : ModificationTrackerWithInvalidationReason {
     @Suppress("Unused")
     @Volatile
-    private var count = 0L
+    var count = 0L
 
     override fun getModificationCount(): Long {
         if (sessionRef.get()?.isValid == true) return 0
@@ -132,7 +132,7 @@ private class LLFirSessionValidityModificationTracker(private val sessionRef: We
     }
 
     companion object {
-        private val COUNT_UPDATER = AtomicLongFieldUpdater.newUpdater(LLFirSessionValidityModificationTracker::class.java, "count")
+        val COUNT_UPDATER = AtomicLongFieldUpdater.newUpdater(LLFirSessionValidityModificationTracker::class.java, "count")
     }
 }
 

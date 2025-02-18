@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-internal class FirThreadSafeCachesFactory(private val project: Project) : FirCachesFactory() {
+class FirThreadSafeCachesFactory(val project: Project) : FirCachesFactory() {
     override fun <KEY : Any, VALUE, CONTEXT> createCache(createValue: (KEY, CONTEXT) -> VALUE): FirCache<KEY, VALUE, CONTEXT> =
         FirThreadSafeCache(createValue = createValue)
 
@@ -86,9 +86,9 @@ internal class FirThreadSafeCachesFactory(private val project: Project) : FirCac
         get() = true
 }
 
-private class FirCaffeineCache<K : Any, V, CONTEXT>(
-    private val cache: Cache<K, Any>,
-    private val createValue: (K, CONTEXT) -> V,
+class FirCaffeineCache<K : Any, V, CONTEXT>(
+    val cache: Cache<K, Any>,
+    val createValue: (K, CONTEXT) -> V,
 ) : FirCache<K, V, CONTEXT>() {
     override fun getValue(key: K, context: CONTEXT): V {
         @Suppress("UNCHECKED_CAST")

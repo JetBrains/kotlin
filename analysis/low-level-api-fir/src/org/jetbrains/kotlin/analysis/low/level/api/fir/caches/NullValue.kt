@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import java.util.concurrent.ConcurrentMap
 
-internal object NullValue
+object NullValue
 
 @Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
-internal inline fun <VALUE> Any.nullValueToNull(): VALUE = when (this) {
+inline fun <VALUE> Any.nullValueToNull(): VALUE = when (this) {
     NullValue -> null
     else -> this
 } as VALUE
 
-internal inline fun <KEY : Any, RESULT> ConcurrentMap<KEY, Any>.getOrPutWithNullableValue(
+inline fun <KEY : Any, RESULT> ConcurrentMap<KEY, Any>.getOrPutWithNullableValue(
     key: KEY,
     crossinline compute: (KEY) -> Any?
 ): RESULT {

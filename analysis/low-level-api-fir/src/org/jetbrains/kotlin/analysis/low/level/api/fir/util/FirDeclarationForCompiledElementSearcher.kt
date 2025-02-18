@@ -35,14 +35,14 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 /**
  * Allows to search for FIR declarations by compiled [KtDeclaration]s.
  */
-internal class FirDeclarationForCompiledElementSearcher(private val session: FirSession) {
-    private val project = session.llFirModuleData.ktModule.project
+class FirDeclarationForCompiledElementSearcher(val session: FirSession) {
+    val project = session.llFirModuleData.ktModule.project
 
-    private val projectStructureProvider by lazy {
+    val projectStructureProvider by lazy {
         KotlinProjectStructureProvider.getInstance(project)
     }
 
-    private val firElementByPsiElementChooser by lazy {
+    val firElementByPsiElementChooser by lazy {
         LLFirElementByPsiElementChooser.getInstance(project)
     }
 
@@ -59,13 +59,13 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
         else -> errorWithFirSpecificEntries("Unsupported compiled declaration of type", psi = ktDeclaration)
     }
 
-    private fun findFunctionCandidates(function: KtNamedFunction): List<FirFunctionSymbol<*>> =
+    fun findFunctionCandidates(function: KtNamedFunction): List<FirFunctionSymbol<*>> =
         findCallableCandidates(function, function.isTopLevel).filterIsInstance<FirFunctionSymbol<*>>()
 
-    private fun findPropertyCandidates(property: KtProperty): List<FirPropertySymbol> =
+    fun findPropertyCandidates(property: KtProperty): List<FirPropertySymbol> =
         findCallableCandidates(property, property.isTopLevel).filterIsInstance<FirPropertySymbol>()
 
-    private fun findCallableCandidates(
+    fun findCallableCandidates(
         declaration: KtCallableDeclaration,
         isTopLevel: Boolean,
     ): List<FirCallableSymbol<*>> {
@@ -98,7 +98,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
         }
     }
 
-    private fun findNonLocalTypeParameter(param: KtTypeParameter): FirDeclaration {
+    fun findNonLocalTypeParameter(param: KtTypeParameter): FirDeclaration {
         val owner = param.containingDeclaration ?: errorWithFirSpecificEntries("Unsupported compiled type parameter", psi = param)
         val firDeclaration = findNonLocalDeclaration(owner)
         val firTypeParameterRefOwner = firDeclaration as? FirTypeParameterRefsOwner ?: errorWithFirSpecificEntries(
@@ -112,7 +112,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
         } as FirDeclaration
     }
 
-    private fun findParameter(param: KtParameter): FirDeclaration {
+    fun findParameter(param: KtParameter): FirDeclaration {
         val ownerFunction = param.ownerFunction ?: errorWithFirSpecificEntries("Unsupported compiled parameter", psi = param)
         val firDeclaration = findNonLocalDeclaration(ownerFunction)
         val firFunction = firDeclaration as? FirFunction ?: errorWithFirSpecificEntries(
@@ -124,7 +124,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
             ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
     }
 
-    private fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {
+    fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {
         val classCandidate = declaration.containingClassOrObject?.let(::findNonLocalClassLikeDeclaration)
             ?: errorWithFirSpecificEntries("Enum entry must have containing class", psi = declaration)
 
@@ -133,7 +133,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
         } as FirEnumEntry
     }
 
-    private fun findNonLocalClassLikeDeclaration(declaration: KtClassLikeDeclaration): FirClassLikeDeclaration {
+    fun findNonLocalClassLikeDeclaration(declaration: KtClassLikeDeclaration): FirClassLikeDeclaration {
         val classId = declaration.getClassId() ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
         val classCandidate = when (val symbolProvider = session.symbolProvider) {
@@ -159,7 +159,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
         return classCandidate.fir
     }
 
-    private fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
+    fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
         val containingClass = declaration.containingClassOrObject
             ?: errorWithFirSpecificEntries("Constructor must have outer class", psi = declaration)
 
@@ -171,7 +171,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
         return constructorCandidate.fir
     }
 
-    private fun findNonLocalFunction(declaration: KtNamedFunction): FirFunction {
+    fun findNonLocalFunction(declaration: KtNamedFunction): FirFunction {
         require(!declaration.isLocal)
 
         val candidates = findFunctionCandidates(declaration)
@@ -183,7 +183,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
         return functionCandidate.fir
     }
 
-    private fun findNonLocalProperty(declaration: KtProperty): FirProperty {
+    fun findNonLocalProperty(declaration: KtProperty): FirProperty {
         require(!declaration.isLocal)
 
         val candidates = findPropertyCandidates(declaration)
@@ -195,7 +195,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
         return propertyCandidate.fir
     }
 
-    private fun findNonLocalPropertyAccessor(declaration: KtPropertyAccessor): FirPropertyAccessor {
+    fun findNonLocalPropertyAccessor(declaration: KtPropertyAccessor): FirPropertyAccessor {
         val firProperty = findNonLocalProperty(declaration.property)
 
         return (if (declaration.isGetter) firProperty.getter else firProperty.setter)
@@ -206,7 +206,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: Fir
 
 // Returns a built-in provider for a Kotlin standard library, as built-in declarations are its logical part.
 // Returns one for built-ins modules as well, as these modules have empty scope and their content comes from the dependency provider.
-private val LLFirModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: FirSymbolProvider?
+val LLFirModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: FirSymbolProvider?
     get() {
         val moduleData = this.session.moduleData
         if (hasPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE)
@@ -218,7 +218,7 @@ private val LLFirModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: Fi
         return null
     }
 
-private fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {
+fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {
     withEntry("Candidates count", candidates.size.toString())
     for ((index, candidate) in candidates.withIndex()) {
         val ktModule = candidate.llFirModuleData.ktModule

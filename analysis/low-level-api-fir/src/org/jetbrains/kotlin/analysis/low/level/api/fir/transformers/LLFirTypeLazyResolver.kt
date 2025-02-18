@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES) {
+object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirTypeTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
@@ -58,8 +58,8 @@ internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES)
  * @see FirTypeResolveTransformer
  * @see FirResolvePhase.TYPES
  */
-private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(target, FirResolvePhase.TYPES) {
-    private val transformer = FirTypeResolveTransformer(resolveTargetSession, resolveTargetScopeSession)
+class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetResolver(target, FirResolvePhase.TYPES) {
+    val transformer = FirTypeResolveTransformer(resolveTargetSession, resolveTargetScopeSession)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withFile", level = DeprecationLevel.ERROR)
     override fun withContainingFile(firFile: FirFile, action: () -> Unit) {
@@ -101,13 +101,13 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
         }
     }
 
-    private fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T, Unit>) {
+    fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T, Unit>) {
         resolveWithKeeper(target, Unit, keeper) {
             rawResolve(target)
         }
     }
 
-    private fun rawResolve(target: FirElementWithResolveState) {
+    fun rawResolve(target: FirElementWithResolveState) {
         when (target) {
             is FirConstructor -> {
                 // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
@@ -132,7 +132,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
         }
     }
 
-    private inline fun <T : FirElementWithResolveState> resolveOutsideClassBody(
+    inline fun <T : FirElementWithResolveState> resolveOutsideClassBody(
         target: T,
         crossinline actionOutsideClassBody: (T) -> Unit,
     ) {
@@ -158,12 +158,12 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
         target.accept(transformer, null)
     }
 
-    private fun resolveScriptTypes(firScript: FirScript) {
+    fun resolveScriptTypes(firScript: FirScript) {
         firScript.transformAnnotations(transformer, null)
         firScript.transformReceivers(transformer, null)
     }
 
-    private fun resolveClassTypes(firClass: FirRegularClass) {
+    fun resolveClassTypes(firClass: FirRegularClass) {
         transformer.transformClassTypeParameters(firClass, null)
         transformer.withScopeCleanup {
             firClass.transformAnnotations(transformer, null)
@@ -177,7 +177,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
     }
 }
 
-private object TypeStateKeepers {
+object TypeStateKeepers {
     val FUNCTION: StateKeeper<FirFunction, Unit> = stateKeeper { builder, function, context ->
         builder.add(CALLABLE_DECLARATION, context)
         builder.entityList(function.valueParameters, CALLABLE_DECLARATION, context)
@@ -190,7 +190,7 @@ private object TypeStateKeepers {
         builder.entity(property.backingField, CALLABLE_DECLARATION, context)
     }
 
-    private val CALLABLE_DECLARATION: StateKeeper<FirCallableDeclaration, Unit> = stateKeeper { builder, _, _ ->
+    val CALLABLE_DECLARATION: StateKeeper<FirCallableDeclaration, Unit> = stateKeeper { builder, _, _ ->
         builder.add(FirCallableDeclaration::returnTypeRef, FirCallableDeclaration::replaceReturnTypeRef)
     }
 }

@@ -216,6 +216,7 @@ test-dependencies:
   - net.java.dev.jna:jna:5.13.0
   - ./../../../js/js.tests
   - ./../../../compiler/incremental-compilation-impl
+  - ./../../../compiler/incremental-compilation-impl-tests
   - ./../../../compiler/tests-common
   - ./../../../compiler/tests-common-new
   - ./../../../compiler/tests-compiler-utils
@@ -229,6 +230,7 @@ test-dependencies:
   - ./../../../native/utils
   - ./../../../compiler/compiler-runner-unshaded
   - ./../../../build-common
+  - ./../../../build-common-tests
   - ./../../../compiler/cli
   - ./../../../compiler/ir/backend.js
   - ./../../../compiler/frontend
@@ -344,4 +346,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi,org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi, -opt-in, org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 /**
  * [LLFirResolveTarget] representing single target to resolve. The [target] can be any of [FirElementWithResolveState]
  */
-internal class LLFirSingleResolveTarget(designation: FirDesignation) : LLFirResolveTarget(designation) {
+class LLFirSingleResolveTarget(designation: FirDesignation) : LLFirResolveTarget(designation) {
     override fun visitTargetElement(
         element: FirElementWithResolveState,
         visitor: LLFirResolveTargetVisitor,

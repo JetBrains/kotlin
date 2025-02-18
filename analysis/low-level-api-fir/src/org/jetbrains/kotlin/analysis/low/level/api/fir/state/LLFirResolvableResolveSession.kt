@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-internal class LLFirResolvableResolveSession(
+class LLFirResolvableResolveSession(
     moduleProvider: LLModuleProvider,
     resolutionStrategyProvider: LLModuleResolutionStrategyProvider,
     sessionProvider: LLSessionProvider,
@@ -53,7 +53,7 @@ internal class LLFirResolvableResolveSession(
         return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
     }
 
-    private fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
+    fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
         val module = getModule(element)
         return sessionProvider.getResolvableSession(module).moduleComponents
     }
@@ -71,7 +71,7 @@ internal class LLFirResolvableResolveSession(
         }
     }
 
-    private fun findFirCompiledSymbol(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
+    fun findFirCompiledSymbol(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
         requireWithAttachment(
             ktDeclaration.containingKtFile.isCompiled,
             { "`findFirCompiledSymbol` only works on compiled declarations, but the given declaration is not compiled." },
@@ -85,13 +85,13 @@ internal class LLFirResolvableResolveSession(
         return firDeclaration.symbol
     }
 
-    private fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
+    fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
         val targetDeclaration = ktDeclaration.originalDeclaration ?: ktDeclaration
         val targetModule = getModule(targetDeclaration)
         return findSourceFirDeclarationByDeclaration(targetDeclaration, targetModule)
     }
 
-    private fun findSourceFirDeclarationByDeclaration(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
+    fun findSourceFirDeclarationByDeclaration(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
         require(getModuleResolutionStrategy(module) == LLModuleResolutionStrategy.LAZY) {
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
@@ -113,11 +113,11 @@ internal class LLFirResolvableResolveSession(
         return findDeclarationInSourceViaResolve(ktDeclaration)
     }
 
-    private fun getModuleResolutionStrategy(module: KaModule): LLModuleResolutionStrategy {
+    fun getModuleResolutionStrategy(module: KaModule): LLModuleResolutionStrategy {
         return resolutionStrategyProvider.getKind(module)
     }
 
-    private fun findDeclarationInSourceViaResolve(ktDeclaration: KtExpression): FirBasedSymbol<*> {
+    fun findDeclarationInSourceViaResolve(ktDeclaration: KtExpression): FirBasedSymbol<*> {
         val firDeclaration = when (val fir = getOrBuildFirFor(ktDeclaration)) {
             is FirDeclaration -> fir
             is FirAnonymousFunctionExpression -> fir.anonymousFunction

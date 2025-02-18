@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 
-internal class LLFirJavaFacadeForBinaries(
-    private val session: LLFirSession,
+class LLFirJavaFacadeForBinaries(
+    val session: LLFirSession,
     classFinder: JavaClassFinder,
 ) : FirJavaFacade(session, classFinder) {
     override fun getModuleDataForClass(javaClass: JavaClass): FirModuleData = session.moduleData

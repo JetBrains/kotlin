@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
+object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirImplicitBodyTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
@@ -39,14 +39,14 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
     }
 }
 
-internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComputationSession() {
+class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComputationSession() {
     /**
      * The symbol on which foreign annotations will be postponed
      *
      * @see withAnchorForForeignAnnotations
      * @see postponeForeignAnnotationResolution
      */
-    private var anchorForForeignAnnotations: FirCallableSymbol<*>? = null
+    var anchorForForeignAnnotations: FirCallableSymbol<*>? = null
 
     inline fun <T> withAnchorForForeignAnnotations(symbol: FirCallableSymbol<*>, action: () -> T): T {
         val previousSymbol = anchorForForeignAnnotations
@@ -67,7 +67,7 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
         }
     }
 
-    private val postponedSymbols = setMultimapOf<FirCallableSymbol<*>, FirBasedSymbol<*>>()
+    val postponedSymbols = setMultimapOf<FirCallableSymbol<*>, FirBasedSymbol<*>>()
 
     /**
      * Postpone the resolution request to [symbol] until [annotation arguments][FirResolvePhase.ANNOTATION_ARGUMENTS] phase
@@ -98,7 +98,7 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
         return postponedSymbols[target.symbol]
     }
 
-    private var cycledSymbol: FirCallableSymbol<*>? = null
+    var cycledSymbol: FirCallableSymbol<*>? = null
 
     /**
      * Push [symbol] with a recursion return type to be able to report it later
@@ -136,7 +136,7 @@ internal class LLImplicitBodyResolveComputationSession : ImplicitBodyResolveComp
  * @see FirImplicitAwareBodyResolveTransformer
  * @see FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
  */
-internal class LLFirImplicitBodyTargetResolver(
+class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
     llImplicitBodyResolveComputationSessionParameter: LLImplicitBodyResolveComputationSession? = null,
 ) : LLFirAbstractBodyTargetResolver(
@@ -214,7 +214,7 @@ internal class LLFirImplicitBodyTargetResolver(
         target.forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
     }
 
-    private fun publishPostponedSymbols(target: FirCallableDeclaration) {
+    fun publishPostponedSymbols(target: FirCallableDeclaration) {
         val postponedSymbols = llImplicitBodyResolveComputationSession.postponedSymbols(target)
         if (postponedSymbols.isNotEmpty()) {
             target.postponedSymbolsForAnnotationResolution = postponedSymbols

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class LLEmptySymbolProvider(session: FirSession) : FirSymbolProvider(session) {
+class LLEmptySymbolProvider(session: FirSession) : FirSymbolProvider(session) {
     override val symbolNamesProvider: FirSymbolNamesProvider
         get() = FirEmptySymbolNamesProvider
 

@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.util.withSourceCodeAnalysisExceptionUnwrapping
  * @see FileStructureElementDiagnostics
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
  */
-internal sealed class FileStructureElementDiagnosticRetriever(
+sealed class FileStructureElementDiagnosticRetriever(
     val declaration: FirDeclaration,
-    private val file: FirFile,
-    private val moduleComponents: LLFirModuleResolveComponents,
+    val file: FirFile,
+    val moduleComponents: LLFirModuleResolveComponents,
 ) {
     fun retrieve(filter: DiagnosticCheckerFilter): FileStructureElementDiagnosticList {
         forceBodyResolve()
@@ -58,7 +58,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
      * not all of them are pre-resolved during [declaration] resolution.
      * For instance, functions and classes are not a part of the container body resolution.
      */
-    private fun forceBodyResolve() {
+    fun forceBodyResolve() {
         ProgressManager.checkCanceled()
 
         declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -75,7 +75,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
     }
 }
 
-internal class ClassDiagnosticRetriever(
+class ClassDiagnosticRetriever(
     declaration: FirDeclaration,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
@@ -88,8 +88,8 @@ internal class ClassDiagnosticRetriever(
         return Visitor(declaration, context, components)
     }
 
-    private class Visitor(
-        private val structureElementDeclaration: FirDeclaration,
+    class Visitor(
+        val structureElementDeclaration: FirDeclaration,
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents,
     ) : LLFirDiagnosticVisitor(context, components) {
@@ -101,7 +101,7 @@ internal class ClassDiagnosticRetriever(
             else -> false
         }
 
-        private var insideFakeDeclaration: Boolean = false
+        var insideFakeDeclaration: Boolean = false
 
         override fun visitNestedElements(element: FirElement) {
             if (element.isImplicitConstructor) {
@@ -126,10 +126,10 @@ internal class ClassDiagnosticRetriever(
     }
 }
 
-internal val FirElement.isImplicitConstructor: Boolean
+val FirElement.isImplicitConstructor: Boolean
     get() = this is FirConstructor && source?.kind == KtFakeSourceElementKind.ImplicitConstructor
 
-internal class SingleNonLocalDeclarationDiagnosticRetriever(
+class SingleNonLocalDeclarationDiagnosticRetriever(
     declaration: FirDeclaration,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
@@ -142,7 +142,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
         return Visitor(context, components)
     }
 
-    private class Visitor(
+    class Visitor(
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents,
     ) : LLFirDiagnosticVisitor(context, components) {
@@ -160,7 +160,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
     }
 }
 
-internal class FileDiagnosticRetriever(
+class FileDiagnosticRetriever(
     declaration: FirDeclaration,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
@@ -173,7 +173,7 @@ internal class FileDiagnosticRetriever(
         return Visitor(context, components)
     }
 
-    private class Visitor(
+    class Visitor(
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents,
     ) : LLFirDiagnosticVisitor(context, components) {
@@ -190,7 +190,7 @@ internal class FileDiagnosticRetriever(
     }
 }
 
-internal class ScriptDiagnosticRetriever(
+class ScriptDiagnosticRetriever(
     declaration: FirDeclaration,
     file: FirFile,
     moduleComponents: LLFirModuleResolveComponents,
@@ -203,7 +203,7 @@ internal class ScriptDiagnosticRetriever(
         return Visitor(context, components)
     }
 
-    private class Visitor(
+    class Visitor(
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents,
     ) : LLFirDiagnosticVisitor(context, components) {

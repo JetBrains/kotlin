@@ -280,6 +280,7 @@ test-dependencies:
   - ./../../compiler/backend
   - ./../../compiler/javac-wrapper
   - ./../../analysis/decompiled/decompiler-native
+  - ./../../analysis/decompiled/decompiler-native-tests
   - ./../../compiler/fir/fir-entrypoint
   - ./../../compiler/frontend.java
   - ./../../core/descriptors.jvm

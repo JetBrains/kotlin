@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-internal inline fun checkTypeRefIsResolved(
+inline fun checkTypeRefIsResolved(
     typeRef: FirTypeRef,
     typeRefName: String,
     owner: FirElementWithResolveState,
@@ -58,7 +58,7 @@ internal inline fun checkTypeRefIsResolved(
     }
 }
 
-internal inline fun checkExpressionTypeIsResolved(
+inline fun checkExpressionTypeIsResolved(
     type: ConeKotlinType?,
     typeName: String,
     owner: FirElement,
@@ -78,7 +78,7 @@ internal inline fun checkExpressionTypeIsResolved(
     }
 }
 
-internal fun <T> checkAnnotationTypeIsResolved(annotationContainer: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
+fun <T> checkAnnotationTypeIsResolved(annotationContainer: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
     annotationContainer.annotations.forEach { annotation ->
         checkTypeRefIsResolved(annotation.annotationTypeRef, "annotation type", owner = annotationContainer) {
             withFirEntry("firAnnotation", annotation)
@@ -94,14 +94,14 @@ internal fun <T> checkAnnotationTypeIsResolved(annotationContainer: T) where T :
     }
 }
 
-internal fun checkBodyIsResolved(function: FirFunction) {
+fun checkBodyIsResolved(function: FirFunction) {
     val block = function.body ?: return
     checkExpressionTypeIsResolved(block.coneTypeOrNull, "block type", function) {
         withFirEntry("block", block)
     }
 }
 
-internal fun checkExpectForActualIsResolved(memberDeclaration: FirMemberDeclaration) {
+fun checkExpectForActualIsResolved(memberDeclaration: FirMemberDeclaration) {
     if (memberDeclaration.isExpect) return
 
     checkWithAttachment(
@@ -112,7 +112,7 @@ internal fun checkExpectForActualIsResolved(memberDeclaration: FirMemberDeclarat
     }
 }
 
-internal fun checkDelegatedConstructorIsResolved(constructor: FirConstructor) {
+fun checkDelegatedConstructorIsResolved(constructor: FirConstructor) {
     val delegatedConstructorCall = constructor.delegatedConstructor ?: return
     val calleeReference = delegatedConstructorCall.calleeReference
     checkReferenceIsResolved(reference = calleeReference, owner = delegatedConstructorCall) {
@@ -120,7 +120,7 @@ internal fun checkDelegatedConstructorIsResolved(constructor: FirConstructor) {
     }
 }
 
-internal fun checkReferenceIsResolved(
+fun checkReferenceIsResolved(
     reference: FirReference,
     owner: FirResolvable,
     extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
@@ -138,21 +138,21 @@ internal fun checkReferenceIsResolved(
     }
 }
 
-internal fun checkInitializerIsResolved(variable: FirVariable) {
+fun checkInitializerIsResolved(variable: FirVariable) {
     val initializer = variable.initializer ?: return
     checkExpressionTypeIsResolved(initializer.coneTypeOrNull, "initializer type", variable) {
         withFirEntry("initializer", initializer)
     }
 }
 
-internal fun checkDefaultValueIsResolved(parameter: FirValueParameter) {
+fun checkDefaultValueIsResolved(parameter: FirValueParameter) {
     val defaultValue = parameter.defaultValue ?: return
     checkExpressionTypeIsResolved(defaultValue.coneTypeOrNull, "default value type", parameter) {
         withFirEntry("defaultValue", defaultValue)
     }
 }
 
-internal fun checkDeprecationProviderIsResolved(declaration: FirDeclaration, provider: DeprecationsProvider) {
+fun checkDeprecationProviderIsResolved(declaration: FirDeclaration, provider: DeprecationsProvider) {
     checkWithAttachment(
         condition = provider !is UnresolvedDeprecationProvider,
         message = { "Unresolved deprecation provider found for ${declaration::class.simpleName}" }
@@ -161,11 +161,11 @@ internal fun checkDeprecationProviderIsResolved(declaration: FirDeclaration, pro
     }
 }
 
-internal fun checkReturnTypeRefIsResolved(declaration: FirCallableDeclaration, acceptImplicitTypeRef: Boolean = false) {
+fun checkReturnTypeRefIsResolved(declaration: FirCallableDeclaration, acceptImplicitTypeRef: Boolean = false) {
     checkTypeRefIsResolved(declaration.returnTypeRef, typeRefName = "return type", declaration, acceptImplicitTypeRef)
 }
 
-internal fun checkContractDescriptionIsResolved(declaration: FirContractDescriptionOwner) {
+fun checkContractDescriptionIsResolved(declaration: FirContractDescriptionOwner) {
     val contractDescription = declaration.contractDescription ?: return
     checkWithAttachment(
         condition = contractDescription is FirResolvedContractDescription ||
@@ -176,7 +176,7 @@ internal fun checkContractDescriptionIsResolved(declaration: FirContractDescript
     }
 }
 
-internal fun checkDeclarationStatusIsResolved(declaration: FirMemberDeclaration) {
+fun checkDeclarationStatusIsResolved(declaration: FirMemberDeclaration) {
     val status = declaration.status
     checkWithAttachment(
         condition = status is FirResolvedDeclarationStatus,
@@ -186,7 +186,7 @@ internal fun checkDeclarationStatusIsResolved(declaration: FirMemberDeclaration)
     }
 }
 
-internal fun checkAnnotationsAreResolved(owner: FirAnnotationContainer, typeRef: FirTypeRef) {
+fun checkAnnotationsAreResolved(owner: FirAnnotationContainer, typeRef: FirTypeRef) {
     checkWithAttachment(typeRef is FirResolvedTypeRef, { "Unexpected type: ${typeRef::class.simpleName}" }) {
         withFirEntry("owner", owner)
         withFirEntry("type", typeRef)
@@ -195,7 +195,7 @@ internal fun checkAnnotationsAreResolved(owner: FirAnnotationContainer, typeRef:
     typeRef.accept(AnnotationChecker, owner)
 }
 
-internal fun FirAbstractBodyResolveTransformerDispatcher.checkAnnotationCallIsResolved(
+fun FirAbstractBodyResolveTransformerDispatcher.checkAnnotationCallIsResolved(
     symbol: FirBasedSymbol<*>,
     annotationCall: FirAnnotationCall,
 ) {
@@ -207,19 +207,19 @@ internal fun FirAbstractBodyResolveTransformerDispatcher.checkAnnotationCallIsRe
     checkAnnotationIsResolved(annotationCall, annotationContainer)
 }
 
-private object AnnotationChecker : NonLocalAnnotationVisitor<FirAnnotationContainer>() {
+object AnnotationChecker : NonLocalAnnotationVisitor<FirAnnotationContainer>() {
     override fun processAnnotation(annotation: FirAnnotation, data: FirAnnotationContainer) {
         checkAnnotationIsResolved(annotation, data)
     }
 }
 
-internal fun checkAnnotationsAreResolved(annotationContainer: FirAnnotationContainer) {
+fun checkAnnotationsAreResolved(annotationContainer: FirAnnotationContainer) {
     for (annotation in annotationContainer.annotations) {
         checkAnnotationIsResolved(annotation, annotationContainer)
     }
 }
 
-internal fun checkAnnotationIsResolved(annotation: FirAnnotation, annotationContainer: FirAnnotationContainer) {
+fun checkAnnotationIsResolved(annotation: FirAnnotation, annotationContainer: FirAnnotationContainer) {
     if (annotation is FirAnnotationCall) {
         checkWithAttachment(
             condition = annotation.argumentList is FirResolvedArgumentList,

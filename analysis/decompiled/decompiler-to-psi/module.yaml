@@ -272,6 +272,7 @@ test-dependencies:
   - ./../../../compiler/ir/serialization.native
   - ./../../../libraries/tools/kotlinp
   - ./../../../compiler/ir/ir.objcinterop
+  - ../decompiler-to-file-stubs-tests
 
 test-settings:
   kotlin:

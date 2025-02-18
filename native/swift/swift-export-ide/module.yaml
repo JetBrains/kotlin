@@ -176,6 +176,7 @@ test-dependencies:
   - ./../../../analysis/analysis-api-fir
   - ./../../../analysis/analysis-test-framework
   - ./../../../analysis/analysis-api-impl-base
+  - ./../../../analysis/analysis-api-impl-base-tests
   - ./../../../analysis/analysis-api
   - ./../../../analysis/low-level-api-fir
   - ./../../../compiler/tests-mutes/mutes-junit5
@@ -298,6 +299,7 @@ test-dependencies:
   - ./../../../plugins/plugin-sandbox
   - ./../../../analysis/symbol-light-classes
   - ./../../../analysis/decompiled/decompiler-native
+  - ./../../../analysis/decompiled/decompiler-native-tests
   - ./../../../core/compiler.common.native
   - ./../../../core/compiler.common.wasm
   - ./../../../core/compiler.common.web
@@ -323,4 +325,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xexplicit-api=disable, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

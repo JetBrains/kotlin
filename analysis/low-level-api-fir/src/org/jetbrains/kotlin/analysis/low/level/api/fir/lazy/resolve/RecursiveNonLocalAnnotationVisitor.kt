@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
  *
  * @see NonLocalAnnotationVisitor
  */
-internal abstract class RecursiveNonLocalAnnotationVisitor<T> : NonLocalAnnotationVisitor<T>() {
+abstract class RecursiveNonLocalAnnotationVisitor<T> : NonLocalAnnotationVisitor<T>() {
     override fun visitFile(file: FirFile, data: T) {
         super.visitFile(file, data)
 

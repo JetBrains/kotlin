@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsSc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.getMeter
 
-internal class LLSymbolProviderStatistics(statisticsService: LLStatisticsService) : LLStatisticsDomain {
-    private val meter = statisticsService.openTelemetry.getMeter(LLStatisticsScopes.SymbolProviders)
+class LLSymbolProviderStatistics(statisticsService: LLStatisticsService) : LLStatisticsDomain {
+    val meter = statisticsService.openTelemetry.getMeter(LLStatisticsScopes.SymbolProviders)
 
     /**
      * A global [Caffeine stats counter][com.github.benmanes.caffeine.cache.stats.StatsCounter] for combined symbol provider caches.

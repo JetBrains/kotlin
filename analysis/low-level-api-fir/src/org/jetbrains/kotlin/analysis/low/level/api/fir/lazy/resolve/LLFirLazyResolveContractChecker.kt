@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
  * @see FirResolvePhase
  * @see FirLazyResolveContractViolationException
  */
-internal class LLFirLazyResolveContractChecker {
-    private val currentTransformerPhase = ThreadLocal.withInitial<FirResolvePhase?> { null }
+class LLFirLazyResolveContractChecker {
+    val currentTransformerPhase = ThreadLocal.withInitial<FirResolvePhase?> { null }
 
     inline fun lazyResolveToPhaseInside(phase: FirResolvePhase, resolve: () -> Unit) {
         checkIfCanLazyResolveToPhase(phase)
@@ -31,7 +31,7 @@ internal class LLFirLazyResolveContractChecker {
         }
     }
 
-    private fun checkIfCanLazyResolveToPhase(requestedPhase: FirResolvePhase) {
+    fun checkIfCanLazyResolveToPhase(requestedPhase: FirResolvePhase) {
         val currentPhase = currentTransformerPhase.get() ?: return
 
         if (!currentPhase.isItAllowedToCallLazyResolveTo(requestedPhase)) {
@@ -44,7 +44,7 @@ internal class LLFirLazyResolveContractChecker {
         }
     }
 
-    private object LoggerHolder {
+    object LoggerHolder {
         val LOG = Logger.getInstance(LLFirLazyResolveContractChecker::class.java)
     }
 }

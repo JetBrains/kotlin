@@ -62,7 +62,7 @@ internal val KtModifierListOwner.visibility: Visibility
         }
     }
 
-internal val KtDeclaration.modality: Modality
+val KtDeclaration.modality: Modality
     get() {
         return when {
             hasModifier(KtTokens.SEALED_KEYWORD) -> Modality.SEALED
@@ -72,8 +72,8 @@ internal val KtDeclaration.modality: Modality
         }
     }
 
-private val STUBS_KEY = Key.create<WeakReference<List<Stub>?>>("STUBS")
-internal fun <S, T> loadStubByElement(ktElement: T): S? where T : StubBasedPsiElementBase<*>, T : KtElement {
+val STUBS_KEY = Key.create<WeakReference<List<Stub>?>>("STUBS")
+fun <S, T> loadStubByElement(ktElement: T): S? where T : StubBasedPsiElementBase<*>, T : KtElement {
     ktElement.greenStub?.let {
         @Suppress("UNCHECKED_CAST")
         return it as S
@@ -99,7 +99,7 @@ internal fun <S, T> loadStubByElement(ktElement: T): S? where T : StubBasedPsiEl
     return stubList[nodeList.indexOf(ktElement.node)] as S
 }
 
-internal fun deserializeClassToSymbol(
+fun deserializeClassToSymbol(
     classId: ClassId,
     classOrObject: KtClassOrObject,
     symbol: FirRegularClassSymbol,
@@ -272,7 +272,7 @@ internal fun deserializeClassToSymbol(
     }
 }
 
-private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<ConeRigidType>? {
+fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<ConeRigidType>? {
     val representation = valueClassRepresentation ?: return null
     val constructor = klass.declarations.firstNotNullOfOrNull { declaration ->
         (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
@@ -297,7 +297,7 @@ private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRe
     }
 }
 
-private fun FirValueParameter.coneRigidType(): ConeRigidType {
+fun FirValueParameter.coneRigidType(): ConeRigidType {
     val type = returnTypeRef.coneType
     requireWithAttachment(type is ConeRigidType, { "Underlying type must be rigid type" }) {
         withConeTypeEntry("type", type)
@@ -307,7 +307,7 @@ private fun FirValueParameter.coneRigidType(): ConeRigidType {
     return type
 }
 
-private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(classOrObject: KtClassOrObject, dispatchReceiver: ConeClassLikeType?) {
+fun FirRegularClassBuilder.addCloneForEnumIfNeeded(classOrObject: KtClassOrObject, dispatchReceiver: ConeClassLikeType?) {
     val hasCloneFunction = classOrObject.declarations
         .any { it is KtNamedFunction && it.name == "clone" && it.valueParameters.isEmpty() }
 

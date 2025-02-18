@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
-internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
+class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
             register(
@@ -116,7 +116,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KaModule) {
+    fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KaModule) {
         if (module.targetPlatform.has<JvmPlatform>())
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
     }

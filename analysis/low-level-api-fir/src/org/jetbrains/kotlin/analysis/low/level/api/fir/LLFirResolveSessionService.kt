@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 @LLFirInternals
 class LLFirResolveSessionService(project: Project) {
-    private val cache = LLFirSessionCache.getInstance(project)
+    val cache = LLFirSessionCache.getInstance(project)
 
     fun getFirResolveSession(module: KaModule): LLFirResolveSession {
         return create(module, cache::getSession)
@@ -48,7 +48,7 @@ class LLFirResolveSessionService(project: Project) {
         return create(module, cache::getSessionNoCaching)
     }
 
-    private fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLFirResolvableResolveSession {
+    fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLFirResolvableResolveSession {
         val moduleProvider = LLModuleProvider(module)
         val sessionProvider = LLSessionProvider(module, factory)
         val resolutionStrategyProvider = createResolutionStrategyProvider(module, moduleProvider)
@@ -57,7 +57,7 @@ class LLFirResolveSessionService(project: Project) {
         return LLFirResolvableResolveSession(moduleProvider, resolutionStrategyProvider, sessionProvider, diagnosticProvider)
     }
 
-    private fun createResolutionStrategyProvider(module: KaModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {
+    fun createResolutionStrategyProvider(module: KaModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {
         return when (module) {
             is KaSourceModule -> LLSourceModuleResolutionStrategyProvider
             is KaLibraryModule, is KaBuiltinsModule, is KaLibrarySourceModule -> LLBinaryModuleResolutionStrategyProvider(module)
@@ -76,7 +76,7 @@ class LLFirResolveSessionService(project: Project) {
         }
     }
 
-    private fun createDiagnosticProvider(moduleProvider: LLModuleProvider, sessionProvider: LLSessionProvider): LLDiagnosticProvider {
+    fun createDiagnosticProvider(moduleProvider: LLModuleProvider, sessionProvider: LLSessionProvider): LLDiagnosticProvider {
         return when (moduleProvider.useSiteModule) {
             is KaSourceModule,
             is KaScriptModule,
@@ -92,7 +92,7 @@ class LLFirResolveSessionService(project: Project) {
     }
 }
 
-private object LLSourceModuleResolutionStrategyProvider : LLModuleResolutionStrategyProvider {
+object LLSourceModuleResolutionStrategyProvider : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
             is KaSourceModule -> LLModuleResolutionStrategy.LAZY
@@ -103,14 +103,14 @@ private object LLSourceModuleResolutionStrategyProvider : LLModuleResolutionStra
 }
 
 
-private class LLBinaryModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
+class LLBinaryModuleResolutionStrategyProvider(val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
         return if (module == useSiteModule) LLModuleResolutionStrategy.LAZY else LLModuleResolutionStrategy.STATIC
     }
 }
 
-private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
+class LLScriptModuleResolutionStrategyProvider(val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
             useSiteModule, is KaSourceModule, is KaLibrarySourceModule -> LLModuleResolutionStrategy.LAZY
@@ -120,7 +120,7 @@ private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule
     }
 }
 
-private class LLDanglingFileResolutionStrategyProvider(private val delegate: LLModuleResolutionStrategyProvider) :
+class LLDanglingFileResolutionStrategyProvider(val delegate: LLModuleResolutionStrategyProvider) :
     LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {

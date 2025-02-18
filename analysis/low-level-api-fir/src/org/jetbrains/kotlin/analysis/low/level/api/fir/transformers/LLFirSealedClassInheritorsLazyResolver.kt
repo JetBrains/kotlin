@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 
-internal object LLFirSealedClassInheritorsLazyResolver : LLFirLazyResolver(FirResolvePhase.SEALED_CLASS_INHERITORS) {
+object LLFirSealedClassInheritorsLazyResolver : LLFirLazyResolver(FirResolvePhase.SEALED_CLASS_INHERITORS) {
     override fun createTargetResolver(
         target: LLFirResolveTarget,
     ): LLFirTargetResolver = LLFirSealedClassInheritorsDesignatedResolver(target)
@@ -29,7 +29,7 @@ internal object LLFirSealedClassInheritorsLazyResolver : LLFirLazyResolver(FirRe
  * @see org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
  * @see FirResolvePhase.SEALED_CLASS_INHERITORS
  */
-private class LLFirSealedClassInheritorsDesignatedResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
+class LLFirSealedClassInheritorsDesignatedResolver(target: LLFirResolveTarget) : LLFirTargetResolver(
     target,
     FirResolvePhase.SEALED_CLASS_INHERITORS,
 ) {

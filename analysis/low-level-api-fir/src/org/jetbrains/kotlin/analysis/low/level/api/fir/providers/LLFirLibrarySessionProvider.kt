@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class LLFirLibrarySessionProvider(
+class LLFirLibrarySessionProvider(
     override val symbolProvider: FirSymbolProvider
 ) : FirProvider() {
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
@@ -32,6 +32,6 @@ internal class LLFirLibrarySessionProvider(
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> = shouldNotBeCalled()
 
-    private fun shouldNotBeCalled(): Nothing = error("Should not be called for LLFirLibrarySessionProvider")
+    fun shouldNotBeCalled(): Nothing = error("Should not be called for LLFirLibrarySessionProvider")
 }
 

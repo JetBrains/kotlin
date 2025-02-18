@@ -110,14 +110,18 @@ test-dependencies:
   - io.opentelemetry:opentelemetry-context:1.41.0
   - ./../../compiler/tests-spec
   - ./../../analysis/analysis-api-fir
+  - ./../../analysis/analysis-api-fir-tests
   - ./../../analysis/low-level-api-fir
   - ./../../compiler/tests-common
   - ./../test-generator
   - ./../../analysis/analysis-api-fe10
   - ./../../analysis/analysis-api-impl-base
+  - ./../../analysis/analysis-api-impl-base-tests
   - ./../../analysis/analysis-api-standalone
   - ./../../analysis/decompiled/decompiler-native
+  - ./../../analysis/decompiled/decompiler-native-tests
   - ./../../analysis/decompiled/decompiler-to-file-stubs
+  - ./../../analysis/decompiled/decompiler-to-file-stubs-tests
   - ./../../analysis/decompiled/decompiler-to-psi
   - ./../../analysis/symbol-light-classes
   - ./../../dependencies/intellij-core

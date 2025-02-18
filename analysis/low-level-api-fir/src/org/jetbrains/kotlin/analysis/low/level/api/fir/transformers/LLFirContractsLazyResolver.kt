@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 
-internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.CONTRACTS) {
+object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.CONTRACTS) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirContractsTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
@@ -46,7 +46,7 @@ internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.C
  * @see FirContractResolveTransformer
  * @see FirResolvePhase.CONTRACTS
  */
-private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
+class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     target,
     FirResolvePhase.CONTRACTS,
 ) {
@@ -95,7 +95,7 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
         }
     }
 
-    private fun <T> resolveContracts(
+    fun <T> resolveContracts(
         target: T,
         keeper: StateKeeper<T, FirDesignation>,
     ) where T : FirElementWithResolveState {
@@ -106,7 +106,7 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
         }
     }
 
-    private fun dropRedundantContractDescription(target: FirElementWithResolveState) {
+    fun dropRedundantContractDescription(target: FirElementWithResolveState) {
         when (target) {
             is FirSimpleFunction, is FirConstructor -> dropRedundantContractDescriptionForFunction(target)
             is FirProperty -> {
@@ -124,7 +124,7 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
      *
      * In this case we can safely drop the calculated body as it is unnecessary and anyway will be recreated on next phases.
      */
-    private fun <T> dropRedundantContractDescriptionForFunction(target: T) where T : FirFunction, T : FirContractDescriptionOwner {
+    fun <T> dropRedundantContractDescriptionForFunction(target: T) where T : FirFunction, T : FirContractDescriptionOwner {
         val contractDescription = target.contractDescription
         // Declarations with initial [FirRawContractDescription] doesn't require to drop body as they don't calculate it
         if (contractDescription is FirResolvedContractDescription) return
@@ -135,8 +135,8 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
     }
 }
 
-private object ContractStateKeepers {
-    private val CONTRACT_DESCRIPTION_OWNER: StateKeeper<FirContractDescriptionOwner, FirDesignation> = stateKeeper { builder, _, _ ->
+object ContractStateKeepers {
+    val CONTRACT_DESCRIPTION_OWNER: StateKeeper<FirContractDescriptionOwner, FirDesignation> = stateKeeper { builder, _, _ ->
         builder.add(
             FirContractDescriptionOwner::contractDescription,
             FirContractDescriptionOwner::replaceContractDescription,
@@ -144,7 +144,7 @@ private object ContractStateKeepers {
         )
     }
 
-    private val BODY_OWNER: StateKeeper<FirFunction, FirDesignation> = stateKeeper { builder, declaration, _ ->
+    val BODY_OWNER: StateKeeper<FirFunction, FirDesignation> = stateKeeper { builder, declaration, _ ->
         if (declaration is FirContractDescriptionOwner && declaration.contractDescription is FirRawContractDescription) {
             // No need to change the body, contract is declared separately
             return@stateKeeper
@@ -165,7 +165,7 @@ private object ContractStateKeepers {
         builder.add(BODY_OWNER, designation)
     }
 
-    private val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor, FirDesignation> = stateKeeper { builder, _, designation ->
+    val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor, FirDesignation> = stateKeeper { builder, _, designation ->
         builder.add(CONTRACT_DESCRIPTION_OWNER, designation)
         builder.add(BODY_OWNER, designation)
     }

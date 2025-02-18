@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSetti
  * flag), even if attached as a .jar dependency (i.e., not Stdlib project itself).
  * This is done for all library source analysis sessions because there's no reliable way to distinguish stdlib .jar from other libs.
  */
-internal fun LLFirSession.createLookupDefaultStarImportsInSourcesSettingHolder(
+fun LLFirSession.createLookupDefaultStarImportsInSourcesSettingHolder(
     languageVersionSettings: LanguageVersionSettings,
 ): FirLookupDefaultStarImportsInSourcesSettingHolder {
     val value =
@@ -24,5 +24,5 @@ internal fun LLFirSession.createLookupDefaultStarImportsInSourcesSettingHolder(
     return FirLookupDefaultStarImportsInSourcesSettingHolder(value)
 }
 
-private fun LLFirSession.isLibrarySourceAnalysisSession(): Boolean =
+fun LLFirSession.isLibrarySourceAnalysisSession(): Boolean =
     this is LLFirLibraryOrLibrarySourceResolvableModuleSession && ktModule is KaLibrarySourceModule

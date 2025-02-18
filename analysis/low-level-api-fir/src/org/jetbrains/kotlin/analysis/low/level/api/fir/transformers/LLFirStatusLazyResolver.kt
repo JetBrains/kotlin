@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.utils.SmartSet
 
-internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
+object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STATUS) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirStatusTargetResolver(
         target = target,
         resolveMode = target.resolveMode(),
@@ -39,7 +39,7 @@ internal object LLFirStatusLazyResolver : LLFirLazyResolver(FirResolvePhase.STAT
     }
 }
 
-private sealed class StatusResolveMode(val resolveSupertypes: Boolean) {
+sealed class StatusResolveMode(val resolveSupertypes: Boolean) {
     abstract fun shouldBeResolved(callableDeclaration: FirCallableDeclaration): Boolean
 
     object OnlyTarget : StatusResolveMode(resolveSupertypes = false) {
@@ -51,7 +51,7 @@ private sealed class StatusResolveMode(val resolveSupertypes: Boolean) {
     }
 }
 
-private fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
+fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
     is LLFirSingleResolveTarget -> when (target) {
         is FirClassLikeDeclaration -> StatusResolveMode.OnlyTarget
         else -> StatusResolveMode.AllCallables
@@ -60,9 +60,9 @@ private fun LLFirResolveTarget.resolveMode(): StatusResolveMode = when (this) {
     else -> StatusResolveMode.AllCallables
 }
 
-private class LLStatusComputationSession : StatusComputationSession() {
+class LLStatusComputationSession : StatusComputationSession() {
     val useSiteSessions: List<LLFirSession> get() = _useSiteSessions
-    private val _useSiteSessions: MutableList<LLFirSession> = mutableListOf<LLFirSession>()
+    val _useSiteSessions: MutableList<LLFirSession> = mutableListOf<LLFirSession>()
 
     inline fun withClassSession(regularClass: FirClass, action: () -> Unit) {
         val newSession = regularClass.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
@@ -90,12 +90,12 @@ private class LLStatusComputationSession : StatusComputationSession() {
  * @see FirStatusResolveTransformer
  * @see FirResolvePhase.STATUS
  */
-private class LLFirStatusTargetResolver(
+class LLFirStatusTargetResolver(
     target: LLFirResolveTarget,
-    private val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(),
-    private val resolveMode: StatusResolveMode,
+    val statusComputationSession: LLStatusComputationSession = LLStatusComputationSession(),
+    val resolveMode: StatusResolveMode,
 ) : LLFirTargetResolver(target, FirResolvePhase.STATUS) {
-    private val transformer = Transformer(resolveTargetSession, resolveTargetScopeSession)
+    val transformer = Transformer(resolveTargetSession, resolveTargetScopeSession)
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
@@ -108,11 +108,11 @@ private class LLFirStatusTargetResolver(
         transformer.statusComputationSession.endComputing(firClass)
     }
 
-    private fun resolveClassTypeParameters(klass: FirClass) {
+    fun resolveClassTypeParameters(klass: FirClass) {
         klass.typeParameters.forEach { it.transformSingle(transformer, data = null) }
     }
 
-    private fun resolveCallableMembers(klass: FirClass) {
+    fun resolveCallableMembers(klass: FirClass) {
         for (member in klass.declarations) {
             if (member !is FirCallableDeclaration || !resolveMode.shouldBeResolved(member)) continue
 
@@ -176,7 +176,7 @@ private class LLFirStatusTargetResolver(
         }
     }
 
-    private fun resolveClass(firClass: FirRegularClass) {
+    fun resolveClass(firClass: FirRegularClass) {
         transformer.statusComputationSession.startComputing(firClass)
 
         if (resolveMode.resolveSupertypes) {
@@ -207,7 +207,7 @@ private class LLFirStatusTargetResolver(
         }
     }
 
-    private inner class Transformer(
+    inner class Transformer(
         session: FirSession,
         scopeSession: ScopeSession,
     ) : FirStatusResolveTransformer(session, scopeSession, statusComputationSession) {

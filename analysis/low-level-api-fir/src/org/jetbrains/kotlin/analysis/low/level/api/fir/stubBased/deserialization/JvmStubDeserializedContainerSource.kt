@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 //required for LLFirDependenciesSymbolProvider#jvmClassName, to resolve ambiguities
 //todo check if moving builtins to stubs would solve the issue
-internal class JvmStubDeserializedContainerSource(classId: ClassId) : DeserializedContainerSourceWithJvmClassName {
+class JvmStubDeserializedContainerSource(classId: ClassId) : DeserializedContainerSourceWithJvmClassName {
     override val className = JvmClassName.byClassId(classId)
 
     override val incompatibility: IncompatibleVersionErrorData<*>?

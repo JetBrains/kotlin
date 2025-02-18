@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
-internal fun createStubBasedFirSymbolProviderForClassFiles(
+fun createStubBasedFirSymbolProviderForClassFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
     isFallbackDependenciesProvider: Boolean,
@@ -30,7 +30,7 @@ internal fun createStubBasedFirSymbolProviderForClassFiles(
     extension == JavaClassFileType.INSTANCE.defaultExtension || extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
 }
 
-internal fun createStubBasedFirSymbolProviderForCommonMetadataFiles(
+fun createStubBasedFirSymbolProviderForCommonMetadataFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
     isFallbackDependenciesProvider: Boolean,
@@ -47,7 +47,7 @@ internal fun createStubBasedFirSymbolProviderForCommonMetadataFiles(
             extension == KLIB_METADATA_FILE_EXTENSION
 }
 
-internal fun createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
+fun createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
     isFallbackDependenciesProvider: Boolean,
@@ -58,7 +58,7 @@ internal fun createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
     isFallbackDependenciesProvider,
 ) { file -> file.extension == KLIB_METADATA_FILE_EXTENSION }
 
-internal fun createStubBasedFirSymbolProviderForScopeLimitedByFiles(
+fun createStubBasedFirSymbolProviderForScopeLimitedByFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
     deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
@@ -78,7 +78,7 @@ internal fun createStubBasedFirSymbolProviderForScopeLimitedByFiles(
     )
 }
 
-private fun <T : FirSymbolProvider> createFirSymbolProviderForScopeLimitedByFiles(
+fun <T : FirSymbolProvider> createFirSymbolProviderForScopeLimitedByFiles(
     project: Project,
     baseScope: GlobalSearchScope,
     fileFilter: (VirtualFile) -> Boolean,

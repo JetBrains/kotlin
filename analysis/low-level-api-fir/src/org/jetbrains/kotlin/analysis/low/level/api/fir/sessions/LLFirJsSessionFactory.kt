@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory.registerJsComponents
 
 @OptIn(SessionConfiguration::class)
-internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
+class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
             registerJsComponents(moduleKind = null)

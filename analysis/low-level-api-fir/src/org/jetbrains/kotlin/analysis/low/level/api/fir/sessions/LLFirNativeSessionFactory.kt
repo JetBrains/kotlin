@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory.registerNativeCo
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
-internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
+class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
             registerNativeComponents()

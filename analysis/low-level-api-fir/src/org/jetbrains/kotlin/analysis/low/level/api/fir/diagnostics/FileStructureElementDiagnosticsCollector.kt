@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.LLFirStructureElementDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
-internal fun collectForStructureElement(
+fun collectForStructureElement(
     firDeclaration: FirDeclaration,
     filter: DiagnosticCheckerFilter,
     createVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,

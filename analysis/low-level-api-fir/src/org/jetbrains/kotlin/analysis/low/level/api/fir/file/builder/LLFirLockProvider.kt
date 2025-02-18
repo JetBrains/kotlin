@@ -27,8 +27,8 @@ import java.util.concurrent.locks.ReentrantLock
  * @see withReadLock
  * @see withJumpingLock
  */
-internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractChecker) {
-    private val globalLock = ReentrantLock()
+class LLFirLockProvider(val checker: LLFirLazyResolveContractChecker) {
+    val globalLock = ReentrantLock()
 
     inline fun <R> withGlobalLock(
         lockingIntervalMs: Long = DEFAULT_LOCKING_INTERVAL,
@@ -97,7 +97,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
      *  - If some other thread tries to resolve current [FirElementWithResolveState], it changes `resolveState` and puts the barrier there. Then it awaits on it until the initial thread which hold the lock finishes its job.
      *  - This way, no barrier is used in a case when no contention arise.
      */
-    private inline fun FirElementWithResolveState.withLock(
+    inline fun FirElementWithResolveState.withLock(
         toPhase: FirResolvePhase,
         updatePhase: Boolean,
         action: () -> Unit,
@@ -149,13 +149,13 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         }
     }
 
-    private fun waitOnBarrier(
+    fun waitOnBarrier(
         stateSnapshot: FirInProcessOfResolvingToPhaseStateWithBarrier,
     ): Boolean {
         return stateSnapshot.barrier.await(DEFAULT_LOCKING_INTERVAL, TimeUnit.MILLISECONDS)
     }
 
-    private fun FirElementWithResolveState.trySettingBarrier(
+    fun FirElementWithResolveState.trySettingBarrier(
         toPhase: FirResolvePhase,
         stateSnapshot: FirResolveState,
     ) {
@@ -163,7 +163,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         resolveStateFieldUpdater.compareAndSet(this, stateSnapshot, newState)
     }
 
-    private fun FirElementWithResolveState.tryLock(
+    fun FirElementWithResolveState.tryLock(
         toPhase: FirResolvePhase,
         stateSnapshot: FirResolveState,
     ): Boolean {
@@ -171,7 +171,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         return resolveStateFieldUpdater.compareAndSet(this, stateSnapshot, newState)
     }
 
-    private fun FirElementWithResolveState.unlock(toPhase: FirResolvePhase) {
+    fun FirElementWithResolveState.unlock(toPhase: FirResolvePhase) {
         when (val stateSnapshotAfter = resolveStateFieldUpdater.getAndSet(this, FirResolvedToPhaseState(toPhase))) {
             is FirInProcessOfResolvingToPhaseStateWithoutBarrier -> {}
             is FirInProcessOfResolvingToPhaseStateWithBarrier -> {
@@ -214,7 +214,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
      * @see tryJumpingLock
      * @see jumpingUnlock
      */
-    private val jumpingResolutionStatesStack = JumpingResolutionStatesStack()
+    val jumpingResolutionStatesStack = JumpingResolutionStatesStack()
 
     /**
      * Locks an a [FirElementWithResolveState] to resolve from `toPhase - 1` to [toPhase] and
@@ -250,7 +250,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
      *
      *  @see withJumpingLock
      */
-    private fun FirElementWithResolveState.withJumpingLockImpl(
+    fun FirElementWithResolveState.withJumpingLockImpl(
         toPhase: FirResolvePhase,
         actionUnderLock: () -> Unit,
         actionOnCycle: () -> Unit,
@@ -327,7 +327,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
      * @see withJumpingLockImpl
      * @see FirInProcessOfResolvingToJumpingPhaseState
      */
-    private fun FirElementWithResolveState.tryJumpingLock(
+    fun FirElementWithResolveState.tryJumpingLock(
         toPhase: FirResolvePhase,
         stateSnapshot: FirResolveState,
     ): Boolean {
@@ -347,7 +347,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
      * @see FirInProcessOfResolvingToJumpingPhaseState
      * @see FirResolvedToPhaseState
      */
-    private fun FirElementWithResolveState.jumpingUnlock(toPhase: FirResolvePhase) {
+    fun FirElementWithResolveState.jumpingUnlock(toPhase: FirResolvePhase) {
         val currentState = jumpingResolutionStatesStack.pop()
 
         resolveStateFieldUpdater.set(this, FirResolvedToPhaseState(toPhase))
@@ -355,23 +355,23 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     }
 }
 
-private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
+val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
     FirElementWithResolveState::class.java,
     FirResolveState::class.java,
     "resolveState"
 )
 
-private val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
     Registry.`is`("kotlin.parallel.resolve.under.global.lock", false)
 }
 
-private const val DEFAULT_LOCKING_INTERVAL = 50L
+const val DEFAULT_LOCKING_INTERVAL = 50L
 
 /**
  * @see FirInProcessOfResolvingToJumpingPhaseState
  */
-private class JumpingResolutionStatesStack {
-    private val stateStackHolder = ThreadLocal.withInitial<MutableList<FirInProcessOfResolvingToJumpingPhaseState>> {
+class JumpingResolutionStatesStack {
+    val stateStackHolder = ThreadLocal.withInitial<MutableList<FirInProcessOfResolvingToJumpingPhaseState>> {
         mutableListOf()
     }
 

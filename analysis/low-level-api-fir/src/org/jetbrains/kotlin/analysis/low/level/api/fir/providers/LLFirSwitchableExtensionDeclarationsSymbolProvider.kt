@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSym
  *
  * @see org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
  */
-internal class LLFirSwitchableExtensionDeclarationsSymbolProvider private constructor(
+class LLFirSwitchableExtensionDeclarationsSymbolProvider constructor(
     delegate: FirExtensionDeclarationsSymbolProvider
 ) : FirSwitchableExtensionDeclarationsSymbolProvider(delegate) {
     companion object {
@@ -39,7 +39,7 @@ internal class LLFirSwitchableExtensionDeclarationsSymbolProvider private constr
      *
      * N.B. We assume that there should be no thread-switching in the compiler code (e.g., due to coroutines).
      */
-    private val disabledThreadLocal: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
+    val disabledThreadLocal: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
     override var disabled: Boolean
         get() = disabledThreadLocal.get()

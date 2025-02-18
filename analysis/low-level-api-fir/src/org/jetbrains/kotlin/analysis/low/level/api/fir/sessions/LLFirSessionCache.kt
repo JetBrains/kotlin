@@ -32,25 +32,25 @@ import org.jetbrains.kotlin.platform.konan.NativePlatform
  * Removal from the session storage invokes the [LLFirSession]'s cleaner, which marks the session as invalid and disposes any disposables
  * registered with the session's disposable.
  */
-private typealias SessionStorage = CleanableValueReferenceCache<KaModule, LLFirSession>
+typealias SessionStorage = CleanableValueReferenceCache<KaModule, LLFirSession>
 
 @LLFirInternals
-class LLFirSessionCache(private val project: Project) : Disposable {
+class LLFirSessionCache(val project: Project) : Disposable {
     companion object {
         fun getInstance(project: Project): LLFirSessionCache {
             return project.getService(LLFirSessionCache::class.java)
         }
     }
 
-    private val sourceCache: SessionStorage = createWeakValueCache()
-    private val binaryCache: SessionStorage = createSoftValueCache()
-    private val danglingFileSessionCache: SessionStorage = createWeakValueCache()
-    private val unstableDanglingFileSessionCache: SessionStorage = createWeakValueCache()
+    val sourceCache: SessionStorage = createWeakValueCache()
+    val binaryCache: SessionStorage = createSoftValueCache()
+    val danglingFileSessionCache: SessionStorage = createWeakValueCache()
+    val unstableDanglingFileSessionCache: SessionStorage = createWeakValueCache()
 
-    private fun createWeakValueCache(): SessionStorage =
+    fun createWeakValueCache(): SessionStorage =
         CleanableWeakValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
 
-    private fun createSoftValueCache(): SessionStorage =
+    fun createSoftValueCache(): SessionStorage =
         CleanableSoftValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
 
     /**
@@ -81,11 +81,11 @@ class LLFirSessionCache(private val project: Project) : Disposable {
      * Returns a session without caching it.
      * Note that session dependencies are still cached.
      */
-    internal fun getSessionNoCaching(module: KaModule): LLFirSession {
+    fun getSessionNoCaching(module: KaModule): LLFirSession {
         return createSession(module)
     }
 
-    private fun getDanglingFileCachedSession(module: KaDanglingFileModule): LLFirSession {
+    fun getDanglingFileCachedSession(module: KaDanglingFileModule): LLFirSession {
         if (module.isStable) {
             return getCachedSession(module, danglingFileSessionCache, ::createSession)
         }
@@ -106,7 +106,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         return session
     }
 
-    private fun <T : KaModule> getCachedSession(module: T, storage: SessionStorage, factory: (T) -> LLFirSession): LLFirSession {
+    fun <T : KaModule> getCachedSession(module: T, storage: SessionStorage, factory: (T) -> LLFirSession): LLFirSession {
         checkCanceled()
 
         val session = if (module.supportsIsolatedSessionCreation) {
@@ -124,7 +124,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         return session
     }
 
-    private fun checkSessionValidity(session: LLFirSession) {
+    fun checkSessionValidity(session: LLFirSession) {
         require(session.isValid) { "A session acquired via `getSession` should always be valid. Module: ${session.ktModule}" }
     }
 
@@ -144,7 +144,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         return didSourceSessionExist || didBinarySessionExist || didDanglingFileSessionExist || didUnstableDanglingFileSessionExist
     }
 
-    private fun removeSessionFrom(module: KaModule, storage: SessionStorage): Boolean = storage.remove(module) != null
+    fun removeSessionFrom(module: KaModule, storage: SessionStorage): Boolean = storage.remove(module) != null
 
     /**
      * Removes all sessions after global invalidation. If [includeLibraryModules] is `false`, sessions of library modules will not be
@@ -180,7 +180,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         }
     }
 
-    private tailrec fun hasContextModule(module: KaDanglingFileModule, contextModule: KaModule): Boolean {
+    tailrec fun hasContextModule(module: KaDanglingFileModule, contextModule: KaModule): Boolean {
         return when (val candidate = module.contextModule) {
             contextModule -> true
             is KaDanglingFileModule -> hasContextModule(candidate, contextModule)
@@ -201,15 +201,15 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         removeAllScriptSessionsFrom(binaryCache)
     }
 
-    private fun removeAllScriptSessionsFrom(storage: SessionStorage) {
+    fun removeAllScriptSessionsFrom(storage: SessionStorage) {
         removeAllMatchingSessionsFrom(storage) { it is KaScriptModule || it is KaScriptDependencyModule }
     }
 
-    private fun removeAllSessionsFrom(storage: SessionStorage) {
+    fun removeAllSessionsFrom(storage: SessionStorage) {
         storage.clear()
     }
 
-    private inline fun removeAllMatchingSessionsFrom(storage: SessionStorage, shouldBeRemoved: (KaModule) -> Boolean) {
+    inline fun removeAllMatchingSessionsFrom(storage: SessionStorage, shouldBeRemoved: (KaModule) -> Boolean) {
         // Because this function is executed in a write action, we do not need concurrency guarantees to remove all matching sessions, so a
         // "collect and remove" approach also works.
         storage.keys.forEach { module ->
@@ -223,10 +223,10 @@ class LLFirSessionCache(private val project: Project) : Disposable {
      * Whether the session for this [KaModule] can be created without getting other sessions from the cache. Should be kept in sync with
      * [createSession].
      */
-    private val KaModule.supportsIsolatedSessionCreation: Boolean
+    val KaModule.supportsIsolatedSessionCreation: Boolean
         get() = this !is KaDanglingFileModule
 
-    private fun createSession(module: KaModule): LLFirSession {
+    fun createSession(module: KaModule): LLFirSession {
         val sessionFactory = createPlatformAwareSessionFactory(module)
         return when (module) {
             is KaSourceModule -> sessionFactory.createSourcesSession(module)
@@ -250,7 +250,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         }
     }
 
-    private fun createPlatformAwareSessionFactory(module: KaModule): LLFirAbstractSessionFactory {
+    fun createPlatformAwareSessionFactory(module: KaModule): LLFirAbstractSessionFactory {
         val targetPlatform = module.targetPlatform
         return when {
             targetPlatform.all { it is JvmPlatform } -> LLFirJvmSessionFactory(project)
@@ -265,7 +265,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
     }
 }
 
-internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession) {
+fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession) {
     val project = session.project
     for (extension in extensionPointName.getExtensionList(project)) {
         extension.configure(session)

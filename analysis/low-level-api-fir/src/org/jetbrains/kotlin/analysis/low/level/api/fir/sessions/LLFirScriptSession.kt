@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
-internal class LLFirScriptSession @PrivateSessionConstructor constructor(
+class LLFirScriptSession @PrivateSessionConstructor constructor(
     ktModule: KaScriptModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes

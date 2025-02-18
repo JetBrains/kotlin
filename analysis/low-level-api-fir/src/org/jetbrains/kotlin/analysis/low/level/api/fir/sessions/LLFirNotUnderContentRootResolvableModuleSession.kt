@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootM
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
-internal class LLFirNotUnderContentRootResolvableModuleSession @PrivateSessionConstructor constructor(
+class LLFirNotUnderContentRootResolvableModuleSession @PrivateSessionConstructor constructor(
     ktModule: KaNotUnderContentRootModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,

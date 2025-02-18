@@ -14,8 +14,8 @@ import kotlin.time.Duration.Companion.milliseconds
 /**
  * Schedules periodic statistics domain updates.
  */
-internal class LLStatisticsScheduler(private val statisticsService: LLStatisticsService) {
-    private var scheduledUpdates: ScheduledFuture<*>? = null
+class LLStatisticsScheduler(val statisticsService: LLStatisticsService) {
+    var scheduledUpdates: ScheduledFuture<*>? = null
 
     /**
      * [schedule] must only be called *once* from a single thread.
@@ -26,7 +26,7 @@ internal class LLStatisticsScheduler(private val statisticsService: LLStatistics
         }
     }
 
-    private fun scheduleWithInterval(interval: Duration, action: Runnable): ScheduledFuture<*> {
+    fun scheduleWithInterval(interval: Duration, action: Runnable): ScheduledFuture<*> {
         val milliseconds = interval.inWholeMilliseconds
         return AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(
             action,
@@ -45,6 +45,6 @@ internal class LLStatisticsScheduler(private val statisticsService: LLStatistics
     }
 
     companion object {
-        private val updateInterval = 20.milliseconds
+        val updateInterval = 20.milliseconds
     }
 }

@@ -74,15 +74,15 @@ class CompilationPeerData(
     val inlinedClasses: Set<KtClassOrObject>
 )
 
-private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
-    private val processed = mutableSetOf<FirDeclaration>()
+class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
+    val processed = mutableSetOf<FirDeclaration>()
 
     /** The entry of this class must be [process]. In that case, [queue] will always be initialized by [process] */
-    private lateinit var queue: MutableSet<FirDeclaration>
+    lateinit var queue: MutableSet<FirDeclaration>
 
-    private val collectedFiles = mutableListOf<KtFile>()
-    private val collectedInlinedClasses = mutableSetOf<KtClassOrObject>()
-    private var isInlineFunctionContext = false
+    val collectedFiles = mutableListOf<KtFile>()
+    val collectedInlinedClasses = mutableSetOf<KtClassOrObject>()
+    var isInlineFunctionContext = false
 
     val files: List<KtFile>
         get() = collectedFiles
@@ -197,7 +197,7 @@ private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
     }
 
     @OptIn(SymbolInternals::class)
-    private fun processResolvable(element: FirResolvable) {
+    fun processResolvable(element: FirResolvable) {
         fun addToQueue(function: FirFunction?) {
             val original = function?.unwrapSubstitutionOverrides() ?: return
             if (original.isInline && original.hasBody) {

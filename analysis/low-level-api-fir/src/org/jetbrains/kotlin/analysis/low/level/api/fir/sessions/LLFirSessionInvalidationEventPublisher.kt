@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * invalidation to allow caches that depend on [LLFirSession]s to be invalidated actively. These events are not published after garbage
  * collection of softly reachable sessions. See [LLFirSession] for more information.
  */
-internal class LLFirSessionInvalidationEventPublisher(private val project: Project) {
+class LLFirSessionInvalidationEventPublisher(val project: Project) {
     /**
      * [invalidatedModules] can only exist during write actions while executing [collectSessionsAndPublishInvalidationEvent], so we don't
      * have to use a thread-safe collection.
      */
-    private var invalidatedModules: MutableSet<KaModule>? = null
+    var invalidatedModules: MutableSet<KaModule>? = null
 
     /**
      * Invokes [action] and collects all sessions which were invalidated during its execution. At the end, publishes a session invalidation

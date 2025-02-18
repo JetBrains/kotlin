@@ -15,17 +15,17 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 
-internal class LLFirIdeRegisteredPluginAnnotations(
+class LLFirIdeRegisteredPluginAnnotations(
     session: FirSession,
-    private val annotationsResolver: KotlinAnnotationsResolver
+    val annotationsResolver: KotlinAnnotationsResolver
 ) : AbstractFirRegisteredPluginAnnotations(session) {
 
-    private val annotationsFromPlugins: MutableSet<AnnotationFqn> = mutableSetOf()
+    val annotationsFromPlugins: MutableSet<AnnotationFqn> = mutableSetOf()
 
     override val annotations: Set<AnnotationFqn>
         get() = allAnnotationsCache.getValue()
 
-    private val allAnnotationsCache: FirLazyValue<Set<AnnotationFqn>> = session.firCachesFactory.createLazyValue {
+    val allAnnotationsCache: FirLazyValue<Set<AnnotationFqn>> = session.firCachesFactory.createLazyValue {
         // at this point, both metaAnnotations and annotationsFromPlugins should be collected
         val result = metaAnnotations.flatMapTo(mutableSetOf()) { getAnnotationsWithMetaAnnotation(it) }
 
@@ -38,14 +38,14 @@ internal class LLFirIdeRegisteredPluginAnnotations(
     }
 
     // MetaAnnotation -> Annotations
-    private val annotationsWithMetaAnnotationCache: FirCache<AnnotationFqn, Set<AnnotationFqn>, Nothing?> =
+    val annotationsWithMetaAnnotationCache: FirCache<AnnotationFqn, Set<AnnotationFqn>, Nothing?> =
         session.firCachesFactory.createCache { metaAnnotation -> collectAnnotationsWithMetaAnnotation(metaAnnotation) }
 
     override fun getAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Collection<AnnotationFqn> {
         return annotationsWithMetaAnnotationCache.getValue(metaAnnotation)
     }
 
-    private fun collectAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Set<FqName> {
+    fun collectAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Set<FqName> {
         val annotatedDeclarations = annotationsResolver.declarationsByAnnotation(ClassId.topLevel(metaAnnotation))
 
         return annotatedDeclarations

@@ -74,9 +74,9 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         )
     }
 
-    private var inBlockModificationQueue: MutableSet<ChangeType.InBlock>? = null
+    var inBlockModificationQueue: MutableSet<ChangeType.InBlock>? = null
 
-    private fun addModificationToQueue(modification: ChangeType.InBlock) {
+    fun addModificationToQueue(modification: ChangeType.InBlock) {
         // There is no sense to add into the queue elements with unresolved body
         if (!modification.blockOwner.hasFirBody) return
 
@@ -88,7 +88,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * We can avoid processing of in-block modification with the same [KaModule] because they
      * will be invalidated anyway by OOBM
      */
-    private fun dropOutdatedModifications(ktModuleWithOutOfBlockModification: KaModule) {
+    fun dropOutdatedModifications(ktModuleWithOutOfBlockModification: KaModule) {
         processQueue { value, iterator ->
             if (value.ktModule == ktModuleWithOutOfBlockModification) iterator.remove()
         }
@@ -102,7 +102,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * **value** is a current element;
      * **iterator** is the corresponding iterator for this element.
      */
-    private inline fun processQueue(action: (value: ChangeType.InBlock, iterator: MutableIterator<ChangeType.InBlock>) -> Unit) {
+    inline fun processQueue(action: (value: ChangeType.InBlock, iterator: MutableIterator<ChangeType.InBlock>) -> Unit) {
         val queue = inBlockModificationQueue ?: return
         val iterator = queue.iterator()
         while (iterator.hasNext()) {
@@ -143,7 +143,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         }
     }
 
-    private fun calculateChangeType(element: PsiElement, modificationType: KaElementModificationType): ChangeType {
+    fun calculateChangeType(element: PsiElement, modificationType: KaElementModificationType): ChangeType {
         if (!element.isValid) {
             // If PSI is not valid, well something bad happened; OOBM won't hurt
             return ChangeType.OutOfBlock
@@ -178,7 +178,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     /**
      * This check covers cases such as a new body that was added to a function, which should cause an out-of-block modification.
      */
-    private fun PsiElement.isNewDirectChildOf(inBlockModificationOwner: KtAnnotated, modificationType: KaElementModificationType): Boolean =
+    fun PsiElement.isNewDirectChildOf(inBlockModificationOwner: KtAnnotated, modificationType: KaElementModificationType): Boolean =
         modificationType == KaElementModificationType.ElementAdded && parent == inBlockModificationOwner
 
     /**
@@ -199,7 +199,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * As it is not a valid contract statement, its removal doesn't need to trigger an out-of-block modification. Nonetheless, as such a
      * situation should not occur frequently, false positives are acceptable and this simplifies the analysis, making it less error-prone.
      */
-    private fun KaElementModificationType.isContractRemoval(): Boolean =
+    fun KaElementModificationType.isContractRemoval(): Boolean =
         this is KaElementModificationType.ElementRemoved && (removedElement as? KtExpression)?.isContractDescriptionCallPsiCheck() == true
 
     /**
@@ -207,12 +207,12 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      *
      * @see potentiallyAffectsPropertyBackingFieldResolution
      */
-    private fun KaElementModificationType.isBackingFieldAccessChange(inBlockModificationOwner: KtAnnotated): Boolean =
+    fun KaElementModificationType.isBackingFieldAccessChange(inBlockModificationOwner: KtAnnotated): Boolean =
         inBlockModificationOwner is KtPropertyAccessor &&
                 this is KaElementModificationType.ElementRemoved &&
                 removedElement.potentiallyAffectsPropertyBackingFieldResolution()
 
-    private fun inBlockModification(declaration: KtAnnotated, module: KaModule) {
+    fun inBlockModification(declaration: KtAnnotated, module: KaModule) {
         val resolveSession = module.getFirResolveSession(project)
         val firDeclaration = when (declaration) {
             is KtCodeFragment -> declaration.getOrBuildFirFile(resolveSession).codeFragment
@@ -247,7 +247,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             .afterModification(declaration, module)
     }
 
-    private fun outOfBlockModification(element: PsiElement) {
+    fun outOfBlockModification(element: PsiElement) {
         val ktModule = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
 
         // We should check outdated modifications before to avoid cache dropping (e.g., KaModule cache)
@@ -270,7 +270,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
          * This function have to be called from Low Level FIR body transformers.
          * It is fine to have false-positives, but false-negatives are not acceptable.
          */
-        internal fun bodyResolved(element: FirElementWithResolveState, phase: FirResolvePhase) {
+        fun bodyResolved(element: FirElementWithResolveState, phase: FirResolvePhase) {
             when (element) {
                 is FirSimpleFunction -> {
                     // in-block modifications only applicable to functions with an explicit type,
@@ -315,11 +315,11 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 }
 
-private fun nonLocalDeclarationForLocalChange(psi: PsiElement): KtAnnotated? {
+fun nonLocalDeclarationForLocalChange(psi: PsiElement): KtAnnotated? {
     return psi.getNonLocalReanalyzableContainingDeclaration() ?: psi.containingFile as? KtCodeFragment
 }
 
-private sealed class ChangeType {
+sealed class ChangeType {
     object OutOfBlock : ChangeType()
     object Invisible : ChangeType()
 
@@ -339,7 +339,7 @@ private sealed class ChangeType {
  *
  * [KtProperty] is used as an anchor for [KtPropertyAccessor]s to avoid extra memory consumption.
  */
-private var KtAnnotated.hasFirBody: Boolean
+var KtAnnotated.hasFirBody: Boolean
     get() = when (this) {
         is KtNamedFunction, is KtProperty, is KtCodeFragment -> getUserData(hasFirBodyKey) == true
         is KtPropertyAccessor -> property.hasFirBody
@@ -353,7 +353,7 @@ private var KtAnnotated.hasFirBody: Boolean
         )
     }
 
-private val hasFirBodyKey = Key.create<Boolean?>("HAS_FIR_BODY")
+val hasFirBodyKey = Key.create<Boolean?>("HAS_FIR_BODY")
 
 /**
  * Covered by org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractInBlockModificationTest
@@ -363,7 +363,7 @@ private val hasFirBodyKey = Key.create<Boolean?>("HAS_FIR_BODY")
  *
  * @return The declaration in which a change of the passed receiver parameter can be treated as in-block modification
  */
-internal fun PsiElement.getNonLocalReanalyzableContainingDeclaration(): KtDeclaration? {
+fun PsiElement.getNonLocalReanalyzableContainingDeclaration(): KtDeclaration? {
     return when (val declaration = getNonLocalContainingOrThisDeclaration()) {
         is KtNamedFunction -> declaration.takeIf { function ->
             function.isReanalyzableContainer() && isElementInsideBody(
@@ -436,7 +436,7 @@ internal fun PsiElement.getNonLocalReanalyzableContainingDeclaration(): KtDeclar
  *   }
  * ```
  */
-private fun PsiElement.potentiallyAffectsPropertyBackingFieldResolution(): Boolean {
+fun PsiElement.potentiallyAffectsPropertyBackingFieldResolution(): Boolean {
     var hasFieldText = false
     this.accept(object : PsiRecursiveElementWalkingVisitor() {
         override fun visitElement(element: PsiElement) {
@@ -452,7 +452,7 @@ private fun PsiElement.potentiallyAffectsPropertyBackingFieldResolution(): Boole
     return hasFieldText
 }
 
-private fun isElementInsideBody(declaration: KtDeclarationWithBody, child: PsiElement, canHaveBackingFieldAccess: Boolean): Boolean {
+fun isElementInsideBody(declaration: KtDeclarationWithBody, child: PsiElement, canHaveBackingFieldAccess: Boolean): Boolean {
     val body = declaration.bodyExpression ?: return false
     return when {
         !body.isAncestor(child) -> false
@@ -462,7 +462,7 @@ private fun isElementInsideBody(declaration: KtDeclarationWithBody, child: PsiEl
     }
 }
 
-private fun isInsideContract(body: KtExpression, child: PsiElement): Boolean {
+fun isInsideContract(body: KtExpression, child: PsiElement): Boolean {
     if (body !is KtBlockExpression) return false
 
     val firstStatement = body.firstStatement ?: return false
@@ -470,8 +470,8 @@ private fun isInsideContract(body: KtExpression, child: PsiElement): Boolean {
     return firstStatement.isAncestor(child)
 }
 
-private fun KtNamedFunction.isReanalyzableContainer(): Boolean = hasBlockBody() || typeReference != null
+fun KtNamedFunction.isReanalyzableContainer(): Boolean = hasBlockBody() || typeReference != null
 
-private fun KtPropertyAccessor.isReanalyzableContainer(): Boolean = isSetter || hasBlockBody() || property.typeReference != null
+fun KtPropertyAccessor.isReanalyzableContainer(): Boolean = isSetter || hasBlockBody() || property.typeReference != null
 
-private fun KtProperty.isReanalyzableContainer(): Boolean = typeReference != null && !hasDelegateExpressionOrInitializer()
+fun KtProperty.isReanalyzableContainer(): Boolean = typeReference != null && !hasDelegateExpressionOrInitializer()

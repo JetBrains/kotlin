@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable
 
-internal interface ReferenceWithCleanup<K, V> {
+interface ReferenceWithCleanup<K, V> {
     val key: K
     val cleaner: ValueReferenceCleaner<V>
     fun get(): V?
 }
 
-internal fun <K, V> ReferenceWithCleanup<K, V>.equalsImpl(other: Any?): Boolean {
+fun <K, V> ReferenceWithCleanup<K, V>.equalsImpl(other: Any?): Boolean {
     // When the referent is collected, equality should be identity-based (for `processQueue` to remove this very same reference).
     // Hence, we skip the value equality check if the referent has been collected and `get()` returns `null`. If the reference is still
     // valid, this is just a canonical equals on referents for `replace(K,V,V)`.
@@ -25,4 +25,4 @@ internal fun <K, V> ReferenceWithCleanup<K, V>.equalsImpl(other: Any?): Boolean 
     return value == other.get()
 }
 
-internal fun <K, V> ReferenceWithCleanup<K, V>.hashKeyImpl(): Int = key.hashCode()
+fun <K, V> ReferenceWithCleanup<K, V>.hashKeyImpl(): Int = key.hashCode()

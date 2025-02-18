@@ -22,10 +22,10 @@ abstract class LLFirScopeSessionProvider {
     }
 }
 
-private class LLFirInvalidatableScopeSessionProvider(project: Project, invalidationTrackers: List<Any>) : LLFirScopeSessionProvider() {
+class LLFirInvalidatableScopeSessionProvider(project: Project, invalidationTrackers: List<Any>) : LLFirScopeSessionProvider() {
     // ScopeSession is thread-local, so we use Thread id as a key
     // We cannot use thread locals here as it may lead to memory leaks
-    private val cache = SoftCachedMap.create<Long, ScopeSession>(
+    val cache = SoftCachedMap.create<Long, ScopeSession>(
         project,
         SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
         invalidationTrackers
@@ -36,10 +36,10 @@ private class LLFirInvalidatableScopeSessionProvider(project: Project, invalidat
     }
 }
 
-private class LLFirNonInvalidatableScopeSessionProvider : LLFirScopeSessionProvider() {
+class LLFirNonInvalidatableScopeSessionProvider : LLFirScopeSessionProvider() {
     // ScopeSession is thread-local, so we use Thread id as a key
     // We cannot use thread locals here as it may lead to memory leaks
-    private val cache = ConcurrentHashMap<Long, ScopeSession>()
+    val cache = ConcurrentHashMap<Long, ScopeSession>()
 
     override fun getScopeSession(): ScopeSession {
         return cache.getOrPut(Thread.currentThread().id) { ScopeSession() }

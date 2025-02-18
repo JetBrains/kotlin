@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirExceptionHandler
 import org.jetbrains.kotlin.fir.declarations.FirFile
 
-internal object LLFirExceptionHandler : FirExceptionHandler() {
+object LLFirExceptionHandler : FirExceptionHandler() {
     override fun handleExceptionOnElementAnalysis(element: FirElement, throwable: Throwable): Nothing {
         throw throwable
     }

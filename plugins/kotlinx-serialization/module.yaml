@@ -15,7 +15,7 @@ module:
 
 settings:
   kotlin:
-    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi,org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi, -Xskip-prerelease-check, -Xwhen-guards]
 
 
 test-dependencies:
@@ -105,10 +105,13 @@ test-dependencies:
   - io.opentelemetry:opentelemetry-api:1.41.0
   - io.opentelemetry:opentelemetry-context:1.41.0
   - ./../../analysis/low-level-api-fir
+  - ./../../analysis/low-level-api-fir-tests
   - ./../../js/js.tests
   - ./../../analysis/analysis-api-fir
+  - ./../../analysis/analysis-api-fir-tests
   - ./../../compiler/tests-common-new
   - ./../../analysis/analysis-api-impl-base
+  - ./../../analysis/analysis-api-impl-base-tests
   - ./../../compiler/test-infrastructure
   - ./../../dependencies/intellij-core
   - ./../../core/descriptors.runtime
@@ -245,6 +248,7 @@ test-dependencies:
   - ./../../core/compiler.common.web
   - ./../../analysis/symbol-light-classes
   - ./../../analysis/decompiled/decompiler-native
+  - ./../../analysis/decompiled/decompiler-native-tests
   - ./../../analysis/decompiled/decompiler-to-psi
   - ./../../analysis/decompiled/decompiler-to-file-stubs
   - ./../../compiler/ir/serialization.native
@@ -259,4 +263,4 @@ test-dependencies:
 
 test-settings:
   kotlin:
-    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi,org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi,kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]
+    freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi, -opt-in, org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

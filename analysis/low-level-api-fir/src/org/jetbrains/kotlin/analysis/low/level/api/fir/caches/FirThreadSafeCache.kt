@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.utils.exceptions.logErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.concurrent.ConcurrentHashMap
 
-internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
-    private val map: ConcurrentHashMap<K, Any> = ConcurrentHashMap<K, Any>(),
-    private val createValue: (K, CONTEXT) -> V,
+class FirThreadSafeCache<K : Any, V, CONTEXT>(
+    val map: ConcurrentHashMap<K, Any> = ConcurrentHashMap<K, Any>(),
+    val createValue: (K, CONTEXT) -> V,
 ) : FirCache<K, V, CONTEXT>(), FirCacheWithInvalidation<K, V, CONTEXT> {
     override fun getValue(key: K, context: CONTEXT): V = map.getOrPutWithNullableValue(key) {
         createValue(it, context)
@@ -54,7 +54,7 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
         return result as (V & Any)
     }
 
-    private fun ExceptionAttachmentBuilder.buildAttachments(key: K, context: CONTEXT, value: V) {
+    fun ExceptionAttachmentBuilder.buildAttachments(key: K, context: CONTEXT, value: V) {
         withEntry("key", key.toString())
 
         if (context is PsiElement) {
@@ -72,4 +72,4 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
     }
 }
 
-private val LOG = Logger.getInstance(FirThreadSafeCache::class.java)
+val LOG = Logger.getInstance(FirThreadSafeCache::class.java)

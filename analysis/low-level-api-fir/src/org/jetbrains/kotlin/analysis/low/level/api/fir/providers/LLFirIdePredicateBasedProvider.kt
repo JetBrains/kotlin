@@ -39,16 +39,16 @@ import org.jetbrains.kotlin.psi.*
 /**
  * PSI index based implementation of [FirPredicateBasedProvider].
  */
-internal class LLFirIdePredicateBasedProvider(
-    private val session: LLFirSession,
-    private val annotationsResolver: KotlinAnnotationsResolver,
+class LLFirIdePredicateBasedProvider(
+    val session: LLFirSession,
+    val annotationsResolver: KotlinAnnotationsResolver,
 ) : FirPredicateBasedProvider() {
-    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(session.project) }
+    val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(session.project) }
 
-    private val registeredPluginAnnotations: FirRegisteredPluginAnnotations
+    val registeredPluginAnnotations: FirRegisteredPluginAnnotations
         get() = session.registeredPluginAnnotations
 
-    private val declarationOwnersCache: FirCache<FirFile, FirOwnersStorage, Nothing?> =
+    val declarationOwnersCache: FirCache<FirFile, FirOwnersStorage, Nothing?> =
         session.firCachesFactory.createCache { firFile -> FirOwnersStorage.collectOwners(firFile) }
 
     override fun getSymbolsByPredicate(predicate: LookupPredicate): List<FirBasedSymbol<*>> {
@@ -66,7 +66,7 @@ internal class LLFirIdePredicateBasedProvider(
             .toList()
     }
 
-    private fun KtElement.findFirDeclaration(): FirDeclaration? {
+    fun KtElement.findFirDeclaration(): FirDeclaration? {
         if (this !is KtDeclaration) return null
 
         if (this !is KtClassLikeDeclaration &&
@@ -106,10 +106,10 @@ internal class LLFirIdePredicateBasedProvider(
         }
     }
 
-    private val declarationPredicateMatcher = Matcher<DeclarationPredicate>()
-    private val lookupPredicateMatcher = Matcher<LookupPredicate>()
+    val declarationPredicateMatcher = Matcher<DeclarationPredicate>()
+    val lookupPredicateMatcher = Matcher<LookupPredicate>()
 
-    private inner class Matcher<P : AbstractPredicate<P>> : PredicateVisitor<P, Boolean, FirDeclaration>() {
+    inner class Matcher<P : AbstractPredicate<P>> : PredicateVisitor<P, Boolean, FirDeclaration>() {
         override fun visitPredicate(predicate: AbstractPredicate<P>, data: FirDeclaration): Boolean {
             error(
                 "When overrides for all possible DeclarationPredicate subtypes are implemented, " +
@@ -152,11 +152,11 @@ internal class LLFirIdePredicateBasedProvider(
             return data.anyDirectChildDeclarationMatches(childPredicate)
         }
 
-        private val FirDeclaration.directParentDeclaration: FirDeclaration?
+        val FirDeclaration.directParentDeclaration: FirDeclaration?
             get() = getOwnersOfDeclaration(this)?.lastOrNull()?.fir
     }
 
-    private fun FirDeclaration.anyDirectChildDeclarationMatches(childPredicate: DeclarationPredicate): Boolean {
+    fun FirDeclaration.anyDirectChildDeclarationMatches(childPredicate: DeclarationPredicate): Boolean {
         var result = false
 
         this.forEachDirectChildDeclaration {
@@ -166,7 +166,7 @@ internal class LLFirIdePredicateBasedProvider(
         return result
     }
 
-    private fun annotationsOnDeclaration(declaration: FirDeclaration): Set<AnnotationFqn> {
+    fun annotationsOnDeclaration(declaration: FirDeclaration): Set<AnnotationFqn> {
         if (declaration.annotations.isEmpty()) return emptySet()
 
         val firResolvedAnnotations = declaration.annotations
@@ -184,12 +184,12 @@ internal class LLFirIdePredicateBasedProvider(
         return psiAnnotations.map { it.asSingleFqName() }.toSet()
     }
 
-    private fun annotationsOnOuterDeclarations(declaration: FirDeclaration): Set<AnnotationFqn> {
+    fun annotationsOnOuterDeclarations(declaration: FirDeclaration): Set<AnnotationFqn> {
         return getOwnersOfDeclaration(declaration)?.flatMap { annotationsOnDeclaration(it.fir) }.orEmpty().toSet()
     }
 }
 
-private class FirOwnersStorage(private val declarationToOwner: Map<FirDeclaration, List<FirBasedSymbol<*>>>) {
+class FirOwnersStorage(val declarationToOwner: Map<FirDeclaration, List<FirBasedSymbol<*>>>) {
     fun getOwners(declaration: FirDeclaration): List<FirBasedSymbol<*>>? = declarationToOwner[declaration]
 
     companion object {
@@ -218,7 +218,7 @@ private class FirOwnersStorage(private val declarationToOwner: Map<FirDeclaratio
  * Walks over every [FirElement] in [this] file and invokes [saveDeclaration] on it, passing each element and the list of its containing
  * declarations (like file, classes, functions/properties and so on).
  */
-private inline fun FirFile.forEachElementWithContainers(
+inline fun FirFile.forEachElementWithContainers(
     crossinline saveDeclaration: (element: FirElement, owners: List<FirBasedSymbol<*>>) -> Unit
 ) {
     val declarationsCollector = object : FirVisitor<Unit, PersistentList<FirBasedSymbol<*>>>() {
@@ -240,7 +240,7 @@ private inline fun FirFile.forEachElementWithContainers(
 /**
  * Calls [action] on every direct child declaration of [this] declaration.
  */
-private inline fun FirDeclaration.forEachDirectChildDeclaration(crossinline action: (child: FirDeclaration) -> Unit) {
+inline fun FirDeclaration.forEachDirectChildDeclaration(crossinline action: (child: FirDeclaration) -> Unit) {
     this.acceptChildren(object : FirDefaultVisitorVoid() {
         override fun visitElement(element: FirElement) {
             // we must visit only direct children

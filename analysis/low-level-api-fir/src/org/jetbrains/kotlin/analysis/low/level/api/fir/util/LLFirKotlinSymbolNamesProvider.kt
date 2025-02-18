@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.utils.filterToSetOrEmpty
  *
  * @param allowKotlinPackage Whether the associated symbol provider is allowed to provide symbols from the `kotlin` package.
  */
-internal open class LLFirKotlinSymbolNamesProvider(
-    private val declarationProvider: KotlinDeclarationProvider,
-    private val allowKotlinPackage: Boolean? = null,
+open class LLFirKotlinSymbolNamesProvider(
+    val declarationProvider: KotlinDeclarationProvider,
+    val allowKotlinPackage: Boolean? = null,
 ) : FirSymbolNamesProvider() {
     override fun getPackageNames(): Set<String>? = declarationProvider.computePackageNames()?.excludeKotlinPackageNamesIfNecessary()
 
@@ -54,7 +54,7 @@ internal open class LLFirKotlinSymbolNamesProvider(
         return declarationProvider.getTopLevelCallableNamesInPackage(packageFqName).ifEmpty { emptySet() }
     }
 
-    private fun Set<String>.excludeKotlinPackageNamesIfNecessary(): Set<String> {
+    fun Set<String>.excludeKotlinPackageNamesIfNecessary(): Set<String> {
         if (allowKotlinPackage == false && any { it.isKotlinPackage() }) {
             return filterToSetOrEmpty { !it.isKotlinPackage() }
         }
@@ -71,8 +71,8 @@ internal open class LLFirKotlinSymbolNamesProvider(
     }
 }
 
-private fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
-private fun String.isKotlinPackage(): Boolean = startsWith(KOTLIN_PACKAGE_PREFIX)
+fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+fun String.isKotlinPackage(): Boolean = startsWith(KOTLIN_PACKAGE_PREFIX)
 
-private const val KOTLIN_PACKAGE_PREFIX = "kotlin."
+const val KOTLIN_PACKAGE_PREFIX = "kotlin."
 

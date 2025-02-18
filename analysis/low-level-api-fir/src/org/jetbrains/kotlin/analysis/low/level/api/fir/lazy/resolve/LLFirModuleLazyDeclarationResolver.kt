@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
  * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
  * @see LLFirLazyResolverRunner
  */
-internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
+class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
     /**
      * Lazily resolves the [target] to a given [toPhase].
      *
@@ -68,7 +68,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         lazyResolve(target, toPhase, LLFirResolveDesignationCollector::getDesignationToResolveRecursively)
     }
 
-    private inline fun <T : FirElementWithResolveState> lazyResolve(
+    inline fun <T : FirElementWithResolveState> lazyResolve(
         targetElement: T,
         toPhase: FirResolvePhase,
         resolveTarget: (T) -> LLFirResolveTarget?,
@@ -107,13 +107,13 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun resolveContainingFileToImports(target: FirElementWithResolveState) {
+    fun resolveContainingFileToImports(target: FirElementWithResolveState) {
         if (target.resolvePhase >= FirResolvePhase.IMPORTS) return
         val firFile = target.getContainingFile() ?: return
         resolveFileToImportsWithLock(firFile)
     }
 
-    private fun resolveFileToImportsWithLock(firFile: FirFile) {
+    fun resolveFileToImportsWithLock(firFile: FirFile) {
         val lockProvider = moduleComponents.globalResolveComponents.lockProvider
         lockProvider.withGlobalLock {
             lockProvider.withWriteLock(firFile, FirResolvePhase.IMPORTS) {
@@ -122,7 +122,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun lazyResolveTargets(target: LLFirResolveTarget, toPhase: FirResolvePhase) {
+    fun lazyResolveTargets(target: LLFirResolveTarget, toPhase: FirResolvePhase) {
         var currentPhase = getMinResolvePhase(target).coerceAtLeast(FirResolvePhase.IMPORTS)
         if (currentPhase >= toPhase) return
 
@@ -144,7 +144,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun getMinResolvePhase(designation: LLFirResolveTarget): FirResolvePhase {
+    fun getMinResolvePhase(designation: LLFirResolveTarget): FirResolvePhase {
         var min = FirResolvePhase.BODY_RESOLVE
         designation.forEachTarget { target ->
             min = minOf(min, target.resolvePhase)
@@ -154,7 +154,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     }
 }
 
-private fun handleExceptionFromResolve(
+fun handleExceptionFromResolve(
     exception: Exception,
     firDeclarationToResolve: FirElementWithResolveState,
     fromPhase: FirResolvePhase,
@@ -184,7 +184,7 @@ private fun handleExceptionFromResolve(
     }
 }
 
-private fun handleExceptionFromResolve(
+fun handleExceptionFromResolve(
     exception: Exception,
     designation: LLFirResolveTarget,
     toPhase: FirResolvePhase,

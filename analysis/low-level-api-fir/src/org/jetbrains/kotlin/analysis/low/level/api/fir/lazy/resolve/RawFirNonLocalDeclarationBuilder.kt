@@ -35,12 +35,12 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class RawFirNonLocalDeclarationBuilder private constructor(
+class RawFirNonLocalDeclarationBuilder constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
-    private val originalDeclaration: FirDeclaration,
-    private val declarationToBuild: KtElement,
-    private val functionsToRebind: Set<FirFunction>,
+    val originalDeclaration: FirDeclaration,
+    val declarationToBuild: KtElement,
+    val functionsToRebind: Set<FirFunction>,
 ) : PsiRawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
     override val KtProperty.sourceForDelegatedPropertyAccessors: KtSourceElement?
         get() = this.toFirSourceElement()
@@ -61,7 +61,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return build(session, scopeProvider, designation, rootNonLocalDeclaration, functionsToRebind)
         }
 
-        private fun build(
+        fun build(
             session: FirSession,
             scopeProvider: FirScopeProvider,
             designation: FirDesignation,
@@ -96,7 +96,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
      * @see bindFunctionTarget
      * @see functionsToRebind
      */
-    private fun computeRebindTarget(function: FirFunction): FirFunction? {
+    fun computeRebindTarget(function: FirFunction): FirFunction? {
         if (functionsToRebind.isNullOrEmpty()) return null
         val realPsi = function.realPsi
         if (realPsi != null) {
@@ -154,7 +154,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             )
         }
 
-        private fun KtDestructuringDeclarationEntry.index(): Int {
+        fun KtDestructuringDeclarationEntry.index(): Int {
             val destructuringDeclaration = parent
             requireIsInstance<KtDestructuringDeclaration>(destructuringDeclaration)
             return destructuringDeclaration.entries.indexOf(this)
@@ -164,7 +164,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return buildAnonymousInitializer(element, containingDeclaration.symbol)
         }
 
-        private fun extractContructorConversionParams(
+        fun extractContructorConversionParams(
             classOrObject: KtClassOrObject,
             constructor: KtConstructor<*>?,
         ): ConstructorConversionParams {
@@ -266,7 +266,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
     }
 
-    private fun moveNext(iterator: Iterator<FirDeclaration>, containingDeclaration: FirDeclaration?): FirDeclaration {
+    fun moveNext(iterator: Iterator<FirDeclaration>, containingDeclaration: FirDeclaration?): FirDeclaration {
         if (!iterator.hasNext()) {
             val containingClass = containingDeclaration as? FirRegularClass
             val visitor = VisitorWithReplacement(containingClass)
@@ -326,10 +326,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
     }
 
-    private fun PsiElement?.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
+    fun PsiElement?.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
         toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
 
-    private data class ConstructorConversionParams(
+    data class ConstructorConversionParams(
         val superTypeCallEntry: KtSuperTypeCallEntry?,
         val selfType: FirTypeRef,
         val typeParameters: List<FirTypeParameterRef>,

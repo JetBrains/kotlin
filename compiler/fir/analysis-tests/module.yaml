@@ -10,30 +10,30 @@ repositories:
   - https://download.jetbrains.com/teamcity-repository
 
 
-dependencies:
-  - com.jetbrains.intellij.platform:util-rt:233.13135.128
-  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
-  - com.jetbrains.intellij.platform:util:233.13135.128
-  - com.jetbrains.intellij.platform:util-base:233.13135.128
-  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
-  - com.jetbrains.intellij.platform:core:233.13135.128
-  - com.jetbrains.intellij.platform:core-impl:233.13135.128
-  - com.jetbrains.intellij.platform:extensions:233.13135.128
-  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
-  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
-  - com.jetbrains.intellij.java:java-psi:233.13135.128
-  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
-  - ../../../dependencies/intellij-core
+#dependencies:
+#  - com.jetbrains.intellij.platform:util-rt:233.13135.128
+#  - com.jetbrains.intellij.platform:util-class-loader:233.13135.128
+#  - com.jetbrains.intellij.platform:util:233.13135.128
+#  - com.jetbrains.intellij.platform:util-base:233.13135.128
+#  - com.jetbrains.intellij.platform:util-xml-dom:233.13135.128
+#  - com.jetbrains.intellij.platform:core:233.13135.128
+#  - com.jetbrains.intellij.platform:core-impl:233.13135.128
+#  - com.jetbrains.intellij.platform:extensions:233.13135.128
+#  - com.jetbrains.intellij.java:java-frontback-psi:233.13135.128
+#  - com.jetbrains.intellij.java:java-frontback-psi-impl:233.13135.128
+#  - com.jetbrains.intellij.java:java-psi:233.13135.128
+#  - com.jetbrains.intellij.java:java-psi-impl:233.13135.128
+#  - ../../../dependencies/intellij-core
 
 module:
   layout: gradle-jvm
 
-settings:
-  kotlin:
-    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals -Xskip-prerelease-check, -Xwhen-guards]
+#settings:
+#  kotlin:
+#    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals -Xskip-prerelease-check, -Xwhen-guards]
 
 
-test-dependencies:
+dependencies:
   - org.junit.jupiter:junit-jupiter-api:5.10.1
   - org.junit.platform:junit-platform-launcher:1.10.1
   - org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil:8.5.4-9
@@ -211,6 +211,6 @@ test-dependencies:
   - ./../../../js/js.translator
   - ./../../ir/ir.objcinterop
 
-test-settings:
+settings:
   kotlin:
     freeCompilerArgs: [-Xdont-warn-on-error-suppression, -XXexplicit-return-types=warning, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, org.jetbrains.kotlin.fir.symbols.SymbolInternals, -opt-in, org.jetbrains.kotlin.types.model.K2Only, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

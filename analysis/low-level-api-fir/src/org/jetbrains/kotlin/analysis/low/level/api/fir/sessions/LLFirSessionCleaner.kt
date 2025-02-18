@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.ValueRef
  * @param disposable The associated [LLFirSession]'s [disposable]. Keeping a separate reference ensures that the disposable can be disposed
  *  even after the session has been reclaimed by the GC.
  */
-internal class LLFirSessionCleaner(private val disposable: Disposable?) : ValueReferenceCleaner<LLFirSession> {
+class LLFirSessionCleaner(val disposable: Disposable?) : ValueReferenceCleaner<LLFirSession> {
     override fun cleanUp(value: LLFirSession?) {
         // If both the session and the disposable are present, we can check their consistency. Otherwise, this is not possible, because
         // we cannot store the session in the session cleaner (otherwise the session will never be garbage-collected).

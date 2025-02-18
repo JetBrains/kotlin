@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-internal fun FirDesignation.asResolveTarget(): LLFirSingleResolveTarget = LLFirSingleResolveTarget(this)
+fun FirDesignation.asResolveTarget(): LLFirSingleResolveTarget = LLFirSingleResolveTarget(this)
 
 /**
  * Resolves the target to the specified [phase].
  * The owning session must be a resolvable one.
  */
-internal fun LLFirResolveTarget.resolve(phase: FirResolvePhase) {
+fun LLFirResolveTarget.resolve(phase: FirResolvePhase) {
     val session = target.llFirResolvableSession
         ?: errorWithAttachment("Resolvable session expected, got '${target.llFirSession::class.java}'") {
             withEntry("firSession", target.llFirSession) { it.toString() }
@@ -28,4 +28,4 @@ internal fun LLFirResolveTarget.resolve(phase: FirResolvePhase) {
     lazyDeclarationResolver.lazyResolveTarget(this, phase)
 }
 
-internal val LLFirResolveTarget.session: LLFirSession get() = target.llFirSession
+val LLFirResolveTarget.session: LLFirSession get() = target.llFirSession

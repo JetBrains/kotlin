@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
-internal object FileElementFactory {
+object FileElementFactory {
     fun createFileStructureElement(
         firDeclaration: FirDeclaration,
         firFile: FirFile,
@@ -46,7 +46,7 @@ internal object FileElementFactory {
         }
     }
 
-    private fun lazyResolveClassGeneratedMembers(firClass: FirRegularClass) {
+    fun lazyResolveClassGeneratedMembers(firClass: FirRegularClass) {
         val classMembersToResolve = buildList {
             for (member in firClass.declarations) {
                 when {

@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 
-internal class LLFirSoftLazyValue<V>(project: Project, createValue: () -> V) : FirLazyValue<V>() {
-    private val cachedValue = softCachedValue(project) { createValue() }
+class LLFirSoftLazyValue<V>(project: Project, createValue: () -> V) : FirLazyValue<V>() {
+    val cachedValue = softCachedValue(project) { createValue() }
 
     override fun getValue(): V = cachedValue.getValue()
 }

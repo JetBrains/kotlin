@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.util.PrivateForInline
 
-internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
+object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     override fun createTargetResolver(
         target: LLFirResolveTarget,
     ): LLFirTargetResolver = LLFirCompilerRequiredAnnotationsTargetResolver(target)
@@ -53,7 +53,7 @@ internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirReso
  * @see FirCompilerRequiredAnnotationsResolveTransformer
  * @see FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
  */
-private class LLFirCompilerRequiredAnnotationsTargetResolver(
+class LLFirCompilerRequiredAnnotationsTargetResolver(
     target: LLFirResolveTarget,
     computationSession: LLFirCompilerRequiredAnnotationsComputationSession? = null,
 ) : LLFirTargetResolver(target, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
@@ -75,14 +75,14 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         override val useCacheForImportScope: Boolean get() = true
     }
 
-    private val transformer = FirCompilerRequiredAnnotationsResolveTransformer(
+    val transformer = FirCompilerRequiredAnnotationsResolveTransformer(
         resolveTargetSession,
         resolveTargetScopeSession,
         computationSession ?: LLFirCompilerRequiredAnnotationsComputationSession(),
     )
 
     @OptIn(PrivateForInline::class)
-    private val llFirComputationSession: LLFirCompilerRequiredAnnotationsComputationSession
+    val llFirComputationSession: LLFirCompilerRequiredAnnotationsComputationSession
         get() = transformer.annotationTransformer.computationSession as LLFirCompilerRequiredAnnotationsComputationSession
 
     @Deprecated("Should never be called directly, only for override purposes, please use withFile", level = DeprecationLevel.ERROR)
@@ -121,7 +121,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         throwUnexpectedFirElementError(target)
     }
 
-    private fun <T> resolveTargetDeclaration(target: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
+    fun <T> resolveTargetDeclaration(target: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
         // 1. Check that we should process this target
         if (llFirComputationSession.annotationsAreResolved(target, treatNonSourceDeclarationsAsResolved = false)) return
 
@@ -161,7 +161,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         }
     }
 
-    private fun <T> T.createAnnotationTransformer(): AnnotationTransformer? where T : FirAnnotationContainer, T : FirElementWithResolveState {
+    fun <T> T.createAnnotationTransformer(): AnnotationTransformer? where T : FirAnnotationContainer, T : FirElementWithResolveState {
         if (!hasAnnotationsToResolve()) {
             return (AnnotationTransformer(mutableMapOf()))
         }
@@ -176,10 +176,10 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         return map.takeIf { isUnresolved }?.let(::AnnotationTransformer)
     }
 
-    private inner class AnnotationTransformer(
-        private val annotationMap: MutableMap<FirElementWithResolveState, List<FirAnnotation>>,
+    inner class AnnotationTransformer(
+        val annotationMap: MutableMap<FirElementWithResolveState, List<FirAnnotation>>,
     ) {
-        private val deprecations: MutableMap<FirElementWithResolveState, DeprecationsProvider> = hashMapOf()
+        val deprecations: MutableMap<FirElementWithResolveState, DeprecationsProvider> = hashMapOf()
 
         fun isNothingToResolve(): Boolean = annotationMap.isEmpty()
 
@@ -264,7 +264,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     /**
      * @return true if at least one applicable annotation is present
      */
-    private fun <T> T.annotationsForTransformationTo(
+    fun <T> T.annotationsForTransformationTo(
         map: MutableMap<FirElementWithResolveState, List<FirAnnotation>>,
     ) where T : FirAnnotationContainer, T : FirElementWithResolveState {
         when (this) {
@@ -316,7 +316,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     }
 }
 
-private fun FirAnnotationContainer.hasAnnotationsToResolve(): Boolean {
+fun FirAnnotationContainer.hasAnnotationsToResolve(): Boolean {
     if (annotations.isNotEmpty()) return true
 
     return when (this) {

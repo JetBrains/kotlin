@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * @see getNonLocalContainingDeclaration
  */
 @ThreadSafe
-internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolveComponents) {
+class FirElementBuilder(val moduleComponents: LLFirModuleResolveComponents) {
     companion object {
-        private fun getPsiAsFirElementSource(element: KtElement): KtElement? {
+        fun getPsiAsFirElementSource(element: KtElement): KtElement? {
             val deparenthesized = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
             return when {
                 deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
@@ -61,7 +61,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
             }
         }
 
-        private fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
+        fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
             is KtImportList -> false
             is KtFileAnnotationList -> false
             is KtAnnotation -> false
@@ -93,13 +93,13 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         }
     }
 
-    private fun getOrBuildFirForKtFile(ktFile: KtFile): FirFile {
+    fun getOrBuildFirForKtFile(ktFile: KtFile): FirFile {
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
         firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
         return firFile
     }
 
-    private fun getFirForNonKtFileElement(element: KtElement): FirElement? {
+    fun getFirForNonKtFileElement(element: KtElement): FirElement? {
         require(element !is KtFile || element is KtCodeFragment)
 
         if (!doKtElementHasCorrespondingFirElement(element)) {
@@ -124,7 +124,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return mappings.getFir(psi)
     }
 
-    private inline fun <T : KtElement, E : PsiElement> getFirForNonBodyElement(
+    inline fun <T : KtElement, E : PsiElement> getFirForNonBodyElement(
         element: KtElement,
         nonLocalDeclaration: KtDeclaration?,
         anchorElementProvider: (KtElement) -> T?,
@@ -152,7 +152,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return findElementInside(firElement = anchorFir, element = element, stopAt = anchorElement)
     }
 
-    private fun PsiElement.annotationOwner(): KtAnnotated? {
+    fun PsiElement.annotationOwner(): KtAnnotated? {
         val modifierList = when (val parent = parent) {
             is KtModifierList -> parent
             is KtAnnotation -> return parent.annotationOwner()
@@ -163,7 +163,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return modifierList?.owner as? KtDeclaration
     }
 
-    private fun getFirForElementInsideAnnotations(
+    fun getFirForElementInsideAnnotations(
         element: KtElement,
         nonLocalDeclaration: KtDeclaration?,
     ): FirElement? = getFirForNonBodyElement<KtAnnotationEntry, KtAnnotated>(
@@ -174,7 +174,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
     )
 
-    private fun getFirForElementInsideTypes(
+    fun getFirForElementInsideTypes(
         element: KtElement,
         nonLocalDeclaration: KtDeclaration,
     ): FirElement? = getFirForNonBodyElement<KtTypeReference, KtDeclaration>(
@@ -197,7 +197,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         }
     }
 
-    private fun getFirForElementInsideFileHeader(element: KtElement): FirElement? = getFirForNonBodyElement<KtElement, KtAnnotated>(
+    fun getFirForElementInsideFileHeader(element: KtElement): FirElement? = getFirForNonBodyElement<KtElement, KtAnnotated>(
         element = element,
         nonLocalDeclaration = null,
         anchorElementProvider = { it.fileHeaderAnchorElement() },
@@ -218,11 +218,11 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         },
     )
 
-    private fun KtElement.fileHeaderAnchorElement(): KtElement? {
+    fun KtElement.fileHeaderAnchorElement(): KtElement? {
         return parentsWithSelf.find { it is KtPackageDirective || it is KtImportDirective } as? KtElement
     }
 
-    private fun findElementInside(firElement: FirElement, element: KtElement, stopAt: PsiElement): FirElement? {
+    fun findElementInside(firElement: FirElement, element: KtElement, stopAt: PsiElement): FirElement? {
         val elementToSearch = getPsiAsFirElementSource(element) ?: return null
         val mapping = FirElementsRecorder.recordElementsFrom(firElement, FirElementsRecorder())
 
@@ -238,7 +238,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return firElement
     }
 
-    private fun FirElementWithResolveState.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+    fun FirElementWithResolveState.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
         requireTypeIntersectionWith<FirAnnotationContainer>()
 
         lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
@@ -275,7 +275,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return null
     }
 
-    private fun FirTypeParameterRef.findTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+    fun FirTypeParameterRef.findTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
         if (this !is FirTypeParameter) return null
 
         for (typeRef in bounds) {
@@ -287,7 +287,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return null
     }
 
-    private fun FirElementWithResolveState.resolveAndFindAnnotation(
+    fun FirElementWithResolveState.resolveAndFindAnnotation(
         annotationEntry: KtAnnotationEntry,
         goDeep: Boolean = false,
     ): FirAnnotation? {
@@ -311,12 +311,12 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         }
     }
 
-    private fun FirAnnotationContainer.findAnnotation(
+    fun FirAnnotationContainer.findAnnotation(
         annotationEntry: KtAnnotationEntry,
     ): FirAnnotation? = annotations.find { it.psi == annotationEntry }
 }
 
-private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
+fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
     is KtPropertyAccessor -> this.property == callableDeclaration
     is KtParameter -> {
         val ownerFunction = ownerFunction
@@ -326,7 +326,7 @@ private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): 
     else -> false
 }
 
-internal val KtTypeParameter.containingDeclaration: KtDeclaration?
+val KtTypeParameter.containingDeclaration: KtDeclaration?
     get() = (parent as? KtTypeParameterList)?.parent as? KtDeclaration
 
 /**
@@ -335,13 +335,13 @@ internal val KtTypeParameter.containingDeclaration: KtDeclaration?
  *
  * @see getNonLocalContainingDeclaration
  */
-internal val KtDeclaration.isAutonomousDeclaration: Boolean
+val KtDeclaration.isAutonomousDeclaration: Boolean
     get() = when (this) {
         is KtPropertyAccessor, is KtParameter, is KtTypeParameter -> false
         else -> true
     }
 
-internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
+fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
     return getNonLocalContainingDeclaration(this, predicate = predicate)
 }
 
@@ -353,7 +353,7 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
  */
-internal fun getNonLocalContainingDeclaration(
+fun getNonLocalContainingDeclaration(
     element: PsiElement,
     codeFragmentAware: Boolean = false,
     predicate: (KtDeclaration) -> Boolean = { true },
@@ -399,6 +399,6 @@ internal fun getNonLocalContainingDeclaration(
     return candidate
 }
 
-private inline fun <reified T : KtElement> PsiElement.parentsOfType(stopDeclaration: KtDeclaration?): Sequence<T> {
+inline fun <reified T : KtElement> PsiElement.parentsOfType(stopDeclaration: KtDeclaration?): Sequence<T> {
     return parentsWithSelf.takeWhile { it !== stopDeclaration }.filterIsInstance<T>()
 }

@@ -17,14 +17,14 @@ import java.lang.ref.WeakReference
  */
 @LLFirInternals
 class CleanableWeakValueReferenceCache<K : Any, V : Any>(
-    private val getCleaner: (V) -> ValueReferenceCleaner<V>,
+    val getCleaner: (V) -> ValueReferenceCleaner<V>,
 ) : CleanableValueReferenceCache<K, V>() {
     override fun createReference(key: K, value: V): ReferenceWithCleanup<K, V> {
         return WeakReferenceWithCleanup(key, value, getCleaner(value), referenceQueue)
     }
 }
 
-private class WeakReferenceWithCleanup<K, V>(
+class WeakReferenceWithCleanup<K, V>(
     override val key: K,
     value: V,
     override val cleaner: ValueReferenceCleaner<V>,

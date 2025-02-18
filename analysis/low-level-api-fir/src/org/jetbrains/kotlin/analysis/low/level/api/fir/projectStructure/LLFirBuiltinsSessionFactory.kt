@@ -41,12 +41,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 @LLFirInternals
-class LLFirBuiltinsSessionFactory(private val project: Project) {
-    private val builtInTypes = BuiltinTypes() // TODO should be platform-specific
+class LLFirBuiltinsSessionFactory(val project: Project) {
+    val builtInTypes = BuiltinTypes() // TODO should be platform-specific
 
-    private val builtinsModules = ConcurrentHashMap<TargetPlatform, KaBuiltinsModule>()
+    val builtinsModules = ConcurrentHashMap<TargetPlatform, KaBuiltinsModule>()
 
-    private val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, CachedValue<LLFirBuiltinsAndCloneableSession>>()
+    val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, CachedValue<LLFirBuiltinsAndCloneableSession>>()
 
     /**
      * Returns the [platform]'s [KaBuiltinsModule]. [getBuiltinsModule] should be used instead of [getBuiltinsSession] when a
@@ -71,7 +71,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
         builtinsAndCloneableSessions.clear()
     }
 
-    private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
+    fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
         val builtinsModule = getBuiltinsModule(platform)
 
         val session = LLFirBuiltinsAndCloneableSession(builtinsModule, builtInTypes)

@@ -35,63 +35,63 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
  * cache invalidation (see `KaFirStopWorldCacheCleaner` in Analysis API K2) when it's guaranteed no threads perform code analysis.
  */
 @KaImplementationDetail
-class LLFirSessionInvalidationService(private val project: Project) {
-    internal class LLKotlinModuleStateModificationListener(val project: Project) : KotlinModuleStateModificationListener {
+class LLFirSessionInvalidationService(val project: Project) {
+    class LLKotlinModuleStateModificationListener(val project: Project) : KotlinModuleStateModificationListener {
         override fun onModification(module: KaModule, modificationKind: KotlinModuleStateModificationKind) {
             getInstance(project).invalidate(module)
         }
     }
 
-    internal class LLKotlinModuleOutOfBlockModificationListener(val project: Project) : KotlinModuleOutOfBlockModificationListener {
+    class LLKotlinModuleOutOfBlockModificationListener(val project: Project) : KotlinModuleOutOfBlockModificationListener {
         override fun onModification(module: KaModule) {
             getInstance(project).invalidate(module)
         }
     }
 
-    internal class LLKotlinGlobalModuleStateModificationListener(val project: Project) : KotlinGlobalModuleStateModificationListener {
+    class LLKotlinGlobalModuleStateModificationListener(val project: Project) : KotlinGlobalModuleStateModificationListener {
         override fun onModification() {
             getInstance(project).invalidateAll(includeLibraryModules = true)
         }
     }
 
-    internal class LLKotlinGlobalSourceModuleStateModificationListener(val project: Project) :
+    class LLKotlinGlobalSourceModuleStateModificationListener(val project: Project) :
         KotlinGlobalSourceModuleStateModificationListener {
         override fun onModification() {
             getInstance(project).invalidateAll(includeLibraryModules = false)
         }
     }
 
-    internal class LLKotlinGlobalSourceOutOfBlockModificationListener(val project: Project) :
+    class LLKotlinGlobalSourceOutOfBlockModificationListener(val project: Project) :
         KotlinGlobalSourceOutOfBlockModificationListener {
         override fun onModification() {
             getInstance(project).invalidateAll(includeLibraryModules = false)
         }
     }
 
-    internal class LLKotlinCodeFragmentContextModificationListener(val project: Project) : KotlinCodeFragmentContextModificationListener {
+    class LLKotlinCodeFragmentContextModificationListener(val project: Project) : KotlinCodeFragmentContextModificationListener {
         override fun onModification(module: KaModule) {
             getInstance(project).invalidateContextualDanglingFileSessions(module)
         }
     }
 
-    internal class LLPsiModificationTrackerListener(val project: Project) : PsiModificationTracker.Listener {
+    class LLPsiModificationTrackerListener(val project: Project) : PsiModificationTracker.Listener {
         override fun modificationCountChanged() {
             getInstance(project).invalidateUnstableDanglingFileSessions()
         }
     }
 
-    internal class LLKotlinGlobalScriptModuleStateModificationListener(val project: Project) :
+    class LLKotlinGlobalScriptModuleStateModificationListener(val project: Project) :
         KotlinGlobalScriptModuleStateModificationListener {
         override fun onModification() {
             getInstance(project).invalidateScriptSessions()
         }
     }
 
-    private val sessionCache: LLFirSessionCache by lazy {
+    val sessionCache: LLFirSessionCache by lazy {
         LLFirSessionCache.getInstance(project)
     }
 
-    private val sessionInvalidationEventPublisher: LLFirSessionInvalidationEventPublisher
+    val sessionInvalidationEventPublisher: LLFirSessionInvalidationEventPublisher
         get() = LLFirSessionInvalidationEventPublisher.getInstance(project)
 
     /**
@@ -99,7 +99,7 @@ class LLFirSessionInvalidationService(private val project: Project) {
      *
      * Per the contract of [LLFirSessionInvalidationService], [invalidate] may only be called from a write action.
      */
-    private fun invalidate(module: KaModule) = performInvalidation {
+    fun invalidate(module: KaModule) = performInvalidation {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {
@@ -130,7 +130,7 @@ class LLFirSessionInvalidationService(private val project: Project) {
         }
     }
 
-    private fun invalidateScriptSessions() = sessionCache.removeAllScriptSessions()
+    fun invalidateScriptSessions() = sessionCache.removeAllScriptSessions()
 
     /**
      * Invalidates all cached sessions. If [includeLibraryModules] is `true`, also invalidates sessions for libraries.
@@ -157,7 +157,7 @@ class LLFirSessionInvalidationService(private val project: Project) {
         project.analysisMessageBus.syncPublisher(LLFirSessionInvalidationTopics.SESSION_INVALIDATION).afterGlobalInvalidation()
     }
 
-    private fun invalidateContextualDanglingFileSessions(contextModule: KaModule) = performInvalidation {
+    fun invalidateContextualDanglingFileSessions(contextModule: KaModule) = performInvalidation {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {
@@ -165,7 +165,7 @@ class LLFirSessionInvalidationService(private val project: Project) {
         }
     }
 
-    private fun invalidateUnstableDanglingFileSessions() = performInvalidation {
+    fun invalidateUnstableDanglingFileSessions() = performInvalidation {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         // We don't need to publish any session invalidation events for unstable dangling file modules.
@@ -181,7 +181,7 @@ class LLFirSessionInvalidationService(private val project: Project) {
      *
      * The synchronization protects concurrent-unsafe cleanup in [SessionStorage].
      */
-    private inline fun performInvalidation(block: () -> Unit) {
+    inline fun performInvalidation(block: () -> Unit) {
         synchronized(this) {
             block()
         }

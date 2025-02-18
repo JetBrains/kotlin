@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
 
-internal class LLFirDiagnosticReporter : DiagnosticReporter() {
-    private val pendingDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
-    private val _committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
+class LLFirDiagnosticReporter : DiagnosticReporter() {
+    val pendingDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
+    val _committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
 
     val committedDiagnostics get() = _committedDiagnostics.ifEmpty { emptyMap() }
 
@@ -61,11 +61,11 @@ internal class LLFirDiagnosticReporter : DiagnosticReporter() {
 }
 
 @OptIn(SuspiciousFakeSourceCheck::class)
-private fun KtDiagnostic.isAboutImplicitImport() =
+fun KtDiagnostic.isAboutImplicitImport() =
     (element is KtFakePsiSourceElement && (element as KtFakePsiSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
 
 
-private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
+fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
     val psiSourceElement = element.unwrapToKtPsiSourceElement()
         ?: error("Diagnostic should be created from PSI in IDE")
     @Suppress("UNCHECKED_CAST")

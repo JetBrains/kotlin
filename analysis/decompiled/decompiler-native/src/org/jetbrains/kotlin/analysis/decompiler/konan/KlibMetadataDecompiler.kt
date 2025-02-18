@@ -79,5 +79,5 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
     }
 
     @TestOnly
-    internal fun buildDecompiledTextForTests(virtualFile: VirtualFile): DecompiledText = buildDecompiledText(virtualFile)
+    fun buildDecompiledTextForTests(virtualFile: VirtualFile): DecompiledText = buildDecompiledText(virtualFile)
 }

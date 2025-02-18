@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 
-internal abstract class AbstractLLFirDiagnosticsCollector(
+abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
     filter: DiagnosticCheckerFilter,
 ) : AbstractDiagnosticCollector(
@@ -52,7 +52,7 @@ internal abstract class AbstractLLFirDiagnosticsCollector(
 )
 
 
-private object CheckersFactory {
+object CheckersFactory {
     fun createComponents(
         session: FirSession,
         reporter: DiagnosticReporter,
@@ -78,7 +78,7 @@ private object CheckersFactory {
     }
 
 
-    private fun createDeclarationCheckers(
+    fun createDeclarationCheckers(
         filter: DiagnosticCheckerFilter,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
@@ -110,7 +110,7 @@ private object CheckersFactory {
         }
     }
 
-    private fun createExpressionCheckers(
+    fun createExpressionCheckers(
         filter: DiagnosticCheckerFilter,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
@@ -141,7 +141,7 @@ private object CheckersFactory {
         }
     }
 
-    private fun createTypeCheckers(
+    fun createTypeCheckers(
         filter: DiagnosticCheckerFilter,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>,
@@ -167,14 +167,14 @@ private object CheckersFactory {
     }
 
 
-    private inline fun createDeclarationCheckers(
+    inline fun createDeclarationCheckers(
         createDeclarationCheckers: MutableList<DeclarationCheckers>.() -> Unit
     ): DeclarationCheckers =
         createDeclarationCheckers(buildList(createDeclarationCheckers))
 
 
     @OptIn(CheckersComponentInternal::class)
-    private fun createDeclarationCheckers(declarationCheckers: List<DeclarationCheckers>): DeclarationCheckers {
+    fun createDeclarationCheckers(declarationCheckers: List<DeclarationCheckers>): DeclarationCheckers {
         return when (declarationCheckers.size) {
             1 -> declarationCheckers.single()
             else -> ComposedDeclarationCheckers { true }.apply {
@@ -183,12 +183,12 @@ private object CheckersFactory {
         }
     }
 
-    private inline fun createExpressionCheckers(
+    inline fun createExpressionCheckers(
         createExpressionCheckers: MutableList<ExpressionCheckers>.() -> Unit
     ): ExpressionCheckers = createExpressionCheckers(buildList(createExpressionCheckers))
 
     @OptIn(CheckersComponentInternal::class)
-    private fun createExpressionCheckers(expressionCheckers: List<ExpressionCheckers>): ExpressionCheckers {
+    fun createExpressionCheckers(expressionCheckers: List<ExpressionCheckers>): ExpressionCheckers {
         return when (expressionCheckers.size) {
             1 -> expressionCheckers.single()
             else -> ComposedExpressionCheckers { true }.apply {
@@ -197,12 +197,12 @@ private object CheckersFactory {
         }
     }
 
-    private inline fun createTypeCheckers(
+    inline fun createTypeCheckers(
         createTypeCheckers: MutableList<TypeCheckers>.() -> Unit
     ): TypeCheckers = createTypeCheckers(buildList(createTypeCheckers))
 
     @OptIn(CheckersComponentInternal::class)
-    private fun createTypeCheckers(typeCheckers: List<TypeCheckers>): TypeCheckers {
+    fun createTypeCheckers(typeCheckers: List<TypeCheckers>): TypeCheckers {
         return when (typeCheckers.size) {
             1 -> typeCheckers.single()
             else -> ComposedTypeCheckers { true }.apply {

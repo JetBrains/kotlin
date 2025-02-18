@@ -10,16 +10,16 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 
-internal class FileStructureElementDiagnostics(private val retriever: FileStructureElementDiagnosticRetriever) {
-    private val diagnosticByDefaultCheckers: FileStructureElementDiagnosticList by lazy {
+class FileStructureElementDiagnostics(val retriever: FileStructureElementDiagnosticRetriever) {
+    val diagnosticByDefaultCheckers: FileStructureElementDiagnosticList by lazy {
         retriever.retrieve(DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
     }
 
-    private val diagnosticByExtraCheckers: FileStructureElementDiagnosticList by lazy {
+    val diagnosticByExtraCheckers: FileStructureElementDiagnosticList by lazy {
         retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXTRA_CHECKERS)
     }
 
-    private val diagnosticByExperimentalCheckers: FileStructureElementDiagnosticList by lazy {
+    val diagnosticByExperimentalCheckers: FileStructureElementDiagnosticList by lazy {
         retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXPERIMENTAL_CHECKERS)
     }
 

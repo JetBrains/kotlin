@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
+object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirBodyTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
@@ -92,7 +92,7 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
  * @see FirBodyResolveTransformer
  * @see FirResolvePhase.BODY_RESOLVE
  */
-private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
+class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     target,
     FirResolvePhase.BODY_RESOLVE,
 ) {
@@ -197,7 +197,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         return false
     }
 
-    private fun calculateControlFlowGraph(target: FirRegularClass) {
+    fun calculateControlFlowGraph(target: FirRegularClass) {
         checkWithAttachment(
             target.controlFlowGraphReference == null,
             { "'controlFlowGraphReference' should be 'null' if the class phase < $resolverPhase)" },
@@ -234,7 +234,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         }
     }
 
-    private fun calculateControlFlowGraph(target: FirFile) {
+    fun calculateControlFlowGraph(target: FirFile) {
         checkWithAttachment(
             target.controlFlowGraphReference == null,
             { "'controlFlowGraphReference' should be 'null' if the file phase < $resolverPhase)" },
@@ -252,7 +252,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
     }
 
-    private fun calculateControlFlowGraph(target: FirScript) {
+    fun calculateControlFlowGraph(target: FirScript) {
         checkWithAttachment(
             target.controlFlowGraphReference == null,
             { "'controlFlowGraphReference' should be 'null' if the script phase < $resolverPhase)" },
@@ -271,7 +271,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     }
 
     @OptIn(DelicateScopeAPI::class)
-    private fun resolveCodeFragmentContext(firCodeFragment: FirCodeFragment): LLFirCodeFragmentContext {
+    fun resolveCodeFragmentContext(firCodeFragment: FirCodeFragment): LLFirCodeFragmentContext {
         val ktCodeFragment = firCodeFragment.psi as? KtCodeFragment
             ?: errorWithAttachment("Code fragment source not found") {
                 withFirEntry("firCodeFragment", firCodeFragment)
@@ -314,7 +314,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     }
 
     @DelicateScopeAPI
-    private fun FirTowerDataContext.withProperSession(session: FirSession, scopeSession: ScopeSession): FirTowerDataContext {
+    fun FirTowerDataContext.withProperSession(session: FirSession, scopeSession: ScopeSession): FirTowerDataContext {
         return replaceTowerDataElements(
             towerDataElements.map { it.withProperSession(session, scopeSession) }.toPersistentList(),
             nonLocalTowerDataElements.map { it.withProperSession(session, scopeSession) }.toPersistentList(),
@@ -322,7 +322,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     }
 
     @DelicateScopeAPI
-    private fun FirTowerDataElement.withProperSession(
+    fun FirTowerDataElement.withProperSession(
         session: FirSession,
         scopeSession: ScopeSession,
     ): FirTowerDataElement = FirTowerDataElement(
@@ -363,7 +363,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     }
 }
 
-internal object BodyStateKeepers {
+object BodyStateKeepers {
     val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignation> = stateKeeper { builder, _, _ ->
         builder.add(FirCodeFragment::block, FirCodeFragment::replaceBlock, ::blockGuard)
     }
@@ -408,7 +408,7 @@ internal object BodyStateKeepers {
         }
     }
 
-    private val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignation> = stateKeeper { builder, valueParameter, _ ->
+    val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignation> = stateKeeper { builder, valueParameter, _ ->
         if (valueParameter.defaultValue != null) {
             builder.add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
         }
@@ -439,7 +439,7 @@ internal object BodyStateKeepers {
     }
 }
 
-private fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(builder: StateKeeperBuilder, function: FirFunction) {
+fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(builder: StateKeeperBuilder, function: FirFunction) {
     val oldBody = function.body
     if (oldBody == null || oldBody is FirLazyBlock) {
         return
@@ -463,7 +463,7 @@ private fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(
     }
 }
 
-private val FirFunction.isCertainlyResolved: Boolean
+val FirFunction.isCertainlyResolved: Boolean
     get() {
         if (this is FirPropertyAccessor) {
             val requiredState = when {
@@ -480,25 +480,25 @@ private val FirFunction.isCertainlyResolved: Boolean
         return body !is FirLazyBlock && body.isResolved
     }
 
-private val FirVariable.initializerIfUnresolved: FirExpression?
+val FirVariable.initializerIfUnresolved: FirExpression?
     get() = when (this) {
         is FirProperty -> if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) initializer else null
         else -> initializer
     }
 
-private val FirVariable.delegateIfUnresolved: FirExpression?
+val FirVariable.delegateIfUnresolved: FirExpression?
     get() = when (this) {
         is FirProperty -> if (bodyResolveState < FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) delegate else null
         else -> delegate
     }
 
-private val FirProperty.backingFieldIfUnresolved: FirBackingField?
+val FirProperty.backingFieldIfUnresolved: FirBackingField?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) getExplicitBackingField() else null
 
-private val FirProperty.getterIfUnresolved: FirPropertyAccessor?
+val FirProperty.getterIfUnresolved: FirPropertyAccessor?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED) getter else null
 
-private val FirProperty.setterIfUnresolved: FirPropertyAccessor?
+val FirProperty.setterIfUnresolved: FirPropertyAccessor?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) setter else null
 
 private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): FirDelegatedConstructorCall {
@@ -532,16 +532,16 @@ private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): Fir
     }
 }
 
-private class LLFirCodeFragmentContext(
+class LLFirCodeFragmentContext(
     override val towerDataContext: FirTowerDataContext,
     override val smartCasts: Map<RealVariable, Set<ConeKotlinType>>,
 ) : FirCodeFragmentContext
 
-private val FirDeclaration.isUsedInFileControlFlowGraphBuilder: Boolean
+val FirDeclaration.isUsedInFileControlFlowGraphBuilder: Boolean
     get() = this is FirControlFlowGraphOwner && isUsedInControlFlowGraphBuilderForFile
 
-private val FirDeclaration.isUsedInScriptControlFlowGraphBuilder: Boolean
+val FirDeclaration.isUsedInScriptControlFlowGraphBuilder: Boolean
     get() = this is FirControlFlowGraphOwner && isUsedInControlFlowGraphBuilderForScript
 
-private val FirDeclaration.isUsedInClassControlFlowGraphBuilder: Boolean
+val FirDeclaration.isUsedInClassControlFlowGraphBuilder: Boolean
     get() = this is FirControlFlowGraphOwner && isUsedInControlFlowGraphBuilderForClass

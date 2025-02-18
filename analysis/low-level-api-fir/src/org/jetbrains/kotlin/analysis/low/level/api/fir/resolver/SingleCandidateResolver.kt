@@ -25,15 +25,15 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 class SingleCandidateResolver(
-    private val firSession: FirSession,
-    private val firFile: FirFile,
+    val firSession: FirSession,
+    val firFile: FirFile,
 ) {
-    private val bodyResolveComponents = createStubBodyResolveComponents(firSession)
-    private val firCallCompleter = FirCallCompleter(
+    val bodyResolveComponents = createStubBodyResolveComponents(firSession)
+    val firCallCompleter = FirCallCompleter(
         bodyResolveComponents.transformer,
         bodyResolveComponents,
     )
-    private val resolutionStageRunner = ResolutionStageRunner()
+    val resolutionStageRunner = ResolutionStageRunner()
 
     fun resolveSingleCandidate(
         resolutionParameters: ResolutionParameters
@@ -87,7 +87,7 @@ class SingleCandidateResolver(
         return completionResult
     }
 
-    private fun createCandidateInfoProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {
+    fun createCandidateInfoProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {
         return when (resolutionParameters.singleCandidateResolutionMode) {
             SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION -> CheckExtensionForCompletionCandidateInfoProvider(
                 resolutionParameters,
@@ -97,7 +97,7 @@ class SingleCandidateResolver(
         }
     }
 
-    private fun buildCallForResolvedCandidate(candidate: Candidate, resolutionParameters: ResolutionParameters): FirFunctionCall =
+    fun buildCallForResolvedCandidate(candidate: Candidate, resolutionParameters: ResolutionParameters): FirFunctionCall =
         buildFunctionCall {
             calleeReference = FirNamedReferenceWithCandidate(
                 source = null,
@@ -106,7 +106,7 @@ class SingleCandidateResolver(
             )
         }
 
-    private fun buildCallForCandidateWithError(
+    fun buildCallForCandidateWithError(
         candidate: Candidate,
         applicability: CandidateApplicability,
         resolutionParameters: ResolutionParameters

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 
-internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.SUPER_TYPES) {
+object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.SUPER_TYPES) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirSuperTypeTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
@@ -65,12 +65,12 @@ internal object LLFirSupertypeLazyResolver : LLFirLazyResolver(FirResolvePhase.S
  * @see FirSupertypeResolverVisitor
  * @see FirResolvePhase.SUPER_TYPES
  */
-private class LLFirSuperTypeTargetResolver(
+class LLFirSuperTypeTargetResolver(
     target: LLFirResolveTarget,
-    private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(),
-    private val visitedElements: MutableSet<FirElementWithResolveState> = hashSetOf(),
+    val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(),
+    val visitedElements: MutableSet<FirElementWithResolveState> = hashSetOf(),
 ) : LLFirTargetResolver(target, FirResolvePhase.SUPER_TYPES) {
-    private val supertypeResolver = object : FirSupertypeResolverVisitor(
+    val supertypeResolver = object : FirSupertypeResolverVisitor(
         session = resolveTargetSession,
         supertypeComputationSession = supertypeComputationSession,
         scopeSession = resolveTargetScopeSession,
@@ -192,9 +192,9 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
-    private fun FirClassLikeDeclaration.asResolveTarget(): LLFirSingleResolveTarget? = tryCollectDesignation()?.asResolveTarget()
+    fun FirClassLikeDeclaration.asResolveTarget(): LLFirSingleResolveTarget? = tryCollectDesignation()?.asResolveTarget()
 
-    private fun resolveToSupertypePhase(target: LLFirSingleResolveTarget) {
+    fun resolveToSupertypePhase(target: LLFirSingleResolveTarget) {
         LLFirSuperTypeTargetResolver(
             target = target,
             supertypeComputationSession = supertypeComputationSession,
@@ -208,7 +208,7 @@ private class LLFirSuperTypeTargetResolver(
      * We want to apply resolved supertypes to as many designations as possible.
      * So we crawl the resolved supertypes of visited designations to find more designations to collect.
      */
-    private fun crawlSupertype(type: ConeKotlinType) {
+    fun crawlSupertype(type: ConeKotlinType) {
         // Resolution order: from declaration site to use site
         for (session in supertypeComputationSession.useSiteSessions.asReversed()) {
             /**
@@ -225,7 +225,7 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
-    private fun crawlSupertype(symbol: FirClassifierSymbol<*>) {
+    fun crawlSupertype(symbol: FirClassifierSymbol<*>) {
         val classLikeDeclaration = symbol.fir
         if (classLikeDeclaration !is FirClassLikeDeclaration) return
         if (classLikeDeclaration in visitedElements) return
@@ -251,7 +251,7 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
-    private fun crawlSupertypeFromResolvedDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
+    fun crawlSupertypeFromResolvedDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
         val parentClass = classLikeDeclaration.outerClass()
         if (parentClass != null) {
             crawlSupertype(parentClass.defaultType())
@@ -279,13 +279,13 @@ private class LLFirSuperTypeTargetResolver(
     }
 }
 
-private fun FirClassLikeDeclaration.outerClass(): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
+fun FirClassLikeDeclaration.outerClass(): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
     llFirSession.symbolProvider.getClassLikeSymbolByClassId(parentClassId)?.fir as? FirRegularClass
 }
 
-private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
+class LLFirSupertypeComputationSession : SupertypeComputationSession() {
     var useSiteSessions: PersistentList<LLFirSession> = persistentListOf<LLFirSession>()
-        private set
+        set
 
     inline fun withDeclarationSession(declaration: FirClassLikeDeclaration, action: () -> Unit) {
         val newSession = declaration.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
@@ -301,10 +301,10 @@ private class LLFirSupertypeComputationSession : SupertypeComputationSession() {
      * These collections exist to reuse a collection for each search to avoid repeated memory allocation.
      * Can be replaced with a new collection on each invocation of [findLoopFor]
      */
-    private val visited: MutableSet<FirClassLikeDeclaration> = hashSetOf()
-    private val looped: MutableSet<FirClassLikeDeclaration> = hashSetOf()
-    private val pathSet: MutableSet<FirClassLikeDeclaration> = hashSetOf()
-    private val path: MutableList<FirClassLikeDeclaration> = mutableListOf()
+    val visited: MutableSet<FirClassLikeDeclaration> = hashSetOf()
+    val looped: MutableSet<FirClassLikeDeclaration> = hashSetOf()
+    val pathSet: MutableSet<FirClassLikeDeclaration> = hashSetOf()
+    val path: MutableList<FirClassLikeDeclaration> = mutableListOf()
     // ---------------
 
     /**

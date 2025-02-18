@@ -18,7 +18,7 @@ dependencies:
 
 settings:
   kotlin:
-    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xsam-conversions=class, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xsuppress-version-warnings, -Xwhen-guards]
+    freeCompilerArgs: [-api-version=2.0, -Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xsam-conversions=class, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xsuppress-version-warnings, -Xwhen-guards]
 
 
 test-dependencies:

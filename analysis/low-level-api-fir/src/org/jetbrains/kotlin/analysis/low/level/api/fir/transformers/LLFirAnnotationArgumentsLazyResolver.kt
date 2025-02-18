@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
+object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
     override fun createTargetResolver(target: LLFirResolveTarget): LLFirTargetResolver = LLFirAnnotationArgumentsTargetResolver(target)
 
     override fun phaseSpecificCheckIsResolved(target: FirElementWithResolveState) {
@@ -74,7 +74,7 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
  * @see FirAnnotationArgumentsTransformer
  * @see FirResolvePhase.ANNOTATION_ARGUMENTS
  */
-private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
+class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
     resolveTarget,
     FirResolvePhase.ANNOTATION_ARGUMENTS,
 ) {
@@ -120,13 +120,13 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
         return false
     }
 
-    private fun MutableList<FirBasedSymbol<*>>.addSymbolsFromForeignAnnotations(target: FirDeclaration) {
+    fun MutableList<FirBasedSymbol<*>>.addSymbolsFromForeignAnnotations(target: FirDeclaration) {
         // It is fine to just visit the declaration recursively as copy declarations don't have a body
         target.accept(ForeignAnnotationsCollector, ForeignAnnotationsContext(this, target.symbol))
     }
 
-    private class ForeignAnnotationsContext(val collection: MutableCollection<FirBasedSymbol<*>>, val currentSymbol: FirBasedSymbol<*>)
-    private object ForeignAnnotationsCollector : NonLocalAnnotationVisitor<ForeignAnnotationsContext>() {
+    class ForeignAnnotationsContext(val collection: MutableCollection<FirBasedSymbol<*>>, val currentSymbol: FirBasedSymbol<*>)
+    object ForeignAnnotationsCollector : NonLocalAnnotationVisitor<ForeignAnnotationsContext>() {
         override fun processAnnotation(annotation: FirAnnotation, data: ForeignAnnotationsContext) {
             if (annotation !is FirAnnotationCall) return
             val symbolToPostpone = annotation.containingDeclarationSymbol.symbolToPostponeIfCanBeResolvedOnDemand() ?: return
@@ -168,7 +168,7 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
         }
     }
 
-    private fun transformAnnotations(target: FirElementWithResolveState) {
+    fun transformAnnotations(target: FirElementWithResolveState) {
         when {
             target is FirRegularClass -> {
                 val declarationTransformer = transformer.declarationsTransformer
@@ -192,7 +192,7 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
     }
 }
 
-internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Boolean
+val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Boolean
     get() = when (this) {
         is FirCallableDeclaration,
         is FirAnonymousInitializer,
@@ -202,20 +202,20 @@ internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Bool
         else -> false
     }
 
-internal object AnnotationArgumentsStateKeepers {
-    private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, _, session ->
+object AnnotationArgumentsStateKeepers {
+    val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, _, session ->
         builder.add(ANNOTATION_BASE, session)
         builder.add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
         builder.add(FirAnnotation::typeArgumentsCopied, FirAnnotation::replaceTypeArguments)
     }
 
-    private val ANNOTATION_BASE: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, annotation, session ->
+    val ANNOTATION_BASE: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, annotation, session ->
         if (annotation is FirAnnotationCall) {
             builder.entity(annotation, ANNOTATION_CALL, session)
         }
     }
 
-    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { builder, annotationCall, session ->
+    val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { builder, annotationCall, session ->
         builder.add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
 
         val argumentList = annotationCall.argumentList
@@ -248,5 +248,5 @@ internal object AnnotationArgumentsStateKeepers {
     }
 }
 
-private val FirAnnotation.typeArgumentsCopied: List<FirTypeProjection>
+val FirAnnotation.typeArgumentsCopied: List<FirTypeProjection>
     get() = if (typeArguments.isEmpty()) emptyList() else ArrayList(typeArguments)

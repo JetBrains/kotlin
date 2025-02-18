@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 @ThreadSafeMutableState
-internal class LLFirProvider(
+class LLFirProvider(
     val session: LLFirSession,
-    private val moduleComponents: LLFirModuleResolveComponents,
+    val moduleComponents: LLFirModuleResolveComponents,
     canContainKotlinPackage: Boolean,
     disregardSelfDeclarations: Boolean = false,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
@@ -40,7 +40,7 @@ internal class LLFirProvider(
     override val symbolProvider: FirSymbolProvider =
         if (disregardSelfDeclarations) LLEmptySymbolProvider(session) else SymbolProvider()
 
-    private val providerHelper = LLFirProviderHelper(
+    val providerHelper = LLFirProviderHelper(
         session,
         moduleComponents.firFileBuilder,
         canContainKotlinPackage,
@@ -60,7 +60,7 @@ internal class LLFirProvider(
         return getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
     }
 
-    private fun getFirClassifierByFqNameAndDeclaration(
+    fun getFirClassifierByFqNameAndDeclaration(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration?,
     ): FirClassLikeDeclaration? {
@@ -118,7 +118,7 @@ internal class LLFirProvider(
     }
 
     @NoMutableState
-    internal inner class SymbolProvider : LLFirKotlinSymbolProvider(session) {
+    inner class SymbolProvider : LLFirKotlinSymbolProvider(session) {
         override val declarationProvider: KotlinDeclarationProvider get() = providerHelper.declarationProvider
 
         override val packageProvider: KotlinPackageProvider get() = providerHelper.packageProvider

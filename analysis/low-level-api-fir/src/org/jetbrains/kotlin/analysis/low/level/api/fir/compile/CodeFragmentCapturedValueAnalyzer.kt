@@ -61,8 +61,8 @@ object CodeFragmentCapturedValueAnalyzer {
 
 class CodeFragmentCapturedValueData(val symbols: List<CodeFragmentCapturedSymbol>, val files: List<KtFile>)
 
-private class CodeFragmentDeclarationCollector : FirDefaultVisitorVoid() {
-    private val collectedSymbols = mutableListOf<FirBasedSymbol<*>>()
+class CodeFragmentDeclarationCollector : FirDefaultVisitorVoid() {
+    val collectedSymbols = mutableListOf<FirBasedSymbol<*>>()
 
     val symbols: List<FirBasedSymbol<*>>
         get() = Collections.unmodifiableList(collectedSymbols)
@@ -76,14 +76,14 @@ private class CodeFragmentDeclarationCollector : FirDefaultVisitorVoid() {
     }
 }
 
-private class CodeFragmentCapturedValueVisitor(
-    private val resolveSession: LLFirResolveSession,
-    private val selfSymbols: Set<FirBasedSymbol<*>>,
+class CodeFragmentCapturedValueVisitor(
+    val resolveSession: LLFirResolveSession,
+    val selfSymbols: Set<FirBasedSymbol<*>>,
 ) : FirDefaultVisitorVoid() {
-    private val collectedMappings = LinkedHashMap<CodeFragmentCapturedId, CodeFragmentCapturedSymbol>()
-    private val collectedFiles = LinkedHashSet<KtFile>()
+    val collectedMappings = LinkedHashMap<CodeFragmentCapturedId, CodeFragmentCapturedSymbol>()
+    val collectedFiles = LinkedHashSet<KtFile>()
 
-    private val assignmentLhs = mutableListOf<FirBasedSymbol<*>>()
+    val assignmentLhs = mutableListOf<FirBasedSymbol<*>>()
 
     val values: List<CodeFragmentCapturedSymbol>
         get() = collectedMappings.values.toList()
@@ -91,7 +91,7 @@ private class CodeFragmentCapturedValueVisitor(
     val files: List<KtFile>
         get() = collectedFiles.toList()
 
-    private val session: FirSession
+    val session: FirSession
         get() = resolveSession.useSiteFirSession
 
     override fun visitElement(element: FirElement) {
@@ -109,7 +109,7 @@ private class CodeFragmentCapturedValueVisitor(
         }
     }
 
-    private fun processElement(element: FirElement) {
+    fun processElement(element: FirElement) {
         if (element is FirExpression) {
             val symbol = element.resolvedType.toSymbol(session)
             if (symbol != null) {
@@ -203,7 +203,7 @@ private class CodeFragmentCapturedValueVisitor(
         }
     }
 
-    private fun processCall(element: FirElement, symbol: FirCallableSymbol<*>) {
+    fun processCall(element: FirElement, symbol: FirCallableSymbol<*>) {
         // Desugared inc/dec FIR looks as follows:
         // lval <unary>: R|kotlin/Int| = R|<local>/x|
         // R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
@@ -251,7 +251,7 @@ private class CodeFragmentCapturedValueVisitor(
         }
     }
 
-    private fun register(mapping: CodeFragmentCapturedSymbol) {
+    fun register(mapping: CodeFragmentCapturedSymbol) {
         val id = CodeFragmentCapturedId(mapping.symbol)
         val previousMapping = collectedMappings[id]
 
@@ -271,7 +271,7 @@ private class CodeFragmentCapturedValueVisitor(
         registerFile(mapping.symbol)
     }
 
-    private fun registerFile(symbol: FirBasedSymbol<*>) {
+    fun registerFile(symbol: FirBasedSymbol<*>) {
         val needsRegistration = when (symbol) {
             is FirRegularClassSymbol -> symbol.isLocal
             is FirAnonymousObjectSymbol -> true
@@ -289,7 +289,7 @@ private class CodeFragmentCapturedValueVisitor(
         }
     }
 
-    private fun isCrossingInlineBounds(element: FirElement, symbol: FirBasedSymbol<*>): Boolean {
+    fun isCrossingInlineBounds(element: FirElement, symbol: FirBasedSymbol<*>): Boolean {
         val callSite = element.source?.psi ?: return false
         val declarationSite = symbol.fir.source?.psi ?: return false
         val commonParent = findCommonParentContextAware(callSite, declarationSite) ?: return false
@@ -310,7 +310,7 @@ private class CodeFragmentCapturedValueVisitor(
         return false
     }
 
-    private fun findCommonParentContextAware(callSite: PsiElement, declarationSite: PsiElement): PsiElement? {
+    fun findCommonParentContextAware(callSite: PsiElement, declarationSite: PsiElement): PsiElement? {
         val directParent = PsiTreeUtil.findCommonParent(callSite, declarationSite)
         if (directParent != null) {
             return directParent

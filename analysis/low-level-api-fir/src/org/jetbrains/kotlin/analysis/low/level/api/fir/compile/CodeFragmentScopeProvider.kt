@@ -33,17 +33,17 @@ import org.jetbrains.org.objectweb.asm.Type
 
 val FirSession.codeFragmentScopeProvider: CodeFragmentScopeProvider by FirSession.sessionComponentAccessor()
 
-private object ForeignValueMarkerDataKey : FirDeclarationDataKey()
+object ForeignValueMarkerDataKey : FirDeclarationDataKey()
 
-private var FirProperty.foreignValueMarker: Boolean? by FirDeclarationDataRegistry.data(ForeignValueMarkerDataKey)
+var FirProperty.foreignValueMarker: Boolean? by FirDeclarationDataRegistry.data(ForeignValueMarkerDataKey)
 
 val FirPropertySymbol.isForeignValue: Boolean
     get() = fir.foreignValueMarker == true
 
-class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionComponent {
-    private val foreignValueProvider = KotlinForeignValueProviderService.getInstance()
+class CodeFragmentScopeProvider(val session: FirSession) : FirSessionComponent {
+    val foreignValueProvider = KotlinForeignValueProviderService.getInstance()
 
-    private val typeCache = session.firCachesFactory.createCache<String, FirTypeRef, KtCodeFragment> { typeDescriptor, ktCodeFragment ->
+    val typeCache = session.firCachesFactory.createCache<String, FirTypeRef, KtCodeFragment> { typeDescriptor, ktCodeFragment ->
         getPrimitiveType(typeDescriptor, session)?.let { return@createCache it }
 
         val project = ktCodeFragment.project
@@ -67,7 +67,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
         return listOf(getForeignValuesScope(codeFragment, foreignValues))
     }
 
-    private fun getForeignValuesScope(ktCodeFragment: KtCodeFragment, foreignValues: Map<String, String>): FirLocalScope {
+    fun getForeignValuesScope(ktCodeFragment: KtCodeFragment, foreignValues: Map<String, String>): FirLocalScope {
         var result = FirLocalScope(session)
 
         for ((variableNameString, typeDescriptor) in foreignValues) {
@@ -95,7 +95,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
     }
 }
 
-private fun getPrimitiveType(typeDescriptor: String, session: FirSession): FirTypeRef? {
+fun getPrimitiveType(typeDescriptor: String, session: FirSession): FirTypeRef? {
     val asmType = Type.getType(typeDescriptor)
     return when (asmType.sort) {
         Type.VOID -> session.builtinTypes.unitType

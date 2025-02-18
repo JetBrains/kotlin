@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticColl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.AbstractLLFirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
-internal class LLFirStructureElementDiagnosticsCollector(
+class LLFirStructureElementDiagnosticsCollector(
     session: FirSession,
-    private val doCreateVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,
+    val doCreateVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,
     filter: DiagnosticCheckerFilter,
 ) : AbstractLLFirDiagnosticsCollector(
     session,

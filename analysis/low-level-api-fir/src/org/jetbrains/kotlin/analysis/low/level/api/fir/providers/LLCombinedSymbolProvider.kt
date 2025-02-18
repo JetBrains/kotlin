@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
  * A symbol provider which combines multiple individual symbol providers of the same type. Combined symbol providers typically have an
  * advantage over naively querying the list of individual symbol providers, such as caching or a single index access with a combined scope.
  */
-internal abstract class LLCombinedSymbolProvider<P : FirSymbolProvider>(session: FirSession) : FirSymbolProvider(session) {
+abstract class LLCombinedSymbolProvider<P : FirSymbolProvider>(session: FirSession) : FirSymbolProvider(session) {
     abstract val providers: List<P>
 
     /**

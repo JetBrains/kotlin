@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory.registerWasmComponents
 
 @OptIn(SessionConfiguration::class)
-internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
+class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
             registerWasmComponents()
@@ -82,7 +82,7 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
         }
     }
 
-    private fun LLFirSession.registerWasmComponents() {
+    fun LLFirSession.registerWasmComponents() {
         val target = ktModule.targetPlatform.getWasmTarget()
         registerWasmComponents(target)
     }

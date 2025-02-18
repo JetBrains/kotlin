@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
  * **Note**: the signature doesn't contain a name. This check should be done externally.
  */
 @KaImplementationDetail
-class FirCallableSignature private constructor(
-    private val receiverType: String?,
-    private val contextReceiverTypes: List<String>,
-    private val parameters: List<String>?,
-    private val typeParametersCount: Int,
-    private val returnType: String,
+class FirCallableSignature constructor(
+    val receiverType: String?,
+    val contextReceiverTypes: List<String>,
+    val parameters: List<String>?,
+    val typeParametersCount: Int,
+    val returnType: String,
 ) {
     fun hasTheSameSignature(declaration: FirCallableSymbol<*>): Boolean = hasTheSameSignature(declaration.fir)
 
@@ -98,7 +98,7 @@ class FirCallableSignature private constructor(
     }
 }
 
-private fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): String = FirRenderer(
+fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): String = FirRenderer(
     builder = builder,
     annotationRenderer = null,
     bodyRenderer = null,
@@ -116,9 +116,9 @@ private fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): Str
     errorExpressionRenderer = null,
 ).renderElementAsString(this)
 
-private object MinimalConeTypeAttributeRenderer : ConeAttributeRenderer() {
+object MinimalConeTypeAttributeRenderer : ConeAttributeRenderer() {
     override fun render(attributes: Iterable<ConeAttribute<*>>): String =
         attributes.filter { it.isImportant }.let(ToString::render)
 
-    private val ConeAttribute<*>.isImportant get() = this is AbbreviatedTypeAttribute
+    val ConeAttribute<*>.isImportant get() = this is AbbreviatedTypeAttribute
 }

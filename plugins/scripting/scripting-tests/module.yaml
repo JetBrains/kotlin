@@ -13,12 +13,12 @@ repositories:
 module:
   layout: gradle-jvm
 
-settings:
-  kotlin:
-    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
+#settings:
+#  kotlin:
+#    freeCompilerArgs: [-Xjdk-release=, -jvm-target=1.8,-Xjvm-default=all, -Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -Xskip-prerelease-check, -Xwhen-guards]
 
 
-test-dependencies:
+dependencies:
   - org.junit.jupiter:junit-jupiter-api:5.10.1
   - org.junit.platform:junit-platform-launcher:1.10.1
   - org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil:8.5.4-9
@@ -195,6 +195,6 @@ test-dependencies:
   - ./../../../js/js.translator
   - ./../../../compiler/ir/ir.objcinterop
 
-test-settings:
+settings:
   kotlin:
     freeCompilerArgs: [-Xdont-warn-on-error-suppression, -Xmulti-dollar-interpolation, -Xnon-local-break-continue, -opt-in, kotlin.RequiresOptIn, -Xskip-prerelease-check, -Xwhen-guards]

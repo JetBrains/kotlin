@@ -13,7 +13,7 @@ import com.github.benmanes.caffeine.cache.stats.StatsCounter
  *
  * [withStatsCounter] exists because [Caffeine.recordStats] itself doesn't handle `null` stats counters.
  */
-internal fun <K, V> Caffeine<K, V>.withStatsCounter(statsCounter: StatsCounter?): Caffeine<K, V> {
+fun <K, V> Caffeine<K, V>.withStatsCounter(statsCounter: StatsCounter?): Caffeine<K, V> {
     return if (statsCounter != null) {
         recordStats { statsCounter }
     } else {

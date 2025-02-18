@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.analysis.api.platform.resolution.KaResolutionActivit
  * so for each [beforeLazyResolve] call where will be the following [afterLazyResolve]. **Nested calls are allowed**.
  */
 @OptIn(KaIdeApi::class)
-internal class LLFirResolutionActivityTracker : KaResolutionActivityTracker {
-    private val blockCounter = ThreadLocal.withInitial { BlockCounter() }
+class LLFirResolutionActivityTracker : KaResolutionActivityTracker {
+    val blockCounter = ThreadLocal.withInitial { BlockCounter() }
 
     fun beforeLazyResolve() {
         blockCounter.get().enter()
@@ -29,8 +29,8 @@ internal class LLFirResolutionActivityTracker : KaResolutionActivityTracker {
     override val isKotlinResolutionActive: Boolean
         get() = blockCounter.get().isInside
 
-    private class BlockCounter {
-        private var count = 0
+    class BlockCounter {
+        var count = 0
 
         fun enter() {
             ++count

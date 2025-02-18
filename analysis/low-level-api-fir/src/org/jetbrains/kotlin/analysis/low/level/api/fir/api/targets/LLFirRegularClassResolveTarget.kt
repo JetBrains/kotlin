@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-internal sealed class LLFirRegularClassResolveTarget(designation: FirDesignation) : LLFirResolveTarget(designation) {
+sealed class LLFirRegularClassResolveTarget(designation: FirDesignation) : LLFirResolveTarget(designation) {
     init {
         requireWithAttachment(
             target is FirRegularClass,

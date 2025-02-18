@@ -97,7 +97,7 @@ dependencies:
   - io.opentelemetry:opentelemetry-api:1.41.0
   - org.apache.commons:commons-lang3:3.12.0
   - io.opentelemetry:opentelemetry-context:1.41.0
-  - ../../plugins/atomicfu/atomicfu-compiler
+#  - ../../plugins/atomicfu/atomicfu-compiler
   - ../../plugins/plugin-sandbox/plugin-sandbox-ic-test
   - ../../plugins/plugin-sandbox
   - ../../js/js.tests
@@ -112,6 +112,7 @@ dependencies:
   - ../../plugins/scripting/scripting-tests
   - ../../analysis/analysis-test-framework
   - ../../analysis/analysis-api-impl-base
+  - ../../analysis/analysis-api-impl-base-tests
   #  - ../../plugins/kapt3/kapt3-cli
   - ../../compiler/tests-common-new
   - ../../compiler/test-infrastructure
@@ -123,7 +124,7 @@ dependencies:
   - ../../plugins/allopen
   - ../../plugins/power-assert
   - ../../plugins/plugins-interactions-testing
-  - ../analysis-api-generator
+#  - ../analysis-api-generator
   - ../../compiler/test-infrastructure-utils
   - ../../libraries/tools/kotlin-gradle-compiler-types
   - ../../jps/jps-common
@@ -281,6 +282,7 @@ dependencies:
   - ../../analysis/analysis-api-fir
   - ../../analysis/symbol-light-classes
   - ../../analysis/decompiled/decompiler-native
+  - ../../analysis/decompiled/decompiler-native-tests
   - ../../analysis/decompiled/decompiler-to-psi
   - ../../analysis/decompiled/decompiler-to-file-stubs
   - ../../libraries/kotlinx-metadata

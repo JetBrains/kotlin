@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 /**
  * Resolves [members] of [designation]. Ignores the class itself.
  */
-internal class LLFirClassSpecificMembersResolveTarget(
+class LLFirClassSpecificMembersResolveTarget(
     designation: FirDesignation,
     val members: List<FirDeclaration>,
 ) : LLFirRegularClassResolveTarget(designation) {

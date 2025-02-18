@@ -27,7 +27,7 @@ class LLFirInBlockModificationTracker : SimpleModificationTracker() {
         fun getInstance(project: Project): ModificationTracker = project.service<LLFirInBlockModificationTracker>()
     }
 
-    internal class Listener(val project: Project) : LLFirInBlockModificationListener {
+    class Listener(val project: Project) : LLFirInBlockModificationListener {
         override fun afterModification(element: KtElement, module: KaModule) {
             project.serviceIfCreated<LLFirInBlockModificationTracker>()?.incModificationCount()
         }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
-internal object LLFirPhaseUpdater {
+object LLFirPhaseUpdater {
     fun updateDeclarationInternalsPhase(target: FirElementWithResolveState, newPhase: FirResolvePhase) {
         updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
 
@@ -37,12 +37,12 @@ internal object LLFirPhaseUpdater {
         }
     }
 
-    private fun updateFunctionLocalElements(target: FirFunction) {
+    fun updateFunctionLocalElements(target: FirFunction) {
         target.body?.accept(LocalElementPhaseUpdatingTransformer)
         target.valueParameters.forEach { it.defaultValue?.accept(LocalElementPhaseUpdatingTransformer) }
     }
 
-    private fun updatePhaseForNonLocals(element: FirElementWithResolveState, newPhase: FirResolvePhase, isTargetDeclaration: Boolean) {
+    fun updatePhaseForNonLocals(element: FirElementWithResolveState, newPhase: FirResolvePhase, isTargetDeclaration: Boolean) {
         if (element.resolvePhase >= newPhase) return
         if (!isTargetDeclaration) {
             // phase update for target declaration happens as a declaration publication event after resolve is finished
@@ -83,7 +83,7 @@ internal object LLFirPhaseUpdater {
     }
 }
 
-private object LocalElementPhaseUpdatingTransformer : FirVisitorVoid() {
+object LocalElementPhaseUpdatingTransformer : FirVisitorVoid() {
     override fun visitElement(element: FirElement) {
         if (element is FirElementWithResolveState) {
             @OptIn(ResolveStateAccess::class)

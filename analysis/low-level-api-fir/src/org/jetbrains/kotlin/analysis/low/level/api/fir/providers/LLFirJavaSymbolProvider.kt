@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 
-internal class LLFirJavaSymbolProvider(firSession: LLFirSession, val searchScope: GlobalSearchScope) : JavaSymbolProvider(
+class LLFirJavaSymbolProvider(firSession: LLFirSession, val searchScope: GlobalSearchScope) : JavaSymbolProvider(
     firSession,
     FirJavaFacadeForSource(firSession, firSession.moduleData, firSession.project.createJavaClassFinder(searchScope))
 )

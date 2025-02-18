@@ -128,6 +128,7 @@ test-dependencies:
   - org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
   - org.jetbrains.kotlin:kotlin-reflect:1.6.10
   - ./../decompiled/decompiler-native
+  - ./../decompiled/decompiler-native-tests
   - ./../decompiled/decompiler-to-file-stubs
   - ./../../compiler/frontend.java
   - ./../../compiler/psi

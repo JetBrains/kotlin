@@ -42,11 +42,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.PrivateForInline
 
-class AllCandidatesResolver(private val firSession: FirSession) {
-    private val scopeSession = ScopeSession()
+class AllCandidatesResolver(val firSession: FirSession) {
+    val scopeSession = ScopeSession()
 
     // This transformer is not intended for actual transformations and created here only to simplify access to resolve components
-    private val stubBodyResolveTransformer = FirBodyResolveTransformer(
+    val stubBodyResolveTransformer = FirBodyResolveTransformer(
         session = firSession,
         phase = FirResolvePhase.BODY_RESOLVE,
         implicitTypeOnly = false,
@@ -68,7 +68,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         }
     }
 
-    private val resolutionContext = ResolutionContext(firSession, bodyResolveComponents, bodyResolveComponents.transformer.context)
+    val resolutionContext = ResolutionContext(firSession, bodyResolveComponents, bodyResolveComponents.transformer.context)
 
     fun getAllCandidates(
         firResolveSession: LLFirResolveSession,
@@ -119,7 +119,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     }
 
     @OptIn(PrivateForInline::class, SymbolInternals::class)
-    private fun initializeBodyResolveContext(firResolveSession: LLFirResolveSession, element: KtElement) {
+    fun initializeBodyResolveContext(firResolveSession: LLFirResolveSession, element: KtElement) {
         val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
 
         // Set up needed context to get all candidates.
@@ -134,7 +134,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         bodyResolveComponents.context.file = firFile
     }
 
-    private fun <T> List<OverloadCandidate>.postProcessCandidates(call: T) where T : FirExpression, T : FirResolvable {
+    fun <T> List<OverloadCandidate>.postProcessCandidates(call: T) where T : FirExpression, T : FirResolvable {
         val callCompleter = bodyResolveComponents.callCompleter
         val analyzer = callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
         val components = resolutionContext.bodyResolveComponents
@@ -171,7 +171,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
      * [org.jetbrains.kotlin.fir.resolve.calls.CandidateFactory], which doesn't make any guarantees for inapplicable calls. Hence, the
      * resulting candidate is *not* marked as inapplicable and needs to be post-processed.
      */
-    private fun OverloadCandidate.preserveCalleeInapplicability() {
+    fun OverloadCandidate.preserveCalleeInapplicability() {
         val callSite = candidate.callInfo.callSite
         val calleeReference = callSite.toReference(firSession) as? FirDiagnosticHolder ?: return
         val diagnostic = calleeReference.diagnostic as? ConeInapplicableCandidateError ?: return

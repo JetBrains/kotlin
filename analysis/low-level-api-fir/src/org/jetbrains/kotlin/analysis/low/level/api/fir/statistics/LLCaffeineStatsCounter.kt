@@ -14,12 +14,12 @@ import org.checkerframework.checker.index.qual.NonNegative
 /**
  * A Caffeine [StatsCounter] which delegates to OpenTelemetry counters.
  */
-internal class LLCaffeineStatsCounter(meter: Meter, scope: LLCaffeineStatisticsScope) : StatsCounter {
-    private val hitCounter = meter.counterBuilder(scope.hits.name).build()
+class LLCaffeineStatsCounter(meter: Meter, scope: LLCaffeineStatisticsScope) : StatsCounter {
+    val hitCounter = meter.counterBuilder(scope.hits.name).build()
 
-    private val missCounter = meter.counterBuilder(scope.misses.name).build()
+    val missCounter = meter.counterBuilder(scope.misses.name).build()
 
-    private val evictionCounter = meter.counterBuilder(scope.evictions.name).build()
+    val evictionCounter = meter.counterBuilder(scope.evictions.name).build()
 
     override fun recordHits(count: @NonNegative Int) {
         hitCounter.add(count.toLong())
