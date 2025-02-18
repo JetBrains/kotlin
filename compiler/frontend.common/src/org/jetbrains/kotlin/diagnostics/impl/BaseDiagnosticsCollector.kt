@@ -9,10 +9,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
-interface DiagnosticCollectorHolder {
-    val diagnosticReporter: BaseDiagnosticsCollector
-}
-
 abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
     abstract val diagnostics: List<KtDiagnostic>
     abstract val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
