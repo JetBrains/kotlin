@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/scripting/scripting-tests/testData/codegen/testScripts")
 @TestDataPath("$PROJECT_ROOT")
-public class LLFirCustomDefScriptBlackBoxCodegenBasedTestGenerated extends AbstractLLFirCustomDefScriptBlackBoxCodegenBasedTest {
+public class LLScriptWithCustomDefBlackBoxTestGenerated extends AbstractLLScriptWithCustomDefBlackBoxTest {
   @Test
   public void testAllFilesPresentInTestScripts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/testScripts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
