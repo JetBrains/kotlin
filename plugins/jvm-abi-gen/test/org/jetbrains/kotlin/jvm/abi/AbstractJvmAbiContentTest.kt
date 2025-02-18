@@ -25,6 +25,7 @@ abstract class AbstractJvmAbiContentTest : BaseJvmAbiTest() {
             val visitor = BytecodeListingTextCollectingVisitor(
                 filter = BytecodeListingTextCollectingVisitor.Filter.EMPTY,
                 withSignatures = false,
+                withAnnotations = true,
                 sortDeclarations = false, // Declaration order matters for the ABI
             )
             reader.accept(visitor, 0)

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.util.io.FileUtil;
-import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure;
@@ -23,7 +21,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.getGeneratedClass;
-import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
 
 @ObsoleteTestInfrastructure(replacer = "org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest")
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
@@ -40,19 +37,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             blackBox(!isIgnored, unexpectedBehaviour);
         }
         catch (Throwable t) {
-            if (!isIgnored) {
-                try {
-                    // To create .txt file in case of failure
-                    doBytecodeListingTest(wholeFile);
-                }
-                catch (Throwable ignored) {
-                }
-            }
-
             throw new TestsRuntimeError(t);
         }
-
-        doBytecodeListingTest(wholeFile);
     }
 
     @Override
@@ -62,21 +48,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         @NotNull List<? extends TestFile> files
     ) throws Exception {
         doMultiFileTest(wholeFile, (List<TestFile>) files, false);
-    }
-
-    private void doBytecodeListingTest(@NotNull File wholeFile) throws Exception {
-        if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "CHECK_BYTECODE_LISTING")) return;
-
-        String suffix = getBackend().isIR() ? "_ir" : "";
-        File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + suffix + ".txt");
-
-        String text =
-                BytecodeListingTextCollectingVisitor.Companion.getText(
-                        classFileFactory,
-                        BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests.INSTANCE
-                );
-
-        assertEqualsToFile(expectedFile, text);
     }
 
     private void blackBox(boolean reportProblems, boolean unexpectedBehaviour) {
@@ -101,10 +72,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             }
         }
         fail("Can't find box method!");
-    }
-
-    protected void blackBox(boolean reportProblems) {
-        blackBox(reportProblems, false);
     }
 
     @Nullable
