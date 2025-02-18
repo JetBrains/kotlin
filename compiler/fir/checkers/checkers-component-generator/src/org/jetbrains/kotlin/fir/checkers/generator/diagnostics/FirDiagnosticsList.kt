@@ -695,6 +695,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val TOO_MANY_ARGUMENTS by error<PsiElement> {
             parameter<FirCallableSymbol<*>>("function")
         }
+        val UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE by error<PsiElement>()
         val NO_VALUE_FOR_PARAMETER by error<KtElement>(PositioningStrategy.VALUE_ARGUMENTS) {
             parameter<FirValueParameterSymbol>("violatedParameter")
         }

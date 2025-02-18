@@ -14,3 +14,10 @@ fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNod
     val count = tree.getChildren(this, children)
     return if (count > 0) children.get().filterNotNull() else emptyList()
 }
+
+fun LighterASTNode.getPreviousSibling(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? {
+    val parent = tree.getParent(this) ?: return null
+    val children = parent.getChildren(tree)
+    val index = children.indexOf(this)
+    return children.elementAtOrNull(index - 1)
+}
