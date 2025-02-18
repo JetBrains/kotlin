@@ -334,7 +334,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             modelInit()
         }
 
-        testClass<AbstractLLReversedDiagnosticsTest>(suiteTestClassName = "LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated") {
+        testClass<AbstractLLReversedDiagnosticsTest>(suiteTestClassName = "LLReversedDiagnosticsFirTestGenerated") {
             modelInit()
         }
     }
