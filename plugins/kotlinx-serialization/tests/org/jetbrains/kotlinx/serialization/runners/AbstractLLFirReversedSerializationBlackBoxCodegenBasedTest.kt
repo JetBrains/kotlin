@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlinx.serialization.runners
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirReversedBlackBoxCodegenBasedTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLReversedBlackBoxTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 
-abstract class AbstractLLFirReversedSerializationBlackBoxCodegenBasedTest : AbstractLLFirReversedBlackBoxCodegenBasedTest() {
+abstract class AbstractLLFirReversedSerializationBlackBoxCodegenBasedTest : AbstractLLReversedBlackBoxTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForKotlinxSerialization()
