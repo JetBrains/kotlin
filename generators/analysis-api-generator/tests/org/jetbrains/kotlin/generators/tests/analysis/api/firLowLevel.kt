@@ -455,7 +455,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 scriptBlackBoxInit()
             }
 
-            testClass<AbstractLLFirReversedScriptBlackBoxCodegenBasedTest> {
+            testClass<AbstractLLReversedScriptBlackBoxTest> {
                 scriptBlackBoxInit()
             }
         }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-abstract class AbstractLLFirReversedCustomDefScriptBlackBoxCodegenBasedTest : AbstractLLFirReversedScriptBlackBoxCodegenBasedTest() {
+abstract class AbstractLLFirReversedCustomDefScriptBlackBoxCodegenBasedTest : AbstractLLReversedScriptBlackBoxTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCustomScriptDefinitions()
