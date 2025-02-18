@@ -345,7 +345,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractLLDiagnosticsTest> {
             model("compilerLikeAnalysis", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
-        testClass<AbstractLLReversedDiagnosticsTest>(suiteTestClassName = "LLFirPreresolvedReversedDiagnosticCompilerAATestDataTestGenerated") {
+        testClass<AbstractLLReversedDiagnosticsTest> {
             model("compilerLikeAnalysis", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
