@@ -83,8 +83,8 @@ internal class AssertionLowering(private val context: JvmBackendContext) :
 
         context.createIrBuilder(scopeOwnerStack.peek().symbol).run {
             at(expression)
-            val assertCondition = expression.getValueArgument(0)!!
-            val lambdaArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
+            val assertCondition = expression.arguments[0]!!
+            val lambdaArgument = if (function.parameters.size == 2) expression.arguments[1] else null
 
             return if (mode == JVMAssertionsMode.ALWAYS_ENABLE) {
                 checkAssertion(assertCondition, lambdaArgument)
@@ -103,7 +103,7 @@ internal class AssertionLowering(private val context: JvmBackendContext) :
             val generator = lambdaArgument?.asInlinable(this)
             val constructor = this@AssertionLowering.context.symbols.assertionErrorConstructor
             val throwError = irThrow(irCall(constructor).apply {
-                putValueArgument(0, generator?.inline(parent) ?: irString("Assertion failed"))
+                arguments[0] = generator?.inline(parent) ?: irString("Assertion failed")
             })
             +irIfThen(irNot(assertCondition), throwError)
         }
