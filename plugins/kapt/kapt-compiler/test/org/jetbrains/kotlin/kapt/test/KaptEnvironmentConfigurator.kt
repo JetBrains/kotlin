@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt.KaptComponentRegistrar
+import org.jetbrains.kotlin.kapt.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.AptMode
 import org.jetbrains.kotlin.kapt.base.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.kapt.base.KaptFlag
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.FrontendKinds
