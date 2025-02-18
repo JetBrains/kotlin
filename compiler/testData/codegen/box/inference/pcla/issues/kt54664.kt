@@ -1,6 +1,5 @@
 // ISSUE: KT-54664
 
-// IGNORE_LIGHT_ANALYSIS
 // IGNORE_BACKEND: ANY
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // REASON: red code (see corresponding diagnostic test)

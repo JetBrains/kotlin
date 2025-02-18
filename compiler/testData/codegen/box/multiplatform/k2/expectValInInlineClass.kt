@@ -1,7 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_K2: JVM_IR
 // IGNORE_LIGHT_TREE
-// IGNORE_LIGHT_ANALYSIS
 
 // MODULE: common
 // FILE: common.kt

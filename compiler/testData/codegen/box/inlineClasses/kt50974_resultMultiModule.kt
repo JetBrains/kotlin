@@ -1,4 +1,3 @@
-// IGNORE_LIGHT_ANALYSIS
 // WITH_STDLIB
 // MODULE: lib
 // FILE: lib.kt
