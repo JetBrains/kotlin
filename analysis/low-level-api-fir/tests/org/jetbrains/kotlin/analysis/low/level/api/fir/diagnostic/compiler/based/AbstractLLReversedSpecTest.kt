@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataSpecTest : AbstractLLCompilerBasedTest() {
+abstract class AbstractLLReversedSpecTest : AbstractLLCompilerBasedTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             baseFirDiagnosticTestConfiguration(
