@@ -339,7 +339,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         }
 
         FqName outermostClassFqName = new FqName(name.replace('/', '.'));
-        classes.add(outermostClassFqName.shortName().asString());
+        classes.add(outermostClassFqName.shortName().asString().replace("$", "."));
 
         Collections.reverse(classes);
 
