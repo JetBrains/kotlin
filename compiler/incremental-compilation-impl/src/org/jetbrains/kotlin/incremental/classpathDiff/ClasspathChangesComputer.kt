@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findRea
 import org.jetbrains.kotlin.incremental.classpathDiff.ImpactedSymbolsComputer.computeImpactedSymbols
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
-import org.jetbrains.kotlin.incremental.storage.ListExternalizer
-import org.jetbrains.kotlin.incremental.storage.loadFromFile
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name

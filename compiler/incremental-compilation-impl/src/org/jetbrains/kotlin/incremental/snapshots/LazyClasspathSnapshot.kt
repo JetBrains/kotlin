@@ -8,15 +8,9 @@ package org.jetbrains.kotlin.incremental.snapshots
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.ClasspathChanges
-import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.LookupStorage
-import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshot
-import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshotExternalizer
-import org.jetbrains.kotlin.incremental.classpathDiff.CachedClasspathSnapshotSerializer
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker
+import org.jetbrains.kotlin.incremental.classpathDiff.*
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasspath
-import org.jetbrains.kotlin.incremental.classpathDiff.removeDuplicateAndInaccessibleClasses
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.loadFromFile
 

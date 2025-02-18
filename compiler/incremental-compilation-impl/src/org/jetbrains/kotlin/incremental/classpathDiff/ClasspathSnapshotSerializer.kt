@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.util.containers.Interner
 import com.intellij.util.io.DataExternalizer
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*

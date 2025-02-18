@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
