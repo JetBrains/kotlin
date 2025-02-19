@@ -45,7 +45,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             "See https://kotl.in/KT-75161 for details.",
         ),
         DeprecatedProperty(
-            KOTLIN_MPP_ENABeLE_PLATFORM_INTEGER_COMMONIZATION,
+            KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION,
             "See https://kotl.in/KT-75161 for details.",
         ),
     )
