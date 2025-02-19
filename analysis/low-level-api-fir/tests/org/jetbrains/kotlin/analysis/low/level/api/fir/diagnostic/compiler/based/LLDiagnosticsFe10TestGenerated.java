@@ -8516,6 +8516,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("deadCodeElvis.kt")
+        public void testDeadCodeElvis() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeElvis.kt");
+        }
+
+        @Test
         @TestMetadata("deadCodeFromDifferentSources.kt")
         public void testDeadCodeFromDifferentSources() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeFromDifferentSources.kt");
