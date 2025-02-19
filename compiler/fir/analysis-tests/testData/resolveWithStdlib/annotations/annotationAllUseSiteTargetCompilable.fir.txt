@@ -87,47 +87,47 @@ FILE: annotationAllUseSiteTargetCompilable.kt
             super<R|kotlin/Any|>()
         }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(a)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final val valFromConstructor: R|kotlin/Int| = R|<local>/valFromConstructor|
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(a)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(a)) public final val valFromConstructor: R|kotlin/Int| = R|<local>/valFromConstructor|
+            @R|p/GetterSetter|(x = Int(1)) @R|p/ParamGetter|(y = Double(1.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(a)) public get(): R|kotlin/Int|
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(b)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final var varFromConstructor: R|kotlin/Int| = R|<local>/varFromConstructor|
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int|
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() value: R|kotlin/Int|): R|kotlin/Unit|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(b)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(b)) public final var varFromConstructor: R|kotlin/Int| = R|<local>/varFromConstructor|
+            @R|p/GetterSetter|(x = Int(2)) @R|p/ParamGetter|(y = Double(2.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(b)) public get(): R|kotlin/Int|
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(2.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(b)) value: R|kotlin/Int|): R|kotlin/Unit|
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(c)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final val valInside: R|kotlin/Int| = Int(0)
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(c)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(c)) public final val valInside: R|kotlin/Int| = Int(0)
+            @R|p/GetterSetter|(x = Int(3)) @R|p/ParamGetter|(y = Double(3.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(c)) public get(): R|kotlin/Int|
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(d)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final var varInside: R|kotlin/Int| = Int(1)
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int|
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() value: R|kotlin/Int|): R|kotlin/Unit|
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(d)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(d)) public final var varInside: R|kotlin/Int| = Int(1)
+            @R|p/GetterSetter|(x = Int(4)) @R|p/ParamGetter|(y = Double(4.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(d)) public get(): R|kotlin/Int|
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(4.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(d)) value: R|kotlin/Int|): R|kotlin/Unit|
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(e)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final val valWithGetter: R|kotlin/Int| = Int(2)
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(e)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(e)) public final val valWithGetter: R|kotlin/Int| = Int(2)
+            @R|p/GetterSetter|(x = Int(5)) @R|p/ParamGetter|(y = Double(5.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(e)) public get(): R|kotlin/Int| {
                 ^ this@R|p/My|.F|p/My.valWithGetter|
             }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(f)) field:@R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final val valWithoutField: R|kotlin/Int|
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(f)) field:@R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(f)) public final val valWithoutField: R|kotlin/Int|
+            @R|p/GetterSetter|(x = Int(6)) @R|p/ParamGetter|(y = Double(6.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(f)) public get(): R|kotlin/Int| {
                 ^ Int(3)
             }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(g)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final var varWithSetter: R|kotlin/Int| = Int(4)
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int|
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() param: R|kotlin/Int|): R|kotlin/Unit| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(g)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(g)) public final var varWithSetter: R|kotlin/Int| = Int(4)
+            @R|p/GetterSetter|(x = Int(7)) @R|p/ParamGetter|(y = Double(7.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(g)) public get(): R|kotlin/Int|
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(7.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(g)) param: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(h)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final var varWithSetterAndGetter: R|kotlin/Int| = Int(5)
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(h)) field:@R|p/ParamField|() @R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(h)) public final var varWithSetterAndGetter: R|kotlin/Int| = Int(5)
+            @R|p/GetterSetter|(x = Int(8)) @R|p/ParamGetter|(y = Double(8.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(h)) public get(): R|kotlin/Int| {
                 ^ this@R|p/My|.F|p/My.varWithSetterAndGetter|
             }
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() param: R|kotlin/Int|): R|kotlin/Unit| {
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamField|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(8.0)) @R|p/ParamGetterSetter|(z = Boolean(true)) @R|p/Default|(s = String(h)) param: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
-        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(i)) field:@R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|() public final var varWithoutField: R|kotlin/Int|
-            @R|p/GetterSetter|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() public get(): R|kotlin/Int| {
+        @ALL:R|p/ParamProperty|() @ALL:R|p/PropertyField|() @ALL:R|p/ParamPropertyField|() @ALL:R|p/Default|(s = String(i)) field:@R|p/PropertyField|() @R|p/ParamPropertyField|() @R|p/Default|(s = String(i)) public final var varWithoutField: R|kotlin/Int|
+            @R|p/GetterSetter|(x = Int(9)) @R|p/ParamGetter|(y = Double(9.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(i)) public get(): R|kotlin/Int| {
                 ^ Int(6)
             }
-            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamPropertyField|() @R|p/ParamGetter|() @R|p/ParamGetterSetter|() @R|p/Default|() param: R|kotlin/Int|): R|kotlin/Unit| {
+            public set(@R|p/ParamOnly|() @R|p/ParamProperty|() @R|p/ParamPropertyField|() @R|p/ParamGetter|(y = Double(9.0)) @R|p/ParamGetterSetter|(z = Boolean(false)) @R|p/Default|(s = String(i)) param: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
     }

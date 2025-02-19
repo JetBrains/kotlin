@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -636,12 +638,17 @@ open class FirTypeResolveTransformer(
                 var addedSomewhere = false
 
                 fun FirCallableDeclaration.addAnnotationWithoutUseSiteTarget(annotation: FirAnnotation) {
-                    replaceAnnotations(
-                        annotations + buildAnnotationCopy(annotation) {
+                    val copy = if (annotation is FirAnnotationCall) {
+                        buildAnnotationCallCopy(annotation) {
                             useSiteTarget = null
-                            addedSomewhere = true
                         }
-                    )
+                    } else {
+                        buildAnnotationCopy(annotation) {
+                            useSiteTarget = null
+                        }
+                    }
+                    replaceAnnotations(annotations + copy)
+                    addedSomewhere = true
                 }
 
                 if (FIELD in allowedTargets && annotated.delegate == null) {
