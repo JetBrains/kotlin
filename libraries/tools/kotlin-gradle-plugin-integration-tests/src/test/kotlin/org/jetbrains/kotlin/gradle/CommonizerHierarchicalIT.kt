@@ -16,10 +16,6 @@ import org.junit.jupiter.api.DisplayName
 @NativeGradlePluginTests
 open class CommonizerHierarchicalIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions
-            .disableConfigurationCache_KT70416()
-
     @DisplayName("Commonize hierarchically metadata compilations")
     @GradleTest
     fun testCommonizeHierarchicallyMetadataCompilations(gradleVersion: GradleVersion) {
