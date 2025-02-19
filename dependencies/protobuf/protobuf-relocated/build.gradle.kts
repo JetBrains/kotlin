@@ -15,38 +15,30 @@ val baseProtobuf by configurations.creating
 val baseProtobufSources by configurations.creating
 
 val protobufVersion: String by rootProject.extra
-val protobufJarPrefix = "protobuf-$protobufVersion"
 
-val renamedSources = "$buildDir/renamedSrc/"
-val outputJarsPath = "$buildDir/libs"
+val renamedSources = "${layout.buildDirectory.get()}/renamedSrc/"
+val outputJarsPath = "${layout.buildDirectory.get()}/libs"
 
 dependencies {
-    baseProtobuf("com.google.protobuf:protobuf-java:$protobufVersion")
-    baseProtobufSources("com.google.protobuf:protobuf-java:$protobufVersion:sources")
+    baseProtobuf("com.google.protobuf:protobuf-java:$protobufVersion") { isTransitive = false }
+    baseProtobufSources("com.google.protobuf:protobuf-java:$protobufVersion:sources") { isTransitive = false }
 }
 
 val prepare = tasks.register<ShadowJar>("prepare") {
     destinationDirectory.set(File(outputJarsPath))
     archiveVersion.set(protobufVersion)
     archiveClassifier.set("")
-    from(
-        provider {
-            baseProtobuf.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath
-        }
-    )
+    from(baseProtobuf)
 
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf" ) {
         exclude("META-INF/maven/com.google.protobuf/protobuf-java/pom.properties")
     }
 }
 
-artifacts.add("default", prepare)
-
 val relocateSources = task<Copy>("relocateSources") {
     from(
         provider {
-            zipTree(baseProtobufSources.files.find { it.name.startsWith("protobuf-java") && it.name.endsWith("-sources.jar") }
-                        ?: throw GradleException("sources jar not found among ${baseProtobufSources.files}"))
+            zipTree(baseProtobufSources.files.single())
         }
     )
 
@@ -61,8 +53,6 @@ val prepareSources = task<Jar>("prepareSources") {
     archiveClassifier.set("sources")
     from(relocateSources)
 }
-
-artifacts.add("default", prepareSources)
 
 publishing {
     publications {
