@@ -51,7 +51,7 @@ abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
         KotlinTestUtils.assertEqualsToFile(expectedOutput, compilationResult.toOutput().sanitizeCrossCompilationOutput())
     }
 
-    private fun String.sanitizeCrossCompilationOutput(): String = lines().map { line ->
+    private fun String.sanitizeCrossCompilationOutput(): String = lines().joinToString(separator = "\n") { line ->
         when {
             KLIB_RESOLVER_TARGET_DOESNT_MATCH_DIAGNOSTIC_REGEX.matches(line) -> {
                 val match = KLIB_RESOLVER_TARGET_DOESNT_MATCH_DIAGNOSTIC_REGEX.matchEntire(line)!!
@@ -65,9 +65,11 @@ abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
                 line.replace(klibRoots, KLIB_ROOTS_STUB)
             }
 
+            DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX.matches(line) -> ""
+
             else -> line
         }
-    }.joinToString(separator = "\n")
+    }
 
     companion object {
 
@@ -90,6 +92,10 @@ abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
          */
         private val KLIB_RESOLVER_UNRESOLVED_LIBRARY_DIAGNOSTIC_REGEX = """
             error: KLIB resolver: Could not find "(.*)" in \[(.*)]
+        """.trimIndent().toRegex()
+
+        val DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX = """
+            warning: language version 1.[0-9.]+ is deprecated and its support will be removed in a future version of Kotlin
         """.trimIndent().toRegex()
 
         private const val KLIB_ROOTS_STUB = "<klib roots>"
