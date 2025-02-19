@@ -21,25 +21,4 @@ class ConeClassLikeTypeImpl(
 
     // Cached expanded type and the relevant session
     var cachedExpandedType: WeakPair<*, ConeClassLikeType>? = null
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ConeClassLikeTypeImpl
-
-        if (lookupTag != other.lookupTag) return false
-        if (!typeArguments.contentEquals(other.typeArguments)) return false
-        if (isMarkedNullable != other.isMarkedNullable) return false
-        if (attributes definitelyDifferFrom other.attributes) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = lookupTag.hashCode()
-        result = 31 * result + typeArguments.contentHashCode()
-        result = 31 * result + isMarkedNullable.hashCode()
-        return result
-    }
 }

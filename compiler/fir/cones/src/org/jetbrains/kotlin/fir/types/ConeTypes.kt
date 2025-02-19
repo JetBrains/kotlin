@@ -80,6 +80,25 @@ class ConeErrorType(
 abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
     abstract val lookupTag: ConeClassifierLookupTag
     abstract val isMarkedNullable: Boolean
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConeLookupTagBasedType) return false
+
+        if (lookupTag != other.lookupTag) return false
+        if (!typeArguments.contentEquals(other.typeArguments)) return false
+        if (isMarkedNullable != other.isMarkedNullable) return false
+        if (attributes definitelyDifferFrom other.attributes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = lookupTag.hashCode()
+        result = 31 * result + typeArguments.contentHashCode()
+        result = 31 * result + isMarkedNullable.hashCode()
+        return result
+    }
 }
 
 abstract class ConeClassLikeType : ConeLookupTagBasedType() {
