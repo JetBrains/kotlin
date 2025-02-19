@@ -8,8 +8,14 @@ package org.jetbrains.kotlin.analysis.utils
 import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassOwner
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationModifierList
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 
 public val PsiClass.classId: ClassId?
     get() {
@@ -45,4 +51,19 @@ public fun PsiClass.isLocalClass(): Boolean {
     classId.asFqNameString(): pckg.With$InName
      */
     return classId.asFqNameString().replace('$', '.') != qualifiedName.replace('$', '.')
+}
+
+/**
+ * A common pattern of illegal code, where a declaration is preceded by an unclosed annotation, for example:
+ *
+ * ```kotlin
+ * @Ann(
+ * fun foo() = 42
+ * ```
+ * @see org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
+ */
+public fun KtDeclaration.isInsideDanglingModifierList(): Boolean {
+    val argument = parent as? KtValueArgument ?: return false
+    val modifierList = argument.parentOfType<KtDeclarationModifierList>() ?: return false
+    return modifierList.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement
 }
