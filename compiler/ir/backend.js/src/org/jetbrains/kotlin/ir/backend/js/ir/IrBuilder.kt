@@ -140,6 +140,7 @@ object JsIrBuilder {
             this.name = Name.identifier(name)
             this.type = type
             this.isAssignable = isAssignable
+            this.kind = IrParameterKind.Regular
         }
 
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
