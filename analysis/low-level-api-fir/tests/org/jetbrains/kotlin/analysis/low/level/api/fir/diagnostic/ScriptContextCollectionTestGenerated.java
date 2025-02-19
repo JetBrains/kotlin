@@ -54,6 +54,24 @@ public class ScriptContextCollectionTestGenerated extends AbstractScriptContextC
   }
 
   @Test
+  @TestMetadata("danglingAnnotationClassLevelScriptFunction.kts")
+  public void testDanglingAnnotationClassLevelScriptFunction() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationClassLevelScriptFunction.kts");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationTopLevelScript.kts")
+  public void testDanglingAnnotationTopLevelScript() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationTopLevelScript.kts");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationTopLevelScriptFunction.kts")
+  public void testDanglingAnnotationTopLevelScriptFunction() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationTopLevelScriptFunction.kts");
+  }
+
+  @Test
   @TestMetadata("declarationsInPropertyInitScript.kts")
   public void testDeclarationsInPropertyInitScript() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/declarationsInPropertyInitScript.kts");

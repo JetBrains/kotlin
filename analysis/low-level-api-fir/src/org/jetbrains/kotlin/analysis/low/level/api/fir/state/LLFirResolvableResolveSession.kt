@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
+import org.jetbrains.kotlin.analysis.utils.isNonLocalDanglingModifierList
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
@@ -94,6 +97,12 @@ internal class LLFirResolvableResolveSession(
     private fun findSourceFirDeclarationByDeclaration(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
         require(getModuleResolutionStrategy(module) == LLModuleResolutionStrategy.LAZY) {
             "Declaration should be resolvable module, instead it had ${module::class}"
+        }
+
+        if (ktDeclaration.parentOfType<KtModifierList>()?.isNonLocalDanglingModifierList() == true) {
+            // Invalid code: the declaration does not have a non-local container (at least on the top level),
+            // because it is considered to be an argument of an unclosed (dangling) annotation
+            return findDeclarationInSourceViaResolve(ktDeclaration)
         }
 
         val nonLocalDeclaration = getNonLocalContainingDeclaration(ktDeclaration, codeFragmentAware = true)

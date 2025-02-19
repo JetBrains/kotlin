@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLFirDiagnosticVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
+import org.jetbrains.kotlin.analysis.utils.isNonLocalDanglingModifierList
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -108,20 +107,12 @@ internal class FileStructure private constructor(
     }
 
     private fun getContainerKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtElement {
-        val declaration = getStructureKtElement(element, nonLocalContainer)
-        val container: KtElement
-        if (declaration != null) {
-            container = declaration
-        } else {
-            val modifierList = PsiTreeUtil.getParentOfType(element, KtModifierList::class.java, false)
-            container = if (modifierList != null && modifierList.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement) {
-                modifierList
-            } else {
-                element.containingKtFile
-            }
+        val modifierList = element.parentOfType<KtModifierList>(withSelf = true)
+        if (modifierList?.isNonLocalDanglingModifierList() == true) {
+            return modifierList
         }
-
-        return container
+        val declaration = getStructureKtElement(element, nonLocalContainer)
+        return declaration ?: element.containingKtFile
     }
 
     private fun getStructureKtElement(element: KtElement, nonLocalContainer: KtDeclaration?): KtDeclaration? {
@@ -196,7 +187,7 @@ internal class FileStructure private constructor(
             }
 
             override fun visitModifierList(list: KtModifierList) {
-                if (list.parent == ktFile) {
+                if (list.isNonLocalDanglingModifierList()) {
                     addStructureElementForTo(list, structureElements)
                 }
             }
@@ -240,7 +231,7 @@ internal class FileStructure private constructor(
         }
 
         container is KtDeclaration -> createDeclarationStructure(container)
-        container is KtModifierList && container.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement -> {
+        container is KtModifierList && container.isNonLocalDanglingModifierList() -> {
             createDanglingModifierListStructure(container)
         }
         else -> errorWithAttachment("Invalid container ${container::class}") {
