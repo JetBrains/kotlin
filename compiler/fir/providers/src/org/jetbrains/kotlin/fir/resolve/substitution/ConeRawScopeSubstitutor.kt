@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : AbstractConeSubstitutor(useSiteSession.typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-        return when {
-            type is ConeTypeParameterType -> {
+        return when (type) {
+            is ConeTypeParameterType -> {
                 substituteOrSelf(
                     type.lookupTag.symbol.getProjectionForRawType(useSiteSession, makeNullable = type.isMarkedNullable)
                 )
             }
-
-            type is ConeClassLikeType && type.typeArguments.isNotEmpty() -> {
+            is ConeClassLikeType if type.typeArguments.isNotEmpty() -> {
                 if (type.lookupTag.classId == StandardClassIds.Array) {
                     val argument = type.typeArguments[0]
                     val erasedType = argument.type?.let(this::substituteOrSelf)
@@ -39,8 +38,7 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
                     type.replaceArgumentsWithStarProjections()
                 )
             }
-
-            type is ConeFlexibleType -> {
+            is ConeFlexibleType -> {
                 val substitutedLowerBound = substituteOrNull(type.lowerBound)
                 val substitutedUpperBound = substituteOrNull(type.upperBound)
                 if (substitutedLowerBound == null && substitutedUpperBound == null) return null
@@ -54,7 +52,6 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
 
                 ConeFlexibleType(newLowerBound, newUpperBound)
             }
-
             else -> null
         }
     }
