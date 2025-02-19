@@ -294,9 +294,16 @@ abstract class AbstractAtomicfuIrBuilder(
 
     fun irPropertyReference(property: IrProperty, classReceiver: IrExpression?): IrPropertyReferenceImpl {
         val backingField = requireNotNull(property.backingField) { "Backing field of the property $property should not be null" }
+        val isInstanceProperty = property.parentClassOrNull != null
+        val receiversCount = if (isInstanceProperty && classReceiver == null) 1 else 0
+        val kPropertyClass = irBuiltIns.getKPropertyClass(property.isVar, receiversCount).owner
+        val substitutionMap = mutableMapOf<IrTypeParameterSymbol, IrType>()
+        if (receiversCount == 1)
+            substitutionMap[kPropertyClass.typeParameters[0].symbol] = property.parentAsClass.defaultType
+        substitutionMap[kPropertyClass.typeParameters.last().symbol] = backingField.type
         return IrPropertyReferenceImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            type = backingField.type,
+            type = kPropertyClass.defaultType.substitute(substitutionMap),
             symbol = property.symbol,
             typeArgumentsCount = 0,
             field = backingField.symbol,
