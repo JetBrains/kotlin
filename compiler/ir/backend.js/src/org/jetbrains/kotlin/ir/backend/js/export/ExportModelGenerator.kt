@@ -794,23 +794,22 @@ private fun shouldDeclarationBeExported(
 }
 
 fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext): Boolean {
+    if (isOverriddenEnumProperty(context)) return true
+
     val firstExportedRealOverride = runIf(isFakeOverride) {
         resolveFakeOverrideMaybeAbstract { it === this || it.isFakeOverride || it.parentClassOrNull?.isExported(context) != true }
-    }
+    } ?: return false
 
-    if (firstExportedRealOverride?.parentClassOrNull.isExportedInterface(context) && firstExportedRealOverride?.isJsExportIgnore() != true) {
-        return true
-    }
-
-    return overriddenSymbols
-        .asSequence()
-        .map { it.owner }
-        .filterIsInstance<IrOverridableDeclaration<*>>()
-        .filter { it.overriddenSymbols.isEmpty() }
-        .mapNotNull { it.parentClassOrNull }
-        .map { it.symbol }
-        .any { it == context.irBuiltIns.enumClass }
+    return firstExportedRealOverride.parentClassOrNull.isExportedInterface(context) && !firstExportedRealOverride.isJsExportIgnore()
 }
+
+fun IrOverridableDeclaration<*>.isOverriddenEnumProperty(context: JsIrBackendContext) =
+    overriddenSymbols
+        .map { it.owner }
+        .filterIsInstanceAnd<IrOverridableDeclaration<*>> {
+            it.overriddenSymbols.isEmpty() && it.parentClassOrNull?.symbol == context.irBuiltIns.enumClass
+        }
+        .isNotEmpty()
 
 fun IrOverridableDeclaration<*>.isOverriddenExported(context: JsIrBackendContext): Boolean =
     overriddenSymbols

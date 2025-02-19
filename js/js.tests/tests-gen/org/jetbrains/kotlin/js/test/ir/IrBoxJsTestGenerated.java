@@ -10341,6 +10341,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("overrideStableNameProperties.kt")
+    public void testOverrideStableNameProperties() {
+      runTest("js/js.translator/testData/box/propertyOverride/overrideStableNameProperties.kt");
+    }
+
+    @Test
     @TestMetadata("overrideValFromTraits.kt")
     public void testOverrideValFromTraits() {
       runTest("js/js.translator/testData/box/propertyOverride/overrideValFromTraits.kt");

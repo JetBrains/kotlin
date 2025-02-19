@@ -262,14 +262,7 @@ private val captureStackTraceInThrowablesPhase = makeIrModulePhase(
 )
 
 private val throwableSuccessorsLoweringPhase = makeIrModulePhase(
-    { context ->
-        context.run {
-            val extendThrowableSymbol =
-                if (es6mode) setPropertiesToThrowableInstanceSymbol else extendThrowableSymbol
-
-            ThrowableLowering(this, extendThrowableSymbol)
-        }
-    },
+    ::ThrowableLowering,
     name = "ThrowableLowering",
     prerequisite = setOf(captureStackTraceInThrowablesPhase)
 )
@@ -546,6 +539,12 @@ private val initializersCleanupLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(initializersLoweringPhase)
 )
 
+private val externalPropertyOverridingLowering = makeIrModulePhase(
+    ::ExternalPropertyOverridingLowering,
+    name = "ExternalPropertyOverridingLowering",
+    prerequisite = setOf(primaryConstructorLoweringPhase, initializersLoweringPhase)
+)
+
 private val multipleCatchesLoweringPhase = makeIrModulePhase(
     ::MultipleCatchesLowering,
     name = "MultipleCatchesLowering",
@@ -810,6 +809,7 @@ fun getJsLowerings(
     propertyAccessorInlinerLoweringPhase,
     copyPropertyAccessorBodiesLoweringPass,
     booleanPropertyInExternalLowering,
+    externalPropertyOverridingLowering,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
     defaultArgumentStubGeneratorPhase,
