@@ -673,9 +673,11 @@ include ":jps:jps-common",
         ":jps:jps-platform-api-signatures"
 
 include ":generators:analysis-api-generator",
+        ":generators:analysis-api-generator:generator-kotlin-native",
         ":analysis",
         ":analysis:low-level-api-fir",
         ":analysis:low-level-api-fir:tests-jdk11",
+        ":analysis:low-level-api-fir:low-level-api-fir-native",
         ":analysis:analysis-api-fir:analysis-api-fir-generator",
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api",
@@ -700,9 +702,7 @@ include ":generators:analysis-api-generator",
         ":tools:ide-plugin-dependencies-validator"
 
 if (buildProperties.isKotlinNativeEnabled) {
-    include ":generators:analysis-api-generator:generator-kotlin-native",
-            ":analysis:low-level-api-fir:low-level-api-fir-native",
-            ":analysis:analysis-api-standalone:analysis-api-standalone-native"
+    include ":analysis:analysis-api-standalone:analysis-api-standalone-native"
 }
 
 
