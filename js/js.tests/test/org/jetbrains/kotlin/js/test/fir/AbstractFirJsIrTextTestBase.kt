@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTextTestBase
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -43,6 +45,11 @@ abstract class AbstractFirJsIrTextTestBase(private val parser: FirParser) : Abst
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.additionalK2ConfigurationForIrTextTest(parser)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
     }
 }
 

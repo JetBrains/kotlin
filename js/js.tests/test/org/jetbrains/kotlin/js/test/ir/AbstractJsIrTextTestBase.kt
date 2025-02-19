@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 
 abstract class AbstractJsIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractNonJvmIrTextTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
+    override val preSerializationFacade: Constructor<IrInliningFacade<IrBackendInput>>
+        get() = ::JsIrInliningFacade
 
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
