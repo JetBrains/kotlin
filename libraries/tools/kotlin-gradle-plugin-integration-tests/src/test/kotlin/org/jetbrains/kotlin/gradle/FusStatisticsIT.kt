@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -522,6 +523,24 @@ class FusStatisticsIT : KGPBaseTest() {
                     "ENABLED_NOOP_GC=true",
                 )
             }
+        }
+    }
+
+    @DisplayName("add configuration metrics after build was finish")
+    @GradleTest
+    @MppGradlePluginTests
+    @GradleTestVersions(
+        //test uses internal internal method `org.gradle.internal.extensions.core.serviceOf`
+        minVersion = TestVersions.Gradle.G_8_11,
+    )
+    fun addConfigurationMetricsAfterFlowActionWasCalled(gradleVersion: GradleVersion) {
+        //Test uses deprecated Gradle features
+        project("multiplatformFlowAction", gradleVersion, buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)) {
+            buildScriptInjection {
+                project.tasks.register("doNothing"){}
+            }
+
+            build("doNothing")
         }
     }
 

@@ -73,9 +73,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.runAgpCompatibilityCheckIfAgpIsApplied()
 
         val buildUidService = BuildUidService.registerIfAbsent(project)
-        if (project.kotlinPropertiesProvider.enableFusMetricsCollection) {
-            BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService)
-        }
+        BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService)
         PropertiesBuildService.registerIfAbsent(project)
 
         project.gradle.projectsEvaluated {
