@@ -29,6 +29,7 @@ module {
 
   // Optional annotations
 
+  @kotlin/OptionalExpectation
   public final expect annotation class test/A : kotlin/Annotation {
 
     // signature: <init>(I)V
@@ -39,6 +40,7 @@ module {
 
     // module name: main
   }
+  @kotlin/OptionalExpectation
   public final expect annotation class test/B : kotlin/Annotation {
 
     // signature: <init>(Lkotlin/Array;)V
@@ -49,7 +51,16 @@ module {
 
     // module name: main
   }
+  @kotlin/OptionalExpectation
   public final expect annotation class test/C : kotlin/Annotation {
+
+    // signature: <init>()V
+    public constructor()
+
+    // module name: main
+  }
+  @kotlin/OptionalExpectation
+  public final expect annotation class test/D : kotlin/Annotation {
 
     // signature: <init>()V
     public constructor()

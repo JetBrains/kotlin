@@ -1,6 +1,3 @@
-// IGNORE K2
-// ^ KT-62931 K2: extra class files for @OptionalExpectation marked annotations
-
 // LANGUAGE: +MultiPlatformProjects
 // OPT_IN: kotlin.ExperimentalMultiplatform
 // NO_READ_WRITE_COMPARE

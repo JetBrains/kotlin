@@ -1,7 +1,7 @@
 // LANGUAGE: +ContextParameters
 // IGNORE_FIR_METADATA_LOADING_K1
 // IGNORE_BACKEND_K1: ANY
-// IGNORE K1
+
 package test
 
 import kotlin.contracts.ExperimentalContracts

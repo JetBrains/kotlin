@@ -3,8 +3,6 @@
 // NO_CHECK_SOURCE_VS_BINARY
 // IGNORE_BACKEND_K1: JVM_IR, ANY
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE K1
-// ^mute KotlinpCompilerTestDataTest
 // K1/K2 difference: KT-60820
 
 // MODULE: common

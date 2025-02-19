@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginR
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -30,9 +31,6 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.KotlinModuleMetadata
 import kotlin.metadata.jvm.UnstableMetadataApi
 import kotlin.test.fail
-
-private const val IGNORE_K1_DIRECTIVE = "// IGNORE K1"
-private const val IGNORE_K2_DIRECTIVE = "// IGNORE K2"
 
 fun compareAllFiles(
     file: File,
@@ -42,27 +40,11 @@ fun compareAllFiles(
     readWriteAndCompare: Boolean,
     useK2: Boolean,
 ) {
-    val directive = if (useK2) IGNORE_K2_DIRECTIVE else IGNORE_K1_DIRECTIVE
-    val isMuted = InTextDirectivesUtils.findStringWithPrefixes(file.readText(), directive) != null
-    try {
-        compileAndPrintAllFiles(file, disposable, tmpdir, compareWithTxt, readWriteAndCompare, useK2)
-    } catch (e: Throwable) {
-        if (isMuted) return
-        throw e
+    if (!useK2) {
+        val ignored = InTextDirectivesUtils.findListWithPrefixes(file.readText(), "// IGNORE_BACKEND_K1: ")
+        if (listOf(TargetBackend.JVM_IR, TargetBackend.JVM, TargetBackend.ANY).any { it.name in ignored }) return
     }
-    if (isMuted) {
-        throw AssertionError("Looks like this test can be unmuted. Remove the \"$directive\" directive.")
-    }
-}
 
-private fun compileAndPrintAllFiles(
-    file: File,
-    disposable: Disposable,
-    tmpdir: File,
-    compareWithTxt: Boolean,
-    readWriteAndCompare: Boolean,
-    useK2: Boolean,
-) {
     val main = StringBuilder()
     val afterNodes = StringBuilder()
 
