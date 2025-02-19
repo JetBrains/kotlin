@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.konan.test.irText
 
+import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.model.IrInliningFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
@@ -17,6 +21,8 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 
 abstract class AbstractNativeIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
     AbstractNonJvmIrTextTest<FrontendOutput>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
+    override val preSerializationFacade: Constructor<IrInliningFacade<IrBackendInput>>
+        get() = ::NativeInliningFacade
 
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(

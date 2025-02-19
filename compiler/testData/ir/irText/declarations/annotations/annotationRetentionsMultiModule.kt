@@ -1,7 +1,5 @@
 // FIR_IDENTICAL
 // ISSUE: KT-69965
-// IGNORE_BACKEND: JS_IR
-// REASON: KT-69965 missing @[Source] annotation on return type of IrCall to `fun source()`
 // IGNORE_BACKEND: NATIVE
 // REASON: native tests use source dependencies and JVM tests use binary dependencies, so source annotations are invisble here
 

@@ -1,0 +1,27 @@
+Module: lib
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <lib>
+open annotation class /Binary : kotlin/Annotation { // /Binary|null[0]
+    constructor <init>() // /Binary.<init>|<init>(){}[0]
+}
+open annotation class /Runtime : kotlin/Annotation { // /Runtime|null[0]
+    constructor <init>() // /Runtime.<init>|<init>(){}[0]
+}
+open annotation class /Source : kotlin/Annotation { // /Source|null[0]
+    constructor <init>() // /Source.<init>|<init>(){}[0]
+}
+final fun /binary(kotlin/Short): kotlin/Short // /binary|binary(kotlin.Short){}[0]
+final fun /runtime(kotlin/Short): kotlin/Short // /runtime|runtime(kotlin.Short){}[0]
+final fun /source(kotlin/Short): kotlin/Short // /source|source(kotlin.Short){}[0]
+Module: main
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /box(): kotlin/String // /box|box(){}[0]

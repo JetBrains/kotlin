@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrFileSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.converters.NativeInliningFacade
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -39,11 +41,14 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.KlibArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.inlinedIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
@@ -85,6 +90,7 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
             // Kotlin/Native does not have "minimal" stdlib(like other backends do), so full stdlib is needed to resolve
             // `Any`, `String`, `println`, etc.
             +ConfigurationDirectives.WITH_STDLIB
+            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
         }
 
         configureFirParser(FirParser.LightTree)
@@ -104,6 +110,10 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
             useHandlers(::NoFirCompilationErrorsHandler)
         }
         facadeStep(::Fir2IrNativeResultsConverter)
+
+        facadeStep(::NativeInliningFacade)
+        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+
         facadeStep(::FirNativeKlibSerializerFacade)
         klibArtifactsHandlersStep {
             useHandlers(::UnboundIrSerializationHandler)

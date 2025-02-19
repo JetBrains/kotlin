@@ -1,0 +1,20 @@
+Module: lib
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <lib>
+final val /extensionFunctionType // /extensionFunctionType|{}extensionFunctionType[0]
+    final fun <get-extensionFunctionType>(): kotlin/Function1<kotlin/Int, kotlin/Unit> // /extensionFunctionType.<get-extensionFunctionType>|<get-extensionFunctionType>(){}[0]
+final fun /exact(): kotlin/String // /exact|exact(){}[0]
+final fun /noInfer(): kotlin/String // /noInfer|noInfer(){}[0]
+final fun /unsafeVariance(): kotlin/String // /unsafeVariance|unsafeVariance(){}[0]
+Module: main
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /main() // /main|main(){}[0]
