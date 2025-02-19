@@ -13,13 +13,13 @@ class InitOpenViaSuper : OpenBase() {
 
 class InitOpenViaThis : OpenBase() {
     init {
-        this.x = "error"
+        this.<!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 
 class InitOpenViaImplicit : OpenBase() {
     init {
-        x = "error"
+        <!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 

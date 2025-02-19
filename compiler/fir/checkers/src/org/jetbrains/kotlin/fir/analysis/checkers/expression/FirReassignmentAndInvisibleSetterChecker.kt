@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
@@ -29,10 +28,9 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
-import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
+import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -148,8 +146,8 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
             && property.requiresInitialization(isForInitialization = false)
         ) return
         if (
-            isInOwnersInitializer(expression.dispatchReceiver?.unwrapSmartcastExpression(), context)
-            && property.requiresInitialization(isForInitialization = true)
+            property.requiresInitialization(isForInitialization = true)
+            && isInOwnersInitializer(expression.dispatchReceiver?.unwrapSmartcastExpression(), property, context)
         ) return
 
         reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, property, context)
@@ -169,10 +167,15 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
         return containingGraph != null
     }
 
-    private fun isInOwnersInitializer(receiver: FirExpression?, context: CheckerContext): Boolean {
+    private fun isInOwnersInitializer(receiver: FirExpression?, property: FirPropertySymbol, context: CheckerContext): Boolean {
         val uninitializedThisSymbol = (receiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol ?: return false
-        val containingDeclarations = context.containingDeclarations
 
+        // For a property substitution override, while they may be considered in their owner's initializer, they do not require
+        // initialization. The `requiresInitialization(isForInitialization = true)` check correctly handles this case since substitution
+        // overrides never have backing fields.
+        if (uninitializedThisSymbol != property.getContainingSymbol(context.session)) return false
+
+        val containingDeclarations = context.containingDeclarations
         val index = containingDeclarations.indexOfFirst { it is FirClass && it.symbol == uninitializedThisSymbol }
         if (index == -1) return false
 
