@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirTypealias
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
+import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.SirAndKaSession
 import org.jetbrains.sir.lightclasses.extensions.withSessions
@@ -37,15 +38,12 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
             val sirType = createParameterType(ktSymbol, parameter)
                 .let {
                     when (it) {
-                        is SirFunctionalType -> SirFunctionalType(
-                            it.parameterTypes,
-                            it.returnType,
-                            it.attributes + listOf(SirAttribute.Escaping)
-                        )
-                        is SirNominalType -> (it.typeDeclaration as? SirTypealias)
-                            ?.takeIf { it.type is SirFunctionalType }
-                            ?.let { SirNominalType(it, attributes = listOf(SirAttribute.Escaping)) }
-                            ?: it
+                        is SirFunctionalType -> it.copyAppendingAttribute(SirAttribute.Escaping)
+                        is SirNominalType -> if (it.isTypealiasOntoFunctionalType) {
+                            it.copyAppendingAttribute(SirAttribute.Escaping)
+                        } else {
+                            it
+                        }
                         else -> it
                     }
                 }
@@ -77,3 +75,5 @@ private fun <P : KaParameterSymbol> SirAndKaSession.createParameterType(ktSymbol
     )
 }
 
+private val SirNominalType.isTypealiasOntoFunctionalType: Boolean
+    get() = (typeDeclaration as? SirTypealias)?.let { it.expandedType is SirFunctionalType } == true

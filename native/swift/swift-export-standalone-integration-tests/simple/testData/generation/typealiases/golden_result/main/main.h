@@ -73,6 +73,8 @@ void __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(NSNumber * 
 
 void __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(NSNumber * (^block)(void));
 
+NSNumber * (^__root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(NSNumber * (^block)(void)))(void);
+
 int32_t __root___increment__TypesOfArguments__Swift_Int32__(int32_t integer);
 
 NSNumber * (^__root___produce_closure())(void);
