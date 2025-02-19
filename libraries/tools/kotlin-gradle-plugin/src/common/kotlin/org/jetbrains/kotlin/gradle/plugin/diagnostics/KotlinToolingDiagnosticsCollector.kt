@@ -19,7 +19,7 @@ private typealias ToolingDiagnosticId = String
 private typealias GradleProjectPath = String
 
 internal interface KotlinToolingDiagnosticsCollectorParameters : BuildServiceParameters {
-    val problemsService: Property<KotlinToolingProblemsService>
+    val problemsReporter: Property<ProblemsReporter>
 }
 
 internal abstract class KotlinToolingDiagnosticsCollector : BuildService<KotlinToolingDiagnosticsCollectorParameters> {
@@ -47,7 +47,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<KotlinT
             handleDiagnostic(project, diagnostic)
         }
 
-        val problems = parameters.problemsService.get()
+        val problems = parameters.problemsReporter.get()
         problems.reportProblemDiagnostic(diagnostic)
     }
 
@@ -74,7 +74,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<KotlinT
             }
         }
 
-        val problems = parameters.problemsService.get()
+        val problems = parameters.problemsReporter.get()
         problems.reportProblemDiagnostic(diagnostic)
     }
 
@@ -103,7 +103,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<KotlinT
 
 internal val Project.kotlinToolingDiagnosticsCollectorProvider: Provider<KotlinToolingDiagnosticsCollector>
     get() = gradle.registerClassLoaderScopedBuildService(KotlinToolingDiagnosticsCollector::class) {
-        it.parameters.problemsService.set(kotlinToolingProblemsServiceProvider)
+        it.parameters.problemsReporter.set(problemsReporter)
     }
 
 internal val Project.kotlinToolingDiagnosticsCollector: KotlinToolingDiagnosticsCollector

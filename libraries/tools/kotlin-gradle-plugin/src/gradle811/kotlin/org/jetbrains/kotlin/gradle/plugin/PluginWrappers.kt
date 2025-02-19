@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG76
-import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
 
-private const val PLUGIN_VARIANT_NAME = "gradle76"
+private const val PLUGIN_VARIANT_NAME = "gradle811"
 
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
@@ -59,25 +56,13 @@ open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
 }
 
 open class KotlinApiPlugin : KotlinBaseApiPlugin() {
-
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)
     }
 }
 
+@Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
-    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
-        ProjectIsolationStartParameterAccessorG76.Factory()
-    factories[CompatibilityConventionRegistrar.Factory::class] =
-        CompatibilityConventionRegistrarG76.Factory()
-    factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
-        ConfigurationCacheStartParameterAccessorG76.Factory()
-    factories[MavenPublicationComponentAccessor.Factory::class] =
-        MavenPublicationComponentAccessorG76.Factory()
-    factories[JavaExecTaskParametersCompatibility.Factory::class] =
-        JavaExecTaskParametersCompatibilityG76.Factory()
-    factories[ProblemsReporter.Factory::class] =
-        ProblemsReporterG76.Factory()
+
 }
