@@ -2483,7 +2483,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'.")
         map.put(
             EXPECT_REFINEMENT_ANNOTATION_MISSING,
-            "Expect refinement is an experimental feature. Mark the declaration with the '@ExperimentalExpectRefinement' annotation."
+            "'expect' declaration refinement is an experimental feature. Mark the declaration with the '@ExperimentalExpectRefinement' annotation."
         )
         map.put(
             EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING,
