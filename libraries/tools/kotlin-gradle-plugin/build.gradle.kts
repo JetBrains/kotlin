@@ -550,8 +550,8 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         val implementation = project.configurations.getByName(functionalTestSourceSet.implementationConfigurationName)
         val compileOnly = project.configurations.getByName(functionalTestSourceSet.compileOnlyConfigurationName)
 
-        implementation("com.android.tools.build:gradle:8.7.2")
-        implementation("com.android.tools.build:gradle-api:8.7.2")
+        implementation("com.android.tools.build:gradle:8.8.1")
+        implementation("com.android.tools.build:gradle-api:8.8.1")
         compileOnly("com.android.tools:common:31.7.2")
         implementation(gradleKotlinDsl())
         implementation(project(":kotlin-gradle-plugin-tcs-android"))
