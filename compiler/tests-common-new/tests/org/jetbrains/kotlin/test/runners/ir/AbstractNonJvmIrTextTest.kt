@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrTextTest
@@ -30,6 +31,7 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
     abstract val frontend: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
     abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+    abstract val preSerializerFacade: Constructor<IrInliningFacade<IrBackendInput>>
 
     /**
      * Facades for serialization and deserialization to/from klibs.
@@ -85,8 +87,12 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         irHandlersStep {
             setupIrTextDumpHandlers()
         }
+
+        facadeStep(preSerializerFacade)
+        inlinedIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+
         klibFacades?.let {klibFacades ->
-            irHandlersStep {
+            inlinedIrHandlersStep {
                 useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
             }
 
