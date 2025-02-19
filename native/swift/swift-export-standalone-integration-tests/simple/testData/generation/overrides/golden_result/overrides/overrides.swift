@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-open class AbstractBase: KotlinRuntime.KotlinBase {
+open class AbstractBase: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     open var abstractVal: Swift.Int32 {
         get {
             return AbstractBase_abstractVal_get(self.__externalRCRef())
@@ -204,7 +204,7 @@ open class OpenDerived1: overrides.AbstractBase {
         return OpenDerived1_abstractFun2(self.__externalRCRef())
     }
 }
-open class Parent: KotlinRuntime.KotlinBase {
+open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     open var objectOptionalVar: overrides.Parent? {
         get {
             return switch Parent_objectOptionalVar_get(self.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); }

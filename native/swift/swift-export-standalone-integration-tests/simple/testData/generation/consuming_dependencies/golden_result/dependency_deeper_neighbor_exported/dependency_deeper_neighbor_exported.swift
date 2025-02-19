@@ -4,7 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.dependency.four {
-    public final class AnotherBar: KotlinRuntime.KotlinBase {
+    public final class AnotherBar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = dependency_four_AnotherBar_init_allocate()
             super.init(__externalRCRef: __kt)

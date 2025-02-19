@@ -4,7 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.org.kotlin {
-    public final class Foo: KotlinRuntime.KotlinBase {
+    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = org_kotlin_Foo_init_allocate()
             super.init(__externalRCRef: __kt)

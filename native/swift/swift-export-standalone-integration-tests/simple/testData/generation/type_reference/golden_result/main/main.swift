@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 
 public protocol INTERFACE: KotlinRuntime.KotlinBase {
 }
-open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
+open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package override init() {
         fatalError()
     }
@@ -15,8 +15,8 @@ open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class Class_without_package: KotlinRuntime.KotlinBase {
-    public final class INNER_CLASS: KotlinRuntime.KotlinBase {
+public final class Class_without_package: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class INNER_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = Class_without_package_INNER_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -28,7 +28,7 @@ public final class Class_without_package: KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    public final class INNER_OBJECT: KotlinRuntime.KotlinBase {
+    public final class INNER_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public static var shared: main.Class_without_package.INNER_OBJECT {
             get {
                 return main.Class_without_package.INNER_OBJECT(__externalRCRef: Class_without_package_INNER_OBJECT_get())
@@ -54,7 +54,7 @@ public final class Class_without_package: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class DATA_CLASS: KotlinRuntime.KotlinBase {
+public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var a: Swift.Int32 {
         get {
             return DATA_CLASS_a_get(self.__externalRCRef())
@@ -84,8 +84,8 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
         return DATA_CLASS_toString(self.__externalRCRef())
     }
 }
-public final class Demo: KotlinRuntime.KotlinBase {
-    public final class INNER_CLASS: KotlinRuntime.KotlinBase {
+public final class Demo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class INNER_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = Demo_INNER_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -97,7 +97,7 @@ public final class Demo: KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    public final class INNER_OBJECT: KotlinRuntime.KotlinBase {
+    public final class INNER_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public static var shared: main.Demo.INNER_OBJECT {
             get {
                 return main.Demo.INNER_OBJECT(__externalRCRef: Demo_INNER_OBJECT_get())
@@ -204,7 +204,7 @@ public final class Demo: KotlinRuntime.KotlinBase {
         return main.Demo.INNER_OBJECT(__externalRCRef: Demo_combine_inner_objects__TypesOfArguments__main_Class_without_package_INNER_OBJECT_ExportedKotlinPackages_namespace_deeper_Class_with_package_INNER_OBJECT_main_Object_without_package_INNER_OBJECT_ExportedKotlinPackages_namespace_deeper_Object_with_package_INNER_OBJECT__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
 }
-open class OPEN_CLASS: KotlinRuntime.KotlinBase {
+open class OPEN_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public override init() {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -216,8 +216,8 @@ open class OPEN_CLASS: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class Object_without_package: KotlinRuntime.KotlinBase {
-    public final class INNER_CLASS: KotlinRuntime.KotlinBase {
+public final class Object_without_package: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class INNER_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = Object_without_package_INNER_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -229,7 +229,7 @@ public final class Object_without_package: KotlinRuntime.KotlinBase {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    public final class INNER_OBJECT: KotlinRuntime.KotlinBase {
+    public final class INNER_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public static var shared: main.Object_without_package.INNER_OBJECT {
             get {
                 return main.Object_without_package.INNER_OBJECT(__externalRCRef: Object_without_package_INNER_OBJECT_get())
@@ -454,9 +454,11 @@ public func setExtensionVarOnNullableRef(
 ) -> Swift.Void {
     return __root___extensionVarOnNullableRef_set__TypesOfArguments__main_Class_without_package_opt__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? 0, v)
 }
+public extension main.INTERFACE where Self : KotlinRuntimeSupport._KotlinBridged {
+}
 public extension ExportedKotlinPackages.namespace.deeper {
-    public final class Class_with_package: KotlinRuntime.KotlinBase {
-        public final class INNER_CLASS: KotlinRuntime.KotlinBase {
+    public final class Class_with_package: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class INNER_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public override init() {
                 let __kt = namespace_deeper_Class_with_package_INNER_CLASS_init_allocate()
                 super.init(__externalRCRef: __kt)
@@ -468,7 +470,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 super.init(__externalRCRef: __externalRCRef)
             }
         }
-        public final class INNER_OBJECT: KotlinRuntime.KotlinBase {
+        public final class INNER_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public static var shared: ExportedKotlinPackages.namespace.deeper.Class_with_package.INNER_OBJECT {
                 get {
                     return ExportedKotlinPackages.namespace.deeper.Class_with_package.INNER_OBJECT(__externalRCRef: namespace_deeper_Class_with_package_INNER_OBJECT_get())
@@ -494,7 +496,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    public final class DATA_OBJECT: KotlinRuntime.KotlinBase {
+    public final class DATA_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var a: Swift.Int32 {
             get {
                 return namespace_deeper_DATA_OBJECT_a_get(self.__externalRCRef())
@@ -520,8 +522,8 @@ public extension ExportedKotlinPackages.namespace.deeper {
             return namespace_deeper_DATA_OBJECT_toString(self.__externalRCRef())
         }
     }
-    public final class Object_with_package: KotlinRuntime.KotlinBase {
-        public final class INNER_CLASS: KotlinRuntime.KotlinBase {
+    public final class Object_with_package: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class INNER_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public override init() {
                 let __kt = namespace_deeper_Object_with_package_INNER_CLASS_init_allocate()
                 super.init(__externalRCRef: __kt)
@@ -533,7 +535,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 super.init(__externalRCRef: __externalRCRef)
             }
         }
-        public final class INNER_OBJECT: KotlinRuntime.KotlinBase {
+        public final class INNER_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public static var shared: ExportedKotlinPackages.namespace.deeper.Object_with_package.INNER_OBJECT {
                 get {
                     return ExportedKotlinPackages.namespace.deeper.Object_with_package.INNER_OBJECT(__externalRCRef: namespace_deeper_Object_with_package_INNER_OBJECT_get())
@@ -564,7 +566,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 public extension ExportedKotlinPackages.ignored {
-    public final class ENUM: KotlinRuntime.KotlinBase, Swift.CaseIterable {
+    public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
         public static var A: ExportedKotlinPackages.ignored.ENUM {
             get {
                 return ExportedKotlinPackages.ignored.ENUM(__externalRCRef: ignored_ENUM_A_get())

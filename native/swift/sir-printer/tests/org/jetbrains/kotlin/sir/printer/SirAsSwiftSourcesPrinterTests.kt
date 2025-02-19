@@ -932,7 +932,6 @@ class SirAsSwiftSourcesPrinterTests {
 
     @Test
     fun `should print extensions`() {
-
         val externalDefinedEnum: SirEnum
         val externalModule = buildModule {
             name = "MyDependencyModule"
@@ -947,9 +946,24 @@ class SirAsSwiftSourcesPrinterTests {
             externalDefinedEnum.parent = this
         }.attachDeclarations()
 
-        val enum: SirEnum
+        val enum: SirEnum = buildEnum {
+            name = "my_enum"
+            origin = SirOrigin.Namespace(listOf("my_enum"))
+        }
+
+        val protocol: SirProtocol = buildProtocol {
+            name = "my_protocol"
+            origin = SirOrigin.Unknown
+        }
+
         val module = buildModule {
             name = "Test"
+            declarations.add(
+                enum
+            )
+            declarations.add(
+                protocol
+            )
             declarations.add(
                 buildExtension {
                     origin = SirOrigin.Unknown
@@ -1009,14 +1023,6 @@ class SirAsSwiftSourcesPrinterTests {
                     )
                 }.attachDeclarations()
             )
-
-            enum = buildEnum {
-                name = "my_enum"
-                origin = SirOrigin.Namespace(listOf("my_enum"))
-            }
-            declarations.add(
-                enum
-            )
             declarations.add(
                 buildExtension {
                     origin = SirOrigin.Unknown
@@ -1041,6 +1047,27 @@ class SirAsSwiftSourcesPrinterTests {
                         }
                     )
                 }.attachDeclarations()
+            )
+            declarations.add(
+                buildExtension {
+                    origin = SirOrigin.Unknown
+
+                    extendedType = SirNominalType(enum)
+                    visibility = SirVisibility.PUBLIC
+                    protocols.add(protocol)
+                    constraints.add(SirTypeConstraint.Equality(SirNominalType(protocol)))
+                }
+            )
+            declarations.add(
+                buildExtension {
+                    origin = SirOrigin.Unknown
+
+                    extendedType = SirNominalType(enum)
+                    visibility = SirVisibility.PUBLIC
+                    protocols.add(protocol)
+                    constraints.add(SirTypeConstraint.Equality(SirNominalType(protocol), listOf("NestedType1", "NestedType2")))
+                    constraints.add(SirTypeConstraint.Conformance(SirNominalType(protocol), listOf("NestedType1", "NestedType2")))
+                }
             )
         }.apply {
             enum.parent = this

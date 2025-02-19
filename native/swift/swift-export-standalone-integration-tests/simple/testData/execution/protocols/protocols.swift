@@ -56,6 +56,20 @@ func testInterfaceMembers() throws {
     try assertFalse(propertyResult === instance, "These should not be same")
 }
 
+func testInterfaceMembersOfExistential() throws {
+    let instance: any Foo = SomeFoo()
+
+    let expected = SomeFoo()
+    let functionResult = instance.identity(obj: expected)
+    try assertSame(actual: functionResult, expected: expected)
+    try assertFalse(functionResult === instance, "These should not be same")
+
+    instance.property = expected
+    let propertyResult = instance.property
+    try assertSame(actual: propertyResult, expected: expected)
+    try assertFalse(propertyResult === instance, "These should not be same")
+}
+
 class ProtocolsTests: TestProvider {
     var tests: [TestCase] = []
 
@@ -67,6 +81,7 @@ class ProtocolsTests: TestProvider {
             TestCase(name: "testListOfInterfaces", method: withAutorelease(testListOfInterfaces)),
             TestCase(name: "testListOfNullableInterfaces", method: withAutorelease(testListOfNullableInterfaces)),
             TestCase(name: "testInterfaceMembers", method: withAutorelease(testInterfaceMembers)),
+            TestCase(name: "testInterfaceMembersOfExistential", method: withAutorelease(testInterfaceMembersOfExistential)),
         ]
     }
 }
