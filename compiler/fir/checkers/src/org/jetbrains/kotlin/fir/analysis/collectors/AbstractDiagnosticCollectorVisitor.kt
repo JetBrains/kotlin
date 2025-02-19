@@ -272,6 +272,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
         visitWithGetClassCall(getClassCall)
     }
 
+    override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: Nothing?) {
+        withAnnotationContainer(danglingModifierList) {
+            visitWithDeclaration(danglingModifierList)
+        }
+    }
+
     protected inline fun visitWithDeclaration(
         declaration: FirDeclaration,
         block: () -> Unit = { visitNestedElements(declaration) }

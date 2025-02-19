@@ -108,6 +108,12 @@ public class OutOfContentRootFileStructureTestGenerated extends AbstractOutOfCon
   }
 
   @Test
+  @TestMetadata("danglingAnnotationClassLevelFunction.kt")
+  public void testDanglingAnnotationClassLevelFunction() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationClassLevelFunction.kt");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationInMiddle.kt")
   public void testDanglingAnnotationInMiddle() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationInMiddle.kt");
@@ -117,6 +123,12 @@ public class OutOfContentRootFileStructureTestGenerated extends AbstractOutOfCon
   @TestMetadata("danglingAnnotationTopLevel.kt")
   public void testDanglingAnnotationTopLevel() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationTopLevel.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationTopLevelFunction.kt")
+  public void testDanglingAnnotationTopLevelFunction() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationTopLevelFunction.kt");
   }
 
   @Test
