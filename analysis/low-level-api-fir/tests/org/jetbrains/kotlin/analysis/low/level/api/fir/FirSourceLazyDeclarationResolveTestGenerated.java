@@ -1254,6 +1254,42 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("danglingAnnotationMemberFunction.kt")
+    public void testDanglingAnnotationMemberFunction() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationMemberFunction2.kt")
+    public void testDanglingAnnotationMemberFunction2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationMemberFunction3.kt")
+    public void testDanglingAnnotationMemberFunction3() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction3.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunction.kt")
+    public void testDanglingAnnotationTopLevelFunction() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunction2.kt")
+    public void testDanglingAnnotationTopLevelFunction2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunction3.kt")
+    public void testDanglingAnnotationTopLevelFunction3() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction3.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationWithNestedDeclarations.kt")
     public void testDanglingAnnotationWithNestedDeclarations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationWithNestedDeclarations.kt");

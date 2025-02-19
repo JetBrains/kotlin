@@ -8,22 +8,21 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.utils.isNonLocalDanglingModifierList
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -81,12 +80,11 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        PsiTreeUtil.getChildrenOfTypeAsList(mainFile, KtModifierList::class.java).forEach {
-            if (it.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement) {
-                val structureElement = declarationToStructureElement[it] ?: return@forEach
-                val comment = structureElement.createComment()
-                elementToComment[it] = comment
-            }
+        val danglingModifierLists = mainFile.collectDescendantsOfType<KtModifierList> { it.isNonLocalDanglingModifierList() }
+        for (modifierList in danglingModifierLists) {
+            val structureElement = declarationToStructureElement[modifierList] ?: continue
+            val comment = structureElement.createComment()
+            elementToComment[modifierList] = comment
         }
 
         val text = buildString {
