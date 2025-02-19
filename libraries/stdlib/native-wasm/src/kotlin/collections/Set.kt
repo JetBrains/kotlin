@@ -21,6 +21,12 @@ public actual interface Set<out E> : Collection<E> {
 
     // Bulk Operations
     actual override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+
+    public actual companion object {
+        public actual fun <T> of(): Set<T> = setOf()
+        public actual fun <T> of(element: T): Set<T> = setOf(element)
+        public actual fun <T> of(vararg elements: T): Set<T> = setOf(*elements) // todo redundant array copy
+    }
 }
 
 /**
