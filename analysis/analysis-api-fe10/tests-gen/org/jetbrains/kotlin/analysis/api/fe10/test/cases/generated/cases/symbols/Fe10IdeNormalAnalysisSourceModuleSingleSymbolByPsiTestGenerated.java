@@ -758,6 +758,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("valKeywordOnVarargFunctionValueParameter.kt")
+    public void testValKeywordOnVarargFunctionValueParameter() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/valKeywordOnVarargFunctionValueParameter.kt");
+    }
+
+    @Test
     @TestMetadata("valPropertyWithSetter.kt")
     public void testValPropertyWithSetter() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/valPropertyWithSetter.kt");
