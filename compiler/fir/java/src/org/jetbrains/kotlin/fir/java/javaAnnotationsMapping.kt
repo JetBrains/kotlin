@@ -42,7 +42,7 @@ import java.util.*
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession, source: KtSourceElement?,
-): List<FirAnnotation> = map { it.toFirAnnotationCall(session, source) }
+): List<FirAnnotation> = map { it.toFirAnnotation(session, source) }
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
@@ -56,7 +56,7 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
 
         this@convertAnnotationsToFir.mapTo(this) {
             if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
-            val firAnnotationCall = it.toFirAnnotationCall(session, source)
+            val firAnnotationCall = it.toFirAnnotation(session, source)
             if (firAnnotationCall.toAnnotationClassId(session) == StandardClassIds.Annotations.Target) {
                 val unmappedKotlinAnnotation = it.classId == StandardClassIds.Annotations.Target
                 if (annotationWithJavaTarget == null && !unmappedKotlinAnnotation) {
@@ -70,7 +70,7 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
         }
 
         if (!isDeprecated && isDeprecatedInJavaDoc) {
-            add(DeprecatedInJavaDocAnnotation.toFirAnnotationCall(session, source))
+            add(DeprecatedInJavaDocAnnotation.toFirAnnotation(session, source))
         }
     }
     if (annotationWithKotlinTarget == null) return result
@@ -144,7 +144,7 @@ internal fun FirAnnotationContainer.setAnnotationsFromJava(
     javaAnnotationOwner: JavaAnnotationOwner,
 ) {
     val annotations = mutableListOf<FirAnnotation>()
-    javaAnnotationOwner.annotations.mapTo(annotations) { it.toFirAnnotationCall(session, source) }
+    javaAnnotationOwner.annotations.mapTo(annotations) { it.toFirAnnotation(session, source) }
     replaceAnnotations(annotations)
 }
 
@@ -211,7 +211,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
             )
             coneTypeOrNull = resolvedTypeRef.coneType
         }
-        is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session, source)
+        is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotation(session, source)
         else -> buildErrorExpression {
             diagnostic = ConeSimpleDiagnostic("Unknown JavaAnnotationArgument: ${this::class.java}", DiagnosticKind.Java)
         }
@@ -298,7 +298,7 @@ internal fun JavaAnnotation.isJavaDeprecatedAnnotation(): Boolean {
     return classId == JvmStandardClassIds.Annotations.Java.Deprecated
 }
 
-private fun JavaAnnotation.toFirAnnotationCall(session: FirSession, source: KtSourceElement?): FirAnnotation {
+private fun JavaAnnotation.toFirAnnotation(session: FirSession, source: KtSourceElement?): FirAnnotation {
     val annotationData = buildFirAnnotation(this, session, source)
     return if (isIdeExternalAnnotation) {
         buildJavaExternalAnnotation {
