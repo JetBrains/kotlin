@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
@@ -26,7 +25,7 @@ abstract class KotlinMetadataTarget @Inject constructor(
     override val artifactsTaskName: String
         // The IDE import looks at this task name to determine the artifact and register the path to the artifact;
         // in HMPP, since the project resolves to the all-metadata JAR, the IDE import needs to work with that JAR, too
-        get() = if (project.isKotlinGranularMetadataEnabled) KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME else super.artifactsTaskName
+        get() = KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME
 
     internal val legacyArtifactsTaskName: String
         get() = super.artifactsTaskName
@@ -46,4 +45,3 @@ abstract class KotlinMetadataTarget @Inject constructor(
         const val METADATA_TARGET_NAME = "metadata"
     }
 }
-

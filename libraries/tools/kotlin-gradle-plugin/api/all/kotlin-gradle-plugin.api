@@ -576,8 +576,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/DefaultKotlinBasePlugin
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 	public fun getPluginVersion ()Ljava/lang/String;
-	protected final fun setupAttributeMatchingStrategy (Lorg/gradle/api/Project;Z)V
-	public static synthetic fun setupAttributeMatchingStrategy$default (Lorg/jetbrains/kotlin/gradle/plugin/DefaultKotlinBasePlugin;Lorg/gradle/api/Project;ZILjava/lang/Object;)V
+	protected final fun setupAttributeMatchingStrategy (Lorg/gradle/api/Project;)V
 	public fun whenBuildEvaluated (Lorg/gradle/api/Project;)V
 }
 

@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
@@ -168,13 +167,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     }
 
     protected fun setupAttributeMatchingStrategy(
-        project: Project,
-        isKotlinGranularMetadata: Boolean = project.isKotlinGranularMetadataEnabled,
+        project: Project
     ) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(
             this,
-            isKotlinGranularMetadata,
         )
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
 
