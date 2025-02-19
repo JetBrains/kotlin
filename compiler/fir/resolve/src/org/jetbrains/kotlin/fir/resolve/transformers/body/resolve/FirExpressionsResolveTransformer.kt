@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -1114,8 +1116,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // If the type is resolved correctly, we don't need to re-run the resolution
         val errorTypeRef = conversionTypeRef as? FirErrorTypeRef ?: return
 
-        // Don't re-run resolution if it's something beside an unresolved reference or a visibility error
-        if (errorTypeRef.diagnostic !is ConeUnresolvedTypeQualifierError && errorTypeRef.diagnostic !is ConeVisibilityError) return
+        // Don't re-run resolution if there's some visible class available
+        if (!errorTypeRef.diagnostic.meansAbsenceOfVisibleClass()) return
 
         // We only re-run resolution for simple name qualifiers
         val userTypeRef = errorTypeRef.delegatedTypeRef as? FirUserTypeRef ?: return
@@ -1175,6 +1177,25 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         return result
+    }
+
+
+    private fun ConeDiagnostic.meansAbsenceOfVisibleClass(): Boolean {
+        // No class found at all
+        if (this is ConeUnresolvedTypeQualifierError) return true
+        // Only invisible class found
+        if (this is ConeVisibilityError) return true
+        // It's necessary for context-sensitive resolution to distinguish the situations:
+        // - when ambiguity happens among available candidates, so it's not correct to run context-sensitive resolution
+        // - when all the candidates are invisible, thus it's safe to run context-sensitive resolution
+        //
+        // The idea is that even ambiguity among imported invisible classes should behave just
+        // like there are none of them exists.
+        // Otherwise, introducing a private class might become a source-breaking change.
+        @OptIn(ApplicabilityDetail::class)
+        if (this is ConeAmbiguityError && !this.applicability.isSuccess) return true
+
+        return false
     }
 
     override fun transformBooleanOperatorExpression(
