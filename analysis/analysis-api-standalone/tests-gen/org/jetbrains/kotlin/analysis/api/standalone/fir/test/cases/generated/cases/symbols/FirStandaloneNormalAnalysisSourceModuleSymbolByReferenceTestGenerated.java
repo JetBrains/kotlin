@@ -71,6 +71,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   }
 
   @Test
+  @TestMetadata("constructorProperty.kt")
+  public void testConstructorProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorProperty.kt");
+  }
+
+  @Test
   @TestMetadata("constructorReferenceViaTypeAlias.kt")
   public void testConstructorReferenceViaTypeAlias() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorReferenceViaTypeAlias.kt");
@@ -380,6 +386,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
   @TestMetadata("nestedAnnotation.kt")
   public void testNestedAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/nestedAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("openConstructorProperty.kt")
+  public void testOpenConstructorProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/openConstructorProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("openConstructorPropertyInAbstractClass.kt")
+  public void testOpenConstructorPropertyInAbstractClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/openConstructorPropertyInAbstractClass.kt");
+  }
+
+  @Test
+  @TestMetadata("openConstructorPropertyInFinalClass.kt")
+  public void testOpenConstructorPropertyInFinalClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/openConstructorPropertyInFinalClass.kt");
   }
 
   @Test

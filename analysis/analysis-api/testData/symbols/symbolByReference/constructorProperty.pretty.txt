@@ -1,0 +1,1 @@
+val property: kotlin.Boolean

@@ -42,6 +42,24 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   }
 
   @Test
+  @TestMetadata("abstractPropertyInAbstractClass.kt")
+  public void testAbstractPropertyInAbstractClass() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/abstractPropertyInAbstractClass.kt");
+  }
+
+  @Test
+  @TestMetadata("abstractPropertyInFinalClass.kt")
+  public void testAbstractPropertyInFinalClass() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/abstractPropertyInFinalClass.kt");
+  }
+
+  @Test
+  @TestMetadata("abstractPropertyInInterface.kt")
+  public void testAbstractPropertyInInterface() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/abstractPropertyInInterface.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInSingleSymbolByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
@@ -98,6 +116,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   @TestMetadata("fileWithAnnotations.kt")
   public void testFileWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/fileWithAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("finalPropertyInInterface.kt")
+  public void testFinalPropertyInInterface() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/finalPropertyInInterface.kt");
   }
 
   @Test
@@ -185,6 +209,24 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   }
 
   @Test
+  @TestMetadata("openPrimaryConstructorParameter.kt")
+  public void testOpenPrimaryConstructorParameter() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/openPrimaryConstructorParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("openPrimaryConstructorParameterInFinalClass.kt")
+  public void testOpenPrimaryConstructorParameterInFinalClass() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/openPrimaryConstructorParameterInFinalClass.kt");
+  }
+
+  @Test
+  @TestMetadata("openPropertyInInterface.kt")
+  public void testOpenPropertyInInterface() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/openPropertyInInterface.kt");
+  }
+
+  @Test
   @TestMetadata("overriddenPropertyWithoutOverriddenSetter_param.kt")
   public void testOverriddenPropertyWithoutOverriddenSetter_param() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/overriddenPropertyWithoutOverriddenSetter_param.kt");
@@ -218,6 +260,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   @TestMetadata("propertyFromWhenExpression.kt")
   public void testPropertyFromWhenExpression() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyFromWhenExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInInterface.kt")
+  public void testPropertyInInterface() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyInInterface.kt");
   }
 
   @Test

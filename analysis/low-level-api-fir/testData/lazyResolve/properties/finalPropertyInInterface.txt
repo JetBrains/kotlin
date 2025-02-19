@@ -1,0 +1,125 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] finalPropertyInInterface.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Check : R|kotlin/Any| {
+        public? final [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Check : R|kotlin/Any| {
+        public? final [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Check : R|kotlin/Any| {
+        public? final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var prop: Int
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Check] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: Int): R|kotlin/Unit|
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Check : R|kotlin/Any| {
+        public? final [ResolvedTo(COMPANION_GENERATION)] var prop: Int
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Check] set([ResolvedTo(COMPANION_GENERATION)] value: Int): R|kotlin/Unit|
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface Check : R|kotlin/Any| {
+        public? final [ResolvedTo(SUPER_TYPES)] var prop: Int
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Check] set([ResolvedTo(SUPER_TYPES)] value: Int): R|kotlin/Unit|
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public final? [ResolvedTo(TYPES)] interface Check : R|kotlin/Any| {
+        public? final [ResolvedTo(TYPES)] var prop: R|kotlin/Int|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Check] set([ResolvedTo(TYPES)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface Check : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] var prop: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Check] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface Check : R|kotlin/Any| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var prop: R|kotlin/Int|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Check] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface Check : R|kotlin/Any| {
+        public final [ResolvedTo(CONTRACTS)] var prop: R|kotlin/Int|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Check] set([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface Check : R|kotlin/Any| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var prop: R|kotlin/Int|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Check] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface Check : R|kotlin/Any| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] var prop: R|kotlin/Int|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Check] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface Check : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var prop: R|kotlin/Int|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Check] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] finalPropertyInInterface.kt
+    public abstract [ResolvedTo(STATUS)] interface Check : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] var prop: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] finalPropertyInInterface.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Check : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] var prop: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }

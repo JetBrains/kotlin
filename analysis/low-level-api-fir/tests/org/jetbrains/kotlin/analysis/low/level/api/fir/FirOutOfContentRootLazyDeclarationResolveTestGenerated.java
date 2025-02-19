@@ -1537,6 +1537,24 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestDataPath("$PROJECT_ROOT")
   public class Properties {
     @Test
+    @TestMetadata("abstractPropertyInAbstractClass.kt")
+    public void testAbstractPropertyInAbstractClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/abstractPropertyInAbstractClass.kt");
+    }
+
+    @Test
+    @TestMetadata("abstractPropertyInFinalClass.kt")
+    public void testAbstractPropertyInFinalClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/abstractPropertyInFinalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("abstractPropertyInInterface.kt")
+    public void testAbstractPropertyInInterface() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/abstractPropertyInInterface.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInProperties() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/properties"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
@@ -1587,6 +1605,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("delegateWithAnnotationOnAccessorWithExplicitType.kt")
     public void testDelegateWithAnnotationOnAccessorWithExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/delegateWithAnnotationOnAccessorWithExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("finalPropertyInInterface.kt")
+    public void testFinalPropertyInInterface() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/finalPropertyInInterface.kt");
     }
 
     @Test
@@ -1650,6 +1674,30 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("openConstructorProperty.kt")
+    public void testOpenConstructorProperty() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/openConstructorProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("openConstructorPropertyInAbstractClass.kt")
+    public void testOpenConstructorPropertyInAbstractClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/openConstructorPropertyInAbstractClass.kt");
+    }
+
+    @Test
+    @TestMetadata("openConstructorPropertyInFinalClass.kt")
+    public void testOpenConstructorPropertyInFinalClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/openConstructorPropertyInFinalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("openPropertyInInterface.kt")
+    public void testOpenPropertyInInterface() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/openPropertyInInterface.kt");
+    }
+
+    @Test
     @TestMetadata("propertyGetterWithExplicitType.kt")
     public void testPropertyGetterWithExplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithExplicitType.kt");
@@ -1665,6 +1713,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("propertyGetterWithImplicitType.kt")
     public void testPropertyGetterWithImplicitType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyGetterWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInInterface.kt")
+    public void testPropertyInInterface() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/propertyInInterface.kt");
     }
 
     @Test

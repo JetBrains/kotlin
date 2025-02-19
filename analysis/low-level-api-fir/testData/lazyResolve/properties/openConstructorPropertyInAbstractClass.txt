@@ -1,0 +1,181 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Check.prop] prop: Int): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(RAW_FIR)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Check.prop] prop: Int): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Check] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/Check.prop] prop: Int): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Check] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: Int): R|kotlin/Unit|
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(COMPANION_GENERATION)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Check] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/Check.prop] prop: Int): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(COMPANION_GENERATION)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Check] set([ResolvedTo(COMPANION_GENERATION)] value: Int): R|kotlin/Unit|
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Check] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/Check.prop] prop: Int): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(SUPER_TYPES)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Check] set([ResolvedTo(SUPER_TYPES)] value: Int): R|kotlin/Unit|
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(TYPES)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Check] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Check] set([ResolvedTo(TYPES)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Check] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Check] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Check] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Check] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(CONTRACTS)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Check] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Check] set([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Check] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Check] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(CONSTANT_EVALUATION)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Check] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Check] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Check] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Check] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Check] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] openConstructorPropertyInAbstractClass.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Check.prop] prop: R|kotlin/Int|): R|Check| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
