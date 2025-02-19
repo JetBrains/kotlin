@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.util
 import org.gradle.api.Project
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.testbase.*
+import java.io.File
 import kotlin.test.assertTrue
 
 private const val RESOLVE_ALL_CONFIGURATIONS_TASK_NAME = "resolveAllConfigurations"
@@ -31,13 +32,7 @@ fun TestProject.testResolveAllConfigurations(
         project.registerResolveAllConfigurationsTask()
     }
 
-    build(
-        RESOLVE_ALL_CONFIGURATIONS_TASK_NAME,
-        buildOptions = buildOptions.copy(
-            // The configuration resolution happens during execution, so we have to disable CC
-            configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
-        )
-    ) {
+    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME) {
         assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
         val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()
         withUnresolvedConfigurationNames(unresolvedConfigurations, this)
@@ -46,39 +41,50 @@ fun TestProject.testResolveAllConfigurations(
 
 private fun Project.registerResolveAllConfigurationsTask() {
     tasks.register(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME) {
+        it.notCompatibleWithConfigurationCache(
+            "The configuration resolution happens during execution, so we have to disable CC for this task"
+        )
         if ("commonizeNativeDistribution" in rootProject.tasks.names) {
             it.dependsOn(":commonizeNativeDistribution")
         }
-        it.doFirst {
-            val excludeConfigs = mutableListOf("default", "archives")
 
+        val excludeConfigs = setOf(
+            "default",
+            "archives",
+        )
+        val projectPath = project.path
+        val projectRootDir = project.rootDir
+
+        val resolvableConfigurations = project.provider {
             project.configurations
-                .filter { it.isCanBeResolved }
-                .filterNot { excludeConfigs.contains(it.name) }
-                .forEach { configuration ->
-                    val configurationPath =
-                        if (project.path == ":") ":" + configuration.name
-                        else project.path + ":" + configuration.name
-                    try {
-                        println("Resolving $configurationPath")
-                        configuration.files.forEach {
-                            val path = if (it.extension in setOf("jar", "klib")) {
-                                it.name
-                            } else {
-                                it.relativeTo(project.rootDir).invariantSeparatorsPath
-                            }
-                            println(">> $configurationPath --> $path")
+                .filter { configuration -> configuration.isCanBeResolved }
+                .filterNot { configuration -> configuration.name in excludeConfigs }
+        }
+
+        it.doFirst { task ->
+            val knownExtensions = setOf("jar", "klib")
+            resolvableConfigurations.get().forEach { configuration ->
+                val configurationPath = if (projectPath == ":") ":" + configuration.name else projectPath + ":" + configuration.name
+                try {
+                    println("Resolving $configurationPath")
+                    configuration.files.forEach { file ->
+                        val path = if (file.extension in knownExtensions) {
+                            file.name
+                        } else {
+                            file.relativeTo(projectRootDir).invariantSeparatorsPath
                         }
-                        println("OK, resolved $configurationPath\n")
-                    } catch (e: Throwable) {
-                        var ex = e as Throwable?
-                        while (ex != null) {
-                            println(ex.message)
-                            ex = ex.cause
-                        }
-                        println("$UNRESOLVED_MARKER $configurationPath\n")
+                        println(">> $configurationPath --> $path")
                     }
+                    println("OK, resolved $configurationPath\n")
+                } catch (e: Throwable) {
+                    var ex = e as Throwable?
+                    while (ex != null) {
+                        println(ex.message)
+                        ex = ex.cause
+                    }
+                    println("$UNRESOLVED_MARKER $configurationPath\n")
                 }
+            }
         }
     }
 }
