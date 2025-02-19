@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.fir.java.deserialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.name.ClassId
@@ -28,8 +30,21 @@ class OptionalAnnotationClassesProvider(
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {
+    private val annotationDeserializer = object : MetadataBasedAnnotationDeserializer(session) {
+        override fun loadClassAnnotations(
+            classProto: ProtoBuf.Class,
+            nameResolver: NameResolver,
+        ): List<FirAnnotation> {
+            // Starting from 2.2, annotations on optional annotation classes on JVM are written to the `ProtoBuf.Class.annotation` field.
+            // Before 2.2, they were written to the `BuiltInsProtoBuf.classAnnotation` extension. So we're looking into both places.
+            val annotations = classProto.annotationList
+            if (annotations.isNotEmpty()) {
+                return annotations.map { deserializeAnnotation(it, nameResolver) }
+            }
 
-    private val annotationDeserializer = MetadataBasedAnnotationDeserializer(session)
+            return super.loadClassAnnotations(classProto, nameResolver)
+        }
+    }
 
     private val optionalAnnotationClassesAndPackages by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val optionalAnnotationClasses = mutableMapOf<ClassId, ClassData>()

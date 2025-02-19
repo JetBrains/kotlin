@@ -52,7 +52,7 @@ abstract class AbstractAnnotationDeserializer(
         OTHERS
     }
 
-    fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> {
+    open fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
         val annotations = classProto.getExtension(protocol.classAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }

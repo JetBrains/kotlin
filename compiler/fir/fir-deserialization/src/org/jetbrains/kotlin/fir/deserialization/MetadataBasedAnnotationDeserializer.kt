@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
-class MetadataBasedAnnotationDeserializer(session: FirSession) :
+open class MetadataBasedAnnotationDeserializer(session: FirSession) :
     AbstractAnnotationDeserializerWithTypeAnnotations(session, BuiltInSerializerProtocol)
