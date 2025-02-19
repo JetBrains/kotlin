@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 
 /**
  * Function signature needs to be kept stable since this is used during import
@@ -24,5 +23,4 @@ internal fun Project.isAllowCommonizer(): Boolean {
     multiplatformExtensionOrNull ?: return false
 
     return multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }
-            && isKotlinGranularMetadataEnabled
 }
