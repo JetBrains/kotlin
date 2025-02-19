@@ -2038,6 +2038,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/FlowActionBu
 	public final fun addConfigurationTimeMetric (Lorg/gradle/api/provider/Provider;)V
 	public final fun addConfigurationTimeMetric (Lorg/jetbrains/kotlin/gradle/plugin/statistics/MetricContainer;)V
 	public final fun addConfigurationTimeMetrics (Ljava/util/List;)V
+	public fun close ()V
 	public final fun getConfigurationTimeMetrics ()Lorg/gradle/api/provider/Provider;
 }
 

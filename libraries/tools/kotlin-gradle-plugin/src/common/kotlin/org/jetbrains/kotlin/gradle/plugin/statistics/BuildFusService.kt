@@ -19,9 +19,11 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
+import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
@@ -82,13 +84,17 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
         private var buildStartTime: Long = System.currentTimeMillis()
 
         fun registerIfAbsent(project: Project, pluginVersion: String, buildUidService: Provider<BuildUidService>) =
-            registerIfAbsentImpl(project, pluginVersion, buildUidService).also { serviceProvider ->
-                SingleActionPerProject.run(project, UsesBuildFusService::class.java.name) {
-                    project.tasks.withType<UsesBuildFusService>().configureEach { task ->
-                        task.buildFusService.value(serviceProvider).disallowChanges()
-                        task.usesService(serviceProvider)
+            if (project.buildServiceShouldBeCreated) {
+                registerIfAbsentImpl(project, pluginVersion, buildUidService).also { serviceProvider ->
+                    SingleActionPerProject.run(project, UsesBuildFusService::class.java.name) {
+                        project.tasks.withType<UsesBuildFusService>().configureEach { task ->
+                            task.buildFusService.value(serviceProvider).disallowChanges()
+                            task.usesService(serviceProvider)
+                        }
                     }
                 }
+            } else {
+                null
             }
 
         private fun registerIfAbsentImpl(
@@ -216,3 +222,6 @@ class MetricContainer : Serializable {
     fun put(metric: BooleanMetrics, value: Boolean) = booleanMetrics.put(metric, value)
     fun put(metric: NumericalMetrics, value: Long) = numericalMetrics.put(metric, value)
 }
+
+private val Project.buildServiceShouldBeCreated
+    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection
