@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.klib.*
+import kotlinx.metadata.klib.annotations
+import kotlinx.metadata.klib.compileTimeValue
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.*
@@ -92,7 +93,7 @@ object CirDeserializers {
         } else CirConstantValue.NullValue
 
         return CirProperty(
-            annotations = annotations(source.klibAnnotations, typeResolver),
+            annotations = annotations(source.annotations, typeResolver),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
             visibility = visibility(source.visibility),
@@ -115,7 +116,7 @@ object CirDeserializers {
 
     private fun propertyGetter(source: KmProperty, typeResolver: CirTypeResolver): CirPropertyGetter? {
         val isDefault = !source.getter.isNotDefault
-        val annotations = annotations(source.klibGetterAnnotations, typeResolver)
+        val annotations = annotations(source.getter.annotations, typeResolver)
 
         if (isDefault && annotations.isEmpty())
             return CirPropertyGetter.DEFAULT_NO_ANNOTATIONS
@@ -131,8 +132,8 @@ object CirDeserializers {
         val setter = source.setter ?: return null
 
         return CirPropertySetter.createInterned(
-            annotations = annotations(source.klibSetterAnnotations, typeResolver),
-            parameterAnnotations = source.setterParameter?.let { annotations(it.klibAnnotations, typeResolver) }.orEmpty(),
+            annotations = annotations(setter.annotations, typeResolver),
+            parameterAnnotations = source.setterParameter?.let { annotations(it.annotations, typeResolver) }.orEmpty(),
             visibility = visibility(setter.visibility),
             isDefault = !setter.isNotDefault,
             isInline = setter.isInline
@@ -150,7 +151,7 @@ object CirDeserializers {
 
     fun function(name: CirName, source: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction =
         CirFunction(
-            annotations = annotations(source.klibAnnotations, typeResolver),
+            annotations = annotations(source.annotations, typeResolver),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
             visibility = visibility(source.visibility),
@@ -173,7 +174,7 @@ object CirDeserializers {
 
     private fun valueParameter(source: KmValueParameter, typeResolver: CirTypeResolver): CirValueParameter =
         CirValueParameter.createInterned(
-            annotations = annotations(source.klibAnnotations, typeResolver),
+            annotations = annotations(source.annotations, typeResolver),
             name = CirName.create(source.name),
             returnType = type(source.type, typeResolver),
             varargElementType = source.varargElementType?.let { type(it, typeResolver) },
@@ -233,7 +234,7 @@ object CirDeserializers {
     }
 
     fun clazz(name: CirName, source: KmClass, typeResolver: CirTypeResolver): CirClass = CirClass.create(
-        annotations = annotations(source.klibAnnotations, typeResolver),
+        annotations = annotations(source.annotations, typeResolver),
         name = name,
         typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
         supertypes = source.filteredSupertypes.compactMap { type(it, typeResolver) },
@@ -290,7 +291,7 @@ object CirDeserializers {
 
     fun constructor(source: KmConstructor, containingClass: CirContainingClass, typeResolver: CirTypeResolver): CirClassConstructor =
         CirClassConstructor.create(
-            annotations = annotations(source.klibAnnotations, typeResolver),
+            annotations = annotations(source.annotations, typeResolver),
             typeParameters = emptyList(), // TODO: nowhere to read constructor type parameters from
             visibility = visibility(source.visibility),
             containingClass = containingClass,

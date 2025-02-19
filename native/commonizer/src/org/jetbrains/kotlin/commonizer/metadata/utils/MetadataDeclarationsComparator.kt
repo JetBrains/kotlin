@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.commonizer.metadata.utils
 
 import com.intellij.util.containers.FactoryMap
 import kotlinx.metadata.klib.*
-import kotlin.metadata.*
-import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.*
-import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch
-import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
 import org.jetbrains.kotlin.commonizer.utils.KNI_BRIDGE_FUNCTION_PREFIX
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 
@@ -599,7 +597,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         classB: KmClass
     ) {
         compareFlags(classContext, classA, classB, CLASS_FLAGS)
-        compareAnnotationLists(classContext, classA.klibAnnotations, classB.klibAnnotations)
+        compareAnnotationLists(classContext, classA.annotations, classB.annotations)
 
         compareTypeParameterLists(classContext, classA.typeParameters, classB.typeParameters)
 
@@ -677,13 +675,17 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
     ) {
         compareFlags(propertyContext, propertyA, propertyB, PROPERTY_FLAGS)
         compareFlags(propertyContext, propertyA.getter, propertyB.getter, PROPERTY_ACCESSOR_FLAGS, FlagKind.GETTER)
-        compareValues(propertyContext, propertyA.setter != null, propertyB.setter != null, FlagKind.REGULAR, "hasSetter")
-        if (propertyA.setter != null && propertyB.setter != null)
-            compareFlags(propertyContext, propertyA.setter!!, propertyB.setter!!, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
 
-        compareAnnotationLists(propertyContext, propertyA.klibAnnotations, propertyB.klibAnnotations)
-        compareAnnotationLists(propertyContext, propertyA.klibGetterAnnotations, propertyB.klibGetterAnnotations, AnnotationKind.GETTER)
-        compareAnnotationLists(propertyContext, propertyA.klibSetterAnnotations, propertyB.klibSetterAnnotations, AnnotationKind.SETTER)
+        val setterA = propertyA.setter
+        val setterB = propertyB.setter
+        compareValues(propertyContext, setterA != null, setterB != null, FlagKind.REGULAR, "hasSetter")
+        if (setterA != null && setterB != null) {
+            compareFlags(propertyContext, setterA, setterB, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
+            compareAnnotationLists(propertyContext, setterA.annotations, setterB.annotations, AnnotationKind.SETTER)
+        }
+
+        compareAnnotationLists(propertyContext, propertyA.annotations, propertyB.annotations)
+        compareAnnotationLists(propertyContext, propertyA.getter.annotations, propertyB.getter.annotations, AnnotationKind.GETTER)
 
         compareTypeParameterLists(propertyContext, propertyA.typeParameters, propertyB.typeParameters)
 
@@ -727,7 +729,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         functionB: KmFunction
     ) {
         compareFlags(functionContext, functionA, functionB, FUNCTION_FLAGS)
-        compareAnnotationLists(functionContext, functionA.klibAnnotations, functionB.klibAnnotations)
+        compareAnnotationLists(functionContext, functionA.annotations, functionB.annotations)
 
         compareTypeParameterLists(functionContext, functionA.typeParameters, functionB.typeParameters)
 
@@ -793,7 +795,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         constructorB: KmConstructor
     ) {
         compareFlags(constructorContext, constructorA, constructorB, CONSTRUCTOR_FLAGS)
-        compareAnnotationLists(constructorContext, constructorA.klibAnnotations, constructorB.klibAnnotations)
+        compareAnnotationLists(constructorContext, constructorA.annotations, constructorB.annotations)
 
         compareValueParameterLists(constructorContext, constructorA.valueParameters, constructorB.valueParameters)
     }
@@ -804,7 +806,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         valueParameterB: KmValueParameter
     ) {
         compareFlags(valueParameterContext, valueParameterA, valueParameterB, VALUE_PARAMETER_FLAGS)
-        compareAnnotationLists(valueParameterContext, valueParameterA.klibAnnotations, valueParameterB.klibAnnotations)
+        compareAnnotationLists(valueParameterContext, valueParameterA.annotations, valueParameterB.annotations)
 
         compareNullableEntities(
             containerContext = valueParameterContext,

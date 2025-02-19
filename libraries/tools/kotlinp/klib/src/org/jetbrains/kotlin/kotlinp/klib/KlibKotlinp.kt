@@ -44,15 +44,15 @@ class KlibKotlinp(
         appendLine("}")
     }
 
-    override fun getAnnotations(clazz: KmClass): List<KmAnnotation> = clazz.klibAnnotations
-    override fun getAnnotations(constructor: KmConstructor): List<KmAnnotation> = constructor.klibAnnotations
-    override fun getAnnotations(function: KmFunction): List<KmAnnotation> = function.klibAnnotations
-    override fun getAnnotations(property: KmProperty): List<KmAnnotation> = property.klibAnnotations
-    override fun getGetterAnnotations(property: KmProperty): List<KmAnnotation> = property.klibGetterAnnotations
-    override fun getSetterAnnotations(property: KmProperty): List<KmAnnotation> = property.klibSetterAnnotations
+    override fun getAnnotations(clazz: KmClass): List<KmAnnotation> = clazz.annotations
+    override fun getAnnotations(constructor: KmConstructor): List<KmAnnotation> = constructor.annotations
+    override fun getAnnotations(function: KmFunction): List<KmAnnotation> = function.annotations
+    override fun getAnnotations(property: KmProperty): List<KmAnnotation> = property.annotations
+    override fun getGetterAnnotations(property: KmProperty): List<KmAnnotation> = property.getter.annotations
+    override fun getSetterAnnotations(property: KmProperty): List<KmAnnotation> = property.setter?.annotations.orEmpty()
     override fun getAnnotations(typeParameter: KmTypeParameter): List<KmAnnotation> = typeParameter.annotations
     override fun getAnnotations(type: KmType): List<KmAnnotation> = type.annotations
-    override fun getAnnotations(valueParameter: KmValueParameter): List<KmAnnotation> = valueParameter.klibAnnotations
+    override fun getAnnotations(valueParameter: KmValueParameter): List<KmAnnotation> = valueParameter.annotations
 
     override fun Printer.appendSignatures(clazz: KmClass) = appendSignature { classSignature(clazz) }
     override fun Printer.appendSignatures(constructor: KmConstructor) = appendSignature { constructorSignature(constructor) }
