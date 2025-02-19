@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 internal fun renderReportedDiagnostics(
     diagnostics: Collection<ToolingDiagnostic>,
     logger: Logger,
+    problemsReporter: ProblemsReporter,
     renderingOptions: ToolingDiagnosticRenderingOptions,
 ) {
     for (diagnostic in diagnostics) {
+        problemsReporter.reportProblemDiagnostic(diagnostic)
         renderReportedDiagnostic(diagnostic, logger, renderingOptions)
     }
 }

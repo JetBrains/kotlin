@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG81
-import org.jetbrains.kotlin.gradle.plugin.internal.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG88
 import javax.inject.Inject
 
-private const val PLUGIN_VARIANT_NAME = "gradle81"
+private const val PLUGIN_VARIANT_NAME = "gradle88"
 
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
@@ -67,14 +66,6 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[CompatibilityConventionRegistrar.Factory::class] =
-        CompatibilityConventionRegistrarG81.Factory()
-    factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
-        ConfigurationCacheStartParameterAccessorG81.Factory()
-    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
-        ProjectIsolationStartParameterAccessorG81.Factory()
-    factories[MavenPublicationComponentAccessor.Factory::class] =
-        MavenPublicationComponentAccessorG81.Factory()
     factories[ProblemsReporter.Factory::class] =
-        ProblemsReporterG81.Factory()
+        ProblemsReporterG88.Factory()
 }

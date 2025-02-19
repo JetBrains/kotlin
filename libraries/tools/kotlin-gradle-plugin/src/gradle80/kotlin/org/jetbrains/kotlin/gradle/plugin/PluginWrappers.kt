@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG80
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
 
@@ -73,4 +75,6 @@ private fun Project.registerVariantImplementations() {
         ProjectIsolationStartParameterAccessorG80.Factory()
     factories[JavaExecTaskParametersCompatibility.Factory::class] =
         JavaExecTaskParametersCompatibilityG80.Factory()
+    factories[ProblemsReporter.Factory::class] =
+        ProblemsReporterG80.Factory()
 }

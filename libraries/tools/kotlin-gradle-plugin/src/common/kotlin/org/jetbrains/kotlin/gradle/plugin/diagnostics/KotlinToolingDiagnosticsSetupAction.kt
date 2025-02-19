@@ -33,6 +33,7 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
         renderReportedDiagnostics(
             collectorProvider.get().getDiagnosticsForProject(project),
             logger,
+            collectorProvider.map { it.problemsReporter }.get(),
             diagnosticRenderingOptions
         )
     }
