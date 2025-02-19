@@ -43,8 +43,8 @@ import java.io.File
  */
 abstract class KDocCoverageTest : KtUsefulTestCase() {
     protected fun doTest() {
-        val environment = KotlinCoreEnvironment.createForTests(
-            { },
+        val environment = KotlinCoreEnvironment.createForParallelTests(
+            testRootDisposable,
             CompilerConfiguration(),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
