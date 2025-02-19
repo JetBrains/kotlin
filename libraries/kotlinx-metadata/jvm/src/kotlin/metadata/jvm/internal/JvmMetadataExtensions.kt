@@ -5,15 +5,14 @@
 
 package kotlin.metadata.jvm.internal
 
-import kotlin.metadata.*
-import kotlin.metadata.internal.*
-import kotlin.metadata.internal.common.*
-import kotlin.metadata.internal.extensions.*
-import kotlin.metadata.jvm.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import kotlin.metadata.*
+import kotlin.metadata.internal.*
+import kotlin.metadata.internal.common.KmModuleFragment
+import kotlin.metadata.internal.extensions.*
 import kotlin.metadata.jvm.JvmMemberSignature
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.wrapAsPublic
@@ -21,6 +20,8 @@ import kotlin.metadata.jvm.wrapAsPublic
 internal class JvmMetadataExtensions : MetadataExtensions {
     override fun readClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class, c: ReadContext) {
         val ext = kmClass.jvm
+
+        proto.annotationList.mapTo(kmClass.annotations) { it.readAnnotation(c.strings) }
 
         val anonymousObjectOriginName = proto.getExtensionOrNull(JvmProtoBuf.anonymousObjectOriginName)
         if (anonymousObjectOriginName != null) {
@@ -53,6 +54,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function, c: ReadContext) {
         val ext = kmFunction.jvm
+        proto.annotationList.mapTo(kmFunction.annotations) { it.readAnnotation(c.strings) }
         ext.signature = JvmProtoBufUtil.getJvmMethodSignature(proto, c.strings, c.types)?.wrapAsPublic()
 
         val lambdaClassOriginName = proto.getExtensionOrNull(JvmProtoBuf.lambdaClassOriginName)
@@ -63,6 +65,13 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readPropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property, c: ReadContext) {
         val ext = kmProperty.jvm
+
+        proto.annotationList.mapTo(kmProperty.annotations) { it.readAnnotation(c.strings) }
+        proto.getterAnnotationList.mapTo(kmProperty.getter.annotations) { it.readAnnotation(c.strings) }
+        kmProperty.setter?.let { setter ->
+            proto.setterAnnotationList.mapTo(setter.annotations) { it.readAnnotation(c.strings) }
+        }
+
         val fieldSignature = JvmProtoBufUtil.getJvmFieldSignature(proto, c.strings, c.types)
         val propertySignature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature)
         val getterSignature =
@@ -85,6 +94,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor, c: ReadContext) {
         val ext = kmConstructor.jvm
+        proto.annotationList.mapTo(kmConstructor.annotations) { it.readAnnotation(c.strings) }
         ext.signature = JvmProtoBufUtil.getJvmConstructorSignature(proto, c.strings, c.types)?.wrapAsPublic()
     }
 
@@ -105,10 +115,13 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readTypeAliasExtensions(kmTypeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias, c: ReadContext) {}
 
-    override fun readValueParameterExtensions(kmValueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter, c: ReadContext) {}
+    override fun readValueParameterExtensions(kmValueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter, c: ReadContext) {
+        proto.annotationList.mapTo(kmValueParameter.annotations) { it.readAnnotation(c.strings) }
+    }
 
     override fun writeClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class.Builder, c: WriteContext) =
         with(kmClass.jvm) {
+            proto.addAllAnnotation(kmClass.annotations.map { it.writeAnnotation(c.strings).build() })
             anonymousObjectOriginName?.let {
                 proto.setExtension(JvmProtoBuf.anonymousObjectOriginName, c[it])
             }
@@ -145,6 +158,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         kmFunction: KmFunction, proto: ProtoBuf.Function.Builder, c: WriteContext,
     ) {
         with(kmFunction.jvm) {
+            proto.addAllAnnotation(kmFunction.annotations.map { it.writeAnnotation(c.strings).build() })
             signature?.let { proto.setExtension(JvmProtoBuf.methodSignature, it.toJvmMethodSignature(c)) }
             lambdaClassOriginName?.let { proto.setExtension(JvmProtoBuf.lambdaClassOriginName, c[it]) }
         }
@@ -153,6 +167,12 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     override fun writePropertyExtensions(
         kmProperty: KmProperty, proto: ProtoBuf.Property.Builder, c: WriteContext,
     ) = with(kmProperty.jvm) {
+        proto.addAllAnnotation(kmProperty.annotations.map { it.writeAnnotation(c.strings).build() })
+        proto.addAllGetterAnnotation(kmProperty.getter.annotations.map { it.writeAnnotation(c.strings).build() })
+        kmProperty.setter?.let { setter ->
+            proto.addAllSetterAnnotation(setter.annotations.map { it.writeAnnotation(c.strings).build() })
+        }
+
         val composedSignature: JvmProtoBuf.JvmPropertySignature.Builder = JvmProtoBuf.JvmPropertySignature.newBuilder()
         var hasSignature = false
 
@@ -188,6 +208,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     override fun writeConstructorExtensions(
         kmConstructor: KmConstructor, proto: ProtoBuf.Constructor.Builder, c: WriteContext,
     ): Unit = with(kmConstructor.jvm) {
+        proto.addAllAnnotation(kmConstructor.annotations.map { it.writeAnnotation(c.strings).build() })
         signature?.let { proto.setExtension(JvmProtoBuf.constructorSignature, it.toJvmMethodSignature(c)) }
     }
 
@@ -217,7 +238,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         valueParameter: KmValueParameter,
         proto: ProtoBuf.ValueParameter.Builder,
         c: WriteContext,
-    ) = Unit
+    ) {
+        proto.addAllAnnotation(valueParameter.annotations.map { it.writeAnnotation(c.strings).build() })
+    }
 
     override fun createClassExtension(): KmClassExtension = JvmClassExtension()
 
