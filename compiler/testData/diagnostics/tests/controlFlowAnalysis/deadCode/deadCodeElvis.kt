@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 
 val nullableInt: Int? get() = null
