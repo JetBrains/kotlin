@@ -58,7 +58,10 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
                 this is BooleanOperatorEnterRightOperandNode ||
                 this is WhenSyntheticElseBranchNode ||
                 this is WhenBranchResultEnterNode ||
-                this is WhenBranchResultExitNode
+                this is WhenBranchResultExitNode ||
+                this is ExitSafeCallNode ||
+                this is ElvisLhsExitNode ||
+                this is ElvisLhsIsNotNullNode
         val allowType = this is LoopEnterNode ||
                 this is LoopBlockEnterNode ||
                 this is TryExpressionEnterNode
