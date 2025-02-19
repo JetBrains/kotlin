@@ -133,13 +133,15 @@ object JsIrBuilder {
         name: String,
         type: IrType,
         isAssignable: Boolean = false,
-        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
+        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION,
+        kind: IrParameterKind = IrParameterKind.Regular,
     ): IrValueParameter =
         buildValueParameter(parent) {
             this.origin = origin
             this.name = Name.identifier(name)
             this.type = type
             this.isAssignable = isAssignable
+            this.kind = kind
         }
 
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =

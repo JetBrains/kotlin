@@ -196,7 +196,7 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
 
         initFunction.parameters = buildList {
             constructor.parameters.mapTo(this) { p -> p.copyTo(initFunction) }
-            add(JsIrBuilder.buildValueParameter(initFunction, "\$this", type).also { it.kind = IrParameterKind.Regular })
+            add(JsIrBuilder.buildValueParameter(initFunction, "\$this", type))
         }
     }
 }
