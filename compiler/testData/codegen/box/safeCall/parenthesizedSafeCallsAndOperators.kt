@@ -1,6 +1,8 @@
 // LANGUAGE: -ForbidParenthesizedLhsInAssignments
 // ISSUE: KT-68834
 // IGNORE_BACKEND_K1: ANY
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
+// ^^^ Compiler v2.1.0 does not know this language feature
 
 var result = "none"
 

@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextParameters
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
+// ^^^ Compiler v2.1.0 does not know this language feature
 class A(val a: String)
 class B(val b: String)
 

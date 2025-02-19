@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CompatibilityTestMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestMode
 import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
@@ -152,6 +154,22 @@ fun main() {
                 suiteTestClassName = "FirNativeKlibCompatibilityTestGenerated",
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
+        // Klib backward/forward compatibility tests.
+        // TODO: After 2.2.0 release, generate also backward/forward compatibility tests for "klib/syntheticAccessors"
+        testGroup("native/native.tests/klib-compatibility-2.1/tests-gen", "compiler/testData/codegen") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenBoxBackward21CompatibilityTestGenerated",
+                annotations = listOf(
+                    *compatibilityTestMode(CompatibilityTestMode.BACKWARD_2_1),
+                    *frontendFir(),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
+                model("boxInline", targetBackend = TargetBackend.NATIVE)
             }
         }
 
@@ -513,6 +531,25 @@ private fun forceDebugMode() = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.OPTIMIZATION_MODE,
     "propertyValue" to "DEBUG"
+)
+
+private fun forceTwoStageMultiModule() = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.TEST_MODE,
+    "propertyValue" to TestMode.TWO_STAGE_MULTI_MODULE.name
+)
+
+private fun compatibilityTestMode(mode: CompatibilityTestMode) = arrayOf(
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.COMPATIBILITY_TEST_MODE,
+        "propertyValue" to mode.name
+    ),
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.TEST_MODE,
+        "propertyValue" to TestMode.TWO_STAGE_MULTI_MODULE.name
+    ),
 )
 
 private fun forceHostTarget() = annotation(EnforcedHostTarget::class.java)

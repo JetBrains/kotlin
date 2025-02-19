@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // ISSUE: KT-67520
 // LANGUAGE: +AvoidWrongOptimizationOfTypeOperatorsOnValueClasses
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
+// ^^^ Compiler v2.1.0 does not know this language feature
 
 inline class X(val x: String)
 

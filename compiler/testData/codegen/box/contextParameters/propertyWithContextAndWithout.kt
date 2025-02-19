@@ -1,6 +1,8 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-74045: CONFLICTING_KLIB_SIGNATURES_ERROR
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
+// ^^^ Compiler v2.1.0 does not know this language feature
 
 class A
 

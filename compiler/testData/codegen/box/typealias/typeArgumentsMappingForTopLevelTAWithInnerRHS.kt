@@ -1,3 +1,4 @@
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
 // DUMP_IR
 // ISSUE: KT-73454
 

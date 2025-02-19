@@ -1,4 +1,6 @@
 // LANGUAGE: -ForbidParenthesizedLhsInAssignments
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
+// ^^^ Compiler v2.1.0 does not know this language feature
 
 var holder = ""
 var globalA: A = A(-1)
