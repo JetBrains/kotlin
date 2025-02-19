@@ -74,12 +74,13 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import kotlin.collections.plus
 
 /**
- * This lowering transforms [IrRichFunctionReference] nodes to an anonymous classes.
+ * This lowering transforms [IrRichFunctionReference] nodes to an anonymous class.
  *
  * The class would have:
  *   * Constructor capturing all values from [IrRichFunctionReference.boundValues], and storing them to fields
  *   * A method overriding [IrRichFunctionReference.overriddenFunctionSymbol], with body moved from [IrRichFunctionReference.invokeFunction]
- *   * [IrRichFunctionReference.type] as a super-interface type (typically [K][Suspend]FunctionN, or fun interface the reference was sam converted to)
+ *   * [IrRichFunctionReference.type] as a super-interface type (typically `[K][Suspend]FunctionN`,
+ *     or fun interface the reference was sam converted to)
  *
  * Platforms can customize:
  *   * Super-class with platform-specific reference implementation details by overriding [getSuperClassType] method
@@ -89,38 +90,38 @@ import kotlin.collections.plus
  * For example, the following code:
  * ```kotlin
  * fun foo1(l: () -> String): String {
- *     return l()
+ *   return l()
  * }
  * fun <FooTP> foo2(v: FooTP, l: (FooTP) -> String): String {
- *     return l(v)
+ *   return l(v)
  * }
  *
  * private fun <T> bar(t: T): String { /* ... */ }
  *
  * fun <BarTP> bar(v: BarTP): String {
- *     return foo1(v::bar/*<T=BarTP>*/) + foo(v) { bar/*<T=BarTP>*/(it) }
+ *   return foo1(v::bar/*<T=BarTP>*/) + foo2(v) { bar/*<T=BarTP>*/(it) }
  * }
  * ```
  *
  * is lowered into:
  * ```kotlin
  * fun <BarTP> bar(v: BarTP): String {
- *     class <local-platform-specific-name-1>(p$0: BarTP) : KFunction0<String>, PlatformSpecificSuperType() {
- *        private val f$0: BarTP = p$0
- *        override fun invoke() = bar<BarTP>(f$0)
- *        // some platform specific reflection information
- *     }
- *     class <local-platform-specific-name-2> : Function1<BarTP, String>, PlatformSpecificSuperTypeProbablyAny() {
- *        override fun invoke(p0: BarTP) = bar<BarTP>(p0)
- *     }
- *     return foo1(<local-platform-specific-name-1>(v)) + foo2(v, <local-platform-specific-name-2>())
+ *   /*local*/ class <local-platform-specific-name-1>(p$0: BarTP) : KFunction0<String>, PlatformSpecificSuperType() {
+ *     private val f$0: BarTP = p$0
+ *     override fun invoke() = bar<BarTP>(f$0)
+ *     // some platform specific reflection information
+ *   }
+ *   /*local*/ class <local-platform-specific-name-2> : Function1<BarTP, String>, PlatformSpecificSuperTypeProbablyAny() {
+ *     override fun invoke(p0: BarTP) = bar<BarTP>(p0)
+ *   }
+ *   return foo1(<local-platform-specific-name-1>(v)) + foo2(v, <local-platform-specific-name-2>())
  * }
  * ```
  *
  * Note that as all these classes are defined as local ones, they don't need to explicitly capture local variables or any type parameters.
  * But it can happen, that [LocalDeclarationsLowering] would later capture something additional into the classes.
  */
-abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val context: C) : BodyLoweringPass {
+abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val context: C) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transform(object : IrTransformer<IrDeclarationParent>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
@@ -129,8 +130,10 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
 
             override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: IrDeclarationParent): IrExpression {
                 expression.transformChildren(this, data)
-                val irBuilder = context.createIrBuilder((data as IrSymbolOwner).symbol,
-                                                        expression.startOffset, expression.endOffset)
+                val irBuilder = context.createIrBuilder(
+                    (data as IrSymbolOwner).symbol,
+                    expression.startOffset, expression.endOffset
+                )
 
                 val clazz = buildClass(expression, data)
                 val constructor = clazz.primaryConstructor!!
@@ -222,7 +225,7 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
             functionReferenceClass.addField {
                 startOffset = captured.startOffset
                 endOffset = captured.endOffset
-                name = Name.identifier("f${'$'}${index}")
+                name = Name.identifier("f\$${index}")
                 visibility = DescriptorVisibilities.PRIVATE
                 isFinal = true
                 type = captured.type
@@ -232,10 +235,10 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
             }
         }
         buildInvokeMethod(
-                functionReference,
-                functionReferenceClass,
-                superInterfaceType,
-                fields
+            functionReference,
+            functionReferenceClass,
+            superInterfaceType,
+            fields,
         ).apply {
             postprocessInvoke(this, functionReference)
         }
@@ -243,11 +246,11 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
         generateExtraMethods(functionReferenceClass, functionReference)
 
         functionReferenceClass.addFakeOverrides(
-                context.typeSystem,
-                // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
-                // transformedSuperMethod in its declaration list. We need not fake override in that case.
-                // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
-                ignoredParentSymbols = listOf(functionReference.overriddenFunctionSymbol)
+            context.typeSystem,
+            // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
+            // transformedSuperMethod in its declaration list. We need not fake override in that case.
+            // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
+            ignoredParentSymbols = listOf(functionReference.overriddenFunctionSymbol),
         )
         postprocessClass(functionReferenceClass, functionReference)
         return functionReferenceClass
@@ -335,14 +338,27 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
     protected open fun postprocessClass(functionReferenceClass: IrClass, functionReference: IrRichFunctionReference) {}
     protected open fun postprocessInvoke(invokeFunction: IrSimpleFunction, functionReference: IrRichFunctionReference) {}
     protected open fun generateExtraMethods(functionReferenceClass: IrClass, reference: IrRichFunctionReference) {}
-    protected open fun getExtraConstructorParameters(constructor: IrConstructor, reference: IrRichFunctionReference): List<IrValueParameter> = emptyList()
-    protected open fun IrBuilderWithScope.getExtraConstructorArgument(parameter: IrValueParameter, reference: IrRichFunctionReference): IrExpression? = null
-    protected abstract fun IrBuilderWithScope.generateSuperClassConstructorCall(constructor: IrConstructor, superClassType: IrType, functionReference: IrRichFunctionReference) : IrDelegatingConstructorCall
+
+    protected open fun getExtraConstructorParameters(
+        constructor: IrConstructor,
+        reference: IrRichFunctionReference,
+    ): List<IrValueParameter> = emptyList()
+
+    protected open fun IrBuilderWithScope.getExtraConstructorArgument(
+        parameter: IrValueParameter,
+        reference: IrRichFunctionReference,
+    ): IrExpression? = null
+
+    protected abstract fun IrBuilderWithScope.generateSuperClassConstructorCall(
+        constructor: IrConstructor,
+        superClassType: IrType,
+        functionReference: IrRichFunctionReference,
+    ): IrDelegatingConstructorCall
 
     protected abstract fun getReferenceClassName(reference: IrRichFunctionReference): Name
-    protected abstract fun getSuperClassType(reference: IrRichFunctionReference) : IrType
+    protected abstract fun getSuperClassType(reference: IrRichFunctionReference): IrType
     protected open fun getAdditionalInterfaces(reference: IrRichFunctionReference): List<IrType> = emptyList()
-    protected abstract fun getClassOrigin(reference: IrRichFunctionReference) : IrDeclarationOrigin
+    protected abstract fun getClassOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin
     protected abstract fun getConstructorOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin
     protected abstract fun getInvokeMethodOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin
     protected abstract fun getConstructorCallOrigin(reference: IrRichFunctionReference): IrStatementOrigin?
