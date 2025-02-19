@@ -13,13 +13,13 @@ class InitViaSuper : Base() {
 
 class InitViaThis : Base() {
     init {
-        this.x = "error"
+        this.<!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 
 
 class InitViaImplicit : Base() {
     init {
-        x = "error"
+        <!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
