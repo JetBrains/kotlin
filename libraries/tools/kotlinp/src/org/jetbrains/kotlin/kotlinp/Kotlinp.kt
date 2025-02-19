@@ -77,7 +77,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendOrigin(clazz)
         appendVersionRequirements(clazz.versionRequirements)
         appendSignatures(clazz)
-        appendAnnotations(getAnnotations(clazz))
+        appendAnnotations(clazz.annotations)
         appendContextReceiverTypes(clazz.contextReceiverTypes)
         append(VISIBILITY_MAP[clazz.visibility])
         append(MODALITY_MAP[clazz.modality])
@@ -137,7 +137,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine()
         appendVersionRequirements(constructor.versionRequirements)
         appendSignatures(constructor)
-        appendAnnotations(getAnnotations(constructor))
+        appendAnnotations(constructor.annotations)
         renderConstructorModifiers(constructor, printer)
         append("constructor")
         appendValueParameters(constructor.valueParameters)
@@ -158,7 +158,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendOrigin(function)
         appendVersionRequirements(function.versionRequirements)
         appendSignatures(function)
-        appendAnnotations(getAnnotations(function))
+        appendAnnotations(function.annotations)
         appendContextReceiverTypes(function.contextReceiverTypes)
         renderFunctionModifiers(function, printer)
         append("fun ")
@@ -292,7 +292,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendVersionRequirements(property.versionRequirements)
         appendSignatures(property)
         appendCustomAttributes(property)
-        appendAnnotations(getAnnotations(property))
+        appendAnnotations(property.annotations)
         appendContextReceiverTypes(property.contextReceiverTypes)
         renderPropertyModifiers(property, printer)
         append(if (property.isVar) "var " else "val ")
@@ -306,12 +306,12 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine()
         withIndent {
             appendGetterSignatures(property)
-            appendAnnotations(getGetterAnnotations(property))
+            appendAnnotations(property.getter.annotations)
             renderPropertyAccessorModifiers(property.getter, printer)
             appendLine("get")
             property.setter?.let { setter ->
                 appendSetterSignatures(property)
-                appendAnnotations(getSetterAnnotations(property))
+                appendAnnotations(setter.annotations)
                 renderPropertyAccessorModifiers(setter, printer)
                 append("set")
                 property.setterParameter?.let {
@@ -440,7 +440,7 @@ abstract class Kotlinp(protected val settings: Settings) {
     }
 
     fun renderValueParameter(valueParameter: KmValueParameter, printer: Printer): Unit = with(printer) {
-        appendAnnotations(getAnnotations(valueParameter), onePerLine = false)
+        appendAnnotations(valueParameter.annotations, onePerLine = false)
         appendFlags(
             valueParameter.isCrossinline to "crossinline",
             valueParameter.isNoinline to "noinline"
@@ -527,15 +527,8 @@ abstract class Kotlinp(protected val settings: Settings) {
         )
     }
 
-    protected abstract fun getAnnotations(clazz: KmClass): List<KmAnnotation>
-    protected abstract fun getAnnotations(constructor: KmConstructor): List<KmAnnotation>
-    protected abstract fun getAnnotations(function: KmFunction): List<KmAnnotation>
-    protected abstract fun getAnnotations(property: KmProperty): List<KmAnnotation>
-    protected abstract fun getGetterAnnotations(property: KmProperty): List<KmAnnotation>
-    protected abstract fun getSetterAnnotations(property: KmProperty): List<KmAnnotation>
     protected abstract fun getAnnotations(typeParameter: KmTypeParameter): List<KmAnnotation>
     protected abstract fun getAnnotations(type: KmType): List<KmAnnotation>
-    protected abstract fun getAnnotations(valueParameter: KmValueParameter): List<KmAnnotation>
 
     protected open fun sortConstructors(constructors: List<KmConstructor>): List<KmConstructor> = constructors
     protected open fun sortFunctions(functions: List<KmFunction>): List<KmFunction> = functions

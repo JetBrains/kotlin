@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.kotlinp.jvm
 
-import org.jetbrains.kotlin.kotlinp.*
+import org.jetbrains.kotlin.kotlinp.Kotlinp
+import org.jetbrains.kotlin.kotlinp.Printer
+import org.jetbrains.kotlin.kotlinp.Settings
+import org.jetbrains.kotlin.kotlinp.printString
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
 
@@ -87,15 +90,8 @@ class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
         appendLine("}")
     }
 
-    override fun getAnnotations(clazz: KmClass): List<KmAnnotation> = clazz.annotations
-    override fun getAnnotations(constructor: KmConstructor): List<KmAnnotation> = constructor.annotations
-    override fun getAnnotations(function: KmFunction): List<KmAnnotation> = function.annotations
-    override fun getAnnotations(property: KmProperty): List<KmAnnotation> = property.annotations
-    override fun getGetterAnnotations(property: KmProperty): List<KmAnnotation> = property.getter.annotations
-    override fun getSetterAnnotations(property: KmProperty): List<KmAnnotation> = property.setter!!.annotations
     override fun getAnnotations(typeParameter: KmTypeParameter): List<KmAnnotation> = typeParameter.annotations
     override fun getAnnotations(type: KmType): List<KmAnnotation> = type.annotations
-    override fun getAnnotations(valueParameter: KmValueParameter): List<KmAnnotation> = valueParameter.annotations
 
     override fun sortConstructors(constructors: List<KmConstructor>) = constructors.sortedBy { it.signature.toString() }
     override fun sortFunctions(functions: List<KmFunction>) = functions.sortedBy { it.signature.toString() }

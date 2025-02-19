@@ -35,8 +35,6 @@ internal val KmType.builtins: BuiltInTypeExtension
     get() = getExtension(BuiltInTypeExtension.TYPE) as BuiltInTypeExtension
 
 internal class BuiltInClassExtension : KmClassExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
-
     override val type: KmExtensionType
         get() = TYPE
 
@@ -57,8 +55,6 @@ internal class BuiltInPackageExtension : KmPackageExtension {
 }
 
 internal class BuiltInFunctionExtension : KmFunctionExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
-
     override val type: KmExtensionType
         get() = TYPE
 
@@ -68,9 +64,6 @@ internal class BuiltInFunctionExtension : KmFunctionExtension {
 }
 
 internal class BuiltInPropertyExtension : KmPropertyExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
-    val getterAnnotations: MutableList<KmAnnotation> = mutableListOf()
-    val setterAnnotations: MutableList<KmAnnotation> = mutableListOf()
     var compileTimeValue: KmAnnotationArgument? = null
 
     override val type: KmExtensionType
@@ -82,8 +75,6 @@ internal class BuiltInPropertyExtension : KmPropertyExtension {
 }
 
 internal class BuiltInConstructorExtension : KmConstructorExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
-
     override val type: KmExtensionType
         get() = TYPE
 
@@ -93,8 +84,6 @@ internal class BuiltInConstructorExtension : KmConstructorExtension {
 }
 
 internal class BuiltInValueParameterExtension : KmValueParameterExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
-
     override val type: KmExtensionType
         get() = TYPE
 
