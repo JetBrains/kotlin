@@ -8103,6 +8103,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("propertiesInitWithParent.kt")
+      public void testPropertiesInitWithParent() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesInitWithParent.kt");
+      }
+
+      @Test
       @TestMetadata("propertiesOrderInPackage.kt")
       public void testPropertiesOrderInPackage() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesOrderInPackage.kt");
