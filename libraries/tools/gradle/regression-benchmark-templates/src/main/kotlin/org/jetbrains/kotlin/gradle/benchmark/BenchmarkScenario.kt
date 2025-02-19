@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.benchmark
 
 class Scenario {
     lateinit var title: String
-    var warmups = 6
-    var iterations = 10
+    var warmups = 50
+    var iterations = 1000
     val tasks = mutableListOf<String>()
     val gradleArgs = mutableListOf<String>()
     val cleanupTasks = mutableListOf<String>()
