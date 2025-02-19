@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
-import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
@@ -264,18 +264,9 @@ private class CollectAccessToOtherState(
     val snippets: MutableSet<FirReplSnippetSymbol>,
 ) : FirDefaultVisitorVoid() {
 
-    override fun visitElement(element: FirElement) {
-        element.acceptChildren(this)
-    }
+    private fun storeAccessedSymbol(symbol: FirBasedSymbol<FirDeclaration>) {
 
-    @OptIn(SymbolInternals::class)
-    override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
-        val resolvedSymbol = resolvedNamedReference.resolvedSymbol
-        val symbol = when (resolvedSymbol) {
-            is FirConstructorSymbol -> (resolvedSymbol.fir.returnTypeRef as? FirResolvedTypeRef)?.coneType?.toSymbol(session)
-            else -> null
-        } ?: resolvedSymbol
-
+        @OptIn(SymbolInternals::class)
         fun FirBasedSymbol<FirDeclaration>.getOriginalSnippetSymbol(): FirReplSnippetSymbol? =
             fir.originalReplSnippetSymbol ?: fir.getContainingClassSymbol()?.getOriginalSnippetSymbol()
 
@@ -287,5 +278,30 @@ private class CollectAccessToOtherState(
             is FirRegularClassSymbol -> classes[symbol] = originalSnippet
             else -> {}
         }
+    }
+
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    override fun visitElement(element: FirElement) {
+        (element as? FirExpression)?.coneTypeOrNull?.toRegularClassSymbol(session)?.let {
+            classSymbol -> storeAccessedSymbol(classSymbol)
+        }
+
+        element.acceptChildren(this)
+    }
+
+    @OptIn(SymbolInternals::class)
+    override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
+        val resolvedSymbol = resolvedNamedReference.resolvedSymbol
+        val symbol = when (resolvedSymbol) {
+            is FirConstructorSymbol -> (resolvedSymbol.fir.returnTypeRef as? FirResolvedTypeRef)?.coneType?.toSymbol(session)
+            else -> null
+        } ?: resolvedSymbol
+
+        storeAccessedSymbol(symbol)
+    }
+
+    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+        val classSymbol = resolvedTypeRef.coneType.toRegularClassSymbol(session) ?: return
+        storeAccessedSymbol(classSymbol)
     }
 }

@@ -396,7 +396,7 @@ fun shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisib
 fun FirDeclaration.visibilityForApproximation(container: FirDeclaration?): Visibility {
     if (this !is FirMemberDeclaration) return Visibilities.Local
     val containerVisibility =
-        if (container == null || container is FirFile || container is FirScript) Visibilities.Public
+        if (container == null || container is FirFile || container is FirScript || container is FirReplSnippet) Visibilities.Public
         else (container as? FirRegularClass)?.visibility ?: Visibilities.Local
     if (containerVisibility == Visibilities.Local) return Visibilities.Local
     return visibility

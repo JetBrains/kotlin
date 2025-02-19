@@ -185,6 +185,10 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
                     }
                     evalFun.returnType = lastExpressionVar?.type ?: context.irBuiltIns.unitType
                 }
+            // required because some declarations deeper in the subtree may get a "wrong" parent on Fir2Ir
+            // E.g. anonymous objects in a property initializer. (see KT-75301 for possible future directions).
+            // Or lambda as in KT-74607
+            evalFun.patchDeclarationParents(irSnippet)
         }
 
         val scriptTransformer = ReplSnippetToClassTransformer(

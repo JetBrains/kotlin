@@ -1433,6 +1433,7 @@ open class PsiRawFirBuilder(
                     symbol = snippetSymbol
 
                     body = buildOrLazyBlock {
+                        // see KT-75301 for discussion about `isLocal` here
                         withContainerSymbol(snippetSymbol, isLocal = true) {
                             buildBlock {
                                 script.declarations.forEach { declaration ->

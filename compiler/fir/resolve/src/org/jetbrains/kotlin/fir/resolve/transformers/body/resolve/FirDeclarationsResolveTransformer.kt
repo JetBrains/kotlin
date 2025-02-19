@@ -139,6 +139,13 @@ open class FirDeclarationsResolveTransformer(
         // script top level destructuring declaration container variables should be treated as properties here
         // to avoid CFG/DFA complications
         if (property.isLocal && property.origin != FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer) {
+            // approximation is required for properties in snippets because they may "leak" to the next snippet
+            // it is also reflects the current script behavior (in contrast to a local context), i.e. the code
+            // `val x = object { val v = 42 }; x.v`
+            // will always report unresolved reference on `v` in a script or K1 REPL
+            // There are plans to make it work in the future though, see KT-75302
+            val returnTypeRequiresApproximation =
+                property.returnTypeRef is FirImplicitTypeRef && context.containerIfAny is FirReplSnippet
             prepareSignatureForBodyResolve(property)
             property.transformStatus(this, property.resolveStatus().mode())
             property.getter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
@@ -147,7 +154,14 @@ open class FirDeclarationsResolveTransformer(
             context.withProperty(property) {
                 doTransformTypeParameters(property)
             }
-            return transformLocalVariable(property)
+            return transformLocalVariable(property).apply {
+                if (returnTypeRequiresApproximation) {
+                    replaceReturnTypeRef(
+                        (returnTypeRef as FirResolvedTypeRef)
+                            .approximateDeclarationType(session, property.visibilityForApproximation(), false)
+                    )
+                }
+            }
         }
 
         val returnTypeRefBeforeResolve = property.returnTypeRef
