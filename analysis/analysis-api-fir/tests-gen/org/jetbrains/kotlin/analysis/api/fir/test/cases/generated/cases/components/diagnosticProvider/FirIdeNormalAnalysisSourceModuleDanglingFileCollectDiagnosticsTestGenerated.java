@@ -83,6 +83,18 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileCollectDiagnosticsTestG
   }
 
   @Test
+  @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+  public void testDanglingAnnotationOnMemberFunction() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationOnMemberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
+  public void testDanglingAnnotationOnTopLevelFunction() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationOnTopLevelFunction.kt");
+  }
+
+  @Test
   @TestMetadata("declarationErrors.kt")
   public void testDeclarationErrors() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/declarationErrors.kt");

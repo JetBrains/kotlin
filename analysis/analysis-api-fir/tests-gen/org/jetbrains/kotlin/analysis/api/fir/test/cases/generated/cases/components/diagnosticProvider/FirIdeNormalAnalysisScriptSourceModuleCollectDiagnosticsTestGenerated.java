@@ -53,6 +53,18 @@ public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerat
   }
 
   @Test
+  @TestMetadata("danglingAnnotationOnMemberFunctionScript.kts")
+  public void testDanglingAnnotationOnMemberFunctionScript() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationOnMemberFunctionScript.kts");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelFunctionScript.kts")
+  public void testDanglingAnnotationOnTopLevelFunctionScript() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationOnTopLevelFunctionScript.kts");
+  }
+
+  @Test
   @TestMetadata("unresolvedContractsScript.kts")
   public void testUnresolvedContractsScript() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedContractsScript.kts");

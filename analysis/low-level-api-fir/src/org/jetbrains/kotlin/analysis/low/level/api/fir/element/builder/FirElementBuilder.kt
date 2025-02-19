@@ -10,7 +10,7 @@ import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeFragmentAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  *
  * @see getOrBuildFirFor
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
- * @see getNonLocalContainingDeclaration
+ * @see getNonLocalContainingOrThisElement
  */
 @ThreadSafe
 internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolveComponents) {
@@ -107,11 +107,13 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
             return null
         }
 
-        val nonLocalContainer = element.getNonLocalContainingOrThisDeclaration()
-        getFirForElementInsideAnnotations(element, nonLocalContainer)?.let { return it }
+        val nonLocalContainer = element.getNonLocalContainingOrThisElement()
+        val nonLocalDeclaration = nonLocalContainer as? KtDeclaration
 
-        if (nonLocalContainer != null) {
-            getFirForElementInsideTypes(element, nonLocalContainer)?.let { return it }
+        // Optimizations for specific cases
+        getFirForElementInsideAnnotations(element, nonLocalDeclaration)?.let { return it }
+        if (nonLocalDeclaration != null) {
+            getFirForElementInsideTypes(element, nonLocalDeclaration)?.let { return it }
         } else {
             getFirForElementInsideFileHeader(element)?.let { return it }
         }
@@ -166,7 +168,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
     private fun getFirForElementInsideAnnotations(
         element: KtElement,
-        nonLocalDeclaration: KtDeclaration?,
+        nonLocalDeclaration: KtDeclaration?, // `null` means it is a file annotation
     ): FirElement? = getFirForNonBodyElement(
         element = element,
         nonLocalDeclaration = nonLocalDeclaration,
@@ -307,7 +309,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     ): FirAnnotation? = annotations.find { it.psi == annotationEntry }
 }
 
-private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
+private fun KtElement.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
     is KtPropertyAccessor -> this.property == callableDeclaration
     is KtParameter -> {
         val ownerDeclaration = ownerDeclaration
@@ -321,40 +323,41 @@ internal val KtTypeParameter.containingDeclaration: KtDeclaration?
     get() = (parent as? KtTypeParameterList)?.parent as? KtDeclaration
 
 /**
- * Returns **true** if [this] declaration is a unit of resolution and can be treated as non-local.
- * The property is supposed to be used only in the pair with [getNonLocalContainingDeclaration] or [getNonLocalContainingOrThisDeclaration]
+ * Returns **true** if [this] element is a unit of resolution and can be treated as non-local.
+ * The property is supposed to be used only in the pair with
+ * [getNonLocalContainingOrThisElement] or [getNonLocalContainingOrThisDeclaration].
  *
- * @see getNonLocalContainingDeclaration
+ * @see getNonLocalContainingOrThisElement
  */
-internal val KtDeclaration.isAutonomousDeclaration: Boolean
+internal val KtElement.isAutonomousElement: Boolean
     get() = when (this) {
         is KtPropertyAccessor, is KtParameter, is KtTypeParameter -> false
         else -> true
     }
 
+// TODO change predicate (KT-76271)
 internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
-    return getNonLocalContainingDeclaration(this, predicate = predicate)
+    return getNonLocalContainingOrThisElement { it is KtDeclaration && predicate(it) } as? KtDeclaration
 }
 
 /**
- * Returns the first non-local declaration from [parentsWithSelf] or [parentsWithSelfCodeFragmentAware]
+ * Returns the first non-local element from [parentsWithSelf] or [parentsWithSelfCodeFragmentAware]
  * (depends on [codeFragmentAware] flag) that contains the given elements, based on the specified predicate.
  *
- * The resulting declaration can be considered reachable at [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
+ * The resulting element can be considered reachable at [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
  */
-internal fun getNonLocalContainingDeclaration(
-    element: PsiElement,
+internal fun PsiElement.getNonLocalContainingOrThisElement(
     codeFragmentAware: Boolean = false,
-    predicate: (KtDeclaration) -> Boolean = { true },
-): KtDeclaration? {
-    var candidate: KtDeclaration? = null
+    predicate: (KtElement) -> Boolean = { true },
+): KtElement? {
+    var candidate: KtElement? = null
 
     val elementsToCheck = if (codeFragmentAware) {
-        element.parentsWithSelfCodeFragmentAware
+        parentsWithSelfCodeFragmentAware
     } else {
-        element.parentsWithSelf
+        parentsWithSelf
     }
 
     for (parent in elementsToCheck) {
@@ -375,11 +378,11 @@ internal fun getNonLocalContainingDeclaration(
 
         // A new candidate only needs to be proposed when `candidate` is null.
         if (candidate == null &&
-            parent is KtDeclaration &&
-            declarationCanBeLazilyResolved(parent, codeFragmentAware) &&
+            parent is KtElement &&
+            elementCanBeLazilyResolved(parent, codeFragmentAware) &&
             predicate(parent)
         ) {
-            if (codeFragmentAware && element.containingFile is KtCodeFragment) {
+            if (codeFragmentAware && this.containingFile is KtCodeFragment) {
                 candidate = parent
             } else {
                 return parent

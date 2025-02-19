@@ -108,6 +108,18 @@ public class SourceWholeFileResolvePhaseTestGenerated extends AbstractSourceWhol
   }
 
   @Test
+  @TestMetadata("danglingAnnotationClassLevelFunction.kt")
+  public void testDanglingAnnotationClassLevelFunction() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationClassLevelFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationEnumEntry.kt")
+  public void testDanglingAnnotationEnumEntry() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationEnumEntry.kt");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationInMiddle.kt")
   public void testDanglingAnnotationInMiddle() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationInMiddle.kt");
@@ -117,6 +129,12 @@ public class SourceWholeFileResolvePhaseTestGenerated extends AbstractSourceWhol
   @TestMetadata("danglingAnnotationTopLevel.kt")
   public void testDanglingAnnotationTopLevel() {
     runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationTopLevel.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationTopLevelFunction.kt")
+  public void testDanglingAnnotationTopLevelFunction() {
+    runTest("analysis/low-level-api-fir/testData/fileStructure/danglingAnnotationTopLevelFunction.kt");
   }
 
   @Test

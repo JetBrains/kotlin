@@ -1,0 +1,2 @@
+@Suppress(""
+fun foo() {}/* DeclarationStructureElement */
