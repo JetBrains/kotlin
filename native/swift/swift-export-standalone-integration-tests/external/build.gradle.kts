@@ -29,6 +29,6 @@ sourceSets {
     }
 }
 
-val test by nativeTestWithExternalDependencies("test")
+val test by nativeTestWithExternalDependencies("test", requirePlatformLibs = true)
 
 testsJar()
