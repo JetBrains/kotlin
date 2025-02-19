@@ -48,6 +48,18 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("function_returns_anonymous_object.repl.kts")
+  public void testFunction_returns_anonymous_object_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_returns_anonymous_object.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("function_returns_class.repl.kts")
+  public void testFunction_returns_class_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_returns_class.repl.kts");
+  }
+
+  @Test
   @TestMetadata("function_uses_local_mutating_property.repl.kts")
   public void testFunction_uses_local_mutating_property_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_uses_local_mutating_property.repl.kts");
@@ -72,6 +84,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("property_uses_anonymous_object.repl.kts")
+  public void testProperty_uses_anonymous_object_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_uses_anonymous_object.repl.kts");
+  }
+
+  @Test
   @TestMetadata("property_with_custom_accessors_different_snippet.repl.kts")
   public void testProperty_with_custom_accessors_different_snippet_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_with_custom_accessors_different_snippet.repl.kts");
@@ -81,6 +99,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("property_with_custom_accessors_same_snippet.repl.kts")
   public void testProperty_with_custom_accessors_same_snippet_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_with_custom_accessors_same_snippet.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("property_with_lambda.repl.kts")
+  public void testProperty_with_lambda_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_with_lambda.repl.kts");
   }
 
   @Test

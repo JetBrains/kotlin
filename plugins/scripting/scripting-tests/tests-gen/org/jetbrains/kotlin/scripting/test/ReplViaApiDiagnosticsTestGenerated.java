@@ -30,6 +30,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("function_returns_anonymous_object.repl.kts")
+  public void testFunction_returns_anonymous_object_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/function_returns_anonymous_object.repl.kts");
+  }
+
+  @Test
   @TestMetadata("mixed1.repl.kts")
   public void testMixed1_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/mixed1.repl.kts");
