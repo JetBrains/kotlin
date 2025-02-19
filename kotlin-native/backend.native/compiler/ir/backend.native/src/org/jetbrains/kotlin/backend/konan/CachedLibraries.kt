@@ -198,9 +198,9 @@ class CachedLibraries(
             File(explicitPath).trySelectCacheFor(library)
                     ?: error("No cache found for library ${library.libraryName} at $explicitPath")
         } else {
-            val libraryPath = library.libraryFile.absolutePath
+            val libraryPath = library.libraryFile.canonicalPath
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
-                    ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) } }
+                    ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPath) } }
                             ?.let {
                                 val dir = computeLibraryCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
                                 library.trySelectCacheAt { cacheName -> dir.child(cacheName) }
