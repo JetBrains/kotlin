@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +NestedTypeAliases
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 does not know this language feature
 
 // FILE: typealiases.kt
 

@@ -285,7 +285,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     }
 
     private fun applyK2MPPArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        if (pipelineType == PipelineType.K2 && freeCompilerArgs.compilerArgs.any { it == "-XXLanguage:+MultiPlatformProjects" }) {
+        if (pipelineType != PipelineType.K1 && freeCompilerArgs.compilerArgs.any { it == "-XXLanguage:+MultiPlatformProjects" }) {
             sourceModules.mapToSet { "-Xfragments=${it.name}" }
                 .sorted().forEach { add(it) }
             sourceModules.flatMapToSet { module -> module.allDependsOnDependencies.map { "-Xfragment-refines=${module.name}:${it.name}" } }
@@ -304,8 +304,8 @@ class LibraryCompilation(
     expectedArtifact: KLIB
 ) : SourceBasedCompilation<KLIB>(
     targets = settings.get(),
-    home = settings.get(),
-    classLoader = settings.get(),
+    home = getNativeHome(settings),
+    classLoader = getNativeClassLoader(settings),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
     threadStateChecker = settings.get(),
@@ -313,7 +313,7 @@ class LibraryCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.get(),
+    pipelineType = getPipelineType(settings),
     cacheMode = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
@@ -343,6 +343,26 @@ class LibraryCompilation(
                 library.headerKlib.takeIf { useHeaders && it.exists() }?.path ?: library.path
             )
         }
+    }
+
+    companion object {
+        fun getNativeHome(settings: Settings): KotlinNativeHome =
+            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.BACKWARD)
+                settings.get<ReleasedCompiler>().nativeHome
+            else
+                settings.get()
+
+        fun getNativeClassLoader(settings: Settings): KotlinNativeClassLoader =
+            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.BACKWARD)
+                KotlinNativeClassLoader(settings.get<ReleasedCompiler>().lazyClassloader)
+            else
+                settings.get()
+
+        fun getPipelineType(settings: Settings): PipelineType =
+            if (settings.get<CompatibilityTestMode>() == CompatibilityTestMode.BACKWARD)
+                PipelineType.DEFAULT // Don't pass "future" language version to old compiler
+            else
+                settings.get()
     }
 }
 

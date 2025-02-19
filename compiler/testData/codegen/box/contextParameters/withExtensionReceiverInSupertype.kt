@@ -3,6 +3,8 @@
 // IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 does not know this language feature
 
 class C(val a: String) {
     fun foo(): String {

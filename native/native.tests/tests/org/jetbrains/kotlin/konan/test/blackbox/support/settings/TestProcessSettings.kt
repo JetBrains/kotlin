@@ -80,6 +80,16 @@ enum class TestMode(private val description: String) {
     override fun toString() = description
 }
 
+enum class CompatibilityTestMode(private val description: String) {
+    NONE(description = "Produce KLIBs and executable file using current compiler"),
+    BACKWARD(
+        description = "Produce KLIBs using old old released compiler." +
+                " Produce an executable file using current compiler"
+    );
+
+    override fun toString() = description
+}
+
 /**
  * Kotlin compiler plugins to be used together with the the Kotlin/Native compiler.
  */

@@ -350,3 +350,12 @@ private fun klibSyntheticAccessors() = arrayOf(
     ),
     provider<UseExtTestCaseGroupProvider>(),
 )
+
+private fun standalone() = arrayOf(
+    annotation(Tag::class.java, "standalone"),
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.TEST_KIND,
+        "propertyValue" to "STANDALONE_NO_TR"
+    )
+)

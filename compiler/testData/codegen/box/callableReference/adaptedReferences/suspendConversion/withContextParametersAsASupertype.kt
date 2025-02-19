@@ -5,6 +5,8 @@
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
 // IGNORE_BACKEND_K1: JVM_IR, WASM, NATIVE
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 does not know this language feature
 
 import helpers.*
 import kotlin.coroutines.*

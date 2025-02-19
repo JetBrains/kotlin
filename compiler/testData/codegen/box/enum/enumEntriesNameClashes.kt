@@ -1,6 +1,8 @@
 // LANGUAGE: +EnumEntries -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
 // KT-59611
 // WITH_STDLIB
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 does not know this language feature
 
 import kotlin.enums.*
 

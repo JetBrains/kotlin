@@ -1,6 +1,8 @@
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-73779
 // LANGUAGE: +ContextParameters
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 does not know this language feature
 
 fun <A, R> context(context: A, block: context(A) () -> R): R = block(context)
 

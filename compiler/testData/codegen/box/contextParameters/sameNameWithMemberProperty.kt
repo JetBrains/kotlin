@@ -1,6 +1,8 @@
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-73779
 // LANGUAGE: +ContextParameters
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 does not know this language feature
 
 class X(val a: String) {
     fun foo(): String { return a }

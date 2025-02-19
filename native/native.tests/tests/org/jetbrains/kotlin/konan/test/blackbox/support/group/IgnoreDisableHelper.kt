@@ -24,6 +24,7 @@ private val TARGET_FAMILY = "targetFamily"
 private val TARGET_ARCHITECTURE = "targetArchitecture"
 private val IS_APPLE_TARGET = "isAppleTarget"
 private val SUPPORTS_CORE_SYMBOLICATION = "targetSupportsCoreSymbolication"
+private val COMPATIBILITY_TEST_MODE = "compatibilityTestMode"
 private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
 private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
@@ -35,6 +36,7 @@ private val FAMILY_NAMES = Family.entries.map { it.name }
 private val ARCHITECTURE_NAMES = Architecture.entries.map { it.name }
 private val BOOLEAN_NAMES = listOf(true.toString(), false.toString())
 private val KLIB_IR_INLINER_NAMES = KlibIrInlinerMode.entries.map { it.name }
+private val COMPATIBILITY_TEST_MODE_NAMES = CompatibilityTestMode.entries.map { it.name }
 
 // Note: this method would accept DISABLED_NATIVE without parameters as an unconditional test exclusion: don't even try to compile
 internal fun Settings.isDisabledNative(directives: Directives) =
@@ -132,6 +134,7 @@ internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
                 IS_APPLE_TARGET -> get<KotlinNativeTargets>().testTarget.family.isAppleFamily.toString() to BOOLEAN_NAMES
                 SUPPORTS_CORE_SYMBOLICATION -> get<KotlinNativeTargets>().testTarget.supportsCoreSymbolication().toString() to BOOLEAN_NAMES
                 KLIB_IR_INLINER -> get<KlibIrInlinerMode>().name to KLIB_IR_INLINER_NAMES
+                COMPATIBILITY_TEST_MODE -> get<CompatibilityTestMode>().name to COMPATIBILITY_TEST_MODE_NAMES
                 else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in IGNORE_NATIVE* test directives.")
             }
             val valueFromTestDirective = matchResult.groups[2]?.value!!

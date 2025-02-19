@@ -2,6 +2,9 @@
 // IGNORE_BACKEND_K1: ANY
 // SKIP_IR_DESERIALIZATION_CHECKS
 // ^ Context parameter names aren't serialized to metadata yet KT-74546
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 does not know this language feature
+
 // MODULE: a
 // FILE: a.kt
 import kotlin.contracts.ExperimentalContracts

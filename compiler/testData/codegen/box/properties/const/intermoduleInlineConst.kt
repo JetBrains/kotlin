@@ -1,3 +1,6 @@
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 creates non-private backing field which does not pass IR Validation in compiler v2.2.0
+
 // MODULE: lib1
 // FILE: lib1.kt
 object L1 {

@@ -1,6 +1,8 @@
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-67869
 // LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD
+// ^^^ Compiler v2.1.10 does not know this language feature
 
 fun interface MyFun {
     fun foo(x: String): Int
