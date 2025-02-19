@@ -465,6 +465,7 @@ enum class LanguageFeature(
     IrInlinerBeforeKlibSerialization(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-69765
     NestedTypeAliases(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-45285
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, kind = BUG_FIX), // KT-66691, KT-66742
+    AllowReifiedTypeInCatchClause(KOTLIN_2_2, kind = BUG_FIX), // KT-54363
     ;
 
     init {
