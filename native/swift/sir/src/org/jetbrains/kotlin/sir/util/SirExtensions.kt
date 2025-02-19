@@ -78,3 +78,6 @@ val SirFunction.swiftFqName: String
 
 val SirVariable.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.${name.swiftSanitizedName}" } ?: name.swiftSanitizedName
+
+val SirTypealias.expandedType: SirType
+    get() = ((type as? SirNominalType)?.typeDeclaration as? SirTypealias)?.expandedType ?: type

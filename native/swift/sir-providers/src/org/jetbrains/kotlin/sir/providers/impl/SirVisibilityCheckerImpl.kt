@@ -49,7 +49,7 @@ public class SirVisibilityCheckerImpl(
             }
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType
                 .let {
-                    it.isPrimitive || it.isNothingType || it.isVisible(ktAnalysisSession)
+                    it.isPrimitive || it.isNothingType || it.isFunctionType || it.isVisible(ktAnalysisSession)
                 }
             else -> false
         }

@@ -33,6 +33,18 @@ func testSavedSwiftBlockOnKotlinSide() throws {
     try assertEquals(actual: i, expected: 4)
 }
 
+func testFunctionalTypeTypealias() throws {
+    var i: Int = 0
+    callback_property = {
+      i += 2
+    }
+    try assertEquals(actual: i, expected: 0)
+    call_saved_callback()
+    try assertEquals(actual: i, expected: 2)
+    callback_property()
+    try assertEquals(actual: i, expected: 4)
+}
+
 class Functional_typeTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -42,6 +54,7 @@ class Functional_typeTests : TestProvider {
             TestCase(name: "testCallingClosureReceivedFromKotlin", method: withAutorelease(testCallingClosureReceivedFromKotlin)),
             TestCase(name: "testCallingClosureSentToKotlin", method: withAutorelease(testCallingClosureSentToKotlin)),
             TestCase(name: "testSavedSwiftBlockOnKotlinSide", method: withAutorelease(testSavedSwiftBlockOnKotlinSide)),
+            TestCase(name: "testFunctionalTypeTypealias", method: withAutorelease(testFunctionalTypeTypealias)),
         ]
     }
 }

@@ -26,3 +26,9 @@ fun foo_consume_simple(block_input: ()->Unit): Unit {
 
 var closure_property: () -> Unit = {}
 fun call_saved_closure() = closure_property()
+
+// FILE: functional_type_typealias.kt
+
+typealias callback = () -> Unit
+var callback_property: callback = {}
+fun call_saved_callback() = callback_property()
