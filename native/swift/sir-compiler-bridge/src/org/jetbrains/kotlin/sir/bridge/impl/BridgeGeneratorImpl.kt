@@ -477,8 +477,6 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
 
 private fun bridgeParameter(parameter: SirParameter, index: Int): BridgeParameter {
     val bridgeParameterName = parameter.name?.let(::createBridgeParameterName) ?: "_$index"
-    // TODO: Remove this check when non-trivial type bridges are supported
-    check(!parameter.type.isVoid) { "The parameter $bridgeParameterName can not have Void type" }
     val bridge = bridgeType(parameter.type)
     return BridgeParameter(
         name = bridgeParameterName,
