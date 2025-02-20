@@ -65,7 +65,7 @@ class MoveInto0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
-class MoveToLeft0 : AbstractSchemaModificationInterpreter() {
+class MoveToStart0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: MoveClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
@@ -74,7 +74,7 @@ class MoveToLeft0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
-class MoveToLeft1 : AbstractSchemaModificationInterpreter() {
+class MoveToStart1 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.columns: ColumnsResolver by arg()
 
@@ -85,7 +85,7 @@ class MoveToLeft1 : AbstractSchemaModificationInterpreter() {
 }
 
 
-class MoveToRight0 : AbstractSchemaModificationInterpreter() {
+class MoveToEnd0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: MoveClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
