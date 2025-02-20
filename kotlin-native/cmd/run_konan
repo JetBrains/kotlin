@@ -75,8 +75,7 @@ while IFS=$'\r' read -r line || [[ -n "$line" ]]; do
 done < "${KONAN_HOME}/tools/env_blacklist"
 
 KONAN_JAR="${KONAN_HOME}/konan/lib/kotlin-native-compiler-embeddable.jar"
-TROVE_JAR="${KONAN_HOME}/konan/lib/trove4j.jar"
-KONAN_CLASSPATH="$KONAN_JAR:$TROVE_JAR"
+KONAN_CLASSPATH="$KONAN_JAR"
 TOOL_CLASS=org.jetbrains.kotlin.cli.utilities.MainKt
 LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
 $TIMECMD "$JAVACMD" "${java_opts[@]}" "${java_args[@]}" -cp "$KONAN_CLASSPATH" "$TOOL_CLASS" "$TOOL_NAME" "${konan_args[@]}"

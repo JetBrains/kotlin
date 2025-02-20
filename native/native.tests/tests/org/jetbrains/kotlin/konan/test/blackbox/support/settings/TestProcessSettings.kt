@@ -367,7 +367,7 @@ internal class ReleasedCompiler(private val lazyNativeHome: Lazy<KotlinNativeHom
     val nativeHome: KotlinNativeHome get() = lazyNativeHome.value
     val lazyClassloader: Lazy<URLClassLoader> = lazy {
         val nativeClassPath = setOf(
-            nativeHome.dir.resolve("konan/lib/trove4j.jar"),
+            nativeHome.dir.resolve("konan/lib/trove4j.jar"), // to be removed after bumping `kotlin.internal.native.test.latestReleasedCompilerVersion` to 2.2.0+
             nativeHome.dir.resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
         )
             .map { it.toURI().toURL() }

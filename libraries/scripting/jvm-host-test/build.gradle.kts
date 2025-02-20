@@ -20,7 +20,6 @@ dependencies {
 
     testRuntimeOnly(project(":kotlin-compiler"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 }
 
 sourceSets {

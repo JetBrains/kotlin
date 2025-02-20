@@ -204,14 +204,12 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                 assertNativeTasksClasspath(":native1:compileKotlin${nativeHostTargetName.capitalize()}") {
                     val konanLibsPath = customNativeHomePath.resolve(STABLE_VERSION_DIR_NAME).resolve("konan").resolve("lib")
                     assertContains(it, konanLibsPath.resolve("kotlin-native-compiler-embeddable.jar").absolutePathString())
-                    assertContains(it, konanLibsPath.resolve("trove4j.jar").absolutePathString())
                 }
 
                 // check that in second project we use k/n from default konan location
                 assertNativeTasksClasspath(":native2:compileKotlin${nativeHostTargetName.capitalize()}") {
                     val konanLibsPath = defaultKotlinNativeHomePath.resolve(STABLE_VERSION_DIR_NAME).resolve("konan").resolve("lib")
                     assertContains(it, konanLibsPath.resolve("kotlin-native-compiler-embeddable.jar").absolutePathString())
-                    assertContains(it, konanLibsPath.resolve("trove4j.jar").absolutePathString())
                 }
             }
         }

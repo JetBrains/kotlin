@@ -264,7 +264,6 @@ internal class ReleasedJsCompiler(private val jsHome: ReleasedJsArtifactsHome) {
 private fun createClassLoader(jsHome: ReleasedJsArtifactsHome): URLClassLoader {
     val jsClassPath = setOf(
         jsHome.compilerEmbeddable,
-        jsHome.trove,
         jsHome.baseStdLib,
     )
         .map { it.toURI().toURL() }
@@ -276,7 +275,6 @@ private fun createClassLoader(jsHome: ReleasedJsArtifactsHome): URLClassLoader {
 
 internal class ReleasedJsArtifactsHome(val dir: File, version: String) {
     val compilerEmbeddable: File = dir.resolve("kotlin-compiler-embeddable-$version.jar")
-    val trove: File = dir.listFiles()?.single { it.name.contains("trove4j") } ?: error("Filed to find trove4j jar in $dir")
     val baseStdLib: File = dir.resolve("kotlin-stdlib-$version.jar")
     val jsStdLib: File = dir.resolve("kotlin-stdlib-js-$version.klib")
 }

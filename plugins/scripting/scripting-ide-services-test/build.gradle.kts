@@ -35,7 +35,6 @@ dependencies {
     testImplementation(intellijCore())
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
     embeddableTestRuntime(project(":kotlin-scripting-ide-services"))

@@ -91,7 +91,6 @@ class NativeDistribution(val root: Directory) {
      */
     val compilerClasspath: FileCollection
         get() = compilerJars.asFileTree.matching {
-            include("trove4j.jar")
             include("kotlin-native-compiler-embeddable.jar")
         }
 

@@ -66,7 +66,6 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:util"))
 
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(libs.guava)
     testRuntimeOnly(intellijJDom())
 

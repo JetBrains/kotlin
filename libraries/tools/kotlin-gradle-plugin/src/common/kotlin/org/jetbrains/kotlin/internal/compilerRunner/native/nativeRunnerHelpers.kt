@@ -30,7 +30,7 @@ internal fun ObjectFactory.nativeCompilerClasspath(
     shouldUseEmbeddableCompilerJar: Provider<Boolean>,
 ) = fileCollection().from(
     nativeHomeDirectory.kotlinNativeCompilerJar(shouldUseEmbeddableCompilerJar),
-    nativeHomeDirectory.map { it.resolve("konan/lib/trove4j.jar") },
+    nativeHomeDirectory.map { it.resolve("konan/lib/trove4j.jar") }, // for compatibility with K/N < 2.2.0
 )
 
 internal fun nativeExecSystemProperties(

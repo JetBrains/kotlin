@@ -166,7 +166,6 @@ fun Project.nativeTest(
                 val kotlinNativeCompilerEmbeddable = if (customNativeHome == null)
                     configurations.detachedConfiguration(
                         dependencies.project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"),
-                        dependencies.create(commonDependency("org.jetbrains.intellij.deps:trove4j"))
                     ).also { dependsOn(it) }
                 else
                     null
@@ -178,7 +177,6 @@ fun Project.nativeTest(
                         addAll(kotlinNativeCompilerEmbeddable!!.files)
                     } else {
                         this += file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
-                        this += file(customNativeHome).resolve("konan/lib/trove4j.jar")
                     }
 
                     customCompilerDependencies.flatMapTo(this) { it.files }
