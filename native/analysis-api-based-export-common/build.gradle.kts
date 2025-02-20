@@ -9,6 +9,11 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     api(project(":analysis:analysis-api"))
+    api(project(":core:compiler.common"))
+}
+
+kotlin {
+    explicitApi()
 }
 
 sourceSets {
