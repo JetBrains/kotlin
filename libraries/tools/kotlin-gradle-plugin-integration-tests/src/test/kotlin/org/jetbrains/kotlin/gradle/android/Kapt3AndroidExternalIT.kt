@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.Kapt3BaseIT
 import org.jetbrains.kotlin.gradle.forceK1Kapt
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 import kotlin.io.path.appendText
 
 @DisplayName("android with kapt3 external dependencies tests")
@@ -97,7 +95,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "android-dbflow".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 setOf("https://jitpack.io")
@@ -127,7 +125,9 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "android-realm".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion"))
+                .suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location,
         ) {
             if (gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6)) {
@@ -162,9 +162,9 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "android-databinding".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-            // TODO: remove the `if` when we drop support for [TestVersions.AGP.AGP_42]
-            buildJdk = if (jdkVersion.version >= JavaVersion.VERSION_11) jdkVersion.location else File(System.getProperty("jdk11Home"))
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            // remove the `if` when we drop support for [TestVersions.AGP.AGP_42]
+            buildJdk = if (jdkVersion.version >= JavaVersion.VERSION_11) jdkVersion.location else jdk11Info.javaHome
         ) {
             // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
             gradleProperties.appendText(
@@ -200,7 +200,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "androidx-navigation-safe-args".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             val safeArgsVersion = "2.5.3"
@@ -221,7 +221,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "android-databinding-androidX".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("kaptDebugKotlin") {
@@ -240,7 +240,9 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "mpp-android-kapt".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG)
+                .suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build(":shared:compileDebugKotlinAndroid") {

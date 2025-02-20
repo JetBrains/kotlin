@@ -28,6 +28,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        resources {
+            excludes += "META-INF/kotlinx_coroutines_core.version"
+        }
+    }
 }
 
 dependencies {

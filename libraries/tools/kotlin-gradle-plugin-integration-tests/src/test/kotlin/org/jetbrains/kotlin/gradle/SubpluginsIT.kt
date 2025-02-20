@@ -199,7 +199,11 @@ class SubpluginsIT : KGPBaseTest() {
         project(
             "kapt2/android-dagger",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressDeprecationWarningsSinceGradleVersion(
+                gradleVersion = TestVersions.Gradle.G_8_13,
+                currentGradleVersion = gradleVersion,
+                reason = "KT-71879: old Kotlin release produces deprecation warning"
+            ),
             buildJdk = providedJdk.location
         ) {
             subProject("app").buildGradle.modify {

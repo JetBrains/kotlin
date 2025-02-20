@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp.publication
 
-import org.gradle.api.JavaVersion
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.cartesianProductOf
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.deleteRecursively
@@ -167,7 +166,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             projectName = "mppPublicationCompatibility/sampleProjects/$sampleDirectoryName",
             gradleVersion = gradleVersion,
             localRepoDir = repoDir,
-            buildJdk = File(System.getProperty("jdk${JavaVersion.VERSION_17.majorVersion}Home"))
+            buildJdk = jdk17Info.javaHome
         ) {
             prepareProjectForPublication(scenarioProject)
             val buildOptions = if (hasAndroid) {
@@ -176,7 +175,8 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             } else {
                 defaultBuildOptions
             }
-            build("publish", buildOptions = buildOptions)
+            // WarningMode.None because of AGP issue: https://issuetracker.google.com/399393875
+            build("publish", buildOptions = buildOptions.copy(warningMode = WarningMode.None))
         }
     }
 
@@ -187,7 +187,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             projectName = "mppPublicationCompatibility/sampleProjects/$consumerDirectory",
             gradleVersion = consumer.gradleVersion,
             localRepoDir = repoDir,
-            buildJdk = File(System.getProperty("jdk${JavaVersion.VERSION_17.majorVersion}Home"))
+            buildJdk = jdk17Info.javaHome
         ) {
             prepareConsumerProject(consumer, listOf(producer), repoDir)
             val buildOptions = if (consumer.hasAndroid) {
@@ -197,7 +197,8 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
                 defaultBuildOptions
             }
 
-            build("resolveDependencies", buildOptions = buildOptions)
+            // WarningMode.None because of AGP issue: https://issuetracker.google.com/399393875
+            build("resolveDependencies", buildOptions = buildOptions.copy(warningMode = WarningMode.None))
 
             fun assertResolvedDependencies(configurationName: String) {
                 val actualReport = projectPath.resolve("resolvedDependenciesReports")

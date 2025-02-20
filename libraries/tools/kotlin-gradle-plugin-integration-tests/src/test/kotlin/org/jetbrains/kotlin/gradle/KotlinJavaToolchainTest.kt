@@ -526,7 +526,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             "android".fullProjectName,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = providedJdk.location
         ) {
             useToolchainExtension(11)
@@ -745,7 +745,9 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             "android".fullProjectName,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG)
+                .suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = providedJdk.location
         ) {
             buildGradle.appendText(

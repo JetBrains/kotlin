@@ -414,7 +414,10 @@ class MppCompositeBuildIT : KGPBaseTest() {
             settingsGradleKts.toFile().replaceText("<consumerA_path>", consumerA.projectPath.toUri().path)
             settingsGradleKts.toFile().replaceText("<consumerB_path>", consumerB.projectPath.toUri().path)
 
-            build(":consumerA:compileCommonMainKotlinMetadata") {
+            build(
+                ":consumerA:compileCommonMainKotlinMetadata",
+                buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)
+            ) {
                 assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
             }
 

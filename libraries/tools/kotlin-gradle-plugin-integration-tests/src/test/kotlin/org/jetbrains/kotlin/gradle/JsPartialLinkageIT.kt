@@ -19,7 +19,13 @@ class JsPartialLinkageIT : KGPBaseTest() {
         project(
             projectName = "kt-72965-no-pl-warnings-on-SubclassOptInRequired-annotation-site/lib",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(kotlinVersion = KOTLIN_VERSION_WITH_OLD_SHAPE_OF_SUBCLASS_OPT_IN_REQUIRED)
+            buildOptions = defaultBuildOptions
+                .copy(kotlinVersion = KOTLIN_VERSION_WITH_OLD_SHAPE_OF_SUBCLASS_OPT_IN_REQUIRED)
+                .suppressDeprecationWarningsSinceGradleVersion(
+                    gradleVersion = TestVersions.Gradle.G_8_13,
+                    currentGradleVersion = gradleVersion,
+                    reason = "Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"
+                ),
         ) {
             build("publish") {
                 assertTasksExecuted(":publish")
@@ -45,7 +51,13 @@ class JsPartialLinkageIT : KGPBaseTest() {
         project(
             projectName = "kt-72965-pl-warnings-on-SubclassOptInRequired-constructor-call/lib",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(kotlinVersion = KOTLIN_VERSION_WITH_OLD_SHAPE_OF_SUBCLASS_OPT_IN_REQUIRED)
+            buildOptions = defaultBuildOptions
+                .copy(kotlinVersion = KOTLIN_VERSION_WITH_OLD_SHAPE_OF_SUBCLASS_OPT_IN_REQUIRED)
+                .suppressDeprecationWarningsSinceGradleVersion(
+                    gradleVersion = TestVersions.Gradle.G_8_13,
+                    currentGradleVersion = gradleVersion,
+                    reason = "Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"
+                ),
         ) {
             build("publish") {
                 assertTasksExecuted(":publish")

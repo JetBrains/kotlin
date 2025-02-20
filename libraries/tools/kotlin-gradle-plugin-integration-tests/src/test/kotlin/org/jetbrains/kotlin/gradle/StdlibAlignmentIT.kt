@@ -28,9 +28,9 @@ class StdlibAlignmentIT : KGPBaseTest() {
         project(
             "AndroidSimpleApp",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion
-            ),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location,
         ) {
             // Adding dependency that pulls transitively older versions

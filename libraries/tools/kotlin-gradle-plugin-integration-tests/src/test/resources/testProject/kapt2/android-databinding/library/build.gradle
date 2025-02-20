@@ -25,6 +25,12 @@ android {
             minifyEnabled = false
         }
     }
+
+    packagingOptions {
+        resources {
+            excludes += "META-INF/kotlinx_coroutines_core.version"
+        }
+    }
 }
 
 dependencies {

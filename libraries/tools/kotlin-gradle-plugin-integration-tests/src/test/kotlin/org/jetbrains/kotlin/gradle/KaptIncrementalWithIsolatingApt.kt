@@ -320,7 +320,11 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
                 """.trimMargin()
             )
 
-            build("clean", ":mylibrary:assembleDebug")
+            build(
+                "clean",
+                ":mylibrary:assembleDebug",
+                buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)
+            )
 
             subProject("baseLibrary")
                 .javaSourcesDir()

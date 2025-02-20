@@ -40,6 +40,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+    packagingOptions {
+        resources {
+            excludes += "META-INF/kotlinx_coroutines_core.version"
+        }
+    }
 }
 
 dependencies {
