@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.resolvedTypeRefFromQualifierParts
+import org.jetbrains.kotlin.fir.extensions.typeFromQualifierParts
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -41,7 +41,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
         val annotation = classLikeDeclaration.getAnnotationByClassId(annotationClassId, session) ?: return emptyList()
         val getClassArgument = (annotation as? FirAnnotationCall)?.argument as? FirGetClassCall ?: return emptyList()
 
-        val resolvedArgument = resolvedTypeRefFromQualifierParts(
+        val resolvedArgument = typeFromQualifierParts(
             isMarkedNullable = false,
             source = classLikeDeclaration.source!!,
             typeResolver = typeResolver
@@ -52,7 +52,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
                 expression.qualifierName?.let { part(it) }
             }
             visitQualifiers(getClassArgument.argument)
-        }.coneType
+        }
 
         return listOf(supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isMarkedNullable = false))
     }

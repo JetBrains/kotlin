@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
@@ -28,16 +28,16 @@ class QualifierPartBuilder(internal val destination: MutableList<FirQualifierPar
     }
 }
 
-fun resolvedTypeRefFromQualifierParts(
+fun typeFromQualifierParts(
     isMarkedNullable: Boolean,
     typeResolver: FirSupertypeGenerationExtension.TypeResolveService,
     source: KtSourceElement,
     builder: QualifierPartBuilder.() -> Unit
-): FirResolvedTypeRef {
+): ConeKotlinType {
     val userTypeRef = buildUserTypeRef {
         this.isMarkedNullable = isMarkedNullable
         this.source = source
         QualifierPartBuilder(qualifier).builder()
     }
-    return typeResolver.resolveUserType(userTypeRef)
+    return typeResolver.resolveUserType(userTypeRef).coneType
 }

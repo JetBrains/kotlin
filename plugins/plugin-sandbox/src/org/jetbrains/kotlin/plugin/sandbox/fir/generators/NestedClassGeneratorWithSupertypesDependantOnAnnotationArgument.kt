@@ -92,14 +92,14 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
     override fun computeAdditionalSupertypesForGeneratedNestedClass(
         klass: FirRegularClass,
         typeResolver: TypeResolveService,
-    ): List<FirResolvedTypeRef> {
+    ): List<ConeKotlinType> {
         require(klass.origin.key == Key)
         val container = klass.getContainingDeclaration(session) ?: return emptyList()
         val annotation = container.annotations.getAnnotationByClassId(ANNOTATION_ID, session) as? FirAnnotationCall ?: return emptyList()
         val getClassCall = annotation.arguments.singleOrNull() as? FirGetClassCall ?: return emptyList()
         val qualifierParts = createQualifier(getClassCall.argument) ?: return emptyList()
         return listOf(
-            resolvedTypeRefFromQualifierParts(
+            typeFromQualifierParts(
                 isMarkedNullable = false,
                 source = klass.source!!,
                 typeResolver = typeResolver

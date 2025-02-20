@@ -520,7 +520,9 @@ open class FirSupertypeResolverVisitor(
                     )
                     if (newSupertypes.isNotEmpty()) {
                         someTypesWereGenerated = true
-                        superTypes += newSupertypes
+                        superTypes += newSupertypes.map {
+                            it.toFirResolvedTypeRef(klass.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated))
+                        }
                     }
                 }
             }
