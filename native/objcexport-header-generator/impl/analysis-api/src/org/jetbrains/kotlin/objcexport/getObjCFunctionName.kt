@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getPropertySymbol
+import org.jetbrains.kotlin.analysis.api.export.utilities.getPropertySymbol
 
 fun ObjCExportContext.getObjCFunctionName(symbol: KaFunctionSymbol): ObjCExportFunctionName {
     val annotationName =

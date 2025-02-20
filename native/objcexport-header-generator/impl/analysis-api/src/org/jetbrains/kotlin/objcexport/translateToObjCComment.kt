@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getEffectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isSuspend
+import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 
 internal fun KaSession.translateToObjCComment(list: KaAnnotationList): ObjCComment? {
     val annotations = getObjCDocumentedAnnotations(list)

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.name
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubOrigin
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getKDocString
+import org.jetbrains.kotlin.analysis.api.export.utilities.getKDocString
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubFactoriesKt.ObjCExportStubOrigin]

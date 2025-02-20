@@ -10,6 +10,7 @@ dependencies {
 
     api(project(":analysis:analysis-api"))
     api(project(":core:compiler.common"))
+    api(project(":compiler:psi"))
 }
 
 kotlin {

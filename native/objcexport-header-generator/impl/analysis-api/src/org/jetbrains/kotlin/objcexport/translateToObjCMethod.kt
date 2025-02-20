@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
+import org.jetbrains.kotlin.analysis.api.export.utilities.isFakeOverride
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames

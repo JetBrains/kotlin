@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.objcexport.analysisApiUtils
+package org.jetbrains.kotlin.analysis.api.export.utilities
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
  * - [KtSymbolOrigin.INTERSECTION_OVERRIDE]
  * - [KtSymbolOrigin.SUBSTITUTION_OVERRIDE]
  */
-internal val KaSymbol.isFakeOverride: Boolean
+public val KaSymbol.isFakeOverride: Boolean
     get() {
         val origin = this.origin
         if (origin == KaSymbolOrigin.INTERSECTION_OVERRIDE) return true

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNonNullReferenceType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassTypeNotAny
+import org.jetbrains.kotlin.analysis.api.export.utilities.getSuperClassTypeNotAny
 
 internal data class KtObjCSuperClassTranslation(
     val superClassName: ObjCExportClassOrProtocolName,
