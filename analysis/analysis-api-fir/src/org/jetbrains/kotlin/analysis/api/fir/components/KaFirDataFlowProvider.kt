@@ -481,7 +481,8 @@ internal class KaFirDataFlowProvider(
             }
 
             val source = element.source
-            return source?.kind !in FORBIDDEN_FAKE_SOURCE_KINDS
+            val isImplicitWhenSubjectVariable = element is FirProperty && element.isImplicitWhenSubjectVariable
+            return source?.kind !in FORBIDDEN_FAKE_SOURCE_KINDS && !isImplicitWhenSubjectVariable
         }
 
         private inline fun withElement(element: FirElement, block: () -> Unit) {
