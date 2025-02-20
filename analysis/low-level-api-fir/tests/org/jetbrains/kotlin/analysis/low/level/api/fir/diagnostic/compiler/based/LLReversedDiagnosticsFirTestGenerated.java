@@ -5316,6 +5316,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("jkjSyntheticProperty.kt")
+      public void testJkjSyntheticProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/scopes/jkjSyntheticProperty.kt");
+      }
+
+      @Test
       @TestMetadata("kotlinAccessorsLikeFunctionsThrowJavaClass.kt")
       public void testKotlinAccessorsLikeFunctionsThrowJavaClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/scopes/kotlinAccessorsLikeFunctionsThrowJavaClass.kt");
