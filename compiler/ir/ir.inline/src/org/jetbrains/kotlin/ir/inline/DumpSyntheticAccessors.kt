@@ -227,9 +227,9 @@ private class SyntheticAccessorsDumper(
         dump.appendIndent(indent = stack.size).append(comment).appendIrElement(expression)
     }
 
-    private fun dumpExpressionIfSymbolIsObserved(expression: IrRichFunctionReference) {
-        val comment = "/* INVOKE @${localDeclarations.indexOf(expression.invokeFunction.symbol)} */ "
-        dump.appendIndent(indent = stack.size).append(comment).appendIrElement(expression.invokeFunction)
+    private fun dumpInvoke(function: IrSimpleFunction) {
+        val comment = "/* INVOKE @${localDeclarations.indexOf(function.symbol)} */ "
+        dump.appendIndent(indent = stack.size).append(comment).appendIrElement(function)
     }
 
     override fun visitElement(element: IrElement) {
@@ -268,7 +268,15 @@ private class SyntheticAccessorsDumper(
         super.visitRichFunctionReference(expression)
         if (expression.invokeFunction.symbol in localDeclarations) {
             dumpCurrentStackIfSymbolIsObserved(expression.invokeFunction.symbol)
-            dumpExpressionIfSymbolIsObserved(expression)
+            dumpInvoke(expression.invokeFunction)
+        }
+    }
+
+    override fun visitFunctionExpression(expression: IrFunctionExpression) {
+        super.visitFunctionExpression(expression)
+        if (expression.function.symbol in localDeclarations) {
+            dumpCurrentStackIfSymbolIsObserved(expression.function.symbol)
+            dumpInvoke(expression.function)
         }
     }
 
