@@ -1504,6 +1504,50 @@ class IrValidatorTest {
     }
 
     @Test
+    fun `getter and setter with inconsistent property symbols are reported`() {
+        val file = createIrFile()
+
+        val property = IrFactoryImpl.buildProperty {
+            name = Name.identifier("p")
+        }.apply {
+            getter = IrFactoryImpl.buildFun {
+                name = Name.identifier("foo")
+                returnType = TestIrBuiltins.anyType
+            }
+            setter = IrFactoryImpl.buildFun {
+                name = Name.identifier("bar")
+                returnType = TestIrBuiltins.anyType
+            }
+        }
+
+        file.addChild(property)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Getter of property 'PROPERTY name:p visibility:public modality:FINAL [val]' has an inconsistent corresponding property symbol.
+                    PROPERTY name:p visibility:public modality:FINAL [val]
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Setter of property 'PROPERTY name:p visibility:public modality:FINAL [val]' has an inconsistent corresponding property symbol.
+                    PROPERTY name:p visibility:public modality:FINAL [val]
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                )
+            )
+        )
+    }
+
+    @Test
     fun `assignments to value parameters not marked assignable are reported`() {
         val file = createIrFile("test.kt")
         val function = IrFactoryImpl.buildFun {

@@ -124,6 +124,7 @@ private class IrFileValidator(
     private val localDelegatedPropertyReferenceCheckers: MutableList<IrLocalDelegatedPropertyReferenceChecker> = mutableListOf()
     private val expressionCheckers: MutableList<IrExpressionChecker<IrExpression>> = mutableListOf(IrExpressionTypeChecker)
     private val typeOperatorCheckers: MutableList<IrTypeOperatorChecker> = mutableListOf(IrTypeOperatorTypeOperandChecker)
+    private val propertyCheckers: MutableList<IrPropertyChecker> = mutableListOf()
 
     // TODO: Why don't we check parameters as well?
     private val callCheckers: MutableList<IrCallChecker> = mutableListOf(IrCallFunctionDispatchReceiverChecker)
@@ -172,6 +173,7 @@ private class IrFileValidator(
             callCheckers.add(IrCallFunctionPropertiesChecker)
             functionCheckers.add(IrFunctionPropertiesChecker)
             functionReferenceCheckers.add(IrFunctionReferenceFunctionPropertiesChecker)
+            propertyCheckers.add(IrPropertyAccessorsChecker)
         }
     }
 
@@ -329,6 +331,11 @@ private class IrFileValidator(
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
         super.visitFunctionAccess(expression)
         functionAccessCheckers.check(expression, context)
+    }
+
+    override fun visitProperty(declaration: IrProperty) {
+        super.visitProperty(declaration)
+        propertyCheckers.check(declaration, context)
     }
 
     private fun checkTreeConsistency(element: IrElement) {

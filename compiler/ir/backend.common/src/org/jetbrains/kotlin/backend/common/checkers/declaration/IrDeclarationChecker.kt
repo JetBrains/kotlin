@@ -21,3 +21,4 @@ internal fun <D : IrDeclaration> List<IrDeclarationChecker<D>>.check(declaration
 internal typealias IrValueParameterChecker = IrDeclarationChecker<IrValueParameter>
 internal typealias IrFieldChecker = IrDeclarationChecker<IrField>
 internal typealias IrFunctionChecker = IrDeclarationChecker<IrFunction>
+internal typealias IrPropertyChecker = IrDeclarationChecker<IrProperty>
