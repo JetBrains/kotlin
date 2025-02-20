@@ -98,8 +98,8 @@ private fun checkVersion() {
     if (version.isEmpty()) {
         throw AssertionError("Output is empty, stderr: $stderr")
     }
-    if (version != "libprotoc 2.6.1") {
-        throw AssertionError("Expected protoc 2.6.1, but was: $version")
+    if (version != "libprotoc 29.3") {
+        throw AssertionError("Expected protoc 29.3, but was: $version")
     }
 }
 
