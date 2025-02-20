@@ -191,13 +191,15 @@ class NewTestGeneratorImpl(
                         get() = null
 
                     override val annotations: Collection<AnnotationModel>
-                        get() = emptyList()
+                        // models have same annotations, so either distinct() or intersect() yield same result
+                        get() = testClassModels.flatMap { it.annotations }.distinct()
 
                     override val imports: Set<Class<*>>
                         get() = super.imports
 
                     override val tags: List<String>
-                        get() = emptyList()
+                        // models have same tags, so either distinct() or intersect() yield same result
+                        get() = testClassModels.flatMap { it.tags }.distinct()
                 }
             }
 
