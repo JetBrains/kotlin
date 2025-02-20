@@ -112,6 +112,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   }
 
   @Test
+  @TestMetadata("kt42271.kt")
+  public void testKt42271() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/kt42271.kt");
+  }
+
+  @Test
   @TestMetadata("localClassMetadata.kt")
   public void testLocalClassMetadata() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/localClassMetadata.kt");
