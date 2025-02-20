@@ -1,5 +1,5 @@
 KtCallExpression(81,87): 'foo(x)'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         x -> (KaVariableSignature:
@@ -33,5 +33,4 @@ KtCallExpression(81,87): 'foo(x)'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(RESOLVED): /foo>
     isInBestCandidates = true

@@ -1,10 +1,11 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-74819
 // WITH_STDLIB
 
 fun foo(x: List<String>) {
     buildList {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>flatMap<!> { x }
+        flatMap { listOf(it) }
         add("")
     }
 }
