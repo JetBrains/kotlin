@@ -152,10 +152,11 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
  *
  * Affected Library:
  * └── io.netty
- *    ├── netty-buffer:* → 4.1.115.Final
- *    └── netty-codec-http2:* → 4.1.115.Final
+ *    ├── netty-buffer:* → 4.1.118.Final
+ *    └── netty-codec-http2:* → 4.1.118.Final
  *
  * Mitigated Vulnerabilities:
+ * - CVE-2025-25193: Denial of Service Vulnerability
  * - CVE-2024-47535: Network security vulnerability
  * - CVE-2024-29025: Remote code execution risk
  * - CVE-2023-4586: Information disclosure vulnerability
@@ -171,8 +172,8 @@ configurations.all {
                 "netty-codec-http2",
             ).contains(requested.name)
         ) {
-            useVersion("4.1.115.Final")
-            because("CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
+            useVersion("4.1.118.Final")
+            because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
         }
     }
 }
