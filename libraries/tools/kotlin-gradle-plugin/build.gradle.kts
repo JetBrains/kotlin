@@ -212,7 +212,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 /**
  * Security Advisory: Vulnerable Transitive Dependencies
  *
- * The dependency com.android.tools.build:gradle:8.7.2 introduces several transitive
+ * The dependency com.android.tools.build:gradle:8.8.1 introduces several transitive
  * dependencies with known security vulnerabilities. The following configuration
  * enforces safer versions of these dependencies.
  *
@@ -222,10 +222,10 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
  * │   └── protobuf-java-util:3.22.3
  * ├── io.netty
  * │   ├── netty-buffer:*
- * │   ├── netty-codec-http:* → 4.1.115.Final
- * │   ├── netty-codec-http2:* → 4.1.115.Final
- * │   ├── netty-common:* → 4.1.115.Final
- * │   └── netty-handler:* → 4.1.115.Final
+ * │   ├── netty-codec-http:* → 4.1.118.Final
+ * │   ├── netty-codec-http2:* → 4.1.118.Final
+ * │   ├── netty-common:* → 4.1.118.Final
+ * │   └── netty-handler:* → 4.1.118.Final
  * ├── org.apache.commons
  * │   ├── commons-compress:* → 1.27.1
  * │   └── commons-io:* → 2.16.1
@@ -236,6 +236,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
  *    - CVE-2024-7254: Potential security vulnerability
  *
  * 2. Netty Components
+ *    - CVE-2025-25193: Denial of Service Vulnerability
  *    - CVE-2024-47535: Network security vulnerability
  *    - CVE-2024-29025: Remote code execution risk
  *    - CVE-2023-4586: Information disclosure vulnerability
@@ -251,7 +252,7 @@ configurations.all {
     resolutionStrategy.eachDependency {
         // Google Protobuf
         if (requested.group == "com.google.protobuf" && requested.name == "protobuf-java") {
-            useVersion("3.25.5")
+            useVersion("3.25.6")
             because("CVE-2024-7254")
         }
 
@@ -263,13 +264,13 @@ configurations.all {
                 "netty-handler-proxy",
             ).contains(requested.name)
         ) {
-            useVersion("4.1.115.Final")
-            because("CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
+            useVersion("4.1.118.Final")
+            because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
         }
 
         // Bouncy Castle
         if (requested.group == "org.bouncycastle" && requested.name == "bcpkix-jdk18on") {
-            useVersion("1.79")
+            useVersion("1.80")
             because("CVE-2024-34447, CVE-2024-30172, CVE-2024-30171, CVE-2024-29857")
         }
     }
