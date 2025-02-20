@@ -102,7 +102,7 @@ public class StandaloneAnalysisAPISessionBuilder(
     private lateinit var projectStructureProvider: KotlinStaticProjectStructureProvider
 
     public fun buildKtModuleProvider(init: KtModuleProviderBuilder.() -> Unit) {
-        projectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment, init)
+        projectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment.environment, project, init)
     }
 
     @Deprecated(
@@ -113,7 +113,8 @@ public class StandaloneAnalysisAPISessionBuilder(
         compilerConfiguration: CompilerConfiguration,
     ) {
         projectStructureProvider = buildKtModuleProviderByCompilerConfiguration(
-            kotlinCoreProjectEnvironment,
+            kotlinCoreProjectEnvironment.environment,
+            project,
             compilerConfiguration,
             getPsiFilesFromPaths(kotlinCoreProjectEnvironment, getSourceFilePaths(compilerConfiguration)),
         )
@@ -206,7 +207,7 @@ public class StandaloneAnalysisAPISessionBuilder(
         val sourceKtFiles = projectStructureProvider.allSourceFiles.filterIsInstance<KtFile>()
         val libraryRoots = StandaloneProjectFactory.getAllBinaryRoots(
             projectStructureProvider.allModules,
-            kotlinCoreProjectEnvironment,
+            kotlinCoreProjectEnvironment.environment,
         )
 
         val createPackagePartProvider = StandaloneProjectFactory.createPackagePartsProvider(libraryRoots)

@@ -5,38 +5,41 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KaLibraryModuleImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
 public open class KtLibraryModuleBuilder(
-    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
+    private val coreApplicationEnvironment: CoreApplicationEnvironment,
+    private val project: Project,
+    private val isSdk: Boolean,
 ) : KtBinaryModuleBuilder() {
     public lateinit var libraryName: String
     public var librarySources: KaLibrarySourceModule? = null
 
-    override fun build(): KaLibraryModule = build(isSdk = false)
-
     @OptIn(KaExperimentalApi::class)
-    protected fun build(isSdk: Boolean): KaLibraryModule {
+    override fun build(): KaLibraryModule {
         val binaryRoots = getBinaryRoots()
         val binaryVirtualFiles = getBinaryVirtualFiles()
-        val contentScope =
-            StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, binaryVirtualFiles, kotlinCoreProjectEnvironment)
+        val contentScope = contentScope
+            ?: StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+                binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project
+            )
         return KaLibraryModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
             directFriendDependencies,
             contentScope,
             platform,
-            kotlinCoreProjectEnvironment.project,
+            project,
             binaryRoots,
             binaryVirtualFiles,
             libraryName,
@@ -51,5 +54,5 @@ public inline fun KtModuleProviderBuilder.buildKtLibraryModule(init: KtLibraryMo
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtLibraryModuleBuilder(kotlinCoreProjectEnvironment).apply(init).build()
+    return KtLibraryModuleBuilder(coreApplicationEnvironment, project, isSdk = false).apply(init).build()
 }

@@ -40,7 +40,8 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
                 StandaloneProjectFactory.createSearchScopeByLibraryRoots(
                     binaryRoots,
                     emptyList(),
-                    testServices.environmentManager.getProjectEnvironment(),
+                    testServices.environmentManager.getApplicationEnvironment(),
+                    project,
                 ),
                 project,
                 binaryRoots = binaryRoots,

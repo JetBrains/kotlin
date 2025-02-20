@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.GlobalSearchScope
 import java.nio.file.Path
 
 @KtModuleBuilderDsl
 public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
     private val binaryRoots: MutableList<Path> = mutableListOf()
     private val binaryVirtualFiles: MutableList<VirtualFile> = mutableListOf()
+
+    public var contentScope: GlobalSearchScope? = null
 
     /**
      * Adds a [root] to the current library.

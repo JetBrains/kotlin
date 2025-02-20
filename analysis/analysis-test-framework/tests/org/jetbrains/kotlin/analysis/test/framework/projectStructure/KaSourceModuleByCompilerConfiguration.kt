@@ -74,7 +74,8 @@ abstract class KtModuleByCompilerConfiguration(
         val scope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             jdkHomePaths,
             emptyList(),
-            testServices.environmentManager.getProjectEnvironment()
+            testServices.environmentManager.getApplicationEnvironment(),
+            project
         )
 
         KaLibraryModuleImpl(
@@ -181,7 +182,8 @@ private class LibraryByRoots(
     override val contentScope: GlobalSearchScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
         roots,
         emptyList(),
-        testServices.environmentManager.getProjectEnvironment(),
+        testServices.environmentManager.getApplicationEnvironment(),
+        project,
     )
     override val libraryName: String get() = "Test Library $roots"
     override val directRegularDependencies: List<KaModule> get() = emptyList()

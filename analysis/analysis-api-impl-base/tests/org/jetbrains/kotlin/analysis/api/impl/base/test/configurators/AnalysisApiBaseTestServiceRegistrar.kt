@@ -121,14 +121,14 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
         val mainBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             mainBinaryModules.flatMap { it.binaryRoots },
-            testServices.environmentManager.getProjectEnvironment(),
+            testServices.environmentManager.getApplicationEnvironment(),
         ).distinct()
 
         val mainBinaryVirtualFiles = mainBinaryModules.flatMap { it.binaryVirtualFiles }.distinct()
 
         val sharedBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             sharedBinaryDependencies.flatMap { binary -> binary.binaryRoots },
-            testServices.environmentManager.getProjectEnvironment()
+            testServices.environmentManager.getApplicationEnvironment()
         ).distinct()
 
         val sharedBinaryVirtualFiles = sharedBinaryDependencies.flatMap { it.binaryVirtualFiles }.distinct()

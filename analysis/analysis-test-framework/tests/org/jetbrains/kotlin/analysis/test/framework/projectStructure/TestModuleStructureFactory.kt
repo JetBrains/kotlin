@@ -202,15 +202,16 @@ object TestModuleStructureFactory {
         check(libraryFile.exists()) { "Library $libraryFile does not exist" }
 
         val libraryName = libraryFile.nameWithoutExtension
-        val libraryScope = getScopeForLibraryByRoots(listOf(libraryFile), testServices)
+        val libraryScope = getScopeForLibraryByRoots(project, listOf(libraryFile), testServices)
         return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null, isSdk = false)
     }
 
-    fun getScopeForLibraryByRoots(roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {
+    fun getScopeForLibraryByRoots(project: Project, roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {
         return StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             roots,
             emptyList(),
-            testServices.environmentManager.getProjectEnvironment()
+            testServices.environmentManager.getApplicationEnvironment(),
+            project,
         )
     }
 
@@ -299,7 +300,7 @@ private class LibraryCache(
 
         jdkModule?.let { return it }
 
-        val jdkScope = getScopeForLibraryByRoots(jdkRoots, testServices)
+        val jdkScope = getScopeForLibraryByRoots(project, jdkRoots, testServices)
         val jdkModule = KaLibraryModuleImpl(
             "jdk",
             JvmPlatforms.defaultJvmPlatform,

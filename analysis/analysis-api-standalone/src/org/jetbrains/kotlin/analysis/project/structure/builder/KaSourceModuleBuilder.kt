@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
@@ -12,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KaSourceModuleImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.collectSourceFilePaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.hasSuitableExtensionToAnalyse
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -25,7 +26,8 @@ import kotlin.io.path.isDirectory
 
 @KtModuleBuilderDsl
 public class KtSourceModuleBuilder(
-    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
+    private val coreApplicationEnvironment: CoreApplicationEnvironment,
+    private val project: Project,
 ) : KtModuleBuilder() {
     public lateinit var moduleName: String
     public var languageVersionSettings: LanguageVersionSettings =
@@ -33,6 +35,8 @@ public class KtSourceModuleBuilder(
 
     private val sourceRoots: MutableList<Path> = mutableListOf()
     private val sourceVirtualFiles: MutableList<VirtualFile> = mutableListOf()
+
+    public var contentScope: GlobalSearchScope? = null
 
     public fun addSourceRoot(path: Path) {
         sourceRoots.add(path)
@@ -52,16 +56,16 @@ public class KtSourceModuleBuilder(
 
     override fun build(): KaSourceModule {
         val virtualFiles = collectVirtualFilesByRoots()
-        val psiManager = PsiManager.getInstance(kotlinCoreProjectEnvironment.project)
+        val psiManager = PsiManager.getInstance(project)
         val psiFiles = virtualFiles.mapNotNull { psiManager.findFile(it) }
-        val contentScope = GlobalSearchScope.filesScope(kotlinCoreProjectEnvironment.project, virtualFiles)
+        val contentScope = contentScope ?: GlobalSearchScope.filesScope(project, virtualFiles)
         return KaSourceModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
             directFriendDependencies,
             contentScope,
             platform,
-            kotlinCoreProjectEnvironment.project,
+            project,
             moduleName,
             languageVersionSettings,
             psiFiles,
@@ -69,7 +73,7 @@ public class KtSourceModuleBuilder(
     }
 
     private fun collectVirtualFilesByRoots(): List<VirtualFile> {
-        val localFileSystem = kotlinCoreProjectEnvironment.environment.localFileSystem
+        val localFileSystem = coreApplicationEnvironment.localFileSystem
         return buildList {
             for (root in sourceRoots) {
                 val files = when {
@@ -93,5 +97,5 @@ public inline fun KtModuleProviderBuilder.buildKtSourceModule(init: KtSourceModu
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtSourceModuleBuilder(kotlinCoreProjectEnvironment).apply(init).build()
+    return KtSourceModuleBuilder(coreApplicationEnvironment, project).apply(init).build()
 }

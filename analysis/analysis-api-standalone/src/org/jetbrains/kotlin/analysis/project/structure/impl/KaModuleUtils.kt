@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -127,10 +129,11 @@ internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
 
 @OptIn(KaExperimentalApi::class)
 internal fun buildKtModuleProviderByCompilerConfiguration(
-    kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
+    coreApplicationEnvironment: CoreApplicationEnvironment,
+    project: Project,
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
-): KotlinStaticProjectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment) {
+): KotlinStaticProjectStructureProvider = buildProjectStructureProvider(coreApplicationEnvironment, project) {
     val (scriptFiles, _) = ktFiles.partition { it.isScript() }
     val platform = JvmPlatforms.defaultJvmPlatform
 

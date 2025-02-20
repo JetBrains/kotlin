@@ -5,19 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KaLibrarySourceModuleImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
-public class KtLibrarySourceModuleBuilder(
-    private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
-) : KtModuleBuilder() {
+public class KtLibrarySourceModuleBuilder(private val project: Project) : KtModuleBuilder() {
     public lateinit var libraryName: String
     public lateinit var binaryLibrary: KaLibraryModule
     public lateinit var contentScope: GlobalSearchScope
@@ -29,7 +27,7 @@ public class KtLibrarySourceModuleBuilder(
             directFriendDependencies,
             contentScope,
             platform,
-            kotlinCoreProjectEnvironment.project,
+            project,
             libraryName,
             binaryLibrary
         )
@@ -41,5 +39,5 @@ public inline fun KtModuleProviderBuilder.buildKtLibrarySourceModule(init: KtLib
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtLibrarySourceModuleBuilder(kotlinCoreProjectEnvironment).apply(init).build()
+    return KtLibrarySourceModuleBuilder(project).apply(init).build()
 }

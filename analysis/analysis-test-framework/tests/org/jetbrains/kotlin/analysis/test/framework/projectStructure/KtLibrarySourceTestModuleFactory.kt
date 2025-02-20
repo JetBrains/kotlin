@@ -62,7 +62,8 @@ fun createKtLibrarySourceModule(
         StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             libraryJars,
             emptyList(),
-            testServices.environmentManager.getProjectEnvironment(),
+            testServices.environmentManager.getApplicationEnvironment(),
+            project,
         ),
         project,
         binaryRoots = libraryJars,

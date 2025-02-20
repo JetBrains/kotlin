@@ -32,7 +32,7 @@ class AnalysisApiTestCompilerConfiguratorProvider(
     private val allProjectBinaryRoots by lazy {
         StandaloneProjectFactory.getAllBinaryRoots(
             testServices.ktTestModuleStructure.mainAndBinaryKtModules,
-            testServices.environmentManager.getProjectEnvironment()
+            testServices.environmentManager.getApplicationEnvironment()
         )
     }
 
