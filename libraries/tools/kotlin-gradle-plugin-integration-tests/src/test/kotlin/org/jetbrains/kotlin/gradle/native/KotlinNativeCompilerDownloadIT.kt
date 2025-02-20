@@ -154,6 +154,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                     
                 tasks.create("taskWithConfigurationResolvedConfiguration") {
                     dependsOn(":commonizeNativeDistribution")
+                    notCompatibleWithConfigurationCache("Passing the project is not compatible with the configuration cache")
                     doFirst {
                         KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
                     }
