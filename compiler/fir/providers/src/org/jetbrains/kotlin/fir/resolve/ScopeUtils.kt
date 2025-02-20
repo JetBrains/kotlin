@@ -96,6 +96,7 @@ private fun ConeKotlinType.scope(
     is ConeClassLikeType -> classScope(useSiteSession, scopeSession, requiredMembersPhase, lookupTag)
     is ConeTypeParameterType -> {
         val symbol = lookupTag.symbol
+        // TODO KT-75366: `requiredMembersPhase` must be used as a key as well
         scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
             val intersectionType = ConeTypeIntersector.intersectTypes(
                 useSiteSession.typeContext,

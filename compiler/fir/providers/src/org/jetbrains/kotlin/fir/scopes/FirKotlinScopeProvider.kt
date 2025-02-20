@@ -40,10 +40,12 @@ class FirKotlinScopeProvider(
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope {
+        // TODO: KT-75366 this explicit check can be dropped as soon as `getOrBuild` for `USE_SITE` will depend on `memberRequiredPhase`
         memberRequiredPhase?.let {
             klass.lazyResolveToPhaseWithCallableMembers(it)
         }
 
+        // TODO: KT-75366 USE_SITE must depend on `memberRequiredPhase` key and, probably, `declaredMemberScopeDecorator`
         return scopeSession.getOrBuild(useSiteSession to klass.symbol, USE_SITE) {
             // Optimization for enum entries that don't declare any members: just use the supertype scope.
             // Otherwise, we'll get quadratic memory consumption as every enum entry contains every enum entry's name in its callable name

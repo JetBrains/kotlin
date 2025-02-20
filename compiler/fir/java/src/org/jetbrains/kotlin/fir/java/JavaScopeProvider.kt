@@ -71,6 +71,7 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): JavaClassMembersEnhancementScope {
+        // TODO KT-75366: `requiredMembersPhase` must be used as a key as well
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
             val firJavaClass = symbol.fir
             require(firJavaClass is FirJavaClass) {
@@ -101,6 +102,7 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): JavaClassUseSiteMemberScope {
+        // TODO KT-75366: `requiredMembersPhase` must be used as a key as well
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
             val superTypes = if (regularClass.isThereLoopInSupertypes(useSiteSession))
