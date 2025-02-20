@@ -157,13 +157,13 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
     }
 
     @Suppress("UNCHECKED_CAST")
-    return when (val t = this as ConeKotlinType) {
-        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(t.lookupTag, arguments, isMarkedNullable, attributes) as T
-        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(t.original.withArguments(arguments)) as T
-        is ConeRawType -> ConeRawType.create(t.lowerBound.withArguments(arguments), t.upperBound.withArguments(arguments)) as T
+    return when (this) {
+        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, isMarkedNullable, attributes)
+        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withArguments(arguments))
+        is ConeRawType -> ConeRawType.create(lowerBound.withArguments(arguments), upperBound.withArguments(arguments))
         is ConeDynamicType -> error()
-        is ConeFlexibleType -> ConeFlexibleType(t.lowerBound.withArguments(arguments), t.upperBound.withArguments(arguments)) as T
-        is ConeErrorType -> ConeErrorType(t.diagnostic, t.isUninferredParameter, typeArguments = arguments, attributes = attributes) as T
+        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withArguments(arguments), upperBound.withArguments(arguments))
+        is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, typeArguments = arguments, attributes = attributes)
         is ConeIntersectionType,
         is ConeTypeVariableType,
         is ConeStubType,
@@ -171,7 +171,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         is ConeCapturedType,
         is ConeLookupTagBasedType, // ConeLookupTagBasedType is in fact not possible (covered by previous ones)
         -> error()
-    }
+    } as T
 }
 
 inline fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection): T {
@@ -202,7 +202,8 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         // Attributes for stub types are not supported, and it's not obvious if it should
         is ConeStubType -> this
         is ConeIntegerLiteralType -> this
-        else -> errorWithAttachment("Not supported: ${this::class}") {
+        // ConeLookupTagBasedType cannot be sealed so we need the extra branch to make the when exhaustive
+        is ConeLookupTagBasedType -> errorWithAttachment("Not supported: ${this::class}") {
             withConeTypeEntry("type", this@withAttributes)
         }
     } as T
@@ -281,7 +282,8 @@ fun <T : ConeKotlinType> T.withNullability(
 
         is ConeIntegerLiteralConstantType -> ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullable)
         is ConeIntegerConstantOperatorType -> ConeIntegerConstantOperatorTypeImpl(isUnsigned, nullable)
-        else -> error("sealed: ${this::class}")
+        // ConeLookupTagBasedType cannot be sealed so we need the extra branch to make the when exhaustive
+        is ConeLookupTagBasedType -> error("sealed: ${this::class}")
     } as T
 }
 
