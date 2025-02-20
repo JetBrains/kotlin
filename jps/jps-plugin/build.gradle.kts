@@ -156,11 +156,11 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
  *    └── netty-codec-http2:* → 4.1.118.Final
  *
  * Mitigated Vulnerabilities:
+ * - CVE-2025-25193: Denial of Service Vulnerability
  * - CVE-2024-47535: Network security vulnerability
  * - CVE-2024-29025: Remote code execution risk
  * - CVE-2023-4586: Information disclosure vulnerability
  * - CVE-2023-34462: Potential denial of service
- * - CVE-2025-25193: Denial of Service Vulnerability
  *
  * This configuration overrides versions regardless of the declaring dependency.
  */
