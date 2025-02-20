@@ -630,6 +630,7 @@ psi/KtLambdaExpression.java:KtLambdaExpression:@Nullable getBodyExpression()
 psi/KtLambdaExpression.java:KtLambdaExpression:@Nullable getRightCurlyBrace()
 psi/KtLambdaExpression.java:KtLambdaExpression:@SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins shouldChangeModificationCount(PsiElement)
 psi/KtLambdaExpression.java:KtLambdaExpression:KtLambdaExpression(CharSequence)
+psi/KtLambdaExpression.java:KtLambdaExpression:final isTrailingLambdaOnNewLine()
 psi/KtLambdaExpression.java:KtLambdaExpression:hasDeclaredReturnType()
 psi/KtLiteralStringTemplateEntry.java:KtLiteralStringTemplateEntry
 psi/KtLiteralStringTemplateEntry.java:KtLiteralStringTemplateEntry:KtLiteralStringTemplateEntry(ASTNode)
