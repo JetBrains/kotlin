@@ -217,7 +217,7 @@ class FirSignatureEnhancement(
                     symbol = FirJavaOverriddenSyntheticPropertySymbol(propertySymbol.callableId, propertySymbol.getterId)
                     delegateGetter = enhancedGetterSymbol?.fir as FirSimpleFunction? ?: getterDelegate
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction? ?: setterDelegate
-                    status = firElement.status
+                    customStatus = firElement.status
                     deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
                     dispatchReceiverType = firElement.dispatchReceiverType
                 }.symbol

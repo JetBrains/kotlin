@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.Name
@@ -22,7 +21,10 @@ class FirSyntheticPropertyBuilder {
     lateinit var delegateGetter: FirSimpleFunction
     lateinit var deprecationsProvider: DeprecationsProvider
 
-    var status: FirDeclarationStatus? = null
+    /**
+     * The values should be `null` for cases where [delegateGetter] values should be reused.
+     */
+    var customStatus: FirDeclarationStatus? = null
     var delegateSetter: FirSimpleFunction? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
 
@@ -30,7 +32,7 @@ class FirSyntheticPropertyBuilder {
     @OptIn(FirImplementationDetail::class)
     fun build(): FirSyntheticProperty = FirSyntheticProperty(
         moduleData, name, isVar = delegateSetter != null, symbol = symbol,
-        status = status ?: delegateGetter.status,
+        customStatus = customStatus,
         getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true, symbol),
         setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false, symbol) },
         dispatchReceiverType = dispatchReceiverType ?: delegateGetter.dispatchReceiverType,

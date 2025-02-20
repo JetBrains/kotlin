@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: C:foo;getFoo
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_REVERSED_RESOLVE
 // ISSUE: KT-75323
 // FILE: A.java
 public interface A {
