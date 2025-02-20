@@ -189,7 +189,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeDestructuringDeclarationsOnTopLevel -> null // TODO Currently a parsing error. Would be better to report here instead KT-58563
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, session)
     is ConeCannotInferValueParameterType -> when {
-        isTopLevelLambda -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE.createOn(source)
+        isTopLevelLambda -> FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE.createOn(source, session)
         else -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, session)
     }
     is ConeCannotInferReceiverParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source, session)
@@ -447,7 +447,7 @@ private fun mapInapplicableCandidateError(
             )
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source, session)
             is TooManyArguments ->
-                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument)
+                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument, session)
                     ?: FirErrors.TOO_MANY_ARGUMENTS.createOn(
                 rootCause.argument.source ?: source,
                 rootCause.function.symbol,
@@ -478,7 +478,7 @@ private fun mapInapplicableCandidateError(
                 session
             )
             is ManyLambdaExpressionArguments ->
-                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument)
+                unexpectedTrailingLambdaOnNewLineOrNull(rootCause.argument, session)
                     ?: FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(
                 rootCause.argument.source ?: source,
                 session
@@ -546,12 +546,12 @@ private fun mapInapplicableCandidateError(
     }
 }
 
-private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression): KtSimpleDiagnostic? {
+private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, session: FirSession): KtSimpleDiagnostic? {
     return when (val argumentSource = argument.source) {
         is KtPsiSourceElement if argumentSource.psi.let { it is KtLambdaExpression && it.isTrailingLambdaOnNewLine }
-            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource)
+            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
         is KtLightSourceElement if argumentSource.isTrailingLambdaOnNewLine()
-            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource)
+            -> FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.createOn(argumentSource, session)
         else
             -> null
     }
