@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
@@ -159,17 +160,17 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     override fun processModule(moduleData: ModuleData): ProcessorAction {
         val disposable = Disposer.newDisposable("Disposable for ${FirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
 
+        val configuration = createDefaultConfiguration(moduleData)
+        configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
+        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         try {
-            val configuration = createDefaultConfiguration(moduleData)
-            configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
-            val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
             PsiElementFinder.EP.getPoint(environment.project)
                 .unregisterExtension(JavaElementFinder::class.java)
-
             runAnalysis(moduleData, environment)
         } finally {
-            Disposer.dispose(disposable)
+            environment.projectEnvironment.environment.application.runWriteAction {
+                Disposer.dispose(disposable)
+            }
         }
 
         if (bench.hasFiles && FAIL_FAST) return ProcessorAction.STOP
