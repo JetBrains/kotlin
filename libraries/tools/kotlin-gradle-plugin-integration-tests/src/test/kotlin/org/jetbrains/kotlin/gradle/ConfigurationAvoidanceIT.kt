@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.internal.artifacts.configurations.ConfigurationInternal
-import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -107,7 +105,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
                     ":Lib" to setOf("clean"),
                     ":Test" to setOf("clean"),
                 ),
-                configuredTasks().buildAndReturn("--dry-run"),
+                configuredTasks()
+                    .buildAndReturn(
+                        "--dry-run",
+                        deriveBuildOptions = { buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion) }
+                    ),
             )
             build("help")
         }

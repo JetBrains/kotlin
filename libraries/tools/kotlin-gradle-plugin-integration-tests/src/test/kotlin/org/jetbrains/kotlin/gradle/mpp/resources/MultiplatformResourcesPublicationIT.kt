@@ -154,7 +154,10 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             providedJdk = providedJdk,
         )
 
-        project.build(":publishAndroidReleasePublicationToMavenRepository")
+        project.build(
+            ":publishAndroidReleasePublicationToMavenRepository",
+            buildOptions = project.buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)
+        )
         val publishedAarPath = "repo/test/publication-android/1.0/publication-android-1.0.aar"
         val classesInAar = project.projectPath.resolve("classesInAar")
         val classesJar = "classes.jar"

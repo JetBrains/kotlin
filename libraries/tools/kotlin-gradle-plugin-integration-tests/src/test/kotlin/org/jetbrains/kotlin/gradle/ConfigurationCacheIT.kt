@@ -399,12 +399,14 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
         checkUpToDateOnRebuild: Boolean = true,
+        suppressAgpWarnings: Boolean = false,
         buildOptions: BuildOptions = this.buildOptions,
     ) {
         assertSimpleConfigurationCacheScenarioWorks(
             *taskNames,
             executedTaskNames = executedTaskNames,
             checkUpToDateOnRebuild = checkUpToDateOnRebuild,
+            suppressAgpWarnings = suppressAgpWarnings,
             buildOptions = buildOptions,
         )
     }

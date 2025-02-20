@@ -43,7 +43,12 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             prepareProjectDependencies(gradleVersion, providedJdk, androidVersion).forEach {
                 include(it.second, it.first)
             }
-            preparePublishedDependencies(gradleVersion, providedJdk, androidVersion).forEach {
+            preparePublishedDependencies(
+                gradleVersion,
+                providedJdk,
+                androidVersion,
+                suppressAgpWarning = true,
+            ).forEach {
                 addPublishedProjectToRepositories(it)
             }
 
@@ -144,9 +149,10 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         providedJdk: JdkVersions.ProvidedJdk,
         androidVersion: String,
+        suppressAgpWarning: Boolean = false,
     ): List<PublishedProject> {
         val publishedProjects = mutableMapOf<String, PublishedProject>()
-        dependencies.reversed().forEach { dependencyProject ->
+        dependencies.reversed().forEachIndexed { index, dependencyProject ->
             val published = resourceProducer(
                 gradleVersion,
                 providedJdk,
@@ -170,7 +176,13 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             }.publish(
                 publisherConfiguration = PublisherConfiguration(group = "test"),
                 deriveBuildOptions = {
-                    buildOptions.copy(androidVersion = androidVersion)
+                    if (suppressAgpWarning && index == 0) {
+                        buildOptions
+                            .copy(androidVersion = androidVersion)
+                            .suppressWarningFromAgpWithGradle813(gradleVersion)
+                    } else {
+                        buildOptions.copy(androidVersion = androidVersion)
+                    }
                 }
             )
             publishedProjects[dependencyProject.name] = published

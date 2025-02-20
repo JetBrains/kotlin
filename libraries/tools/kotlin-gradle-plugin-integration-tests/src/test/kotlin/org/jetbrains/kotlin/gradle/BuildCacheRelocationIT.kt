@@ -134,7 +134,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                         "$module:compile$flavor${buildType}Kotlin"
                     }
                 }
-            }
+            },
+            suppressAgpWarning = true,
         )
     }
 
@@ -195,7 +196,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                 listOf("kapt", "kaptGenerateStubs", "compile").map { kotlinTask ->
                     ":app:$kotlinTask${buildType}Kotlin"
                 }
-            }
+            },
+            suppressAgpWarning = true,
         )
     }
 
@@ -291,9 +293,19 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         secondProject: TestProject,
         tasksToExecute: List<String>,
         cacheableTasks: List<String>,
+        suppressAgpWarning: Boolean = false,
         additionalAssertions: BuildResult.() -> Unit = {},
     ) {
-        firstProject.build(*tasksToExecute.toTypedArray()) {
+        val firstProjectBuildOptions = if (suppressAgpWarning) {
+            firstProject.buildOptions.suppressWarningFromAgpWithGradle813(firstProject.gradleVersion)
+        } else {
+            firstProject.buildOptions
+        }
+
+        firstProject.build(
+            *tasksToExecute.toTypedArray(),
+            buildOptions = firstProjectBuildOptions,
+        ) {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
             additionalAssertions()
         }

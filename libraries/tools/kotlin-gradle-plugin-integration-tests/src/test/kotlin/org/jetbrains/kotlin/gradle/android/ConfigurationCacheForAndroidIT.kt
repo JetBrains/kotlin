@@ -38,7 +38,8 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
             testConfigurationCacheOf(
                 ":app:compileDebugKotlin",
                 ":app:kaptDebugKotlin",
-                ":app:kaptGenerateStubsDebugKotlin"
+                ":app:kaptGenerateStubsDebugKotlin",
+                suppressAgpWarnings = true,
             )
         }
     }
@@ -58,7 +59,8 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         ) {
             testConfigurationCacheOf(
                 ":Lib:compileFlavor1DebugKotlin",
-                ":Android:compileFlavor1DebugKotlin"
+                ":Android:compileFlavor1DebugKotlin",
+                suppressAgpWarnings = true,
             )
         }
     }
@@ -78,7 +80,8 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         ) {
             testConfigurationCacheOf(
                 ":app:compileDebugAndroidTestKotlin",
-                ":app:compileDebugUnitTestKotlin"
+                ":app:compileDebugUnitTestKotlin",
+                suppressAgpWarnings = true,
             )
         }
     }
