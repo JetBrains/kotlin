@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
+import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.same
 
 class FirOverloadByLambdaReturnTypeResolver(
@@ -86,7 +89,9 @@ class FirOverloadByLambdaReturnTypeResolver(
 
         val originalCalleeReference = call.calleeReference
 
-        for (candidate in lambdas.keys) {
+        val inferenceSession = components.context.inferenceSession
+        val additionalBindings = mutableMapOf<TypeConstructorMarker, KotlinTypeMarker>()
+        for ((candidate, lambda) in lambdas) {
             call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
             callCompleter.runCompletionForCall(
                 candidate,
@@ -94,11 +99,20 @@ class FirOverloadByLambdaReturnTypeResolver(
                 call,
                 components.initialTypeOfCandidate(candidate)
             )
+            if (inferenceSession is FirPCLAInferenceSession) {
+                for (inputType in lambda.inputTypes) {
+                    inferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(
+                        inputType, myCs = candidate.system, overloadResolutionMode = true
+                    )?.let {
+                        additionalBindings += it
+                    }
+                }
+            }
         }
 
         try {
             val inputTypesAreSame = lambdas.entries.same { (candidate, lambda) ->
-                val substitutor = candidate.system.buildCurrentSubstitutor() as ConeSubstitutor
+                val substitutor = candidate.system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
                 lambda.inputTypes.map { substitutor.substituteOrSelf(it) }
             }
             if (!inputTypesAreSame) return null
@@ -120,10 +134,12 @@ class FirOverloadByLambdaReturnTypeResolver(
                 forOverloadByLambdaReturnType = true,
                 // we explicitly decided not to use PCLA in that case because this case didn't work before in K1
                 withPCLASession = false,
+                additionalBindingsFromOverloadResolution = additionalBindings
             )
             while (iterator.hasNext()) {
                 val (candidate, atom) = iterator.next()
                 call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
+                val substitutor = candidate.system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
                 postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
                     candidate.system,
                     atom,
@@ -140,7 +156,7 @@ class FirOverloadByLambdaReturnTypeResolver(
                             else it.makeFreshCopy()
                         }
                     ),
-                )
+                ) { substitutor.substituteOrSelf(it) }
             }
 
             val errorCandidates = mutableSetOf<Candidate>()

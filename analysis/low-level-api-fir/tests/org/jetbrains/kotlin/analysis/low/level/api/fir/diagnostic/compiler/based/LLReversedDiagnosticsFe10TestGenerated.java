@@ -21579,6 +21579,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
           public void testKt74819c() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt74819c.kt");
           }
+
+          @Test
+          @TestMetadata("kt74819d.kt")
+          public void testKt74819d() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt74819d.kt");
+          }
+
+          @Test
+          @TestMetadata("kt74819f.kt")
+          public void testKt74819f() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt74819f.kt");
+          }
         }
 
         @Nested
