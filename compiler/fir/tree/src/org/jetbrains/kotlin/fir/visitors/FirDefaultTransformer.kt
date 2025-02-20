@@ -27,20 +27,20 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         return transformResolvedTypeRef(errorTypeRef, data)
     }
 
-    override fun transformTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): FirTypeRef {
-        return transformTypeRef(typeRefWithNullability, data)
+    override fun transformUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: D): FirTypeRef {
+        return transformTypeRef(unresolvedTypeRef, data)
     }
 
     override fun transformDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef, data: D): FirTypeRef {
-        return transformTypeRefWithNullability(dynamicTypeRef, data)
+        return transformUnresolvedTypeRef(dynamicTypeRef, data)
     }
 
     override fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): FirTypeRef {
-        return transformTypeRefWithNullability(functionTypeRef, data)
+        return transformUnresolvedTypeRef(functionTypeRef, data)
     }
 
     override fun transformUserTypeRef(userTypeRef: FirUserTypeRef, data: D): FirTypeRef {
-        return transformTypeRefWithNullability(userTypeRef, data)
+        return transformUnresolvedTypeRef(userTypeRef, data)
     }
 
     override fun transformIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): FirTypeRef {

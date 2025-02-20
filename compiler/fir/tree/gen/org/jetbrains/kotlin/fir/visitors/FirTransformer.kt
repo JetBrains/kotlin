@@ -1075,12 +1075,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformResolvedTypeRef(resolvedTypeRef, data)
     }
 
-    open fun transformTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): FirTypeRef {
-        return transformElement(typeRefWithNullability, data)
+    open fun transformUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: D): FirTypeRef {
+        return transformElement(unresolvedTypeRef, data)
     }
 
-    final override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): FirTypeRef {
-        return transformTypeRefWithNullability(typeRefWithNullability, data)
+    final override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: D): FirTypeRef {
+        return transformUnresolvedTypeRef(unresolvedTypeRef, data)
     }
 
     open fun transformUserTypeRef(userTypeRef: FirUserTypeRef, data: D): FirTypeRef {

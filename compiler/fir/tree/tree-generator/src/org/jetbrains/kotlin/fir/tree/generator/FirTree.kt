@@ -1142,7 +1142,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
     }
 
-    val typeRefWithNullability: Element by element(TypeRefElement) {
+    val unresolvedTypeRef: Element by sealedElement(TypeRefElement) {
         parent(typeRef)
 
         +field("source", sourceElementType, nullable = false)
@@ -1150,13 +1150,13 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val userTypeRef: Element by element(TypeRefElement) {
-        parent(typeRefWithNullability)
+        parent(unresolvedTypeRef)
 
         +listField("qualifier", firQualifierPartType)
     }
 
     val functionTypeRef: Element by element(TypeRefElement) {
-        parent(typeRefWithNullability)
+        parent(unresolvedTypeRef)
 
         +field("receiverTypeRef", typeRef, nullable = true)
         +listField("parameters", functionTypeParameter)
@@ -1166,7 +1166,7 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val dynamicTypeRef: Element by element(TypeRefElement) {
-        parent(typeRefWithNullability)
+        parent(unresolvedTypeRef)
     }
 
     val implicitTypeRef: Element by element(TypeRefElement) {
@@ -1193,7 +1193,7 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val intersectionTypeRef: Element by element(TypeRefElement) {
-        parent(typeRefWithNullability)
+        parent(unresolvedTypeRef)
 
         +field("leftType", typeRef)
         +field("rightType", typeRef)

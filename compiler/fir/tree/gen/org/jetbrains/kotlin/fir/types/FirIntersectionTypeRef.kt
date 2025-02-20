@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.intersectionTypeRef]
  */
-abstract class FirIntersectionTypeRef : FirTypeRefWithNullability() {
+abstract class FirIntersectionTypeRef : FirUnresolvedTypeRef() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val customRenderer: Boolean
     abstract override val source: KtSourceElement

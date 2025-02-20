@@ -299,20 +299,20 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitTypeRef(resolvedTypeRef)
     }
 
-    override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability) {
-        visitTypeRef(typeRefWithNullability)
+    override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef) {
+        visitTypeRef(unresolvedTypeRef)
     }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
-        visitTypeRefWithNullability(userTypeRef)
+        visitUnresolvedTypeRef(userTypeRef)
     }
 
     override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef) {
-        visitTypeRefWithNullability(functionTypeRef)
+        visitUnresolvedTypeRef(functionTypeRef)
     }
 
     override fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef) {
-        visitTypeRefWithNullability(dynamicTypeRef)
+        visitUnresolvedTypeRef(dynamicTypeRef)
     }
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
@@ -324,7 +324,7 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     }
 
     override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef) {
-        visitTypeRefWithNullability(intersectionTypeRef)
+        visitUnresolvedTypeRef(intersectionTypeRef)
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {

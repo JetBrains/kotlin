@@ -63,8 +63,8 @@ class TypeCheckersDiagnosticComponent(
         checkers.allTypeRefCheckers.check(implicitTypeRef, data)
     }
 
-    override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: CheckerContext) {
-        checkers.allTypeRefCheckers.check(typeRefWithNullability, data)
+    override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: CheckerContext) {
+        checkers.allTypeRefCheckers.check(unresolvedTypeRef, data)
     }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: CheckerContext) {

@@ -230,17 +230,17 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): R =
         visitTypeRef(resolvedTypeRef, data)
 
-    override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): R =
-        visitTypeRef(typeRefWithNullability, data)
+    override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: D): R =
+        visitTypeRef(unresolvedTypeRef, data)
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R =
-        visitTypeRefWithNullability(userTypeRef, data)
+        visitUnresolvedTypeRef(userTypeRef, data)
 
     override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: D): R =
-        visitTypeRefWithNullability(functionTypeRef, data)
+        visitUnresolvedTypeRef(functionTypeRef, data)
 
     override fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef, data: D): R =
-        visitTypeRefWithNullability(dynamicTypeRef, data)
+        visitUnresolvedTypeRef(dynamicTypeRef, data)
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): R =
         visitTypeRef(implicitTypeRef, data)
@@ -249,7 +249,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
         visitResolvedNamedReference(resolvedErrorReference, data)
 
     override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): R =
-        visitTypeRefWithNullability(intersectionTypeRef, data)
+        visitUnresolvedTypeRef(intersectionTypeRef, data)
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R =
         visitQualifiedAccessExpression(thisReceiverExpression, data)

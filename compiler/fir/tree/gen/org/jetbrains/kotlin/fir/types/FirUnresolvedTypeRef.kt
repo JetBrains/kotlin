@@ -15,22 +15,22 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeRefWithNullability]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.unresolvedTypeRef]
  */
-abstract class FirTypeRefWithNullability : FirTypeRef() {
+sealed class FirUnresolvedTypeRef : FirTypeRef() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val customRenderer: Boolean
     abstract override val source: KtSourceElement
     abstract val isMarkedNullable: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitTypeRefWithNullability(this, data)
+        visitor.visitUnresolvedTypeRef(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformTypeRefWithNullability(this, data) as E
+        transformer.transformUnresolvedTypeRef(this, data) as E
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeRefWithNullability
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUnresolvedTypeRef
 }

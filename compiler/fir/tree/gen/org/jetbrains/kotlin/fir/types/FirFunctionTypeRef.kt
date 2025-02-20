@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.functionTypeRef]
  */
-abstract class FirFunctionTypeRef : FirTypeRefWithNullability() {
+abstract class FirFunctionTypeRef : FirUnresolvedTypeRef() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val customRenderer: Boolean
     abstract override val source: KtSourceElement

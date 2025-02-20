@@ -1075,12 +1075,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(resolvedTypeRef)
     }
 
-    final override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: Nothing?) {
-        visitTypeRefWithNullability(typeRefWithNullability)
+    final override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: Nothing?) {
+        visitUnresolvedTypeRef(unresolvedTypeRef)
     }
 
-    open fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability) {
-        visitElement(typeRefWithNullability)
+    open fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef) {
+        visitElement(unresolvedTypeRef)
     }
 
     final override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: Nothing?) {

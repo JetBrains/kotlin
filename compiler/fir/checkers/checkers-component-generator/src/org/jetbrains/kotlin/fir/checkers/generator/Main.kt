@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRefWithNullability
+import org.jetbrains.kotlin.fir.types.FirUnresolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import java.io.File
 
@@ -110,7 +110,7 @@ fun main(args: Array<String>) {
         generateCheckersComponents(checkersPath, typePackage, "FirTypeChecker", FirTypeRef::class, FirTypeRef::class) {
             alias<FirTypeRef>("TypeRefChecker").let {
                 visitAlso<FirImplicitTypeRef>(it)
-                visitAlso<FirTypeRefWithNullability>(it)
+                visitAlso<FirUnresolvedTypeRef>(it)
                 visitAlso<FirUserTypeRef>(it)
                 visitAlso<FirDynamicTypeRef>(it)
             }

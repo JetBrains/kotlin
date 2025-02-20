@@ -416,8 +416,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): R =
         visitElement(resolvedTypeRef, data)
 
-    open fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): R =
-        visitElement(typeRefWithNullability, data)
+    open fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef, data: D): R =
+        visitElement(unresolvedTypeRef, data)
 
     open fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R =
         visitElement(userTypeRef, data)

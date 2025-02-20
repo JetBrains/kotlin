@@ -846,8 +846,8 @@ class FirRenderer(
             print("<implicit>")
         }
 
-        override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability) {
-            if (typeRefWithNullability.isMarkedNullable) {
+        override fun visitUnresolvedTypeRef(unresolvedTypeRef: FirUnresolvedTypeRef) {
+            if (unresolvedTypeRef.isMarkedNullable) {
                 print("?")
             }
         }
@@ -855,7 +855,7 @@ class FirRenderer(
         override fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef) {
             annotationRenderer?.render(dynamicTypeRef)
             print("<dynamic>")
-            visitTypeRefWithNullability(dynamicTypeRef)
+            visitUnresolvedTypeRef(dynamicTypeRef)
         }
 
         override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef) {
@@ -889,7 +889,7 @@ class FirRenderer(
             print(" -> ")
             functionTypeRef.returnTypeRef.accept(this)
             print(" )")
-            visitTypeRefWithNullability(functionTypeRef)
+            visitUnresolvedTypeRef(functionTypeRef)
         }
 
         @OptIn(AllowedToUsedOnlyInK1::class)
@@ -917,7 +917,7 @@ class FirRenderer(
                     print(">")
                 }
             }
-            visitTypeRefWithNullability(userTypeRef)
+            visitUnresolvedTypeRef(userTypeRef)
         }
 
         override fun visitTypeProjection(typeProjection: FirTypeProjection) {
