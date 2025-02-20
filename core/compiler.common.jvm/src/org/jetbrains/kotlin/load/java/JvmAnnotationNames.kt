@@ -86,6 +86,8 @@ val NOT_NULL_ANNOTATIONS: Set<FqName> = setOf(
     FqName("org.eclipse.jdt.annotation.NonNull"),
     // Lombok
     FqName("lombok.NonNull"),
+    // jakarta
+    FqName("jakarta.annotation.Nonnull"),
 )
 
 val NULLABLE_ANNOTATIONS: Set<FqName> = setOf(
@@ -115,6 +117,8 @@ val NULLABLE_ANNOTATIONS: Set<FqName> = setOf(
     FqName("io.reactivex.rxjava3.annotations.Nullable"),
     // Eclipse JDT
     FqName("org.eclipse.jdt.annotation.Nullable"),
+    // jakarta
+    FqName("jakarta.annotation.Nullable"),
 )
 
 val FORCE_FLEXIBILITY_ANNOTATIONS: Set<FqName> = setOf(
