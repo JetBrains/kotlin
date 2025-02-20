@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+edition = "2023";
+
 package org.jetbrains.kotlin.metadata.builtins;
 
 import "core/metadata/src/metadata.proto";
@@ -21,10 +23,10 @@ import "core/metadata/src/metadata.proto";
 // Changes to this proto are tracked by BuiltInsBinaryVersion version. See BuiltInsBinaryVersion KDoc.
 
 option java_outer_classname = "BuiltInsProtoBuf";
-option optimize_for = LITE_RUNTIME;
+option features.utf8_validation = NONE;
 
 extend Package {
-  optional int32 package_fq_name = 151;
+  int32 package_fq_name = 151;
 }
 
 extend Class {
@@ -43,7 +45,7 @@ extend Property {
   repeated Annotation property_annotation = 150;
   repeated Annotation property_getter_annotation = 152;
   repeated Annotation property_setter_annotation = 153;
-  optional Annotation.Argument.Value compile_time_value = 151;
+  Annotation.Argument.Value compile_time_value = 151;
 }
 
 extend EnumEntry {

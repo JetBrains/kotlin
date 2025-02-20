@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
+edition = "2023";
+
 package org.jetbrains.kotlin.serialization.js.ast;
 
 option java_outer_classname = "JsAstProtoBuf";
-option optimize_for = LITE_RUNTIME;
+option features.utf8_validation = NONE;
 
 
 message Location {
-    required int32 startLine = 1;
-    required int32 startChar = 2;
+    int32 startLine = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 startChar = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 enum SideEffects {
+    option features.enum_type = CLOSED;
     AFFECTS_STATE = 1;
     DEPENDS_ON_STATE = 2;
     PURE = 3;
 }
 
 message JsImportedModule {
-    required int32 external_name = 1;
-    required int32 internal_name = 2;
-    optional Expression plain_reference = 3;
+    int32 external_name = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 internal_name = 2 [features.field_presence = LEGACY_REQUIRED];
+    Expression plain_reference = 3;
 }
 
 
@@ -42,11 +45,11 @@ message JsImportedModule {
 //
 
 message Expression {
-    optional int32 fileId = 1;
-    optional Location location = 2;
-    optional bool synthetic = 3 [default = false];
-    optional SideEffects side_effects = 4 [default = AFFECTS_STATE];
-    optional JsImportedModule local_alias = 5;
+    int32 fileId = 1;
+    Location location = 2;
+    bool synthetic = 3 [default = false];
+    SideEffects side_effects = 4 [default = AFFECTS_STATE];
+    JsImportedModule local_alias = 5;
     repeated Comment before_comments = 6;
     repeated Comment after_comments = 7;
 
@@ -93,8 +96,8 @@ message FalseLiteral {
 }
 
 message RegExpLiteral {
-    required int32 pattern_string_id = 1;
-    optional int32 flags_string_id = 2;
+    int32 pattern_string_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 flags_string_id = 2;
 }
 
 message ArrayLiteral {
@@ -103,23 +106,24 @@ message ArrayLiteral {
 
 message ObjectLiteral {
     repeated ObjectLiteralEntry entry = 1;
-    optional bool multiline = 2 [default = true];
+    bool multiline = 2 [default = true];
 }
 
 message ObjectLiteralEntry {
-    required Expression key = 1;
-    required Expression value = 2;
+    Expression key = 1 [features.field_presence = LEGACY_REQUIRED];
+    Expression value = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message Function {
     repeated Parameter parameter = 1;
-    optional int32 name_id = 2;
-    required Statement body = 3;
-    optional bool local = 4 [default = false];
+    int32 name_id = 2;
+    Statement body = 3 [features.field_presence = LEGACY_REQUIRED];
+    bool local = 4 [default = false];
     repeated Modifier modifier = 5;
-    optional bool is_es6_arrow = 6 [default = false];
+    bool is_es6_arrow = 6 [default = false];
 
     enum Modifier {
+        option features.enum_type = CLOSED;
         STATIC = 1;
         GET = 2;
         SET = 3;
@@ -128,15 +132,15 @@ message Function {
 }
 
 message Class {
-    optional int32 name_id = 1;
-    optional Expression super_expression = 2;
-    optional Function constructor = 3;
+    int32 name_id = 1;
+    Expression super_expression = 2;
+    Function constructor = 3;
     repeated Function member = 4;
 }
 
 message Parameter {
-    required int32 name_id = 1;
-    optional bool has_default_value = 2 [default = false];
+    int32 name_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    bool has_default_value = 2 [default = false];
 }
 
 message DocComment {
@@ -144,7 +148,7 @@ message DocComment {
 }
 
 message DocCommentTag {
-    required int32 name_id = 1;
+    int32 name_id = 1 [features.field_presence = LEGACY_REQUIRED];
     oneof value {
         int32 value_string_id = 2;
         Expression expression = 3;
@@ -152,16 +156,17 @@ message DocCommentTag {
 }
 
 message Comment {
-    required string text = 1;
-    required bool multiline = 2;
+    string text = 1 [features.field_presence = LEGACY_REQUIRED];
+    bool multiline = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message BinaryOperation {
-    required Expression left = 1;
-    required Expression right = 2;
-    required Type type = 3;
+    Expression left = 1 [features.field_presence = LEGACY_REQUIRED];
+    Expression right = 2 [features.field_presence = LEGACY_REQUIRED];
+    Type type = 3 [features.field_presence = LEGACY_REQUIRED];
 
     enum Type {
+        option features.enum_type = CLOSED;
         MUL = 1;
         DIV = 2;
         MOD = 3;
@@ -202,11 +207,12 @@ message BinaryOperation {
 }
 
 message UnaryOperation {
-    required Expression operand = 1;
-    required Type type = 2;
-    required bool postfix = 3;
+    Expression operand = 1 [features.field_presence = LEGACY_REQUIRED];
+    Type type = 2 [features.field_presence = LEGACY_REQUIRED];
+    bool postfix = 3 [features.field_presence = LEGACY_REQUIRED];
 
     enum Type {
+        option features.enum_type = CLOSED;
         BIT_NOT = 1;
         DEC = 2;
         DELETE = 3;
@@ -220,36 +226,36 @@ message UnaryOperation {
 }
 
 message Conditional {
-    required Expression test_expression = 1;
-    required Expression then_expression = 2;
-    required Expression else_expression = 3;
+    Expression test_expression = 1 [features.field_presence = LEGACY_REQUIRED];
+    Expression then_expression = 2 [features.field_presence = LEGACY_REQUIRED];
+    Expression else_expression = 3 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message ArrayAccess {
-    required Expression array = 1;
-    required Expression index = 2;
+    Expression array = 1 [features.field_presence = LEGACY_REQUIRED];
+    Expression index = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message NameReference {
-    required int32 name_id = 1;
-    optional Expression qualifier = 2;
-    optional InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
+    int32 name_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    Expression qualifier = 2;
+    InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
 }
 
 message PropertyReference {
-    required int32 string_id = 1;
-    optional Expression qualifier = 2;
-    optional InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
+    int32 string_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    Expression qualifier = 2;
+    InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
 }
 
 message Invocation {
-    required Expression qualifier = 1;
+    Expression qualifier = 1 [features.field_presence = LEGACY_REQUIRED];
     repeated Expression argument = 2;
-    optional InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
+    InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
 }
 
 message Instantiation {
-    required Expression qualifier = 1;
+    Expression qualifier = 1 [features.field_presence = LEGACY_REQUIRED];
     repeated Expression argument = 2;
 }
 
@@ -258,9 +264,9 @@ message Instantiation {
 //
 
 message Statement {
-    optional int32 fileId = 1;
-    optional Location location = 2;
-    optional bool synthetic = 3 [default = false];
+    int32 fileId = 1;
+    Location location = 2;
+    bool synthetic = 3 [default = false];
     repeated Comment before_comments = 4;
     repeated Comment after_comments = 5;
 
@@ -289,40 +295,40 @@ message Statement {
 }
 
 message Return {
-    optional Expression value = 1;
+    Expression value = 1;
 }
 
 message Throw {
-    required Expression exception = 1;
+    Expression exception = 1 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message Break {
-    optional int32 label_id = 1;
+    int32 label_id = 1;
 }
 
 message Continue {
-    optional int32 label_id = 1;
+    int32 label_id = 1;
 }
 
 message Debugger {
 }
 
 message ExpressionStatement {
-    required Expression expression = 1;
-    optional int32 exported_tag_id = 2;
+    Expression expression = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 exported_tag_id = 2;
 }
 
 message Vars {
     repeated VarDeclaration declaration = 1;
-    optional bool multiline = 2 [default = false];
-    optional int32 exported_package_id = 3;
+    bool multiline = 2 [default = false];
+    int32 exported_package_id = 3;
 }
 
 message VarDeclaration {
-    required int32 name_id = 1;
-    optional Expression initial_value = 2;
-    optional int32 fileId = 3;
-    optional Location location = 4;
+    int32 name_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    Expression initial_value = 2;
+    int32 fileId = 3;
+    Location location = 4;
 }
 
 message Block {
@@ -334,37 +340,37 @@ message CompositeBlock {
 }
 
 message Label {
-    required int32 nameId = 1;
-    required Statement inner_statement = 2;
+    int32 nameId = 1 [features.field_presence = LEGACY_REQUIRED];
+    Statement inner_statement = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message If {
-    required Expression condition = 1;
-    required Statement then_statement = 2;
-    optional Statement else_statement = 3;
+    Expression condition = 1 [features.field_presence = LEGACY_REQUIRED];
+    Statement then_statement = 2 [features.field_presence = LEGACY_REQUIRED];
+    Statement else_statement = 3;
 }
 
 message Switch {
-    required Expression expression = 1;
+    Expression expression = 1 [features.field_presence = LEGACY_REQUIRED];
     repeated SwitchEntry entry = 2;
 }
 
 message SwitchEntry {
-    optional Expression label = 1;
+    Expression label = 1;
     repeated Statement statement = 2;
 
-    optional int32 fileId = 3;
-    optional Location location = 4;
+    int32 fileId = 3;
+    Location location = 4;
 }
 
 message While {
-    required Expression condition = 1;
-    required Statement body = 2;
+    Expression condition = 1 [features.field_presence = LEGACY_REQUIRED];
+    Statement body = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message DoWhile {
-    required Expression condition = 1;
-    required Statement body = 2;
+    Expression condition = 1 [features.field_presence = LEGACY_REQUIRED];
+    Statement body = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message For {
@@ -373,9 +379,9 @@ message For {
         Expression expression = 2;
         EmptyInit empty = 3;
     }
-    optional Expression condition = 4;
-    optional Expression increment = 5;
-    required Statement body = 6;
+    Expression condition = 4;
+    Expression increment = 5;
+    Statement body = 6 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message EmptyInit {
@@ -386,33 +392,34 @@ message ForIn {
         int32 nameId = 1;
         Expression expression = 2;
     }
-    required Expression iterable = 3;
-    required Statement body = 4;
+    Expression iterable = 3 [features.field_presence = LEGACY_REQUIRED];
+    Statement body = 4 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message Try {
-    required Statement tryBlock = 1;
-    optional Catch catchBlock = 2;
-    optional Statement finallyBlock = 3;
+    Statement tryBlock = 1 [features.field_presence = LEGACY_REQUIRED];
+    Catch catchBlock = 2;
+    Statement finallyBlock = 3;
 }
 
 message Catch {
-    required Parameter parameter = 1;
-    required Statement body = 2;
+    Parameter parameter = 1 [features.field_presence = LEGACY_REQUIRED];
+    Statement body = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message Empty {
 }
 
 message SingleLineComment {
-    required string message = 1;
+    string message = 1 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message MultiLineComment {
-    required string message = 1;
+    string message = 1 [features.field_presence = LEGACY_REQUIRED];
 }
 
 enum InlineStrategy {
+    option features.enum_type = CLOSED;
     AS_FUNCTION = 0;
     IN_PLACE = 1;
     NOT_INLINE = 2;
@@ -424,63 +431,63 @@ enum InlineStrategy {
 message Fragment {
     repeated ImportedModule imported_module = 1;
     repeated Import import_entry = 2;
-    optional CompositeBlock declaration_block = 3;
-    optional CompositeBlock export_block = 4;
-    optional CompositeBlock initializer_block = 5;
+    CompositeBlock declaration_block = 3;
+    CompositeBlock export_block = 4;
+    CompositeBlock initializer_block = 5;
     repeated NameBinding name_binding = 6;
     repeated ClassModel class_model = 7;
     repeated Expression module_expression = 8;
     repeated InlineModule inline_module = 9;
-    optional string package_fqn = 10;
-    optional Statement tests_invocation = 11;
-    optional Statement main_invocation = 12;
+    string package_fqn = 10;
+    Statement tests_invocation = 11;
+    Statement main_invocation = 12;
     repeated InlinedLocalDeclarations inlined_local_declarations = 13;
     repeated IrClassModel ir_class_model = 14;
-    optional string dts = 15;
-    optional int32 suite_function = 16;
-    repeated int32 definitions = 17;
-    optional CompositeBlock polyfills = 18;
-    repeated int32 optionalCrossModuleImports = 19;
+    string dts = 15;
+    int32 suite_function = 16;
+    repeated int32 definitions = 17 [features.repeated_field_encoding = EXPANDED];
+    CompositeBlock polyfills = 18;
+    repeated int32 optionalCrossModuleImports = 19 [features.repeated_field_encoding = EXPANDED];
 }
 
 message InlinedLocalDeclarations {
-    required int32 tag = 1;
-    required CompositeBlock block = 2;
+    int32 tag = 1 [features.field_presence = LEGACY_REQUIRED];
+    CompositeBlock block = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message ImportedModule {
-    required int32 external_name_id = 1;
-    required int32 internal_name_id = 2;
-    optional Expression plain_reference = 3;
+    int32 external_name_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 internal_name_id = 2 [features.field_presence = LEGACY_REQUIRED];
+    Expression plain_reference = 3;
 }
 
 message Import {
-    required int32 signature_id = 1;
-    required Expression expression = 2;
+    int32 signature_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    Expression expression = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message NameBinding {
-    required int32 signature_id = 1;
-    required int32 nameId = 2;
+    int32 signature_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 nameId = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 message ClassModel {
-    required int32 name_id = 1;
-    optional int32 super_name_id = 2;
-    repeated int32 interface_name_id = 4;
-    optional CompositeBlock post_declaration_block = 3;
+    int32 name_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 super_name_id = 2;
+    repeated int32 interface_name_id = 4 [features.repeated_field_encoding = EXPANDED];
+    CompositeBlock post_declaration_block = 3;
 }
 
 message IrClassModel {
-    required int32 name_id = 1;
-    repeated int32 super_classes = 2;
-    optional CompositeBlock pre_declaration_block = 3;
-    optional CompositeBlock post_declaration_block = 4;
+    int32 name_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    repeated int32 super_classes = 2 [features.repeated_field_encoding = EXPANDED];
+    CompositeBlock pre_declaration_block = 3;
+    CompositeBlock post_declaration_block = 4;
 }
 
 message InlineModule {
-    required int32 signature_id = 1;
-    required int32 expression_id = 2;
+    int32 signature_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 expression_id = 2 [features.field_presence = LEGACY_REQUIRED];
 }
 
 // Tables
@@ -495,19 +502,20 @@ message NameTable {
 }
 
 message Name {
-    required bool temporary = 1;
-    optional int32 identifier = 2;
-    optional LocalAlias local_name_id = 3;
-    optional bool imported = 4 [default = false];
-    optional SpecialFunction special_function = 5;
+    bool temporary = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 identifier = 2;
+    LocalAlias local_name_id = 3;
+    bool imported = 4 [default = false];
+    SpecialFunction special_function = 5;
 }
 
 message LocalAlias {
-    required int32 local_name_id = 1;
-    optional int32 tag = 2;
+    int32 local_name_id = 1 [features.field_presence = LEGACY_REQUIRED];
+    int32 tag = 2;
 }
 
 enum SpecialFunction {
+    option features.enum_type = CLOSED;
     DEFINE_INLINE_FUNCTION = 1;
     WRAP_FUNCTION = 2;
     TO_BOXED_CHAR = 3;
@@ -526,9 +534,9 @@ enum SpecialFunction {
 //
 
 message Chunk {
-    required StringTable string_table = 1;
-    required NameTable name_table = 2;
-    required Fragment fragment = 3;
+    StringTable string_table = 1 [features.field_presence = LEGACY_REQUIRED];
+    NameTable name_table = 2 [features.field_presence = LEGACY_REQUIRED];
+    Fragment fragment = 3 [features.field_presence = LEGACY_REQUIRED];
 }
 
 // InlineData

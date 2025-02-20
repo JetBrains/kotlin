@@ -1,9 +1,9 @@
-syntax = "proto2";
+edition = "2023";
 package org.jetbrains.kotlin.backend.jvm.serialization.proto;
 import "compiler/ir/serialization.common/src/KotlinIr.proto";
 
 option java_outer_classname = "JvmIr";
-option optimize_for = LITE_RUNTIME;
+option features.utf8_validation = NONE;
 
 /* Stored in JVM .class annotations */
 
@@ -21,6 +21,6 @@ message ClassOrFile {
   repeated string string = 4;
   repeated XStatementOrExpression body = 5;
   repeated string debug_info = 6;
-  required string file_facade_fq_name = 7;
+  string file_facade_fq_name = 7 [features.field_presence = LEGACY_REQUIRED];
   repeated common.serialization.proto.FileEntry file_entry = 8;
 }

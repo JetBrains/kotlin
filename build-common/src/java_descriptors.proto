@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
+edition = "2023";
+
 package org.jetbrains.kotlin.metadata.java;
 
 import "core/metadata/src/metadata.proto";
 
 option java_outer_classname = "JavaClassProtoBuf";
-option optimize_for = LITE_RUNTIME;
+option features.utf8_validation = NONE;
 
 extend Function {
-  optional bool is_static_method = 1000;
-  optional bool is_package_private_method = 1001;
+  bool is_static_method = 1000;
+  bool is_package_private_method = 1001;
 }
 
 extend Property {
-  optional bool is_static_field = 1000;
-  optional bool is_package_private_field = 1001;
+  bool is_static_field = 1000;
+  bool is_package_private_field = 1001;
 }
 
 extend Class {
-  optional bool is_package_private_class = 1000;
+  bool is_package_private_class = 1000;
 }
 
 extend Constructor {
-  optional bool is_package_private_constructor = 1000;
+  bool is_package_private_constructor = 1000;
 }
