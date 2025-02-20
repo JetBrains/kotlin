@@ -686,7 +686,7 @@ abstract class IncrementalCompilerRunner<
     }
 
     protected fun reportPerformanceData(defaultPerformanceManager: PerformanceManager) {
-        val lines = defaultPerformanceManager.lines.takeIf { it > 0 }
+        val lines = defaultPerformanceManager.unitStats.initStats?.linesCount?.takeIf { it > 0 }
         if (lines != null) {
             reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, lines.toLong())
         }
@@ -699,27 +699,27 @@ abstract class IncrementalCompilerRunner<
 
         var codegenTime: Time = Time.ZERO
 
-        defaultPerformanceManager.unitStats.forEachPhaseMeasurement { phaseType, time ->
-            if (time == null) return@forEachPhaseMeasurement
+        defaultPerformanceManager.unitStats.forEachPhaseMeasurement { phaseType, phaseStats ->
+            if (phaseStats == null) return@forEachPhaseMeasurement
 
             val gradleBuildTime = when (phaseType) {
                 PhaseMeasurementType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
                 PhaseMeasurementType.Analysis -> GradleBuildTime.CODE_ANALYSIS
                 PhaseMeasurementType.IrGeneration -> GradleBuildTime.IR_GENERATION
                 PhaseMeasurementType.IrLowering -> {
-                    codegenTime += time
+                    codegenTime += phaseStats.time
                     GradleBuildTime.IR_LOWERING
                 }
                 PhaseMeasurementType.BackendGeneration -> {
-                    codegenTime += time
+                    codegenTime += phaseStats.time
                     GradleBuildTime.BACKEND_GENERATION
                 }
             }
 
-            reporter.addTimeMetricMs(gradleBuildTime, time.millis)
+            reporter.addTimeMetricMs(gradleBuildTime, phaseStats.time.millis)
 
             if (phaseType == PhaseMeasurementType.Analysis) {
-                reportLps(GradleBuildPerformanceMetric.ANALYSIS_LPS, time)
+                reportLps(GradleBuildPerformanceMetric.ANALYSIS_LPS, phaseStats.time)
             }
         }
 

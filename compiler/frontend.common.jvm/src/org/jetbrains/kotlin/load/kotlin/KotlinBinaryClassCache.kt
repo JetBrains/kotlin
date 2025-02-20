@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.util.PerformanceManager
+import java.io.File
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -56,9 +57,16 @@ class KotlinBinaryClassCache : Disposable {
         // also created for each test. However all tests share the same event dispatch thread, which would collect all instances of this
         // thread-local if they're not removed properly. Each instance would transitively retain VFS resulting in OutOfMemoryError
         cache.remove()
+
+        synchronized(writeLock) {
+            File("F:\\JetBrains\\logs\\temp.txt").appendText("dispose\n")
+        }
     }
 
     companion object {
+        var count = 0
+        val writeLock = Any()
+
         @Deprecated(
             "Please pass metadataVersion explicitly",
             ReplaceWith(
@@ -87,14 +95,24 @@ class KotlinBinaryClassCache : Disposable {
 
             if (file.name == PsiJavaModule.MODULE_INFO_CLS_FILE) return null
 
-            val service = ApplicationManager.getApplication().getService(KotlinBinaryClassCache::class.java)
+            val application = ApplicationManager.getApplication()
+            val service = application.getService(KotlinBinaryClassCache::class.java)
             val requestCache = service.cache.get()
 
             if (file.modificationStamp == requestCache.modificationStamp && file == requestCache.virtualFile) {
                 return requestCache.result
             }
 
-            val aClass = ApplicationManager.getApplication().runReadAction(Computable {
+            if (file.toString().contains("kotlin\\ExceptionsKt.class")) {
+                synchronized(writeLock) {
+                    "Load ${file} ${count++} time".let {
+                        println(it)
+                        File("F:\\JetBrains\\logs\\temp.txt").appendText(it + "\n")
+                    }
+                }
+            }
+
+            val aClass = application.runReadAction(Computable {
                 VirtualFileKotlinClass.create(file, metadataVersion, fileContent, perfManager)
             })
 

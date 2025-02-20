@@ -125,7 +125,7 @@ internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment)
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
+                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null, null)
             },
     )
 }

@@ -35,9 +35,11 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.util.InitStats
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.Time
 import java.io.File
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
@@ -251,10 +253,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             if (messageCollector.hasErrors()) return null
 
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment =
+                KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val sourceFiles = environment.getSourceFiles()
-            perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
+            perfManager?.addPhaseStats(
+                PhaseMeasurementType.Initialization,
+                InitStats(Time.ZERO, sourceFiles.size, environment.countLinesOfCode(sourceFiles))
+            )
 
             return if (messageCollector.hasErrors()) null else environment
         }

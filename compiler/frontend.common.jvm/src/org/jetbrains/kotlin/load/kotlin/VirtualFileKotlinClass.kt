@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.util.BinaryStats
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseSideMeasurementType
+import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.tryMeasureSideTime
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -74,6 +76,18 @@ class VirtualFileKotlinClass private constructor(
                     throw logFileReadingErrorMessage(e, file)
                 }
                 null
+            }.also { result ->
+                if (perfManager != null) {
+                    val size = when (result) {
+                        is KotlinClass -> result.byteContent?.size ?: 0
+                        is KotlinClassFinder.Result.ClassFileContent -> result.content.size
+                        null -> 0
+                    }
+                    perfManager.addPhaseSideStats(
+                        PhaseSideMeasurementType.BinaryClassFromKotlinFile,
+                        BinaryStats(Time.ZERO, 0, size.toLong())
+                    )
+                }
             }
         }
 

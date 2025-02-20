@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.util
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.stats.toJson
 import java.io.File
 import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
@@ -31,8 +32,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var jitStartTime: Long? = null
     private var garbageCollectorMXBeans: List<GarbageCollectorMXBean> = emptyList()
 
-    private val phaseMeasurements: SortedMap<PhaseMeasurementType, Time> = sortedMapOf()
-    private val phaseSideMeasurements: SortedMap<PhaseSideMeasurementType, SideStats> = sortedMapOf()
+    private val phaseMeasurements: SortedMap<PhaseMeasurementType, PhaseStats<*>> = sortedMapOf()
+    private val phaseSideMeasurements: SortedMap<PhaseSideMeasurementType, BinaryStats> = sortedMapOf()
     private var gcMeasurements: SortedMap<String, GarbageCollectionStats> = sortedMapOf()
     private var jitTimeMillis: Long? = null
     private val extendedStats: MutableList<String> = mutableListOf()
@@ -44,39 +45,37 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         private set
 
     var targetDescription: String? = null
-    var files: Int = 0
-        private set
-    var lines: Int = 0
-        private set
     var isFinalized: Boolean = false
         private set
     val isMeasuring: Boolean
         get() = phaseStartTime != null
 
-    fun getTargetInfo(): String =
-        "$targetDescription, $files files ($lines lines)"
+    fun getTargetInfo(): String {
+        val initStats = phaseMeasurements[PhaseMeasurementType.Initialization] as InitStats?
+        return "$targetDescription, ${initStats?.filesCount} (${initStats?.linesCount} lines)"
+    }
 
     val unitStats: UnitStats by lazy {
         isFinalized = true
 
-        var initTime: Time? = null
-        var analysisTime: Time? = null
-        var irGenerationTime: Time? = null
-        var irLoweringTime: Time? = null
-        var backendTime: Time? = null
+        var initTime: InitStats? = null
+        var analysisTime: AnalysisStats? = null
+        var irGenerationTime: IrStats? = null
+        var irLoweringTime: IrStats? = null
+        var backendTime: BinaryStats? = null
 
-        for ((phaseType, time) in phaseMeasurements) {
+        for ((phaseType, stats) in phaseMeasurements) {
             when (phaseType) {
-                PhaseMeasurementType.Initialization -> initTime = time
-                PhaseMeasurementType.Analysis -> analysisTime = time
-                PhaseMeasurementType.IrGeneration -> irGenerationTime = time
-                PhaseMeasurementType.IrLowering -> irLoweringTime = time
-                PhaseMeasurementType.BackendGeneration -> backendTime = time
+                PhaseMeasurementType.Initialization -> initTime = stats as InitStats?
+                PhaseMeasurementType.Analysis -> analysisTime = stats as AnalysisStats?
+                PhaseMeasurementType.IrGeneration -> irGenerationTime = stats as IrStats?
+                PhaseMeasurementType.IrLowering -> irLoweringTime = stats as IrStats?
+                PhaseMeasurementType.BackendGeneration -> backendTime = stats as BinaryStats?
             }
         }
 
-        var findJavaClassStats: SideStats? = null
-        var findKotlinClassStats: SideStats? = null
+        var findJavaClassStats: BinaryStats? = null
+        var findKotlinClassStats: BinaryStats? = null
 
         for ((phaseSideType, sideStats) in phaseSideMeasurements) {
             when (phaseSideType) {
@@ -90,8 +89,6 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             targetPlatform.getPlatformEnumValue(),
             isK2,
             hasErrors,
-            files,
-            lines,
             initTime,
             analysisTime,
             irGenerationTime,
@@ -113,17 +110,15 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         assert(targetPlatform.getPlatformEnumValue() == otherUnitStats.platform)
         assert(isK2 == otherUnitStats.isK2)
 
-        addSourcesStats(otherUnitStats.filesCount, otherUnitStats.linesCount)
-
-        otherUnitStats.forEachPhaseMeasurement { phaseType, time ->
-            if (time != null) {
-                phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + time
+        otherUnitStats.forEachPhaseMeasurement { phaseType, phaseStats ->
+            if (phaseStats != null) {
+                addPhaseStats(phaseType, phaseStats)
             }
         }
 
         otherUnitStats.forEachPhaseSideMeasurement { phaseSideType, sideStats ->
             if (sideStats != null) {
-                phaseSideMeasurements[phaseSideType] = (phaseSideMeasurements[phaseSideType] ?: SideStats.EMPTY) + sideStats
+                phaseSideMeasurements[phaseSideType] = sideStats + phaseSideMeasurements[phaseSideType]
             }
         }
 
@@ -168,11 +163,21 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
     }
 
-    open fun addSourcesStats(files: Int, lines: Int) {
-        ensureNotFinalizedAndSameThread()
+    fun <T : PhaseStats<T>> addInitStats(initStats: InitStats) {
+        addPhaseStats(PhaseMeasurementType.Initialization, initStats)
+    }
 
-        this.files += files
-        this.lines += lines
+    fun <T : PhaseStats<T>> addAnalysisStats(analysisStats: AnalysisStats) {
+        addPhaseStats(PhaseMeasurementType.Analysis, analysisStats)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : PhaseStats<T>> addPhaseStats(phaseType: PhaseMeasurementType, phaseStats: PhaseStats<T>) {
+        phaseMeasurements[phaseType] = phaseStats + (phaseMeasurements[phaseType] as? T)
+    }
+
+    fun addPhaseSideStats(phaseSideType: PhaseSideMeasurementType, binaryStats: BinaryStats) {
+        phaseSideMeasurements[phaseSideType] = binaryStats + phaseSideMeasurements[phaseSideType]
     }
 
     fun notifyPhaseStarted(newPhaseType: PhaseMeasurementType) {
@@ -239,10 +244,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     private fun finishPhase(phaseType: PhaseMeasurementType) {
-        if (phaseType != currentPhaseType) { // It's allowed to measure the same phase multiple times (although it's better to avoid that)
+        if (phaseType != currentPhaseType) { // It's allowed to measure the same phase multiple times
             assert(!phaseMeasurements.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
         }
-        phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + (currentTime() - phaseStartTime!!)
+        addTime(phaseType, currentTime() - phaseStartTime!!)
         phaseStartTime = null
     }
 
@@ -259,14 +264,33 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
             // Subtract side measurement time to get a more refined result
             // The time could be negative at the moment but should be normalized after the `notifyPhaseFinished` call.
-            phaseMeasurements[currentPhaseType] = phaseMeasurements.getOrDefault(currentPhaseType, Time.ZERO) - elapsedTime
+            addTime(currentPhaseType, -elapsedTime)
             phaseSideMeasurements[phaseSideMeasurementType] =
-                phaseSideMeasurements.getOrDefault(phaseSideMeasurementType, SideStats.EMPTY) + SideStats(1, elapsedTime)
+                BinaryStats(elapsedTime, 1, 0) + phaseSideMeasurements[phaseSideMeasurementType]
         }
     }
 
+    private fun addTime(phaseType: PhaseMeasurementType, elapsed: Time) {
+        val currentMeasurement = phaseMeasurements[phaseType]
+        phaseMeasurements[phaseType] = when (phaseType) {
+            PhaseMeasurementType.Initialization -> InitStats(elapsed, 0, 0) + (currentMeasurement as? InitStats)
+            PhaseMeasurementType.Analysis -> AnalysisStats(elapsed, 0, 0, 0) + (currentMeasurement as? AnalysisStats)
+            PhaseMeasurementType.IrGeneration -> IrStats(elapsed, 0, 0) + (currentMeasurement as? IrStats)
+            PhaseMeasurementType.IrLowering -> IrStats(elapsed, 0, 0) + (currentMeasurement as? IrStats)
+            PhaseMeasurementType.BackendGeneration -> BinaryStats(elapsed, 0, 0) + (currentMeasurement as? BinaryStats)
+        }
+    }
+
+    companion object {
+        val writeJsonLock = Any()
+    }
+
     fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport().toByteArray())
+        //destination.writeBytes(createPerformanceReport().toByteArray())
+        val json = unitStats.toJson(trailingComma = true)
+        synchronized(writeJsonLock) {
+            destination.appendText(json)
+        }
     }
 
     fun createPerformanceReport(): String = buildString {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.IrStatsCounter
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
@@ -46,7 +47,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.util.BinaryStats
 import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -411,6 +414,13 @@ object KotlinToJVMBytecodeCompiler {
 
         return performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
             codegenFactory.invokeLowerings(state, backendInput)
+        }.also { codegenInput ->
+            if (performanceManager != null) {
+                IrStatsCounter().apply {
+                    visitElement(codegenInput.module, null)
+                    performanceManager.addPhaseStats(PhaseMeasurementType.IrLowering, irStats)
+                }
+            }
         }
     }
 
@@ -428,6 +438,20 @@ object KotlinToJVMBytecodeCompiler {
 
         performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.BackendGeneration) {
             codegenFactory.invokeCodegen(codegenInput)
+        }
+
+        val outDir = configuration.outputDirectory
+        if (performanceManager != null && outDir != null) {
+            var backendFilesCount = 0
+            var backendBytesCount = 0L
+            outDir.walkTopDown().filter { entity -> entity.isFile && entity.extension == "class" }.forEach { file ->
+                backendFilesCount++
+                backendBytesCount += file.length()
+            }
+            performanceManager.addPhaseStats(
+                PhaseMeasurementType.BackendGeneration,
+                BinaryStats(Time.ZERO, backendFilesCount, backendBytesCount)
+            )
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

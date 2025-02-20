@@ -190,7 +190,13 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, performanceManager?.let { it::addSourcesStats })
+                buildResolveAndCheckFirViaLightTree(
+                    session,
+                    files,
+                    diagnosticsReporter,
+                    performanceManager?.let { it::addInitStats },
+                    performanceManager?.let { it::addAnalysisStats }
+                )
             },
             useWasmPlatform = useWasmPlatform,
         )

@@ -15,9 +15,12 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
+import org.jetbrains.kotlin.util.AnalysisStats
+import org.jetbrains.kotlin.util.BinaryStats
 import org.jetbrains.kotlin.util.GarbageCollectionStats
+import org.jetbrains.kotlin.util.InitStats
+import org.jetbrains.kotlin.util.IrStats
 import org.jetbrains.kotlin.util.PlatformType
-import org.jetbrains.kotlin.util.SideStats
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.UnitStats
 
@@ -27,8 +30,6 @@ object UnitStatsSerializer : KSerializer<UnitStats> {
         element<PlatformType>("platform", isOptional = true)
         element<Boolean>("isK2", isOptional = true)
         element<Boolean>("hasErrors", isOptional = true)
-        element<Int>("filesCount")
-        element<Int>("linesCount")
 
         element("initStats", TimeSerializer.descriptor)
         element("analysisStats", TimeSerializer.descriptor)
@@ -36,8 +37,8 @@ object UnitStatsSerializer : KSerializer<UnitStats> {
         element("irLoweringStats", TimeSerializer.descriptor)
         element("backendStats", TimeSerializer.descriptor)
 
-        element("findJavaClassStats", SideStatsSerializer.descriptor, isOptional = true)
-        element("findKotlinClassStats", SideStatsSerializer.descriptor, isOptional = true)
+        element("findJavaClassStats", BinaryStatsSerializer.descriptor, isOptional = true)
+        element("findKotlinClassStats", BinaryStatsSerializer.descriptor, isOptional = true)
 
         element("gcStats", ListSerializer(GarbageCollectionStatsSerializer).descriptor, isOptional = true)
         element<Long?>("jitTimeMillis", isOptional = true)
@@ -51,15 +52,13 @@ object UnitStatsSerializer : KSerializer<UnitStats> {
             var platform: PlatformType = PlatformType.JVM
             var isK2 = true
             var hasErrors = false
-            var filesCount = 0
-            var linesCount = 0
-            var initStats: Time? = null
-            var analysisStats: Time? = null
-            var irGenerationStats: Time? = null
-            var irLoweringStats: Time? = null
-            var backendStats: Time? = null
-            var findJavaClassStats: SideStats? = null
-            var findKotlinClassStats: SideStats? = null
+            var initStats: InitStats? = null
+            var analysisStats: AnalysisStats? = null
+            var irGenerationStats: IrStats? = null
+            var irLoweringStats: IrStats? = null
+            var backendStats: BinaryStats? = null
+            var findJavaClassStats: BinaryStats? = null
+            var findKotlinClassStats: BinaryStats? = null
             var gcStats: List<GarbageCollectionStats> = emptyList()
             var jitTimeMillis: Long? = null
             var extendedStats: List<String> = emptyList()
@@ -70,20 +69,18 @@ object UnitStatsSerializer : KSerializer<UnitStats> {
                     1 -> platform = decodeSerializableElement(descriptor, index, PlatformSerializer)
                     2 -> isK2 = decodeBooleanElement(descriptor, index)
                     3 -> hasErrors = decodeBooleanElement(descriptor, index)
-                    4 -> filesCount = decodeIntElement(descriptor, index)
-                    5 -> linesCount = decodeIntElement(descriptor, index)
-                    6 -> initStats = decodeNullableSerializableElement(descriptor, index, TimeSerializer)
-                    7 -> analysisStats = decodeNullableSerializableElement(descriptor, index, TimeSerializer)
-                    8 -> irGenerationStats = decodeNullableSerializableElement(descriptor, index, TimeSerializer)
-                    9 -> irLoweringStats = decodeNullableSerializableElement(descriptor, index, TimeSerializer)
-                    10 -> backendStats = decodeNullableSerializableElement(descriptor, index, TimeSerializer)
-                    11 -> findJavaClassStats = decodeNullableSerializableElement(descriptor, index, SideStatsSerializer)
-                    12 -> findKotlinClassStats =
-                        decodeNullableSerializableElement(descriptor, index, SideStatsSerializer)
-                    13 -> gcStats =
+                    4 -> initStats = decodeNullableSerializableElement(descriptor, index, InitStatsSerializer)
+                    5 -> analysisStats = decodeNullableSerializableElement(descriptor, index, AnalysisStatsSerializer)
+                    6 -> irGenerationStats = decodeNullableSerializableElement(descriptor, index, IrStatsSerializer)
+                    7 -> irLoweringStats = decodeNullableSerializableElement(descriptor, index, IrStatsSerializer)
+                    8 -> backendStats = decodeNullableSerializableElement(descriptor, index, BinaryStatsSerializer)
+                    9 -> findJavaClassStats = decodeNullableSerializableElement(descriptor, index, BinaryStatsSerializer)
+                    10 -> findKotlinClassStats =
+                        decodeNullableSerializableElement(descriptor, index, BinaryStatsSerializer)
+                    11 -> gcStats =
                         decodeSerializableElement(descriptor, index, ListSerializer(GarbageCollectionStatsSerializer))
-                    14 -> jitTimeMillis = decodeNullableSerializableElement(descriptor, index, Long.serializer())
-                    15 -> extendedStats = decodeSerializableElement(descriptor, index, ListSerializer(String.serializer()))
+                    12 -> jitTimeMillis = decodeNullableSerializableElement(descriptor, index, Long.serializer())
+                    13 -> extendedStats = decodeSerializableElement(descriptor, index, ListSerializer(String.serializer()))
                     CompositeDecoder.DECODE_DONE -> break@loop
                     else -> throw SerializationException("Unexpected index $index")
                 }
@@ -93,8 +90,6 @@ object UnitStatsSerializer : KSerializer<UnitStats> {
                 platform,
                 isK2,
                 hasErrors,
-                filesCount,
-                linesCount,
                 initStats,
                 analysisStats,
                 irGenerationStats,
@@ -139,31 +134,133 @@ object PlatformSerializer : KSerializer<PlatformType> {
     }
 }
 
-object SideStatsSerializer : KSerializer<SideStats> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.util.SideStats") {
-        element<Int>("count")
+object InitStatsSerializer : KSerializer<InitStats> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.util.InitStats") {
         element("time", TimeSerializer.descriptor)
+        element<Int>("filesCount")
+        element<Int>("linesCount")
     }
 
-    override fun deserialize(decoder: Decoder): SideStats {
+    override fun deserialize(decoder: Decoder): InitStats {
         return decoder.decodeStructure(descriptor) {
-            var count = 0
-            var time = Time.ZERO
+            var time: Time = Time.ZERO
+            var filesCount = 0
+            var linesCount = 0
 
             loop@ while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
-                    0 -> count = decodeIntElement(descriptor, index)
-                    1 -> time = decodeSerializableElement(descriptor, index, TimeSerializer)
+                    0 -> time = decodeSerializableElement(BinaryStatsSerializer.descriptor, index, TimeSerializer)
+                    1 -> filesCount = decodeIntElement(descriptor, index)
+                    2 -> linesCount = decodeIntElement(descriptor, index)
+                    CompositeDecoder.DECODE_DONE -> break@loop
+                    else -> throw SerializationException("Unexpected index: $index")
+                }
+            }
+
+            InitStats(time, filesCount, linesCount)
+        }
+    }
+
+    override fun serialize(encoder: Encoder, value: InitStats) {
+        TODO("Not yet implemented")
+    }
+}
+
+object AnalysisStatsSerializer : KSerializer<AnalysisStats> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.util.AnalysisStats") {
+        element("time", TimeSerializer.descriptor)
+        element<Int>("allNodesCount")
+        element<Int>("leafNodesCount")
+        element<Int>("starImportsCount")
+    }
+
+    override fun deserialize(decoder: Decoder): AnalysisStats {
+        return decoder.decodeStructure(descriptor) {
+            var time: Time = Time.ZERO
+            var allNodesCount = 0
+            var leafNodesCount = 0
+            var starImportsCount = 0
+
+            loop@ while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> time = decodeSerializableElement(BinaryStatsSerializer.descriptor, index, TimeSerializer)
+                    1 -> allNodesCount = decodeIntElement(descriptor, index)
+                    2 -> leafNodesCount = decodeIntElement(descriptor, index)
+                    3 -> starImportsCount = decodeIntElement(descriptor, index)
+                    CompositeDecoder.DECODE_DONE -> break@loop
+                    else -> throw SerializationException("Unexpected index: $index")
+                }
+            }
+
+            AnalysisStats(time, allNodesCount, leafNodesCount, starImportsCount)
+        }
+    }
+
+    override fun serialize(encoder: Encoder, value: AnalysisStats) {
+        TODO("Not yet implemented")
+    }
+}
+
+object IrStatsSerializer : KSerializer<IrStats> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.util.IrStats") {
+        element("time", TimeSerializer.descriptor)
+        element<Int>("allNodesAfterCount")
+        element<Int>("leafNodesAfterCount")
+    }
+
+    override fun deserialize(decoder: Decoder): IrStats {
+        return decoder.decodeStructure(descriptor) {
+            var time: Time = Time.ZERO
+            var allNodesAfterCount = 0
+            var leafNodesAfterCount = 0
+
+            loop@ while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> time = decodeSerializableElement(BinaryStatsSerializer.descriptor, index, TimeSerializer)
+                    1 -> allNodesAfterCount = decodeIntElement(descriptor, index)
+                    2 -> leafNodesAfterCount = decodeIntElement(descriptor, index)
+                    CompositeDecoder.DECODE_DONE -> break@loop
+                    else -> throw SerializationException("Unexpected index: $index")
+                }
+            }
+
+            IrStats(time, allNodesAfterCount, leafNodesAfterCount)
+        }
+    }
+
+    override fun serialize(encoder: Encoder, value: IrStats) {
+        TODO("Not yet implemented")
+    }
+}
+
+object BinaryStatsSerializer : KSerializer<BinaryStats> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.util.SideStats") {
+        element("time", TimeSerializer.descriptor)
+        element<Int>("count")
+        element<Long>("bytesCount")
+    }
+
+    override fun deserialize(decoder: Decoder): BinaryStats {
+        return decoder.decodeStructure(descriptor) {
+            var time = Time.ZERO
+            var count = 0
+            var bytesCount = 0L
+
+            loop@ while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> time = decodeSerializableElement(descriptor, index, TimeSerializer)
+                    1 -> count = decodeIntElement(descriptor, index)
+                    2 -> bytesCount = decodeLongElement(descriptor, index)
                     CompositeDecoder.DECODE_DONE -> break@loop
                     else -> throw SerializationException("Unexpected index $index")
                 }
             }
 
-            SideStats(count, time)
+            BinaryStats(time, count, bytesCount)
         }
     }
 
-    override fun serialize(encoder: Encoder, value: SideStats) {
+    override fun serialize(encoder: Encoder, value: BinaryStats) {
         TODO("Not yet implemented")
     }
 }

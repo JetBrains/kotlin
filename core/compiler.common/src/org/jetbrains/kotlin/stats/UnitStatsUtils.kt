@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.stats
 
+import org.jetbrains.kotlin.util.AnalysisStats
+import org.jetbrains.kotlin.util.BinaryStats
+import org.jetbrains.kotlin.util.InitStats
+import org.jetbrains.kotlin.util.IrStats
 import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.util.PhaseSideMeasurementType
+import org.jetbrains.kotlin.util.PhaseStats
 import org.jetbrains.kotlin.util.PlatformType
-import org.jetbrains.kotlin.util.SideStats
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.UnitStats
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
@@ -28,21 +32,9 @@ fun UnitStats.toJson(indent: Int = 0, trailingComma: Boolean = false): String {
                 appendKeyValue("hasErrors", value = true, indent + 1)
             }
 
-            appendKeyValue("filesCount", filesCount, indent + 1)
-            appendKeyValue("linesCount", linesCount, indent + 1)
-
-            forEachPhaseMeasurement { phaseType, time ->
-                if (time == null) return@forEachPhaseMeasurement
-
-                val key = when (phaseType) {
-                    PhaseMeasurementType.Initialization -> "initStats"
-                    PhaseMeasurementType.Analysis -> "analysisStats"
-                    PhaseMeasurementType.IrGeneration -> "irGenerationStats"
-                    PhaseMeasurementType.IrLowering -> "irLoweringStats"
-                    PhaseMeasurementType.BackendGeneration -> "backendStats"
-                }
-
-                appendTime(key, time, indent + 1, trailingComma = true)
+            forEachPhaseMeasurement { phaseType, stats ->
+                if (stats == null) return@forEachPhaseMeasurement
+                appendPhaseStats(phaseType, stats, indent + 1, trailingComma = true)
             }
 
             forEachPhaseSideMeasurement { phaseType, sideStats ->
@@ -53,7 +45,7 @@ fun UnitStats.toJson(indent: Int = 0, trailingComma: Boolean = false): String {
                     PhaseSideMeasurementType.BinaryClassFromKotlinFile -> "findKotlinClassStats"
                 }
 
-                appendSideStats(key, sideStats, indent + 1, trailingComma = true)
+                appendBinaryStats(key, sideStats, indent + 1, trailingComma = true)
             }
 
             if (gcStats.isNotEmpty()) {
@@ -78,16 +70,49 @@ fun UnitStats.toJson(indent: Int = 0, trailingComma: Boolean = false): String {
 private const val trailingCommaSuffix = ",\n"
 private val indentCache = mutableListOf<String>()
 
-private fun StringBuilder.appendSideStats(key: String, sideStats: SideStats, indent: Int = 1, trailingComma: Boolean = true) {
-    appendObject(key, sideStats, indent, trailingComma) {
-        sideStats.apply {
-            appendKeyValue("count", count, indent + 1)
-            appendTime("time", time, indent + 1, trailingComma = false)
+private fun StringBuilder.appendPhaseStats(phaseType: PhaseMeasurementType, stats: PhaseStats<*>, indent: Int, trailingComma: Boolean) {
+    val key = when (phaseType) {
+        PhaseMeasurementType.Initialization -> "initStats"
+        PhaseMeasurementType.Analysis -> "analysisStats"
+        PhaseMeasurementType.IrGeneration -> "irGenerationStats"
+        PhaseMeasurementType.IrLowering -> "irLoweringStats"
+        PhaseMeasurementType.BackendGeneration -> "backendStats"
+    }
+    appendObject(key, stats, indent, trailingComma) {
+        appendTime("time", stats.time, indent + 1)
+        when (stats) {
+            is InitStats -> {
+                appendKeyValue("linesCount", stats.linesCount, indent + 1)
+                appendKeyValue("filesCount", stats.filesCount, indent + 1, trailingComma = false)
+            }
+            is AnalysisStats -> {
+                appendKeyValue("allNodesCount", stats.allNodesCount, indent + 1)
+                appendKeyValue("leafNodesCount", stats.leafNodesCount, indent + 1)
+                appendKeyValue("starImportsCount", stats.starImportsCount, indent + 1, trailingComma = false)
+            }
+            is IrStats -> {
+                appendKeyValue("allNodesAfterCount", stats.allNodesAfterCount, indent + 1)
+                appendKeyValue("leafNodesAfterCount", stats.leafNodesAfterCount, indent + 1, trailingComma = false)
+            }
+            is BinaryStats -> {
+                appendKeyValue("count", stats.count, indent + 1)
+                appendKeyValue("bytesCount", stats.bytesCount, indent + 1, trailingComma = false)
+            }
         }
     }
 }
 
-private fun StringBuilder.appendTime(key: String, time: Time, indent: Int, trailingComma: Boolean) {
+private fun StringBuilder.appendBinaryStats(key: String, binaryStats: BinaryStats, indent: Int = 1, trailingComma: Boolean = true) {
+    appendObject(key, binaryStats, indent, trailingComma) {
+        binaryStats.apply {
+            appendTime("time", time, indent + 1)
+            appendKeyValue("count", count, indent + 1)
+            appendKeyValue("bytesCount", bytesCount, indent + 1, trailingComma = false)
+        }
+    }
+}
+
+private fun StringBuilder.appendTime(key: String, time: Time, indent: Int, trailingComma: Boolean = true) {
     appendObject(key, time, indent, trailingComma) {
         appendKeyValue("nano", time.nano, indent + 1)
         appendKeyValue("userNano", time.userNano, indent + 1)

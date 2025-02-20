@@ -7,40 +7,54 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.cli.common.IrStatsCounter
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object JvmFir2IrPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFir2IrPipelineArtifact>(
     name = "JvmFir2IrPipelinePhase",
-    preActions = setOf(PerformanceNotifications.IrGenerationStarted),
-    postActions = setOf(PerformanceNotifications.IrGenerationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: JvmFrontendPipelineArtifact): JvmFir2IrPipelineArtifact? {
-        val (firResult, configuration, environment, diagnosticCollector, sourceFiles) = input
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
-        val irGenerationExtensions = IrGenerationExtension.Companion.getInstances(environment.project)
-        val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
-            fir2IrExtensions,
-            configuration,
-            diagnosticCollector,
-            irGenerationExtensions
-        )
+    override fun executePhase(input: JvmFrontendPipelineArtifact): JvmFir2IrPipelineArtifact {
+        val perfManager = input.configuration.perfManager
+        return perfManager.tryMeasurePhaseTime(PhaseMeasurementType.IrGeneration) {
+            val (firResult, configuration, environment, diagnosticCollector, sourceFiles) = input
+            val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
+            val irGenerationExtensions = IrGenerationExtension.Companion.getInstances(environment.project)
+            val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
+                fir2IrExtensions,
+                configuration,
+                diagnosticCollector,
+                irGenerationExtensions
+            )
 
-        val mainClassFqName = runIf(configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-            findMainClass(firResult.outputs.last().fir)
+            val mainClassFqName = runIf(configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
+                findMainClass(firResult.outputs.last().fir)
+            }
+
+            JvmFir2IrPipelineArtifact(
+                fir2IrAndIrActualizerResult,
+                configuration,
+                environment,
+                diagnosticCollector,
+                sourceFiles,
+                mainClassFqName,
+            )
+        }.also { artifact ->
+            if (perfManager != null) {
+                IrStatsCounter().apply {
+                    visitElement(artifact.result.irModuleFragment, null)
+                    perfManager.addPhaseStats(PhaseMeasurementType.IrGeneration, irStats)
+                }
+            }
         }
-
-        return JvmFir2IrPipelineArtifact(
-            fir2IrAndIrActualizerResult,
-            configuration,
-            environment,
-            diagnosticCollector,
-            sourceFiles,
-            mainClassFqName,
-        )
     }
 }
+

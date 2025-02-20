@@ -281,7 +281,7 @@ abstract class CompileServiceImplBase(
     protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
         val performanceMetrics = ArrayList<BuildMetricsValue>()
         val performanceManager = compiler.defaultPerformanceManager
-        val lines = performanceManager.lines.takeIf { it > 0 }
+        val lines = performanceManager.unitStats.initStats?.linesCount?.takeIf { it > 0 }
         if (lines != null) {
             performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, lines.toLong()))
         }
@@ -294,27 +294,27 @@ abstract class CompileServiceImplBase(
             }
         }
 
-        performanceManager.unitStats.forEachPhaseMeasurement { phaseType, time ->
-            if (time == null) return@forEachPhaseMeasurement
+        performanceManager.unitStats.forEachPhaseMeasurement { phaseType, phaseStats ->
+            if (phaseStats == null) return@forEachPhaseMeasurement
 
             val metrics = when (phaseType) {
                 PhaseMeasurementType.Initialization -> CompilationPerformanceMetrics.COMPILER_INITIALIZATION
                 PhaseMeasurementType.Analysis -> CompilationPerformanceMetrics.CODE_ANALYSIS
                 // TODO: Report `IrGeneration` (FIR2IR) time
                 PhaseMeasurementType.IrLowering -> {
-                    codegenTime += time
+                    codegenTime += phaseStats.time
                     null
                 }
                 PhaseMeasurementType.BackendGeneration -> {
-                    codegenTime += time
+                    codegenTime += phaseStats.time
                     null
                 }
                 else -> null
             }
             if (metrics != null) {
-                performanceMetrics.add(BuildMetricsValue(metrics, time.millis))
+                performanceMetrics.add(BuildMetricsValue(metrics, phaseStats.time.millis))
                 if (phaseType == PhaseMeasurementType.Analysis) {
-                    reportLps(CompilationPerformanceMetrics.ANALYSIS_LPS, time)
+                    reportLps(CompilationPerformanceMetrics.ANALYSIS_LPS, phaseStats.time)
                 }
             }
         }

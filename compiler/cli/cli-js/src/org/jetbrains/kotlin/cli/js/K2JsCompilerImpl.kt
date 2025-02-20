@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.util.InitStats
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
+import org.jetbrains.kotlin.util.Time
 import java.io.File
 
 class Ir2JsTransformer private constructor(
@@ -174,7 +176,10 @@ internal class K2JsCompilerImpl(
 
         performanceManager?.apply {
             targetDescription = "$moduleName-${configuration.moduleKind}"
-            addSourcesStats(sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles))
+            addPhaseStats(
+                PhaseMeasurementType.Initialization,
+                InitStats(Time.ZERO, sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles))
+            )
             notifyPhaseFinished(PhaseMeasurementType.Initialization)
         }
 

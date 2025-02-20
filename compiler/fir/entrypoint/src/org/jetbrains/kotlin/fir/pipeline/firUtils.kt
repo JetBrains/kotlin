@@ -18,17 +18,20 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
-import kotlin.reflect.KFunction2
+import org.jetbrains.kotlin.util.AnalysisStats
+import org.jetbrains.kotlin.util.InitStats
+import org.jetbrains.kotlin.util.Time
 
 fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
     diagnosticsReporter: DiagnosticReporter?,
-    reportFilesAndLines: ((Int, Int) -> Unit)?,
+    reportInitStats: ((InitStats) -> Unit)?,
+    reportAnalysisStats: ((AnalysisStats) -> Unit)?
 ): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
     val sourcesToPathsMapper = sourcesToPathsMapper
     val builder = LightTree2Fir(this, firProvider.kotlinScopeProvider, diagnosticsReporter)
-    val shouldCountLines = (reportFilesAndLines != null)
+    val shouldCountLines = (reportInitStats != null)
     var linesCount = 0
     val firFiles = files.map { file ->
         val (code, linesMapping) = file.getContentsAsStream().reader(Charsets.UTF_8).use {
@@ -42,8 +45,22 @@ fun FirSession.buildFirViaLightTree(
             sourcesToPathsMapper.registerFileSource(firFile.source!!, file.path ?: file.name)
         }
     }
-    reportFilesAndLines?.invoke(files.count(), linesCount)
+    reportInitStats?.invoke(InitStats(Time.ZERO, files.count(), linesCount))
+    reportAnalysisStats?.invoke(firFiles.countAnalysisStats())
     return firFiles
+}
+
+private fun List<FirFile>.countAnalysisStats(): AnalysisStats {
+    val firStatsCounter = FirStatsCounter()
+    var analysisStats: AnalysisStats = AnalysisStats.EMPTY
+
+    for (firFile in this) {
+        firStatsCounter.visitFile(firFile, null)
+        analysisStats += firStatsCounter.analysisStats
+        firStatsCounter.reset()
+    }
+
+    return analysisStats
 }
 
 fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
@@ -82,8 +99,9 @@ fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
     diagnosticsReporter: BaseDiagnosticsCollector,
-    countFilesAndLines: KFunction2<Int, Int, Unit>?
+    countInitStats: ((InitStats) -> Unit)?,
+    countAnalysisStats: ((AnalysisStats) -> Unit)?,
 ): ModuleCompilerAnalyzedOutput {
-    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
+    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countInitStats, countAnalysisStats)
     return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }

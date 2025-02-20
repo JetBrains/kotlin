@@ -39,8 +39,10 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
+import org.jetbrains.kotlin.util.BinaryStats
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseSideMeasurementType
+import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.tryMeasureSideTime
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -107,12 +109,22 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             //
             // Otherwise B.kt will not see the newly added field in A.
             val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
-            singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)?.let { SmartList(it) }
+            val virtualFiles = singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)?.let { SmartList(it) }
                 ?: SmartList(
                     index.findClasses(outerMostClassId) { dir, type ->
                         findVirtualFileGivenPackage(dir, relativeClassName, type)
                     }
                 ).takeIf { it.isNotEmpty() }
+
+            if (virtualFiles != null) {
+                perfManager?.let {
+                    virtualFiles.forEach { file ->
+                        it.addPhaseSideStats(PhaseSideMeasurementType.FindJavaClass, BinaryStats(Time.ZERO, 0, file.length))
+                    }
+                }
+            }
+
+            virtualFiles
         }?.firstOrNull { it in searchScope }
     }
 

@@ -289,7 +289,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         }
 
     @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics.")
-    var reportPerf = false
+    var reportPerf = true
         set(value) {
             checkFrozen()
             field = value
@@ -300,7 +300,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         valueDescription = "<path>",
         description = "Dump detailed performance statistics to the specified file."
     )
-    var dumpPerf: String? = null
+    var dumpPerf: String? = "F:\\JetBrains\\logs\\perf.log.json"
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value

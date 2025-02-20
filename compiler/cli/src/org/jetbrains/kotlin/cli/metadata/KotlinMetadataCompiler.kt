@@ -36,8 +36,11 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.util.InitStats
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.Time
 import java.io.File
 
 /**
@@ -117,7 +120,10 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         val sourceFiles = environment.getSourceFiles()
         performanceManager.apply {
             targetDescription = "$mode mode for $moduleName module"
-            addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
+            addPhaseStats(
+                PhaseMeasurementType.Initialization,
+                InitStats(Time.ZERO, sourceFiles.size, environment.countLinesOfCode(sourceFiles))
+            )
         }
 
         if (environment.getSourceFiles().isEmpty()) {
