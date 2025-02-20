@@ -26,6 +26,9 @@ interface TypeRef {
      */
     fun renderTo(appendable: Appendable, importCollector: ImportCollecting)
 
+    val typeAnnotations: List<String>
+        get() = emptyList()
+
     object Star : TypeRef {
 
         override fun substitute(map: TypeParameterSubstitutionMap) = this
@@ -46,13 +49,19 @@ class ClassRef<P : TypeParameterRef> private constructor(
     names: List<String>,
     override val args: Map<P, TypeRef>,
     override val nullable: Boolean = false,
+    override val typeAnnotations: List<String> = emptyList(),
 ) : ParametrizedTypeRef<ClassRef<P>, P>, ClassOrElementRef {
     /**
      * Returns a class name created from the given parts. For example, calling this with package name
      * `"java.util"` and simple names `"Map"`, `"Entry"` yields `Map.Entry`.
      */
-    constructor(kind: TypeKind, packageName: String, vararg simpleNames: String, args: Map<P, TypeRef> = emptyMap()) :
-            this(kind, listOf(packageName, *simpleNames), args) {
+    constructor(
+        kind: TypeKind,
+        packageName: String,
+        vararg simpleNames: String,
+        args: Map<P, TypeRef> = emptyMap(),
+        typeAnnotations: List<String> = emptyList(),
+    ) : this(kind, listOf(packageName, *simpleNames), args, false, typeAnnotations) {
         require(simpleNames.isNotEmpty()) { "simpleNames must not be empty" }
         require(simpleNames.none { it.isEmpty() }) {
             "simpleNames must not contain empty items: ${simpleNames.contentToString()}"
@@ -77,6 +86,12 @@ class ClassRef<P : TypeParameterRef> private constructor(
 
     override fun renderTo(appendable: Appendable, importCollector: ImportCollecting) {
         importCollector.addImport(this)
+        for (annotation in typeAnnotations) {
+            if (!annotation.startsWith("@")) {
+                appendable.append("@")
+            }
+            appendable.append(annotation, " ")
+        }
         simpleNames.joinTo(appendable, separator = ".")
         renderArgsTo(appendable, importCollector)
         renderNullabilityTo(appendable)
@@ -88,14 +103,18 @@ class ClassRef<P : TypeParameterRef> private constructor(
      */
     val simpleNames: List<String> get() = names.subList(1, names.size)
 
-    override fun copy(args: Map<P, TypeRef>) = ClassRef(kind, names, args, nullable)
-    override fun copy(nullable: Boolean) = ClassRef(kind, names, args, nullable)
+    override fun copy(args: Map<P, TypeRef>) = ClassRef(kind, names, args, nullable, typeAnnotations)
+    override fun copy(nullable: Boolean) = ClassRef(kind, names, args, nullable, typeAnnotations)
 
     override fun toString() = canonicalName
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ClassRef<*>) return false
-        return kind == other.kind && args == other.args && nullable == other.nullable && names == other.names
+        return kind == other.kind &&
+                args == other.args &&
+                nullable == other.nullable &&
+                names == other.names &&
+                typeAnnotations == other.typeAnnotations
     }
 
     override fun hashCode(): Int = Objects.hash(kind, args, nullable, names)

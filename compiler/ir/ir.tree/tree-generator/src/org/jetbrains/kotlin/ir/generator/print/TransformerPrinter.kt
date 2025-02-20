@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator.print
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
+import org.jetbrains.kotlin.ir.generator.Packages
 import org.jetbrains.kotlin.ir.generator.irVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
@@ -20,7 +21,15 @@ internal class TransformerPrinter(
 ) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(irVisitorType.withArgs(rootElement, dataTypeVariable))
+        get() = listOf(
+            irVisitorType.withArgs(rootElement, dataTypeVariable),
+            ClassRef<PositionTypeParameterRef>(
+                TypeKind.Interface,
+                Packages.visitors,
+                "IrElementTransformer",
+                typeAnnotations = listOf("Suppress(\"DEPRECATION_ERROR\")")
+            ).withArgs(dataTypeVariable), // See KT-75353
+        )
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = listOf(dataTypeVariable)

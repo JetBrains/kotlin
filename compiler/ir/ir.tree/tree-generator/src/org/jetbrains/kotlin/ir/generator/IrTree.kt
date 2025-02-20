@@ -465,12 +465,25 @@ object IrTree : AbstractTreeBuilder() {
     val moduleFragment: Element by element(Declaration) {
         needTransformMethod()
         transformByChildren = true
-        
+
         +descriptor("ModuleDescriptor").apply {
             optInAnnotation = null
         }
         +field("name", type<Name>(), mutable = false)
         +listField("files", file, mutability = MutableList)
+
+        generationCallback = {
+            printlnMultiLine(
+                """
+ 
+                @Deprecated("", level = DeprecationLevel.HIDDEN) // See KT-75353
+                fun <D> transform(
+                    transformer: @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.ir.visitors.IrElementTransformer<D>,
+                    data: D
+                ): IrModuleFragment = transform(transformer as IrTransformer<D>, data)
+                """
+            )
+        }
     }
     val property: Element by element(Declaration) {
         parent(declarationBase)

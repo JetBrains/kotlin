@@ -21,9 +21,13 @@ typealias IrElementVisitor<R, D> = IrVisitor<R, D>
 )
 typealias IrElementVisitorVoid = IrVisitorVoid
 
+/**
+ * See [KT-75353](https://youtrack.jetbrains.com/issue/KT-75353) for an explanation
+ * why this is a marker interface and not a type alias to [IrTransformer].
+ */
 @Deprecated(
     "Use the IrTransformer abstract class instead",
     ReplaceWith("IrTransformer<D>", "org.jetbrains.kotlin.ir.visitors.IrTransformer"),
     DeprecationLevel.ERROR,
 )
-typealias IrElementTransformer<D> = IrTransformer<D>
+interface IrElementTransformer<in D>

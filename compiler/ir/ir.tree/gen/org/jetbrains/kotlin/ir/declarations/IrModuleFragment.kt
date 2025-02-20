@@ -26,6 +26,12 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
 
     abstract val files: MutableList<IrFile>
 
+    @Deprecated("", level = DeprecationLevel.HIDDEN) // See KT-75353
+    fun <D> transform(
+        transformer: @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.ir.visitors.IrElementTransformer<D>,
+        data: D
+    ): IrModuleFragment = transform(transformer as IrTransformer<D>, data)
+
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitModuleFragment(this, data)
 
