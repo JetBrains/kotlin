@@ -144,36 +144,3 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
     compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
     compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
 }
-
-/**
- * Dependency Security Overrides
- *
- * Forces specific versions of transitive dependencies to address known vulnerabilities:
- *
- * Affected Library:
- * └── io.netty
- *    ├── netty-buffer:* → 4.1.118.Final
- *    └── netty-codec-http2:* → 4.1.118.Final
- *
- * Mitigated Vulnerabilities:
- * - CVE-2025-25193: Denial of Service Vulnerability
- * - CVE-2024-47535: Network security vulnerability
- * - CVE-2024-29025: Remote code execution risk
- * - CVE-2023-4586: Information disclosure vulnerability
- * - CVE-2023-34462: Potential denial of service
- *
- * This configuration overrides versions regardless of the declaring dependency.
- */
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "io.netty" &&
-            listOf(
-                "netty-buffer",
-                "netty-codec-http2",
-            ).contains(requested.name)
-        ) {
-            useVersion("4.1.118.Final")
-            because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
-        }
-    }
-}
