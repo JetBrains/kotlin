@@ -59,7 +59,7 @@ abstract class FlowActionBuildFusService @Inject constructor(
     fun getConfigurationTimeMetrics(): Provider<List<MetricContainer>> {
         return providerFactory.provider {
             synchronized(this) {
-                configurationMetrics.disallowChanges()
+//                configurationMetrics.disallowChanges()
                 configurationMetrics.get()
             }
         }

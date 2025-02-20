@@ -176,6 +176,95 @@ class UklibDependencyDeclarationViolations {
         }
     }
 
+    @Test
+    fun `dependency specification validation - different compilation scopes - don't trigger violation`() {
+        runTest(
+            { emptySet() }
+        ) {
+            jvm()
+            js()
+
+            // Scopes don't matter because we only care about that all compilations see the same set of dependencies
+            sourceSets.commonMain.dependencies {
+                implementation("a:common:1.0")
+            }
+            sourceSets.jvmMain.dependencies {
+                compileOnly("a:common:1.0")
+            }
+            sourceSets.jsMain.dependencies {
+                api("a:common:1.0")
+            }
+        }
+    }
+
+    @Test
+    fun `dependency specification validation - runtime scope - isn't validated`() {
+        runTest(
+            { emptySet() }
+        ) {
+            jvm()
+            js()
+
+            // We probably don't care about runtime dependencies, so those can be whatever
+            sourceSets.commonMain.dependencies {
+                implementation("a:common:1.0")
+            }
+            sourceSets.jvmMain.dependencies {
+                runtimeOnly("a:runtime_only:1.0")
+            }
+        }
+    }
+
+    @Test
+    fun `dependency specification validation - test compilation dependencies - are not validated`() {
+        runTest(
+            { emptySet() }
+        ) {
+            jvm()
+            js()
+
+            // We don't validate test compilations at all
+            sourceSets.commonMain.dependencies {
+                implementation("a:common:1.0")
+            }
+            sourceSets.commonTest.dependencies {
+                implementation("a:common_test:1.0")
+            }
+            sourceSets.jvmTest.dependencies {
+                implementation("a:jvm_test:1.0")
+            }
+        }
+    }
+
+    @Test
+    fun `dependency specification validation - npm dependencies`() {
+        runTest(
+            { emptySet() }
+        ) {
+            jvm()
+            js()
+
+            sourceSets.jsMain.dependencies {
+                implementation(npm("mocha", "*"))
+            }
+        }
+    }
+
+    @Test
+    fun `dependency specification validation - stdlib and dom dependencies - are not validated`() {
+        runTest(
+            { emptySet() }
+        ) {
+            jvm()
+            js()
+
+            sourceSets.jsMain.dependencies {
+                implementation("")
+            }
+        }
+    }
+
+
     private fun violation(
         configuration: Configuration,
         uniqueDependencies: Set<Dependency>,

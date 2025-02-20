@@ -31,7 +31,7 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
             gradleVersion,
             providedJdk,
             androidVersion
-        ).publish(PublisherConfiguration())
+        ).publish(publisherConfiguration = PublisherConfiguration())
 
         val projectDependency = project(
             "multiplatformResources/android/projectDependency",

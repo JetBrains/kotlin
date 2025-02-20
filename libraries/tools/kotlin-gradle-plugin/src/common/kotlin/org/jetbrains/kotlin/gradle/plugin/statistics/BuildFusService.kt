@@ -85,8 +85,8 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             registerIfAbsentImpl(project, pluginVersion, buildUidService).also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesBuildFusService::class.java.name) {
                     project.tasks.withType<UsesBuildFusService>().configureEach { task ->
-                        task.buildFusService.value(serviceProvider).disallowChanges()
-                        task.usesService(serviceProvider)
+//                        task.buildFusService.value(serviceProvider).disallowChanges()
+//                        task.usesService(serviceProvider)
                     }
                 }
             }

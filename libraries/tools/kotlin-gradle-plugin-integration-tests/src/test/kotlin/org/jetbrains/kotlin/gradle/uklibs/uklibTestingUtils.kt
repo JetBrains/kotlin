@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import java.io.File
@@ -60,6 +59,7 @@ data class PublishedProject(
         val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
         val jar: File get() = path.resolve("${artifactsPrefix}.jar")
         val psmJar: File get() = path.resolve("${artifactsPrefix}-psm.jar")
+        val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
     }
 
     val rootCoordinate: String = "$group:$name:$version"
@@ -273,16 +273,17 @@ fun Project.enableCrossCompilation(enable: Boolean = true) {
     )
 }
 
-internal fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrategy = UklibResolutionStrategy.ResolveUklibsInMavenComponents) {
+internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy = KmpResolutionStrategy.ResolveUklibsAndResolvePSMLeniently) {
     propertiesExtension.set(
-        PropertiesProvider.PropertyNames.KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY,
+        PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY,
         strategy.propertyName,
     )
+    computeTransformedLibraryChecksum(false)
 }
 
-fun Project.computeUklibChecksum(enable: Boolean = false) {
+fun Project.computeTransformedLibraryChecksum(enable: Boolean = false) {
     propertiesExtension.set(
-        PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM,
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM,
         enable.toString(),
     )
 }

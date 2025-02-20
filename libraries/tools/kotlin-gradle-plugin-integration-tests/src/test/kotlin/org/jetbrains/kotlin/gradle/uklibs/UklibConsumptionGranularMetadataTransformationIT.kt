@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.gradle.uklibs
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import java.io.File
-import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -96,7 +92,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(transitivePublisher)
             buildScriptInjection {
                 project.setUklibResolutionStrategy()
-                project.computeUklibChecksum(false)
                 project.applyMultiplatform {
                     iosArm64()
                     iosX64()
@@ -201,7 +196,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publishedProject)
             buildScriptInjection {
-                project.computeUklibChecksum(false)
+                project.computeTransformedLibraryChecksum(false)
                 project.enableCrossCompilation()
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
@@ -229,27 +224,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     .relativeTransformationPathComponents(),
             )
         }
-    }
-
-    // Take full paths of the classpath formed by the GMT and extract last 2 path components for assertions
-    private fun List<File>.relativeTransformationPathComponents(): List<List<String>> = map { it.lastPathComponents(2) }
-    private fun File.lastPathComponents(number: Int): List<String> = toPath().toList().takeLast(number).map { it.pathString }
-
-    private fun TestProject.metadataTransformationOutputClasspath(
-        sourceSetName: String,
-    ): List<File> {
-        val iosMainTransformationTask = buildScriptReturn {
-            project.locateOrRegisterMetadataDependencyTransformationTask(
-                kotlinMultiplatform.sourceSets.getByName(sourceSetName)
-            ).name
-        }.buildAndReturn()
-        val outputClasspath = buildScriptReturn {
-            val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(
-                kotlinMultiplatform.sourceSets.getByName(sourceSetName)
-            ).get()
-            transformationTask.allTransformedLibraries().get()
-        }.buildAndReturn(iosMainTransformationTask)
-        return outputClasspath
     }
 
     private fun publishUklib(

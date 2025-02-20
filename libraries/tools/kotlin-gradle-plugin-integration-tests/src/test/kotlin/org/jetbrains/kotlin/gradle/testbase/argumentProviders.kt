@@ -24,7 +24,7 @@ import kotlin.streams.asStream
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class GradleTestVersions(
-    val minVersion: String = TestVersions.Gradle.MIN_SUPPORTED,
+    val minVersion: String = TestVersions.Gradle.MAX_SUPPORTED,
     val maxVersion: String = TestVersions.Gradle.MAX_SUPPORTED,
     val additionalVersions: Array<String> = [],
 )

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -47,6 +48,8 @@ abstract class KotlinSoftwareComponent(
     override fun getName(): String = name
 
     private val metadataTarget get() = project.multiplatformExtension.metadataTarget
+
+    internal val uklibUsages: CompletableFuture<List<DefaultKotlinUsageContext>> = CompletableFuture()
 
     internal suspend fun subcomponentTargets(): List<KotlinTarget> {
         AfterFinaliseCompilations.await()
@@ -66,7 +69,20 @@ abstract class KotlinSoftwareComponent(
             }.toSet()
     }
 
-    override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
+    override fun getVariants(): Set<SoftwareComponent> = if (project.kotlinPropertiesProvider.publishUklib) emptySet() else _variants.getOrThrow()
+
+    private val allUklibUsages: Future<Set<UsageContext>> = project.future {
+        if (project.kotlinPropertiesProvider.publishUklib) {
+            // FIXME: Is there a sane API to get jvm component as a bunch of variants???
+//            val foo = (project.components.named("java") as ComponentWithVariants)
+//            println(foo)
+//            println(project)
+            // FIXME: Drop this KotlinSoftwareComponent garbage and use adhoc component factory when publishing with uklibs. This component maybe should go into a separate -legacy component
+            return@future uklibUsages.await().toSet()
+        } else {
+            return@future emptySet()
+        }
+    }
 
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
@@ -74,6 +90,10 @@ abstract class KotlinSoftwareComponent(
         if (!project.isKotlinGranularMetadataEnabled) {
             val metadataCompilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME)
             return@future metadataTarget.createUsageContexts(metadataCompilation)
+        }
+
+        if (project.kotlinPropertiesProvider.publishUklib) {
+            return@future emptySet()
         }
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
@@ -105,7 +125,7 @@ abstract class KotlinSoftwareComponent(
 
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages
+        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages + allUklibUsages.getOrThrow()
     }
 
     private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +

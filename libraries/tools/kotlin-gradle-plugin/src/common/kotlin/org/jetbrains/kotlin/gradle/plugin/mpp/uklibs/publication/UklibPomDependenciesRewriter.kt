@@ -40,6 +40,7 @@ internal class UklibPomDependenciesRewriter {
 
             // Leave if it's already compile
             if (scope?.text() == "compile") return@forEach
+            // FIXME: Drop this and rewrite everything to compile
             scopeMapping[DependencyGA(group, artifact)]?.let {
                 when (it) {
                     KotlinUsageContext.MavenScope.COMPILE -> scope?.setValue("compile")
@@ -81,7 +82,7 @@ internal class UklibPomDependenciesRewriter {
                             }
                     }.forEach { set ->
                         set.dependencySet.forEach { dependency ->
-                            val dep = DependencyGA(dependency.group, dependency.name)
+                            val dep = DependencyGA(dependency.group, dependency.name) // mavenPublication {customArtifact = "custom" group = "custom" }
                             val exScope = dependencyRemapping[dep]
                             when (exScope) {
                                 KotlinUsageContext.MavenScope.COMPILE -> {}

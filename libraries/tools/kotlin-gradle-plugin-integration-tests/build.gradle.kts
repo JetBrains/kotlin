@@ -44,6 +44,7 @@ tasks.withType(AbstractKotlinCompile::class.java).configureEach {
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
+    testImplementation(project(":kotlin-gradle-plugin", configuration = "ftConsumable"))
     testImplementation(project(":kotlin-gradle-plugin")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
@@ -358,6 +359,11 @@ configureJvmTarget8()
 
 val mergedTestClassesClasspathTask = tasks.register<Copy>("testClassesCopy") {
     from(kotlin.target.compilations.getByName("test").output.classesDirs)
+    from(
+        configurations.detachedConfiguration(
+            dependencies.create(dependencies.project(":kotlin-gradle-plugin", configuration = "ftConsumable"))
+        )
+    )
     into(layout.buildDirectory.dir("testClassesCopy"))
 }
 
@@ -431,7 +437,9 @@ tasks.withType<Test>().configureEach {
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
-    val mergedTestClassesDirectory = files(mergedTestClassesClasspathTask)
+    val mergedTestClassesDirectory = files(
+        mergedTestClassesClasspathTask,
+    )
     inputs.files(mergedTestClassesDirectory)
     doFirst {
         systemProperty("buildScriptInjectionsClasspath", mergedTestClassesDirectory.single())

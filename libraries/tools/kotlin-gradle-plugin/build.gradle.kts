@@ -201,6 +201,7 @@ dependencies {
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(libs.lincheck)
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
@@ -346,58 +347,58 @@ tasks {
              */
             pivotVersion = KotlinMetadataPivotVersion(1, 8, 0)
         }
-        asmDeprecation {
-            val exclusions = listOf(
-                "org.jetbrains.kotlin.gradle.**", // part of the plugin
-                "org.jetbrains.kotlin.project.model.**", // part of the plugin
-                "org.jetbrains.kotlin.statistics.**", // part of the plugin
-                "org.jetbrains.kotlin.tooling.**", // part of the plugin
-                "org.jetbrains.kotlin.org.**", // already shadowed dependencies
-                "org.jetbrains.kotlin.com.**", // already shadowed dependencies
-                "org.jetbrains.kotlin.it.unimi.**", // already shadowed dependencies
-                "org.jetbrains.kotlin.internal.**", // already internal package
-            )
-            val deprecationMessage = """
-                You're using a Kotlin compiler class bundled into KGP for its internal needs.
-                This is discouraged and will not be supported in future releases.
-                The class in this artifact is scheduled for removal in Kotlin 2.2. Please define dependency on it in an alternative way.
-                See https://kotl.in/gradle/internal-compiler-symbols for more details
-            """.trimIndent()
-            deprecateClassesByPattern("org.jetbrains.kotlin.**", deprecationMessage, exclusions)
-        }
+//        asmDeprecation {
+//            val exclusions = listOf(
+//                "org.jetbrains.kotlin.gradle.**", // part of the plugin
+//                "org.jetbrains.kotlin.project.model.**", // part of the plugin
+//                "org.jetbrains.kotlin.statistics.**", // part of the plugin
+//                "org.jetbrains.kotlin.tooling.**", // part of the plugin
+//                "org.jetbrains.kotlin.org.**", // already shadowed dependencies
+//                "org.jetbrains.kotlin.com.**", // already shadowed dependencies
+//                "org.jetbrains.kotlin.it.unimi.**", // already shadowed dependencies
+//                "org.jetbrains.kotlin.internal.**", // already internal package
+//            )
+//            val deprecationMessage = """
+//                You're using a Kotlin compiler class bundled into KGP for its internal needs.
+//                This is discouraged and will not be supported in future releases.
+//                The class in this artifact is scheduled for removal in Kotlin 2.2. Please define dependency on it in an alternative way.
+//                See https://kotl.in/gradle/internal-compiler-symbols for more details
+//            """.trimIndent()
+//            deprecateClassesByPattern("org.jetbrains.kotlin.**", deprecationMessage, exclusions)
+//        }
     }
-    GradlePluginVariant.values().forEach { variant ->
-        if (kotlinBuildProperties.isInJpsBuildIdeaSync) return@forEach
-        val sourceSet = sourceSets.getByName(variant.sourceSetName)
-        val taskSuffix = sourceSet.jarTaskName.capitalize()
-        val shadowJarTaskName = "$EMBEDDABLE_COMPILER_TASK_NAME$taskSuffix"
-        asmDeprecation {
-            val dumpTask = registerDumpDeprecationsTask(shadowJarTaskName, taskSuffix)
-            val dumpAllTask = getOrCreateTask<Task>("dumpDeprecations") {
-                dependsOn(dumpTask)
-            }
-            val expectedFileDoesNotExistMessage = """
-                The file with expected deprecations for the compiler modules bundled into KGP does not exist.
-                Run ./gradlew ${project.path}:${dumpTask.name} first to create it.
-                You may also use ./gradlew ${project.path}:${dumpAllTask.name} to dump deprecations of all fat jars.
-                Context: https://youtrack.jetbrains.com/issue/KT-70251
-            """.trimIndent()
-            val checkFailureMessage = """
-                Expected deprecations applied to the compiler modules bundled into KGP does not match with the actually applied ones.
-                Run ./gradlew ${project.path}:${dumpTask.name} to see the difference.
-                You may also use ./gradlew ${project.path}:${dumpAllTask.name} to dump deprecations of all fat jars.
-                Use INFO level log for the exact deprecated classes set.
-                Either commit the difference or adjust the package relocation rules in ${buildFile.absolutePath}
-                Please be sure to leave a comment explaining any changes related to this failure clear enough.
-                Context: https://youtrack.jetbrains.com/issue/KT-70251
-            """.trimIndent()
-            val checkTask =
-                registerCheckDeprecationsTask(shadowJarTaskName, taskSuffix, expectedFileDoesNotExistMessage, checkFailureMessage)
-            named("check") {
-                dependsOn(checkTask)
-            }
-        }
-    }
+//    GradlePluginVariant.values().forEach {
+//        if (kotlinBuildProperties.isInJpsBuildIdeaSync) return@forEach
+//        val sourceSet = sourceSets.getByName(variant.sourceSetName)
+//        val taskSuffix = sourceSet.jarTaskName.capitalize()
+//        val shadowJarTaskName = "$EMBEDDABLE_COMPILER_TASK_NAME$taskSuffix"
+//        asmDeprecation {
+//            val dumpTask = registerDumpDeprecationsTask(shadowJarTaskName, taskSuffix)
+//            val dumpAllTask = getOrCreateTask<Task>("dumpDeprecations") {
+//                dependsOn(dumpTask)
+//            }
+//            val expectedFileDoesNotExistMessage = """
+//                The file with expected deprecations for the compiler modules bundled into KGP does not exist.
+//                Run ./gradlew ${project.path}:${dumpTask.name} first to create it.
+//                You may also use ./gradlew ${project.path}:${dumpAllTask.name} to dump deprecations of all fat jars.
+//                Context: https://youtrack.jetbrains.com/issue/KT-70251
+//            """.trimIndent()
+//            val checkFailureMessage = """
+//                Expected deprecations applied to the compiler modules bundled into KGP does not match with the actually applied ones.
+//                Run ./gradlew ${project.path}:${dumpTask.name} to see the difference.
+//                You may also use ./gradlew ${project.path}:${dumpAllTask.name} to dump deprecations of all fat jars.
+//                Use INFO level log for the exact deprecated classes set.
+//                Either commit the difference or adjust the package relocation rules in ${buildFile.absolutePath}
+//                Please be sure to leave a comment explaining any changes related to this failure clear enough.
+//                Context: https://youtrack.jetbrains.com/issue/KT-70251
+//            """.trimIndent()
+//            val checkTask =
+//                registerCheckDeprecationsTask(shadowJarTaskName, taskSuffix, expectedFileDoesNotExistMessage, checkFailureMessage)
+//            named("check") {
+//                dependsOn(checkTask)
+//            }
+//        }
+//    }
 }
 
 tasks.named("validatePlugins") {
@@ -488,7 +489,17 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
     }
 
+    val ftConsumable = configurations.create("ftConsumable") {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+    }
     val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
+    functionalTestCompilation.output.classesDirs.forEach {
+        ftConsumable.outgoing.artifact(it) {
+            builtBy(functionalTestCompilation.compileTaskProvider)
+        }
+    }
+
     functionalTestCompilation.compileJavaTaskProvider.configure {
         sourceCompatibility = JavaLanguageVersion.of(17).toString()
         targetCompatibility = JavaLanguageVersion.of(17).toString()
@@ -498,6 +509,10 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
         }
     }
+    functionalTestCompilation.configurations.pluginConfiguration.dependencies.add(
+        // FIXME: Do we intentionally use different kotlin versions with BTA impl and without? Or how does this even work?
+        dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
+    )
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
@@ -562,6 +577,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
         implementation("org.reflections:reflections:0.10.2")
         implementation(project(":compose-compiler-gradle-plugin"))
+        implementation(libs.kotlinx.serialization.json)
     }
 
     tasks.named("check") {

@@ -28,11 +28,13 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
 
     @get:OutputFile
     val outputZip: RegularFileProperty = project.objects.fileProperty().convention(
+        // fixme: use convention name + output locations
         project.layout.buildDirectory.file("library.${Uklib.UKLIB_EXTENSION}")
     )
 
     @get:Internal
     val temporariesDirectory: DirectoryProperty = project.objects.directoryProperty().convention(
+        // fixme: use streams instead tmp files
         project.layout.buildDirectory.dir("uklibTemp")
     )
 
@@ -56,6 +58,11 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
          */
         val compiledFragments = this.fragmentsWithTransitiveRefinees.get().filterKeys { fragment ->
             val isMetadata = fragment.attributes.count() > 1
+            // write code in nativeMain
+            // compile
+            // realize that all nativeMain can be moved to commonMain. Move it
+            // compile again
+            // all good and nice, publish it!
             if (isMetadata && !fragment.file().exists()) {
                 return@filterKeys false
             }

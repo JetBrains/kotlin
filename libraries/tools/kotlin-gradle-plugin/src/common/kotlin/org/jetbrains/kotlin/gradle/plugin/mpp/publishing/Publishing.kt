@@ -12,10 +12,10 @@ import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
-import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPomDependenciesRewriter
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.locateOrRegisterArchiveUklibTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.createUklibPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.locateOrStubJvmJarTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -90,10 +90,9 @@ private fun MavenPublication.configureRootComponentForUklibPublication(
         UklibPomDependenciesRewriter().rewriteDependencies(it, scopeRewritingMapping.get())
     }
     project.launch {
-        artifact(project.locateOrStubJvmJarTask())
-        artifact(project.locateOrRegisterArchiveUklibTask()) { artifact ->
-            artifact.extension = Uklib.UKLIB_EXTENSION
-        }
+        rootComponent.uklibUsages.complete(
+            project.createUklibPublication()
+        )
     }
 }
 

@@ -136,7 +136,7 @@ private fun KotlinTarget.addStdlibDependency(
                 val stdlibModule = compilation.platformType.stdlibPlatformType(this, kotlinSourceSet, stdlibVersion >= kotlin1920Version)
                     ?: return@withDependencies
 
-                KotlinStdlibConfigurationMetrics.collectMetrics(project, requestedStdlibVersion)
+//                KotlinStdlibConfigurationMetrics.collectMetrics(project, requestedStdlibVersion)
 
                 dependencySet.addLater(
                     coreLibrariesVersion.map {
