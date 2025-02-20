@@ -82,7 +82,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleAndroidTest")
@@ -99,7 +99,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidIcepickProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 setOf("https://clojars.org/repo/")
@@ -119,7 +119,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidParcelizeProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug")
@@ -177,7 +177,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             buildGradle.modify {
@@ -242,7 +242,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             subProject("Lib").buildGradle.modify {

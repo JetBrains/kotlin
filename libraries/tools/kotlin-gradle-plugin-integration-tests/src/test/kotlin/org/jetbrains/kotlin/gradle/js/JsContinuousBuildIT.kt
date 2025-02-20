@@ -100,7 +100,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
 
                 // Verify webpack starts and is aborted.
                 // (Webpack is launched using DeploymentHandle and runs continuously until Gradle stops the handle.)
-                val expectedMessage = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_12)) {
+                val expectedMessage = if (gradleVersion != GradleVersion.version(TestVersions.Gradle.G_8_12)) {
                     // language=text
                     """
                     |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] started
