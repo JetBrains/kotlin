@@ -200,7 +200,7 @@ abstract class AbstractAnnotationDeserializer(
     open fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
         emptyList<FirAnnotation>()
 
-    private fun <T : ExtendableMessage<T>> T.loadAnnotations(
+    private fun <T : ExtendableMessage<T, *>> T.loadAnnotations(
         extension: GeneratedMessageLite.GeneratedExtension<T, List<ProtoBuf.Annotation>>?,
         flags: Int,
         nameResolver: NameResolver,
