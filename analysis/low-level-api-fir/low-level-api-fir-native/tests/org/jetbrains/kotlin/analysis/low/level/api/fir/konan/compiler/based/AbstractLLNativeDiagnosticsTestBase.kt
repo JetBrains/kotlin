@@ -41,7 +41,7 @@ abstract class AbstractLLNativeDiagnosticsTest : AbstractLLNativeDiagnosticsTest
     }
 }
 
-abstract class AbstractLLFirReversedNativeTest : AbstractLLNativeDiagnosticsTestBase() {
+abstract class AbstractLLReversedNativeDiagnosticsTest : AbstractLLNativeDiagnosticsTestBase() {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             baseNativeDiagnosticTestConfiguration(::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder))
