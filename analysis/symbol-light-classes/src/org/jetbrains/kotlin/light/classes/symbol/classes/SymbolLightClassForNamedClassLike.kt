@@ -82,8 +82,7 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
             }
     }
 
-    private val isInner: Boolean
-        get() = classOrObjectDeclaration?.hasModifier(KtTokens.INNER_KEYWORD) ?: withClassSymbol { it.isInner }
+    private val isInner: Boolean get() = withClassSymbol { it.isInner }
 
     internal val isSealed: Boolean
         get() = classOrObjectDeclaration?.hasModifier(KtTokens.SEALED_KEYWORD) ?: withClassSymbol { it.modality == KaSymbolModality.SEALED }
