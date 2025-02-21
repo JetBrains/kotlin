@@ -117,7 +117,7 @@ private class IrFileValidator(
     private val returnCheckers: MutableList<IrReturnChecker> = mutableListOf()
     private val throwCheckers: MutableList<IrThrowChecker> = mutableListOf()
     private val functionCheckers: MutableList<IrFunctionChecker> =
-        mutableListOf(IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker)
+        mutableListOf(IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker)
     private val declarationBaseCheckers: MutableList<IrDeclarationChecker<IrDeclaration>> =
         mutableListOf(IrPrivateDeclarationOverrideChecker)
     private val propertyReferenceCheckers: MutableList<IrPropertyReferenceChecker> = mutableListOf()

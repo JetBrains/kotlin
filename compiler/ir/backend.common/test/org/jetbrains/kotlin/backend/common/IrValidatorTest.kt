@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -2476,6 +2477,56 @@ class IrValidatorTest {
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
             ),
+        )
+    }
+
+    @Test
+    fun `constructors cannot have dispatch or extension parameters`() {
+        val file = createIrFile("test.kt")
+        val klass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+        }
+        klass.createThisReceiverParameter()
+        file.addChild(klass)
+        val ctorWithDispatchParameter = klass.addConstructor()
+        ctorWithDispatchParameter.addValueParameter {
+            name = SpecialNames.THIS
+            type = klass.defaultType
+        }.apply {
+            kind = IrParameterKind.DispatchReceiver
+        }
+        val ctorWithExtensionParameter = klass.addConstructor()
+        ctorWithExtensionParameter.addValueParameter {
+            name = SpecialNames.THIS
+            type = klass.defaultType
+        }.apply {
+            kind = IrParameterKind.ExtensionReceiver
+        }
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Constructors of non-inner classes can't have dispatch receiver parameters
+                    CONSTRUCTOR visibility:public <> (<this>:org.sample.MyClass) returnType:org.sample.MyClass
+                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Constructors can't have extension receiver parameters
+                    CONSTRUCTOR visibility:public <> (<this>:org.sample.MyClass) returnType:org.sample.MyClass
+                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            )
         )
     }
 }
