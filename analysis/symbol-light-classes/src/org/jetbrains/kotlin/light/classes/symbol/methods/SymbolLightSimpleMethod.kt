@@ -190,7 +190,7 @@ internal class SymbolLightSimpleMethod private constructor(
     override fun isOverride(): Boolean = _isOverride
 
     private val _isOverride: Boolean by lazyPub {
-        if (isTopLevel) false else withFunctionSymbol { it.isOverride }
+        withFunctionSymbol { it.isOverride }
     }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
