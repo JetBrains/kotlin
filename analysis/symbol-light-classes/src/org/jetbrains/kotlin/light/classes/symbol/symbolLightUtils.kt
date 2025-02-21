@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInte
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.util.*
 
@@ -279,14 +278,6 @@ internal fun <T : KaSymbol> KaSession.restoreSymbolOrThrowIfDisposed(pointer: Ka
         ?: errorWithAttachment("${pointer::class} pointer already disposed") {
             withEntry("pointer", pointer) { it.toString() }
         }
-
-internal fun hasTypeParameters(
-    ktModule: KaModule,
-    declaration: KtTypeParameterListOwner?,
-    declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
-): Boolean = declaration?.typeParameters?.isNotEmpty() ?: declarationPointer.withSymbol(ktModule) {
-    it.typeParameters.isNotEmpty()
-}
 
 internal val SymbolLightClassBase.interfaceIfDefaultImpls: SymbolLightClassForInterface?
     get() = (this as? SymbolLightClassForInterfaceDefaultImpls)?.containingClass
