@@ -47,7 +47,7 @@ class IrLazyClass(
         symbol.bind(this)
         this.deserializedIr = lazy {
             assert(parent is IrPackageFragment)
-            stubGenerator.extensions.deserializeClass(this, stubGenerator, parent)
+            stubGenerator.extensions.deserializeClass(this, stubGenerator.irBuiltIns, stubGenerator.symbolTable, stubGenerator)
         }
     }
 

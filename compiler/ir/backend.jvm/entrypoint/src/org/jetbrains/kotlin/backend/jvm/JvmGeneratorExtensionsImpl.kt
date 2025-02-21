@@ -9,14 +9,15 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.lazy.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolDescriptor
+import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -79,7 +80,9 @@ open class JvmGeneratorExtensionsImpl(
     override fun generateFacadeClass(
         irFactory: IrFactory,
         deserializedSource: DeserializedContainerSource,
-        stubGenerator: DeclarationStubGenerator
+        irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
+        irProvider: IrProvider,
     ): IrClass? {
         if (!generateFacades || deserializedSource !is FacadeClassSource) return null
         val facadeName = deserializedSource.facadeClassName ?: deserializedSource.className
@@ -87,7 +90,7 @@ open class JvmGeneratorExtensionsImpl(
             if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
             facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
             deserializedSource,
-            deserializeIr = { facade -> deserializeClass(facade, stubGenerator, facade.parent) }
+            deserializeIr = { facade -> deserializeClass(facade, irBuiltIns, symbolTable, irProvider) }
         ).also {
             it.createThisReceiverParameter()
             it.classNameOverride = facadeName
@@ -96,10 +99,11 @@ open class JvmGeneratorExtensionsImpl(
 
     override fun deserializeClass(
         irClass: IrClass,
-        stubGenerator: DeclarationStubGenerator,
-        parent: IrDeclarationParent,
+        irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
+        irProvider: IrProvider,
     ): Boolean = JvmIrDeserializerImpl().deserializeTopLevelClass(
-        irClass, stubGenerator.irBuiltIns, stubGenerator.symbolTable, listOf(stubGenerator), this
+        irClass, irBuiltIns, symbolTable, listOf(irProvider), this
     )
 
     override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
