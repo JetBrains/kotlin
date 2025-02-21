@@ -95,7 +95,8 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":libraries:tools:gradle:fus-statistics-gradle-plugin",
     ":kotlin-util-klib-metadata",
     ":libraries:tools:abi-validation:abi-tools-api",
-    ":libraries:tools:abi-validation:abi-tools"
+    ":libraries:tools:abi-validation:abi-tools",
+    ":kotlin-metadata-jvm",
 )
 
 fun Task.dependsOnKotlinGradlePluginInstall() {
