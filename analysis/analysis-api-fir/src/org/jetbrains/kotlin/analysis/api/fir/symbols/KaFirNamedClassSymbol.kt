@@ -79,12 +79,7 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val modality: KaSymbolModality
         get() = withValidityAssertion {
-            backingPsi?.kaSymbolModality
-                ?: firSymbol.optionallyResolvedStatus.modality?.asKaSymbolModality
-                ?: when (classKind) { // default modality
-                    KaClassKind.INTERFACE -> KaSymbolModality.ABSTRACT
-                    else -> KaSymbolModality.FINAL
-                }
+            backingPsi?.kaSymbolModality ?: firSymbol.modality.asKaSymbolModality
         }
 
     override val visibility: KaSymbolVisibility
@@ -170,18 +165,4 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val location: KaSymbolLocation
         get() = withValidityAssertion { backingPsi?.location ?: getSymbolKind() }
-
-    /**
-     * We can use [FirRegularClassSymbol.rawStatus] to avoid unnecessary resolve unless there are status transformers present.
-     * If they are present, we have to resort to [FirRegularClassSymbol.resolvedStatus] instead - otherwise we can observe incorrect status
-     * properties.
-     *
-     * TODO This optimization should become obsolete after KT-56551 is fixed.
-     */
-    private val FirRegularClassSymbol.optionallyResolvedStatus: FirDeclarationStatus
-        get() = if (moduleData.session.extensionService.statusTransformerExtensions.isNotEmpty()) {
-            resolvedStatus
-        } else {
-            rawStatus
-        }
 }
