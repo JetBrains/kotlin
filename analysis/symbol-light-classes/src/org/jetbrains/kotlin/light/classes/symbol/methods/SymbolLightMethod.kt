@@ -72,7 +72,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         functionSymbolPointer.withSymbol(ktModule, action)
 
     override fun isVarArgs(): Boolean = withFunctionSymbol { functionSymbol ->
-        functionSymbol.valueParameters.any { it.isVararg }
+        functionSymbol.valueParameters.lastOrNull()?.isVararg == true
     }
 
     private val _parametersList by lazyPub {
