@@ -446,6 +446,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R =
         visitElement(thisReceiverExpression, data)
 
+    open fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: D): R =
+        visitElement(superReceiverExpression, data)
+
     open fun visitInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression, data: D): R =
         visitElement(inaccessibleReceiverExpression, data)
 

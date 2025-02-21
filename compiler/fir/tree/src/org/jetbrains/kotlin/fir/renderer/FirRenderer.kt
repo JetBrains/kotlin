@@ -1054,6 +1054,10 @@ class FirRenderer(
             qualifiedAccessExpression.typeArguments.renderTypeArguments()
         }
 
+        override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression) {
+            visitQualifiedAccessExpression(superReceiverExpression)
+        }
+
         override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
             visitQualifiedAccessExpression(propertyAccessExpression)
         }

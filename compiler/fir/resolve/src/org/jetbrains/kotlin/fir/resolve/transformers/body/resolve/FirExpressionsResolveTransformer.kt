@@ -402,6 +402,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return true
     }
 
+    override fun transformSuperReceiverExpression(
+        superReceiverExpression: FirSuperReceiverExpression,
+        data: ResolutionMode,
+    ): FirStatement {
+        return transformQualifiedAccessExpression(superReceiverExpression, data)
+    }
+
     override fun transformSafeCallExpression(
         safeCallExpression: FirSafeCallExpression,
         data: ResolutionMode

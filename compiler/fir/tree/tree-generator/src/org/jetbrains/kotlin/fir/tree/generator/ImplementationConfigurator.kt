@@ -401,6 +401,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultEmptyList("contextArguments", withGetter = true)
         }
 
+        impl(superReceiverExpression) {
+            defaultNull("explicitReceiver", "extensionReceiver", withGetter = true)
+            defaultEmptyList("contextArguments", withGetter = true)
+        }
+
         impl(expression, "FirUnitExpression") {
             kDoc(
                 """

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.KtNodeTypes.STRING_TEMPLATE
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -57,7 +56,6 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementT
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import kotlin.collections.contains
 
 class LightTreeRawFirExpressionBuilder(
     session: FirSession,
@@ -1605,7 +1603,7 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        return buildPropertyAccessExpression {
+        return buildSuperReceiverExpression {
             val sourceElement = superExpression.toFirSourceElement()
             source = sourceElement
             calleeReference = buildExplicitSuperReference {

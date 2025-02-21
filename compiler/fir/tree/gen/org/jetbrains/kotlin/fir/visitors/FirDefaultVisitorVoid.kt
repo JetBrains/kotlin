@@ -331,6 +331,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitQualifiedAccessExpression(thisReceiverExpression)
     }
 
+    override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression) {
+        visitQualifiedAccessExpression(superReceiverExpression)
+    }
+
     override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance) {
         visitTypeProjection(typeProjectionWithVariance)
     }

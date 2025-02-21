@@ -1155,6 +1155,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformThisReceiverExpression(thisReceiverExpression, data)
     }
 
+    open fun transformSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: D): FirStatement {
+        return transformElement(superReceiverExpression, data)
+    }
+
+    final override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: D): FirStatement {
+        return transformSuperReceiverExpression(superReceiverExpression, data)
+    }
+
     open fun transformInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression, data: D): FirStatement {
         return transformElement(inaccessibleReceiverExpression, data)
     }

@@ -288,6 +288,10 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             withCopy()
         }
 
+        builder(superReceiverExpression) {
+            parents += qualifiedAccessExpressionBuilder
+        }
+
         builder(anonymousFunction) {
             parents += functionBuilder
             parents += typeParametersOwnerBuilder

@@ -55,6 +55,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allPropertyAccessExpressionCheckers.check(propertyAccessExpression, data)
     }
 
+    override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: CheckerContext) {
+        checkers.allSuperReceiverExpressionCheckers.check(superReceiverExpression, data)
+    }
+
     override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: CheckerContext) {
         checkers.allIntegerLiteralOperatorCallCheckers.check(integerLiteralOperatorCall, data)
     }

@@ -6,25 +6,12 @@
 package org.jetbrains.kotlin.fir.checkers.generator
 
 import org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WASM_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNOSTICS_LIST
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.*
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.ErrorListDiagnosticListRenderer
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.generateDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUnresolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import java.io.File
 
 /*
@@ -149,6 +136,7 @@ fun main(args: Array<String>) {
                 visitAlso<FirImplicitInvokeCall>(it)
             }
             alias<FirPropertyAccessExpression>("PropertyAccessExpressionChecker")
+            alias<FirSuperReceiverExpression>("SuperReceiverExpressionChecker")
             alias<FirIntegerLiteralOperatorCall>("IntegerLiteralOperatorCallChecker")
             alias<FirVariableAssignment>("VariableAssignmentChecker")
             alias<FirTryExpression>("TryExpressionChecker")

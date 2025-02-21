@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
+import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
@@ -50,6 +51,7 @@ typealias FirQualifiedAccessExpressionChecker = FirExpressionChecker<FirQualifie
 typealias FirCallChecker = FirExpressionChecker<FirCall>
 typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>
 typealias FirPropertyAccessExpressionChecker = FirExpressionChecker<FirPropertyAccessExpression>
+typealias FirSuperReceiverExpressionChecker = FirExpressionChecker<FirSuperReceiverExpression>
 typealias FirIntegerLiteralOperatorCallChecker = FirExpressionChecker<FirIntegerLiteralOperatorCall>
 typealias FirVariableAssignmentChecker = FirExpressionChecker<FirVariableAssignment>
 typealias FirTryExpressionChecker = FirExpressionChecker<FirTryExpression>

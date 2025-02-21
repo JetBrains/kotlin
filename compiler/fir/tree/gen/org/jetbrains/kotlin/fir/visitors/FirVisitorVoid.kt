@@ -1155,6 +1155,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(thisReceiverExpression)
     }
 
+    final override fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression, data: Nothing?) {
+        visitSuperReceiverExpression(superReceiverExpression)
+    }
+
+    open fun visitSuperReceiverExpression(superReceiverExpression: FirSuperReceiverExpression) {
+        visitElement(superReceiverExpression)
+    }
+
     final override fun visitInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression, data: Nothing?) {
         visitInaccessibleReceiverExpression(inaccessibleReceiverExpression)
     }
