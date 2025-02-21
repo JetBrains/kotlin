@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.serialization.common"))
+    implementation(project(":compiler:ir.psi2ir"))
     api(project(":core:descriptors.jvm"))
     api(project(":core:metadata.jvm"))
     implementation(project(":core:deserialization.common.jvm"))

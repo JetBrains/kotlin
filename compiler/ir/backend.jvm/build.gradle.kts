@@ -8,6 +8,7 @@ dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:backend.common.jvm"))
+    api(project(":compiler:ir.psi2ir"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 }

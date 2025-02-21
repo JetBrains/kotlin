@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
-import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -38,6 +36,8 @@ import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.lazy.IrMaybeDeserializedClass
+import org.jetbrains.kotlin.psi2ir.lazy.lazyVar
 
 class Fir2IrLazyClass(
     private val c: Fir2IrComponents,
