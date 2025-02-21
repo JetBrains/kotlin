@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/nativeTests")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("llFirNative")
-public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
+public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnosticsTest {
   @Test
   public void testAllFilesPresentInNativeTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
