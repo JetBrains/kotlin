@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.util.*
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbolTable by originalTable {
     /*Don't force builtins class linking before unbound symbols linking: otherwise stdlib compilation will fail*/
-    var stubGenerator: DeclarationStubGenerator? = null
+    val stubGenerator: DeclarationStubGenerator?
+        get() = originalTable.irProvider as? DeclarationStubGenerator
 
     @ObsoleteDescriptorBasedAPI
     override val descriptorExtension: DescriptorBasedReferenceSymbolTableExtension = ExtensionWrapper()

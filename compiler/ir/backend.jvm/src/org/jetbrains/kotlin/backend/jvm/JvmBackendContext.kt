@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -129,10 +130,10 @@ class JvmBackendContext(
     }
 
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
-        symbolTable.lazyWrapper.descriptorExtension.referenceClass(descriptor)
+        IrLazySymbolTable(symbolTable).descriptorExtension.referenceClass(descriptor)
 
     internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
-        symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(descriptor)
+        IrLazySymbolTable(symbolTable).descriptorExtension.referenceTypeParameter(descriptor)
 
     override val preferJavaLikeCounterLoop: Boolean
         get() = true
