@@ -284,7 +284,7 @@ interface BaseKapt : Task,
      *
      * Accepts a [List] of [org.gradle.process.CommandLineArgumentProvider]s.
      */
-    @get:Internal
+    @get:Nested
     @Deprecated(
         "Use annotationProcessorOptionsProviders instead. Scheduled for removal in Kotlin 2.4.",
         ReplaceWith("annotationProcessorOptionsProviders"),
