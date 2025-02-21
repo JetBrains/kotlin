@@ -10,6 +10,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.net.URI
 import java.nio.file.FileSystems
@@ -19,6 +20,8 @@ import java.nio.file.StandardCopyOption
 import java.util.zip.Deflater
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.streams.asSequence
 
 internal class TaskOutputsBackup(
     private val fileSystemOperations: FileSystemOperations,
@@ -41,24 +44,24 @@ internal class TaskOutputsBackup(
         // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
-            if (outputPath.isDirectory && !outputPath.isEmptyDirectory) {
+            if (outputPath.isDirectory) {
                 val snapshotFile = File(snapshotsDir.get().asFile, index.asSnapshotArchiveName)
-                logger.debug("Packing $outputPath as $snapshotFile to make a backup")
+                logger.debug("Packing ${outputPath.invariantSeparatorsPath} as ${snapshotFile.invariantSeparatorsPath} to make a backup")
                 compressDirectoryToZip(
                     snapshotFile,
                     outputPath
                 )
             } else if (!outputPath.exists()) {
-                logger.debug("Ignoring $outputPath in making a backup as it does not exist")
+                logger.debug("Creating is-empty marker file for ${outputPath.invariantSeparatorsPath} as it does not exist")
                 val markerFile = File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile)
                 markerFile.parentFile.mkdirs()
                 markerFile.createNewFile()
-            } else {
-                val snapshotFile = snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile }
-                logger.debug("Copying $outputPath as $snapshotFile to make a backup")
+            } else { // it's not a directory, but it exists -> it's a file
+                val personalSnapshotDir = snapshotsDir.map { it.file(index.asSnapshotHolderDirectory).asFile }.get()
+                logger.debug("Copying ${outputPath.invariantSeparatorsPath} into ${personalSnapshotDir.invariantSeparatorsPath} to make a backup")
                 fileSystemOperations.copy { spec ->
                     spec.from(outputPath)
-                    spec.into(snapshotFile)
+                    spec.into(personalSnapshotDir)
                 }
             }
         }
@@ -70,28 +73,37 @@ internal class TaskOutputsBackup(
         }
 
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
-            val snapshotDir = snapshotsDir.get().file(index.asSnapshotDirectoryName).asFile
-            if (snapshotDir.isDirectory) {
-                logger.debug("Copying files from $snapshotDir into ${outputPath.parentFile} to restore from backup")
+            val possibleDir = snapshotsDir.get().file(index.asSnapshotHolderDirectory).asFile
+            val possibleArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile
+            val possibleNotExistsMarker = snapshotsDir.get().file(index.asNotExistsMarkerFile).asFile
+
+            if (possibleArchive.exists()) {
+                logger.debug("Unpacking ${possibleArchive.invariantSeparatorsPath} into ${outputPath.invariantSeparatorsPath} to restore from backup")
+                outputPath.mkdirs()
+                uncompressZipIntoDirectory(possibleArchive, outputPath)
+            } else if (possibleDir.exists()) {
+                logger.debug("Copying file from ${possibleDir.invariantSeparatorsPath} into ${outputPath.parentFile.invariantSeparatorsPath} to restore ${outputPath.name} from backup")
                 fileSystemOperations.copy { spec ->
-                    spec.from(snapshotDir)
+                    spec.from(possibleDir)
                     spec.into(outputPath.parentFile)
                 }
-            } else if (snapshotsDir.get().file(index.asNotExistsMarkerFile).asFile.exists()) {
+            } else if (possibleNotExistsMarker.exists()) {
                 // do nothing
+                logger.debug("Found marker ${possibleNotExistsMarker.invariantSeparatorsPath} for ${outputPath.invariantSeparatorsPath}, doing nothing")
             } else {
-                val snapshotArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile
-                logger.debug("Unpacking $snapshotArchive into $outputPath to restore from backup")
-                if (!snapshotArchive.exists()) {
-                    logger.warn(
-                        """
-                        |Failed to restore task outputs as snapshot file ${snapshotArchive.absolutePath} does not exist!
-                        |On recompilation full rebuild will be performed.
-                        """.trimMargin()
-                    )
-                    return
+                logger.warn(
+                    """
+                    |Failed to restore task outputs as all possible snapshot files for ${outputPath.invariantSeparatorsPath} do not exist!
+                    |On recompilation full rebuild will be performed.
+                    """.trimMargin()
+                )
+                val walkSnapshots = {
+                    Files.walk(snapshotsDir.getFile().toPath()).map {
+                        it.invariantSeparatorsPathString
+                    }.asSequence().toList().joinToString(",")
                 }
-                uncompressZipIntoDirectory(snapshotArchive, outputPath)
+                logger.debug("Available snapshots: ${walkSnapshots()}")
+                return
             }
         }
     }
@@ -163,7 +175,7 @@ internal class TaskOutputsBackup(
     private val Int.asNotExistsMarkerFile: String
         get() = "$this.not-exists"
 
-    private val Int.asSnapshotDirectoryName: String
+    private val Int.asSnapshotHolderDirectory: String
         get() = "$this"
 }
 
