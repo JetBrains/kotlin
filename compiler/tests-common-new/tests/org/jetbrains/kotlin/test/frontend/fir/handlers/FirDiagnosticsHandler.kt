@@ -75,7 +75,6 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.io.File
 
 class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
@@ -259,9 +258,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
             override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
                 val reference = propertyAccessExpression.calleeReference
-                if (reference is FirNamedReference) {
-                    consumer.reportContainingClassDiagnostic(propertyAccessExpression, reference)
-                }
+                consumer.reportContainingClassDiagnostic(propertyAccessExpression, reference)
 
                 super.visitPropertyAccessExpression(propertyAccessExpression)
             }
