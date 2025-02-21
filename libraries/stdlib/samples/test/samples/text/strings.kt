@@ -2,6 +2,7 @@ package samples.text
 
 import samples.*
 import java.util.Locale
+import java.util.regex.Pattern
 import kotlin.test.*
 
 class Strings {
@@ -515,6 +516,154 @@ class Strings {
             .firstOrNull { it.contains('&') }
 
         assertPrints(mixedColor, "brown&blue")
+    }
+
+    @Sample
+    fun toPattern() {
+        val string = "Kotlin [1-9]+\\.[0-9]\\.[0-9]+"
+        val pattern = string.toPattern(Pattern.CASE_INSENSITIVE)
+        assertPrints(pattern.pattern(), string)
+        assertTrue(pattern.flags() == Pattern.CASE_INSENSITIVE)
+        assertTrue(pattern.matcher("Kotlin 2.1.255").matches())
+        assertTrue(pattern.matcher("kOtLiN 21.0.1").matches())
+        assertFalse(pattern.matcher("Java 21.0.1").matches())
+        assertFalse(pattern.matcher("Kotlin 2.0").matches())
+
+        assertFails { "[0-9".toPattern(Pattern.CASE_INSENSITIVE) } // the given regex is malformed
+    }
+
+    @Sample
+    fun encodeToByteArray() {
+        val str = "Kòtlin\u00a02.1.255"
+        val byteArray = str.encodeToByteArray()
+        assertPrints(byteArray.contentToString(), "[75, -61, -78, 116, 108, 105, 110, -62, -96, 50, 46, 49, 46, 50, 53, 53]")
+
+        val byteArrayWithoutFirstLetter = str.encodeToByteArray(startIndex = 1, endIndex = str.length)
+        assertPrints(byteArrayWithoutFirstLetter.contentToString(), "[-61, -78, 116, 108, 105, 110, -62, -96, 50, 46, 49, 46, 50, 53, 53]")
+
+        val byteArrayWithoutLastLetter = str.encodeToByteArray(startIndex = 0, endIndex = str.length - 1)
+        assertPrints(byteArrayWithoutLastLetter.contentToString(), "[75, -61, -78, 116, 108, 105, 110, -62, -96, 50, 46, 49, 46, 50, 53]")
+
+        val byteArrayWithoutNbsp = str.replace("\u00a0", " ").replace("ò", "o").encodeToByteArray()
+        assertPrints(byteArrayWithoutNbsp.contentToString(), "[75, 111, 116, 108, 105, 110, 32, 50, 46, 49, 46, 50, 53, 53]")
+    }
+
+    @Sample
+    fun subStringFromStartIndex() {
+        val str = "abcde"
+        assertPrints(str.substring(0), "abcde")
+        assertPrints(str.substring(1), "bcde")
+        assertFails { str.substring(6) } // index exceeds string length
+    }
+
+    @Sample
+    fun substringByStandAndEndIndices() {
+        val str = "abcde"
+        assertPrints(str.substring(0, 0), "")
+        assertPrints(str.substring(0, 1), "a")
+        assertFails { str.substring(0, 6) } // index end exceeds string length
+        assertFails { str.substring(1, 0) } // index end is smaller thant index start
+    }
+
+    @Sample
+    fun startsWithFromPrefix() {
+        val str = "abcde"
+        assertTrue(str.startsWith("abc"))
+        assertFalse(str.startsWith("ABC"))
+        assertFalse(str.startsWith("bcd"))
+        assertFalse(str.startsWith("BCD"))
+    }
+
+    @Sample
+    fun startsWithFromPrefixAndIgnoreCase() {
+        val str = "abcde"
+        assertTrue(str.startsWith("abc", true))
+        assertTrue(str.startsWith("ABC", true))
+        assertFalse(str.startsWith("bcd", true))
+        assertFalse(str.startsWith("BCD", true))
+    }
+
+    @Sample
+    fun startsWithFromPrefixAndStartIndex() {
+        val str = "abcde"
+        assertFalse(str.startsWith("abc", 1))
+        assertFalse(str.startsWith("ABC", 1))
+        assertFalse(str.startsWith("BCD", 1))
+        assertTrue(str.startsWith("bcd", 1))
+    }
+
+    @Sample
+    fun startsWithFromPrefixAndStartIndexAndIgnoreCase() {
+        val str = "abcde"
+        assertFalse(str.startsWith("abc", 1, true))
+        assertFalse(str.startsWith("ABC", 1, true))
+        assertTrue(str.startsWith("bcd", 1, true))
+        assertTrue(str.startsWith("BCD", 1, true))
+    }
+
+    @Sample
+    fun endsWithFromSuffix() {
+        val str = "abcde"
+        assertTrue(str.endsWith("cde"))
+        assertFalse(str.endsWith("CDE"))
+        assertFalse(str.endsWith("bcd"))
+        assertFalse(str.endsWith("BCD"))
+    }
+
+    @Sample
+    fun endsWith() {
+        val str = "abcde"
+        assertTrue(str.endsWith("cde", true))
+        assertTrue(str.endsWith("CDE", true))
+        assertFalse(str.endsWith("bcd", true))
+        assertFalse(str.endsWith("BCD", true))
+    }
+
+    @Sample
+    fun codePointAt() {
+        val str = "abc"
+        assertPrints(str.codePointAt(0).toString(), "97")
+        assertPrints(str.codePointAt(1).toString(), "98")
+        assertPrints(str.codePointAt(2).toString(), "99")
+        assertFails { str.codePointAt(3) }
+        assertFails { str.codePointAt(-1) }
+        assertFails { str.codePointAt(str.length) }
+
+        val broccoli = "🥦"
+        assertPrints(broccoli.codePointAt(0), "129382")
+        assertPrints(broccoli.codePointAt(1), "56678")
+    }
+
+    @Sample
+    fun codePointBefore() {
+        val str = "abc"
+        assertPrints(str.codePointBefore(1).toString(), "97")
+        assertPrints(str.codePointBefore(2).toString(), "98")
+        assertPrints(str.codePointBefore(3).toString(), "99")
+        assertPrints(str.codePointBefore(str.length).toString(), "99")
+        assertFails { str.codePointBefore(0) }
+        assertFails { str.codePointBefore(-1) }
+        assertFails { str.codePointBefore(str.length + 1) }
+
+        val broccoli = "🥦"
+        assertPrints(broccoli.codePointBefore(1), "55358")
+        assertPrints(broccoli.codePointBefore(2), "129382")
+        assertFails { broccoli.codePointBefore(3) }
+    }
+
+    @Sample
+    fun codePointCount() {
+        val str = "abc"
+        assertPrints(str.codePointCount(0, 2).toString(), "2")
+        assertPrints(str.codePointCount(1, 3).toString(), "2")
+        assertPrints(str.codePointCount(2, 2).toString(), "0")
+        assertFails { str.codePointCount(3, 2) }
+        assertFails { str.codePointCount(-1, 2) }
+        assertFails { str.codePointCount(0, str.length+1) }
+
+        val broccoli = "🥦"
+        assertPrints(broccoli.codePointCount(0, broccoli.length /* = 2 */), "1")
+        assertPrints(broccoli.codePointCount(0, broccoli.length - 1 /* = 1 */), "1")
     }
 
     @Sample
