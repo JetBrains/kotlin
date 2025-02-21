@@ -1,20 +1,9 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.util
+package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -22,13 +11,12 @@ import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -43,7 +31,7 @@ abstract class DeclarationStubGenerator(
     val moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
     val irBuiltIns: IrBuiltIns,
-    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
+    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.Companion.EMPTY,
 ) : IrProvider {
     protected val lazyTable = symbolTable.lazyWrapper
 
@@ -132,7 +120,7 @@ abstract class DeclarationStubGenerator(
     }
 
     private fun computeOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin =
-        extensions.computeExternalDeclarationOrigin(descriptor) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+        extensions.computeExternalDeclarationOrigin(descriptor) ?: IrDeclarationOrigin.Companion.IR_EXTERNAL_DECLARATION_STUB
 
     fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty {
         val referenced = symbolTable.descriptorExtension.referenceProperty(descriptor)
@@ -148,7 +136,7 @@ abstract class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
                 descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
-                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE)
+                isFakeOverride = (origin == IrDeclarationOrigin.Companion.FAKE_OVERRIDE)
                         || descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                 stubGenerator = this, typeTranslator,
             ).generateParentDeclaration()
@@ -193,7 +181,7 @@ abstract class DeclarationStubGenerator(
 
         val origin =
             if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-                IrDeclarationOrigin.FAKE_OVERRIDE
+                IrDeclarationOrigin.Companion.FAKE_OVERRIDE
             else computeOrigin(descriptor)
         return symbolTable.descriptorExtension.declareSimpleFunction(descriptor.original) {
             IrLazyFunction(
@@ -201,7 +189,7 @@ abstract class DeclarationStubGenerator(
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isInline, descriptor.isExternal, descriptor.isTailrec, descriptor.isSuspend, descriptor.isExpect,
-                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
+                isFakeOverride = (origin == IrDeclarationOrigin.Companion.FAKE_OVERRIDE),
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
             ).generateParentDeclaration().also {
