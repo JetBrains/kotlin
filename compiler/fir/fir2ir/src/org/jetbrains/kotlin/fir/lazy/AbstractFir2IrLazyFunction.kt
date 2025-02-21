@@ -14,15 +14,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
-import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isFacadeClass
-import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.psi2ir.lazy.AbstractIrLazyFunction
+import org.jetbrains.kotlin.psi2ir.lazy.IrLazyFunctionBase
+import org.jetbrains.kotlin.psi2ir.lazy.lazyVar
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.properties.ReadWriteProperty
 

@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
+import org.jetbrains.kotlin.backend.jvm.ir.isNotLazy
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -93,7 +93,7 @@ class SingletonObjectJvmStaticTransformer(
             function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
                 function.dispatchReceiverParameter = null
 
-                if (function !is IrLazyFunctionBase) {
+                if (function.isNotLazy()) {
                     function.replaceThisByStaticReference(cachedFields, function.parentAsClass, oldDispatchReceiverParameter)
                 }
             }

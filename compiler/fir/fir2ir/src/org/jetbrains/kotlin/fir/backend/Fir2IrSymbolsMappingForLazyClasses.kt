@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.ir.IrLock
-import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import org.jetbrains.kotlin.psi2ir.lazy.lazyVar
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

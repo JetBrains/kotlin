@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.declarations.lazy.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.lazy.DeclarationStubGenerator
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmIrLinker(

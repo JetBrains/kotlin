@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.psi2ir.lazy.IrLazyClass
 
 object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
     private fun IdSignature.isInteropSignature(): Boolean = with(this) {

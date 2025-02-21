@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi2ir.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
@@ -502,3 +503,5 @@ fun IrClass.findEnumValuesFunction(context: JvmBackendContext): IrSimpleFunction
 val IrValueParameter.isSkippedInGenericSignature: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
             origin == JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER
+
+fun IrFunction.isNotLazy() = this !is IrLazyFunctionBase
