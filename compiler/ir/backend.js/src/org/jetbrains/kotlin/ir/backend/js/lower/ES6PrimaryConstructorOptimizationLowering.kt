@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -69,7 +70,9 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
             origin = IrDeclarationOrigin.DEFINED
         }.also { constructor ->
             constructor.copyAnnotationsFrom(original)
-            constructor.copyValueAndTypeParametersFrom(original)
+            constructor.copyTypeParametersFrom(original)
+            val substitutionMap = makeTypeParameterSubstitutionMap(original, constructor)
+            constructor.copyParameters(original.nonDispatchParameters, substitutionMap)
             constructor.parent = irClass
 
             if (irClass.isExported(context)) {
@@ -172,19 +175,31 @@ class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBa
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 val callee = expression.symbol.owner
-                return when {
-                    !callee.shouldBeConvertedToPlainConstructor -> super.visitCall(expression)
-                    expression.isSyntheticDelegatingReplacement -> {
-                        super.visitDelegatingConstructorCall(JsIrBuilder.buildDelegatingConstructorCall(callee.parentAsClass.primaryConstructor!!.symbol)
-                                                                 .apply { copyTypeAndValueArgumentsFrom(expression) })
-                    }
-                    else -> {
-                        super.visitConstructorCall(JsIrBuilder.buildConstructorCall(callee.parentAsClass.primaryConstructor!!.symbol)
-                                                       .apply { copyTypeAndValueArgumentsFrom(expression) })
-                    }
+                if (!callee.shouldBeConvertedToPlainConstructor) return super.visitCall(expression)
+                val primaryConstructorSymbol = callee.parentAsClass.primaryConstructor?.symbol ?: return super.visitCall(expression)
+                return if (expression.isSyntheticDelegatingReplacement) {
+                    super.visitDelegatingConstructorCall(
+                        JsIrBuilder.buildDelegatingConstructorCall(primaryConstructorSymbol)
+                            .copyTypeAndValueArgumentsFromConstructorReplacement(expression)
+                    )
+                } else {
+                    super.visitConstructorCall(
+                        JsIrBuilder.buildConstructorCall(primaryConstructorSymbol)
+                            .copyTypeAndValueArgumentsFromConstructorReplacement(expression)
+                    )
                 }
             }
         })
+    }
+
+    private fun <E : IrMemberAccessExpression<*>> E.copyTypeAndValueArgumentsFromConstructorReplacement(expression: IrCall): E {
+        copyTypeArgumentsFrom(expression)
+        // Skip the first argument of the replacement function call because it's always jsClassIntrinsic(),
+        // which is not needed when calling a constructor
+        for (i in arguments.indices) {
+            arguments[i] = expression.arguments[i + 1]
+        }
+        return this
     }
 }
 

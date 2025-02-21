@@ -830,7 +830,11 @@ fun IrFunction.copyParametersFrom(from: IrFunction) {
 }
 
 fun IrFunction.copyParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
-    parameters = parameters memoryOptimizedPlus from.parameters.map {
+    copyParameters(from.parameters, substitutionMap)
+}
+
+fun IrFunction.copyParameters(source: List<IrValueParameter>, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
+    parameters = parameters memoryOptimizedPlus source.map {
         it.copyTo(
             this,
             type = it.type.substitute(substitutionMap),
