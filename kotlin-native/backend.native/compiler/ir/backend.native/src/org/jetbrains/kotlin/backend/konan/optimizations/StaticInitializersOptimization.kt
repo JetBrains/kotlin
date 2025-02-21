@@ -276,9 +276,9 @@ internal object StaticInitializersOptimization {
                 val call = callSite.call
                 val irCall = call.irCallSite ?: continue
                 if (irCall.origin == STATEMENT_ORIGIN_PRODUCER_INVOCATION)
-                    producerInvocations[irCall.dispatchReceiver!!] = irCall
+                    producerInvocations[irCall.arguments[0]!!] = irCall
                 else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
-                    jobInvocations[irCall.getValueArgument(0) as IrCall] = irCall
+                    jobInvocations[irCall.arguments[0] as IrCall] = irCall
                 if (call !is DataFlowIR.Node.VirtualCall) continue
                 virtualCallSites.getOrPut(irCall) { mutableListOf() }.add(callSite)
             }
@@ -459,7 +459,7 @@ internal object StaticInitializersOptimization {
 
                 private fun processExecuteImpl(expression: IrCall, data: BitSet): BitSet {
                     var curData = processCall(expression, expression.symbol.owner, data)
-                    val producerInvocation = producerInvocations[expression.getValueArgument(2)!!]!!
+                    val producerInvocation = producerInvocations[expression.arguments[2]!!]!!
                     // Producer is invoked right here in the same thread, so can update the result.
                     // Albeit this call site is a fictitious one, it is always a virtual one, which aren't optimized for now.
                     curData = visitCall(producerInvocation, curData)

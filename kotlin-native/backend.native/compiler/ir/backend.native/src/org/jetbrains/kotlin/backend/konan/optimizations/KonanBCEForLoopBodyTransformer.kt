@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.sure
 
 // Base class describing value of expression.
 sealed class ValueDescription
@@ -96,12 +97,12 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             OperatorNameConventions.DEC ->
                 functionCall.dispatchReceiverIsGetSizeCall()
             OperatorNameConventions.MINUS -> {
-                val value = functionCall.getValueArgument(0)
+                val value = functionCall.arguments[1]
                 functionCall.dispatchReceiverIsGetSizeCall() &&
                         value?.compareIntegerNumericConst { it > 0 } == true
             }
             OperatorNameConventions.DIV -> {
-                val value = functionCall.getValueArgument(0)
+                val value = functionCall.arguments[1]
                 functionCall.dispatchReceiverIsGetSizeCall() &&
                         value?.compareFloatNumericConst { it > 1 } == true
             }
@@ -214,7 +215,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                             // There is a temporary variable `val nestedLast = array.size - 1`
                             // and `last` is computed as `getProgressionLastElement(0, nestedLast, n)`
                             if (loopHeader.headerInfo.progressionType.getProgressionLastElementFunction == functionCall.symbol) {
-                                val nestedLastVariable = functionCall.getValueArgument(1)
+                                val nestedLastVariable = functionCall.arguments[1]
                                 if (nestedLastVariable is IrGetValue && nestedLastVariable.symbol.owner is IrVariable) {
                                     val nestedLast = (nestedLastVariable.symbol.owner as IrVariable).initializer
                                     analysisResult = checkLastElement(nestedLast!!, loopHeader)
@@ -236,7 +237,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                             // There is a temporary variable `val nestedFirst = array.size - 1`
                             // and `last` is computed as `getProgressionLastElement(nestedFirst, 0, n)`
                             if (loopHeader.headerInfo.progressionType.getProgressionLastElementFunction == functionCall.symbol) {
-                                if (functionCall.getValueArgument(1)?.compareIntegerNumericConst { it >= valueToCompare } == true) {
+                                if (functionCall.arguments[1]?.compareIntegerNumericConst { it >= valueToCompare } == true) {
                                     boundsAreSafe = true
                                 }
                             }
@@ -255,16 +256,17 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                             val firstReceiver = ((loopHeader.headerInfo.first as IrCall).dispatchReceiver as? IrGetValue)?.symbol?.owner
                             val lastReceiver = ((loopHeader.headerInfo.last as IrCall).dispatchReceiver as? IrGetValue)?.symbol?.owner
                             if (firstReceiver == lastReceiver) {
-                                val createRange = ((firstReceiver as? IrVariable)?.initializer as? IrCall)?.extensionReceiver as? IrCall
+                                val createRangeCall = (firstReceiver as? IrVariable)?.initializer as? IrCall
+                                val createRange = if (createRangeCall?.symbol?.owner?.parameters?.firstOrNull()?.kind == IrParameterKind.ExtensionReceiver) {
+                                    createRangeCall.arguments[0] as? IrCall
+                                } else null
                                 val first = createRange?.symbol?.owner?.let {
-                                    when {
-                                        it.fqNameWhenAvailable == untilFqName -> createRange.extensionReceiver
-                                        createRange.origin == IrStatementOrigin.RANGE_UNTIL -> createRange.dispatchReceiver
-                                        else -> null
-                                    }
+                                    if (it.fqNameWhenAvailable == untilFqName || createRange.origin == IrStatementOrigin.RANGE_UNTIL) {
+                                        createRange.arguments[0]
+                                    } else null
                                 }
                                 if (first?.compareIntegerNumericConst { it >= 0 } == true) {
-                                    val last = createRange.getValueArgument(0)!!
+                                    val last = createRange.arguments[1]!!
                                     analysisResult = checkIrCallCondition(last) { call ->
                                         // `isLastInclusive` for current case is set to true.
                                         // This case isn't fully optimized in ForLoopsLowering.
@@ -292,7 +294,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
 
     private fun replaceOperators(expression: IrCall, index: IrExpression, safeIndexVariables: List<IrVariable>): IrExpression {
         if (index is IrGetValue && index.symbol.owner in safeIndexVariables) {
-            val operatorWithoutBoundCheck = expression.dispatchReceiver!!.type.getClass()!!.functions.singleOrNull {
+            val operatorWithoutBoundCheck = expression.arguments[0]!!.type.getClass()!!.functions.singleOrNull {
                 if (expression.symbol.owner.name == OperatorNameConventions.SET)
                     it.name == KonanNameConventions.setWithoutBoundCheck
                 else
@@ -302,9 +304,8 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                     expression.startOffset, expression.endOffset, expression.type, operatorWithoutBoundCheck.symbol,
                     typeArgumentsCount = expression.typeArguments.size
             ).apply {
-                dispatchReceiver = expression.dispatchReceiver
-                for (argIndex in 0 until expression.valueArgumentsCount) {
-                    putValueArgument(argIndex, expression.getValueArgument(argIndex))
+                expression.arguments.forEachIndexed { argIndex, arg ->
+                    arguments[argIndex] = arg
                 }
             }
         }
@@ -320,7 +321,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                 findExpressionValueDescription(expression.dispatchReceiver!!)?.equals(analysisResult.arrayInLoop!!) != true)
             return newExpression
         // Analyze arguments of set/get operator.
-        val index = newExpression.getValueArgument(0)!!
+        val index = newExpression.arguments[1]!!
         return when (loopHeader) {
             is ProgressionLoopHeader -> with(loopHeader as ProgressionLoopHeader) {
                 replaceOperators(newExpression, index, listOf(mainLoopVariable, inductionVariable))

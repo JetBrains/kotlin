@@ -1274,11 +1274,9 @@ internal object DevirtualizationAnalysis {
             if (coercion == null)
                 value
             else irCall(coercion).apply {
-                require(coercion.owner.dispatchReceiverParameter == null &&
-                        coercion.owner.extensionReceiverParameter == null &&
-                        coercion.owner.valueParameters.size == 1
+                require(coercion.owner.hasShape(regularParameters = 1)
                 ) { "Coercion function must be static with one value parameter" }
-                putValueArgument(0, value)
+                arguments[0] = value
             }
 
     private fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: DataFlowIR.FunctionSymbol.Declared?) =
@@ -1336,7 +1334,7 @@ internal object DevirtualizationAnalysis {
         fun <T : IrElement> IrStatementsBuilder<T>.irSplitCoercion(parent: IrDeclarationParent, expression: IrExpression, tempName: String?, actualType: IrType) =
                 if (expression.isBoxOrUnboxCall()) {
                     val coercion = expression as IrCall
-                    val argument = coercion.getValueArgument(0)!!
+                    val argument = coercion.arguments[0]!!
                     val symbol = coercion.symbol
                     if (tempName != null)
                         PossiblyCoercedValue.OverVariable(irTemporary(parent, argument, tempName, symbol.owner.parameters.single().type), symbol)
@@ -1360,23 +1358,6 @@ internal object DevirtualizationAnalysis {
             return actualType.boxFunction as DataFlowIR.FunctionSymbol.Declared
         }
 
-        fun IrCallImpl.putArgument(index: Int, value: IrExpression) {
-            var receiversCount = 0
-            val callee = symbol.owner
-            if (callee.dispatchReceiverParameter != null)
-                ++receiversCount
-            if (callee.extensionReceiverParameter != null)
-                ++receiversCount
-            if (index >= receiversCount)
-                putValueArgument(index - receiversCount, value)
-            else {
-                if (callee.dispatchReceiverParameter != null && index == 0)
-                    dispatchReceiver = value
-                else
-                    extensionReceiver = value
-            }
-        }
-
         fun irDevirtualizedCall(callSite: IrCall,
                                 actualType: IrType,
                                 actualCallee: IrSimpleFunction,
@@ -1393,7 +1374,7 @@ internal object DevirtualizationAnalysis {
                 "Incorrect number of arguments: expected [${actualCallee.parameters.size}] but was [${arguments.size}]\n" +
                         actualCallee.dump()
             }
-            arguments.forEachIndexed { index, argument -> call.putArgument(index, argument) }
+            arguments.forEachIndexed { index, argument -> call.arguments[index] = argument }
             return call.implicitCastIfNeededTo(actualType)
         }
 
@@ -1426,11 +1407,11 @@ internal object DevirtualizationAnalysis {
                     nameHint = "clazz"
             )
             +irCall(kClassImplConstructorImpl).apply {
-                dispatchReceiver = irGet(kClass)
-                putValueArgument(0, getTypeInfo())
+                arguments[0] = irGet(kClass)
+                arguments[1] = getTypeInfo()
             }
             +irCall(throwInvalidReceiverTypeException).apply {
-                putValueArgument(0, irGet(kClass))
+                arguments[0] = irGet(kClass)
             }
         }
 
@@ -1474,7 +1455,7 @@ internal object DevirtualizationAnalysis {
                         possibleCallees.isEmpty() -> irBlock(expression) {
                             val throwExpr = irThrowInvalidReceiverTypeException {
                                 irCall(getObjectTypeInfo.owner).apply {
-                                    putValueArgument(0, expression.dispatchReceiver!!)
+                                    arguments[0] = expression.arguments[0]
                                 }
                             }
                             // Insert proper unboxing (unreachable code):
@@ -1549,7 +1530,7 @@ internal object DevirtualizationAnalysis {
                             val receiver = irTemporary(arguments[0].getFullValue(this@irBlock))
                             val typeInfo by lazy {
                                 irTemporary(irCall(getObjectTypeInfo).apply {
-                                    putValueArgument(0, irGet(receiver))
+                                    this.arguments[0] = irGet(receiver)
                                 })
                             }
                             val branches = mutableListOf<IrBranchImpl>()
@@ -1570,13 +1551,13 @@ internal object DevirtualizationAnalysis {
                                                 receiverType.irClass.defaultType
                                         )
                                         irCall(nativePtrEqualityOperatorSymbol).apply {
-                                            putValueArgument(0, irGet(typeInfo))
-                                            putValueArgument(1, expectedTypeInfo)
+                                            this.arguments[0] = irGet(typeInfo)
+                                            this.arguments[1] = expectedTypeInfo
                                         }
                                     }
                                     else -> {
                                         irCallWithSubstitutedType(isSubtype, listOf(target.declType.defaultType)).apply {
-                                            putValueArgument(0, irGet(typeInfo))
+                                            this.arguments[0] = irGet(typeInfo)
                                         }
                                     }
                                 }
