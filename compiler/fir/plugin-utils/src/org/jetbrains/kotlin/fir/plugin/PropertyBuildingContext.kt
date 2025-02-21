@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -101,14 +100,26 @@ public class PropertyBuildingContext(
 
             isVar = !isVal
             getter = FirDefaultPropertyGetter(
-                source = null, session.moduleData, key.origin, returnTypeRef, status.visibility, symbol,
-                Modality.FINAL, resolvedStatus.effectiveVisibility,
+                source = null,
+                moduleData = session.moduleData,
+                origin = key.origin,
+                propertyTypeRef = returnTypeRef,
+                visibility = status.visibility,
+                propertySymbol = symbol,
+                modality = resolvedStatus.modality,
+                effectiveVisibility = resolvedStatus.effectiveVisibility,
                 resolvePhase = FirResolvePhase.BODY_RESOLVE,
             )
             if (isVar) {
                 setter = FirDefaultPropertySetter(
-                    source = null, session.moduleData, key.origin, returnTypeRef, setterVisibility ?: status.visibility,
-                    symbol, Modality.FINAL, resolvedStatus.effectiveVisibility,
+                    source = null,
+                    moduleData = session.moduleData,
+                    origin = key.origin,
+                    propertyTypeRef = returnTypeRef,
+                    visibility = setterVisibility ?: status.visibility,
+                    propertySymbol = symbol,
+                    modality = resolvedStatus.modality,
+                    effectiveVisibility = resolvedStatus.effectiveVisibility,
                     resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )
             } else {

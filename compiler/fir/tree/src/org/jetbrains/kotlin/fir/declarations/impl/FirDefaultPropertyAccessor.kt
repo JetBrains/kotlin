@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -75,16 +75,28 @@ abstract class FirDefaultPropertyAccessor(
             isGetter: Boolean,
             parameterAnnotations: List<FirAnnotation> = emptyList(),
             parameterSource: KtSourceElement? = null,
-        ): FirDefaultPropertyAccessor {
-            return if (isGetter) {
-                FirDefaultPropertyGetter(source, moduleData, origin, propertyTypeRef, visibility, propertySymbol, Modality.FINAL)
-            } else {
-                FirDefaultPropertySetter(
-                    source, moduleData, origin, propertyTypeRef, visibility, propertySymbol, Modality.FINAL,
-                    parameterAnnotations = parameterAnnotations,
-                    parameterSource = parameterSource,
-                )
-            }
+        ): FirDefaultPropertyAccessor = if (isGetter) {
+            FirDefaultPropertyGetter(
+                source = source,
+                moduleData = moduleData,
+                origin = origin,
+                propertyTypeRef = propertyTypeRef,
+                visibility = visibility,
+                propertySymbol = propertySymbol,
+                modality = null,
+            )
+        } else {
+            FirDefaultPropertySetter(
+                source = source,
+                moduleData = moduleData,
+                origin = origin,
+                propertyTypeRef = propertyTypeRef,
+                visibility = visibility,
+                propertySymbol = propertySymbol,
+                modality = null,
+                parameterAnnotations = parameterAnnotations,
+                parameterSource = parameterSource,
+            )
         }
     }
 }
@@ -119,7 +131,7 @@ class FirDefaultPropertyGetter(
         propertyTypeRef: FirTypeRef,
         visibility: Visibility,
         propertySymbol: FirPropertySymbol,
-        modality: Modality = Modality.FINAL,
+        modality: Modality?,
         effectiveVisibility: EffectiveVisibility? = null,
         isInline: Boolean = false,
         isOverride: Boolean = false,
@@ -186,7 +198,7 @@ class FirDefaultPropertySetter(
         propertyTypeRef: FirTypeRef,
         visibility: Visibility,
         propertySymbol: FirPropertySymbol,
-        modality: Modality = Modality.FINAL,
+        modality: Modality?,
         effectiveVisibility: EffectiveVisibility? = null,
         isInline: Boolean = false,
         isOverride: Boolean = false,
@@ -212,13 +224,13 @@ class FirDefaultPropertySetter(
 
 private fun createStatus(
     visibility: Visibility,
-    modality: Modality,
+    modality: Modality?,
     effectiveVisibility: EffectiveVisibility?,
     isInline: Boolean,
     isOverride: Boolean,
 ): FirDeclarationStatusImpl = when (effectiveVisibility) {
     null -> FirDeclarationStatusImpl(visibility, modality)
-    else -> FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility)
+    else -> FirResolvedDeclarationStatusImpl(visibility, modality ?: Modality.FINAL, effectiveVisibility)
 }.apply {
     this.isInline = isInline
     this.isOverride = isOverride

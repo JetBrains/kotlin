@@ -1011,8 +1011,9 @@ class JavaClassUseSiteMemberScope(
             propertyTypeRef = returnTypeRef,
             visibility = status.visibility,
             propertySymbol = symbol,
-            modality = status.modality ?: Modality.FINAL
+            modality = status.modality,
         )
+
         return syntheticGetter.computeJvmDescriptor(customName, includeReturnType)
     }
 
@@ -1025,8 +1026,9 @@ class JavaClassUseSiteMemberScope(
             propertyTypeRef = returnTypeRef,
             visibility = status.visibility,
             propertySymbol = symbol,
-            modality = status.modality ?: Modality.FINAL
+            modality = status.modality,
         )
+
         return syntheticSetter.computeJvmDescriptor(customName, includeReturnType)
     }
 

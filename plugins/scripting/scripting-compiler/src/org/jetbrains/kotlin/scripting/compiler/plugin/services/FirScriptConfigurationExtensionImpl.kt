@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -184,13 +184,15 @@ class FirScriptConfiguratorExtensionImpl(
                         initializer = lastExpression
                         returnTypeRef = lastExpressionTypeRef
                         getter = FirDefaultPropertyGetter(
-                            lastScriptBlock?.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
-                            session.moduleData,
-                            FirDeclarationOrigin.ScriptCustomization.ResultProperty,
-                            lastExpressionTypeRef,
-                            Visibilities.Public,
-                            this.symbol,
+                            source = lastScriptBlock?.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                            moduleData = session.moduleData,
+                            origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty,
+                            propertyTypeRef = lastExpressionTypeRef,
+                            visibility = Visibilities.Public,
+                            propertySymbol = this.symbol,
+                            modality = Modality.FINAL,
                         )
+
                         status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                         isLocal = false
                         isVar = false

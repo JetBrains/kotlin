@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -245,9 +245,14 @@ fun generateEntriesGetter(
         symbol = FirPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
         resolvePhase = classResolvePhase
         getter = FirDefaultPropertyGetter(
-            sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
-            moduleData, origin, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
-            Visibilities.Public, symbol, resolvePhase = classResolvePhase
+            source = sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
+            moduleData = moduleData,
+            origin = origin,
+            propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
+            visibility = Visibilities.Public,
+            propertySymbol = symbol,
+            modality = Modality.FINAL,
+            resolvePhase = classResolvePhase,
         ).apply {
             this.status = createStatus(classStatus).apply {
                 isStatic = true

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -87,13 +87,23 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             entry.extractAnnotationsTo(this, context.containerSymbol)
             if (!localEntries) {
                 getter = FirDefaultPropertyGetter(
-                    source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor), moduleData,
-                    FirDeclarationOrigin.Source, returnTypeRef, Visibilities.Public, symbol,
+                    source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                    moduleData = moduleData,
+                    origin = FirDeclarationOrigin.Source,
+                    propertyTypeRef = returnTypeRef,
+                    visibility = Visibilities.Public,
+                    propertySymbol = symbol,
+                    modality = Modality.FINAL,
                 )
                 if (isVar) {
                     setter = FirDefaultPropertySetter(
-                        source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor), moduleData,
-                        FirDeclarationOrigin.Source, returnTypeRef, Visibilities.Public, symbol,
+                        source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                        moduleData = moduleData,
+                        origin = FirDeclarationOrigin.Source,
+                        propertyTypeRef = returnTypeRef,
+                        visibility = Visibilities.Public,
+                        propertySymbol = symbol,
+                        modality = Modality.FINAL,
                     )
                 }
             }

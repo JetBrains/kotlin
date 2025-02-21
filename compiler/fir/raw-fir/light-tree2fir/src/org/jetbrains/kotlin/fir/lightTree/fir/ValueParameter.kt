@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -182,24 +182,27 @@ class ValueParameter(
             annotations += remappedAnnotations.filterConstructorPropertyRelevantAnnotations(this.isVar)
 
             getter = FirDefaultPropertyGetter(
-                defaultAccessorSource,
-                moduleData,
-                FirDeclarationOrigin.Source,
-                type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                modifiers.getVisibility(),
-                symbol,
+                source = defaultAccessorSource,
+                moduleData = moduleData,
+                origin = FirDeclarationOrigin.Source,
+                propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                visibility = status.visibility,
+                propertySymbol = symbol,
+                modality = status.modality,
                 isInline = modifiers.hasInline(),
             ).also {
                 it.initContainingClassAttr(context)
                 it.replaceAnnotations(remappedAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
             }
+
             setter = if (this.isVar) FirDefaultPropertySetter(
-                defaultAccessorSource,
-                moduleData,
-                FirDeclarationOrigin.Source,
-                type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                modifiers.getVisibility(),
-                symbol,
+                source = defaultAccessorSource,
+                moduleData = moduleData,
+                origin = FirDeclarationOrigin.Source,
+                propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                visibility = status.visibility,
+                propertySymbol = symbol,
+                modality = status.modality,
                 parameterAnnotations = remappedAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
                 isInline = modifiers.hasInline(),
             ).also {

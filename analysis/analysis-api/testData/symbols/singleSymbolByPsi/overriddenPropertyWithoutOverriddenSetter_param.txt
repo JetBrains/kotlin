@@ -47,7 +47,7 @@ KaValueParameterSymbol:
       isInline: false
       isOverride: true
       location: PROPERTY
-      modality: FINAL
+      modality: OPEN
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -102,7 +102,7 @@ KaValueParameterSymbol:
       isInline: false
       isOverride: false
       location: PROPERTY
-      modality: FINAL
+      modality: OPEN
       origin: SOURCE
       parameter: KaValueParameterSymbol:
         annotations: []

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -779,24 +779,26 @@ open class PsiRawFirBuilder(
 
                     this.status = status
                     getter = FirDefaultPropertyGetter(
-                        defaultAccessorSource,
-                        baseModuleData,
-                        FirDeclarationOrigin.Source,
-                        returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                        getVisibility(),
-                        symbol,
+                        source = defaultAccessorSource,
+                        moduleData = baseModuleData,
+                        origin = FirDeclarationOrigin.Source,
+                        propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                        visibility = status.visibility,
+                        propertySymbol = symbol,
+                        modality = status.modality,
                         isInline = hasModifier(INLINE_KEYWORD),
                     ).also { getter ->
                         getter.initContainingClassAttr()
                         getter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
                     }
                     setter = if (isMutable) FirDefaultPropertySetter(
-                        defaultAccessorSource,
-                        baseModuleData,
-                        FirDeclarationOrigin.Source,
-                        returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                        getVisibility(),
-                        symbol,
+                        source = defaultAccessorSource,
+                        moduleData = baseModuleData,
+                        origin = FirDeclarationOrigin.Source,
+                        propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                        visibility = status.visibility,
+                        propertySymbol = symbol,
+                        modality = status.modality,
                         parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
                         isInline = hasModifier(INLINE_KEYWORD),
                     ).also { setter ->

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
 import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabel
+import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
@@ -1445,12 +1445,13 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                         this.getter = convertedAccessors.find { it.isGetter }
                             ?: FirDefaultPropertyGetter(
-                                property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
-                                moduleData,
-                                FirDeclarationOrigin.Source,
-                                returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                                propertyVisibility,
-                                symbol,
+                                source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
+                                moduleData = moduleData,
+                                origin = FirDeclarationOrigin.Source,
+                                propertyTypeRef = returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                                visibility = propertyVisibility,
+                                propertySymbol = symbol,
+                                modality = calculatedModifiers.getModality(isClassOrObject = false),
                             ).also {
                                 it.status = defaultAccessorStatus()
                                 it.replaceAnnotations(propertyAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
@@ -1460,13 +1461,14 @@ class LightTreeRawFirDeclarationBuilder(
                         this.setter = convertedAccessors.find { it.isSetter }
                             ?: if (isVar) {
                                 FirDefaultPropertySetter(
-                                    property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
-                                    moduleData,
-                                    FirDeclarationOrigin.Source,
-                                    returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
-                                    propertyVisibility,
-                                    symbol,
-                                    parameterAnnotations = propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER)
+                                    source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
+                                    moduleData = moduleData,
+                                    origin = FirDeclarationOrigin.Source,
+                                    propertyTypeRef = returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                                    visibility = propertyVisibility,
+                                    propertySymbol = symbol,
+                                    modality = calculatedModifiers.getModality(isClassOrObject = false),
+                                    parameterAnnotations = propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
                                 ).also {
                                     it.status = defaultAccessorStatus()
                                     it.replaceAnnotations(propertyAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
