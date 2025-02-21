@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder
 internal fun VersionRequirement.Companion.create(proto: MessageLiteOrBuilder, context: FirDeserializationContext): List<VersionRequirement> =
     create(proto, context.nameResolver, context.versionRequirementTable)
 
-internal inline fun <M : GeneratedMessageLite.ExtendableMessage<M>> FirDeclaration.deserializeCompilerPluginMetadata(
+internal inline fun <M : GeneratedMessageLite.ExtendableMessage<M, *>> FirDeclaration.deserializeCompilerPluginMetadata(
     context: FirDeserializationContext,
     proto: M,
     getCompilerPluginMetadataList: M.() -> List<ProtoBuf.CompilerPluginData>

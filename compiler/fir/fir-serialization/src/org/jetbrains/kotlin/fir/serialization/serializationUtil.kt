@@ -66,7 +66,7 @@ fun FirMemberDeclaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib: Boo
 }
 
 fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
         > FirAnnotationContainer.serializeAnnotations(
     session: FirSession,
@@ -92,7 +92,7 @@ fun FirAnnotationContainer.allRequiredAnnotations(
 }
 
 fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
         > List<FirAnnotation>.serializeAnnotations(
     annotationSerializer: FirAnnotationSerializer,
@@ -106,7 +106,7 @@ fun <
 }
 
 fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
         Type,
         > GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>.addExtensionOrNull(

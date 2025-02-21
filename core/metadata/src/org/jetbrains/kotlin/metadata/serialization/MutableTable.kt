@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
-
 package org.jetbrains.kotlin.metadata.serialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -22,7 +20,7 @@ private class TableElementWrapper<Element : GeneratedMessageLite.Builder<*, Elem
 
 abstract class MutableTable<Element, Table, TableBuilder>
         where Element : GeneratedMessageLite.Builder<*, Element>,
-              Table : GeneratedMessageLite,
+              Table : GeneratedMessageLite<Table, TableBuilder>,
               TableBuilder : GeneratedMessageLite.Builder<Table, TableBuilder> {
 
     private val interner = Interner<TableElementWrapper<Element>>()
@@ -34,14 +32,13 @@ abstract class MutableTable<Element, Table, TableBuilder>
     operator fun get(type: Element): Int =
         interner.intern(TableElementWrapper(type))
 
-    @Suppress("UNCHECKED_CAST")
     fun serialize(): Table? =
         if (interner.isEmpty) null
         else createTableBuilder().apply {
             for (obj in interner.allInternedObjects) {
                 addElement(this, obj.builder)
             }
-        }.build() as Table
+        }.build()
 }
 
 class MutableTypeTable : MutableTable<ProtoBuf.Type.Builder, ProtoBuf.TypeTable, ProtoBuf.TypeTable.Builder>() {

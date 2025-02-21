@@ -164,7 +164,7 @@ abstract class FirSerializerExtensionBase(
 
     @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
     > List<FirAnnotation>.serializeAnnotations(
         proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,

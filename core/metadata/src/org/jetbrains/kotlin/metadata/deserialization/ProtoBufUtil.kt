@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.metadata.deserialization
 
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 
-fun <M : GeneratedMessageLite.ExtendableMessage<M>, T> GeneratedMessageLite.ExtendableMessage<M>.getExtensionOrNull(
+fun <M : GeneratedMessageLite.ExtendableMessage<M, *>, T> GeneratedMessageLite.ExtendableMessage<M, *>.getExtensionOrNull(
     extension: GeneratedMessageLite.GeneratedExtension<M, T>
 ): T? = if (hasExtension(extension)) getExtension(extension) else null
 
-fun <M : GeneratedMessageLite.ExtendableMessage<M>, T> GeneratedMessageLite.ExtendableMessage<M>.getExtensionOrNull(
+fun <M : GeneratedMessageLite.ExtendableMessage<M, *>, T> GeneratedMessageLite.ExtendableMessage<M, *>.getExtensionOrNull(
     extension: GeneratedMessageLite.GeneratedExtension<M, List<T>>, index: Int
 ): T? = if (index < getExtensionCount(extension)) getExtension(extension, index) else null
