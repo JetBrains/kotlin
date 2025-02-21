@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -228,6 +229,8 @@ abstract class AbstractDiagnosticCollectorVisitor(
             visitTypeRef(resolvedTypeRef, data)
         }
         if (resolvedTypeRef.source?.kind?.shouldSkipErrorTypeReporting == true) return
+        // As implicit built-in type refs never have sources
+        if (resolvedTypeRef is FirImplicitBuiltinTypeRef) return
 
         // Even though we don't visit the children of the resolvedTypeRef we still add it as an annotation container
         // and take care not to add the corresponding delegatedTypeRef. This is so that diagnostics will have access to
