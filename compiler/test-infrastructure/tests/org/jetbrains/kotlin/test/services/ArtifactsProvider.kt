@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorHolder
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
@@ -31,12 +33,19 @@ class ArtifactsProvider(
     }
 
     // Registers output artifact, overriding previous one of the same kind.
-    // It's important for different IrBackend artifacts: the first one before serialization, the second one after serialization.
+    // It's made intentionally for different IrBackend artifacts, which are created one after another:
+    // - by Fir2IR,
+    // - by Preserialization lowerings + IR Inliner
+    // - by Klib deserializer
     fun <OutputArtifact : ResultingArtifact<OutputArtifact>> registerArtifact(
         module: TestModule,
         artifact: ResultingArtifact<OutputArtifact>,
     ) {
-        artifactsByModule.getMap(module)[artifact.kind] = artifact
+        val artifacts = artifactsByModule.getMap(module)
+        if (artifact is DiagnosticsCollectorHolder) {
+            checkDistinctDiagnosticReporter(artifacts, artifact.diagnosticReporter)
+        }
+        artifacts[artifact.kind] = artifact
     }
 
     fun unregisterAllArtifacts(module: TestModule) {
@@ -51,6 +60,16 @@ class ArtifactsProvider(
 
     private fun <K, V, R> MutableMap<K, MutableMap<V, R>>.getMap(key: K): MutableMap<V, R> {
         return getOrPut(key) { mutableMapOf() }
+    }
+
+    private fun checkDistinctDiagnosticReporter(artifacts: Map<*, ResultingArtifact<*>>, diagnosticReporter: BaseDiagnosticsCollector) {
+        val existingReporters = artifacts.values.mapNotNull {
+            (it as? DiagnosticsCollectorHolder)?.diagnosticReporter
+        }.toSet()
+        require(!existingReporters.contains(diagnosticReporter)) {
+            "In test pipelines, diagnostics reporter from previous resulting artifact must not be reused for next resulting artifact. " +
+                    "Please create brand new diagnostics reporter instead."
+        }
     }
 }
 
