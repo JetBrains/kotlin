@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
@@ -24,12 +25,14 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.walk
 import kotlin.io.path.writeText
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 
@@ -656,7 +659,7 @@ open class CommonizerIT : KGPBaseTest() {
     @OsCondition(enabledOnCI = [OS.LINUX, OS.WINDOWS, OS.MAC])
     @GradleTest
     fun testCommonizationOfNonPlatformShouldWorkOnlyForSupportedTargets(gradleVersion: GradleVersion) {
-        nativeProject("emptyKts", gradleVersion) {
+        nativeProject("emptyKts", gradleVersion, forceOutput = EnableGradleDebug.ENABLED) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.applyMultiplatform {
@@ -668,6 +671,7 @@ open class CommonizerIT : KGPBaseTest() {
                     linuxX64().addCInterop()
                     linuxArm64().addCInterop()
                     macosX64().addCInterop()
+                    macosArm64().addCInterop()
                 }
             }
 
@@ -681,73 +685,144 @@ open class CommonizerIT : KGPBaseTest() {
                 |    void linux_only_api(void) {}
                 |#endif
                 |
+                |#ifdef __APPLE__
+                |    void apply_only_api(void) {}
+                |#endif
+                |
                 |void sqlite_optimistically_commonized_api(void) {}    
                 """.trimMargin()
             )
 
-            kotlinSourcesDir("nativeMain").createDirectories().resolve("OnlyLinuxClass.kt").writeText(
-                //language=kotlin
-                """
-                |import kotlinx.cinterop.ExperimentalForeignApi
-                |import nonplatform.sqlite_optimistically_commonized_api
-                |import nonplatform.linux_only_api
-                |
-                |class OnlyLinuxClass {
-                |    @OptIn(ExperimentalForeignApi::class)
-                |    fun supertfunction() {
-                |        linux_only_api()
-                |        sqlite_optimistically_commonized_api()
-                |    }
-                |}
-                """.trimMargin()
-            )
-
             if (HostManager.hostIsMac) {
-                // It is expected to not fail here because non-platform cinterop now work only for supported targets.
-                // The behavior of these checks must change when KT-74073 is done.
-                buildAndFail(
-                    ":compileNativeMainKotlinMetadata",
-                    buildOptions = defaultBuildOptions.copy(
+                build(
+                    "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
                         nativeOptions = defaultBuildOptions.nativeOptions.copy(
                             enableKlibsCrossCompilation = false
                         )
                     )
                 ) {
-                    assertOutputContains("Unresolved reference 'linux_only_api'")
+                    checkCommonizedMetadataBuildOnMac()
                 }
-
-                buildAndFail(
-                    ":compileNativeMainKotlinMetadata",
-                    buildOptions = defaultBuildOptions.copy(
+                build(
+                    "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
                         nativeOptions = defaultBuildOptions.nativeOptions.copy(
                             enableKlibsCrossCompilation = true
                         )
                     )
                 ) {
-                    assertOutputContains("Unresolved reference 'linux_only_api'")
+                    checkCommonizedMetadataBuildOnMac()
                 }
             } else {
-                // It is expected to not fail here because non-platform cinterop now work only for supported targets.
-                // The behavior of these checks must change when KT-74073 is done.
                 build(
-                    ":compileNativeMainKotlinMetadata",
-                    buildOptions = defaultBuildOptions.copy(
+                    "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
                         nativeOptions = defaultBuildOptions.nativeOptions.copy(
                             enableKlibsCrossCompilation = false
                         )
                     )
-                )
+                ) {
+                    checkCommonizedMetadataBuildOnNonMac()
+                }
 
                 build(
-                    ":compileNativeMainKotlinMetadata",
-                    buildOptions = defaultBuildOptions.copy(
+                    "commonizeCInterop", buildOptions = defaultBuildOptions.copy(
                         nativeOptions = defaultBuildOptions.nativeOptions.copy(
                             enableKlibsCrossCompilation = true
                         )
                     )
-                )
+                ) {
+                    checkCommonizedMetadataBuildOnNonMac()
+                }
             }
         }
+    }
+
+    private fun TestProject.checkCommonizedMetadataBuildOnNonMac() {
+        val commonizedKlibs = collectCommonizedLibraries()
+
+        assertEquals(3, commonizedKlibs.size, "Expected exactly 3 commonized klibs")
+
+        assertEquals(
+            """
+            |nonplatform/linux_only_api|linux_only_api(){}[1]
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            commonizedKlibs[setOf("linux_x64", "linux_arm64")]
+        )
+        // It is expected to not fail here because non-platform cinterop now work only for supported targets.
+        // The behavior of these checks must change when KT-74073 is done.
+        assertEquals(
+            """
+            |nonplatform/linux_only_api|linux_only_api(){}[1]
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            commonizedKlibs[setOf("linux_x64", "linux_arm64", "macos_x64", "macos_arm64")]
+        )
+    }
+
+    private fun TestProject.checkCommonizedMetadataBuildOnMac() {
+        val commonizedKlibs = collectCommonizedLibraries()
+
+        assertEquals(3, commonizedKlibs.size, "Expected exactly 3 commonized klibs")
+
+        assertEquals(
+            """
+            |nonplatform/linux_only_api|linux_only_api(){}[1]
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            commonizedKlibs[setOf("linux_x64", "linux_arm64")]
+        )
+        assertEquals(
+            """
+            |nonplatform/apply_only_api|apply_only_api(){}[1]
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            commonizedKlibs[setOf("macos_x64", "macos_arm64")]
+        )
+        assertEquals(
+            """
+            |nonplatform/sqlite_optimistically_commonized_api|sqlite_optimistically_commonized_api(){}[1]
+            |
+            """.trimMargin(),
+            commonizedKlibs[setOf("linux_x64", "linux_arm64", "macos_x64", "macos_arm64")]
+        )
+    }
+
+    private fun TestProject.collectCommonizedLibraries(): Map<Set<String>, String> {
+        val nonplatformCiteropCommonizationDir = classesDir(sourceSet = "commonizer").resolve("nonplatform")
+        val commonizationHashedSubDirectories =
+            Files.newDirectoryStream(nonplatformCiteropCommonizationDir).filter { Files.isDirectory(it) }.toList()
+
+        if (commonizationHashedSubDirectories.size != 1) {
+            throw AssertionError("Expected exactly one directory inside $nonplatformCiteropCommonizationDir, but found ${commonizationHashedSubDirectories.size}")
+        }
+
+        val commonizedKlibs = commonizationHashedSubDirectories
+            .first()
+            .toFile()
+            .listFiles()
+            .mapNotNull { parentDir ->
+                val firstFile = parentDir.listFiles()?.firstOrNull()
+                if (firstFile != null) {
+                    val platformNames = parseCommonizedDirectoryToPlatformNames(parentDir.name)
+                    val klibSignatures = dumpKlibMetadataSignatures(firstFile)
+                    platformNames to klibSignatures
+                } else {
+                    null
+                }
+            }.toMap()
+        return commonizedKlibs
+    }
+
+    private fun parseCommonizedDirectoryToPlatformNames(commonizedDirName: String): Set<String> {
+        return commonizedDirName
+            .removePrefix("(")
+            .removeSuffix(")")
+            .split(", ")
+            .toSet()
     }
 
     private fun `test multiple cinterops with test source sets and compilations`(
