@@ -84,7 +84,7 @@ class FirKLibSerializerExtension(
 
     @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
     > FirDeclaration.setKDoc(
         proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
@@ -104,7 +104,7 @@ class FirKLibSerializerExtension(
 
     @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
     > FirDeclaration.setFileId(
         proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,

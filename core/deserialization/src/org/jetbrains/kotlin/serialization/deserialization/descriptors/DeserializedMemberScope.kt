@@ -240,7 +240,7 @@ abstract class DeserializedMemberScope protected constructor(
             else
                 emptyMap()
 
-        private fun Map<Name, Collection<AbstractMessageLite>>.packToByteArray(): Map<Name, ByteArray> =
+        private fun Map<Name, Collection<AbstractMessageLite<*, *>>>.packToByteArray(): Map<Name, ByteArray> =
             mapValues { entry ->
                 val byteArrayOutputStream = ByteArrayOutputStream()
                 entry.value.map { proto -> proto.writeDelimitedTo(byteArrayOutputStream) }
@@ -272,7 +272,7 @@ abstract class DeserializedMemberScope protected constructor(
             computeDescriptors(
                 name,
                 functionProtosBytes,
-                ProtoBuf.Function.PARSER,
+                ProtoBuf.Function.parser(),
                 { c.memberDeserializer.loadFunction(it).takeIf(::isDeclaredFunctionAvailable) },
                 { computeNonDeclaredFunctions(name, it) }
             )
@@ -310,7 +310,7 @@ abstract class DeserializedMemberScope protected constructor(
             computeDescriptors(
                 name,
                 propertyProtosBytes,
-                ProtoBuf.Property.PARSER,
+                ProtoBuf.Property.parser(),
                 { c.memberDeserializer.loadProperty(it) },
                 { computeNonDeclaredProperties(name, it) }
             )

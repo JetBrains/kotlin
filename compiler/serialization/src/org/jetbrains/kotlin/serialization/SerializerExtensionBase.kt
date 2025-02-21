@@ -136,7 +136,7 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
 
     @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
         Type
     > GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>.addExtensionOrNull(

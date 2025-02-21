@@ -184,14 +184,14 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         fir.klibSourceFile = loadKlibSourceFileExtensionOrNull(packagePart, proto, KlibMetadataProtoBuf.propertyFile) ?: return
     }
 
-    private fun <T : GeneratedMessageLite.ExtendableMessage<T>> loadKlibSourceFileExtensionOrNull(
+    private fun <T : GeneratedMessageLite.ExtendableMessage<T, *>> loadKlibSourceFileExtensionOrNull(
         packagePart: PackagePartsCacheData, proto: T, sourceFileExtension: GeneratedExtension<T, Int>,
     ): DeserializedSourceFile? {
         val library = (packagePart.extra as? MetadataLibraryPackagePartCacheDataExtra)?.library as? KotlinLibrary ?: return null
         return loadKlibSourceFileExtensionOrNull(library, packagePart.context.nameResolver, proto, sourceFileExtension)
     }
 
-    private fun <T : GeneratedMessageLite.ExtendableMessage<T>> loadKlibSourceFileExtensionOrNull(
+    private fun <T : GeneratedMessageLite.ExtendableMessage<T, *>> loadKlibSourceFileExtensionOrNull(
         library: KotlinLibrary, nameResolver: NameResolver, proto: T, sourceFileExtension: GeneratedExtension<T, Int>,
     ): DeserializedSourceFile? {
         return proto.getExtensionOrNull(sourceFileExtension)
