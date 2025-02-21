@@ -372,6 +372,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("capturedTypeWithPlatformSupertype.kt")
+    public void testCapturedTypeWithPlatformSupertype() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/capturedTypeWithPlatformSupertype.kt");
+    }
+
+    @Test
     @TestMetadata("compoundAssignOnVal.kt")
     public void testCompoundAssignOnVal() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/compoundAssignOnVal.kt");
