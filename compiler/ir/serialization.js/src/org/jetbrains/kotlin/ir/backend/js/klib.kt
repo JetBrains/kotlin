@@ -611,7 +611,16 @@ fun serializeModuleIntoKlib(
         platformKlibCheckers = listOfNotNull(
             { irDiagnosticReporter: IrDiagnosticReporter ->
                 val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
-                JsKlibCheckers.makeChecker(cleanFilesIrData, moduleExportedNames, irDiagnosticReporter, configuration)
+                JsKlibCheckers.makeChecker(
+                    irDiagnosticReporter,
+                    configuration,
+                    // Should IrInlinerBeforeKlibSerialization be set, then calls should have already been checked during pre-serialization,
+                    // and there's no need to raise duplicates of those warnings here.
+                    doCheckCalls = !configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
+                    doCheckExportedDeclarations = true,
+                    cleanFilesIrData,
+                    moduleExportedNames,
+                )
             }.takeIf { builtInsPlatform == BuiltInsPlatform.JS  }
         ),
         processCompiledFileData = { ioFile, compiledFile ->

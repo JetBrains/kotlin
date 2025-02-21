@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.test.utils.createTestPhaseConfig
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -37,6 +42,22 @@ class JsIrInliningFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
         val phaseConfig = createTestPhaseConfig(testServices, module)
+
+        val irDiagnosticReporter =
+            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+        inputArtifact.irModuleFragment.acceptVoid(
+            JsKlibCheckers.makeChecker(
+                irDiagnosticReporter,
+                configuration,
+                doCheckCalls = true,
+                doCheckExportedDeclarations = false,
+            )
+        )
+        if (diagnosticReporter.hasErrors) {
+            // Should errors be found by checkers, there's a chance that JsCodeOutlineLowering will throw an exception on unparseable code.
+            // In test pipeline, it's unwanted, so let's avoid crashes. Already found errors would already be enough for diagnostic tests.
+            return inputArtifact.copy(diagnosticReporter = diagnosticReporter)
+        }
 
         val transformedModule = PhaseEngine(
             phaseConfig,

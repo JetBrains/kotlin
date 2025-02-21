@@ -31,10 +31,12 @@ object JsKlibCheckers {
     )
 
     fun makeChecker(
-        cleanFiles: List<SerializedIrFile>,
-        exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>>,
         diagnosticReporter: IrDiagnosticReporter,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        doCheckCalls: Boolean,
+        doCheckExportedDeclarations: Boolean,
+        cleanFiles: List<SerializedIrFile> = listOf(),
+        exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>> = mapOf(),
     ): IrVisitorVoid {
         return object : IrVisitorVoid() {
             private val diagnosticContext = JsKlibDiagnosticContext(configuration)
@@ -50,9 +52,11 @@ object JsKlibCheckers {
             }
 
             override fun visitModuleFragment(declaration: IrModuleFragment) {
-                val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
-                for (checker in exportedDeclarationsCheckers) {
-                    checker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
+                if (doCheckExportedDeclarations) {
+                    val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
+                    for (checker in exportedDeclarationsCheckers) {
+                        checker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
+                    }
                 }
                 super.visitModuleFragment(declaration)
             }
@@ -64,9 +68,10 @@ object JsKlibCheckers {
             }
 
             override fun visitCall(expression: IrCall) {
-                for (checker in callCheckers) {
-                    checker.check(expression, this.diagnosticContext, diagnosticReporter)
-                }
+                if (doCheckCalls)
+                    for (checker in callCheckers) {
+                        checker.check(expression, this.diagnosticContext, diagnosticReporter)
+                    }
                 super.visitCall(expression)
             }
         }
