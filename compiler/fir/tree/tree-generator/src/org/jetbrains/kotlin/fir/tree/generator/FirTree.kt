@@ -895,6 +895,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val propertyAccessExpression: Element by element(Expression) {
         parent(qualifiedAccessExpression)
+        +field("calleeReference", namedReference, withReplace = true, withTransform = true)
     }
 
     val getClassCall: Element by element(Expression) {

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -31,7 +32,6 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var calleeReference: FirReference,
     override var contextArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
@@ -39,11 +39,11 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var extensionReceiver: FirExpression?,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    override var calleeReference: FirNamedReference,
 ) : FirPropertyAccessExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        calleeReference.accept(visitor, data)
         contextArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
@@ -53,11 +53,11 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
             extensionReceiver?.accept(visitor, data)
         }
+        calleeReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         transformAnnotations(transformer, data)
-        transformCalleeReference(transformer, data)
         contextArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
@@ -67,16 +67,12 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
             extensionReceiver = extensionReceiver?.transform(transformer, data)
         }
+        transformCalleeReference(transformer, data)
         return this
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
-        calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
@@ -90,16 +86,17 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
+        calleeReference = calleeReference.transform(transformer, data)
+        return this
+    }
+
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
         coneTypeOrNull = newConeTypeOrNull
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
-    }
-
-    override fun replaceCalleeReference(newCalleeReference: FirReference) {
-        calleeReference = newCalleeReference
     }
 
     override fun replaceContextArguments(newContextArguments: List<FirExpression>) {
@@ -129,5 +126,14 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
         nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {
+        calleeReference = newCalleeReference
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        require(newCalleeReference is FirNamedReference)
+        replaceCalleeReference(newCalleeReference)
     }
 }
