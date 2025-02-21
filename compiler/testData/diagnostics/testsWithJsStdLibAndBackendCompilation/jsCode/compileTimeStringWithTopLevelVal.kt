@@ -1,3 +1,5 @@
+// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// ^^^ Don't run JsCodeOutliningLowering after fatal error in FIR checker, otherwise it will crash.
 // FIR_DIFFERENCE
 // The difference is okay: K1 and K2 report a bit differently
 // IGNORE_BACKEND_K1: JS_IR
