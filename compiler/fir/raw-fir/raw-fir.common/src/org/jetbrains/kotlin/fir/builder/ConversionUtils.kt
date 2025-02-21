@@ -410,6 +410,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 variance = Variance.INVARIANT
                 typeRef = buildResolvedTypeRef {
                     coneType = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+                    source = fakeSource
                 }
             }
         }

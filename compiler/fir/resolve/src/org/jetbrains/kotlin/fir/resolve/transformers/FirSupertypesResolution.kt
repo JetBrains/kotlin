@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -366,7 +367,7 @@ open class FirSupertypeResolverVisitor(
             is SupertypeComputationStatus.Computed -> return status.supertypeRefs
             is SupertypeComputationStatus.Computing -> return listOf(
                 createErrorTypeRef(
-                    classLikeDeclaration,
+                    classLikeDeclaration.source,
                     "Loop in supertype definition for ${classLikeDeclaration.symbol.classId}",
                     if (classLikeDeclaration is FirTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype
                 )
@@ -451,7 +452,7 @@ open class FirSupertypeResolverVisitor(
                         }
                     superTypeRef !is FirResolvedTypeRef ->
                         createErrorTypeRef(
-                            superTypeRef,
+                            superTypeRef.source,
                             "Unresolved super-type: ${superTypeRef.render()}",
                             DiagnosticKind.UnresolvedSupertype
                         )
@@ -587,8 +588,8 @@ open class FirSupertypeResolverVisitor(
     }
 }
 
-private fun createErrorTypeRef(fir: FirElement, message: String, kind: DiagnosticKind) = buildErrorTypeRef {
-    source = fir.source
+private fun createErrorTypeRef(sourceElement: KtSourceElement?, message: String, kind: DiagnosticKind) = buildErrorTypeRef {
+    source = sourceElement
     diagnostic = ConeSimpleDiagnostic(message, kind)
 }
 
@@ -780,10 +781,10 @@ open class SupertypeComputationSession {
                 }
 
                 resultSupertypeRefs.add(
-                    if (classLikeDeclaration in looped) {
+                    if (classLikeDeclaration in looped && supertypeRef !is FirImplicitBuiltinTypeRef) {
                         isErrorInSupertypesFound = true
                         createErrorTypeRef(
-                            supertypeRef,
+                            supertypeRef.source,
                             // A loop may have been caused by the outer declaration, not necessarily `supertypeRef`
                             "Loop in supertypes involving ${classLikeDeclaration.symbol.classId}",
                             if (isTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype

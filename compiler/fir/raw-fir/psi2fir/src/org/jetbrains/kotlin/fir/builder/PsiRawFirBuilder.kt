@@ -1611,6 +1611,7 @@ open class PsiRawFirBuilder(
                                                 emptyArray(),
                                                 isMarkedNullable = false
                                             )
+                                        source = toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
                                     }
                                     registerSelfType(delegatedEntrySelfType)
 
@@ -1618,6 +1619,7 @@ open class PsiRawFirBuilder(
                                     val superTypeCallEntry = superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
                                     val correctedEnumSelfTypeRef = buildResolvedTypeRef {
                                         source = superTypeCallEntry?.calleeExpression?.typeReference?.toFirSourceElement()
+                                            ?: delegatedEntrySelfType.source
                                         coneType = delegatedEnumSelfTypeRef.coneType
                                     }
                                     declarations += primaryConstructor.toFirConstructor(

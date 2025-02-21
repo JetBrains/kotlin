@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -42,7 +43,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             when {
                 it is FirImplicitBuiltinTypeRef && it.id == StandardClassIds.Any -> {
                     anyFound = true
-                    it.withReplacedConeType(recordType)
+                    it.withReplacedSourceAndType(firClass.source?.fakeElement(KtFakeSourceElementKind.RecordSuperTypeRef), recordType)
                 }
                 it.coneType.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS -> {
                     hasExplicitSuperClass = true
@@ -52,7 +53,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             }
         }
         if (!anyFound && !hasExplicitSuperClass) {
-            newSuperTypeRefs += recordType.toFirResolvedTypeRef()
+            newSuperTypeRefs += recordType.toFirResolvedTypeRef(firClass.source?.fakeElement(KtFakeSourceElementKind.RecordSuperTypeRef))
         }
 
         if (anyFound || !hasExplicitSuperClass) {
@@ -95,7 +96,12 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             ) return delegatedConstructorCall
             val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
             if (constructedTypeRef is FirImplicitTypeRef || constructedTypeRef.coneTypeSafe<ConeKotlinType>()?.isAny == true) {
-                delegatedConstructorCall.replaceConstructedTypeRef(constructedTypeRef.resolvedTypeFromPrototype(recordType))
+                delegatedConstructorCall.replaceConstructedTypeRef(
+                    constructedTypeRef.resolvedTypeFromPrototype(
+                        recordType,
+                        fallbackSource = delegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.RecordSuperTypeRef)
+                    )
+                )
             }
 
             val recordConstructorSymbol = recordType.lookupTag.toRegularClassSymbol(session)

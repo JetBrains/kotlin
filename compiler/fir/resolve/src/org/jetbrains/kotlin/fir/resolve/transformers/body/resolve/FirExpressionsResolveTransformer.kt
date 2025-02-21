@@ -1740,7 +1740,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 source = unwrappedSamIndex.source?.fakeElement(fakeSourceElementKind),
                 name = SpecialNames.subscribeOperatorIndex(i),
                 initializer = unwrappedSamIndex,
-                typeRef = unwrappedSamIndex.resolvedType.toFirResolvedTypeRef(),
+                typeRef = unwrappedSamIndex.resolvedType.toFirResolvedTypeRef(
+                    source = unwrappedSamIndex.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
+                ),
             ).apply {
                 // See compiler/testData/codegen/boxInline/reified/kt28234.kt
                 replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -220,7 +221,7 @@ class CandidateFactory private constructor(
 
     fun createErrorCandidate(callInfo: CallInfo, diagnostic: ConeDiagnostic): Candidate {
         val symbol: FirBasedSymbol<*> = when (callInfo.callKind) {
-            is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
+            is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic, callInfo.callSite.source)
             is CallKind.Function,
             is CallKind.DelegatingConstructorCall,
             is CallKind.CallableReference
@@ -254,7 +255,7 @@ class CandidateFactory private constructor(
         }
     }
 
-    private fun createErrorPropertySymbol(diagnostic: ConeDiagnostic): FirErrorPropertySymbol {
+    private fun createErrorPropertySymbol(diagnostic: ConeDiagnostic, sourceElement: KtSourceElement?): FirErrorPropertySymbol {
         return FirErrorPropertySymbol(diagnostic).also {
             buildErrorProperty {
                 moduleData = context.session.moduleData
@@ -263,6 +264,7 @@ class CandidateFactory private constructor(
                 name = FirErrorPropertySymbol.NAME
                 this.diagnostic = diagnostic
                 symbol = it
+                source = sourceElement
             }
         }
     }

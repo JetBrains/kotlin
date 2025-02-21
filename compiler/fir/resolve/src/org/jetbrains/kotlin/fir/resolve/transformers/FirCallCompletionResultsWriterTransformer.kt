@@ -975,7 +975,12 @@ class FirCallCompletionResultsWriterTransformer(
         val initialReceiverType = receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>()
         val resultReceiverType = initialReceiverType?.let { finallySubstituteOrNull(it) }
         if (resultReceiverType != null) {
-            receiverParameter.replaceTypeRef(receiverParameter.typeRef.resolvedTypeFromPrototype(resultReceiverType))
+            receiverParameter.replaceTypeRef(
+                receiverParameter.typeRef.resolvedTypeFromPrototype(
+                    resultReceiverType,
+                    (receiverParameter.source ?: anonymousFunction.source)?.fakeElement(KtFakeSourceElementKind.LambdaReceiver)
+                )
+            )
             needUpdateLambdaType = true
         }
 
@@ -1040,7 +1045,7 @@ class FirCallCompletionResultsWriterTransformer(
                 data: Any?,
             ): FirTypeRef =
                 buildErrorTypeRef {
-                    source = implicitTypeRef.source
+                    source = anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                     // NB: this error message assumes that it is used only if CFG for the anonymous function is not available
                     diagnostic = ConeSimpleDiagnostic("Cannot infer type w/o CFG", DiagnosticKind.InferenceError)
                 }

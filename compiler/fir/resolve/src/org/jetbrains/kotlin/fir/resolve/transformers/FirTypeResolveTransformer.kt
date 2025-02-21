@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -307,6 +306,7 @@ open class FirTypeResolveTransformer(
             if (hasSupertypePathToParameter(typeParameter, typeParameter, mutableSetOf())) {
                 val errorType = buildErrorTypeRef {
                     diagnostic = ConeCyclicTypeBound(typeParameter.symbol, typeParameter.bounds.toImmutableList())
+                    source = typeParameter.bounds.first().source
                 }
                 typeParameter.replaceBounds(
                     listOf(errorType)

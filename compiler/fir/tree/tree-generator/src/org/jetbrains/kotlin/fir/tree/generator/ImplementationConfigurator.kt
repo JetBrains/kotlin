@@ -304,7 +304,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "getter", "setter",
                 withGetter = true
             )
-            default("returnTypeRef", "FirErrorTypeRefImpl(null, MutableOrEmptyList.empty(), null, null, diagnostic)")
+            default("returnTypeRef", "FirErrorTypeRefImpl(source, MutableOrEmptyList.empty(), null, null, diagnostic)")
             additionalImports(errorTypeRefImplType)
         }
 

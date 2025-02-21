@@ -41,7 +41,7 @@ inline fun FirFunctionCall.copyAsImplicitInvokeCall(
 
 fun FirTypeRef.resolvedTypeFromPrototype(
     type: ConeKotlinType,
-    fallbackSource: KtSourceElement? = null,
+    fallbackSource: KtSourceElement?,
 ): FirResolvedTypeRef {
     if (this is FirResolvedTypeRef) {
         return withReplacedSourceAndType(this@resolvedTypeFromPrototype.source ?: fallbackSource, type)

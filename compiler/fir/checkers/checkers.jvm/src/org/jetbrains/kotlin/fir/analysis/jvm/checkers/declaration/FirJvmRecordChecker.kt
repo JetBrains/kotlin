@@ -29,7 +29,9 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.superTypeRefs.firstOrNull()?.let { typeRef ->
             // compiler automatically adds java.lang.Record supertype, so we should check only for explicit type declarations
-            if (typeRef.source != null && typeRef.coneType.fullyExpandedClassId(context.session) == JvmStandardClassIds.Java.Record) {
+            if (typeRef.source?.kind !is KtFakeSourceElementKind.RecordSuperTypeRef &&
+                typeRef.coneType.fullyExpandedClassId(context.session) == JvmStandardClassIds.Java.Record
+            ) {
                 reporter.reportOn(typeRef.source, FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, context)
                 return
             }

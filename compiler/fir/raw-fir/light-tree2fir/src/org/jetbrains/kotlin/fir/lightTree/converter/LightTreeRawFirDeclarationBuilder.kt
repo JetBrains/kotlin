@@ -853,6 +853,7 @@ class LightTreeRawFirDeclarationBuilder(
                                         ConeTypeProjection.EMPTY_ARRAY,
                                         isMarkedNullable = false
                                     )
+                                    source = enumEntry.toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
                                 }.also { registerSelfType(it) },
                                 delegatedSuperTypeRef = classWrapper.delegatedSelfTypeRef,
                                 delegatedSuperCalls = listOf(

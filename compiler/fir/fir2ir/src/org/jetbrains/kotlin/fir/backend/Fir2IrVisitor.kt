@@ -1317,7 +1317,7 @@ class Fir2IrVisitor(
                     } else {
                         Fir2IrImplicitCastInserter.implicitCastOrExpression(
                             irGetLhsValue(),
-                            originalType.toFirResolvedTypeRef().resolvedTypeFromPrototype(notNullType).toIrType(c)
+                            originalType.toFirResolvedTypeRef().resolvedTypeFromPrototype(notNullType, fallbackSource = null).toIrType(c)
                         )
                     }
                 )
