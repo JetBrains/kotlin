@@ -100,12 +100,13 @@ internal interface DescriptorToIrTranslationMixin {
                 )
             }
         }
-        irConstructor.valueParameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
+        irConstructor.parameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
             symbolTable.descriptorExtension.declareValueParameter(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED,
                     valueParameterDescriptor,
                     valueParameterDescriptor.type.toIrType()).also {
                 it.parent = irConstructor
+                it.kind = IrParameterKind.Regular
             }
         }
         irConstructor.generateAnnotations()
@@ -132,11 +133,21 @@ internal interface DescriptorToIrTranslationMixin {
         val irFunction = symbolTable.declareSimpleFunctionWithOverrides(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, functionDescriptor)
         symbolTable.withScope(irFunction) {
             irFunction.returnType = functionDescriptor.returnType!!.toIrType()
-            irFunction.valueParameters +=  functionDescriptor.valueParameters.map {
-                symbolTable.descriptorExtension.declareValueParameter(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED, it, it.type.toIrType())
-            }
-            irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-                symbolTable.descriptorExtension.declareValueParameter(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED, it, it.type.toIrType())
+            val descriptorParameters =
+                    listOfNotNull(functionDescriptor.dispatchReceiverParameter).associateWith { IrParameterKind.DispatchReceiver } +
+                            functionDescriptor.contextReceiverParameters.associateWith { IrParameterKind.Context } +
+                            listOfNotNull(functionDescriptor.extensionReceiverParameter).associateWith { IrParameterKind.ExtensionReceiver } +
+                            functionDescriptor.valueParameters.associateWith { IrParameterKind.Regular }
+            irFunction.parameters += descriptorParameters.map { (descriptor, kind) ->
+                symbolTable.descriptorExtension.declareValueParameter(
+                        SYNTHETIC_OFFSET,
+                        SYNTHETIC_OFFSET,
+                        IrDeclarationOrigin.DEFINED,
+                        descriptor,
+                        descriptor.type.toIrType()
+                ).also {
+                    it.kind = kind
+                }
             }
             irFunction.generateAnnotations()
         }

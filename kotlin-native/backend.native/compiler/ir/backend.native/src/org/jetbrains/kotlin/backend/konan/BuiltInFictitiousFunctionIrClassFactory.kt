@@ -320,12 +320,14 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
         }
     }
 
-    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter {
+    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor, kind: IrParameterKind): IrValueParameter {
         val varargType = if (descriptor is ValueParameterDescriptor) descriptor.varargElementType else null
+        descriptor.dispatchReceiverParameter
         return symbolTable.irFactory.createValueParameter(
                 startOffset = offset,
                 endOffset = offset,
                 origin = memberOrigin,
+                kind = kind,
                 name = descriptor.name,
                 type = toIrType(descriptor.type),
                 isAssignable = false,
@@ -375,9 +377,14 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
             newFunction.parent = this
             newFunction.overriddenSymbols = descriptor.overriddenDescriptors.mapNotNull { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
-            newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.valueParameters = descriptor.valueParameters.map { newFunction.createValueParameter(it) }
+
+            val descriptorParameters =
+                    listOfNotNull(descriptor.dispatchReceiverParameter).associateWith { IrParameterKind.DispatchReceiver } +
+                            descriptor.contextReceiverParameters.associateWith { IrParameterKind.Context } +
+                            listOfNotNull(descriptor.extensionReceiverParameter).associateWith { IrParameterKind.ExtensionReceiver } +
+                            descriptor.valueParameters.associateWith { IrParameterKind.Regular }
+            newFunction.parameters += descriptorParameters.map { (param, kind) -> newFunction.createValueParameter(param, kind) }
+
             newFunction.correspondingPropertySymbol = property
 
             return newFunction
