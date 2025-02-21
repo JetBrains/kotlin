@@ -1342,7 +1342,9 @@ open class FirDeclarationsResolveTransformer(
                     containingDeclarationSymbol = resolvedLambdaAtom.anonymousFunction.symbol
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source
-                    returnTypeRef = singleParameterType.toFirResolvedTypeRef()
+                    returnTypeRef = singleParameterType.toFirResolvedTypeRef(
+                        source = lambda.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
+                    )
                     this.name = name
                     symbol = FirValueParameterSymbol(name)
                     isCrossinline = false
