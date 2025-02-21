@@ -72,7 +72,11 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
     context(context: CheckerContext)
     private fun checkCastErased(l: TypeInfo, r: TypeInfo): Applicability = when {
-        isCastErased(l.directType, r.directType, context) -> Applicability.CAST_ERASED
+        !(context.isContractBody
+                && context.languageVersionSettings.supportsFeature(LanguageFeature.AllowCheckForErasedTypesInContracts)
+                ) && isCastErased(l.directType, r.directType, context) -> {
+            Applicability.CAST_ERASED
+        }
         else -> Applicability.APPLICABLE
     }
 
