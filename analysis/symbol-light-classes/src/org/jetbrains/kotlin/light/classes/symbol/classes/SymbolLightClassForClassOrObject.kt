@@ -266,22 +266,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
-    override fun classKind(): KaClassKind = _classKind
-
-    private val _classKind: KaClassKind by lazyPub {
-        when (classOrObjectDeclaration) {
-            is KtObjectDeclaration -> {
-                if (classOrObjectDeclaration.isCompanion()) KaClassKind.COMPANION_OBJECT else KaClassKind.OBJECT
-            }
-
-            is KtClass -> {
-                if (classOrObjectDeclaration.isEnum()) KaClassKind.ENUM_CLASS else KaClassKind.CLASS
-            }
-
-            else -> withClassSymbol { it.classKind }
-        }
-    }
-
+    override fun classKind(): KaClassKind = withClassSymbol { it.classKind }
     override fun isRecord(): Boolean {
         return _modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
     }
