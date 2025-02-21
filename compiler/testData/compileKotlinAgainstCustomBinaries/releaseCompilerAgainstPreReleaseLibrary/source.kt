@@ -12,4 +12,10 @@ fun baz(param: A, nested: A.Nested) {
     val y = bar
     bar = 239
     val z: TA = ""
+
+    baz {}
+}
+
+val a = A {
+    "".toA()
 }
