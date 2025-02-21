@@ -140,7 +140,8 @@ object FirExpectActualResolver {
  *      ↓  module3   (expect class Foo)
  *   module4         (expect class Foo)
  * ```
- * Otherwise, `module2` and `module3` are in "the first wave" of topologically sorted graph
+ * Otherwise, `module4` won't appear in "the first wave" of the topologically sorted graph,
+ * and `AMBIGUOUS_EXPECTS` won't be reported.
  */
 private fun <T : Any> Iterable<T>.filterContainedInTheFirstWaveOfDependsOnDominatorTree(
     graphStartingNode: FirModuleData,
