@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -124,8 +125,10 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstruc
 
 fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)
 
+@OptIn(SymbolInternals::class)
 fun ConeKotlinType.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
-    typeConstructor().isMultiFieldValueClass() && !fullyExpandedType(session).isMarkedNullable
+    typeConstructor().isMultiFieldValueClass() && !fullyExpandedType(session).isMarkedNullable &&
+            toRegularClassSymbol(session)?.fir?.isValhallaValueClass == false
 }
 
 val FirCallableSymbol<*>.hasExplicitReturnType: Boolean

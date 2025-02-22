@@ -851,6 +851,12 @@ public class FirLightTreeBlackBoxModernJdkCodegenTestGenerated extends AbstractF
       }
 
       @Test
+      @TestMetadata("annotations.kt")
+      public void testAnnotations() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/annotations.kt");
+      }
+
+      @Test
       @TestMetadata("basicSyntax.kt")
       public void testBasicSyntax() {
         runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/basicSyntax.kt");

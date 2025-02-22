@@ -1,0 +1,149 @@
+@Ann$Container(value=[Ann, Ann])
+@kotlin.Metadata
+public final class A {
+    // source: 'annotations.kt'
+    private final @Ann$Container(value=[Ann, Ann]) field x: int
+    private final @Ann$Container(value=[Ann, Ann]) field y: int
+    public @Ann method <init>(@Ann$Container(value=[Ann, Ann, Ann, Ann]) p0: int, @Ann$Container(value=[Ann, Ann, Ann, Ann]) p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method x$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) method x(): int
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method y$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) method y(): int
+    public inner class Ann$Container
+}
+
+@kotlin.jvm.internal.RepeatableContainer
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class Ann$Container {
+    // source: 'annotations.kt'
+    public abstract method value(): Ann[]
+    public inner class Ann$Container
+}
+
+@kotlin.annotation.Repeatable
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Repeatable(value=Ann$Container::class)
+@kotlin.Metadata
+public annotation class Ann {
+    // source: 'annotations.kt'
+    public inner class Ann$Container
+}
+
+@kotlin.Metadata
+synthetic final class AnnotationsKt$box$10 {
+    // source: 'annotations.kt'
+    enclosing method AnnotationsKt.box()Ljava/lang/String;
+    public final static field INSTANCE: AnnotationsKt$box$10
+    inner (anonymous) class AnnotationsKt$box$10
+    static method <clinit>(): void
+    method <init>(): void
+    public method get(p0: java.lang.Object): java.lang.Object
+    public method set(p0: java.lang.Object, p1: java.lang.Object): void
+}
+
+@kotlin.Metadata
+synthetic final class AnnotationsKt$box$12 {
+    // source: 'annotations.kt'
+    enclosing method AnnotationsKt.box()Ljava/lang/String;
+    public final static field INSTANCE: AnnotationsKt$box$12
+    inner (anonymous) class AnnotationsKt$box$12
+    static method <clinit>(): void
+    method <init>(): void
+    public method get(p0: java.lang.Object): java.lang.Object
+    public method set(p0: java.lang.Object, p1: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class AnnotationsKt {
+    // source: 'annotations.kt'
+    inner (anonymous) class AnnotationsKt$box$10
+    inner (anonymous) class AnnotationsKt$box$12
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getTP$annotations(p0: A): void
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getTP$annotations(p0: C): void
+    public final static @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method getTP(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: A): A
+    public final static @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method getTP(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: C): A
+    public final static @Ann$Container(value=[Ann, Ann]) method setTP(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: A, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p1: A): void
+    public final static @Ann$Container(value=[Ann, Ann]) method setTP(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: C, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p1: A): void
+    private final static method t$f(): void
+    public final static @Ann$Container(value=[Ann, Ann]) method t(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: A, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p1: A, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p2: B, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p3: C): void
+    public final static @Ann$Container(value=[Ann, Ann]) method t(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: C, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p1: A, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p2: B, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p3: C): int
+    public inner class Ann$Container
+}
+
+@Ann$Container(value=[Ann, Ann])
+@kotlin.Metadata
+public final class B {
+    // source: 'annotations.kt'
+    private final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull field x: A
+    private final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable field y: A
+    public @Ann method <init>(@Ann$Container(value=[Ann, Ann, Ann, Ann]) @org.jetbrains.annotations.NotNull p0: A, @Ann$Container(value=[Ann, Ann, Ann, Ann]) @org.jetbrains.annotations.Nullable p1: A): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public final @kotlin.jvm.JvmName(name="otherName") method otherName(): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method x$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method x(): A
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method y$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable method y(): A
+    public inner class Ann$Container
+}
+
+@Ann$Container(value=[Ann, Ann])
+@kotlin.Metadata
+public final class C {
+    // source: 'annotations.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull field c$delegate: A
+    public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field e: A
+    private @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull field x: A
+    private @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable field y: A
+    private @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable field yTa: A
+    private final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull field z$delegate: kotlin.Lazy
+    static method <clinit>(): void
+    public @Ann method <init>(@Ann$Container(value=[Ann, Ann, Ann, Ann]) @org.jetbrains.annotations.NotNull p0: A, @Ann$Container(value=[Ann, Ann, Ann, Ann]) @org.jetbrains.annotations.Nullable p1: A, @Ann$Container(value=[Ann, Ann, Ann, Ann]) @org.jetbrains.annotations.Nullable p2: A): void
+    private final static method _init_$f(): void
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getC$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) method getC(): int
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getD$annotations(): void
+    private static method getD$delegate(p0: C): java.lang.Object
+    public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method getD(): A
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getX$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method getX(): A
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getY$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable method getY(): A
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getYTa$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable method getYTa(): A
+    public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getZ$annotations(): void
+    public final @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method getZ(): A
+    public final @Ann$Container(value=[Ann, Ann]) method setX(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: A): void
+    public final @Ann$Container(value=[Ann, Ann]) method setY(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable p0: A): void
+    public final @Ann$Container(value=[Ann, Ann]) method setYTa(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable p0: A): void
+    private final static method z_delegate$lambda$0(): A
+    public inner class Ann$Container
+}
+
+@kotlin.Metadata
+synthetic final class Generated_Box_MainKt$main$2 {
+    // source: 'Generated_Box_Main.kt'
+    enclosing method Generated_Box_MainKt.main([Ljava/lang/String;)V
+    public final static field INSTANCE: Generated_Box_MainKt$main$2
+    inner (anonymous) class Generated_Box_MainKt$main$2
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Generated_Box_MainKt {
+    // source: 'Generated_Box_Main.kt'
+    inner (anonymous) class Generated_Box_MainKt$main$2
+    public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method main(p0: java.lang.String[]): void
+}

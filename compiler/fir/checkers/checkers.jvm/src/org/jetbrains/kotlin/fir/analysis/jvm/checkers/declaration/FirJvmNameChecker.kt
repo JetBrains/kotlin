@@ -64,6 +64,6 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
     private fun FirRegularClass.isValueClassThatRequiresMangling(): Boolean {
         // value classes have inline modifiers in FIR
-        return isInlineOrValue && name != StandardClassIds.Result.shortClassName
+        return isInlineOrValue && name != StandardClassIds.Result.shortClassName && !isValhallaValueClass
     }
 }
