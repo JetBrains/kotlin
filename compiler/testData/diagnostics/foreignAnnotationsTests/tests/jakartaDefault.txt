@@ -1,0 +1,14 @@
+package
+
+public fun main(/*0*/ a: A<kotlin.String>, /*1*/ a1: A<kotlin.String?>): kotlin.Unit
+
+public open class A</*0*/ T : kotlin.Any!> {
+    public constructor A</*0*/ T : kotlin.Any!>()
+    @jakarta.annotation.Nullable public final var field: @jakarta.annotation.Nullable kotlin.String!
+    @jakarta.annotation.Nonnull public open fun bar(): @jakarta.annotation.Nonnull kotlin.String!
+    @jakarta.annotation.Nullable public open fun baz(/*0*/ @jakarta.annotation.Nonnull x: @jakarta.annotation.Nonnull T!): @jakarta.annotation.Nullable T!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @jakarta.annotation.Nullable public open fun foo(/*0*/ @jakarta.annotation.Nonnull x: @jakarta.annotation.Nonnull kotlin.String!, /*1*/ @jakarta.annotation.Nullable y: @jakarta.annotation.Nullable kotlin.CharSequence!): @jakarta.annotation.Nullable kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

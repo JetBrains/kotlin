@@ -58,6 +58,11 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
             sinceVersion = KotlinVersion(1, 8),
             reportLevelAfter = ReportLevel.STRICT
         ),
+        FqName("jakarta.annotation") to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(2, 1),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
     )
 )
 
