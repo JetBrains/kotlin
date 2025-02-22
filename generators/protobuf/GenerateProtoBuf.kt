@@ -61,16 +61,29 @@ private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/metadata/src/ext_options.pr
 private val PROTOBUF_PROTO_PATHS = listOf("./", "core/metadata/src")
 
 fun main() {
-    try {
-        checkVersion()
+    fun generateDebug() {
+        val outPath = "build-common/test"
 
-        modifyAndExecProtoc(EXT_OPTIONS_PROTO_PATH)
+        for (protoPath in PROTO_PATHS + EXT_OPTIONS_PROTO_PATH) {
+            val debugProtoFile = createDebugProtoFile(protoPath) ?: continue
 
+            execProtoc(debugProtoFile.path, outPath, liteMode = false)
+            renamePackages(debugProtoFile.path, outPath)
+        }
+    }
+
+    fun generateRelease() {
         for (protoPath in PROTO_PATHS) {
             execProtoc(protoPath.file, protoPath.outPath, liteMode = true)
             renamePackages(protoPath.file, protoPath.outPath)
-            modifyAndExecProtoc(protoPath)
         }
+    }
+
+    try {
+        checkVersion()
+
+        generateDebug()
+        generateRelease()
 
         println()
         println("Do not forget to run GenerateProtoBufCompare")
@@ -159,16 +172,13 @@ private fun renamePackagesInSingleFile(javaFile: File) {
     )
 }
 
-private fun modifyAndExecProtoc(protoPath: ProtoPath) {
-    if (protoPath.generateDebug) {
-        val debugProtoFile = File(protoPath.file.replace(".proto", ".debug.proto"))
-        debugProtoFile.writeText(modifyForDebug(protoPath))
-        debugProtoFile.deleteOnExit()
+private fun createDebugProtoFile(protoPath: ProtoPath): File? {
+    if (!protoPath.generateDebug) return null
 
-        val outPath = "build-common/test"
-        execProtoc(debugProtoFile.path, outPath, liteMode = false)
-        renamePackages(debugProtoFile.path, outPath)
-    }
+    val debugProtoFile = File(protoPath.file.replace(".proto", ".debug.proto"))
+    debugProtoFile.writeText(modifyForDebug(protoPath))
+    debugProtoFile.deleteOnExit()
+    return debugProtoFile
 }
 
 private fun modifyForDebug(protoPath: ProtoPath): String {
