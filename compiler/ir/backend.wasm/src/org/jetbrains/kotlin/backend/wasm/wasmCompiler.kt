@@ -327,8 +327,8 @@ $jsCodeBodyIndented
     let require; 
     let wasmExports;
 
-    const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
-    const isDeno = !isNodeJs && (typeof Deno !== 'undefined')
+    const isDeno = typeof Deno !== 'undefined'
+    const isNodeJs = !isDeno && (typeof process !== 'undefined') && (process.release.name === 'node');
     const isStandaloneJsVM =
         !isDeno && !isNodeJs && (
             typeof d8 !== 'undefined' // V8
