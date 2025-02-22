@@ -22,7 +22,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
     @DisplayName("Base test case - local change, local recompilation")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testStrictlyLocalChange(gradleVersion: GradleVersion): Unit = withProject(gradleVersion) {
         build("assemble")
 

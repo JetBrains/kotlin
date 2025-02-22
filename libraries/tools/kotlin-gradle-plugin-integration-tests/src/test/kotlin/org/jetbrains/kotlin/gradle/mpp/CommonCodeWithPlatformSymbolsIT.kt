@@ -19,7 +19,7 @@ import org.junit.jupiter.api.DisplayName
  * [CommonCodeWithPlatformSymbolsIT] should be removed with the IC option when the underlying compiler issue is fixed
  */
 
-open class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String, val taskToExecute: String) : KGPBaseTest() {
+abstract class CommonCodeWithPlatformSymbolsITBase(val platformSourceSet: String, val taskToExecute: String) : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             logLevel = LogLevel.DEBUG,

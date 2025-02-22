@@ -44,7 +44,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
     @DisplayName("KMP tests are rebuilt when affected")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testAffectingTestDependencies(gradleVersion: GradleVersion): Unit = withProject(gradleVersion) {
         build("build")
 

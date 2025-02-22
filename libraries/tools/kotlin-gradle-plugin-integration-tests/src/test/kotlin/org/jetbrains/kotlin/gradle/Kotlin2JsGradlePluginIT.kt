@@ -971,8 +971,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("yarn is set up from local archive")
     @GradleTest
-    @TestMetadata("yarn-setup")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
     fun testYarnSetupFromLocalArchive(gradleVersion: GradleVersion) {
         project("yarn-setup", gradleVersion) {
             build("yarnFolderRemove")
