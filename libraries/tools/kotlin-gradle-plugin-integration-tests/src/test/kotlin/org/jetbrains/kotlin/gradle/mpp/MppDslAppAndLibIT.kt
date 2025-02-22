@@ -35,7 +35,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testLibAndAppWithoutHMPP(gradleVersion: GradleVersion) = doTestLibAndApp(
         libProjectPath = "new-mpp-lib-and-app/sample-lib",
         appProjectPath = "new-mpp-lib-and-app/sample-app",
@@ -44,7 +44,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testLibAndAppWithGradleKotlinDsl(gradleVersion: GradleVersion) {
         doTestLibAndApp(
             libProjectPath = "new-mpp-lib-and-app/sample-lib-gradle-kotlin-dsl",

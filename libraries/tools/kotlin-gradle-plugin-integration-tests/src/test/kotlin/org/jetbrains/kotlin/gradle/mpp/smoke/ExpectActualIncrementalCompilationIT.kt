@@ -31,7 +31,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @DisplayName("File with actual declaration needs recompiling")
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testRecompilationOfActualFun(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")
@@ -58,7 +58,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @DisplayName("File with expect declaration needs recompiling indirectly")
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testRecompilationOfExpectFun(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")
@@ -83,7 +83,7 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     @DisplayName("File with expect class declaration needs recompiling")
     @GradleTest
     @TestMetadata("expect-actual-fun-or-class-ic")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testRecompilationOfExpectClass(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
             build("assemble")

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
+import org.jetbrains.kotlin.gradle.BrokenOnMacosTestFailureExpectation
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
@@ -71,6 +73,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
+    @BrokenOnMacosTest(failureExpectation = BrokenOnMacosTestFailureExpectation.AFTER_AGP_8_5_0)
     fun `test - simple project - ide dependency resolution`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
     ) {

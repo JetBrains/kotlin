@@ -511,7 +511,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("MPP (KTIJ-6098): in single platform project common metadata configurations resolve the framework-specific dependency ")
     @GradleTest
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun kotlinTestSingleDependencyMppCommonSinglePlatform(gradleVersion: GradleVersion) {
         project("jvm-and-js-hmpp", gradleVersion) {
             assertKotlinTestDependency(
@@ -532,7 +532,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testFrameworkSelectionJvm(
         gradleVersion: GradleVersion,
         testFramework: Pair<String, String>,
@@ -556,7 +556,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testFrameworkSelectionMppJvm(
         gradleVersion: GradleVersion,
         testFramework: Pair<String, String>,
@@ -581,7 +581,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testFrameworkSelectionMppCommon(
         gradleVersion: GradleVersion,
         testFramework: Pair<String, String>,

@@ -152,7 +152,6 @@ class BuildCacheIT : KGPBaseTest() {
 
     @DisplayName("Changing native toolchain location should not break build cache")
     @GradleTest
-    @BrokenOnMacosTest
     fun testNativeToolchainWithBuildCache(gradleVersion: GradleVersion, @TempDir customNativeHomePath: Path) {
         nativeProject("native-simple-project", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)

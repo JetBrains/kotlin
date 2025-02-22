@@ -31,7 +31,7 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         nativeProject(
             "generic-kmp-app-plus-lib-with-tests",
@@ -51,7 +51,7 @@ class LoggingConfigurationJvmIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("jvmTargetModernDsl")
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         project("jvmTargetModernDsl", gradleVersion) {
             checkLoggingConfigurations("build.gradle.kts", ":compileKotlin", defaultBuildOptions)

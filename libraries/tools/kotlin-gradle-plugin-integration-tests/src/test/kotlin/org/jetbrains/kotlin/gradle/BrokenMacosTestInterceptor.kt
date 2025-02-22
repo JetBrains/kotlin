@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.util.text.SemVer
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.GradleTest
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.GradleAndroidTest
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.AssumptionViolatedException
 import org.junit.jupiter.api.extension.*
@@ -21,43 +20,72 @@ import java.lang.reflect.Method
  */
 annotation class BrokenOnMacosTest(
     // This is most likely to happen because target project is not configuration cache compatible.
-    val expectedToFailOnlyAfterGradle8: Boolean = true,
+    val failureExpectation: BrokenOnMacosTestFailureExpectation = BrokenOnMacosTestFailureExpectation.AFTER_GRADLE_8,
 )
+
+enum class BrokenOnMacosTestFailureExpectation {
+    ALWAYS,
+    // This is most likely to happen because target project is not configuration cache compatible and the test runs with CC
+    AFTER_GRADLE_8,
+    AFTER_AGP_8_5_0,
+}
 
 class BrokenMacosTestInterceptor : InvocationInterceptor {
     override fun interceptTestMethod(
         invocation: Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,
         extensionContext: ExtensionContext,
-    ) = runTest(invocation, extensionContext, null)
+    ) = runTest(invocation, extensionContext, emptyList())
 
     override fun interceptDynamicTest(
         invocation: Invocation<Void>,
         invocationContext: DynamicTestInvocationContext,
         extensionContext: ExtensionContext,
-    ) = runTest(invocation, extensionContext, null)
+    ) = runTest(invocation, extensionContext, emptyList())
 
     override fun interceptTestTemplateMethod(
         invocation: Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,
         extensionContext: ExtensionContext,
-    ) = runTest(invocation, extensionContext, invocationContext.arguments.singleOrNull { it is GradleVersion } as? GradleVersion)
+    ) {
+        runTest(
+            invocation,
+            extensionContext,
+            invocationContext.arguments,
+        )
+    }
 
     private fun runTest(
         invocation: Invocation<Void>,
         extensionContext: ExtensionContext,
-        gradleVersion: GradleVersion?,
+        arguments: List<Any>,
     ) {
+        if (!HostManager.hostIsMac) {
+            invocation.proceed()
+            return
+        }
+
         val brokenOnMacosTest = extensionContext.element.get().getAnnotation(BrokenOnMacosTest::class.java)
-        val isTestMarkedBrokenOnMacos = HostManager.hostIsMac && brokenOnMacosTest != null
+        val isTestMarkedBrokenOnMacos = brokenOnMacosTest != null
         if (!isTestMarkedBrokenOnMacos) {
             invocation.proceed()
             return
         }
 
-        val isTestExpectedToBeBroken = if (brokenOnMacosTest.expectedToFailOnlyAfterGradle8) {
-            gradleVersion?.let { it >= GradleVersion.version("8.0.0") } ?: true
-        } else true
+        val isTestExpectedToBeBroken: Boolean = when (brokenOnMacosTest.failureExpectation) {
+            BrokenOnMacosTestFailureExpectation.ALWAYS -> true
+            BrokenOnMacosTestFailureExpectation.AFTER_GRADLE_8 -> {
+                val gradleVersion = (arguments.singleOrNull { it is GradleVersion } as? GradleVersion) ?: error("Missing Gradle version")
+                gradleVersion >= GradleVersion.version("8.0.0")
+            }
+            BrokenOnMacosTestFailureExpectation.AFTER_AGP_8_5_0 -> {
+                extensionContext.element.get().getAnnotation(GradleAndroidTest::class.java) ?: error("Not a GradleAndroidTest")
+                val agpVersion = (arguments.singleOrNull { it is String } as? String) ?: error(
+                    "Couldn't find single Android version argument in GradleAndroidTest: $arguments"
+                )
+                (SemVer.parseFromText(agpVersion) ?: error("Couldn't parse AGP version: $agpVersion")) >= SemVer.parseFromText("8.5.0")!!
+            }
+        }
         if (!isTestExpectedToBeBroken) {
             invocation.proceed()
             return
@@ -81,7 +109,7 @@ class BrokenMacosTestInterceptor : InvocationInterceptor {
 
         throw MarkedTestSucceeded(
             buildString {
-                appendLine("Test succeeded, but was expected to fail on a macOS host. Please remove \"@${BrokenOnMacosTest::class.simpleName}\" from the test or adjust \"${BrokenOnMacosTest::expectedToFailOnlyAfterGradle8.name}\" parameter")
+                appendLine("Test succeeded, but was expected to fail on a macOS host. Please remove \"@${BrokenOnMacosTest::class.simpleName}\" from the test or adjust \"${BrokenOnMacosTest::failureExpectation.name}\" parameter")
             }
         )
     }

@@ -162,7 +162,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Failing with lock file update")
     @GradleTest
-    @BrokenOnMacosTest(expectedToFailOnlyAfterGradle8 = false)
+    @BrokenOnMacosTest
     fun testFailingWithLockFileUpdate(gradleVersion: GradleVersion) {
         project("kotlin-js-package-lock-project", gradleVersion) {
             testFailingWithLockFileUpdate(
