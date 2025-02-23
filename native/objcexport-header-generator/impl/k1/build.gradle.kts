@@ -10,6 +10,7 @@ sourceSets {
 dependencies {
     api(project(":native:objcexport-header-generator"))
     implementation(project(":compiler:cli-base"))
+    implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.objcinterop"))

@@ -7,6 +7,7 @@ dependencies {
     api(project(":core:metadata.jvm"))
     api(project(":core:deserialization.common"))
     api(project(":core:deserialization.common.jvm"))
+    implementation(project(":compiler:config"))
     implementation(project(":core:compiler.common.jvm"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

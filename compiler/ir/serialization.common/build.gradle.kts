@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":compiler:config"))
     implementation(project(":compiler:ir.tree"))
     implementation(project(":compiler:serialization"))
     api(project(":kotlin-util-klib"))

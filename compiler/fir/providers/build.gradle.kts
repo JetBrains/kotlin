@@ -8,6 +8,8 @@ dependencies {
     api(project(":compiler:resolution.common"))
     api(project(":compiler:fir:cones"))
     api(project(":compiler:fir:tree"))
+    implementation(project(":compiler:config"))
+    implementation(project(":core:metadata"))
     implementation(project(":core:util.runtime"))
 
     compileOnly(libs.guava)
