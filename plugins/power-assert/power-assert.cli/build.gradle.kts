@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:ir.backend.common"))
 
     implementation(project(":kotlin-power-assert-compiler-plugin.backend"))
 }

@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     testApi(kotlinStdlib("jdk8"))
+    testImplementation(project(":analysis:light-classes-base"))
     testApi(project(":kotlin-scripting-compiler"))
     testApi(project(":core:descriptors"))
     testApi(project(":core:descriptors.jvm"))

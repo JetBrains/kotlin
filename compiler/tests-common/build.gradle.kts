@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     testApi(kotlinStdlib("jdk8"))
+    testImplementation(project(":compiler:light-classes"))
     testApi(project(":kotlin-scripting-compiler"))
     testApi(project(":core:descriptors"))
     testApi(project(":core:descriptors.jvm"))
@@ -13,6 +14,7 @@ dependencies {
     testApi(project(":compiler:util"))
     testApi(project(":compiler:tests-mutes"))
     testApi(project(":compiler:backend"))
+    testImplementation(project(":compiler:frontend:cfg"))
     testApi(project(":compiler:ir.tree"))
     testApi(project(":compiler:fir:tree"))
     testApi(project(":compiler:fir:raw-fir:psi2fir"))
@@ -34,6 +36,7 @@ dependencies {
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:frontend.java"))
+    testImplementation(project(":compiler:javac-wrapper"))
     testApi(project(":compiler:util"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:cli"))

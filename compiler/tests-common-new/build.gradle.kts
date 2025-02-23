@@ -9,6 +9,7 @@ dependencies {
     testApi(project(":compiler:fir:fir-serialization"))
     testApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testApi(project(":compiler:cli"))
+    testImplementation(project(":analysis:light-classes-base"))
     testImplementation(project(":compiler:ir.tree"))
     testImplementation(project(":compiler:backend.jvm.entrypoint"))
     testImplementation(project(":compiler:backend.jvm.lower"))

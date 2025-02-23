@@ -5,8 +5,10 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":analysis:light-classes-base"))
     api(project(":compiler:util"))
     api(project(":compiler:cli-base"))
+    implementation(project(":compiler:javac-wrapper"))
     api(project(":compiler:frontend"))
     api(project(":compiler:backend-common"))
     api(project(":compiler:backend"))

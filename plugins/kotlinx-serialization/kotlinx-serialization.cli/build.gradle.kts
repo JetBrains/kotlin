@@ -8,8 +8,11 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:tests-common"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
     implementation(project(":kotlinx-serialization-compiler-plugin.k1"))
