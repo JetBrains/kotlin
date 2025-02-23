@@ -8,6 +8,7 @@ dependencies {
     api(project(":compiler:ir.tree"))
 
     compileOnly(jpsModel())
+    compileOnly(libs.guava)
     compileOnly(project(":compiler:cli-common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
 
@@ -17,7 +18,9 @@ dependencies {
     implementation(intellijJDom())
     implementation(intellijCore())
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":compiler:fir:fir-serialization"))
+    implementation(project(":compiler:fir:fir2ir"))
     implementation(project(":compiler:fir:native"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.backend.native"))

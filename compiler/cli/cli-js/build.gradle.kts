@@ -10,6 +10,7 @@ dependencies {
     api(project(":compiler:cli"))
     api(project(":compiler:frontend"))
     api(project(":compiler:backend-common"))
+    implementation(project(":compiler:fir:entrypoint"))
     api(project(":compiler:fir:fir-serialization"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.js"))

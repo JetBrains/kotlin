@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)

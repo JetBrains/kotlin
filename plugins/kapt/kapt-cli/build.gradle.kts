@@ -7,6 +7,10 @@ dependencies {
     api(project(":compiler:cli"))
 
     compileOnly(intellijCore())
+    compileOnly(kotlin("stdlib"))
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":compiler:plugin-api"))
+
 
     testImplementation(intellijCore())
     testApi(projectTests(":compiler:test-infrastructure-utils"))

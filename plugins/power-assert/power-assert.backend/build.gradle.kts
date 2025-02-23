@@ -13,6 +13,10 @@ dependencies {
     compileOnly(project(":compiler:cli"))
 
     compileOnly(intellijCore())
+
+    implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
+    implementation(project(":compiler:fir:fir2ir"))
+    implementation(project(":compiler:fir:tree"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()

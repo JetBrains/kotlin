@@ -64,6 +64,7 @@ dependencies {
     testApi(intellijCore())
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:cli"))
+    testApi(project(":compiler:plugin-api"))
     testApi(project(":compiler:util"))
 
     testRuntimeOnly(libs.guava)

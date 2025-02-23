@@ -8,6 +8,8 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":compiler:fir:providers"))
+    compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:psi"))

@@ -4,6 +4,9 @@ plugins {
 }
 
 dependencies {
+    testImplementation(project(":compiler:backend"))
+    testImplementation(project(":compiler:backend-common"))
+    testImplementation(project(":compiler:backend.common.jvm"))
     testImplementation(project(":compiler:fir:entrypoint"))
     testImplementation(project(":compiler:cli"))
     testImplementation(intellijCore())

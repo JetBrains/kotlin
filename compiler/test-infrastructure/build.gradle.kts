@@ -11,6 +11,7 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(project(":compiler:plugin-api"))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }
