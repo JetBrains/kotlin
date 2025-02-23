@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":compiler:backend.jvm"))
     implementation(project(":compiler:light-classes"))
     implementation(project(":compiler:javac-wrapper"))
+    implementation(project(":compiler:plugin-api"))
     implementation(project(":native:frontend.native"))
     implementation(project(":wasm:wasm.frontend"))
     implementation(project(":kotlin-util-klib"))

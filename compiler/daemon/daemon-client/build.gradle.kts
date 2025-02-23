@@ -20,7 +20,10 @@ val nativePlatformVariants = listOf(
 
 dependencies {
     api(kotlinStdlib())
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":core:compiler.common"))
     compileOnly(project(":daemon-common"))
+    compileOnly(project(":js:js.config"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
     testCompileOnly(project(":daemon-common"))

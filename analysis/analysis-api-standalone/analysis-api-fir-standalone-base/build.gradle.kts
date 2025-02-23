@@ -8,6 +8,7 @@ dependencies {
     implementation(kotlinStdlib())
     implementation(project(":compiler:psi"))
     implementation(project(":compiler:cli-base"))
+    implementation(project(":compiler:plugin-api"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":analysis:analysis-api-fir"))

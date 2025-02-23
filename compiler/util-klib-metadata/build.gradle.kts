@@ -7,11 +7,13 @@ plugins {
 description = "Common klib metadata reader and writer"
 
 dependencies {
+    compileOnly(project(":compiler:config.jvm"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:deserialization"))
     compileOnly(project(":core:compiler.common.native"))
     compileOnly(project(":compiler:serialization"))
+    compileOnly(project(":native:kotlin-native-utils"))
 
     api(kotlinStdlib())
     api(project(":kotlin-util-io"))
