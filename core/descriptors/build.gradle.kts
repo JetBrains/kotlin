@@ -8,9 +8,9 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
     api(project(":core:compiler.common"))
-    api(project(":core:util.runtime"))
-    api(kotlinStdlib())
-    api(project(":kotlin-annotations-jvm"))
+    implementation(project(":core:util.runtime"))
+    implementation(kotlinStdlib())
+    implementation(project(":kotlin-annotations-jvm"))
 }
 
 sourceSets {
