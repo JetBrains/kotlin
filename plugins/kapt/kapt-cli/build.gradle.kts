@@ -4,7 +4,9 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:cli"))
+    implementation(project(":compiler:cli"))
+    implementation(project(":compiler:cli-base"))
+    implementation(project(":compiler:cli-common"))
 
     compileOnly(intellijCore())
     compileOnly(kotlin("stdlib"))

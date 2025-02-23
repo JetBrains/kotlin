@@ -9,6 +9,8 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-base"))
+    compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
     compileOnly(project(":compiler:frontend"))

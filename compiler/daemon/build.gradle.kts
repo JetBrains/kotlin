@@ -6,7 +6,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-base"))
+    compileOnly(project(":compiler:cli-js"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":js:js.config"))

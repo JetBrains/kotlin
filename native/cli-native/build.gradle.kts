@@ -6,6 +6,7 @@ dependencies {
     compileOnly(intellijCore())
 
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:cli-common"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.backend.native"))

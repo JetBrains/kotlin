@@ -18,6 +18,7 @@ dependencies {
     implementation(intellijJDom())
     implementation(intellijCore())
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:fir:fir2ir"))

@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:util"))
-    api(project(":compiler:cli-base"))
+    implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:javac-wrapper"))
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:backend-common"))
