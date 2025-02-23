@@ -19,6 +19,7 @@ dependencies {
     testApi(project(":native:executors"))
 
     testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(project(":compiler:ir.actualization"))
     testImplementation(project(":compiler:ir.serialization.native"))
     testImplementation(project(":compiler:fir:native"))
     testImplementation(project(":core:compiler.common.native"))

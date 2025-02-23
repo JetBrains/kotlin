@@ -15,7 +15,11 @@ dependencies {
     testImplementation(project(":compiler:backend.jvm.lower"))
     testImplementation(project(":compiler:backend.wasm"))
     testImplementation(project(":compiler:plugin-api"))
+    testImplementation(project(":compiler:fir:checkers:checkers.jvm"))
+    testImplementation(project(":compiler:ir.actualization"))
     testImplementation(project(":kotlin-util-klib-abi"))
+    testImplementation(project(":native:frontend.native"))
+    testImplementation(project(":wasm:wasm.frontend"))
     testImplementation(intellijCore())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

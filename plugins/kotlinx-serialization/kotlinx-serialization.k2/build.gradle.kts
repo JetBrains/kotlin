@@ -12,6 +12,8 @@ dependencies {
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:frontend.common-psi"))
+    compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:cli-common"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))

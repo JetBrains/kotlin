@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":kotlin-scripting-common"))
     implementation(project(":kotlin-assignment-compiler-plugin.k2"))
     implementation(project(":kotlin-assignment-compiler-plugin.cli"))
+    implementation(project(":wasm:wasm.config"))
     implementation(libs.caffeine)
 
     implementation(libs.opentelemetry.api)

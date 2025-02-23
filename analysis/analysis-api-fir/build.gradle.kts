@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
+    implementation(project(":compiler:ir.actualization"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.jvm"))
     api(intellijCore())
@@ -33,6 +34,10 @@ dependencies {
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:kt-references"))
     implementation(project(":analysis:symbol-light-classes"))
+    implementation(project(":js:js.frontend"))
+    implementation(project(":native:frontend.native"))
+    implementation(project(":wasm:wasm.frontend"))
+    implementation(project(":wasm:wasm.config"))
     implementation(libs.caffeine)
     implementation(libs.opentelemetry.api)
 

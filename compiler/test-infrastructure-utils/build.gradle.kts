@@ -9,6 +9,9 @@ dependencies {
     testImplementation(project(":compiler:backend.common.jvm"))
     testImplementation(project(":compiler:fir:entrypoint"))
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":js:js.config"))
+    testImplementation(project(":kotlin-util-io"))
+    testImplementation(project(":kotlin-util-klib"))
     testImplementation(intellijCore())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

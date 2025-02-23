@@ -10,6 +10,7 @@ dependencies {
     api(project(":kotlin-noarg-compiler-plugin.k1"))
     api(project(":kotlin-noarg-compiler-plugin.k2"))
     api(project(":kotlin-noarg-compiler-plugin.backend"))
+    compileOnly(project(":compiler:config.jvm"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))

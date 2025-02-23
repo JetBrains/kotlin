@@ -33,6 +33,8 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
+
+    testApi(project(":compiler:plugin-api"))
 }
 
 optInToExperimentalCompilerApi()

@@ -16,6 +16,7 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
+    compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":kotlin-annotation-processing-cli"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
@@ -49,6 +50,8 @@ dependencies {
 
     testApi(project(":tools:kotlinp-jvm"))
     testApi(project(":kotlin-metadata-jvm"))
+
+    implementation(project(":compiler:plugin-api"))
 }
 
 optInToExperimentalCompilerApi()

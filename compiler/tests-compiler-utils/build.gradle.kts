@@ -15,8 +15,10 @@ dependencies {
     testApi(project(":compiler:tests-mutes"))
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:backend.js"))
+    testImplementation(project(":compiler:fir:java"))
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:frontend.java"))
+    testImplementation(project(":compiler:ir.actualization"))
     testApi(project(":compiler:util"))
     testApi(project(":compiler:psi"))
     testApi(project(":compiler:cli-common"))
@@ -28,6 +30,7 @@ dependencies {
     testApi(project(":compiler:backend.jvm.entrypoint"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(project(":kotlin-preloader"))
+    testImplementation(project(":native:frontend.native"))
     testApi(commonDependency("com.android.tools:r8"))
     testCompileOnly(intellijCore())
 

@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":compiler:fir:fir-serialization"))
+    implementation(project(":compiler:ir.actualization"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.js"))
     implementation(project(":compiler:ir.tree"))

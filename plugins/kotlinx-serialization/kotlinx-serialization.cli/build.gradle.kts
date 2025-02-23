@@ -11,7 +11,10 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:serialization"))
     compileOnly(project(":compiler:tests-common"))
+    compileOnly(project(":core:metadata.jvm"))
+    compileOnly(project(":js:js.serializer"))
     compileOnly(project(":kotlin-util-klib-metadata"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))

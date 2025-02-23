@@ -22,6 +22,9 @@ dependencies {
     api(project(":compiler:build-tools:kotlin-build-statistics"))
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(intellijCore())
+    implementation(project(":js:js.config"))
+    implementation(project(":compiler:fir:java"))
+    implementation(project(":compiler:ir.actualization"))
 
     testImplementation(libs.junit4)
     testApi(kotlinTest("junit"))
