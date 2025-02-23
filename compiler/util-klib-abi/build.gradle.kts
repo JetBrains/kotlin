@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(kotlinStdlib())
     implementation(project(":kotlin-util-klib"))
+    implementation(project(":compiler:ir.tree"))
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:ir.serialization.common"))
     compileOnly(libs.intellij.fastutil)

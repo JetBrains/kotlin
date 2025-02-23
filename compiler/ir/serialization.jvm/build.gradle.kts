@@ -4,12 +4,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:ir.tree"))
+    implementation(project(":compiler:ir.tree"))
     api(project(":compiler:ir.serialization.common"))
-    api(project(":core:descriptors.jvm"))
-    api(project(":core:metadata.jvm"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":core:metadata.jvm"))
     implementation(project(":core:deserialization.common.jvm"))
-    api(project(":compiler:frontend.java"))
+    implementation(project(":compiler:frontend.java"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
