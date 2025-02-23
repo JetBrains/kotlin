@@ -22,6 +22,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:fir:fir2ir"))
     implementation(project(":compiler:fir:native"))
+    implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:ir.actualization"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.backend.native"))

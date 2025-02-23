@@ -8,7 +8,10 @@ plugins {
 dependencies {
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":core:descriptors.jvm"))
+    compileOnly(project(":compiler:config.jvm"))
+    compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:java"))
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:providers"))
     compileOnly(project(":compiler:fir:semantics"))
