@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
+    implementation(project(":compiler:cli-common"))
     implementation(project(":compiler:serialization"))
     implementation(project(":compiler:plugin-api"))
     implementation(commonDependency("org.fusesource.jansi", "jansi"))

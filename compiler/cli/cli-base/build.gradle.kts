@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:cli-common"))
+    implementation(project(":compiler:cli-common"))
     implementation(project(":compiler:resolution.common"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:frontend:cfg"))

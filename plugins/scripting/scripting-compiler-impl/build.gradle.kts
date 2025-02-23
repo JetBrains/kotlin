@@ -15,6 +15,7 @@ dependencies {
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:ir.serialization.js"))
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))

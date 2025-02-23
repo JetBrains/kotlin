@@ -19,6 +19,8 @@ dependencies {
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-base"))
+    compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))

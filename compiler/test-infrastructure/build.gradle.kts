@@ -5,7 +5,8 @@ plugins {
 
 dependencies {
     testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli-common"))
     testApi(intellijCore())
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
