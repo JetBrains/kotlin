@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.backend.native"))

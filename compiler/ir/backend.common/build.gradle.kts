@@ -4,11 +4,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:backend-common"))
-    api(project(":compiler:ir.tree"))
-    api(project(":compiler:ir.interpreter"))
-    implementation(project(":compiler:config.jvm"))
+    api(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:backend-common"))
+    implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:ir.interpreter"))
     implementation(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
 

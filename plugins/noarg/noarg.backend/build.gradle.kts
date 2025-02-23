@@ -6,9 +6,9 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:ir.backend.common"))
-    api(project(":core:descriptors"))
-    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:frontend"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
     implementation(kotlinStdlib())

@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":core:compiler.common.jvm"))
+    compileOnly(project(":compiler:backend-common"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":compiler:cli-common"))

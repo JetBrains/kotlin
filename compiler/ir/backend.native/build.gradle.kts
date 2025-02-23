@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(intellijCore())
+    implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.tree"))
     implementation(project(":core:compiler.common.native"))

@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:fir:native"))
     implementation(project(":compiler:fir:raw-fir:psi2fir"))
     implementation(project(":compiler:fir:raw-fir:light-tree2fir"))
