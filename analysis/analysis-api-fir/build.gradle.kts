@@ -37,7 +37,6 @@ dependencies {
     implementation(project(":js:js.frontend"))
     implementation(project(":native:frontend.native"))
     implementation(project(":wasm:wasm.frontend"))
-    implementation(project(":wasm:wasm.config"))
     implementation(libs.caffeine)
     implementation(libs.opentelemetry.api)
 

@@ -106,7 +106,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":js:js.tests"))
     testImplementation(project(":compiler:backend.wasm"))
-    testImplementation(project(":wasm:wasm.config"))
     testImplementation(project(":wasm:wasm.frontend"))
     testApi(intellijCore())
     testApi(platform(libs.junit.bom))

@@ -20,7 +20,6 @@ dependencies {
     implementation(project(":compiler:backend.wasm"))
     implementation(project(":js:js.sourcemap"))
     implementation(project(":wasm:wasm.frontend"))
-    implementation(project(":wasm:wasm.config"))
 
     wasmCustomFormatters(project(":wasm:wasm.debug.browsers"))
 

@@ -35,7 +35,6 @@ dependencies {
     implementation(project(":compiler:ir.actualization"))
     implementation(project(":kotlin-util-io"))
     implementation(project(":js:js.config"))
-    implementation(project(":wasm:wasm.config"))
     implementation(project(":wasm:wasm.frontend"))
 
     compileOnly(toolsJarApi())
