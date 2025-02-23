@@ -14,6 +14,7 @@ dependencies {
     api(project(":compiler:cli"))
     api(project(":compiler:cli-js"))
     api(project(":compiler:fir:entrypoint"))
+    implementation(project(":compiler:fir:fir2ir"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:ir.serialization.jvm"))
     api(project(":compiler:backend.jvm.entrypoint"))

@@ -25,6 +25,7 @@ dependencies {
     compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:ir.serialization.js"))
     compileOnly(project(":compiler:backend.jvm.codegen"))
+    compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:plugin-api"))
 

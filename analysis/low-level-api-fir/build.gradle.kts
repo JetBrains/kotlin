@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))
+    implementation(project(":compiler:fir:raw-fir:psi2fir"))
     implementation(project(":compiler:plugin-api"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))

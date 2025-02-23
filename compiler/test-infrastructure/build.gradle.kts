@@ -11,6 +11,7 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(project(":compiler:fir:cones"))
     testImplementation(project(":compiler:config.jvm"))
     testImplementation(project(":compiler:plugin-api"))
     testImplementation(project(":js:js.config"))

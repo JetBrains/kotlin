@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":compiler:fir:fir2ir"))
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:fir:cones"))
