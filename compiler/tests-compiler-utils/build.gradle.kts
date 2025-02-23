@@ -14,6 +14,7 @@ dependencies {
     testApi(project(":compiler:util"))
     testApi(project(":compiler:tests-mutes"))
     testApi(project(":compiler:backend"))
+    testApi(project(":compiler:backend.js"))
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:frontend.java"))
     testApi(project(":compiler:util"))

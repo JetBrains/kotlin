@@ -13,6 +13,7 @@ dependencies {
     testImplementation(project(":compiler:ir.tree"))
     testImplementation(project(":compiler:backend.jvm.entrypoint"))
     testImplementation(project(":compiler:backend.jvm.lower"))
+    testImplementation(project(":compiler:backend.wasm"))
     testImplementation(project(":compiler:plugin-api"))
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(intellijCore())

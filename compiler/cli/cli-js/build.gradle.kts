@@ -5,21 +5,21 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
+    implementation(project(":compiler:util"))
     api(project(":compiler:cli-common"))
     api(project(":compiler:cli"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:backend-common"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:fir:entrypoint"))
-    api(project(":compiler:fir:fir-serialization"))
-    api(project(":compiler:ir.backend.common"))
-    api(project(":compiler:ir.serialization.js"))
-    api(project(":compiler:ir.tree"))
-    api(project(":compiler:backend.js"))
-    api(project(":compiler:backend.wasm"))
-    api(project(":js:js.sourcemap"))
-    api(project(":wasm:wasm.frontend"))
-    api(project(":wasm:wasm.config"))
+    implementation(project(":compiler:fir:fir-serialization"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.serialization.js"))
+    implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:backend.js"))
+    implementation(project(":compiler:backend.wasm"))
+    implementation(project(":js:js.sourcemap"))
+    implementation(project(":wasm:wasm.frontend"))
+    implementation(project(":wasm:wasm.config"))
 
     wasmCustomFormatters(project(":wasm:wasm.debug.browsers"))
 
