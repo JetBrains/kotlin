@@ -7831,6 +7831,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("functionalType.kt")
+      public void testFunctionalType() {
+        runTest("compiler/testData/codegen/box/contextParameters/functionalType.kt");
+      }
+
+      @Test
       @TestMetadata("propertyWithContextAndWithout.kt")
       public void testPropertyWithContextAndWithout() {
         runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
