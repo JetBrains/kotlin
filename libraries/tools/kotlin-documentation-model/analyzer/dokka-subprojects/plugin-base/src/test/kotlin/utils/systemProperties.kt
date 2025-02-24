@@ -14,6 +14,13 @@ internal fun withAllTypesPage(block: () -> Unit): Unit =
 internal fun withSinceKotlin(block: () -> Unit): Unit =
     DokkaBaseInternalConfiguration.withProperty(SHOULD_DISPLAY_SINCE_KOTLIN_SYS_PROP, "true", block)
 
+/**
+ * This property works only for K2
+ * Allow analysing code in the 'kotlin' package
+ */
+internal fun withAllowKotlinPackage(block: () -> Unit): Unit =
+    DokkaBaseInternalConfiguration.withProperty("org.jetbrains.dokka.analysis.allowKotlinPackage", "true", block)
+
 internal fun DokkaBaseInternalConfiguration.withProperty(propertyName: String, value: String, block: () -> Unit) {
     setProperty(propertyName, value)
     try {
