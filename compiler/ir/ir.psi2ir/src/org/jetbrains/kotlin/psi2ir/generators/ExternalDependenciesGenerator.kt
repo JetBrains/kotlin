@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.psi2ir.lazy.DeclarationStubGenerator
 
 class ExternalDependenciesGenerator(
     private val symbolTable: SymbolTable,

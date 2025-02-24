@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import org.jetbrains.kotlin.psi2ir.lazy.DeclarationStubGenerator
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGenerator
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanIrLinker(

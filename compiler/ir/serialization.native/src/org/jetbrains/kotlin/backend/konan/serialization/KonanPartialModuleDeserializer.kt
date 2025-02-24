@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.psi2ir.lazy.DeclarationStubGenerator
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGenerator
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanPartialModuleDeserializer(

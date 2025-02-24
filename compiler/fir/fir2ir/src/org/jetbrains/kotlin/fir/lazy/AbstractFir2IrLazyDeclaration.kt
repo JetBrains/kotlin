@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.psi2ir.lazy.DeclarationStubGenerator
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGenerator
 import org.jetbrains.kotlin.psi2ir.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.psi2ir.lazy.lazyVar
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled

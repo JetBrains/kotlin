@@ -52,7 +52,7 @@ class SymbolTableWithBuiltInsDeduplication(
          * duplicate built-in.
          *
          * Note that not all built-in symbols may have been bound or created by the time [builtIns] has been bound. However, [referenceClass]
-         * will create a symbol in such a case (via `super.referenceClass`) and [org.jetbrains.kotlin.psi2ir.lazy.DeclarationStubGenerator] will
+         * will create a symbol in such a case (via `super.referenceClass`) and [org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGenerator] will
          * create a stub for the symbol if [referenceClass] was invoked from the stub generator.
          */
         @ObsoleteDescriptorBasedAPI
