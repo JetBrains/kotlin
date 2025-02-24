@@ -1,7 +1,7 @@
 @_exported import ExportedKotlinPackages
 import KotlinRuntimeSupport
-@_implementationOnly import KotlinBridges_testLibraryA
 import KotlinRuntime
+@_implementationOnly import KotlinBridges_testLibraryA
 
 public extension ExportedKotlinPackages.org.jetbrains.a {
     public final class MyLibraryA: KotlinRuntime.KotlinBase {

@@ -1,5 +1,6 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_main_one
+import KotlinRuntime
 import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.org.main.first {

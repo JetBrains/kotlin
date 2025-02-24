@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinBridges_cross_module_inheritance
+import KotlinRuntime
 import KotlinRuntimeSupport
 import inheritance
 

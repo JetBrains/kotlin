@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinBridges_ref_types
+import KotlinRuntime
 import KotlinRuntimeSupport
 import data
 

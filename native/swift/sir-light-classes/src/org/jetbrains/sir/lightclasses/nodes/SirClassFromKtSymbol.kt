@@ -67,9 +67,7 @@ private class SirClassFromKtSymbol(
                 ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
                 ?.let { SirNominalType(it) }
         } ?: let {
-            SirNominalType(KotlinRuntimeModule.kotlinBase).also {
-                ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
-            }
+            SirNominalType(KotlinRuntimeModule.kotlinBase)
         }
     }
 }
@@ -86,7 +84,7 @@ internal class SirEnumClassFromKtSymbol(
     override val superClass: SirType? by lazyWithSessions {
         // TODO: this super class as default will become obsolete with the KT-66855
         SirNominalType(KotlinRuntimeModule.kotlinBase).also {
-            ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
+            ktSymbol.containingModule.sirModule()
         }
     }
     override val protocols: List<SirProtocol> = super.protocols + listOf(SirSwiftModule.caseIterable)

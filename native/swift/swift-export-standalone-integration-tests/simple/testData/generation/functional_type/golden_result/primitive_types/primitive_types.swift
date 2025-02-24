@@ -1,4 +1,5 @@
 @_implementationOnly import KotlinBridges_primitive_types
+import KotlinRuntime
 import KotlinRuntimeSupport
 
 public func consume_block_with_byte_id(

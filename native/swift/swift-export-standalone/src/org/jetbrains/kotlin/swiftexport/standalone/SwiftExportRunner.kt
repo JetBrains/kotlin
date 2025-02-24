@@ -163,6 +163,7 @@ private fun translateModule(module: InputModule, dependencies: Set<InputModule>,
         // Assume that parts of the KotlinRuntimeSupport module are used.
         // It might not be the case, but precise tracking seems like an overkill at the moment.
         buildResult.module.updateImport(SirImport(config.runtimeSupportModuleName))
+        buildResult.module.updateImport(SirImport(config.runtimeModuleName))
 
         val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
 

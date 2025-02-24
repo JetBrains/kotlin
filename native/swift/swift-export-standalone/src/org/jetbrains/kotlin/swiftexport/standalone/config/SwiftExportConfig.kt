@@ -23,4 +23,5 @@ public data class SwiftExportConfig(
 ) {
     val moduleForPackagesName: String = "ExportedKotlinPackages"
     val runtimeSupportModuleName: String = "KotlinRuntimeSupport"
+    val runtimeModuleName: String = "KotlinRuntime"
 }
