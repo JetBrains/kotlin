@@ -1,8 +1,6 @@
-/privateTypesInsideInternalInlineFunctionError.kt:32:5: error: Public-API inline function accesses a non Public-API declaration
-
-/privateTypesInsideInternalInlineFunctionError.kt:32:13: error: Public-API inline function accesses a non Public-API declaration
-
 /privateTypesInsideInternalInlineFunctionError.kt:33:5: error: Public-API inline function accesses a non Public-API declaration
+
+/privateTypesInsideInternalInlineFunctionError.kt:33:13: error: Public-API inline function accesses a non Public-API declaration
 
 /privateTypesInsideInternalInlineFunctionError.kt:34:5: error: Public-API inline function accesses a non Public-API declaration
 
@@ -10,18 +8,13 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:36:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:38:5: error: Public-API inline function accesses a non Public-API declaration A. This could happen as a result of cascaded inlining of the following functions:
-private inline fun privateInline(): Any
+/privateTypesInsideInternalInlineFunctionError.kt:37:5: error: Public-API inline function accesses a non Public-API declaration
 
-
-
-/privateTypesInsideInternalInlineFunctionError.kt:39:19: error: Public-API inline function accesses a non Public-API declaration
-
-/privateTypesInsideInternalInlineFunctionError.kt:40:5: error: Public-API inline function accesses a non Public-API declaration
-
-/privateTypesInsideInternalInlineFunctionError.kt:40:23: error: Public-API inline function accesses a non Public-API declaration
+/privateTypesInsideInternalInlineFunctionError.kt:40:19: error: Public-API inline function accesses a non Public-API declaration
 
 /privateTypesInsideInternalInlineFunctionError.kt:41:5: error: Public-API inline function accesses a non Public-API declaration
+
+/privateTypesInsideInternalInlineFunctionError.kt:41:23: error: Public-API inline function accesses a non Public-API declaration
 
 /privateTypesInsideInternalInlineFunctionError.kt:42:5: error: Public-API inline function accesses a non Public-API declaration
 
@@ -29,27 +22,24 @@ private inline fun privateInline(): Any
 
 /privateTypesInsideInternalInlineFunctionError.kt:44:5: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:50:13: error: Public-API inline function accesses a non Public-API declaration
-
-/privateTypesInsideInternalInlineFunctionError.kt:50:21: error: Public-API inline function accesses a non Public-API declaration
+/privateTypesInsideInternalInlineFunctionError.kt:45:5: error: Public-API inline function accesses a non Public-API declaration
 
 /privateTypesInsideInternalInlineFunctionError.kt:51:13: error: Public-API inline function accesses a non Public-API declaration
+
+/privateTypesInsideInternalInlineFunctionError.kt:51:21: error: Public-API inline function accesses a non Public-API declaration
 
 /privateTypesInsideInternalInlineFunctionError.kt:52:13: error: Public-API inline function accesses a non Public-API declaration
 
 /privateTypesInsideInternalInlineFunctionError.kt:53:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:55:13: error: Public-API inline function accesses a non Public-API declaration
+/privateTypesInsideInternalInlineFunctionError.kt:54:13: error: Public-API inline function accesses a non Public-API declaration
 
-/privateTypesInsideInternalInlineFunctionError.kt:56:13: error: Public-API inline function accesses a non Public-API declaration A. This could happen as a result of cascaded inlining of the following functions:
-private inline fun privateInline(): Any
+/privateTypesInsideInternalInlineFunctionError.kt:56:13: error: Public-API inline function accesses a non Public-API declaration
 
-
-
-/privateTypesInsideInternalInlineFunctionError.kt:57:27: error: Public-API inline function accesses a non Public-API declaration
-
-/privateTypesInsideInternalInlineFunctionError.kt:58:13: error: Public-API inline function accesses a non Public-API declaration
+/privateTypesInsideInternalInlineFunctionError.kt:58:27: error: Public-API inline function accesses a non Public-API declaration
 
 /privateTypesInsideInternalInlineFunctionError.kt:59:13: error: Public-API inline function accesses a non Public-API declaration
 
 /privateTypesInsideInternalInlineFunctionError.kt:60:13: error: Public-API inline function accesses a non Public-API declaration
+
+/privateTypesInsideInternalInlineFunctionError.kt:61:13: error: Public-API inline function accesses a non Public-API declaration

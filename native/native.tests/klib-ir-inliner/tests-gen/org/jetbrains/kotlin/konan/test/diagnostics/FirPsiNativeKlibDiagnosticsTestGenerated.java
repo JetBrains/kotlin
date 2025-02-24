@@ -86,9 +86,21 @@ public class FirPsiNativeKlibDiagnosticsTestGenerated extends AbstractFirPsiNati
       }
 
       @Test
+      @TestMetadata("privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt")
+      public void testPrivateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib() {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt");
+      }
+
+      @Test
       @TestMetadata("privateTypesInsideInternalInlineFunctionWarning.kt")
       public void testPrivateTypesInsideInternalInlineFunctionWarning() {
         runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionWarning.kt");
+      }
+
+      @Test
+      @TestMetadata("privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt")
+      public void testPrivateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib() {
+        runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt");
       }
 
       @Test
@@ -181,9 +193,21 @@ public class FirPsiNativeKlibDiagnosticsTestGenerated extends AbstractFirPsiNati
         }
 
         @Test
+        @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFunErrorWithInlinedFunInKlib.kt")
+        public void testLeakingPrivateClassThroughtPrivateTopLevelFunErrorWithInlinedFunInKlib() {
+          runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtPrivateTopLevelFunErrorWithInlinedFunInKlib.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFunWarning.kt")
         public void testLeakingPrivateClassThroughtPrivateTopLevelFunWarning() {
           runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtPrivateTopLevelFunWarning.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateClassThroughtPrivateTopLevelFunWarningWithInlinedFunInKlib.kt")
+        public void testLeakingPrivateClassThroughtPrivateTopLevelFunWarningWithInlinedFunInKlib() {
+          runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate/leakingPrivateClassThroughtPrivateTopLevelFunWarningWithInlinedFunInKlib.kt");
         }
 
         @Test

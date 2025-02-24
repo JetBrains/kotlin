@@ -1,0 +1,55 @@
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:33:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:33:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:34:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:35:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:36:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:37:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:39:5: warning: Public-API inline function accesses a non Public-API declaration A. This could happen as a result of cascaded inlining of the following functions:
+private inline fun privateInline(): Any
+
+This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:40:19: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:41:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:41:23: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:42:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:43:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:44:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:45:5: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:51:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:51:21: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:52:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:53:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:54:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:56:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:57:13: warning: Public-API inline function accesses a non Public-API declaration A. This could happen as a result of cascaded inlining of the following functions:
+private inline fun privateInline(): Any
+
+This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:58:27: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:59:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:60:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:61:13: warning: Public-API inline function accesses a non Public-API declaration. This will become an error in a future release.
