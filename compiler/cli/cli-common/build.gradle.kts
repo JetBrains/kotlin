@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api(project(":core:util.runtime"))
     implementation(project(":compiler:config.jvm"))
-    api(project(":js:js.config"))
+    implementation(project(":js:js.config"))
     api(project(":wasm:wasm.config"))
     implementation(project(":native:kotlin-native-utils"))
     api(project(":compiler:plugin-api"))
