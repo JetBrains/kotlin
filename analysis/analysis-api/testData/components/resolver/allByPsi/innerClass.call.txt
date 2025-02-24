@@ -82,7 +82,9 @@ KtSuperTypeCallEntry(86,93): 'Base(x)'
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
-        dispatchReceiver = null
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = r/A
+          type = r.A
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
@@ -116,7 +118,9 @@ KtConstructorCalleeExpression(86,90): 'Base'
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
-        dispatchReceiver = null
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = r/A
+          type = r.A
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null

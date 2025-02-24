@@ -689,6 +689,13 @@ internal class KaFirResolver(
                 contextArguments = fir.contextArguments.toKaContextParameterValues(),
             )
 
+            fir is FirDelegatedConstructorCall -> KaBasePartiallyAppliedSymbol(
+                backingSignature = signature,
+                dispatchReceiver = fir.dispatchReceiver?.toKtReceiverValue(),
+                extensionReceiver = null,
+                contextArguments = fir.contextArguments.toKaContextParameterValues(),
+            )
+
             else -> KaBasePartiallyAppliedSymbol(
                 backingSignature = signature,
                 dispatchReceiver = null,
