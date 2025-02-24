@@ -14,24 +14,29 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_LINKAGE_RUNTIME_ERROR
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.linkage.partial.*
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.compact
@@ -506,6 +511,46 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitDeclarationReference(expression: IrDeclarationReference) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
+        }
+
+        override fun visitGetField(expression: IrGetField): IrExpression {
+            var stabilityFieldGetterCall: IrCall? = null
+
+            val newExpression = expression.maybeThrowLinkageError {
+                val partialLinkageCase = checkReferencedDeclaration(symbol)
+
+                if (partialLinkageCase !is ExpressionHasInaccessibleDeclaration)
+                    return@maybeThrowLinkageError partialLinkageCase
+
+                val getInaccessibleFieldExpression = partialLinkageCase.expression as? IrGetField
+                val maybeComposeStabilityField = getInaccessibleFieldExpression?.symbol?.takeIf { it.isBound }?.owner
+                    ?: return@maybeThrowLinkageError partialLinkageCase
+
+                val fieldName = maybeComposeStabilityField.name.asString()
+                if (!fieldName.endsWith(COMPOSE_STABILITY_FIELD_SUFFIX))
+                    return@maybeThrowLinkageError partialLinkageCase
+
+                val composeStabilityGetterName =
+                    Name.identifier(fieldName.removeSuffix(COMPOSE_STABILITY_FIELD_SUFFIX) + COMPOSE_STABILITY_GETTER_SUFFIX)
+
+                val composeStabilityGetter = (maybeComposeStabilityField.parent as? IrDeclarationContainer)?.let { container ->
+                    container.findDeclaration<IrSimpleFunction> { it.name == composeStabilityGetterName }
+                } ?: return@maybeThrowLinkageError partialLinkageCase
+
+                stabilityFieldGetterCall = IrCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    getInaccessibleFieldExpression.type,
+                    composeStabilityGetter.symbol
+                )
+
+                null
+            }
+
+            return if (newExpression === expression && stabilityFieldGetterCall != null)
+                stabilityFieldGetterCall
+            else
+                newExpression
         }
 
         override fun visitClassReference(expression: IrClassReference) = expression.maybeThrowLinkageError {
@@ -1216,5 +1261,8 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         private val REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN = FqName("kotlin.ReplaceWith.<init>.expression")
+
+        private const val COMPOSE_STABILITY_FIELD_SUFFIX = $$"$stable"
+        private const val COMPOSE_STABILITY_GETTER_SUFFIX = $$"$stableprop_getter"
     }
 }
