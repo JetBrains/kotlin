@@ -40,25 +40,25 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolveComponents) {
     companion object {
         private fun getPsiAsFirElementSource(element: KtElement): KtElement? {
-            val deparenthesized = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
-            return when {
-                deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
-                deparenthesized is KtQualifiedExpression && deparenthesized.selectorExpression is KtCallExpression -> {
+            val unwrappedElement = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
+            return when (unwrappedElement) {
+                is KtPropertyDelegate -> unwrappedElement.expression ?: element
+                is KtQualifiedExpression if unwrappedElement.selectorExpression is KtCallExpression -> {
                     /*
                      KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
                      Which will have a receiver as qualifier
                      */
-                    deparenthesized.selectorExpression ?: errorWithAttachment("Incomplete code") {
-                        withPsiEntry("psi", deparenthesized)
+                    unwrappedElement.selectorExpression ?: errorWithAttachment("Incomplete code") {
+                        withPsiEntry("psi", unwrappedElement)
                     }
                 }
-                deparenthesized is KtValueArgument -> {
+                is KtValueArgument -> {
                     // null will be return in case of invalid KtValueArgument
-                    deparenthesized.getArgumentExpression()
+                    unwrappedElement.getArgumentExpression()
                 }
-                deparenthesized is KtStringTemplateEntryWithExpression -> deparenthesized.expression
-                deparenthesized is KtUserType && deparenthesized.parent is KtNullableType -> deparenthesized.parent as KtNullableType
-                else -> deparenthesized
+                is KtStringTemplateEntryWithExpression -> unwrappedElement.expression
+                is KtUserType if unwrappedElement.parent is KtNullableType -> unwrappedElement.parent as KtNullableType
+                else -> unwrappedElement
             }
         }
 
@@ -167,7 +167,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     private fun getFirForElementInsideAnnotations(
         element: KtElement,
         nonLocalDeclaration: KtDeclaration?,
-    ): FirElement? = getFirForNonBodyElement<KtAnnotationEntry, KtAnnotated>(
+    ): FirElement? = getFirForNonBodyElement(
         element = element,
         nonLocalDeclaration = nonLocalDeclaration,
         anchorElementProvider = { it.parentsOfType<KtAnnotationEntry>(nonLocalDeclaration).firstOrNull() },
@@ -178,7 +178,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     private fun getFirForElementInsideTypes(
         element: KtElement,
         nonLocalDeclaration: KtDeclaration,
-    ): FirElement? = getFirForNonBodyElement<KtTypeReference, KtDeclaration>(
+    ): FirElement? = getFirForNonBodyElement(
         element = element,
         nonLocalDeclaration = nonLocalDeclaration,
         anchorElementProvider = { it.parentsOfType<KtTypeReference>(nonLocalDeclaration).lastOrNull() },
