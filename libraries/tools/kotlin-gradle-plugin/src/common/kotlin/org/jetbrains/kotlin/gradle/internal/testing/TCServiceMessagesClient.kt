@@ -37,12 +37,13 @@ internal open class TCServiceMessagesClient(
 ) : ServiceMessageParserCallback {
     var afterMessage = false
 
-    inline fun root(actions: () -> Unit) {
+    inline fun <T> root(actions: () -> T): T {
         val tsStart = System.currentTimeMillis()
         val root = RootNode()
         open(tsStart, root)
-        actions()
+        val result = actions()
         ensureNodesClosed(root)
+        return result
     }
 
     override fun parseException(e: ParseException, text: String) {
