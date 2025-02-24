@@ -8,9 +8,9 @@ expect fun foo()
 expect class Foo
 
 // MODULE: intermediate()()(common)
-@ExperimentalExpectRefinement
+@kotlin.experimental.ExperimentalExpectRefinement
 expect fun foo()
-@ExperimentalExpectRefinement
+@kotlin.experimental.ExperimentalExpectRefinement
 expect class Foo
 
 // MODULE: main()()(common, intermediate)

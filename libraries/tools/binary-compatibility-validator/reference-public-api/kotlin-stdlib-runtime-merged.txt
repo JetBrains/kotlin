@@ -53,9 +53,6 @@ public final class kotlin/ExceptionsKt {
 	public static final fun stackTraceToString (Ljava/lang/Throwable;)Ljava/lang/String;
 }
 
-public abstract interface annotation class kotlin/ExperimentalExpectRefinement : java/lang/annotation/Annotation {
-}
-
 public abstract interface annotation class kotlin/ExperimentalMultiplatform : java/lang/annotation/Annotation {
 }
 
@@ -3180,6 +3177,9 @@ public abstract interface class kotlin/enums/EnumEntries : java/util/List, kotli
 public final class kotlin/enums/EnumEntriesKt {
 	public static final fun enumEntries (Lkotlin/jvm/functions/Function0;)Lkotlin/enums/EnumEntries;
 	public static final fun enumEntries ([Ljava/lang/Enum;)Lkotlin/enums/EnumEntries;
+}
+
+public abstract interface annotation class kotlin/experimental/ExperimentalExpectRefinement : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class kotlin/experimental/ExperimentalNativeApi : java/lang/annotation/Annotation {

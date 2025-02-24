@@ -5,10 +5,10 @@
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: common
-@ExperimentalExpectRefinement
+@kotlin.experimental.ExperimentalExpectRefinement
 expect fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>()
 
-@ExperimentalExpectRefinement
+@kotlin.experimental.ExperimentalExpectRefinement
 expect class <!ACTUAL_WITHOUT_EXPECT!>Foo<!>
 
 // MODULE: main()()(common)
