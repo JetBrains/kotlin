@@ -127,8 +127,8 @@ abstract class MetadataLegacySerializerPhaseBase(
     name: String
 ) : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataSerializationArtifact>(
     name = name,
-    preActions = setOf(PerformanceNotifications.GenerationStarted),
-    postActions = setOf(PerformanceNotifications.GenerationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = setOf(PerformanceNotifications.BackendStarted),
+    postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact? {
         val (firResult, configuration, _, _) = input

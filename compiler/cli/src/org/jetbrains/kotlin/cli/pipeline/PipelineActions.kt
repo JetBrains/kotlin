@@ -61,10 +61,6 @@ object PerformanceNotifications {
     object BackendStarted : AbstractNotification(PerformanceManager::notifyBackendStarted)
     object BackendFinished : AbstractNotification(PerformanceManager::notifyBackendFinished)
 
-    // whole backend
-    object GenerationStarted : AbstractNotification(PerformanceManager::notifyGenerationStarted)
-    object GenerationFinished : AbstractNotification(PerformanceManager::notifyGenerationFinished)
-
     sealed class AbstractNotification(
         val notify: PerformanceManager.() -> Unit
     ) : Action<PipelineArtifact, PipelineContext> {

@@ -1,7 +1,6 @@
 Kotlin to JS Compiler performance report
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
              BACKEND        $INT>>$ ms            $REAL>>$ loc/s
-            GENERATE        $INT>>$ ms            $REAL>>$ loc/s
    TRANSLATION to IR        $INT>>$ ms            $REAL>>$ loc/s
 Binary class from Kotlin file performed $INT$ times, total time $INT$ ms
 Find Java class performed $INT$ times, total time $INT$ ms

@@ -1,8 +1,8 @@
 Kotlin to Native Compiler performance report
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
              ANALYZE        $INT>>$ ms            $REAL>>$ loc/s
-             BACKEND        $INT>>$ ms
-            GENERATE        $INT>>$ ms            $REAL>>$ loc/s
+             BACKEND        $INT>>$ ms            $REAL>>$ loc/s
+             BACKEND        $INT>>$ ms            $REAL>>$ loc/s
          IR LOWERING        $INT>>$ ms    Infinity loc/s
          IR LOWERING        $INT>>$ ms    Infinity loc/s
          IR LOWERING        $INT>>$ ms    Infinity loc/s

@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsSerializedKlibPipelineArtifact>(
     name = "JsKlibSerializationPipelinePhase",
-    preActions = setOf(PerformanceNotifications.GenerationStarted, PerformanceNotifications.BackendStarted),
-    postActions = setOf(PerformanceNotifications.GenerationFinished, PerformanceNotifications.BackendFinished)
+    preActions = setOf(PerformanceNotifications.BackendStarted),
+    postActions = setOf(PerformanceNotifications.BackendFinished)
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsSerializedKlibPipelineArtifact? {
         val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input

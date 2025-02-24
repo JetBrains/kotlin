@@ -64,20 +64,20 @@ internal inline fun <T> PerformanceManager?.trackTranslationToIR(fn: () -> T): T
     }
 }
 
-internal inline fun <T> PerformanceManager?.trackGeneration(fn: () -> T): T {
-    this?.notifyGenerationStarted()
-    try {
-        return fn()
-    } finally {
-        this?.notifyGenerationFinished()
-    }
-}
-
 internal inline fun <T> PerformanceManager?.trackIRLowering(fn: () -> T): T {
     this?.notifyIRLoweringStarted()
     try {
         return fn()
     } finally {
         this?.notifyIRLoweringFinished()
+    }
+}
+
+internal inline fun <T> PerformanceManager?.trackBackendGeneration(fn: () -> T): T {
+    this?.notifyBackendStarted()
+    try {
+        return fn()
+    } finally {
+        this?.notifyBackendFinished()
     }
 }

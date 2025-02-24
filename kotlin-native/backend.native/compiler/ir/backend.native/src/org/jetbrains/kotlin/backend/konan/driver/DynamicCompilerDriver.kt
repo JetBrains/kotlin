@@ -73,7 +73,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
             Triple(objCExportedInterface, psiToIrOutput, objCCodeSpec)
         }
 
-        performanceManager.trackGeneration {
+        performanceManager.trackBackendGeneration {
             val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
                 it.objCExportedInterface = objCExportedInterface
                 it.objCExportCodeSpec = objCCodeSpec
@@ -96,7 +96,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
         }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
 
-        performanceManager.trackGeneration {
+        performanceManager.trackBackendGeneration {
             val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
                 it.cAdapterExportedElements = cAdapterElements
             }
@@ -179,7 +179,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
         val psiToIrOutput = performanceManager.trackTranslationToIR { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
 
-        performanceManager.trackGeneration {
+        performanceManager.trackBackendGeneration {
             val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
             engine.runBackend(backendContext, psiToIrOutput.irModule)
         }
@@ -220,7 +220,7 @@ internal class DynamicCompilerDriver(private val performanceManager: Performance
             engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        performanceManager.trackGeneration {
+        performanceManager.trackBackendGeneration {
             val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
             engine.runBackend(backendContext, psiToIrOutput.irModule)
         }

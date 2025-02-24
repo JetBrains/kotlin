@@ -37,7 +37,6 @@ abstract class PerformanceManager(private val presentableName: String) {
     private var isK2: Boolean = true
     private var initStartNanos = currentTime()
     private var analysisStart: Long = 0
-    private var generationStart: Long = 0
 
     private var startGCData = mutableMapOf<String, GCData>()
 
@@ -55,6 +54,9 @@ abstract class PerformanceManager(private val presentableName: String) {
         "$targetDescription, $files files ($lines lines)"
 
     fun getMeasurementResults(): List<PerformanceMeasurement> = measurements + counterMeasurements.values
+
+    fun getLoweringAndBackendTimeMs(): Long = (measurements.filterIsInstance<IrLoweringMeasurement>().sumOf { it.milliseconds }) +
+            (measurements.filterIsInstance<BackendMeasurement>().sumOf { it.milliseconds })
 
     fun addMeasurementResults(newMeasurements: List<PerformanceMeasurement>) {
         measurements += newMeasurements
@@ -103,15 +105,6 @@ abstract class PerformanceManager(private val presentableName: String) {
     open fun notifyAnalysisFinished() {
         val time = currentTime() - analysisStart
         measurements += CodeAnalysisMeasurement(TimeUnit.NANOSECONDS.toMillis(time))
-    }
-
-    open fun notifyGenerationStarted() {
-        generationStart = currentTime()
-    }
-
-    open fun notifyGenerationFinished() {
-        val time = currentTime() - generationStart
-        measurements += CodeGenerationMeasurement(TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyTranslationToIRStarted() {
@@ -207,7 +200,6 @@ abstract class PerformanceManager(private val presentableName: String) {
         val relevantMeasurements = getMeasurementResults().filter {
             it is CompilerInitializationMeasurement ||
                     it is CodeAnalysisMeasurement ||
-                    it is CodeGenerationMeasurement ||
                     it is PerformanceCounterMeasurement ||
                     it is FindJavaClassMeasurement ||
                     it is BinaryClassFromKotlinFileMeasurement

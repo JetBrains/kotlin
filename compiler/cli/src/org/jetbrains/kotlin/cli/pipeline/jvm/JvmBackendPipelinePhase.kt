@@ -30,12 +30,10 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBinaryPipelineArtifact>(
     name = "JvmBackendPipelineStep",
     preActions = setOf(
-        PerformanceNotifications.GenerationStarted,
         PerformanceNotifications.IrLoweringStarted
     ),
     postActions = setOf(
         PerformanceNotifications.BackendFinished,
-        PerformanceNotifications.GenerationFinished,
         CheckCompilationErrors.CheckDiagnosticCollector
     )
 ) {
