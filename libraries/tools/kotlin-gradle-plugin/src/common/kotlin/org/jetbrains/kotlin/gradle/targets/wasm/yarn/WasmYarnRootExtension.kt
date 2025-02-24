@@ -6,20 +6,26 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.yarn
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.gradle.api.model.ObjectFactory
+import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 
 abstract class WasmYarnRootExtension internal constructor(
     project: Project,
     nodeJsRoot: WasmNodeJsRootExtension,
     yarnSpec: WasmYarnRootEnvSpec,
+    objects: ObjectFactory,
+    execOps: ExecOperations,
 ) : BaseYarnRootExtension(
-    project,
-    nodeJsRoot,
-    yarnSpec,
+    project = project,
+    nodeJsRoot = nodeJsRoot,
+    yarnSpec = yarnSpec,
+    objects = objects,
+    execOps = execOps,
 ) {
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val YARN: String

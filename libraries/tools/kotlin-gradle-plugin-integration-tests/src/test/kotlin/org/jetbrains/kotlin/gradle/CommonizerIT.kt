@@ -664,7 +664,7 @@ open class CommonizerIT : KGPBaseTest() {
     @OsCondition(enabledOnCI = [OS.LINUX, OS.WINDOWS, OS.MAC])
     @GradleTest
     fun testCommonizationOfNonPlatformShouldWorkOnlyForSupportedTargets(gradleVersion: GradleVersion) {
-        nativeProject("emptyKts", gradleVersion, forceOutput = EnableGradleDebug.ENABLED) {
+        nativeProject("emptyKts", gradleVersion) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.applyMultiplatform {

@@ -13,10 +13,10 @@ import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdErr
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdOut
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType.*
-import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
+import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.slf4j.Logger
 import java.text.ParseException
 
@@ -50,8 +50,8 @@ internal open class TCServiceMessagesClient(
         log.error("Failed to parse test process messages: \"$text\"", e)
     }
 
-    internal open fun testFailedMessage(execHandle: ExecHandle, exitValue: Int): String =
-        "$execHandle exited with errors (exit code: $exitValue)"
+    internal open fun testFailedMessage(execHandle: ExecAsyncHandle, exitValue: Int): String =
+        "${execHandle.displayName} exited with errors (exit code: $exitValue)"
 
     override fun serviceMessage(message: ServiceMessage) {
 
@@ -238,7 +238,7 @@ internal open class TCServiceMessagesClient(
 
             check(it.localId == assertLocalId) {
                 "Bad TCSM: unexpected node to close `$assertLocalId`, expected `${it.localId}`, stack: ${
-                leaf.collectParents().joinToString("") { item -> "\n - ${item.localId}" }
+                    leaf.collectParents().joinToString("") { item -> "\n - ${item.localId}" }
                 }\n"
             }
         }

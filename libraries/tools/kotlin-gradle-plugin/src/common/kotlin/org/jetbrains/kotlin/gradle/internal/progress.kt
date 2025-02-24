@@ -5,21 +5,64 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.logging.events.ProgressStartEvent
 import org.gradle.internal.logging.progress.ProgressLogger
-import org.gradle.internal.service.ServiceRegistry
+import org.gradle.internal.logging.progress.ProgressLoggerFactory
+import javax.inject.Inject
 
-fun <T> ServiceRegistry.operation(
+
+/**
+ * Create a new instance of a [ProgressLogger] with a category of [ProgressStartEvent.BUILD_OP_CATEGORY].
+ *
+ * **NOTE**: [ProgressLogger] cannot be stored in the Configuration Cache.
+ * A new instance should only be created and used during the execution phase.
+ */
+internal fun ObjectFactory.newBuildOpLogger(): ProgressLogger =
+    progressLoggerFactory()
+        // I don't know how important the category is.
+        // The KGP/JS code used it - I just wanted to preserve the existing behaviour.
+        .newOperation(ProgressStartEvent.BUILD_OP_CATEGORY)
+
+
+/**
+ * Executes [body] within the context of a [ProgressLogger],
+ * calling [ProgressLogger.started] before and [ProgressLogger.completed] after.
+ */
+internal fun <T> ProgressLogger.operation(
     description: String,
     initialStatus: String? = null,
-    body: ProgressLogger.() -> T
+    body: ProgressLogger.() -> T,
 ): T {
-    val progressFactory = get(org.gradle.internal.logging.progress.ProgressLoggerFactory::class.java)
-    val operation = progressFactory.newOperation(ProgressStartEvent.BUILD_OP_CATEGORY)
-    operation.start(description, initialStatus)
+    start(description, initialStatus)
     try {
-        return operation.body()
+        return body(this)
     } finally {
-        operation.completed()
+        completed()
     }
+}
+
+
+/**
+ * Instantiate a new instance of [ProgressLoggerFactory].
+ *
+ * **NOTE**: [ProgressLoggerFactory] cannot be stored in the Configuration Cache.
+ * A new instance should only be created and used during the execution phase.
+ */
+private fun ObjectFactory.progressLoggerFactory(): ProgressLoggerFactory {
+    val accessor = newInstance(ProgressLoggerFactoryAccessor::class.java)
+    return accessor.progressLoggerFactory
+}
+
+
+/**
+ * Used by [ObjectFactory.progressLoggerFactory] to access [ProgressLoggerFactory]
+ * during the execution phase.
+ *
+ * Is there a way to hide this?
+ * I would make this `private` if I could, but then [ObjectFactory] can't create a new instance.
+ */
+internal interface ProgressLoggerFactoryAccessor {
+    @get:Inject
+    val progressLoggerFactory: ProgressLoggerFactory
 }

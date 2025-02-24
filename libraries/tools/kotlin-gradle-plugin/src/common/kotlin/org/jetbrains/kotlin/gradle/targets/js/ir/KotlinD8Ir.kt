@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
@@ -16,7 +19,14 @@ import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
 @OptIn(ExperimentalWasmDsl::class)
-abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
+abstract class KotlinD8Ir
+@InternalKotlinGradlePluginApi
+@Inject
+constructor(
+    target: KotlinJsIrTarget,
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+) :
     KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
 
@@ -34,7 +44,7 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
-        test.testFramework = KotlinWasmD8(test)
+        test.testFramework = KotlinWasmD8(test, objects, providers)
     }
 
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {

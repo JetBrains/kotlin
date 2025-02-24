@@ -6,13 +6,21 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
+import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
-class Npm : NpmApiExecution<NpmEnvironment> {
+class Npm internal constructor(
+    private val execOps: ExecOperations,
+    private val objects: ObjectFactory,
+) : NpmApiExecution<NpmEnvironment> {
 
     override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> {
         return listOf(
@@ -65,20 +73,23 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         packageManagerEnvironment: NpmEnvironment,
         cliArgs: List<String>,
     ) {
-        val nodeJsWorldDir = nodeJs.rootPackageDir.getFile()
-
         npmExec(
-            services,
-            logger,
-            nodeJs,
-            packageManagerEnvironment,
-            nodeJsWorldDir,
-            NpmApiExecution.resolveOperationDescription("npm"),
-            cliArgs
+            logger = logger,
+            nodeJs = nodeJs,
+            environment = packageManagerEnvironment,
+            dir = nodeJs.rootPackageDir.map { it.asFile },
+            description = NpmApiExecution.resolveOperationDescription("npm"),
+            args = cliArgs,
         )
     }
 
+    @Deprecated(
+        "Updated to remove ServiceRegistry. Scheduled for removal in Kotlin 2.4.",
+        ReplaceWith("npmExec(logger, nodeJs, environment, dir, description, args)"),
+    )
+    @Suppress("unused")
     fun npmExec(
+        @Suppress("UNUSED_PARAMETER")
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
@@ -87,32 +98,46 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         description: String,
         args: List<String>,
     ) {
-        services.execWithProgress(description) { exec ->
-            val arguments = listOf("install") + args
-                .plus(
-                    if (logger.isDebugEnabled) "--verbose" else ""
-                )
-                .plus(
-                    if (environment.ignoreScripts) "--ignore-scripts" else ""
-                ).filter { it.isNotEmpty() }
+        npmExec(
+            logger = logger,
+            nodeJs = nodeJs,
+            environment = environment,
+            dir = objects.property<File>().value(dir),
+            description = description,
+            args = args,
+        )
+    }
+
+    fun npmExec(
+        logger: Logger,
+        nodeJs: NodeJsEnvironment,
+        environment: NpmEnvironment,
+        dir: Provider<File>,
+        description: String,
+        args: List<String>,
+    ) {
+        val progressLogger = objects.newBuildOpLogger()
+        execWithProgress(progressLogger, description, execOps = execOps) { execSpec ->
+            val arguments: List<String> = mutableListOf<String>().apply {
+                add("install")
+                addAll(args)
+                if (logger.isDebugEnabled) add("--verbose")
+                if (environment.ignoreScripts) add("--ignore-scripts")
+            }.filter { it.isNotEmpty() }
 
             if (!environment.standalone) {
                 val nodeExecutable = nodeJs.nodeExecutable
                 val nodePath = File(nodeExecutable).parent
-                exec.environment(
-                    "PATH",
+                execSpec.environment["PATH"] =
                     "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
-                )
             }
 
             val command = environment.executable
 
-            exec.executable = command
-            exec.args = arguments
-
-            exec.workingDir = dir
+            execSpec.executable = command
+            execSpec.setArgs(arguments)
+            execSpec.workingDir = dir.get()
         }
-
     }
 
     private fun saveRootProjectWorkspacesPackageJson(

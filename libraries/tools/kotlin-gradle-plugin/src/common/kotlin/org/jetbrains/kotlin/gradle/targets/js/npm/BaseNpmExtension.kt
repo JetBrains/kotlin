@@ -10,11 +10,14 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 
 /**
@@ -27,6 +30,8 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 abstract class BaseNpmExtension internal constructor(
     val project: Project,
     val nodeJsRoot: BaseNodeJsRootExtension,
+    private val objects: ObjectFactory,
+    private val execOps: ExecOperations,
 ) : ConfigurationPhaseAware<NpmEnv>(), NpmApiExtension<NpmEnvironment, Npm> {
     init {
         check(project == project.rootProject)
@@ -34,7 +39,10 @@ abstract class BaseNpmExtension internal constructor(
     }
 
     override val packageManager: Npm by lazy {
-        Npm()
+        Npm(
+            objects = objects,
+            execOps = execOps,
+        )
     }
 
     override val environment: NpmEnvironment by lazy {

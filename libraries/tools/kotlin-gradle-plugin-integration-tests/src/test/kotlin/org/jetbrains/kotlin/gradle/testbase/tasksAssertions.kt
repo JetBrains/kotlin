@@ -77,7 +77,7 @@ fun BuildResult.assertTasksFailed(taskPaths: Collection<String>) {
  * Asserts given [taskPaths] have [TaskOutcome.FAILED] execution state.
  */
 fun BuildResult.assertTasksFailed(vararg taskPaths: String) {
-    assertTasksHaveOutcome(TaskOutcome.FAILED, taskPaths.asList())
+    assertTasksFailed(taskPaths.asList())
 }
 
 /**
