@@ -117,7 +117,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
                 """.trimMargin())
             build("linkDebugExecutableHost") {
                 assertDirectoryExists(
-                    getFileCache("native-incremental-simple", "src/hostMain/kotlin/main.kt", gcType = "noop")
+                    getFileCache("native-incremental-simple", "src/hostMain/kotlin/main.kt")
                 )
             }
         }
