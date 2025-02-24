@@ -215,6 +215,8 @@ object JavaToKotlinClassMap {
     fun isMutable(classId: ClassId?): Boolean = mutableToReadOnlyClassId.containsKey(classId)
     fun isReadOnly(classId: ClassId?): Boolean = readOnlyToMutableClassId.containsKey(classId)
 
+    fun getReadOnlyAsJava(): Set<FqName> = readOnlyToMutable.keys.mapTo(mutableSetOf()) { kotlinToJava[it]!!.asSingleFqName() }
+
     private fun classId(clazz: Class<*>): ClassId {
         assert(!clazz.isPrimitive && !clazz.isArray) { "Invalid class: $clazz" }
         val outer = clazz.declaringClass

@@ -48,6 +48,25 @@ private fun ConeKotlinType.enhanceConeKotlinType(
                 session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index, subtreeSizes,
                 isFromDefinitelyNotNullType = false, convertErrorToWarning = convertErrorsToWarnings,
             )
+
+            if (isTrivial) {
+                val effectiveQualifiers = qualifiers(index)
+                return if (effectiveQualifiers.nullability == null ||
+                    effectiveQualifiers.nullability == NullabilityQualifier.FORCE_FLEXIBILITY ||
+                    effectiveQualifiers.isNullabilityQualifierForWarning
+                ) {
+                    lowerResult?.let {
+                        ConeFlexibleType(
+                            it,
+                            it.withNullability(true, session.typeContext, preserveAttributes = true),
+                            isTrivial = true
+                        )
+                    }
+                } else {
+                    (lowerResult ?: lowerBound).withEnhancedNullabilityAttributeIfRigid()
+                }
+            }
+
             val upperResult = upperBound.enhanceInflexibleType(
                 session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index, subtreeSizes,
                 isFromDefinitelyNotNullType = false, convertErrorToWarning = convertErrorsToWarnings,
@@ -56,11 +75,8 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             when {
                 lowerResult == null && upperResult == null -> null
                 this is ConeRawType -> ConeRawType.create(lowerResult ?: lowerBound, upperResult ?: upperBound)
-                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound).let {
-                    it.applyIf(it !is ConeFlexibleType) {
-                        it.withAttributes(it.attributes.add(CompilerConeAttributes.EnhancedNullability))
-                    }
-                }
+                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound)
+                    .withEnhancedNullabilityAttributeIfRigid()
             }
         }
         is ConeSimpleKotlinType -> enhanceInflexibleType(
@@ -68,6 +84,12 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             isFromDefinitelyNotNullType = false, convertErrorToWarning = convertErrorsToWarnings,
         )
         else -> null
+    }
+}
+
+private fun ConeKotlinType.withEnhancedNullabilityAttributeIfRigid(): ConeKotlinType {
+    return applyIf(this !is ConeFlexibleType) {
+        this.withAttributes(this.attributes.add(CompilerConeAttributes.EnhancedNullability))
     }
 }
 
@@ -178,7 +200,8 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
                 return@mapIndexed ConeKotlinTypeProjectionOut(
                     ConeFlexibleType(
                         bound.lowerBoundIfFlexible().withNullability(nullable = false, session.typeContext),
-                        bound.upperBoundIfFlexible().withNullability(nullable = true, session.typeContext)
+                        bound.upperBoundIfFlexible().withNullability(nullable = true, session.typeContext),
+                        isTrivial = false,
                     )
                 )
             }

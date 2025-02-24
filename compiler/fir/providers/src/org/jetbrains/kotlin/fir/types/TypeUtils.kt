@@ -159,7 +159,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withArguments(arguments))
         is ConeRawType -> ConeRawType.create(lowerBound.withArguments(arguments), upperBound.withArguments(arguments))
         is ConeDynamicType -> error()
-        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withArguments(arguments), upperBound.withArguments(arguments))
+        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withArguments(arguments), upperBound.withArguments(arguments), isTrivial)
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, typeArguments = arguments, attributes = attributes)
         is ConeIntersectionType,
         is ConeTypeVariableType,
@@ -190,7 +190,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, isMarkedNullable, attributes)
         is ConeRawType -> ConeRawType.create(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeDynamicType -> ConeDynamicType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
-        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
+        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes), isTrivial)
         is ConeTypeVariableType -> ConeTypeVariableType(isMarkedNullable, typeConstructor, attributes)
         is ConeCapturedType -> copy(attributes = attributes)
         // TODO: Consider correct application of attributes to ConeIntersectionType
@@ -250,11 +250,15 @@ fun <T : ConeKotlinType> T.withNullability(
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullable, theAttributes)
         is ConeDynamicType -> this
         is ConeFlexibleType -> {
-            coneFlexibleOrSimpleType(
-                typeContext,
-                lowerBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes),
-                upperBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes)
-            )
+            if (isTrivial) {
+                lowerBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes)
+            } else {
+                coneFlexibleOrSimpleType(
+                    typeContext,
+                    lowerBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes),
+                    upperBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes)
+                )
+            }
         }
 
         is ConeTypeVariableType -> ConeTypeVariableType(isMarkedNullable = nullable, typeConstructor, theAttributes)
@@ -294,19 +298,35 @@ inline fun ConeFlexibleType.mapTypesOrNull(
     dropIdentity: Boolean = false,
     f: (ConeRigidType) -> ConeKotlinType?,
 ): ConeKotlinType? {
-    val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it != lowerBound }
-    val mappedUpperBound = f(upperBound).takeIf { !dropIdentity || it != upperBound }
     return when {
-        mappedLowerBound == null && mappedUpperBound == null -> null
-        this !is ConeRawType -> coneFlexibleOrSimpleType(
-            typeContext,
-            mappedLowerBound ?: lowerBound,
-            mappedUpperBound ?: upperBound
-        )
-        else -> ConeRawType.create(
-            mappedLowerBound?.lowerBoundIfFlexible() ?: this.lowerBound,
-            mappedUpperBound?.upperBoundIfFlexible() ?: this.upperBound
-        )
+        isTrivial -> {
+            when (val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it != lowerBound }) {
+                null -> null
+                is ConeRigidType -> coneFlexibleOrSimpleType(
+                    typeContext,
+                    mappedLowerBound,
+                    mappedLowerBound.withNullability(true, typeContext, preserveAttributes = true),
+                    isTrivial = true
+                )
+                is ConeFlexibleType -> mappedLowerBound
+            }
+        }
+        else -> {
+            val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it != lowerBound }
+            val mappedUpperBound = f(upperBound).takeIf { !dropIdentity || it != upperBound }
+            when {
+                mappedLowerBound == null && mappedUpperBound == null -> null
+                this !is ConeRawType -> coneFlexibleOrSimpleType(
+                    typeContext,
+                    mappedLowerBound ?: lowerBound,
+                    mappedUpperBound ?: upperBound
+                )
+                else -> ConeRawType.create(
+                    mappedLowerBound?.lowerBoundIfFlexible() ?: this.lowerBound,
+                    mappedUpperBound?.upperBoundIfFlexible() ?: this.upperBound
+                )
+            }
+        }
     }
 }
 
@@ -328,17 +348,23 @@ fun coneFlexibleOrSimpleType(
     typeContext: ConeTypeContext,
     lowerBound: ConeKotlinType,
     upperBound: ConeKotlinType,
+    isTrivial: Boolean = false,
 ): ConeKotlinType {
     return when (lowerBound) {
         is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound)
         is ConeRigidType -> when (upperBound) {
             is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
             is ConeRigidType -> when {
-                AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> lowerBound
-                else -> ConeFlexibleType(lowerBound, upperBound)
+                isTrivial && lowerBound.withNullability(true, typeContext, preserveAttributes = true) == lowerBound -> lowerBound
+                !isTrivial && AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> lowerBound
+                else -> ConeFlexibleType(lowerBound, upperBound, isTrivial = isTrivial)
             }
         }
     }
+}
+
+fun ConeRigidType.toTrivialFlexibleType(typeContext: ConeTypeContext): ConeFlexibleType {
+    return ConeFlexibleType(this, this.withNullability(true, typeContext), isTrivial = true)
 }
 
 fun ConeKotlinType.isExtensionFunctionType(session: FirSession): Boolean {
@@ -895,6 +921,7 @@ fun ConeKotlinType.convertToNonRawVersion(): ConeKotlinType {
         return ConeFlexibleType(
             lowerBound.withAttributes(this.attributes.remove(CompilerConeAttributes.RawType)),
             upperBound,
+            isTrivial = false,
         )
     }
 

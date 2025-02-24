@@ -143,10 +143,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     ): ConeKotlinType {
         return if (typeParameter.shouldBeFlexible(session.typeContext)) {
             when (type) {
-                is ConeRigidType -> ConeFlexibleType(
-                    type.withNullability(nullable = false, session.typeContext),
-                    type.withNullability(nullable = true, session.typeContext)
-                )
+                is ConeRigidType -> type.withNullability(nullable = false, session.typeContext).toTrivialFlexibleType(session.typeContext)
                 /*
                  * ConeFlexibleTypes have to be handled here
                  * at least because MapTypeArguments special-cases ConeRawTypes without explicit arguments (KT-54666)
@@ -158,7 +155,8 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                  */
                 is ConeFlexibleType -> ConeFlexibleType(
                     type.lowerBound.withNullability(nullable = false, session.typeContext),
-                    type.upperBound.withNullability(nullable = true, session.typeContext)
+                    type.upperBound.withNullability(nullable = true, session.typeContext),
+                    isTrivial = false,
                 )
             }.run {
                 if (session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {

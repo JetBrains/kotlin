@@ -183,7 +183,7 @@ class FirTypeDeserializer(
                 proto: Type,
                 lowerBound: ConeRigidType,
                 upperBound: ConeRigidType,
-            ): ConeFlexibleType = ConeFlexibleType(lowerBound, upperBound)
+            ): ConeFlexibleType = ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
 
             override fun createDynamicType(
                 proto: Type,

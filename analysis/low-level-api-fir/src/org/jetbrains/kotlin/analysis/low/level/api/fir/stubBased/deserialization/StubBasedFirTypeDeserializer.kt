@@ -147,7 +147,7 @@ internal class StubBasedFirTypeDeserializer(
             is KotlinFlexibleTypeBean -> {
                 val lowerBound = type(type.lowerBound).asRigidType
                 val upperBound = type(type.upperBound).asRigidType
-                return ConeFlexibleType(lowerBound, upperBound)
+                return ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
             }
         }
     }
@@ -213,7 +213,7 @@ internal class StubBasedFirTypeDeserializer(
 
             // If an upper bound is specified, `typeReference` represents a flexible type. The cone type deserialized from `typeReference`
             // is defined as the lower bound of this flexible type.
-            ConeFlexibleType(coneType, upperBoundType as ConeSimpleKotlinType)
+            ConeFlexibleType(coneType, upperBoundType as ConeSimpleKotlinType, isTrivial = false)
         } else {
             coneType
         }

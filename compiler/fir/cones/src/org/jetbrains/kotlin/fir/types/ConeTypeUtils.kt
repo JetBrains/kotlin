@@ -81,7 +81,9 @@ inline fun ConeKotlinType.forEachType(
         when (next) {
             is ConeFlexibleType -> {
                 stack.add(next.lowerBound)
-                stack.add(next.upperBound)
+                if (!next.isTrivial) {
+                    stack.add(next.upperBound)
+                }
             }
 
             is ConeDefinitelyNotNullType -> stack.add(next.original)
@@ -101,7 +103,7 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
     visited += this
 
     return when (this) {
-        is ConeFlexibleType -> lowerBound.contains(predicate, visited) || upperBound.contains(predicate, visited)
+        is ConeFlexibleType -> lowerBound.contains(predicate, visited) || !isTrivial && upperBound.contains(predicate, visited)
         is ConeDefinitelyNotNullType -> original.contains(predicate, visited)
         is ConeIntersectionType -> intersectedTypes.any { it.contains(predicate, visited) }
         else -> typeArguments.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
