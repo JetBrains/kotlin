@@ -599,6 +599,7 @@ private fun commonBuildSetup(
     return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
         // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
         "-Porg.gradle.java.installations.auto-download=false",
+        "-Porg.gradle.java.installations.auto-detect=false",
         "-Porg.gradle.java.installations.paths=$jdkLocations",
         // Disable automatic download of android SDK.
         // It should be downloaded in dependencies/android-sdk to enable caching and prevent sdk installation failures.
