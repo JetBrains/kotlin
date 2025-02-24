@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:tree:tree-generator"))
     implementation(project(":compiler:fir:checkers:checkers-component-generator"))
+    implementation(project(":core:metadata"))
     implementation(project(":analysis:analysis-api"))
 
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
