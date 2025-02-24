@@ -654,21 +654,22 @@ abstract class IncrementalCompilerRunner<
     }
 
     protected fun reportPerformanceData(defaultPerformanceManager: PerformanceManager) {
+        val lines = defaultPerformanceManager.lines.takeIf { it > 0 }
+        if (lines != null) {
+            reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, lines.toLong())
+        }
         defaultPerformanceManager.getMeasurementResults().forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)
                 is CodeAnalysisMeasurement -> {
                     reporter.addTimeMetricMs(GradleBuildTime.CODE_ANALYSIS, it.milliseconds)
-                    it.lines?.apply {
-                        reporter.addMetric(GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER, this.toLong())
-                        if (it.milliseconds > 0) {
-                            reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, this * 1000 / it.milliseconds)
-                        }
+                    if (lines != null && it.milliseconds > 0) {
+                        reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, lines * 1000 / it.milliseconds)
                     }
                 }
                 is CodeGenerationMeasurement -> {
                     reporter.addTimeMetricMs(GradleBuildTime.CODE_GENERATION, it.milliseconds)
-                    it.lines?.apply {
+                    lines?.apply {
                         if (it.milliseconds > 0) {
                             reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
                         }

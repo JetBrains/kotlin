@@ -46,8 +46,10 @@ abstract class PerformanceManager(private val presentableName: String) {
     private var backendStart: Long = 0
 
     var targetDescription: String? = null
-    protected var files: Int? = null
-    protected var lines: Int? = null
+    var files: Int = 0
+        protected set
+    var lines: Int = 0
+        protected set
 
     fun getTargetInfo(): String =
         "$targetDescription, $files files ($lines lines)"
@@ -90,8 +92,8 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     open fun addSourcesStats(files: Int, lines: Int) {
         if (!isEnabled) return
-        this.files = this.files?.plus(files) ?: files
-        this.lines = this.lines?.plus(lines) ?: lines
+        this.files = this.files + files
+        this.lines = this.lines + lines
     }
 
     open fun notifyAnalysisStarted() {
@@ -100,7 +102,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     open fun notifyAnalysisFinished() {
         val time = currentTime() - analysisStart
-        measurements += CodeAnalysisMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
+        measurements += CodeAnalysisMeasurement(TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyGenerationStarted() {
@@ -109,7 +111,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     open fun notifyGenerationFinished() {
         val time = currentTime() - generationStart
-        measurements += CodeGenerationMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
+        measurements += CodeGenerationMeasurement(TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyTranslationToIRStarted() {
@@ -118,10 +120,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     open fun notifyTranslationToIRFinished() {
         val time = deltaTime(translationToIrStart)
-        measurements += TranslationToIrMeasurement(
-            lines,
-            TimeUnit.NANOSECONDS.toMillis(time),
-        )
+        measurements += TranslationToIrMeasurement(TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyIRLoweringStarted() {
@@ -130,10 +129,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     open fun notifyIRLoweringFinished() {
         val time = deltaTime(irLoweringStart)
-        measurements += IrLoweringMeasurement(
-            lines,
-            TimeUnit.NANOSECONDS.toMillis(time),
-        )
+        measurements += IrLoweringMeasurement(TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyBackendStarted() {
@@ -142,10 +138,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     open fun notifyBackendFinished() {
         val time = deltaTime(backendStart)
-        measurements += BackendMeasurement(
-            lines,
-            TimeUnit.NANOSECONDS.toMillis(time),
-        )
+        measurements += BackendMeasurement(TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     fun dumpPerformanceReport(destination: File) {
@@ -154,7 +147,7 @@ abstract class PerformanceManager(private val presentableName: String) {
 
     fun createPerformanceReport(): String = buildString {
         append("$presentableName performance report\n")
-        getMeasurementResults().map { it.render() }.sorted().forEach { append("$it\n") }
+        getMeasurementResults().map { it.render(lines) }.sorted().forEach { append("$it\n") }
     }
 
     private fun recordGcTime() {
@@ -220,7 +213,7 @@ abstract class PerformanceManager(private val presentableName: String) {
                     it is BinaryClassFromKotlinFileMeasurement
         }
 
-        return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
+        return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render(lines)}" }
     }
 }
 
