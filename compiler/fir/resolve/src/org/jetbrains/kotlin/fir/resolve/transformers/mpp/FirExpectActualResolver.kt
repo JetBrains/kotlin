@@ -39,7 +39,6 @@ object FirExpectActualResolver {
                     val classId = callableId.classId
                     var actualContainingClass: FirRegularClassSymbol? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
-                    val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
                     val candidates = when {
                         callableId.isLocal -> return emptyMap()
                         classId != null -> {
@@ -59,6 +58,7 @@ object FirExpectActualResolver {
                             }
                         }
                         else -> {
+                            val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
                             val scope =
                                 FirPackageMemberScope(callableId.packageName, useSiteSession, useSiteSession.dependenciesSymbolProvider)
                             mutableListOf<FirCallableSymbol<*>>()
