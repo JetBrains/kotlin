@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":compiler:cli-common"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":core:descriptors"))
+    implementation(project(":native:frontend.native"))
 }
 
 kotlin {

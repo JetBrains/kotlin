@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":compiler:ir.serialization.native"))
     implementation(project(":core:descriptors"))
-
+    implementation(project(":native:frontend.native"))
     testImplementation(projectTests(":native:objcexport-header-generator"))
 }
 
