@@ -17,6 +17,7 @@ dependencies {
 kotlin {
     js {
         tasks.register("checkConfigurationsResolve") {
+            notCompatibleWithConfigurationCache("Resolving the configuration should happen during the execution phase")
             doLast {
                 configurations.named(compilations["main"].npmAggregatedConfigurationName).get().resolve()
             }

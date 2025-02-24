@@ -295,22 +295,25 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("generated typescript declarations validation")
     @GradleTest
-    @BrokenOnMacosTest
     fun testGeneratedTypeScriptDeclarationsValidation(gradleVersion: GradleVersion) {
         project("js-ir-validate-ts", gradleVersion) {
             buildGradleKts.appendText(
                 """
-                |fun makeTypeScriptFileInvalid(mode: String) {
-                |  val dts = projectDir.resolve("build/compileSync/js/main/" + mode + "Executable/kotlin/js-ir-validate-ts.d.ts")
-                |  dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
+                |object Utils {
+                |  fun makeTypeScriptFileInvalid(mode: String, projectDir: File) {
+                |    val dts = projectDir.resolve("build/compileSync/js/main/" + mode + "Executable/kotlin/js-ir-validate-ts.d.ts")
+                |    dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
+                |  }
                 |}
                 |
                 |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs").configure {
-                |   doLast { makeTypeScriptFileInvalid("development") }
+                |   val projectDir = projectDir
+                |   doLast { Utils.makeTypeScriptFileInvalid("development", projectDir) }
                 |}
                 |
                 |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileProductionExecutableKotlinJs").configure {
-                |   doLast { makeTypeScriptFileInvalid("production") }
+                |   val projectDir = projectDir
+                |   doLast { Utils.makeTypeScriptFileInvalid("production", projectDir) }
                 |}
                """.trimMargin()
             )
@@ -704,7 +707,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Custom plugin applying Kotlin/JS plugin")
     @GradleTest
-    @BrokenOnMacosTest
     fun customPluginApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("js-custom-build-src-plugin", gradleVersion) {
             build("checkConfigurationsResolve") {
@@ -940,7 +942,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("yarn is set up")
     @GradleTest
-    @BrokenOnMacosTest
     @TestMetadata("yarn-setup")
     fun testYarnSetup(gradleVersion: GradleVersion) {
         project("yarn-setup", gradleVersion) {
@@ -1256,7 +1257,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("webpack-config-d directory created during the build is not ignored")
     @GradleTest
-    @BrokenOnMacosTest
     fun testDynamicWebpackConfigD(gradleVersion: GradleVersion) {
         project("js-dynamic-webpack-config-d", gradleVersion) {
             build("build") {
@@ -1435,7 +1435,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("nodejs up-to-date check works")
     @GradleTest
-    @BrokenOnMacosTest
     fun testNodeJsAndYarnDownload(gradleVersion: GradleVersion) {
         project("cleanTask", gradleVersion) {
             build("checkDownloadedFolder")
