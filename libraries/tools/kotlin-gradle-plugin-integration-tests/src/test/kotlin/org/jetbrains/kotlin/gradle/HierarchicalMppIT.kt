@@ -83,7 +83,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Check no sourceSets visible if no variant matched")
-    @BrokenOnMacosTest
     fun testNoSourceSetsVisibleIfNoVariantMatched(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -116,7 +115,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Dependencies in tests should be correct with third-party library")
-    @BrokenOnMacosTest
     fun testDependenciesInTests(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir) {
             kotlinSourcesDir("jvmMain").copyRecursively(kotlinSourcesDir("linuxX64Main"))
@@ -228,7 +226,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("hierarchical-mpp-published-modules")
     @DisplayName("Check that only composite metadata artifacts are transformed")
-    @BrokenOnMacosTest
     fun testOnlyCompositeMetadataArtifactsTransformed(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
@@ -335,7 +332,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KT-48370: Multiplatform Gradle build fails for Native targets with \"we cannot choose between the following variants of project\"")
-    @BrokenOnMacosTest
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
             "hierarchical-mpp-multi-modules",
@@ -802,7 +798,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Check dependencies in non published sourceSets")
-    @BrokenOnMacosTest
     fun testDependenciesInNonPublishedSourceSets(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -824,7 +819,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Check transitive dependency on self")
-    @BrokenOnMacosTest
     fun testTransitiveDependencyOnSelf(gradleVersion: GradleVersion) =
         with(project("transitive-dep-on-self-hmpp", gradleVersion = gradleVersion)) {
             testDependencyTransformations(subproject = "lib") { reports ->
@@ -1032,7 +1026,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KT-44845: all external dependencies is unresolved in IDE")
-    @BrokenOnMacosTest
     fun testMixedScopesFilesExistKt44845(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -1077,7 +1070,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KT-46417: [UNRESOLVED_REFERENCE] For project to project dependencies of native platform test source sets")
-    @BrokenOnMacosTest
     fun testNativeLeafTestSourceSetsKt46417(gradleVersion: GradleVersion) {
         with(project("kt-46417-ios-test-source-sets", gradleVersion = gradleVersion)) {
             testDependencyTransformations("p2") { reports ->
@@ -1363,9 +1355,10 @@ open class HierarchicalMppIT : KGPBaseTest() {
             buildGradleKts.modify {
                 "import ${DefaultKotlinSourceSet::class.qualifiedName}\n" + it + "\n" + """
                 val $testTaskName by tasks.creating {
-                // adding psm generation if needed
-                // for that purpose we setting all Resolvable Dependencies Metadata Configurations as inputs for report task
-                        kotlin.sourceSets
+                    notCompatibleWithConfigurationCache("Resolving transformations should happen during the execution phase")
+                    // adding psm generation if needed
+                    // for that purpose we setting all Resolvable Dependencies Metadata Configurations as inputs for report task
+                    kotlin.sourceSets
                         .map { it.name }
                         .forEach { sourceSetName ->
                             val configurationName = sourceSetName + "ResolvableDependenciesMetadata"
