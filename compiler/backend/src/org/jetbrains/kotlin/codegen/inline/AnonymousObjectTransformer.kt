@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
-import org.jetbrains.kotlin.util.toMetadataVersion
+import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -122,7 +122,7 @@ class AnonymousObjectTransformer(
 
             override fun visitEnd() {}
         }, ClassReader.SKIP_FRAMES)
-        val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toMetadataVersion())
+        val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toJvmMetadataVersion())
         assert(isSameModule || (header != null && isPublicAbi(header)) || inliningContext.callSiteInfo.suppressNonPublicApiObjectInliningError) {
             "Trying to inline an anonymous object which is not part of the public ABI: ${oldObjectType.className}"
         }
