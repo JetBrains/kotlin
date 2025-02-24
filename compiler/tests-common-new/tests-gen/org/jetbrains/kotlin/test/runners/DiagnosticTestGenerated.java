@@ -13928,6 +13928,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("exposingContextReceiverType.kt")
+        public void testExposingContextReceiverType() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/exposingContextReceiverType.kt");
+        }
+
+        @Test
         @TestMetadata("functionalType.kt")
         public void testFunctionalType() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/functionalType.kt");

@@ -220,15 +220,27 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         if (declarationVisibility != EffectiveVisibility.Local) {
             returnTypeRef.coneType
                 .findVisibilityExposure(context, declarationVisibility)?.let { (restricting, restrictingVisibility, relation) ->
-                    reporter.reportOn(
-                        source,
-                        FirErrors.EXPOSED_PARAMETER_TYPE,
-                        declarationVisibility,
-                        restricting,
-                        relation,
-                        restrictingVisibility,
-                        context
-                    )
+                    if (valueParameterKind == FirValueParameterKind.LegacyContextReceiver) {
+                        reporter.reportOn(
+                            source,
+                            FirErrors.EXPOSED_RECEIVER_TYPE,
+                            declarationVisibility,
+                            restricting,
+                            relation,
+                            restrictingVisibility,
+                            context
+                        )
+                    } else {
+                        reporter.reportOn(
+                            source,
+                            FirErrors.EXPOSED_PARAMETER_TYPE,
+                            declarationVisibility,
+                            restricting,
+                            relation,
+                            restrictingVisibility,
+                            context
+                        )
+                    }
                     return
                 }
         }
