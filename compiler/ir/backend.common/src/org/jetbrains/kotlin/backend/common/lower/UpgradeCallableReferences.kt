@@ -304,7 +304,7 @@ open class UpgradeCallableReferences(
                         this.type = type
                     }
                 }
-                this.body = context.createIrBuilder(symbol).at(this@buildWrapperFunction).run {
+                this.body = context.createIrBuilder(symbol).run {
                     irBlockBody {
                         body(parameters)
                     }
@@ -357,19 +357,23 @@ open class UpgradeCallableReferences(
                 // Unfortunately, some plugins sometimes generate the wrong number of arguments in references
                 // we already have such klib, so need to handle it. We just ignore extra type parameters
                 val cleanedTypeArgumentCount = minOf(typeArguments.size, referencedFunction.allTypeParameters.size)
-                val exprToReturn = irCallWithSubstitutedType(
-                    referencedFunction.symbol,
-                    typeArguments = (0 until cleanedTypeArgumentCount).map { typeArguments[it] ?: context.irBuiltIns.anyNType },
-                ).apply {
-                    val bound = captured.map { it.first }.toSet()
-                    val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }
-                    require(boundParameters.size + unboundParameters.size == parameters.size) {
-                        "Wrong number of parameters in wrapper: expected: ${boundParameters.size} bound and ${unboundParameters.size} unbound, but ${parameters.size} found"
+                val exprToReturn = this@UpgradeCallableReferences
+                    .context
+                    .createIrBuilder(symbol)
+                    .at(this@wrapFunction)
+                    .irCallWithSubstitutedType(
+                        referencedFunction.symbol,
+                        typeArguments = (0 until cleanedTypeArgumentCount).map { typeArguments[it] ?: context.irBuiltIns.anyNType },
+                    ).apply {
+                        val bound = captured.map { it.first }.toSet()
+                        val (boundParameters, unboundParameters) = referencedFunction.parameters.partition { it in bound }
+                        require(boundParameters.size + unboundParameters.size == parameters.size) {
+                            "Wrong number of parameters in wrapper: expected: ${boundParameters.size} bound and ${unboundParameters.size} unbound, but ${parameters.size} found"
+                        }
+                        for ((originalParameter, localParameter) in (boundParameters + unboundParameters).zip(parameters)) {
+                            arguments[originalParameter.indexInParameters] = irGet(localParameter)
+                        }
                     }
-                    for ((originalParameter, localParameter) in (boundParameters + unboundParameters).zip(parameters)) {
-                        arguments[originalParameter.indexInParameters] = irGet(localParameter)
-                    }
-                }
                 +irReturn(exprToReturn)
             }
         }
