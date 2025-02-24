@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
@@ -138,7 +138,7 @@ fun compileIr(
     @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
     performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyTranslationToIRFinished`, but this phase not always started or already finished
 
-    performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
+    performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
         (irFactory.stageController as? WholeWorldStageController)?.let {
             lowerPreservingTags(allModules, context, it)
         } ?: run {

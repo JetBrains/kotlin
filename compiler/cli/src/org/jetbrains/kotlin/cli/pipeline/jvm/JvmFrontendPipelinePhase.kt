@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import java.io.File
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
@@ -66,7 +66,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val perfManager = configuration.perfManager
 
         if (!checkNotSupportedPlugins(configuration, messageCollector)) {
-            perfManager?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
+            perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             return null
         }
 
@@ -78,7 +78,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             targetDescription,
             diagnosticsCollector
         ) ?: run {
-            perfManager?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
+            perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             return null
         }
 
@@ -98,7 +98,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val sources = sourcesProvider()
         val allSources = sources.allFiles
 
-        perfManager?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
+        perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
         if (
             allSources.isEmpty() &&
@@ -111,7 +111,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
-        perfManager?.notifyPhaseStarted(PhaseMeasurementType.Analysis)
+        perfManager?.notifyPhaseStarted(PhaseType.Analysis)
         val sourceScope: AbstractProjectFileSearchScope
         when (configuration.useLightTree) {
             true -> {

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.pipeline
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 
 abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext> {
     object CheckMessageCollector : CheckCompilationErrors() {
@@ -46,23 +46,23 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
 
 object PerformanceNotifications {
     // frontend
-    object AnalysisStarted : AbstractNotification(PhaseMeasurementType.Analysis, start = true)
-    object AnalysisFinished : AbstractNotification(PhaseMeasurementType.Analysis, start = false)
+    object AnalysisStarted : AbstractNotification(PhaseType.Analysis, start = true)
+    object AnalysisFinished : AbstractNotification(PhaseType.Analysis, start = false)
 
     // fir2ir
-    object TranslationToIrStarted : AbstractNotification(PhaseMeasurementType.TranslationToIr, start = true)
-    object TranslationToIrFinished : AbstractNotification(PhaseMeasurementType.TranslationToIr, start = false)
+    object TranslationToIrStarted : AbstractNotification(PhaseType.TranslationToIr, start = true)
+    object TranslationToIrFinished : AbstractNotification(PhaseType.TranslationToIr, start = false)
 
     // backend lowerings
-    object IrLoweringStarted : AbstractNotification(PhaseMeasurementType.IrLowering, start = true)
-    object IrLoweringFinished : AbstractNotification(PhaseMeasurementType.IrLowering, start = false)
+    object IrLoweringStarted : AbstractNotification(PhaseType.IrLowering, start = true)
+    object IrLoweringFinished : AbstractNotification(PhaseType.IrLowering, start = false)
 
     // backend codegen
-    object BackendStarted : AbstractNotification(PhaseMeasurementType.Backend, start = true)
-    object BackendFinished : AbstractNotification(PhaseMeasurementType.Backend, start = false)
+    object BackendStarted : AbstractNotification(PhaseType.Backend, start = true)
+    object BackendFinished : AbstractNotification(PhaseType.Backend, start = false)
 
     sealed class AbstractNotification(
-        val phaseType: PhaseMeasurementType,
+        val phaseType: PhaseType,
         val start: Boolean,
     ) : Action<PipelineArtifact, PipelineContext> {
         override fun invoke(

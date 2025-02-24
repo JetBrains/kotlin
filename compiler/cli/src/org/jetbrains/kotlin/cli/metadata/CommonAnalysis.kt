@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
@@ -39,7 +39,7 @@ internal fun runCommonAnalysisForSerialization(
 
     lateinit var analysisResultWithHasErrors: AnalysisResultWithHasErrors
     do {
-        val result = performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+        val result = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
             analysisResultWithHasErrors = runCommonAnalysisIteration(environment, dependOnBuiltins, dependencyContainerFactory())
             analysisResultWithHasErrors.result.also {
                 if (it is AnalysisResult.RetryWithAdditionalRoots) {

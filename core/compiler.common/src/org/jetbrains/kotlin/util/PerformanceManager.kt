@@ -27,10 +27,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     private fun currentTime(): Long = System.nanoTime()
 
-    private var currentPhaseType: PhaseMeasurementType = PhaseMeasurementType.Initialization
+    private var currentPhaseType: PhaseType = PhaseType.Initialization
     private var phaseStartNanos: Long? = currentTime()
 
-    private val phaseMeasurementsMs: SortedMap<PhaseMeasurementType, Long> = sortedMapOf()
+    private val phaseMeasurementsMs: SortedMap<PhaseType, Long> = sortedMapOf()
 
     // Initialize the counter measurements in strict order to get rid of difference in the same report
     private val counterMeasurements: MutableMap<KClass<*>, CounterMeasurement> = mutableMapOf(
@@ -71,11 +71,11 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             for ((phaseType, measurement) in phaseMeasurementsMs) {
                 add(
                     when (phaseType) {
-                        PhaseMeasurementType.Initialization -> CompilerInitializationMeasurement(measurement)
-                        PhaseMeasurementType.Analysis -> CodeAnalysisMeasurement(measurement)
-                        PhaseMeasurementType.TranslationToIr -> TranslationToIrMeasurement(measurement)
-                        PhaseMeasurementType.IrLowering -> IrLoweringMeasurement(measurement)
-                        PhaseMeasurementType.Backend -> BackendMeasurement(measurement)
+                        PhaseType.Initialization -> CompilerInitializationMeasurement(measurement)
+                        PhaseType.Analysis -> CodeAnalysisMeasurement(measurement)
+                        PhaseType.TranslationToIr -> TranslationToIrMeasurement(measurement)
+                        PhaseType.IrLowering -> IrLoweringMeasurement(measurement)
+                        PhaseType.Backend -> BackendMeasurement(measurement)
                     }
                 )
             }
@@ -148,7 +148,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         this.lines = this.lines + lines
     }
 
-    fun notifyPhaseStarted(newPhaseType: PhaseMeasurementType) {
+    fun notifyPhaseStarted(newPhaseType: PhaseType) {
         // Here should be the following check: `if (!isEnabled) return`.
         // However, currently it's dropped to keep compatibility with build systems that don't call `enableCollectingPerformanceStatistics`,
         // but take some measurements from this manager (old behavior is preserved).
@@ -167,7 +167,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         currentPhaseType = newPhaseType
     }
 
-    fun notifyPhaseFinished(phaseType: PhaseMeasurementType) {
+    fun notifyPhaseFinished(phaseType: PhaseType) {
         // Here should be the following check: `if (!isEnabled) return`.
         // However, currently it's dropped to keep compatibility with build systems that don't call `enableCollectingPerformanceStatistics`
         // but take some measurements from this manager (old behavior is preserved).
@@ -204,7 +204,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
     }
 
-    private fun finishPhase(phaseType: PhaseMeasurementType) {
+    private fun finishPhase(phaseType: PhaseType) {
         if (phaseType != currentPhaseType) { // It's allowed to measure the same phase multiple times (although it's better to avoid that)
             assert(!phaseMeasurementsMs.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
         }
@@ -307,7 +307,7 @@ fun <T> PerformanceManager?.tryMeasureTime(measurementClass: KClass<*>, block: (
     return if (this == null) return block() else measureTime(measurementClass, block)
 }
 
-inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseMeasurementType, block: () -> T): T {
+inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseType, block: () -> T): T {
     if (this == null) return block()
 
     try {

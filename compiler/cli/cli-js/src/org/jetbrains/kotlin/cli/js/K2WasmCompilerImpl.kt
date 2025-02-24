@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import java.io.File
 
 internal class K2WasmCompilerImpl(
@@ -68,7 +68,7 @@ internal class K2WasmCompilerImpl(
             arguments.generateDwarf
         )
 
-        performanceManager?.notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)
+        performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
 
         return OK
     }
@@ -95,7 +95,7 @@ internal class K2WasmCompilerImpl(
             generateDwarf = arguments.generateDwarf
         )
 
-        performanceManager?.notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)
+        performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
 
         return OK
     }

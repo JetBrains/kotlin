@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -150,7 +150,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)
+            performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
             return OK
         }
 
@@ -241,7 +241,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
         lateinit var sourceModule: ModulesStructure
-        performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+        performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
             do {
                 val analyzerFacade = when (arguments.wasm) {
                     true -> TopDownAnalyzerFacadeForWasm.facadeFor(environmentForJS.configuration.get(WasmConfigurationKeys.WASM_TARGET))

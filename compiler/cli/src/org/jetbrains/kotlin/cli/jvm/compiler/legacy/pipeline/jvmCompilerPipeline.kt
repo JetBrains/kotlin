@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
@@ -159,7 +159,7 @@ fun generateCodeFromIr(
     @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
     performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyIRGenerationFinished`, but this phase not always started or already finished
     lateinit var codegenFactory: JvmIrCodegenFactory
-    val codegenInput = performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
+    val codegenInput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
         val backendInput = JvmIrCodegenFactory.BackendInput(
             input.irModuleFragment,
             input.pluginContext.irBuiltIns,
@@ -177,7 +177,7 @@ fun generateCodeFromIr(
         codegenFactory.invokeLowerings(generationState, backendInput)
     }
 
-    performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Backend) {
+    performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
         codegenFactory.invokeCodegen(codegenInput)
     }
 

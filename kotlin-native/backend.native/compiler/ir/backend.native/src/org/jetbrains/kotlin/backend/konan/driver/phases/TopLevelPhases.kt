@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -188,7 +188,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 return
             }
             try {
-                fragment.performanceManager?.notifyPhaseStarted(PhaseMeasurementType.Backend)
+                fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
@@ -212,13 +212,13 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
             } finally {
                 tempFiles.dispose()
-                fragment.performanceManager?.notifyPhaseFinished(PhaseMeasurementType.Backend)
+                fragment.performanceManager?.notifyPhaseFinished(PhaseType.Backend)
             }
         }
 
         val fragments = backendEngine.splitIntoFragments(irModule, performanceManager)
         val fragmentsList = fragments.toList()
-        val generationStates = performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
+        val generationStates = performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
             fragmentsList.runAllLowerings()
         }
 
@@ -325,7 +325,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     cacheDeserializationStrategy,
                     dependenciesTracker,
                     llvmModuleSpecification,
-                    PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseMeasurementType.Initialization) },
+                    PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseType.Initialization) },
             )
         }
     } else {
@@ -341,7 +341,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
                         llvmModuleSpecification,
-                        PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseMeasurementType.Initialization) },
+                        PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseType.Initialization) },
                 )
         )
     }

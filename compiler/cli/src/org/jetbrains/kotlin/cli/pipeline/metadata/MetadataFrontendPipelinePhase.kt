@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
@@ -99,7 +99,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         perfManager?.let {
             @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
             it.notifyCurrentPhaseFinishedIfNeeded()
-            it.notifyPhaseStarted(PhaseMeasurementType.Analysis)
+            it.notifyPhaseStarted(PhaseType.Analysis)
         }
 
         val sourceFiles: List<KtSourceFile>

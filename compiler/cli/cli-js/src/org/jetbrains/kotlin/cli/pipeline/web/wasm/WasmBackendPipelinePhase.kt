@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
@@ -127,8 +127,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     ): WasmCompilerResult {
         val performanceManager = configuration.perfManager
         performanceManager?.let {
-            it.notifyPhaseFinished(PhaseMeasurementType.Initialization)
-            it.notifyPhaseStarted(PhaseMeasurementType.TranslationToIr)
+            it.notifyPhaseFinished(PhaseType.Initialization)
+            it.notifyPhaseStarted(PhaseType.TranslationToIr)
         }
 
         val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
@@ -153,7 +153,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             propertyLazyInitialization = propertyLazyInitialization,
         )
 
-        performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Backend) {
+        performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
             val dceDumpNameCache = DceDumpNameCache()
             if (dce) {
                 eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)

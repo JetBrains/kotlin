@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -39,8 +39,8 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
         val time = measureNanoTime {
             try {
                 environment.configuration.perfManager.let {
-                    it?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
-                    it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+                    it?.notifyPhaseFinished(PhaseType.Initialization)
+                    it.tryMeasurePhaseTime(PhaseType.Analysis) {
                         KotlinToJVMBytecodeCompiler.analyze(environment)
                     }
                 }

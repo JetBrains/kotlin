@@ -9,7 +9,7 @@ interface PerformanceMeasurement {
     fun render(lines: Int): String
 }
 
-enum class PhaseMeasurementType {
+enum class PhaseType {
     Initialization,
     Analysis,
     TranslationToIr,
@@ -18,10 +18,10 @@ enum class PhaseMeasurementType {
 }
 
 sealed class PhasePerformanceMeasurement(val milliseconds: Long) : PerformanceMeasurement {
-    abstract val phase: PhaseMeasurementType
+    abstract val phase: PhaseType
     abstract val name: String
     override fun render(lines: Int): String = "%20s%8s ms".format(name, milliseconds) +
-            if (phase != PhaseMeasurementType.Initialization && lines != 0) {
+            if (phase != PhaseType.Initialization && lines != 0) {
                 val lps = lines.toDouble() * 1000 / milliseconds
                 "%12.3f loc/s".format(lps)
             } else {
@@ -30,27 +30,27 @@ sealed class PhasePerformanceMeasurement(val milliseconds: Long) : PerformanceMe
 }
 
 class CompilerInitializationMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
-    override val phase = PhaseMeasurementType.Initialization
+    override val phase = PhaseType.Initialization
     override val name: String = "INIT"
 }
 
 class CodeAnalysisMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
-    override val phase: PhaseMeasurementType = PhaseMeasurementType.Analysis
+    override val phase: PhaseType = PhaseType.Analysis
     override val name: String = "ANALYZE"
 }
 
 class TranslationToIrMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
-    override val phase: PhaseMeasurementType = PhaseMeasurementType.TranslationToIr
+    override val phase: PhaseType = PhaseType.TranslationToIr
     override val name: String = "TRANSLATION to IR"
 }
 
 class IrLoweringMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
-    override val phase: PhaseMeasurementType = PhaseMeasurementType.IrLowering
+    override val phase: PhaseType = PhaseType.IrLowering
     override val name: String = "IR LOWERING"
 }
 
 class BackendMeasurement(milliseconds: Long) : PhasePerformanceMeasurement(milliseconds) {
-    override val phase: PhaseMeasurementType = PhaseMeasurementType.Backend
+    override val phase: PhaseType = PhaseType.Backend
     override val name: String = "BACKEND"
 }
 

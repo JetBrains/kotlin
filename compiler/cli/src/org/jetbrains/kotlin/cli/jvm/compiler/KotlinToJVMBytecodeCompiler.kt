@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -163,8 +163,8 @@ object KotlinToJVMBytecodeCompiler {
     ): BackendInputForMultiModuleChunk? {
         // K1: Frontend
         val result = environment.configuration.perfManager.let {
-            it?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
-            it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+            it?.notifyPhaseFinished(PhaseType.Initialization)
+            it.tryMeasurePhaseTime(PhaseType.Analysis) {
                 repeatAnalysisIfNeeded(analyze(environment), environment)
             }
         }
@@ -252,8 +252,8 @@ object KotlinToJVMBytecodeCompiler {
     @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
         val result = environment.configuration.perfManager.let {
-            it?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
-            it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+            it?.notifyPhaseFinished(PhaseType.Initialization)
+            it.tryMeasurePhaseTime(PhaseType.Analysis) {
                 repeatAnalysisIfNeeded(analyze(environment), environment) ?: return null
             }
         }
@@ -287,7 +287,7 @@ object KotlinToJVMBytecodeCompiler {
         val configuration = environment.configuration
         val codegenFactory = JvmIrCodegenFactory(configuration)
         val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
-        val backendInput = performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.TranslationToIr) {
+        val backendInput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             codegenFactory.convertToIr(
                 environment.project,
                 environment.getSourceFiles(),
@@ -409,7 +409,7 @@ object KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        return performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
+        return performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
             codegenFactory.invokeLowerings(state, backendInput)
         }
     }
@@ -426,7 +426,7 @@ object KotlinToJVMBytecodeCompiler {
 
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
-        performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Backend) {
+        performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
             codegenFactory.invokeCodegen(codegenInput)
         }
 

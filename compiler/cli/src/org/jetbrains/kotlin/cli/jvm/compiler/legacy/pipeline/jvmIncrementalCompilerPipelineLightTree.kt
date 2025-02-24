@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 @RequiresOptIn(message = "In compiler:cli, please use FrontendContext extensions instead")
@@ -60,7 +60,7 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     friendPaths: List<String>,
 ): FirResult {
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    return performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+    return performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
         var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
 
         val incrementalCompilationScope = createIncrementalCompilationScope(
