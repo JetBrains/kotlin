@@ -11,11 +11,11 @@ private const val FILE_METADATA_VERSION_MARKER: String = "FILE_METADATA"
 private const val CURRENT_METADATA_VERSION_MARKER: String = "CURRENT_METADATA"
 
 const val INCOMPATIBLE_METADATA_VERSION_GENERAL_COMMENT: String =
-    "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
+    "// This top-level declaration was compiled with different version of Kotlin compiler and can't be decompiled."
 
 private const val INCOMPATIBLE_METADATA_VERSION_COMMENT: String = "$INCOMPATIBLE_METADATA_VERSION_GENERAL_COMMENT\n" +
         "//\n" +
-        "// Current compiler metadata version is $CURRENT_METADATA_VERSION_MARKER\n" +
+        "// Current compiler can accept metadata with versions $CURRENT_METADATA_VERSION_MARKER or lower\n" +
         "// File metadata version is $FILE_METADATA_VERSION_MARKER"
 
 fun <V : BinaryVersion> createIncompatibleMetadataVersionDecompiledText(expectedVersion: V, actualVersion: V): DecompiledText = DecompiledText(
