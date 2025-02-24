@@ -49,7 +49,7 @@ package kotlin.experimental
  * The feature is experimental.
  * **No stability guarantees are provided.**
  */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")

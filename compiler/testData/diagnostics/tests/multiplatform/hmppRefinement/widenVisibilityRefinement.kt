@@ -1,4 +1,5 @@
 // LANGUAGE: +ExpectRefinement
+// IGNORE_FIR_DIAGNOSTICS
 // FIR_IDENTICAL
 // SKIP_K1
 // WITH_STDLIB
@@ -10,7 +11,7 @@ expect class Foo {
 }
 
 // MODULE: intermediate()()(common)
-@kotlin.experimental.ExperimentalExpectRefinement
+<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
 expect public fun foo()
 @kotlin.experimental.ExperimentalExpectRefinement
 expect class Foo {
