@@ -65,12 +65,8 @@ fun ConeKotlinType.fullyExpandedType(
 ): ConeKotlinType = when (this) {
     is ConeDynamicType -> this
     is ConeFlexibleType -> {
-        val expandedLower = lowerBound.fullyExpandedType(useSiteSession, expandedConeType)
-        val expandedUpper = upperBound.fullyExpandedType(useSiteSession, expandedConeType)
-        when {
-            expandedLower === lowerBound && expandedUpper === upperBound -> this
-            this is ConeRawType -> ConeRawType.create(expandedLower, expandedUpper)
-            else -> ConeFlexibleType(expandedLower, expandedUpper)
+        mapTypesOrSelf(useSiteSession.typeContext, dropIdentity = true) {
+            it.fullyExpandedType(useSiteSession, expandedConeType)
         }
     }
     is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)

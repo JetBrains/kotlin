@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -47,8 +46,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible as coneLowerBoundIfFlexible
-import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible as coneUpperBoundIfFlexible
 
 fun ConeInferenceContext.commonSuperTypeOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
     return when (types.size) {
@@ -287,6 +284,46 @@ fun <T : ConeKotlinType> T.withNullability(
     } as T
 }
 
+/**
+ * Returns a [ConeFlexibleType] with [f] applied to both bounds. If [f] returns `null` for both bounds, `null` is returned.
+ *
+ * @param dropIdentity if `true` and the result of `f(bound)` is equal to the unprocessed bound, it will be treated like `null`.
+ */
+inline fun ConeFlexibleType.mapTypesOrNull(
+    typeContext: ConeTypeContext,
+    dropIdentity: Boolean = false,
+    f: (ConeRigidType) -> ConeKotlinType?,
+): ConeKotlinType? {
+    val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it != lowerBound }
+    val mappedUpperBound = f(upperBound).takeIf { !dropIdentity || it != upperBound }
+    return when {
+        mappedLowerBound == null && mappedUpperBound == null -> null
+        this !is ConeRawType -> coneFlexibleOrSimpleType(
+            typeContext,
+            mappedLowerBound ?: lowerBound,
+            mappedUpperBound ?: upperBound
+        )
+        else -> ConeRawType.create(
+            mappedLowerBound?.lowerBoundIfFlexible() ?: this.lowerBound,
+            mappedUpperBound?.upperBoundIfFlexible() ?: this.upperBound
+        )
+    }
+}
+
+
+/**
+ * Returns a [ConeFlexibleType] with [f] applied to both bounds. If [f] returns `null` for both bounds, the original type is returned.
+ *
+ * @param dropIdentity if `true` and the result of `f(bound)` is equal to the unprocessed bound, it will be treated like `null`.
+ */
+inline fun ConeFlexibleType.mapTypesOrSelf(
+    typeContext: ConeTypeContext,
+    dropIdentity: Boolean = false,
+    f: (ConeRigidType) -> ConeKotlinType?,
+): ConeKotlinType {
+    return mapTypesOrNull(typeContext, dropIdentity, f) ?: this
+}
+
 fun coneFlexibleOrSimpleType(
     typeContext: ConeTypeContext,
     lowerBound: ConeKotlinType,
@@ -522,15 +559,10 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
             // At the same time, capturing of raw(-like) types leads to issues like KT-63982 or breaks tests like
             // testData/codegen/box/reflection/typeOf/rawTypes_after.kt.
             // Therefore, we return null if nothing was captured for either bound.
-
-            val lowerIntersectedType =
-                intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.lowerBound) ?: return null)
-                    .withNullability(type.lowerBound.canBeNull(session), this)
-            val upperIntersectedType =
-                intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.upperBound) ?: return null)
-                    .withNullability(type.upperBound.canBeNull(session), this)
-
-            ConeFlexibleType(lowerIntersectedType.coneLowerBoundIfFlexible(), upperIntersectedType.coneUpperBoundIfFlexible())
+            type.mapTypesOrNull(this) {
+                intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(it) ?: return null)
+                    .withNullability(it.canBeNull(session), this)
+            }
         }
         is ConeIntersectionType -> {
             capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
