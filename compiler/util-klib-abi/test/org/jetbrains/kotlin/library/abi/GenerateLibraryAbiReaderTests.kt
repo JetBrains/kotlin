@@ -15,6 +15,9 @@ fun main() {
             testClass<AbstractFirJsLibraryAbiReaderTest> {
                 model("content")
             }
+            testClass<AbstractFirJsLibraryAbiReaderWithInlinedFunInKlibTest> {
+                model("content")
+            }
             testClass<AbstractClassicJsLibraryAbiReaderTest> {
                 model("content")
             }

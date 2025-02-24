@@ -117,6 +117,12 @@ open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<Fi
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         configureFirParser(FirParser.LightTree)
+        super.configure(builder)
+    }
+}
+
+open class AbstractFirJsLibraryAbiReaderWithInlinedFunInKlibTest : AbstractFirJsLibraryAbiReaderTest() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
         }
