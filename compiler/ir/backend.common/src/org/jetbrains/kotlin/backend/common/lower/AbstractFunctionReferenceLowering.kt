@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addField
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
+import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
@@ -58,11 +60,13 @@ import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassPare
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.collections.plus
 
@@ -176,8 +180,6 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
         val superInterfaceType = functionReference.type.removeProjections()
         functionReferenceClass.superTypes = mutableListOf(superClass, superInterfaceType)
         val constructor = functionReferenceClass.addConstructor {
-            this.startOffset = functionReference.startOffset
-            this.endOffset = functionReference.endOffset
             origin = getConstructorOrigin(functionReference)
             isPrimary = true
         }.apply {
@@ -239,12 +241,13 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
     ): IrSimpleFunction {
         val superFunction = functionReference.overriddenFunctionSymbol.owner
         val invokeFunction = functionReference.invokeFunction
+        val isLambda = functionReference.origin.isLambda
         return functionReferenceClass.addFunction {
-            startOffset = functionReference.startOffset
-            endOffset = functionReference.endOffset
+            setSourceRange(if (isLambda) invokeFunction else functionReference)
             origin = getInvokeMethodOrigin(functionReference)
             name = superFunction.name
             returnType = invokeFunction.returnType
+            isOperator = superFunction.isOperator
             isSuspend = superFunction.isSuspend
         }.apply {
             attributeOwnerId = functionReference.attributeOwnerId
@@ -258,13 +261,20 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
                 allowEmptySubstitution = true
             )
 
-            val nonDispatchParameters = superFunction.nonDispatchParameters.map {
-                it.copyTo(this, type = typeSubstitutor.substitute(it.type), defaultValue = null)
+            val nonDispatchParameters = superFunction.nonDispatchParameters.mapIndexed { i, superParameter ->
+                superParameter.copyTo(
+                    this,
+                    startOffset = if (isLambda) invokeFunction.parameters[i].startOffset else UNDEFINED_OFFSET,
+                    endOffset = if (isLambda) invokeFunction.parameters[i].endOffset else UNDEFINED_OFFSET,
+                    name = invokeFunction.parameters[i].name,
+                    type = typeSubstitutor.substitute(superParameter.type),
+                    defaultValue = null,
+                )
             }
             this.parameters += nonDispatchParameters
             overriddenSymbols += superFunction.symbol
 
-            val builder = context.createIrBuilder(symbol)
+            val builder = context.createIrBuilder(symbol).applyIf(isLambda) { at(invokeFunction.body!!) }
             body = builder.irBlockBody {
                 val variablesMapping = buildMap {
                     for ((index, field) in boundFields.withIndex()) {

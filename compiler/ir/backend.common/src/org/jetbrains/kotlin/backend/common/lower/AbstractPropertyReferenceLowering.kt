@@ -42,7 +42,7 @@ abstract class AbstractPropertyReferenceLowering<C: CommonBackendContext>(val co
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression {
                 expression.transformChildrenVoid(this)
-                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
+                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol)
                 val originalPropertySymbol = expression.reflectionTargetSymbol
                 if (originalPropertySymbol is IrLocalDelegatedPropertySymbol) {
                     return irBuilder.createLocalKProperty(expression, originalPropertySymbol.owner.name.asString(), expression.type)
