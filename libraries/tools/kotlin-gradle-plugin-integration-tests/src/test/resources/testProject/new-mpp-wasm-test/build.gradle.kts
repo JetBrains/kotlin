@@ -28,7 +28,7 @@ kotlin {
 }
 
 plugins.apply(org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin::class.java)
-the<org.jetbrains.kotlin.gradle.targets.wasm.d8.D8RootExtension>().apply {
+the<org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec>().apply {
     // Test that we can set the version and it is a String.
     // But use the default version since update this place every time anyway.
     version.set(version.get())
