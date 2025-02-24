@@ -11,61 +11,25 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.utils.PrintingLogger
 import java.io.File
-import java.lang.ref.WeakReference
-import java.util.concurrent.CopyOnWriteArrayList
+import java.io.PrintStream
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinBinaryClassCache : Disposable {
-    private val requestCaches = CopyOnWriteArrayList<WeakReference<RequestCache>>()
-
-    private class RequestCache {
-        var virtualFile: VirtualFile? = null
-        var modificationStamp: Long = 0
-        var result: KotlinClassFinder.Result? = null
-
-        fun cache(
-            file: VirtualFile,
-            result: KotlinClassFinder.Result?
-        ): KotlinClassFinder.Result? {
-            virtualFile = file
-            this.result = result
-            modificationStamp = file.modificationStamp
-
-            return result
-        }
-    }
-
-    private val cache = object : ThreadLocal<RequestCache>() {
-        override fun initialValue(): RequestCache {
-            return RequestCache().also {
-                requestCaches.add(WeakReference(it))
-            }
-        }
-    }
+    private val cache: ConcurrentHashMap<Pair<String, Long>, KotlinClassFinder.Result?> = ConcurrentHashMap()
 
     override fun dispose() {
-        for (cache in requestCaches) {
-            cache.get()?.run {
-                result = null
-                virtualFile = null
-            }
-        }
-        requestCaches.clear()
-        // This is only relevant for tests. We create a new instance of Application for each test, and so a new instance of this service is
-        // also created for each test. However all tests share the same event dispatch thread, which would collect all instances of this
-        // thread-local if they're not removed properly. Each instance would transitively retain VFS resulting in OutOfMemoryError
-        cache.remove()
-
-        synchronized(writeLock) {
-            File("F:\\JetBrains\\logs\\temp.txt").appendText("dispose\n")
-        }
+        cache.clear()
+        MY_PERF_LOGGER.info("KotlinBinaryClassCache is disposed")
     }
 
     companion object {
-        var count = 0
-        val writeLock = Any()
+        var count: AtomicInteger = AtomicInteger(0)
 
         @Deprecated(
             "Please pass metadataVersion explicitly",
@@ -95,28 +59,45 @@ class KotlinBinaryClassCache : Disposable {
 
             if (file.name == PsiJavaModule.MODULE_INFO_CLS_FILE) return null
 
+            val currentThreadId = Thread.currentThread().id
+
             val application = ApplicationManager.getApplication()
             val service = application.getService(KotlinBinaryClassCache::class.java)
-            val requestCache = service.cache.get()
+            val cache = service.cache
 
-            if (file.modificationStamp == requestCache.modificationStamp && file == requestCache.virtualFile) {
-                return requestCache.result
+            val isExceptionsClass = file.toString().contains("kotlin${File.separator}ExceptionsKt.class")
+            if (isExceptionsClass) {
+                MY_PERF_LOGGER.info("${file.url} is accessed, metadata: $metadataVersion current thread id is $currentThreadId;")
             }
 
-            if (file.toString().contains("kotlin\\ExceptionsKt.class")) {
-                synchronized(writeLock) {
-                    "Load ${file} ${count++} time".let {
-                        println(it)
-                        File("F:\\JetBrains\\logs\\temp.txt").appendText(it + "\n")
+            return cache.getOrPut(file.url to file.modificationStamp) {
+                if (isExceptionsClass) {
+                    MY_PERF_LOGGER.info("${file.url} is created, metadata: $metadataVersion, current thread id is $currentThreadId;")
+                }
+
+                application.runReadAction(Computable {
+                    VirtualFileKotlinClass.create(file, metadataVersion, fileContent, perfManager)
+                }).also {
+                    if (count.incrementAndGet() % 32 == 0) {
+                        val totalSizeInBytes = cache.values.fold(0L) { acc, result ->
+                            acc + when (result) {
+                                is KotlinClass -> result.byteContent?.size ?: 0
+                                is KotlinClassFinder.Result.ClassFileContent -> result.content.size
+                                null -> 0
+                            }
+                        }
+                        MY_PERF_LOGGER.info("Total size of KotlinBinaryClassCache is ${totalSizeInBytes / 1024} KB")
                     }
                 }
             }
-
-            val aClass = application.runReadAction(Computable {
-                VirtualFileKotlinClass.create(file, metadataVersion, fileContent, perfManager)
-            })
-
-            return requestCache.cache(file, aClass)
         }
     }
 }
+
+val MY_PERF_LOGGER = PrintingLogger(PrintStream(
+        if (System.getProperty("os.name").contains("Mac")) {
+            "/Users/Ivan.Kochurkin/Documents/JetBrains/logs/perf.info.log"
+        } else {
+            "F:\\JetBrains\\logs\\test.log"
+        }
+    ))

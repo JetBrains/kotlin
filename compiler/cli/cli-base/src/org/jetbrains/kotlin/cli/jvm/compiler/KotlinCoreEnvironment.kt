@@ -46,9 +46,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -57,8 +55,7 @@ import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.perfManager
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.resetApplicationManager
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrar
@@ -79,10 +76,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
-import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -101,6 +95,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.FileSystems
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
@@ -571,8 +566,11 @@ class KotlinCoreEnvironment private constructor(
                             ourApplicationEnvironment = null
                         }
                     })
+                } else {
+                    ApplicationManager.setApplication(ourApplicationEnvironment!!.application)
                 }
                 try {
+                    CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
                     val disposeAppEnv =
                         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true
                     // Disposer uses identity of passed object to deduplicate registered disposables
@@ -591,6 +589,7 @@ class KotlinCoreEnvironment private constructor(
                                     if (disposeAppEnv) {
                                         disposeApplicationEnvironment()
                                     } else {
+                                        MY_PERF_LOGGER.warn("Idle cleanup for module ${configuration.moduleName} #${cleanupCount.incrementAndGet()}")
                                         ourApplicationEnvironment?.idleCleanup()
                                     }
                                 }
@@ -861,3 +860,5 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 }
+
+private val cleanupCount = AtomicInteger(0)

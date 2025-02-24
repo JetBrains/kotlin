@@ -24,6 +24,9 @@ internal class FastJarVirtualFile(
     private val myChildrenList: MutableList<VirtualFile> = mutableListOf()
 
     init {
+        if (name.contains("ExceptionsKt.class")) {
+            Unit
+        }
         parent?.myChildrenList?.add(this)
     }
 

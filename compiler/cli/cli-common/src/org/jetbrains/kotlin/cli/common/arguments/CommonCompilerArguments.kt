@@ -300,7 +300,13 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         valueDescription = "<path>",
         description = "Dump detailed performance statistics to the specified file."
     )
-    var dumpPerf: String? = "F:\\JetBrains\\logs\\perf.log.json"
+    var dumpPerf: String? = run {
+        if (System.getProperty("os.name").contains("Mac")) {
+            "/Users/Ivan.Kochurkin/Documents/JetBrains/logs/perf.log.json"
+        } else {
+            "F:\\JetBrains\\logs\\perf.log.json"
+        }
+    }
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value

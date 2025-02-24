@@ -28,6 +28,9 @@ fun main(args: Array<String>) {
     println()
     println("* Platform: ${totalStats.platform}")
     println("* Has errors: ${totalStats.hasErrors}")
+    println("* Modules count: ${modulesStats.modulesStats.size}")
+    println("* Files count: ${totalStats.initStats!!.filesCount}")
+    println("* Lines count: ${totalStats.initStats!!.linesCount}")
     println()
 
     val totalTime = totalStats.totalTime()
@@ -44,6 +47,8 @@ fun main(args: Array<String>) {
     printTimeAndRatio("FIND KOTLIN CLASS", totalStats.findKotlinClassStats!!.time, totalTime)
     println("-".repeat(50))
     printTimeAndRatio("TOTAL", totalTime, totalTime)
+    println()
+    println("Total time: ${TimeUnit.NANOSECONDS.toSeconds(totalTime.nano)} s")
     println()
 
     val analysisStatsTime = totalStats.analysisStats!!.time
@@ -66,18 +71,18 @@ fun main(args: Array<String>) {
     ) { it.analysisStats!!.time.userNano }
 
     modulesStats.printModulesBy("Find Kotlin Class Bytes") {
-        it.findKotlinClassStats!!.bytesCount
+        it.findKotlinClassStats?.bytesCount ?: 0
     }
     modulesStats.printModulesBy("Find Java Class Bytes") {
         it.findJavaClassStats!!.bytesCount
     }
     modulesStats.printModulesBy("Find Kotlin ms", printer = {
-            stats, nanos -> "${TimeUnit.NANOSECONDS.toMillis(nanos!!)} ms}"
+            stats, nanos -> "${TimeUnit.NANOSECONDS.toMillis(nanos!!)} ms"
     }) {
-        it.findKotlinClassStats!!.time.userNano
+        it.findKotlinClassStats?.time?.userNano ?: 0
     }
     modulesStats.printModulesBy("Find Java ms", printer = {
-        stats, nanos -> "${TimeUnit.NANOSECONDS.toMillis(nanos!!)} ms}"
+        stats, nanos -> "${TimeUnit.NANOSECONDS.toMillis(nanos!!)} ms"
     }) {
         it.findJavaClassStats!!.time.userNano
     }
@@ -99,7 +104,6 @@ fun main(args: Array<String>) {
             it.totalTime().nano
         }
     }*/
-    println("Total time: ${totalTime.millis} ms")
     println("Total Java class bytes count: ${totalStats.findJavaClassStats!!.bytesCount} bytes")
     println("Total Kotlin class bytes count: ${totalStats.findKotlinClassStats!!.bytesCount} bytes")
 }
