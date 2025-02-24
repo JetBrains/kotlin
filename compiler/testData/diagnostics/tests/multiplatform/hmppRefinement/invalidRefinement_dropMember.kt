@@ -1,3 +1,4 @@
+// LANGUAGE: +ExpectRefinement
 // FIR_IDENTICAL
 // SKIP_K1
 // WITH_STDLIB
