@@ -45814,6 +45814,24 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("operatorsAllowedInK2.kt")
+        public void testOperatorsAllowedInK2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/operatorsAllowedInK2.kt");
+        }
+
+        @Test
+        @TestMetadata("operatorsForAugmentedAssignsK2.kt")
+        public void testOperatorsForAugmentedAssignsK2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/operatorsForAugmentedAssignsK2.kt");
+        }
+
+        @Test
+        @TestMetadata("operatorsForbiddenInK2.kt")
+        public void testOperatorsForbiddenInK2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/operatorsForbiddenInK2.kt");
+        }
+
+        @Test
         @TestMetadata("rewriteAtSliceFunctor.kt")
         public void testRewriteAtSliceFunctor() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/rewriteAtSliceFunctor.kt");

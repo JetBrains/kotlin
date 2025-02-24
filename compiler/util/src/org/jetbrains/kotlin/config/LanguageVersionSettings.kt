@@ -426,6 +426,7 @@ enum class LanguageFeature(
     ProhibitNullableTypeThroughTypealias(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-279"),
 
     AllowCheckForErasedTypesInContracts(KOTLIN_2_3, "KT-45683"),
+    AllowContractsOnSomeOperators(KOTLIN_2_3, "KT-32313"),
 
     // 2.4 TODO set sinceVersion to 2.4 when it becomes available
 
