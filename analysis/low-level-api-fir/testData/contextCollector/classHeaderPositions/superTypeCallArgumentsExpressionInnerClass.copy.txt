@@ -1,0 +1,60 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public open class Base : R|kotlin/Any|
+                FirRegularClassSymbol public final inner class Child : R|test/TopLevel.Base|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class TopLevel : R|kotlin/Any|
+                Type: test.TopLevel
+    Element 8
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final? class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 9
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol primaryConstructorParameter: R|test/TopLevel.Base.Nested|
+
+FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsExpressionInnerClass.kt
+    public final? [ResolvedTo(SUPER_TYPES)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|test/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] param: Nested): R|test/TopLevel.Base| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] constructor(): R|test/TopLevel.Base.Nested| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+        public final inner [ResolvedTo(STATUS)] class Child : R|test/TopLevel.Base| {
+            public [ResolvedTo(BODY_RESOLVE)] test/TopLevel.constructor([ResolvedTo(BODY_RESOLVE)] primaryConstructorParameter: R|test/TopLevel.Base.Nested|): R|test/TopLevel.Child| {
+                super<R|test/TopLevel.Base|>(R|<local>/primaryConstructorParameter|)
+            }
+
+        }
+
+    }

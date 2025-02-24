@@ -280,6 +280,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("innerClass.kt")
+    public void testInnerClass() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/innerClass.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClass.kt")
+    public void testNestedClass() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/nestedClass.kt");
+    }
+
+    @Test
     @TestMetadata("primaryConstructorParameter_initializerExpression.kt")
     public void testPrimaryConstructorParameter_initializerExpression() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/primaryConstructorParameter_initializerExpression.kt");
@@ -295,6 +307,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("superTypeCallArgumentsExpression.kt")
     public void testSuperTypeCallArgumentsExpression() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeCallArgumentsExpressionInnerClass.kt")
+    public void testSuperTypeCallArgumentsExpressionInnerClass() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions/superTypeCallArgumentsExpressionInnerClass.kt");
     }
 
     @Test
