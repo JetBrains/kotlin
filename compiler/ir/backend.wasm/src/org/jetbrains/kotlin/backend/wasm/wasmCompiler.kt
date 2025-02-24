@@ -100,7 +100,7 @@ fun compileToLoweredIr(
         val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(ModuleKind.ES, exportModel.declarations)
         TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", ModuleKind.ES, listOf(fragment)))
     }
-    performanceManager?.notifyTranslationToIRFinished()
+    performanceManager?.notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)
 
     performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
         lowerPreservingTags(

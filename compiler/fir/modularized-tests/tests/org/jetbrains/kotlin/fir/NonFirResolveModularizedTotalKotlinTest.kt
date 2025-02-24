@@ -39,7 +39,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
         val time = measureNanoTime {
             try {
                 environment.configuration.perfManager.let {
-                    it?.notifyCompilerInitialized()
+                    it?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
                     it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
                         KotlinToJVMBytecodeCompiler.analyze(environment)
                     }

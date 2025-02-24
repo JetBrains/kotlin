@@ -163,7 +163,7 @@ object KotlinToJVMBytecodeCompiler {
     ): BackendInputForMultiModuleChunk? {
         // K1: Frontend
         val result = environment.configuration.perfManager.let {
-            it?.notifyCompilerInitialized()
+            it?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
             it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
                 repeatAnalysisIfNeeded(analyze(environment), environment)
             }
@@ -252,7 +252,7 @@ object KotlinToJVMBytecodeCompiler {
     @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
         val result = environment.configuration.perfManager.let {
-            it?.notifyCompilerInitialized()
+            it?.notifyPhaseFinished(PhaseMeasurementType.Initialization)
             it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
                 repeatAnalysisIfNeeded(analyze(environment), environment) ?: return null
             }
@@ -287,19 +287,19 @@ object KotlinToJVMBytecodeCompiler {
         val configuration = environment.configuration
         val codegenFactory = JvmIrCodegenFactory(configuration)
         val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
-        performanceManager?.notifyTranslationToIRStarted()
-        val backendInput = codegenFactory.convertToIr(
-            environment.project,
-            environment.getSourceFiles(),
-            configuration,
-            result.moduleDescriptor,
-            diagnosticsReporter,
-            result.bindingContext,
-            configuration.languageVersionSettings,
-            ignoreErrors = false,
-            skipBodies = false,
-        )
-        performanceManager?.notifyTranslationToIRFinished()
+        val backendInput = performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.TranslationToIr) {
+            codegenFactory.convertToIr(
+                environment.project,
+                environment.getSourceFiles(),
+                configuration,
+                result.moduleDescriptor,
+                diagnosticsReporter,
+                result.bindingContext,
+                configuration.languageVersionSettings,
+                ignoreErrors = false,
+                skipBodies = false,
+            )
+        }
         return Pair(codegenFactory, backendInput)
     }
 

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
@@ -105,7 +106,7 @@ class Ir2JsTransformer private constructor(
 
         val mode = TranslationMode.fromFlags(dce, granularity, minimizedMemberNames)
         return transformer
-            .also { performanceManager?.notifyBackendStarted() }
+            .also { performanceManager?.notifyPhaseStarted(PhaseMeasurementType.Backend) }
             .makeJsCodeGenerator(ir.allModules, mode)
     }
 
@@ -113,7 +114,7 @@ class Ir2JsTransformer private constructor(
         return makeJsCodeGenerator()
             .generateJsCode(relativeRequirePath = true, outJsProgram = false)
             .also {
-                performanceManager?.notifyBackendFinished()
+                performanceManager?.notifyPhaseFinished(PhaseMeasurementType.Backend)
             }
     }
 }
@@ -174,7 +175,7 @@ internal class K2JsCompilerImpl(
         performanceManager?.apply {
             targetDescription = "$moduleName-${configuration.moduleKind}"
             addSourcesStats(sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles))
-            notifyCompilerInitialized()
+            notifyPhaseFinished(PhaseMeasurementType.Initialization)
         }
 
         return environmentForJS

@@ -187,7 +187,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 return
             }
             try {
-                fragment.performanceManager?.notifyBackendStarted()
+                fragment.performanceManager?.notifyPhaseStarted(PhaseMeasurementType.Backend)
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
@@ -211,7 +211,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
             } finally {
                 tempFiles.dispose()
-                fragment.performanceManager?.notifyBackendFinished()
+                fragment.performanceManager?.notifyPhaseFinished(PhaseMeasurementType.Backend)
             }
         }
 
@@ -324,7 +324,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     cacheDeserializationStrategy,
                     dependenciesTracker,
                     llvmModuleSpecification,
-                    K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)?.also { it.notifyCompilerInitialized() },
+                    K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseMeasurementType.Initialization) },
             )
         }
     } else {
@@ -340,7 +340,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
                         llvmModuleSpecification,
-                        K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)?.also { it.notifyCompilerInitialized() },
+                        K2NativeCompilerPerformanceManager.createAndEnableIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseMeasurementType.Initialization) },
                 )
         )
     }

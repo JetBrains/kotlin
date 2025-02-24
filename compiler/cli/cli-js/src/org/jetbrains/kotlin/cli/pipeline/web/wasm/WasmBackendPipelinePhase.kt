@@ -127,8 +127,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     ): WasmCompilerResult {
         val performanceManager = configuration.perfManager
         performanceManager?.let {
-            it.notifyCompilerInitialized()
-            it.notifyTranslationToIRStarted()
+            it.notifyPhaseFinished(PhaseMeasurementType.Initialization)
+            it.notifyPhaseStarted(PhaseMeasurementType.TranslationToIr)
         }
 
         val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)

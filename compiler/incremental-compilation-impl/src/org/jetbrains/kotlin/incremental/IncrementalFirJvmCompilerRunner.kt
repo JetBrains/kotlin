@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledException
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 import java.io.File
 
 @OptIn(LegacyK2CliPipeline::class)
@@ -187,7 +188,7 @@ open class IncrementalFirJvmCompilerRunner(
 
             performanceManager?.apply {
                 targetDescription = "${targetId.name}-${targetId.type}"
-                notifyCompilerInitialized()
+                notifyPhaseFinished(PhaseMeasurementType.Initialization)
             }
 
             // !! main class - maybe from cache?

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 @RequiresOptIn(message = "In compiler:cli, please use FrontendContext extensions instead")
 annotation class IncrementalCompilationApi
@@ -58,47 +60,45 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     friendPaths: List<String>,
 ): FirResult {
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyAnalysisStarted()
+    return performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+        var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
 
-    var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
+        val incrementalCompilationScope = createIncrementalCompilationScope(
+            configuration,
+            projectEnvironment,
+            incrementalExcludesScope
+        )?.also { librariesScope -= it }
 
-    val incrementalCompilationScope = createIncrementalCompilationScope(
-        configuration,
-        projectEnvironment,
-        incrementalExcludesScope
-    )?.also { librariesScope -= it }
-
-    val allSources = mutableListOf<KtSourceFile>().apply {
-        addAll(input.groupedSources.commonSources)
-        addAll(input.groupedSources.platformSources)
-    }
-    val sessionsWithSources = prepareJvmSessions(
-        allSources,
-        rootModuleNameAsString = input.targetId.name,
-        friendPaths,
-        librariesScope,
-        isCommonSource = input.groupedSources.isCommonSourceForLt,
-        isScript = { false },
-        fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
-        createProviderAndScopeForIncrementalCompilation = { files ->
-            val scope = projectEnvironment.getSearchScopeBySourceFiles(files)
-            createContextForIncrementalCompilation(
-                configuration,
-                projectEnvironment,
-                scope,
-                previousStepsSymbolProviders,
-                incrementalCompilationScope
-            )
+        val allSources = mutableListOf<KtSourceFile>().apply {
+            addAll(input.groupedSources.commonSources)
+            addAll(input.groupedSources.platformSources)
         }
-    )
+        val sessionsWithSources = prepareJvmSessions(
+            allSources,
+            rootModuleNameAsString = input.targetId.name,
+            friendPaths,
+            librariesScope,
+            isCommonSource = input.groupedSources.isCommonSourceForLt,
+            isScript = { false },
+            fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
+            createProviderAndScopeForIncrementalCompilation = { files ->
+                val scope = projectEnvironment.getSearchScopeBySourceFiles(files)
+                createContextForIncrementalCompilation(
+                    configuration,
+                    projectEnvironment,
+                    scope,
+                    previousStepsSymbolProviders,
+                    incrementalCompilationScope
+                )
+            }
+        )
 
-    val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
+        val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
 
-    val outputs = sessionsWithSources.map { (session, sources) ->
-        buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines)
+        val outputs = sessionsWithSources.map { (session, sources) ->
+            buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines)
+        }
+        outputs.runPlatformCheckers(diagnosticsReporter)
+        FirResult(outputs)
     }
-    outputs.runPlatformCheckers(diagnosticsReporter)
-
-    performanceManager?.notifyAnalysisFinished()
-    return FirResult(outputs)
 }

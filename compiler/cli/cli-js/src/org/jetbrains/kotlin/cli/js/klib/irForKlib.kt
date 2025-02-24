@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
+import org.jetbrains.kotlin.util.PhaseMeasurementType
 
 fun generateIrForKlibSerialization(
     project: Project,
@@ -52,7 +53,7 @@ fun generateIrForKlibSerialization(
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
 ): Pair<IrModuleFragment, IrPluginContext> {
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-    performanceManager?.notifyTranslationToIRStarted()
+    performanceManager?.notifyPhaseStarted(PhaseMeasurementType.TranslationToIr)
 
     val messageCollector = configuration.messageCollector
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
