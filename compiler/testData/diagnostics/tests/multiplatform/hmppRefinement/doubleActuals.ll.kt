@@ -1,3 +1,4 @@
+// LANGUAGE: +ExpectRefinement
 // FIR_IDENTICAL
 // SKIP_K1
 // IGNORE_FIR_DIAGNOSTICS
