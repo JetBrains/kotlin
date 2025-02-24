@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.testbase.useAsZipFile
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.test.*
 
@@ -287,7 +287,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         }
     }
 
-    @Disabled("Yahor: Failing after merge")
+    @DisplayName("Composite build")
     @GradleTest
     fun compositeBuild(version: GradleVersion) {
         val parent = "Parent"
@@ -328,7 +328,14 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         // Check we managed to compile the Child class
         assertFileExists(
             consumer.buildScriptReturn {
-                kotlinMultiplatform.jvm().compilations.getByName("main").output.classesDirs.singleFile.resolve("${child}.class")
+                kotlinMultiplatform.jvm()
+                    .compilations
+                    .getByName("main")
+                    .output
+                    .classesDirs
+                    .files
+                    .single { it.endsWith("kotlin/jvm/main") }
+                    .resolve("${child}.class")
             }.buildAndReturn("compileKotlinJvm")
         )
     }
