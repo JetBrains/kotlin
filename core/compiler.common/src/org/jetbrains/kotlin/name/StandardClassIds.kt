@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 object StandardClassIds {
     val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
+    val BASE_EXPERIMENTAL_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("experimental"))
     val BASE_COLLECTIONS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("collections"))
     val BASE_SEQUENCES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("sequences"))
     val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))
@@ -203,7 +204,7 @@ object StandardClassIds {
         val Target = "Target".annotationId()
         val Repeatable = "Repeatable".annotationId()
         val MustBeDocumented = "MustBeDocumented".annotationId()
-        val ExperimentalExpectRefinement = "ExperimentalExpectRefinement".baseId()
+        val ExperimentalExpectRefinement = "ExperimentalExpectRefinement".experimentalId()
 
         val Volatile = "Volatile".concurrentId()
 
@@ -306,6 +307,7 @@ object StandardClassIds {
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))
+private fun String.experimentalId() = ClassId(StandardClassIds.BASE_EXPERIMENTAL_PACKAGE, Name.identifier(this))
 private fun ClassId.unsignedId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("U" + shortClassName.identifier))
 private fun String.reflectId() = ClassId(StandardClassIds.BASE_REFLECT_PACKAGE, Name.identifier(this))
 private fun Name.primitiveArrayId() = ClassId(StandardClassIds.Array.packageFqName, Name.identifier(identifier + StandardClassIds.Array.shortClassName.identifier))
