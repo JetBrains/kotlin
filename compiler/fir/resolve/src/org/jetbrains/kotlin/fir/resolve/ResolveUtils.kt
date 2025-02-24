@@ -554,7 +554,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         ) {
             smartcastTypeWithoutNullableNothing = buildResolvedTypeRef {
                 source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-                coneType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes.filter { !it.isKindOfNothing })
+                coneType = ConeTypeIntersector.intersectTypes(session.typeContext, nonNothingTypes)
             }
         }
         this.typesFromSmartCast = typesFromSmartCast
