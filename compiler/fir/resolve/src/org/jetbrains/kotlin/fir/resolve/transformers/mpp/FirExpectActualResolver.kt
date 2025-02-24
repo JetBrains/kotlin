@@ -53,12 +53,10 @@ object FirExpectActualResolver {
                                 actualSymbol is FirConstructorSymbol -> expectContainingClass?.getConstructors(expectScopeSession)
                                 actualSymbol.isStatic -> expectContainingClass?.getStaticCallablesForExpectClass(actualSymbol.name)
                                 else -> expectContainingClass?.getCallablesForExpectClass(actualSymbol.name)
+                            }.orEmpty().filter { expectSymbol ->
+                                // Don't match with private fake overrides
+                                !expectSymbol.isFakeOverride(expectContainingClass) || expectSymbol.visibility != Visibilities.Private
                             }
-                                .orEmpty()
-                                .filter { expectSymbol ->
-                                    // Don't match with private fake overrides
-                                    !expectSymbol.isFakeOverride(expectContainingClass) || expectSymbol.visibility != Visibilities.Private
-                                }
                         }
                         else -> {
                             val scope =
