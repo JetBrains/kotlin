@@ -98,8 +98,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         configuration.phaseConfig = createPhaseConfig(arguments)
 
-        configuration.setupMetadataVersion(arguments, ::MetadataVersion)
-
         arguments.relativePathBases?.let {
             configuration.put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
         }
