@@ -34,7 +34,8 @@ private fun ClassId.toConeFlexibleType(
 ) = toLookupTag().run {
     ConeFlexibleType(
         constructClassType(typeArguments, isMarkedNullable = false, attributes),
-        constructClassType(typeArgumentsForUpper, isMarkedNullable = true, attributes)
+        constructClassType(typeArgumentsForUpper, isMarkedNullable = true, attributes),
+        false,
     )
 }
 
@@ -88,7 +89,7 @@ private fun JavaType?.toConeKotlinType(
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeKotlinType =
     toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode, source, additionalAnnotations).type
-        ?: StandardClassIds.Any.toConeFlexibleType(emptyArray(), emptyArray(), ConeAttributes.Empty)
+        ?: ConeFlexibleType(session.builtinTypes.anyType.coneType, session.builtinTypes.nullableAnyType.coneType, isTrivial = true)
 
 private fun JavaType?.toConeTypeProjection(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
@@ -118,8 +119,6 @@ private fun JavaType?.toConeTypeProjection(
             if (mode.insideAnnotation) {
                 return lowerBound
             }
-            val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
-
             val finalLowerBound = when {
                 !session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) ->
                     lowerBound
@@ -134,7 +133,17 @@ private fun JavaType?.toConeTypeProjection(
                 else -> lowerBound
             }
 
-            if (isRaw) ConeRawType.create(finalLowerBound, upperBound) else ConeFlexibleType(finalLowerBound, upperBound)
+            if (!isRaw && finalLowerBound is ConeLookupTagBasedType && classifier?.isTriviallyFlexible() == true) {
+                finalLowerBound.toTrivialFlexibleType(session.typeContext)
+            } else {
+                val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
+
+                if (isRaw) {
+                    ConeRawType.create(finalLowerBound, upperBound)
+                } else {
+                    ConeFlexibleType(finalLowerBound, upperBound, isTrivial = false)
+                }
+            }
         }
 
         is JavaArrayType -> {
@@ -179,6 +188,12 @@ private fun JavaType?.toConeTypeProjection(
             withEntry("type", this@toConeTypeProjection) { it.toString() }
         }
     }
+}
+
+private val javaReadOnlyFqNames = JavaToKotlinClassMap.getReadOnlyAsJava()
+
+private fun JavaClassifier.isTriviallyFlexible(): Boolean {
+    return this is JavaClass && fqName !in javaReadOnlyFqNames || this is JavaTypeParameter
 }
 
 private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(

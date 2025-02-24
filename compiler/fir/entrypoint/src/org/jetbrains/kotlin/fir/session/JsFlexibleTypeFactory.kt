@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 
 class JsFlexibleTypeFactory(private val session: FirSession) : FirTypeDeserializer.FlexibleTypeFactory {
     override fun createFlexibleType(proto: ProtoBuf.Type, lowerBound: ConeRigidType, upperBound: ConeRigidType): ConeFlexibleType {
-        return ConeFlexibleType(lowerBound, upperBound)
+        return ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
     }
 
     override fun createDynamicType(proto: ProtoBuf.Type, lowerBound: ConeRigidType, upperBound: ConeRigidType): ConeDynamicType {

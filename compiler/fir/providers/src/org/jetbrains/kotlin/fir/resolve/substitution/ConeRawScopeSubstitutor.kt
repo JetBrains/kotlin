@@ -50,7 +50,7 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
                     return ConeRawType.create(newLowerBound, newUpperBound)
                 }
 
-                ConeFlexibleType(newLowerBound, newUpperBound)
+                ConeFlexibleType(newLowerBound, newUpperBound, isTrivial = false)
             }
             else -> null
         }

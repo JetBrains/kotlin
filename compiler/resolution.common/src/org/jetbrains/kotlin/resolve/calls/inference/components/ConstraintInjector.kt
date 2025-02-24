@@ -439,7 +439,7 @@ class ConstraintInjector(
                      * It's OK in the old inference because it uses already substituted types, that are with the correct flexibility.
                      */
                     require(upperType is RigidTypeMarker)
-                    val flexibleUpperType = createFlexibleType(upperType, upperType.withNullability(true))
+                    val flexibleUpperType = createTrivialFlexibleTypeOrSelf(upperType)
                     if (!isSubtypeOf(flexibleUpperType)) {
                         c.addError(NewConstraintError(lowerType, flexibleUpperType, position))
                     }

@@ -91,11 +91,23 @@ class FirSamResolver(
             )
             is ConeFlexibleType -> {
                 val lowerType = getSamInfoForPossibleSamType(type.lowerBound)?.functionalType ?: return null
-                val upperType = getSamInfoForPossibleSamType(type.upperBound)?.functionalType ?: return null
-                SamConversionInfo(
-                    functionalType = ConeFlexibleType(lowerType.lowerBoundIfFlexible(), upperType.upperBoundIfFlexible()),
-                    samType = type
-                )
+
+                if (type.isTrivial) {
+                    SamConversionInfo(
+                        functionalType = lowerType.lowerBoundIfFlexible().toTrivialFlexibleType(session.typeContext),
+                        samType = type
+                    )
+                } else {
+                    val upperType = getSamInfoForPossibleSamType(type.upperBound)?.functionalType ?: return null
+                    SamConversionInfo(
+                        functionalType = ConeFlexibleType(
+                            lowerType.lowerBoundIfFlexible(),
+                            upperType.upperBoundIfFlexible(),
+                            isTrivial = false,
+                        ),
+                        samType = type
+                    )
+                }
             }
 
             is ConeStubType, is ConeTypeParameterType, is ConeTypeVariableType,

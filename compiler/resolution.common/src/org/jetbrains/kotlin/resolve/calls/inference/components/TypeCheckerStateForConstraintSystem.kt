@@ -320,17 +320,15 @@ abstract class TypeCheckerStateForConstraintSystem(
                         when {
                             useRefinedBoundsForTypeVariableInFlexiblePosition() ->
                                 // Foo <: T! -- (Foo!! .. Foo) <: T
-                                createFlexibleType(
+                                createTrivialFlexibleTypeOrSelf(
                                     subType.makeDefinitelyNotNullOrNotNull(),
-                                    subType.withNullability(true)
                                 )
                             // In K1 (FE1.0), there is an obsolete behavior
                             subType.isMarkedNullable() -> subType
-                            else -> createFlexibleType(subType, subType.withNullability(true))
+                            else -> createTrivialFlexibleTypeOrSelf(subType)
                         }
 
                     is FlexibleTypeMarker ->
-
                         when {
                             useRefinedBoundsForTypeVariableInFlexiblePosition() ->
                                 // (Foo..Bar) <: T! -- (Foo!! .. Bar?) <: T
@@ -340,10 +338,7 @@ abstract class TypeCheckerStateForConstraintSystem(
                                 )
                             else ->
                                 // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
-                                createFlexibleType(
-                                    subType.lowerBound().makeDefinitelyNotNullOrNotNull(),
-                                    subType.upperBound()
-                                )
+                                makeLowerBoundDefinitelyNotNullOrNotNull(subType)
                         }
 
                     else -> error("sealed")
@@ -441,7 +436,7 @@ abstract class TypeCheckerStateForConstraintSystem(
             }
 
             typeVariable.isFlexible() && superType is RigidTypeMarker ->
-                createFlexibleType(superType, superType.withNullability(true))
+                createTrivialFlexibleTypeOrSelf(superType)
 
             else -> superType
         }

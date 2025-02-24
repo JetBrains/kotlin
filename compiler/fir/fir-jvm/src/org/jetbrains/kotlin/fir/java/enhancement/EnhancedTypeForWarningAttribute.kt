@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.expressions.explicitTypeArgumentIfMadeFlexibleSynthetically
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.reflect.KClass
 
 data class EnhancedTypeForWarningAttribute(
@@ -59,6 +58,14 @@ class EnhancedForWarningConeSubstitutor(
         // (Any..EFW(Any) Any?) -> coneFlexibleOrSimpleType(Any, Any) = Any
         // (EFW(MutableList<>?) MutableList<>..List<>?) -> coneFlexibleOrSimpleType(MutableList<>?, List<>?) -> (MutableList<>?..List<>?)
         if (type is ConeFlexibleType) {
+            /**
+             * This fast-path enables the optimization for trivial flexible types in [substituteRecursive] where we only substitute one bound.
+             * For non-trivial flexible types, we will process both bounds anyway, so we might as well do it here.
+             **/
+            if (type.isTrivial && type.lowerBound.replacementTopLevelTypeOrNull() == null && type.upperBound.replacementTopLevelTypeOrNull() == null) {
+                return null
+            }
+
             val lowerSubstituted = substituteOrNull(type.lowerBound)
             val upperSubstituted = substituteOrNull(type.upperBound)
 
@@ -66,17 +73,26 @@ class EnhancedForWarningConeSubstitutor(
                 return null
             }
 
-            return coneFlexibleOrSimpleType(typeContext, lowerSubstituted ?: type.lowerBound, upperSubstituted ?: type.upperBound)
+            return coneFlexibleOrSimpleType(
+                typeContext,
+                lowerSubstituted ?: type.lowerBound,
+                upperSubstituted ?: type.upperBound,
+                isTrivial = false
+            )
         }
 
         // If the top-level type can be enhanced, this will only enhance the top-level type but not its arguments: Foo<Bar!>! -> Foo<Bar!>?
         // Otherwise, it will enhance recursively until the first possible enhancement.
-        val enhancedTopLevel = type.enhancedTypeForWarning
-            ?: type.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically
-                ?.takeIf { it.relevantFeature == useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature }
-                ?.coneType
+        val enhancedTopLevel = type.replacementTopLevelTypeOrNull()
 
         // This will also enhance type arguments if the top-level type was enhanced, otherwise it will continue enhancing recursively.
         return enhancedTopLevel?.let(::substituteOrSelf)
+    }
+
+    private fun ConeKotlinType.replacementTopLevelTypeOrNull(): ConeKotlinType? {
+        return enhancedTypeForWarning
+            ?: attributes.explicitTypeArgumentIfMadeFlexibleSynthetically
+                ?.takeIf { it.relevantFeature == useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature }
+                ?.coneType
     }
 }

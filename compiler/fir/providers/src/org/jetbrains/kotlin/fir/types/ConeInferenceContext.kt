@@ -59,7 +59,38 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         require(lowerBound is ConeRigidType)
         require(upperBound is ConeRigidType)
 
-        return coneFlexibleOrSimpleType(this, lowerBound, upperBound)
+        return coneFlexibleOrSimpleType(this, lowerBound, upperBound, isTrivial = false)
+    }
+
+    override fun createTrivialFlexibleTypeOrSelf(lowerBound: KotlinTypeMarker): KotlinTypeMarker {
+        require(lowerBound is ConeKotlinType)
+
+        // We need to ensure that the returned type is not a flexible type with two equal bounds.
+        // This can happen if the given type is marked nullable or if it's an error type.
+        return if (lowerBound is ConeRigidType && !lowerBound.isMarkedNullable && lowerBound !is ConeErrorType) {
+            lowerBound.toTrivialFlexibleType(this)
+        } else {
+            lowerBound
+        }
+    }
+
+    override fun isTriviallyFlexible(flexibleType: FlexibleTypeMarker): Boolean {
+        require(flexibleType is ConeFlexibleType)
+        return flexibleType.isTrivial
+    }
+
+    override fun makeLowerBoundDefinitelyNotNullOrNotNull(flexibleType: FlexibleTypeMarker): KotlinTypeMarker {
+        require(flexibleType is ConeFlexibleType)
+
+        if (flexibleType.isTrivial) {
+            return ConeFlexibleType(
+                flexibleType.lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(this) as ConeRigidType,
+                flexibleType.upperBound,
+                isTrivial = true
+            )
+        }
+
+        return super.makeLowerBoundDefinitelyNotNullOrNotNull(flexibleType)
     }
 
     override fun createSimpleType(
@@ -209,10 +240,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         if (predicate(this)) return true
 
         val flexibleType = this as? ConeFlexibleType
-        if (flexibleType != null
-            && (flexibleType.lowerBound.containsInternal(predicate) || flexibleType.upperBound.containsInternal(predicate))
-        ) {
-            return true
+        if (flexibleType != null) {
+            if (flexibleType.lowerBound.containsInternal(predicate)) {
+                return true
+            }
+            if (!flexibleType.isTrivial && flexibleType.upperBound.containsInternal(predicate)) {
+                return true
+            }
         }
 
 

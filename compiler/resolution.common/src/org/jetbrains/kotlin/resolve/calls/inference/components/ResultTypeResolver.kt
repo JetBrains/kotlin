@@ -264,7 +264,7 @@ class ResultTypeResolver(
         when (val type = this@makeFlexibleIfNecessary) {
             is RigidTypeMarker -> {
                 if (constraints.any { it.type.typeConstructor().isTypeVariable() && it.type.hasFlexibleNullability() }) {
-                    createFlexibleType(type.makeDefinitelyNotNullOrNotNull(), type.withNullability(true))
+                    createTrivialFlexibleTypeOrSelf(type.makeDefinitelyNotNullOrNotNull())
                 } else type
             }
             else -> type

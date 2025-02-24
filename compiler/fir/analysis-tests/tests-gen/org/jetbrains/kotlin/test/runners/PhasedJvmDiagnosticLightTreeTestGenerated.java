@@ -57938,6 +57938,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
   @TestDataPath("$PROJECT_ROOT")
   public class ResolveFreezesIDE {
     @Test
+    @TestMetadata("javaNullability.nkt")
+    public void testJavaNullability() {
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/javaNullability.nkt");
+    }
+
+    @Test
     @TestMetadata("kt69995.nkt")
     public void testKt69995() {
       runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/kt69995.nkt");

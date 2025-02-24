@@ -200,7 +200,7 @@ private class ConeFlexibleTypePointer(
     builder: KaSymbolByFirBuilder,
 ) : AbstractConeFlexibleTypePointer<ConeFlexibleType>(coneType, builder) {
     override fun restore(lowerBound: ConeRigidType, upperBound: ConeRigidType): ConeFlexibleType {
-        return ConeFlexibleType(lowerBound, upperBound)
+        return ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
     }
 }
 

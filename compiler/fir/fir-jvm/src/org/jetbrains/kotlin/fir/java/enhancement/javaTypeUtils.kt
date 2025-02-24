@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal fun ConeKotlinType.enhance(session: FirSession, qualifiers: IndexedJavaTypeQualifiers): ConeKotlinType? =
     enhanceConeKotlinType(session, qualifiers, 0, mutableListOf<Int>().apply { computeSubtreeSizes(this) }, convertErrorsToWarnings = false)
@@ -46,28 +47,38 @@ private fun ConeKotlinType.enhanceConeKotlinType(
         is ConeFlexibleType -> {
             val lowerResult = lowerBound.enhanceInflexibleType(
                 session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index, subtreeSizes,
-                isFromDefinitelyNotNullType = false, convertErrorToWarning = convertErrorsToWarnings,
+                precomputedTypeArguments = null,
+                isFromDefinitelyNotNullType = false,
+                convertErrorToWarning = convertErrorsToWarnings,
             )
+
             val upperResult = upperBound.enhanceInflexibleType(
                 session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index, subtreeSizes,
-                isFromDefinitelyNotNullType = false, convertErrorToWarning = convertErrorsToWarnings,
+                precomputedTypeArguments = runIf(isTrivial) { lowerResult?.typeArguments },
+                isFromDefinitelyNotNullType = false,
+                convertErrorToWarning = convertErrorsToWarnings
             )
 
             when {
                 lowerResult == null && upperResult == null -> null
                 this is ConeRawType -> ConeRawType.create(lowerResult ?: lowerBound, upperResult ?: upperBound)
-                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound).let {
-                    it.applyIf(it !is ConeFlexibleType) {
-                        it.withAttributes(it.attributes.add(CompilerConeAttributes.EnhancedNullability))
-                    }
-                }
+                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound, isTrivial)
+                    .withEnhancedNullabilityAttributeIfRigid()
             }
         }
         is ConeSimpleKotlinType -> enhanceInflexibleType(
             session, TypeComponentPosition.INFLEXIBLE, qualifiers, index, subtreeSizes,
-            isFromDefinitelyNotNullType = false, convertErrorToWarning = convertErrorsToWarnings,
+            precomputedTypeArguments = null,
+            isFromDefinitelyNotNullType = false,
+            convertErrorToWarning = convertErrorsToWarnings,
         )
         else -> null
+    }
+}
+
+private fun ConeKotlinType.withEnhancedNullabilityAttributeIfRigid(): ConeKotlinType {
+    return applyIf(this !is ConeFlexibleType) {
+        this.withAttributes(this.attributes.add(CompilerConeAttributes.EnhancedNullability))
     }
 }
 
@@ -85,11 +96,15 @@ private fun ConeRigidType.enhanceInflexibleType(
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int,
     subtreeSizes: List<Int>,
+    precomputedTypeArguments: Array<out ConeTypeProjection>?,
     isFromDefinitelyNotNullType: Boolean,
     convertErrorToWarning: Boolean,
 ): ConeRigidType? {
     if (this is ConeDefinitelyNotNullType) {
-        return original.enhanceInflexibleType(session, position, qualifiers, index, subtreeSizes, isFromDefinitelyNotNullType = true, convertErrorToWarning)
+        return original.enhanceInflexibleType(
+            session, position, qualifiers, index, subtreeSizes,
+            precomputedTypeArguments, isFromDefinitelyNotNullType = true, convertErrorToWarning
+        )
     }
 
     val shouldEnhance = position.shouldEnhance()
@@ -114,6 +129,7 @@ private fun ConeRigidType.enhanceInflexibleType(
         convertNestedErrorsToWarnings = convertErrorToWarning ||
                 effectiveQualifiers.isNullabilityQualifierForWarning &&
                 !session.languageVersionSettings.supportsFeature(LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced),
+        precomputedTypeArguments,
     )
 
     return if (enhanced != null && (effectiveQualifiers.isNullabilityQualifierForWarning || convertErrorToWarning)) {
@@ -160,6 +176,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     nullabilityFromQualifiers: NullabilityQualifier?,
     enhancedTag: ConeClassifierLookupTag,
     convertNestedErrorsToWarnings: Boolean,
+    precomputedTypeArguments: Array<out ConeTypeProjection>?,
 ): ConeRigidType? {
     val enhancedIsNullable = when (nullabilityFromQualifiers) {
         NullabilityQualifier.NULLABLE -> true
@@ -168,17 +185,19 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     }
 
     var globalArgIndex = index + 1
-    val enhancedArguments = typeArguments.mapIndexed { currentArgLocalIndex, arg ->
+    val mergedArguments = precomputedTypeArguments ?: Array(typeArguments.size) { currentArgLocalIndex ->
+        val arg = typeArguments[currentArgLocalIndex]
         val currentArgGlobalIndex = globalArgIndex.also { globalArgIndex += subtreeSizes[it] }
         if (arg.type == null && qualifiers(currentArgGlobalIndex).nullability == NullabilityQualifier.FORCE_FLEXIBILITY) {
             // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
             val typeParameters = this.lookupTag.toClassLikeSymbol(session)?.fir?.typeParameters
             if (typeParameters != null) {
                 val bound = typeParameters[currentArgLocalIndex].symbol.fir.bounds.first().coneType
-                return@mapIndexed ConeKotlinTypeProjectionOut(
+                return@Array ConeKotlinTypeProjectionOut(
                     ConeFlexibleType(
                         bound.lowerBoundIfFlexible().withNullability(nullable = false, session.typeContext),
-                        bound.upperBoundIfFlexible().withNullability(nullable = true, session.typeContext)
+                        bound.upperBoundIfFlexible().withNullability(nullable = true, session.typeContext),
+                        isTrivial = false,
                     )
                 )
             }
@@ -192,21 +211,29 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
                 ProjectionKind.STAR -> ConeStarProjection
                 ProjectionKind.INVARIANT -> it
             }
-        }
+        } ?: typeArguments[currentArgLocalIndex]
     }
 
     val shouldAddAttribute = nullabilityFromQualifiers == NullabilityQualifier.NOT_NULL && !hasEnhancedNullability
-    if (lookupTag == enhancedTag && enhancedIsNullable == isMarkedNullable && !shouldAddAttribute && enhancedArguments.all { it == null }) {
+    if (lookupTag == enhancedTag &&
+        enhancedIsNullable == isMarkedNullable &&
+        !shouldAddAttribute &&
+        contentIdentityEqual(mergedArguments, typeArguments)
+    ) {
         return null // absolutely no changes
     }
 
-    val mergedArguments = Array(typeArguments.size) { enhancedArguments[it] ?: typeArguments[it] }
     val mergedAttributes = if (shouldAddAttribute) attributes.add(CompilerConeAttributes.EnhancedNullability) else attributes
     val enhancedType = enhancedTag.constructType(mergedArguments, enhancedIsNullable, mergedAttributes)
     return if (isDefinitelyNotNull || (isFromDefinitelyNotNullType && nullabilityFromQualifiers == null))
         ConeDefinitelyNotNullType.create(enhancedType, session.typeContext) ?: enhancedType
     else
         enhancedType
+}
+
+private fun contentIdentityEqual(a: Array<out ConeTypeProjection>, b: Array<out ConeTypeProjection>): Boolean {
+    var i = 0
+    return a === b || a.size == b.size && a.all { it === b[i++] }
 }
 
 private fun ConeClassifierLookupTag.enhanceMutability(

@@ -219,7 +219,8 @@ private object ConeIntegerLiteralTypeExtensions {
         if (newLowerBound !== lowerBound || newUpperBound !== upperBound) {
             return ConeFlexibleType(
                 newLowerBound.lowerBoundIfFlexible(),
-                newUpperBound.upperBoundIfFlexible()
+                newUpperBound.upperBoundIfFlexible(),
+                isTrivial = isTrivial,
             )
         }
 
