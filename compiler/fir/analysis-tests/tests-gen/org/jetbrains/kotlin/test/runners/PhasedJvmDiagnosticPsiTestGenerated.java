@@ -29115,6 +29115,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestDataPath("$PROJECT_ROOT")
       public class HmppRefinement {
         @Test
+        @TestMetadata("actualTypealias.kt")
+        public void testActualTypealias() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/actualTypealias.kt");
+        }
+
+        @Test
         @TestMetadata("actualWithoutExpect.kt")
         public void testActualWithoutExpect() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/actualWithoutExpect.kt");
@@ -29178,6 +29184,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         @TestMetadata("invalidRefinement_returnType.kt")
         public void testInvalidRefinement_returnType() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/invalidRefinement_returnType.kt");
+        }
+
+        @Test
+        @TestMetadata("propertiesRefinement.kt")
+        public void testPropertiesRefinement() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/propertiesRefinement.kt");
         }
 
         @Test
