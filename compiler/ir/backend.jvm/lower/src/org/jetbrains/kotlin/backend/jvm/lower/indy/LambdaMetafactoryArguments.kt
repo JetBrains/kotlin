@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.indy
 
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.findInterfaceImplementation
@@ -23,14 +22,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
@@ -338,22 +335,20 @@ internal class LambdaMetafactoryArgumentsBuilder(
             return null
         }
 
-        val newReference =
-            if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || implFun.isAnonymousFunction)
-                remapExtensionLambda(implFun as IrSimpleFunction, reference)
-            else
-                reference
+        if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || implFun.isAnonymousFunction) {
+            adjustLambdaFunction(implFun as IrSimpleFunction)
+        }
 
         if (samMethod.isFakeOverride && nonFakeOverriddenFuns.size == 1) {
             return LambdaMetafactoryArguments(
                 nonFakeOverriddenFuns.single(),
                 fakeInstanceMethod,
-                newReference,
+                reference,
                 listOf(),
                 shouldBeSerializable
             )
         }
-        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, newReference, nonFakeOverriddenFuns, shouldBeSerializable)
+        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, reference, nonFakeOverriddenFuns, shouldBeSerializable)
     }
 
     private fun checkMethodSignatureCompliance(
@@ -456,43 +451,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
             )
     }
 
-    private fun remapExtensionLambda(lambda: IrSimpleFunction, reference: IrFunctionReference): IrFunctionReference {
-        val oldExtensionReceiver = lambda.extensionReceiverParameter
-            ?: return reference
-
-        val newValueParameters = ArrayList<IrValueParameter>()
-        val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
-
-        lambda.valueParameters.take(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
-            oldParameter.copy(lambda).also {
-                oldToNew[oldParameter] = it
+    private fun adjustLambdaFunction(lambda: IrSimpleFunction) {
+        lambda.parameters.forEach { parameter ->
+            if (parameter.kind != IrParameterKind.DispatchReceiver) {
+                parameter.kind = IrParameterKind.Regular
             }
         }
-
-        newValueParameters.add(
-            oldExtensionReceiver.copy(lambda, oldExtensionReceiver.name).also {
-                oldToNew[oldExtensionReceiver] = it
-            }
-        )
-
-        lambda.valueParameters.drop(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
-            oldParameter.copy(lambda).also {
-                oldToNew[oldParameter] = it
-            }
-        }
-
-        lambda.body?.transformChildrenVoid(VariableRemapper(oldToNew))
-
-        lambda.extensionReceiverParameter = null
-        lambda.valueParameters = newValueParameters
-
-        return IrFunctionReferenceImpl(
-            reference.startOffset, reference.endOffset, reference.type,
-            lambda.symbol,
-            typeArgumentsCount = 0,
-            reflectionTarget = null,
-            origin = reference.origin
-        )
     }
 
 
