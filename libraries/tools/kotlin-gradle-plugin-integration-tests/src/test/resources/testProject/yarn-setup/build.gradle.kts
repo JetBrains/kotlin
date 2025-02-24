@@ -20,16 +20,18 @@ kotlin.js {
 tasks {
     val yarnSpec = project.the<YarnRootEnvSpec>()
     val yarnFolderRemove by registering {
+        val installationDirectory = yarnSpec.installationDirectory
         doLast {
-            yarnSpec.installationDirectory.get().asFile.deleteRecursively()
+            installationDirectory.get().asFile.deleteRecursively()
         }
     }
 
     val yarnFolderCheck by registering {
         dependsOn(getByName("kotlinYarnSetup"))
+        val installationDirectory = yarnSpec.installationDirectory
 
         doLast {
-            if (!yarnSpec.installationDirectory.get().asFile.exists()) {
+            if (!installationDirectory.get().asFile.exists()) {
                 throw GradleException()
             }
         }
@@ -37,9 +39,10 @@ tasks {
 
     val yarnConcreteVersionFolderChecker by registering {
         dependsOn(getByName("kotlinYarnSetup"))
+        val installationDirectory = yarnSpec.installationDirectory
 
         doLast {
-            if (!yarnSpec.installationDirectory.get().file("yarn-v1.9.3").asFile.exists()) {
+            if (!installationDirectory.get().file("yarn-v1.9.3").asFile.exists()) {
                 throw GradleException()
             }
         }

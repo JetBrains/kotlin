@@ -12,9 +12,10 @@ String nodeJsLocation
 tasks.create("checkDownloadedFolder") {
     description = "updated last modified date for downloaded folder"
     dependsOn "build"
+    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
         println("check downloaded folder existance")
-        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
             throw new InvalidUserDataException("Downloaded folder was not found")
         }
@@ -31,9 +32,10 @@ tasks.create("checkDownloadedFolder") {
 tasks.create("checkIfLastModifiedNotNow") {
     description = "check if last modified is not current date now"
     dependsOn "build"
+    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
         println("check downloaded folder existance")
-        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
             throw new InvalidUserDataException("Downloaded folder was not found")
         }
@@ -52,9 +54,10 @@ tasks.create("checkIfLastModifiedNotNow") {
 
 tasks.create("testCleanTask") {
     description = "check clean task behaviour"
+    def gradleUserHomeDir = project.gradle.gradleUserHomeDir
     doLast {
         println("check deletion of downloaded folder")
-        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        def downloadedFolder = new File(gradleUserHomeDir, nodeJsLocation)
         if (downloadedFolder.exists()) {
             throw new InvalidUserDataException("Folder was not deleted")
         }

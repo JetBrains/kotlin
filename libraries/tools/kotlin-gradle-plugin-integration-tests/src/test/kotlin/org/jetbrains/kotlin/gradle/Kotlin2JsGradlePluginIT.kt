@@ -11,6 +11,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
@@ -295,25 +296,18 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("generated typescript declarations validation")
     @GradleTest
-    @BrokenOnMacosTest
     fun testGeneratedTypeScriptDeclarationsValidation(gradleVersion: GradleVersion) {
         project("js-ir-validate-ts", gradleVersion) {
-            buildGradleKts.appendText(
-                """
-                |fun makeTypeScriptFileInvalid(mode: String) {
-                |  val dts = projectDir.resolve("build/compileSync/js/main/" + mode + "Executable/kotlin/js-ir-validate-ts.d.ts")
-                |  dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
-                |}
-                |
-                |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs").configure {
-                |   doLast { makeTypeScriptFileInvalid("development") }
-                |}
-                |
-                |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileProductionExecutableKotlinJs").configure {
-                |   doLast { makeTypeScriptFileInvalid("production") }
-                |}
-               """.trimMargin()
-            )
+            buildScriptInjection {
+                project.tasks.withType(KotlinJsIrLink::class.java).configureEach { task ->
+                    val projectDir = project.projectDir
+                    task.doLast {
+                        val mode = task.modeProperty.get().name.lowercase()
+                        val dts = projectDir.resolve("build/compileSync/js/main/${mode}Executable/kotlin/js-ir-validate-ts.d.ts")
+                        dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
+                    }
+                }
+            }
 
             buildAndFail("developmentExecutableCompileSync") {
                 assertTasksFailed(":developmentExecutableValidateGeneratedByCompilerTypeScript")
@@ -704,7 +698,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Custom plugin applying Kotlin/JS plugin")
     @GradleTest
-    @BrokenOnMacosTest
     fun customPluginApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("js-custom-build-src-plugin", gradleVersion) {
             build("checkConfigurationsResolve") {
@@ -940,7 +933,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("yarn is set up")
     @GradleTest
-    @BrokenOnMacosTest
     @TestMetadata("yarn-setup")
     fun testYarnSetup(gradleVersion: GradleVersion) {
         project("yarn-setup", gradleVersion) {
@@ -1276,7 +1268,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("webpack-config-d directory created during the build is not ignored")
     @GradleTest
-    @BrokenOnMacosTest
     fun testDynamicWebpackConfigD(gradleVersion: GradleVersion) {
         project("js-dynamic-webpack-config-d", gradleVersion) {
             build("build") {
@@ -1455,7 +1446,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("nodejs up-to-date check works")
     @GradleTest
-    @BrokenOnMacosTest
     fun testNodeJsAndYarnDownload(gradleVersion: GradleVersion) {
         project("cleanTask", gradleVersion) {
             build("checkDownloadedFolder")

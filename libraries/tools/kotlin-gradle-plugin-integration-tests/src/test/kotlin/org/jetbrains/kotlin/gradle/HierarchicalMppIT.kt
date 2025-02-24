@@ -1350,7 +1350,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             buildGradleKts.modify {
                 "import ${DefaultKotlinSourceSet::class.qualifiedName}\n" + it + "\n" + """
                 val $testTaskName by tasks.creating {
-                    notCompatibleWithConfigurationCache("Resolving transformations should happen during the execution phase")
+                    notCompatibleWithConfigurationCache("During normal usage the transformations are computed in the configuration phase. In this test the transformations must run after KGP is fully configured, i.e. in the execution phase.")
                     // adding psm generation if needed
                     // for that purpose we setting all Resolvable Dependencies Metadata Configurations as inputs for report task
                     kotlin.sourceSets

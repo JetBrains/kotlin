@@ -18,6 +18,7 @@ kotlin {
 }
 
 tasks.register("foo") {
+    val projectDir = projectDir
     doLast {
         val dir = projectDir.resolve("webpack.config.d")
         dir.mkdirs()
