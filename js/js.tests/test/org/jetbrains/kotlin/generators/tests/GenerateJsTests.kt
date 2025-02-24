@@ -334,6 +334,15 @@ fun main(args: Array<String>) {
                 )
             }
 
+            testClass<AbstractFirJsDiagnosticWithBackendWithInlinedFunInKlibTestBase>(suiteTestClassName = "FirJsOldFrontendDiagnosticsWithBackendWithInlinedFunInKlibTestGenerated") {
+                model(
+                    relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
             testClass<AbstractDiagnosticsTestWithJsStdLib>(
                 suiteTestClassName = "DiagnosticsWithJsStdLibTestGenerated",
                 annotations = listOf(*legacyFrontend()),
