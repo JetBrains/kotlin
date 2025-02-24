@@ -970,6 +970,48 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("stringConcatenationInsideAnnotation.kt")
+    public void testStringConcatenationInsideAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenationInsideAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenationInsideAnnotation_lhs1.kt")
+    public void testStringConcatenationInsideAnnotation_lhs1() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenationInsideAnnotation_lhs1.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenationInsideAnnotation_lhs2.kt")
+    public void testStringConcatenationInsideAnnotation_lhs2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenationInsideAnnotation_lhs2.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenationInsideAnnotation_op1.kt")
+    public void testStringConcatenationInsideAnnotation_op1() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenationInsideAnnotation_op1.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenationInsideAnnotation_op2.kt")
+    public void testStringConcatenationInsideAnnotation_op2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenationInsideAnnotation_op2.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenationInsideAnnotation_rhs1.kt")
+    public void testStringConcatenationInsideAnnotation_rhs1() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenationInsideAnnotation_rhs1.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenationInsideAnnotation_rhs2.kt")
+    public void testStringConcatenationInsideAnnotation_rhs2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenationInsideAnnotation_rhs2.kt");
+    }
+
+    @Test
     @TestMetadata("stringConcatenation_lhs1.kt")
     public void testStringConcatenation_lhs1() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/expressions/stringConcatenation_lhs1.kt");

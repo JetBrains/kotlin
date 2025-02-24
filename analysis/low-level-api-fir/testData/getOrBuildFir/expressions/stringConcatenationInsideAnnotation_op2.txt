@@ -1,0 +1,19 @@
+KT element: KtOperationReferenceExpression
+FIR element: FirStringConcatenationCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<strcat>(String(1), String(2), String(3))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] stringConcatenationInsideAnnotation_op2.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|Anno|[Types](str = <strcat>(String(1), String(2), String(3))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
