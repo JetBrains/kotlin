@@ -792,7 +792,6 @@ open class LocalDeclarationsLowering(
                     newDeclaration,
                     type = localFunctionContext.remapType(param.type),
                     varargElementType = param.varargElementType?.let { localFunctionContext.remapType(it) },
-                    kind = if (param.kind == IrParameterKind.ExtensionReceiver) param.kind else IrParameterKind.Regular,
                 ).also {
                     newParameterToOld.putAbsentOrSame(it, param)
                 }
@@ -824,8 +823,12 @@ open class LocalDeclarationsLowering(
             }
 
             // For now, we must preserve the parameter kind order since the old API is still in use, and the bridge expects the canonical order.
-            val (extensionReceiver, nonExtensionParameters) = transformedParameters.partition { it.kind == IrParameterKind.ExtensionReceiver }
-            return extensionReceiver + parametersForCapturedValues + nonExtensionParameters
+            val capturedValuesStartIndex = transformedParameters.indexOfFirst { it.kind == IrParameterKind.Regular }
+                .takeIf { it != -1 } ?: transformedParameters.size
+            return buildList {
+                addAll(transformedParameters)
+                addAll(capturedValuesStartIndex, parametersForCapturedValues)
+            }
         }
 
         private fun IrFunction.recordTransformedValueParameters(localContext: LocalContextWithClosureAsParameters) {
