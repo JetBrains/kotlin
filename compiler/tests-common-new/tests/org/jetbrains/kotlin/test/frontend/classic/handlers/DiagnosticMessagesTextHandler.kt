@@ -58,7 +58,6 @@ class DiagnosticMessagesTextHandler(
                 PrintingMessageCollector(diagnosticsFullTextPrintStream, MessageRenderer.SYSTEM_INDEPENDENT_RELATIVE_PATHS, true),
                 false,
                 false,
-                false,
             )
 
         AnalyzerWithCompilerReport.reportDiagnostics(

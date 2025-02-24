@@ -42,8 +42,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         val messageCollector = GroupingMessageCollector(
             originalMessageCollector,
             arguments.allWarningsAsErrors,
-            arguments.reportAllWarnings,
-            arguments.suppressVersionWarnings,
+            arguments.reportAllWarnings
         )
         val argumentsInput = ArgumentsPipelineArtifact(
             arguments,

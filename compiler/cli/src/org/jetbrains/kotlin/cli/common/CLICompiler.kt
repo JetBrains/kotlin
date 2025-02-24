@@ -92,12 +92,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
         configuration.put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
 
-        val collector = GroupingMessageCollector(
-            messageCollector,
-            arguments.allWarningsAsErrors,
-            arguments.reportAllWarnings,
-            arguments.suppressVersionWarnings,
-        ).also {
+        val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors, arguments.reportAllWarnings).also {
             configuration.messageCollector = it
         }
 

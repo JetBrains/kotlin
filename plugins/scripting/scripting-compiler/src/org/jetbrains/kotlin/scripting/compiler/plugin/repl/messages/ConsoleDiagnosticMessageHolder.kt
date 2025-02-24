@@ -20,7 +20,6 @@ class ConsoleDiagnosticMessageHolder : MessageCollectorBasedReporter,
         PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false),
         false,
         false,
-        false,
     )
 
     override fun renderMessage(): String {
