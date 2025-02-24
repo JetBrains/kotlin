@@ -120,9 +120,6 @@ abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser
         globalDefaults {
             targetBackend = TargetBackend.NATIVE
         }
-        defaultDirectives {
-            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
-        }
 
         useAdditionalService(::LibraryProvider)
 
@@ -133,6 +130,15 @@ abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser
 
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)
+        }
+    }
+}
+
+abstract class AbstractFirNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase : AbstractFirNativeDiagnosticsWithBackendTestBase(FirParser.LightTree) {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
+        defaultDirectives {
+            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
         }
     }
 }

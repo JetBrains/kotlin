@@ -99,6 +99,15 @@ fun main() {
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
                 model("nativeTests/specialBackendChecks")
             }
+
+            testClass<AbstractFirNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
+                suiteTestClassName = "FirNativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated",
+                annotations = listOf(*frontendFir(), klib())
+            ) {
+                model("klibSerializationTests")
+                // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
+                model("nativeTests/specialBackendChecks")
+            }
         }
 
         // New frontend test infrastructure tests
