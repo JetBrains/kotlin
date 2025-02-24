@@ -454,8 +454,9 @@ tasks.withType<Test>().configureEach {
         systemProperty("buildScriptInjectionsClasspath", mergedTestClassesDirectory.single())
     }
 
-    // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
-    // names should follow "jdk\\d+Home" regex where number is a major JDK version
+    // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase.
+    // Names should follow "jdk\\d+Home" regex where number is a major JDK version.
+    // On any change 'jdkHelpers.kt' should be updated as well.
     doFirst {
         systemProperty("jdk8Home", jdk8Provider.get())
         systemProperty("jdk11Home", jdk11Provider.get())

@@ -576,11 +576,8 @@ private fun commonBuildSetup(
     gradleVersion: GradleVersion,
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
-    // Following jdk system properties are provided via sub-project build.gradle.kts
-    val jdkPropNameRegex = Regex("jdk\\d+Home")
-    val jdkLocations = System.getProperties()
-        .filterKeys { it.toString().matches(jdkPropNameRegex) }
-        .values
+    val jdkLocations = allJdkProperties
+        .map { System.getProperty(it) }
         .sortedWith(compareBy { it.toString() })
         .joinToString(separator = ",")
 

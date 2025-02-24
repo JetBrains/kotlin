@@ -69,9 +69,8 @@ class JvmBinariesDslIT : KGPBaseTest() {
 
             build("runJvm") {
                 assertTasksExecuted(":multiplatform:runJvm")
-                val jdk21path = Jvm.forHome(File(System.getProperty("jdk21Home"))).javaExecutable.absolutePath
                 assertOutputContains(
-                    "Successfully started process 'command '${jdk21path}''"
+                    "Successfully started process 'command '${jdk21Info.javaExecutable}''"
                 )
             }
         }
@@ -390,7 +389,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         processBuilder.redirectErrorStream(true)
         processBuilder.redirectOutput(outputFile)
         // Prevent the distribution script picking up the wrong JDK
-        processBuilder.environment()["JAVA_HOME"] = System.getProperty("jdk17Home")
+        processBuilder.environment()["JAVA_HOME"] = jdk17Info.jdkPath
         val process = processBuilder.start()
         assertEquals(0, process.waitFor(), "Distribution run failed:\n${outputFile.readText()}")
     }

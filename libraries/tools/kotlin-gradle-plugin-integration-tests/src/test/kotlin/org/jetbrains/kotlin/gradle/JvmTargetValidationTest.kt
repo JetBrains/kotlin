@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
-import org.gradle.internal.jvm.JavaInfo
-import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteExisting
@@ -363,7 +360,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleProperties.append(
                 """
                 kotlin.jvm.target.validation.mode = error
-                org.gradle.java.installations.paths=${getJdk17().javaHome},${getJdk11().javaHome}
+                org.gradle.java.installations.paths=${jdk17Info.javaHome},${jdk11Info.javaHome}
                 """.trimIndent()
             )
 
@@ -543,10 +540,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
             """.trimIndent()
         )
     }
-
-    private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
-
-    private fun getJdk17(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk17Home")))
 
     private val String.fullProjectName get() = "kotlin-java-toolchain/$this"
 }
