@@ -131,7 +131,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         is KtDestructuringDeclaration,
         is KtDestructuringDeclarationEntry,
         is KtScript,
-        -> firDeclarationProvider(this)
+            -> firDeclarationProvider(this)
 
         is KtPropertyAccessor -> {
             val firPropertyDeclaration = property.findSourceNonLocalFirDeclarationByProvider(
@@ -250,12 +250,12 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
  * Some "local" declarations are not local from the lazy resolution perspective.
  */
 internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
-    get() = when {
+    get() = when (fir.origin) {
         // Destructuring declaration container should be treated as a non-local as it is a top-level script declaration
-        fir.origin == FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer -> false
+        FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer -> false
 
         // Script parameters should be treated as non-locals as they are visible from FirScript
-        fir.origin == FirDeclarationOrigin.ScriptCustomization.Parameter || fir.origin == FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
+        FirDeclarationOrigin.ScriptCustomization.Parameter, FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
 
         else -> callableId.isLocal || fir.status.visibility == Visibilities.Local
     }
