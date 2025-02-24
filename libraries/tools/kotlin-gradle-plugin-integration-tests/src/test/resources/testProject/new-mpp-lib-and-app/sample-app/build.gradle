@@ -72,10 +72,12 @@ kotlin {
 }
 
 tasks.register("resolveRuntimeDependencies") {
+    def configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
+    def runtimeDependencies = configurations[configName].getIncoming().getFiles()
+    inputs.files(runtimeDependencies).withPropertyName("runtimeDependencies")
     doFirst {
         // KT-26301
-        def configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
-        configurations[configName].resolve()
+        runtimeDependencies.getFiles()
     }
 }
 
