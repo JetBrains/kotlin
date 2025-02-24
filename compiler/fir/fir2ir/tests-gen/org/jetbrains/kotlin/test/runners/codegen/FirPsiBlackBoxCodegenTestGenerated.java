@@ -10422,6 +10422,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("functionalType.kt")
+    public void testFunctionalType() {
+      runTest("compiler/testData/codegen/box/contextParameters/functionalType.kt");
+    }
+
+    @Test
     @TestMetadata("propertyWithContextAndWithout.kt")
     public void testPropertyWithContextAndWithout() {
       runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
@@ -21429,12 +21435,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestMetadata("dp.kt")
         public void testDp() {
           runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/dp.kt");
-        }
-
-        @Test
-        @TestMetadata("functionalType.kt")
-        public void testFunctionalType() {
-          runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP/functionalType.kt");
         }
 
         @Test
