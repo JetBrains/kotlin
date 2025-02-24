@@ -612,6 +612,22 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JsCode {
+    @Test
+    public void testAllFilesPresentInJsCode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jsCode"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("compileTimeStringWithTopLevelVal.kt")
+    public void testCompileTimeStringWithTopLevelVal() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/compileTimeStringWithTopLevelVal.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmDeclarations {

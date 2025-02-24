@@ -1,8 +1,5 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
-// ^^^ Don't run JsCodeOutliningLowering after fatal error in FIR checker, otherwise it will crash.
 // FIR_DIFFERENCE
 // The difference is okay: K1 and K2 report a bit differently
-// IGNORE_BACKEND_K1: JS_IR
 
 // MODULE: lib1
 // FILE: A.kt
@@ -55,6 +52,6 @@ fun testValFromThisFile2() {
 }
 
 fun testValWithGetter() {
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"var ${valWithGetter} = 1;"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"var " + valWithGetter + " = 1;"<!>)
+    js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valWithGetter<!>} = 1;")
+    js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valWithGetter<!> + " = 1;")
 }

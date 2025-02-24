@@ -197,12 +197,6 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
     }
 
     @Test
-    @TestMetadata("compileTimeStringWithTopLevelVal.kt")
-    public void testCompileTimeStringWithTopLevelVal() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithTopLevelVal.kt");
-    }
-
-    @Test
     @TestMetadata("compileTimeStringWithVal.kt")
     public void testCompileTimeStringWithVal() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithVal.kt");
