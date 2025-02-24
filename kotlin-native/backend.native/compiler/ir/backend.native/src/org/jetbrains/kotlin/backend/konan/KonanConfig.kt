@@ -84,7 +84,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     private val defaultGC get() = GC.PARALLEL_MARK_CONCURRENT_SWEEP
-    val gc: GC get() = configuration.get(BinaryOptions.gc) ?: defaultGC
+    val gc: GC get() = configuration.get(BinaryOptions.gc) ?: run {
+        if (swiftExport) GC.CONCURRENT_MARK_AND_SWEEP else defaultGC
+    }
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
     private val defaultDisableMmap get() = target.family == Family.MINGW || !pagedAllocator
@@ -550,7 +552,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (allocationMode != defaultAllocationMode)
             append("-allocator${allocationMode.name}")
         if (gc != defaultGC)
-            append("-gc${gc.name}")
+            append("-gc${gc.shortcut ?: gc.name.lowercase()}")
         if (gcSchedulerType != defaultGCSchedulerType)
             append("-gc_scheduler${gcSchedulerType.name}")
         if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)
