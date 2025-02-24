@@ -67,7 +67,7 @@ object FirExpectActualResolver {
                                     scope.processPropertiesByName(callableId.callableName) { add(it) }
                                 }
                                 .filter { expectSymbol -> expectSymbol.isExpect && expectSymbol.moduleData in transitiveDependsOn }
-                                .filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData) { it.moduleData }
+                                .filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData)
                         }
                     }
                     candidates
@@ -96,7 +96,7 @@ object FirExpectActualResolver {
                         .filter { it.isExpect && it.moduleData in transitiveDependsOn }
                         .filterIsInstance<FirRegularClassSymbol>()
                         .distinct()
-                        .filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData) { it.moduleData }
+                        .filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData)
                         .groupBy { AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol = it, actualSymbol, context) }
                 }
                 else -> emptyMap()
@@ -141,11 +141,10 @@ object FirExpectActualResolver {
  * Otherwise, `module4` won't appear in "the first wave" of the topologically sorted graph,
  * and `AMBIGUOUS_EXPECTS` won't be reported.
  */
-private fun <T : Any> Iterable<T>.filterContainedInTheFirstWaveOfDependsOnDominatorTree(
+private fun <T : FirBasedSymbol<*>> Iterable<T>.filterContainedInTheFirstWaveOfDependsOnDominatorTree(
     graphStartingNode: FirModuleData,
-    moduleSelector: (T) -> FirModuleData,
 ): List<T> {
-    val modulesOfInterest: Map<FirModuleData, List<T>> = groupBy(moduleSelector)
+    val modulesOfInterest: Map<FirModuleData, List<T>> = groupBy { it.moduleData }
     // In happy cases (the majority of the cases), only 1 expect declaration is available;
     // Otherwise, an `AMBIGUOUS_EXPECTS` diagnostic is reported.
     val result: MutableList<T> = ArrayList(1)
