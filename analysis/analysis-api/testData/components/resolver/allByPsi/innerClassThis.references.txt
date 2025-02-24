@@ -1,0 +1,11 @@
+KtNameReferenceExpression(8,9): 'r'
+  KtSimpleNameReference:
+    package r
+
+KtNameReferenceExpression(46,49): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtConstructorDelegationReferenceExpression(76,80): 'this'
+  KtConstructorDelegationReference:
+    (in r.A.B) constructor(x: kotlin.Int)

@@ -173,6 +173,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
   }
 
   @Test
+  @TestMetadata("innerClass.kt")
+  public void testInnerClass() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/innerClass.kt");
+  }
+
+  @Test
+  @TestMetadata("innerClassThis.kt")
+  public void testInnerClassThis() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/innerClassThis.kt");
+  }
+
+  @Test
   @TestMetadata("invoke.kt")
   public void testInvoke() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/invoke.kt");
@@ -194,6 +206,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
   @TestMetadata("multiEquals.kt")
   public void testMultiEquals() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/multiEquals.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClass.kt")
+  public void testNestedClass() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/nestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassThis.kt")
+  public void testNestedClassThis() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/nestedClassThis.kt");
   }
 
   @Test

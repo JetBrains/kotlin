@@ -1,0 +1,164 @@
+KtFile: 'nestedClassThis.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,9): 'package r'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,9): 'r'
+  NO_CANDIDATES
+
+KtImportList(9,9): ''
+  NO_CANDIDATES
+
+KtClass(11,86): 'class A {'
+  NO_CANDIDATES
+
+KtClassBody(19,86): '{'
+  NO_CANDIDATES
+
+KtClass(25,84): 'class B(val x: Int) {'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(32,44): '(val x: Int)'
+  NO_CANDIDATES
+
+KtParameterList(32,44): '(val x: Int)'
+  NO_CANDIDATES
+
+KtParameter(33,43): 'val x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(40,43): 'Int'
+  NO_CANDIDATES
+
+KtUserType(40,43): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(40,43): 'Int'
+  NO_CANDIDATES
+
+KtClassBody(45,84): '{'
+  NO_CANDIDATES
+
+KtSecondaryConstructor(55,78): 'constructor(): this(10)'
+  NO_CANDIDATES
+
+KtParameterList(66,68): '()'
+  NO_CANDIDATES
+
+KtConstructorDelegationCall(70,78): 'this(10)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.A.B
+          symbol = <constructor>(): r.A.B
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A.B'.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        10 -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.A.B
+          symbol = <constructor>(x: kotlin.Int): r.A.B
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorDelegationReferenceExpression(70,74): 'this'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.A.B
+          symbol = <constructor>(): r.A.B
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A.B'.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        10 -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.A.B
+          symbol = <constructor>(x: kotlin.Int): r.A.B
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(74,78): '(10)'
+  NO_CANDIDATES
+
+KtValueArgument(75,77): '10'
+  NO_CANDIDATES
+
+KtConstantExpression(75,77): '10'
+  NO_CANDIDATES

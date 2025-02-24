@@ -1,0 +1,200 @@
+KtFile: 'nestedClass.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,9): 'package r'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,9): 'r'
+  NO_CANDIDATES
+
+KtImportList(9,9): ''
+  NO_CANDIDATES
+
+KtClass(11,83): 'class A {'
+  NO_CANDIDATES
+
+KtClassBody(19,83): '{'
+  NO_CANDIDATES
+
+KtClass(25,52): 'open class Base(val x: Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(25,29): 'open'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(40,52): '(val x: Int)'
+  NO_CANDIDATES
+
+KtParameterList(40,52): '(val x: Int)'
+  NO_CANDIDATES
+
+KtParameter(41,51): 'val x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(48,51): 'Int'
+  NO_CANDIDATES
+
+KtUserType(48,51): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(48,51): 'Int'
+  NO_CANDIDATES
+
+KtClass(57,81): 'class B(x: Int): Base(x)'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(64,72): '(x: Int)'
+  NO_CANDIDATES
+
+KtParameterList(64,72): '(x: Int)'
+  NO_CANDIDATES
+
+KtParameter(65,71): 'x: Int'
+  NO_CANDIDATES
+
+KtTypeReference(68,71): 'Int'
+  NO_CANDIDATES
+
+KtUserType(68,71): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(68,71): 'Int'
+  NO_CANDIDATES
+
+KtSuperTypeList(74,81): 'Base(x)'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(74,81): 'Base(x)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        x -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.A.Base
+          symbol = <constructor>(x: kotlin.Int): r.A.Base
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(74,78): 'Base'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        x -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.A.Base
+          symbol = <constructor>(x: kotlin.Int): r.A.Base
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(74,78): 'Base'
+  NO_CANDIDATES
+
+KtUserType(74,78): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(74,78): 'Base'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        x -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.A.Base
+          symbol = <constructor>(x: kotlin.Int): r.A.Base
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(78,81): '(x)'
+  NO_CANDIDATES
+
+KtValueArgument(79,80): 'x'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(79,80): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
