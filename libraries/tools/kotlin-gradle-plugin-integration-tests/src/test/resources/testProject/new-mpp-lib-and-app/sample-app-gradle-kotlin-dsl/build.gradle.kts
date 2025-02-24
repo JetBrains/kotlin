@@ -64,6 +64,7 @@ kotlin {
 }
 
 tasks.register("resolveRuntimeDependencies") {
+    notCompatibleWithConfigurationCache("Resolving the configuration should happen during the execution phase")
     doFirst {
         // KT-26301
         val configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
