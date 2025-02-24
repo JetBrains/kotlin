@@ -1,4 +1,5 @@
 // LANGUAGE: +ExpectRefinement
+// IGNORE_FIR_DIAGNOSTICS
 // FIR_IDENTICAL
 // SKIP_K1
 // WITH_STDLIB
@@ -8,7 +9,7 @@
 expect fun foo(a: Int = 1)
 
 // MODULE: common2()()(common1)
-@kotlin.experimental.ExperimentalExpectRefinement
+<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
 expect fun foo(a: Int)
 
 fun bar() {
