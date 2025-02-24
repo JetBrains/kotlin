@@ -61,11 +61,11 @@ import kotlin.contracts.contract
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
-fun FirClass.unsubstitutedScope(context: CheckerContext): FirTypeScope =
+fun FirClass.unsubstitutedScope(context: CheckerContext, withForcedTypeCalculator: Boolean = false): FirTypeScope =
     this.unsubstitutedScope(
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,
-        withForcedTypeCalculator = false,
+        withForcedTypeCalculator = withForcedTypeCalculator,
         memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
