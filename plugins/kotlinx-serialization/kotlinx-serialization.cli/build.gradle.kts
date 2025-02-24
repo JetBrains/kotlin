@@ -10,6 +10,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
     implementation(project(":kotlinx-serialization-compiler-plugin.k1"))

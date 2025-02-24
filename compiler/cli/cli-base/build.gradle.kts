@@ -11,8 +11,7 @@ dependencies {
     api(project(":compiler:backend.jvm"))
     api(project(":compiler:light-classes"))
     api(project(":compiler:javac-wrapper"))
-    api(project(":kotlin-util-klib"))
-    api(project(":kotlin-util-klib-metadata"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
