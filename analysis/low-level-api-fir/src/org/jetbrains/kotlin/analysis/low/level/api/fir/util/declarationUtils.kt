@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
@@ -288,7 +287,7 @@ internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.contai
 
 fun findStringPlusSymbol(session: FirSession): FirNamedFunctionSymbol? {
     val stringClassSymbol = session.builtinTypes.stringType.toRegularClassSymbol(session)
-    return stringClassSymbol?.declarationSymbols?.singleOrNull {
-        it is FirFunctionSymbol && it.callableId.callableName == OperatorNameConventions.PLUS
-    } as? FirNamedFunctionSymbol
+    return stringClassSymbol?.fir?.declarations?.singleOrNull {
+        it is FirSimpleFunction && it.name == OperatorNameConventions.PLUS
+    }?.symbol as? FirNamedFunctionSymbol
 }
