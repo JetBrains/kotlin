@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
@@ -82,9 +83,10 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         exceptActualTracer: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
         enumWhenTracker: EnumWhenTracker,
-        importTracker: ImportTracker
+        importTracker: ImportTracker,
+        compilationCanceledStatus: CompilationCanceledStatus
     ) {
-        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker, importTracker)
+        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker, importTracker, compilationCanceledStatus)
 
         with(builder) {
             register(

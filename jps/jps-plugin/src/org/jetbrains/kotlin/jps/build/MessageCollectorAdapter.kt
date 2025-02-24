@@ -33,6 +33,9 @@ class MessageCollectorAdapter(
 
         val kind = kind(severity)
         if (kind != null) {
+            if (severity == CompilerMessageSeverity.EXCEPTION || severity == CompilerMessageSeverity.ERROR) {
+                KotlinBuilder.LOG.info(">>>I catched " + kind.toString() + " With message: " + message + "<<<")
+            }
             // Report target when cross-compiling common files
             if (location != null && kotlinTarget != null && kotlinTarget.isFromIncludedSourceRoot(File(location.path))) {
                 val moduleName = kotlinTarget.module.name

@@ -54,6 +54,8 @@ import org.jetbrains.kotlin.util.CodeAnalysisMeasurement
 import org.jetbrains.kotlin.util.CodeGenerationMeasurement
 import org.jetbrains.kotlin.util.CompilerInitializationMeasurement
 import java.io.File
+import java.io.StringWriter
+import java.io.PrintWriter
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -762,6 +764,11 @@ class CompileServiceImpl(
     override fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> = ifAlive(minAliveness = Aliveness.Alive) {
         state.addClient(aliveFlagPath)
         log.info("Registered a client alive file: $aliveFlagPath")
+        val sw = StringWriter()
+        val pw = PrintWriter(sw)
+        Exception("Current stack trace").printStackTrace(pw)
+        val stackTraceString = sw.toString()
+        log.info(stackTraceString)
         CompileService.CallResult.Ok()
     }
 

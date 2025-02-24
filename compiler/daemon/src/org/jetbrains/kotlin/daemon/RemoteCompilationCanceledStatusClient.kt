@@ -44,22 +44,28 @@ class RemoteCompilationCanceledStatusClient(
         if (curNanos - lastChecked > CANCELED_STATUS_CHECK_THRESHOLD_NS) {
             profiler.withMeasure(this) {
                 try {
+                    log.warning(">>>check cancelled from: " + System.identityHashCode(facade))
                     facade.compilationCanceledStatus_checkCanceled()
                 }
                 catch (e: RmiFriendlyCompilationCanceledException) {
+                    log.warning(">>>RmiFriendlyCompilationCanceledException (${e.message})")
                     throw CompilationCanceledException()
                 }
                 catch (e: java.rmi.ConnectIOException) {
+                    log.warning(">>>ConnectIOException (${e.message})")
                     cancelOnError(e)
                 }
-                catch (e: java.rmi.ConnectException) {
+                catch (e: java.rmi.ConnectException) { // here // Connection refused to host: 127.0.0.1; nested exception is: java.net.ConnectException: Connection refused)
+                    log.warning(">>>ConnectException (${e.message}) AND facade is:" + System.identityHashCode(facade))
                     cancelOnError(e)
                 }
                 catch (e: java.rmi.NoSuchObjectException) {
+                    log.warning(">>>NoSuchObjectException (${e.message})")
                     // this was added mostly for tests since others are more difficult to emulate
                     cancelOnError(e)
                 }
                 catch (e: java.rmi.UnmarshalException) {
+                    log.warning(">>>UnmarshalException (${e.message})")
                     cancelOnError(e)
                 }
             }

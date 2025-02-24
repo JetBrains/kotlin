@@ -182,12 +182,14 @@ data class DaemonJVMOptions(
         var maxMemory: String = "",
         var maxMetaspaceSize: String = "",
         var reservedCodeCacheSize: String = "320m",
+//        var rmiDebug: String = "ALL",
         var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = ""),
                        StringPropMapper(this, DaemonJVMOptions::maxMetaspaceSize, listOf("XX:MaxMetaspaceSize"), mergeDelimiter = "="),
                        StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "="),
+//                       StringPropMapper(this, DaemonJVMOptions::rmiDebug, listOf("Dsun.rmi.transport.tcp.logLevel"), mergeDelimiter = "="),
                        restMapper)
 
     val restMapper: RestPropMapper<*, *>

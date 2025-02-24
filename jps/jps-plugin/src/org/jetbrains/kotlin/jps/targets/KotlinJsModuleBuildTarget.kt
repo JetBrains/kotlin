@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.jps.model.productionOutputFilePath
 import org.jetbrains.kotlin.jps.model.testOutputFilePath
 import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.JS_EXT
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.META_JS_SUFFIX
@@ -71,9 +72,10 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
         exceptActualTracer: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
         enumWhenTracker: EnumWhenTracker,
-        importTracker: ImportTracker
+        importTracker: ImportTracker,
+        compilationCanceledStatus: CompilationCanceledStatus
     ) {
-        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker, importTracker)
+        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker, importTracker, compilationCanceledStatus)
 
         with(builder) {
             register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())

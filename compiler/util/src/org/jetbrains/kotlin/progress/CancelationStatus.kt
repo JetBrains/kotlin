@@ -25,6 +25,10 @@ class IncrementalNextRoundException : CompilationCanceledException()
 
 interface CompilationCanceledStatus {
     fun checkCanceled(): Unit
+    object DoNothing : CompilationCanceledStatus {
+        override fun checkCanceled() {
+        }
+    }
 }
 
 object ProgressIndicatorAndCompilationCanceledStatus {

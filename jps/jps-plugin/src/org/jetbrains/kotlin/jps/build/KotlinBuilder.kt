@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
@@ -252,6 +253,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             InlineConstTracker.DoNothing,
             EnumWhenTracker.DoNothing,
             ImportTracker.DoNothing,
+            CompilationCanceledStatus.DoNothing,
             chunk,
             messageCollector
         ) ?: return
@@ -444,6 +446,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val inlineConstTracker = InlineConstTrackerImpl()
         val enumWhenTracker = EnumWhenTrackerImpl()
         val importTracker = ImportTrackerImpl()
+        val cancelStatus = CompilationCanceledStatusImpl()
 
         val environment = createCompileEnvironment(
             context,
@@ -454,6 +457,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             inlineConstTracker,
             enumWhenTracker,
             importTracker,
+            cancelStatus,
             chunk,
             messageCollector
         ) ?: return ABORT
@@ -488,9 +492,17 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
-        val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
+        val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false] // если компилятор посылал CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION
         if (compilationErrors) {
             LOG.info("Compiled with errors")
+//            environment.progressReporter.progress(">>>>")
+//            (lookupTracker as? LookupTrackerImpl)?.lookups?.let { lookups ->
+//                val formattedLookups = lookups.toHashMap().entries.joinToString("\n") { (key, value) ->
+//                    "Key: $key -> Value: $value"
+//                }
+//                environment.progressReporter.progress(formattedLookups)
+//            }
+//            environment.progressReporter.progress("<<<<")
             JavaBuilderUtil.registerFilesWithErrors(context, messageCollector.filesWithErrors.map(::File))
             return ABORT
         } else {
@@ -667,6 +679,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         inlineConstTracker: InlineConstTracker,
         enumWhenTracker: EnumWhenTracker,
         importTracker: ImportTracker,
+        cancelStatus: CompilationCanceledStatus,
         chunk: ModuleChunk,
         messageCollector: MessageCollectorAdapter
     ): JpsCompilerEnvironment? {
@@ -678,7 +691,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 exceptActualTracer,
                 inlineConstTracker,
                 enumWhenTracker,
-                importTracker
+                importTracker,
+                cancelStatus
             )
             build()
         }

@@ -114,7 +114,10 @@ open class CompilerCallbackServicesFacadeServer(
             // removing dependency from openapi (this is obsolete part anyway, and will be removed soon)
             if (e.isProcessCanceledException())
                 throw RmiFriendlyCompilationCanceledException()
-            else throw e
+            else {
+                // this code o=is not reported
+                throw Exception( ">>>compilationCanceledStatus_checkCanceled: " + compilationCanceledStatus!!::class.java.simpleName, e)
+            }
         }
     }
 

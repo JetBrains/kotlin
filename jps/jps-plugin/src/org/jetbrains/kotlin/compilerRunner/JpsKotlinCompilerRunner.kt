@@ -230,13 +230,21 @@ class JpsKotlinCompilerRunner {
         return doWithDaemon(environment) { sessionId, daemon ->
             environment.withProgressReporter { progress ->
                 progress.compilationStarted()
-                daemon.compile(
+                log.info("!!!JpsKotlinCompilerRunner")
+                environment.progressReporter.progress(daemon.getClients().get().joinToString(prefix = ">>>BEFORE:Connected clients: "))
+                val exitCode = daemon.compile(
                     sessionId,
                     withAdditionalCompilerArgs(compilerArgs),
                     options,
                     JpsCompilerServicesFacadeImpl(environment),
                     compilationResult
                 )
+                environment.progressReporter.progress(daemon.getClients().get().joinToString(prefix = ">>>AFTER:Connected clients: "))
+//                log.info("!!!JpsKotlinCompilerRunner=" + exitCode.get().toString())
+                environment.progressReporter.progress("!!!JpsKotlinCompilerRunner=" + exitCode.get().toString() + " session=" + sessionId)
+
+
+                return@withProgressReporter exitCode
             }.also {
                 buildMetricReporter?.addCompilerMetrics(compilationResult)
             }

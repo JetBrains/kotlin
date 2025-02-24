@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.nio.file.Files
+import java.util.Collections
 
 /**
  * Properties and actions for Kotlin test / production module build target.
@@ -272,16 +273,28 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         exceptActualTracer: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
         enumWhenTracker: EnumWhenTracker,
-        importTracker: ImportTracker
+        importTracker: ImportTracker,
+        compilationCanceledStatus: CompilationCanceledStatus,
     ) {
         with(builder) {
             register(LookupTracker::class.java, lookupTracker)
             register(ExpectActualTracker::class.java, exceptActualTracer)
             register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
+                val history = Collections.synchronizedList(mutableListOf<String>())
+
                 override fun checkCanceled() {
-                    if (jpsGlobalContext.cancelStatus.isCanceled) throw CompilationCanceledException()
+                    val isCanceled = jpsGlobalContext.cancelStatus.isCanceled
+                    val logEntry = "Cheking for: ${chunk.representativeTarget.module.name}=${isCanceled} ${Thread.currentThread().name} -- ${Thread.currentThread().id}"
+                    history.add(logEntry)
+                    KotlinBuilder.LOG.info(logEntry)
+
+                    if (isCanceled) {
+                        KotlinBuilder.LOG.info("ITS FAILING" + history.joinToString("\n", "\n\n"))
+                        throw CompilationCanceledException()
+                    }
                 }
             })
+//            register(CompilationCanceledStatus::class.java, compilationCanceledStatus)
             register(InlineConstTracker::class.java, inlineConstTracker)
             register(EnumWhenTracker::class.java, enumWhenTracker)
             register(ImportTracker::class.java, importTracker)
