@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.analysis.decompiler.konan
@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
@@ -32,7 +33,10 @@ sealed class FileWithMetadata {
             val klibMetadataLoadingCache = KlibLoadingMetadataCache.getInstance()
             val (fragment, version) = klibMetadataLoadingCache.getCachedPackageFragmentWithVersion(packageFragment)
             if (fragment == null || version == null) return null
-            return Compatible(fragment, version) //todo: check version compatibility
+            if (!version.isCompatibleWithCurrentCompilerVersion()) {
+                return Incompatible(version)
+            }
+            return Compatible(fragment, version)
         }
     }
 }

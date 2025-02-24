@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,10 +19,8 @@ abstract class K2KlibMetadataDecompiler<out V : BinaryVersion>(
     private val fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,
     flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    expectedBinaryVersion: () -> V,
-    invalidBinaryVersion: () -> V,
     private val stubVersion: Int,
-) : KlibMetadataDecompiler<V>(fileType, serializerProtocol, flexibleTypeDeserializer, expectedBinaryVersion, invalidBinaryVersion) {
+) : KlibMetadataDecompiler<V>(fileType, serializerProtocol, flexibleTypeDeserializer) {
     private val renderer: DescriptorRenderer by lazy {
         DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
     }
