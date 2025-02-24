@@ -49,6 +49,7 @@ internal fun getLanguageVersionSettings(
     return LanguageVersionSettingsImpl(
         languageVersion = languageVersion,
         apiVersion = apiVersion, analysisFlags = hashMapOf(
+            AnalysisFlags.allowKotlinPackage to InternalConfiguration.allowKotlinPackage,
             // special flag for Dokka
             // force to resolve light classes (lazily by default)
             AnalysisFlags.eagerResolveOfLightClasses to true

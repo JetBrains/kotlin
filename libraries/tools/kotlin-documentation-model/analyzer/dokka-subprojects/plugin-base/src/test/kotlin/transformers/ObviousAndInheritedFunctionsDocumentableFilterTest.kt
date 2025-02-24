@@ -9,7 +9,7 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import testApi.testRunner.dokkaConfiguration
-import utils.OnlyDescriptors
+import utils.withAllowKotlinPackage
 import kotlin.test.assertEquals
 
 class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
@@ -252,12 +252,12 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyDescriptors("#3354")
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration"])
-    fun `should not suppress toString, equals and hashcode of kotlin Any`(suppressingConfiguration: DokkaConfigurationImpl) {
-        testInline(
-            """
+    fun `should not suppress toString, equals and hashcode of kotlin Any`(suppressingConfiguration: DokkaConfigurationImpl) =
+        withAllowKotlinPackage {
+            testInline(
+                """
             /src/Any.kt
             package kotlin
             public open class Any {
@@ -266,22 +266,21 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
                 public open fun toString(): String
             }
             """.trimIndent(),
-            suppressingConfiguration
-        ) {
-            preMergeDocumentablesTransformationStage = { modules ->
-                val functions = modules.flatMap { it.packages }.flatMap { it.classlikes }.flatMap { it.functions }
-                assertEquals(setOf("equals", "hashCode", "toString"), functions.map { it.name }.toSet())
+                suppressingConfiguration
+            ) {
+                preMergeDocumentablesTransformationStage = { modules ->
+                    val functions = modules.flatMap { it.packages }.flatMap { it.classlikes }.flatMap { it.functions }
+                    assertEquals(setOf("equals", "hashCode", "toString"), functions.map { it.name }.toSet())
+                }
             }
         }
-    }
 
-    // when running with K2 - kotlin package is skipped
-    @OnlyDescriptors("#3354")
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration"])
-    fun `should not suppress toString, equals and hashcode of kotlin Enum`(suppressingConfiguration: DokkaConfigurationImpl) {
-        testInline(
-            """
+    fun `should not suppress toString, equals and hashcode of kotlin Enum`(suppressingConfiguration: DokkaConfigurationImpl) =
+        withAllowKotlinPackage {
+            testInline(
+                """
             /src/Enum.kt
             package kotlin
             public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<E> {
@@ -291,12 +290,16 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
                 public override fun toString(): String
             }
             """.trimIndent(),
-            suppressingConfiguration
-        ) {
-            preMergeDocumentablesTransformationStage = { modules ->
-                val functions = modules.flatMap { it.packages }.flatMap { it.classlikes }.flatMap { it.functions }
-                assertEquals(setOf("compareTo", "equals", "hashCode", "toString"), functions.map { it.name }.toSet())
+                suppressingConfiguration
+            ) {
+                preMergeDocumentablesTransformationStage = { modules ->
+                    val functions = modules.flatMap { it.packages }.flatMap { it.classlikes }.flatMap { it.functions }
+                    assertEquals(
+                        setOf("compareTo", "equals", "hashCode", "toString"),
+                        functions.map { it.name }.toSet()
+                    )
+                }
             }
+
         }
-    }
 }
