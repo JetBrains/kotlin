@@ -18665,9 +18665,21 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Forks {
         @Test
+        @TestMetadata("failForkPointWhenNoneOfThemSuccessful.kt")
+        public void testFailForkPointWhenNoneOfThemSuccessful() {
+          runTest("compiler/testData/diagnostics/tests/inference/forks/failForkPointWhenNoneOfThemSuccessful.kt");
+        }
+
+        @Test
         @TestMetadata("forkInWhen.kt")
         public void testForkInWhen() {
           runTest("compiler/testData/diagnostics/tests/inference/forks/forkInWhen.kt");
+        }
+
+        @Test
+        @TestMetadata("kt75444Original.kt")
+        public void testKt75444Original() {
+          runTest("compiler/testData/diagnostics/tests/inference/forks/kt75444Original.kt");
         }
 
         @Test
