@@ -404,7 +404,7 @@ object NativeTestSupport {
         // Aggressively adjust timeout in case of an aggressive scheduler
         val scheduler = output.filterIsInstance<GCScheduler>().firstOrNull()
         if (scheduler == GCScheduler.AGGRESSIVE) {
-            executionTimeout *= 2
+            executionTimeout *= 4
         }
 
         return Timeouts(executionTimeout)
