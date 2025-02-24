@@ -18,12 +18,11 @@ kotlin {
 }
 
 val buildExternalDependenciesFile = tasks.register("buildExternalDependenciesFile") {
+    val externalDependenciesFile = Class.forName("org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder")
+        .getDeclaredMethod("buildExternalDependenciesFileForTests", Project::class.java).apply { isAccessible = true }
+        .invoke(null, project)
+        ?.toString().orEmpty()
     doLast {
-        val externalDependenciesFile = Class.forName("org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder")
-            .getDeclaredMethod("buildExternalDependenciesFileForTests", Project::class.java).apply { isAccessible = true }
-            .invoke(null, project)
-            ?.toString().orEmpty()
-
         println("for_test_external_dependencies_file=$externalDependenciesFile")
     }
 }
