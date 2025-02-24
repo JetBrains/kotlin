@@ -409,7 +409,7 @@ class AdapterGenerator(
 
         if (argument !is FirSamConversionExpression) return this
 
-        val samFirType = argument.resolvedType.let { it.removeExternalProjections() ?: it }
+        val samFirType = argument.resolvedType.let { it.removeExternalProjections(session.typeContext) ?: it }
         val samType = samFirType.toIrType(c, ConversionTypeOrigin.DEFAULT)
 
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
@@ -471,13 +471,10 @@ class AdapterGenerator(
     // This function is mostly a mirror of org.jetbrains.kotlin.backend.common.SamTypeApproximator.removeExternalProjections
     // First attempts, to share the code between K1 and K2 via type contexts stumbled upon the absence of star-projection-type in K2
     // and the possibility of incorrectly mapped details that might break some code when using K1.
-    private fun ConeKotlinType.removeExternalProjections(): ConeKotlinType? =
+    private fun ConeKotlinType.removeExternalProjections(typeContext: ConeInferenceContext): ConeKotlinType? =
         when (this) {
             is ConeRigidType -> removeExternalProjections()
-            is ConeFlexibleType -> ConeFlexibleType(
-                lowerBound.removeExternalProjections() ?: lowerBound,
-                upperBound.removeExternalProjections() ?: upperBound,
-            )
+            is ConeFlexibleType -> mapTypesOrNull(typeContext) { it.removeExternalProjections() }
         }
 
     private fun ConeRigidType.removeExternalProjections(): ConeRigidType? {
