@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProv
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import java.io.IOException
@@ -22,8 +23,6 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
     private val fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    private val expectedBinaryVersion: () -> V,
-    private val invalidBinaryVersion: () -> V
 ) : ClassFileDecompilers.Full() {
     protected abstract val metadataStubBuilder: KlibMetadataStubBuilder
 
@@ -67,13 +66,13 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
 
         return when (val fileWithMetadata = readFileSafely(virtualFile)) {
             is FileWithMetadata.Incompatible -> {
-                createIncompatibleMetadataVersionDecompiledText(expectedBinaryVersion(), fileWithMetadata.version)
+                createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INSTANCE_NEXT, fileWithMetadata.version)
             }
             is FileWithMetadata.Compatible -> {
                 getDecompiledText(fileWithMetadata, virtualFile, serializerProtocol(), flexibleTypeDeserializer)
             }
             null -> {
-                createIncompatibleMetadataVersionDecompiledText(expectedBinaryVersion(), invalidBinaryVersion())
+                createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INSTANCE_NEXT, MetadataVersion.INVALID_VERSION)
             }
         }
     }

@@ -31,7 +31,7 @@ fun buildDecompiledTextForClassFile(
     val classId = classHeader.classId
 
     if (!classHeader.metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
-        return createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INSTANCE, classHeader.metadataVersion)
+        return createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INSTANCE_NEXT, classHeader.metadataVersion)
     }
 
     fun buildText(declarations: List<DeclarationDescriptor>) = buildDecompiledText(
