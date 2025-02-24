@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeFragmentAware
@@ -149,7 +150,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         // We use identity comparison here intentionally to check that it is exactly the object we want to find
         if (element === anchorElement) return anchorFir
 
-        return findElementInside(firElement = anchorFir, element = element, stopAt = anchorElement)
+        return findElementInside(firElement = anchorFir, element = element)
     }
 
     private fun PsiElement.annotationOwner(): KtAnnotated? {
@@ -222,20 +223,10 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return parentsWithSelf.find { it is KtPackageDirective || it is KtImportDirective } as? KtElement
     }
 
-    private fun findElementInside(firElement: FirElement, element: KtElement, stopAt: PsiElement): FirElement? {
+    private fun findElementInside(firElement: FirElement, element: KtElement): FirElement? {
         val elementToSearch = getPsiAsFirElementSource(element) ?: return null
         val mapping = FirElementsRecorder.recordElementsFrom(firElement, FirElementsRecorder())
-
-        var current: PsiElement? = elementToSearch
-        while (current != null && current != stopAt && current !is KtFile) {
-            if (current is KtElement) {
-                mapping[current]?.let { return it }
-            }
-
-            current = current.parent
-        }
-
-        return firElement
+        return KtToFirMapping.getFir(elementToSearch, moduleComponents.session, mapping)
     }
 
     private fun FirElementWithResolveState.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
