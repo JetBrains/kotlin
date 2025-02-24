@@ -882,8 +882,10 @@ class FirSignatureEnhancement(
             this.owner.classKind == ClassKind.ANNOTATION_CLASS
         }
 
-        // If any overridden member has implicit return type, we need to defer the return type computation.
-        if (overriddenMembers.any { it.returnTypeRef is FirImplicitTypeRef }) {
+        // If any overridden member has an implicit return type, we need to defer the return type computation.
+        // If we're saving a private Kotlin supertype,
+        // the owner could also be a non-intersected Kotlin declaration with an implicit return type.
+        if (overriddenMembers.any { it.returnTypeRef is FirImplicitTypeRef } || privateKtSuperClass != null && owner.returnTypeRef is FirImplicitTypeRef) {
             val deferredReturnTypeCalculation = object : DeferredCallableCopyReturnType() {
                 override fun computeReturnType(calc: CallableCopyTypeCalculator): ConeKotlinType {
                     return owner.enhance(
