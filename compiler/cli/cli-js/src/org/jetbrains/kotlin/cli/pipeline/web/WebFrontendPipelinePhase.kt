@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.nio.file.Paths
 
@@ -54,7 +55,11 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
     override fun executePhase(input: ConfigurationPipelineArtifact): WebFrontendPipelineArtifact? {
         val configuration = input.configuration
         val environmentForJS = KotlinCoreEnvironment.createForProduction(input.rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-        configuration.perfManager?.notifyAnalysisStarted()
+        configuration.perfManager?.let {
+            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+            it.notifyCurrentPhaseFinishedIfNeeded()
+            it.notifyAnalysisStarted()
+        }
         val messageCollector = configuration.messageCollector
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries

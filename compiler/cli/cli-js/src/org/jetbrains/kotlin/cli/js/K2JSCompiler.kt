@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -235,6 +236,8 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         outputKlibPath: String,
     ): ModulesStructure {
         val performanceManager = environmentForJS.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+        @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+        performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
         performanceManager?.notifyAnalysisStarted()
         lateinit var sourceModule: ModulesStructure
         do {

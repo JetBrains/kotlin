@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
 
 object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, MetadataFrontendPipelineArtifact>(
@@ -95,7 +96,8 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             EnvironmentConfigFiles.METADATA_CONFIG_FILES
         )
         perfManager?.let {
-            it.notifyCompilerInitialized()
+            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+            it.notifyCurrentPhaseFinishedIfNeeded()
             it.notifyAnalysisStarted()
         }
 

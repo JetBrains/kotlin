@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -100,16 +102,14 @@ fun compileToLoweredIr(
     }
     performanceManager?.notifyTranslationToIRFinished()
 
-    performanceManager?.notifyIRLoweringStarted()
-
-    lowerPreservingTags(
-        allModules,
-        context,
-        context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false,
-    )
-
-    performanceManager?.notifyIRLoweringFinished()
+    performanceManager.tryMeasurePhaseTime(PhaseMeasurementType.IrLowering) {
+        lowerPreservingTags(
+            allModules,
+            context,
+            context.irFactory.stageController as WholeWorldStageController,
+            isIncremental = false,
+        )
+    }
 
     return LoweredIrWithExtraArtifacts(allModules, context, typeScriptFragment)
 }

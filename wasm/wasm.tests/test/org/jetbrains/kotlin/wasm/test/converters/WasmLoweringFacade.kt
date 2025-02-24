@@ -67,6 +67,10 @@ class WasmLoweringFacade(
 
         val testPackage = extractTestPackage(testServices)
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+        performanceManager?.let {
+            it.notifyCompilerInitialized()
+            it.notifyIRGenerationStarted()
+        }
         val generateDwarf = WasmEnvironmentConfigurationDirectives.GENERATE_DWARF in testServices.moduleStructure.allDirectives
         val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
         val generateDts = WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS in testServices.moduleStructure.allDirectives

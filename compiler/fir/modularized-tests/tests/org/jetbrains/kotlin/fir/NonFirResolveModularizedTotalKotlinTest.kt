@@ -11,12 +11,15 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.util.PhaseMeasurementType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.FileOutputStream
 import java.io.PrintStream
 import kotlin.system.measureNanoTime
@@ -35,7 +38,12 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
         val vmBefore = vmStateSnapshot()
         val time = measureNanoTime {
             try {
-                KotlinToJVMBytecodeCompiler.analyze(environment)
+                environment.configuration.perfManager.let {
+                    it?.notifyCompilerInitialized()
+                    it.tryMeasurePhaseTime(PhaseMeasurementType.Analysis) {
+                        KotlinToJVMBytecodeCompiler.analyze(environment)
+                    }
+                }
             } catch (e: Throwable) {
                 var exception: Throwable? = e
                 while (exception != null && exception != exception.cause) {

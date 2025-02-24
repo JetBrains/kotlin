@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.messageCollector
@@ -29,11 +28,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 
 object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBinaryPipelineArtifact>(
     name = "JvmBackendPipelineStep",
-    preActions = setOf(
-        PerformanceNotifications.IrLoweringStarted
-    ),
     postActions = setOf(
-        PerformanceNotifications.BackendFinished,
         CheckCompilationErrors.CheckDiagnosticCollector
     )
 ) {
@@ -89,7 +84,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
 
             codegenInputs += KotlinToJVMBytecodeCompiler.runLowerings(
                 project, configurationForModule, moduleDescriptor, module,
-                codegenFactory, backendInput, diagnosticCollector, classResolver, reportGenerationStarted = false
+                codegenFactory, backendInput, diagnosticCollector, classResolver,
             )
         }
 
@@ -103,7 +98,6 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
                 codegenFactory,
                 diagnosticCollector,
                 input.state.configuration,
-                reportGenerationFinished = false,
                 reportDiagnosticsToMessageCollector = false, // diagnostics will be reported in CheckCompilationErrors.CheckDiagnosticCollector
             )
         }

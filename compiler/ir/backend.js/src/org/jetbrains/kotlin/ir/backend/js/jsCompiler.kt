@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 
 class CompilerResult(
     val outputs: Map<TranslationMode, CompilationOutputs>,
@@ -132,7 +133,8 @@ fun compileIr(
 
     // TODO should be done incrementally
     generateJsTests(context, allModules.last())
-    performanceManager?.notifyTranslationToIRFinished()
+    @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+    performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyTranslationToIRFinished`, but this phase not always started or already finished
 
     performanceManager?.notifyIRLoweringStarted()
     (irFactory.stageController as? WholeWorldStageController)?.let {
