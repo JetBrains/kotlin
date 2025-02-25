@@ -34,6 +34,7 @@ abstract class FlowActionBuildFusService @Inject constructor(
         ): Provider<out BuildFusService<out Parameters>> {
             return project.gradle.sharedServices.registerIfAbsent(serviceName, FlowActionBuildFusService::class.java) { spec ->
                 spec.parameters.generalConfigurationMetrics.set(generalConfigurationMetricsProvider)
+                spec.parameters.generalMetricsFinalized.set(false)
                 spec.parameters.buildStatisticsConfiguration.set(KotlinBuildStatsConfiguration(project))
                 spec.parameters.buildId.value(buildUidService.map { it.buildId }).disallowChanges()
             }.also { buildService ->

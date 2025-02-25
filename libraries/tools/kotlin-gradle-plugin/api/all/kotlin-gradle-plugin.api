@@ -2585,6 +2585,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/Bu
 	public abstract fun getBuildId ()Lorg/gradle/api/provider/Property;
 	public abstract fun getBuildStatisticsConfiguration ()Lorg/gradle/api/provider/Property;
 	public abstract fun getGeneralConfigurationMetrics ()Lorg/gradle/api/provider/Property;
+	public abstract fun getGeneralMetricsFinalized ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/CloseActionBuildFusService : org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService {

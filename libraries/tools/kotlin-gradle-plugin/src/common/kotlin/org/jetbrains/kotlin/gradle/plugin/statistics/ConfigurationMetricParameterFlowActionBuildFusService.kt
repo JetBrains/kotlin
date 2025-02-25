@@ -23,6 +23,7 @@ abstract class ConfigurationMetricParameterFlowActionBuildFusService() : BuildFu
                 ConfigurationMetricParameterFlowActionBuildFusService::class.java
             ) { spec ->
                 spec.parameters.generalConfigurationMetrics.set(generalConfigurationMetricsProvider)
+                spec.parameters.generalMetricsFinalized.set(false)
                 spec.parameters.buildStatisticsConfiguration.set(KotlinBuildStatsConfiguration(project))
                 spec.parameters.buildId.value(buildUidService.map { it.buildId }).disallowChanges()
                 //init value to avoid `java.lang.IllegalStateException: GradleScopeServices has been closed` exception on close
