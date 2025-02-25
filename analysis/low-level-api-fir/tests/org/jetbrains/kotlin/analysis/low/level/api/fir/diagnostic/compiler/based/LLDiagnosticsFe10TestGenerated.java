@@ -30312,6 +30312,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("turnOffExpectRefinementFeature.kt")
+        public void testTurnOffExpectRefinementFeature() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/turnOffExpectRefinementFeature.kt");
+        }
+
+        @Test
         @TestMetadata("unrelatedExpects.kt")
         public void testUnrelatedExpects() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/hmppRefinement/unrelatedExpects.kt");
