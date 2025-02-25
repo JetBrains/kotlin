@@ -43,14 +43,12 @@ data class CompilerArgumentsLevel(
 }
 
 @Serializable
-data class CompilerArgumentsTopLevel(
-    override val name: String,
-    override val arguments: Set<CompilerArgument>,
-    override val nestedLevels: Set<CompilerArgumentsLevel>,
+data class CompilerArguments(
     val schemaVersion: Int = 1,
     val releases: List<KotlinReleaseVersionDetails> = KotlinReleaseVersionDetails.allReleaseVersions,
     val types: KotlinArgumentTypes = KotlinArgumentTypes(),
-) : CompilerArgumentsLevelBase
+    val topLevel: CompilerArgumentsLevel,
+)
 
 
 abstract class CompilerArgumentsLevelBuilderBase(
@@ -109,12 +107,20 @@ fun compilerArgumentsLevel(
 }
 
 @KotlinArgumentsDslMarker
-class CompilerArgumentsTopLevelBuilder(
-    name: String
-) : CompilerArgumentsLevelBuilderBase(name) {
-    fun build(): CompilerArgumentsTopLevel = CompilerArgumentsTopLevel(
-        name,
-        arguments,
-        nestedLevels,
+class CompilerArgumentsBuilder() {
+    private lateinit var topLevel: CompilerArgumentsLevel
+
+    fun topLevel(
+        name: String,
+        mergeWith: Set<CompilerArgumentsLevel> = emptySet(),
+        config: CompilerArgumentsLevelBuilder.() -> Unit
+    ) {
+        val levelBuilder = CompilerArgumentsLevelBuilder(name)
+        config(levelBuilder)
+        topLevel = mergeWith.fold(levelBuilder.build()) { init, level -> init.mergeWith(level) }
+    }
+
+    fun build(): CompilerArguments = CompilerArguments(
+        topLevel = topLevel
     )
 }
