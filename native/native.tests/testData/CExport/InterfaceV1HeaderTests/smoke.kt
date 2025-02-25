@@ -55,3 +55,27 @@ value class ValueClass(val content: Int)
 fun produceValueClass() = ValueClass(5)
 
 fun consumeValueClass(param: ValueClass): Int = param.content
+
+context(c: Boolean)
+fun ctxFoo() {}
+
+context(c: Boolean)
+val ctxVal: Int get() = 0
+
+context(c: Boolean)
+var ctxVar: Int
+    get() = if (c) 1 else 0
+    set(v) {}
+
+class CtxClass {
+    context(c: Boolean)
+    fun ctxFoo() {}
+
+    context(c: Boolean)
+    val ctxVal: Int get() = 0
+
+    context(c: Boolean)
+    var ctxVar: Int
+        get() = if (c) 1 else 0
+        set(v) {}
+}

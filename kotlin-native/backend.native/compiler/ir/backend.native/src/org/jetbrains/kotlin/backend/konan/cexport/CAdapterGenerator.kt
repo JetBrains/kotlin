@@ -56,6 +56,8 @@ private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
         return false
     if (descriptor.isSuspend)
         return false
+    if (descriptor.contextReceiverParameters.any())
+        return false
     return !descriptor.typeParameters.any()
 }
 

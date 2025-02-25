@@ -108,6 +108,9 @@ typedef struct {
 typedef struct {
   smoke_KNativePtr pinned;
 } smoke_kref_tests_native_SealedClass_C_D;
+typedef struct {
+  smoke_KNativePtr pinned;
+} smoke_kref_tests_native_CtxClass;
 
 
 typedef struct {
@@ -207,6 +210,10 @@ typedef struct {
             smoke_KType* (*_type)(void);
             smoke_kref_tests_native_SealedClass (*SealedClass)();
           } SealedClass;
+          struct {
+            smoke_KType* (*_type)(void);
+            smoke_kref_tests_native_CtxClass (*CtxClass)();
+          } CtxClass;
           smoke_KDouble (*get_constDouble)();
           smoke_KFloat (*get_constFloat)();
           smoke_KInt (*get_constInt)();
