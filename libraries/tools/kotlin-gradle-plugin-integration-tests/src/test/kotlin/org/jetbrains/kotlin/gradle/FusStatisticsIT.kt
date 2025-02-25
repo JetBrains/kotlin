@@ -18,6 +18,7 @@ import kotlin.io.path.deleteIfExists
 import kotlin.io.path.writeText
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.listDirectoryEntries
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @DisplayName("FUS statistic")
@@ -515,7 +516,8 @@ class FusStatisticsIT : KGPBaseTest() {
                 |        }
                 |    }
                 |}
-                """.trimMargin())
+                """.trimMargin()
+            )
 
             build("linkDebugExecutableHost", "-Pkotlin.session.logger.root.path=$projectPath") {
                 assertFileContains(
@@ -537,11 +539,58 @@ class FusStatisticsIT : KGPBaseTest() {
         //Test uses deprecated Gradle features
         project("multiplatformFlowAction", gradleVersion, buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)) {
             buildScriptInjection {
-                project.tasks.register("doNothing"){}
+                project.tasks.register("doNothing") {}
             }
-
             build("doNothing")
         }
+    }
+
+    @DisplayName("add configuration metrics after build was finish")
+    @GradleTest
+    @JvmGradlePluginTests
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_2,
+    )
+    fun concurrencyModificationExceptionTest(gradleVersion: GradleVersion) {
+        val rounds = 100
+        project(
+            "multiClassloaderProject", gradleVersion,
+        ) {
+            repeat(rounds) {
+                build(
+                    "compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", "-Dorg.gradle.parallel=true",
+                    buildOptions = defaultBuildOptions.copy(
+                        buildReport = listOf(BuildReportType.FILE),
+                        isolatedProjects = IsolatedProjectsMode.ENABLED,
+                    ),
+                ) {
+                    assertOutputDoesNotContain("BuildFusService was not registered")
+                }
+
+                build("clean", buildOptions = buildOptions)
+            }
+
+            val fusReports = baseFusStatisticsDirectory.listDirectoryEntries()
+            assertEquals(getExpectedFusFilesCount(gradleVersion, rounds), fusReports.size)
+
+            fusReports.forEach { path ->
+                assertFileContains(
+                    path,
+                    "CONFIGURATION_IMPLEMENTATION_COUNT",
+                    "NUMBER_OF_SUBPROJECTS",
+                )
+            }
+        }
+    }
+
+    private fun getExpectedFusFilesCount(gradleVersion: GradleVersion, rounds: Int): Int {
+        val expectedFiles = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_9)) {
+            //every submodule will create a separate file. There are two modules in the project
+            rounds * 2
+        } else {
+            rounds
+        }
+        return expectedFiles
     }
 
     private fun TestProject.applyDokka(version: String) {
