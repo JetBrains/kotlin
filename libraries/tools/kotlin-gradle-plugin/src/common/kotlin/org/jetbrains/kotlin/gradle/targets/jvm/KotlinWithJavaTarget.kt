@@ -15,7 +15,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.targets.jvm.ConfigureJavaTestFixturesSideEffect
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -42,9 +41,7 @@ internal fun ObjectFactory.KotlinWithJavaTargetForJvm(
             override val options: KotlinJvmCompilerOptions get() = compilerOptions
         }
     }
-) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>).also {
-    ConfigureJavaTestFixturesSideEffect.invoke(it)
-}
+) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>)
 
 @Suppress("DEPRECATION")
 abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(
