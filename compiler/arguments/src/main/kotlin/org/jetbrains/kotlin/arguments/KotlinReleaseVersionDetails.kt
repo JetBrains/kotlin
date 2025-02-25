@@ -12,11 +12,9 @@ sealed class KotlinReleaseVersionDetails(
     val major: Int,
     val minor: Int,
     val patch: Int,
-    val rcRelease: Int? = null,
-    val betaRelease: Int? = null
 ) {
     override fun toString(): String {
-        return "KotlinReleaseVersionDetails(major=$major, minor=$minor, patch=$patch, rcRelease=$rcRelease, betaRelease=$betaRelease)"
+        return "KotlinReleaseVersionDetails(major=$major, minor=$minor, patch=$patch)"
     }
 
     @Serializable

@@ -5,25 +5,19 @@
             "name": "1.4.0",
             "major": 1,
             "minor": 4,
-            "patch": 0,
-            "rcRelease": null,
-            "betaRelease": null
+            "patch": 0
         },
         {
             "name": "1.9.20",
             "major": 1,
             "minor": 9,
-            "patch": 20,
-            "rcRelease": null,
-            "betaRelease": null
+            "patch": 20
         },
         {
             "name": "2.0.0",
             "major": 2,
             "minor": 0,
-            "patch": 0,
-            "rcRelease": null,
-            "betaRelease": null
+            "patch": 0
         }
     ],
     "types": {
