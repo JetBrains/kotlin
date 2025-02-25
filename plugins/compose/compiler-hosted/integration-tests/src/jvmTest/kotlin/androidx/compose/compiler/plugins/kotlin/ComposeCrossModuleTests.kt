@@ -1411,6 +1411,54 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    // Regression test for b/397855145
+    @Test
+    fun testB397855145() {
+        compile(
+            mapOf(
+                "lib" to mapOf(
+                    "lib.kt" to """
+                        import androidx.compose.runtime.Composable
+    
+                        interface AssetScope {
+                            @Composable
+                            fun GraphicAsset(asset: Int, modifier: Int = 0): Int
+                        }
+            
+            
+                        class DefaultAssetScope : AssetScope {
+                            @Composable
+                            override fun GraphicAsset(asset: Int, modifier: Int) = asset
+                        }
+            
+                        @Composable
+                        fun SomeView(visualAsset: @Composable AssetScope.() -> Unit = {}) {
+                            DefaultAssetScope().visualAsset()
+                        }
+                    """
+                ),
+                "Main" to mapOf(
+                    "main.kt" to """
+                        import androidx.compose.runtime.Composable
+                        
+                        // in code
+                        data class Graphic(val res: Int)
+            
+                        @Composable
+                        fun Test() {
+                            val asset = Graphic(0)
+                            SomeView(
+                                visualAsset = {
+                                    GraphicAsset(asset = asset.res)
+                                }
+                            )
+                        }
+                    """
+                )
+            )
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
