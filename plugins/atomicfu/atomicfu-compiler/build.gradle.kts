@@ -191,12 +191,13 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     val localAtomicfuJsIrRuntimeForTests: FileCollection = atomicfuJsIrRuntimeForTests
     val localAtomicfuJsClasspath: FileCollection = atomicfuJsClasspath
     val localAtomicfuJvmClasspath: FileCollection = atomicfuJvmClasspath
+    val localAtomicfuCompilerPluginClasspath: FileCollection = atomicfuCompilerPluginForTests
 
     doFirst {
         systemProperty("atomicfuJsIrRuntimeForTests.classpath", localAtomicfuJsIrRuntimeForTests.asPath)
         systemProperty("atomicfuJs.classpath", localAtomicfuJsClasspath.asPath)
         systemProperty("atomicfuJvm.classpath", localAtomicfuJvmClasspath.asPath)
-        systemProperty("atomicfu.compiler.plugin", atomicfuCompilerPluginForTests.asPath)
+        systemProperty("atomicfu.compiler.plugin", localAtomicfuCompilerPluginClasspath.asPath)
     }
 }
 
@@ -218,8 +219,9 @@ val nativeTest = nativeTest(
     customTestDependencies = listOf(atomicfuNativeKlib),
     compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
 ) {
+    val localAtomicfuNativeKlib: FileCollection = atomicfuNativeKlib
     doFirst {
-        systemProperty("atomicfuNative.classpath", atomicfuNativeKlib.asPath)
+        systemProperty("atomicfuNative.classpath", localAtomicfuNativeKlib.asPath)
     }
 
     // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
