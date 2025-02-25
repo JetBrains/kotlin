@@ -60,6 +60,13 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
     }
 
+    public void testHelloAppContextMain() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xcontext-parameters", "hello.kt", "-d", jar));
+        run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
+    }
+
     public void testHelloAppSuspendMain() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 

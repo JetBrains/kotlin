@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -42,6 +43,19 @@ class CustomCliTest : TestCaseWithTmpdir() {
         }
 
         compileAndCheckMainClass(listOf(main1Kt, main2Kt), expectedMainClass = null)
+    }
+
+    fun testInvalidContextMainClasses() {
+        val main1Kt = tmpdir.resolve("main1.kt").apply {
+            writeText(
+                """
+                    context(_: Array<String>)
+                    fun Array<String>.main() = println("hello")
+                """
+            )
+        }
+
+        compileAndCheckMainClass(listOf(main1Kt), expectedMainClass = null)
     }
 
     fun testExtensionFunctionMainClass() {
@@ -122,7 +136,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
     }
 
     private fun makeCompilerArgs(sourceFiles: List<File>, jarFile: File): List<String> {
-        return listOf(K2JVMCompilerArguments::includeRuntime.cliArgument, K2JVMCompilerArguments::destination.cliArgument, jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
+        return listOf(K2JVMCompilerArguments::includeRuntime.cliArgument, CommonCompilerArguments::contextParameters.cliArgument, K2JVMCompilerArguments::destination.cliArgument, jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
     }
 
     private fun compileAndCheckMainClass(sourceFiles: List<File>, expectedMainClass: String?, messageRenderer: MessageRenderer? = null) {

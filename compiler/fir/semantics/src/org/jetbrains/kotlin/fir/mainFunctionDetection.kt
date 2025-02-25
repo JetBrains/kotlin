@@ -41,9 +41,12 @@ fun FirSimpleFunction.isMaybeMainFunction(
 
     if ((getPlatformName() ?: name.asString()) != "main") return false
 
-    val valueParametersTypes = valueParameters.map { it.returnTypeRef } +
-            // Support for "extension main", which in fact compiles to a correct (from JVM point of view) main method. See #KTIJ-7949
-            listOfNotNull(receiverParameter?.typeRef)
+    val valueParametersTypes = buildList {
+        valueParameters.mapTo(this) { it.returnTypeRef }
+        // Support for "extension main", which in fact compiles to a correct (from JVM point of view) main method. See #KTIJ-7949
+        receiverParameter?.typeRef?.let { add(it) }
+        contextParameters.mapTo(this) { it.returnTypeRef }
+    }
 
     val hasValidParameters =
         when (valueParametersTypes.size) {
