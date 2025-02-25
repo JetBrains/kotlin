@@ -82,6 +82,7 @@ internal abstract class SwiftExportTask @Inject constructor(
             workParameters.swiftModules.set(swiftModules)
             workParameters.swiftExportSettings.set(parameters.swiftExportSettings)
             workParameters.konanDistribution.set(kotlinNativeProvider.flatMap { it.bundleDirectory }.map { Distribution(it) })
+            workParameters.konanTarget.set(parameters.konanTarget)
         }
     }
 

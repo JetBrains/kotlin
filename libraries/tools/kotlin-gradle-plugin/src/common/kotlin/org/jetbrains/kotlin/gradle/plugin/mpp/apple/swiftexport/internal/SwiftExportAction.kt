@@ -70,6 +70,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
             distribution = parameters.konanDistribution.get(),
             renderDocComments = parameters.renderDocComments.getOrElse(false),
             logger = swiftExportLogger,
+            konanTarget = parameters.konanTarget.get(),
         )
     }
 }
