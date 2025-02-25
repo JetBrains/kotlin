@@ -45,7 +45,8 @@ data class CompilerArgumentsLevel(
 @Serializable
 data class CompilerArguments(
     val schemaVersion: Int = 1,
-    val releases: List<KotlinReleaseVersionDetails> = KotlinReleaseVersionDetails.allReleaseVersions,
+    @Serializable(with = AllDetailsKotlinReleaseVersionSerializer::class)
+    val releases: Set<KotlinReleaseVersion> = KotlinReleaseVersions.allKotlinReleaseVersions,
     val types: KotlinArgumentTypes = KotlinArgumentTypes(),
     val topLevel: CompilerArgumentsLevel,
 )

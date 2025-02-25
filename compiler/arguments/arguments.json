@@ -24,29 +24,19 @@
         "kotlinVersions": [
             {
                 "name": "1.0",
-                "addedInVersion": {
-                    "name": "1.4.0"
-                },
-                "deprecatedInVersion": {
-                    "name": "1.9.20"
-                },
-                "removedInVersion": {
-                    "name": "2.0.0"
-                }
+                "addedInVersion": "1.4.0",
+                "deprecatedInVersion": "1.9.20",
+                "removedInVersion": "2.0.0"
             },
             {
                 "name": "1.9",
-                "addedInVersion": {
-                    "name": "1.9.20"
-                },
+                "addedInVersion": "1.9.20",
                 "deprecatedInVersion": null,
                 "removedInVersion": null
             },
             {
                 "name": "2.0",
-                "addedInVersion": {
-                    "name": "2.0.0"
-                },
+                "addedInVersion": "2.0.0",
                 "deprecatedInVersion": null,
                 "removedInVersion": null
             }
@@ -54,21 +44,13 @@
         "jvmTargets": [
             {
                 "name": "1.6",
-                "addedInVersion": {
-                    "name": "1.4.0"
-                },
-                "deprecatedInVersion": {
-                    "name": "1.9.20"
-                },
-                "removedInVersion": {
-                    "name": "2.0.0"
-                }
+                "addedInVersion": "1.4.0",
+                "deprecatedInVersion": "1.9.20",
+                "removedInVersion": "2.0.0"
             },
             {
                 "name": "1.8",
-                "addedInVersion": {
-                    "name": "1.4.0"
-                },
+                "addedInVersion": "1.4.0",
                 "deprecatedInVersion": null,
                 "removedInVersion": null
             }
@@ -89,12 +71,8 @@
                     "defaultValue": false
                 },
                 "valueDescription": null,
-                "addedInVersion": {
-                    "name": "1.4.0"
-                },
-                "stableSinceVersion": {
-                    "name": "1.4.0"
-                },
+                "addedInVersion": "1.4.0",
+                "stableSinceVersion": "1.4.0",
                 "deprecatedInVersion": null,
                 "removedInVersion": null
             },
@@ -110,9 +88,7 @@
                     "defaultValue": false
                 },
                 "valueDescription": null,
-                "addedInVersion": {
-                    "name": "1.9.20"
-                },
+                "addedInVersion": "1.9.20",
                 "stableSinceVersion": null,
                 "deprecatedInVersion": null,
                 "removedInVersion": null
@@ -129,9 +105,7 @@
                     "defaultValue": false
                 },
                 "valueDescription": null,
-                "addedInVersion": {
-                    "name": "1.9.20"
-                },
+                "addedInVersion": "1.9.20",
                 "stableSinceVersion": null,
                 "deprecatedInVersion": null,
                 "removedInVersion": null
@@ -148,9 +122,7 @@
                     "defaultValue": false
                 },
                 "valueDescription": null,
-                "addedInVersion": {
-                    "name": "1.9.20"
-                },
+                "addedInVersion": "1.9.20",
                 "stableSinceVersion": null,
                 "deprecatedInVersion": null,
                 "removedInVersion": null
@@ -167,9 +139,7 @@
                     "defaultValue": false
                 },
                 "valueDescription": null,
-                "addedInVersion": {
-                    "name": "1.9.20"
-                },
+                "addedInVersion": "1.9.20",
                 "stableSinceVersion": null,
                 "deprecatedInVersion": null,
                 "removedInVersion": null
@@ -186,9 +156,7 @@
                     "defaultValue": false
                 },
                 "valueDescription": null,
-                "addedInVersion": {
-                    "name": "1.9.20"
-                },
+                "addedInVersion": "1.9.20",
                 "stableSinceVersion": null,
                 "deprecatedInVersion": null,
                 "removedInVersion": null
@@ -212,9 +180,7 @@
                             }
                         },
                         "valueDescription": "<version>",
-                        "addedInVersion": {
-                            "name": "1.4.0"
-                        },
+                        "addedInVersion": "1.9.20",
                         "stableSinceVersion": null,
                         "deprecatedInVersion": null,
                         "removedInVersion": null
@@ -233,9 +199,7 @@
                             }
                         },
                         "valueDescription": "<version>",
-                        "addedInVersion": {
-                            "name": "1.4.0"
-                        },
+                        "addedInVersion": "1.4.0",
                         "stableSinceVersion": null,
                         "deprecatedInVersion": null,
                         "removedInVersion": null
@@ -252,16 +216,10 @@
                             "defaultValue": null
                         },
                         "valueDescription": "true|false",
-                        "addedInVersion": {
-                            "name": "1.4.0"
-                        },
+                        "addedInVersion": "1.4.0",
                         "stableSinceVersion": null,
-                        "deprecatedInVersion": {
-                            "name": "1.9.20"
-                        },
-                        "removedInVersion": {
-                            "name": "2.0.0"
-                        }
+                        "deprecatedInVersion": "1.9.20",
+                        "removedInVersion": "2.0.0"
                     }
                 ],
                 "nestedLevels": [
@@ -282,9 +240,7 @@
                                     }
                                 },
                                 "valueDescription": "<version>",
-                                "addedInVersion": {
-                                    "name": "1.4.0"
-                                },
+                                "addedInVersion": "1.4.0",
                                 "stableSinceVersion": null,
                                 "deprecatedInVersion": null,
                                 "removedInVersion": null
@@ -301,16 +257,10 @@
                                     "defaultValue": null
                                 },
                                 "valueDescription": "true|false",
-                                "addedInVersion": {
-                                    "name": "1.4.0"
-                                },
+                                "addedInVersion": "1.4.0",
                                 "stableSinceVersion": null,
-                                "deprecatedInVersion": {
-                                    "name": "1.9.20"
-                                },
-                                "removedInVersion": {
-                                    "name": "2.0.0"
-                                }
+                                "deprecatedInVersion": "1.9.20",
+                                "removedInVersion": "2.0.0"
                             }
                         ],
                         "nestedLevels": []

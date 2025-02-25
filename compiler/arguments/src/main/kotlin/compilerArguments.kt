@@ -2,7 +2,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.arguments.CompilerArguments
 import org.jetbrains.kotlin.arguments.KotlinArgumentValueType
-import org.jetbrains.kotlin.arguments.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.KotlinReleaseVersions
 import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
 import java.io.File
 
@@ -14,9 +14,9 @@ val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
         valueType = KotlinArgumentValueType.BooleanType()
         valueDescription = "true|false"
 
-        addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0
-        deprecatedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
-        removedInVersion = KotlinReleaseVersion.KOTLIN_2_0_0
+        addedInVersion = KotlinReleaseVersions.v1_4_0
+        deprecatedInVersion = KotlinReleaseVersions.v1_9_20
+        removedInVersion = KotlinReleaseVersions.v2_0_0
     }
 
     subLevel("jvmCompilerArguments") {
@@ -27,9 +27,9 @@ val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
             valueType = KotlinArgumentValueType.BooleanType()
             valueDescription = "true|false"
 
-            addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0
-            deprecatedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
-            removedInVersion = KotlinReleaseVersion.KOTLIN_2_0_0
+            addedInVersion = KotlinReleaseVersions.v1_4_0
+            deprecatedInVersion = KotlinReleaseVersions.v1_9_20
+            removedInVersion = KotlinReleaseVersions.v2_0_0
         }
     }
 }
@@ -46,8 +46,8 @@ val kotlinCompilerArguments = compilerArguments {
                 defaultValue = false
             )
 
-            addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0
-            stableSinceVersion = KotlinReleaseVersion.KOTLIN_1_4_0
+            addedInVersion = KotlinReleaseVersions.v1_4_0
+            stableSinceVersion = KotlinReleaseVersions.v1_4_0
         }
 
         compilerArgument {
@@ -59,7 +59,7 @@ val kotlinCompilerArguments = compilerArguments {
                 defaultValue = false
             )
 
-            addedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
+            addedInVersion = KotlinReleaseVersions.v1_9_20
         }
 
         compilerArgument {
@@ -71,7 +71,7 @@ val kotlinCompilerArguments = compilerArguments {
                 defaultValue = false
             )
 
-            addedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
+            addedInVersion = KotlinReleaseVersions.v1_9_20
         }
 
         compilerArgument {
@@ -83,7 +83,7 @@ val kotlinCompilerArguments = compilerArguments {
                 defaultValue = false
             )
 
-            addedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
+            addedInVersion = KotlinReleaseVersions.v1_9_20
         }
 
         compilerArgument {
@@ -95,7 +95,7 @@ val kotlinCompilerArguments = compilerArguments {
                 defaultValue = false
             )
 
-            addedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
+            addedInVersion = KotlinReleaseVersions.v1_9_20
         }
 
         compilerArgument {
@@ -107,7 +107,7 @@ val kotlinCompilerArguments = compilerArguments {
                 defaultValue = false
             )
 
-            addedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
+            addedInVersion = KotlinReleaseVersions.v1_9_20
         }
 
         subLevel("commonCompilerArguments", mergeWith = setOf(deprecatedCommonArgs)) {
@@ -119,7 +119,7 @@ val kotlinCompilerArguments = compilerArguments {
                 valueType = KotlinArgumentValueType.KotlinVersionType()
                 valueDescription = "<version>"
 
-                addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0
+                addedInVersion = KotlinReleaseVersions.v1_9_20
             }
 
             compilerArgument {
@@ -129,7 +129,7 @@ val kotlinCompilerArguments = compilerArguments {
                 valueType = KotlinArgumentValueType.KotlinVersionType()
                 valueDescription = "<version>"
 
-                addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0
+                addedInVersion = KotlinReleaseVersions.v1_4_0
             }
 
             subLevel("jvmCompilerArguments") {
@@ -140,7 +140,7 @@ val kotlinCompilerArguments = compilerArguments {
                     valueType = KotlinArgumentValueType.KotlinJvmTargetType()
                     valueDescription = "<version>"
 
-                    addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0
+                    addedInVersion = KotlinReleaseVersions.v1_4_0
                 }
             }
         }

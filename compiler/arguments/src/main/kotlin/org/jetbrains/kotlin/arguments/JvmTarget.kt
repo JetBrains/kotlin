@@ -22,15 +22,15 @@ sealed class JvmTargetDetails(
     @Serializable
     @SerialName("1.6")
     class JvmTargetDetails16 : JvmTargetDetails(
-        addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0,
-        deprecatedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20,
-        removedInVersion = KotlinReleaseVersion.KOTLIN_2_0_0,
+        addedInVersion = KotlinReleaseVersions.v1_4_0,
+        deprecatedInVersion = KotlinReleaseVersions.v1_9_20,
+        removedInVersion = KotlinReleaseVersions.v2_0_0,
     )
 
     @Serializable
     @SerialName("1.8")
     class JvmTargetDetails18 : JvmTargetDetails(
-        addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0,
+        addedInVersion = KotlinReleaseVersions.v1_4_0
     )
 
     companion object {

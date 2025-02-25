@@ -21,21 +21,21 @@ sealed class KotlinVersionDetails(
     @Serializable
     @SerialName("1.0")
     class Kotlin10Details : KotlinVersionDetails(
-        addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0,
-        deprecatedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20,
-        removedInVersion = KotlinReleaseVersion.KOTLIN_2_0_0,
+        addedInVersion = KotlinReleaseVersions.v1_4_0,
+        deprecatedInVersion = KotlinReleaseVersions.v1_9_20,
+        removedInVersion = KotlinReleaseVersions.v2_0_0,
     )
 
     @Serializable
     @SerialName("1.9")
     class Kotlin19Details : KotlinVersionDetails(
-        addedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20,
+        addedInVersion = KotlinReleaseVersions.v1_9_20,
     )
 
     @Serializable
     @SerialName("2.0")
     class Kotlin20Details : KotlinVersionDetails(
-        addedInVersion = KotlinReleaseVersion.KOTLIN_2_0_0,
+        addedInVersion = KotlinReleaseVersions.v2_0_0,
     )
 
     companion object {
