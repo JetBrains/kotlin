@@ -10,20 +10,10 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
-import org.jetbrains.kotlin.fir.analysis.checkers.leastUpperBound
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -32,8 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -163,9 +151,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     private fun checkParameterNameChangedOnOverride(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (function !is FirSimpleFunction || !function.isOverride || !function.hasStableParameterNames) return
-        val currentScope = function
-            .containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return
-        for (overriddenFunctionSymbol in currentScope.getDirectOverriddenFunctions(function.symbol)) {
+        for (overriddenFunctionSymbol in function.symbol.directOverriddenFunctions(context)) {
             if (!overriddenFunctionSymbol.resolvedStatus.hasStableParameterNames) continue
             function.symbol.checkValueParameterNamesWith(overriddenFunctionSymbol) { currentParameter, overriddenParameter, _ ->
                 reporter.reportOn(

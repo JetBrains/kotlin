@@ -12,7 +12,7 @@ interface B {
 }
 
 interface D : C {
-    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d1<!>: Int, <!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d2<!>: Double)
+    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE, PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d1<!>: Int, <!PARAMETER_NAME_CHANGED_ON_OVERRIDE, PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d2<!>: Double)
 }
 
 fun test1(d: D) {
