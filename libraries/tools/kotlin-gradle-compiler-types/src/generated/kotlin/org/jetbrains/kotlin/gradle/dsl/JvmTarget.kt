@@ -29,7 +29,7 @@ enum class JvmTarget(val target: String) {
         fun fromTarget(target: String): JvmTarget =
             JvmTarget.values().firstOrNull { it.target == target }
                 ?: throw IllegalArgumentException("Unknown Kotlin JVM target: $target\n" + 
-                        "Supported versions: ${JvmTarget.values().joinToString(", ") { it.target }})
+                        "Supported versions: ${JvmTarget.values().joinToString(", ") { it.target }}")
             )
 
         @JvmStatic
