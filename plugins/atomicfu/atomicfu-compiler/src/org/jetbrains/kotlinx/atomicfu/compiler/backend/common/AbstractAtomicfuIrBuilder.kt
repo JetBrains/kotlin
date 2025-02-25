@@ -340,7 +340,7 @@ abstract class AbstractAtomicfuIrBuilder(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             type = atomicfuSymbols.function0Type(irPropertyReference.type),
             function = irBuiltIns.irFactory.buildFun {
-                name = Name.identifier("<$propertyName-getter-${nextGetterCounterId()}>")
+                name = Name.identifier("<$propertyName-getter>")
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
                 returnType = irPropertyReference.type
                 isInline = true
@@ -600,12 +600,4 @@ abstract class AbstractAtomicfuIrBuilder(
                 }
             }
         }
-
-    companion object {
-        // This counter is used to ensure uniqueness of functions for refGetter lambdas,
-        // as several functions with the same name may be created in the same scope
-        private var refGetterCounter = AtomicInteger(0)
-
-        private fun nextGetterCounterId() = refGetterCounter.getAndIncrement()
-    }
 }
