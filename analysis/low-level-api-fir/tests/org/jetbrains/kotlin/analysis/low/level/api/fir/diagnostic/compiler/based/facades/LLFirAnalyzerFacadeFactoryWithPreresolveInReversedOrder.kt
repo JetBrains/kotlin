@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.getDeclarationsToResolve
+import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import kotlin.concurrent.thread
 
 object LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder : LLFirAnalyzerFacadeFactory() {
     override fun createFirFacade(
@@ -23,9 +25,13 @@ object LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder : LLFirAnalyzerFa
     ): LowLevelFirAnalyzerFacade = object : LowLevelFirAnalyzerFacade(firResolveSession, allFirFiles, diagnosticCheckerFilter) {
         override fun runResolution(): List<FirFile> {
             val allDeclarations = allFirFiles.values.getDeclarationsToResolve().reversed()
-            for (declaration in allDeclarations) {
-                declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                declaration.checkPhase(FirResolvePhase.BODY_RESOLVE)
+
+            // Execution on another thread is needed to avoid thread local caches
+            executeOnPooledThreadInReadAction {
+                for (declaration in allDeclarations) {
+                    declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                    declaration.checkPhase(FirResolvePhase.BODY_RESOLVE)
+                }
             }
 
             return allFirFiles.values.toList()
