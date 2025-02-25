@@ -19,3 +19,13 @@ func testModifyingNSDate() throws {
 
     try #require(future.timeIntervalSince(date as Date) == 60*60)
 }
+
+// @Test
+// func testReturningPrimitive() throws {
+//     let ti = 60*60*24*365*10.0
+//     let date = NSDate(timeIntervalSinceReferenceDate: ti)
+//
+//     let timeIntervalSince = sinceRefDate(date)
+//
+//     try #require(timeIntervalSince == ti)
+// }

@@ -28,7 +28,7 @@ class TestSirSession(
     kaModule: KaModule,
 ) : SirSession {
     override val declarationNamer: SirDeclarationNamer = SirDeclarationNamerImpl()
-    override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider()
+    override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider(emptyList())
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = SirDeclarationFromKtSymbolProvider(
             ktModule = kaModule,

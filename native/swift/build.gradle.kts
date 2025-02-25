@@ -10,5 +10,6 @@ tasks.register("sirAllTests") {
         ":native:swift:swift-export-ide:test",
         ":native:swift:sir-compiler-bridge:test",
         ":native:swift:sir-printer:test",
+        ":native:swift:sir-light-classes:check",
     )
 }

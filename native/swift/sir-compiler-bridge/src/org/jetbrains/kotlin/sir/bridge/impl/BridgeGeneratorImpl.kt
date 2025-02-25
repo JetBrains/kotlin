@@ -522,7 +522,7 @@ private sealed class CType {
     data object id : Predefined("id")
     data object NSString : Predefined("NSString *")
     data object NSNumber : Predefined("NSNumber *")
-    data object NSObject : Predefined("NSObject *")
+    data object NSObject : Predefined("id<NSObject>") // NSProxy and NSObject conforms to this
 
     sealed class Generic(base: String, vararg args: CType) : Predefined(
         repr = "$base<${args.joinToString(", ") { it.render("").trim() }}> *"

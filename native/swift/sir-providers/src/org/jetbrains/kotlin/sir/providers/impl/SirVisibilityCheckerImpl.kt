@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
@@ -81,6 +83,7 @@ public class SirVisibilityCheckerImpl(
         return true
     }
 
+    @OptIn(KaIdeApi::class)
     private fun KaNamedClassSymbol.isConsumableBySirBuilder(ktAnalysisSession: KaSession): Boolean =
         with(ktAnalysisSession) {
             if (
@@ -98,9 +101,14 @@ public class SirVisibilityCheckerImpl(
                 return false
             }
             if (classKind == KaClassKind.ENUM_CLASS) {
+                if (superTypes.any { it.symbol?.classId?.relativeClassName == FqName("CEnum") }) {
+                    unsupportedDeclarationReporter
+                        .report(this@isConsumableBySirBuilder, "c-Enums are not supported yet.")
+                    return@with false
+                }
                 return@with true
             }
-            if (superTypes.any { it.symbol.let { it?.classId != DefaultTypeClassIds.ANY && it?.sirVisibility(ktAnalysisSession) != SirVisibility.PUBLIC } }) {
+            if (superTypes.any { it.symbol.let { it?.classId != DefaultTypeClassIds.ANY && it?.sirVisibility(ktAnalysisSession) != SirVisibility.PUBLIC }}) {
                 unsupportedDeclarationReporter
                     .report(this@isConsumableBySirBuilder, "inheritance from non-classes is not supported yet.")
                 return@with false
