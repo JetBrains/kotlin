@@ -6,43 +6,45 @@
 package kotlin.experimental
 
 /**
+ * The marked `expect` declaration refines `expect` declaration from the closest transitive *dependsOn* [source set](https://kotlinlang.org/docs/multiplatform-discover-project.html#source-sets).
+ * The marked declaration is called a *refinement*.
  * The annotation can be put only on top-level `expect` declarations.
- * The marked `expect` declarations refine "the original" `expect` declarations from the "closest" transitive "dependsOn" module.
  *
- * A pair of "the original" `expect` declaration and a refined `expect` declaration must obey the same rules
+ * A pair of an `expect` declaration and *refinement* declaration must obey the same rules
  * as a pair of regular `expect` and `actual` declarations.
- * Except, the refined `expect` declaration must not have a body.
+ * Except, the `expect` *refinement* declaration must not have a body.
  * The rules are checked by the compiler.
- *
- * A refined `expect` declaration can be further refined by other `expect` declaration forming a chain of refined `expect` declarations.
- * The chain must always end with the `actual` declaration.
- *
- * It's possible to have multiple "dependsOn" dependencies.
- * "dependsOn" relation forms a graph; unfortunately, it's not a tree.
- * Given that, Refined `expect` must refine one and only one `expect` declaration.
- * The same applies to `actual` declarations.
- * An `actual` declaration must actualize one and only one `expect` declaration.
  *
  * Example:
  * ```
- * // MODULE: common
- * expect class Foo {
- *     fun foo()
+ * // SOURCE SET: common
+ * expect class PlatformSpecific {
+ *     fun availableOnAllPlatforms()
  * }
  *
- * // MODULE: native (dependsOn: common)
+ * // SOURCE SET: native (dependsOn: common)
  * @ExperimentalExpectRefinement
- * expect class Foo { // `Foo` in native module "refines" `Foo` in common module
- *     fun foo() // The declarations from the original expect declaration must be repeated
- *     fun bar() // Add new member
+ * expect class PlatformSpecific { // `PlatformSpecific` in native source set refines `PlatformSpecific` in common source set
+ *     fun availableOnAllPlatforms() // The declarations from the original expect declaration must be repeated
+ *     fun availableOnlyOnNativePlatforms() // Add a new member
  * }
  *
- * // MODULE: linux (dependsOn: native)
- * actual class Foo {
- *     actual fun foo() {}
- *     actual fun bar() {}
+ * // SOURCE SET: linux (dependsOn: native)
+ * actual class PlatformSpecific {
+ *     actual fun availableOnAllPlatforms() {}
+ *     actual fun availableOnlyOnNativePlatforms() {}
  * }
  * ```
+ *
+ * An *refinement* declaration can be further refined by other *refinements*,
+ * forming a chain of `expect` *refinement* declarations.
+ * The chain must always end with an `actual` declaration.
+ *
+ * It's possible to have multiple *dependsOn* dependencies.
+ * *dependsOn* relation forms a graph, it's not a tree.
+ * Given that, a *refinement* must refine one and only one `expect` declaration.
+ * The same applies to `actual` declarations.
+ * An `actual` declaration must actualize one and only one `expect` declaration.
  *
  * ## Stability guarantees
  *
