@@ -94,18 +94,6 @@ public class JsIrLineNumberTestGenerated extends AbstractJsIrLineNumberTest {
   }
 
   @Test
-  @TestMetadata("delegateMemberVal.kt")
-  public void testDelegateMemberVal() {
-    runTest("js/js.translator/testData/lineNumbers/delegateMemberVal.kt");
-  }
-
-  @Test
-  @TestMetadata("delegatedProperty.kt")
-  public void testDelegatedProperty() {
-    runTest("js/js.translator/testData/lineNumbers/delegatedProperty.kt");
-  }
-
-  @Test
   @TestMetadata("delegation.kt")
   public void testDelegation() {
     runTest("js/js.translator/testData/lineNumbers/delegation.kt");

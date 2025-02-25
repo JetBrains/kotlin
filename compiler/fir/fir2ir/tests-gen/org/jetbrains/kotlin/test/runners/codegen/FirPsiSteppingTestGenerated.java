@@ -175,6 +175,18 @@ public class FirPsiSteppingTestGenerated extends AbstractFirPsiSteppingTest {
   }
 
   @Test
+  @TestMetadata("delegateMemberVal.kt")
+  public void testDelegateMemberVal() {
+    runTest("compiler/testData/debug/stepping/delegateMemberVal.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedProperty.kt")
+  public void testDelegatedProperty() {
+    runTest("compiler/testData/debug/stepping/delegatedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("delegation.kt")
   public void testDelegation() {
     runTest("compiler/testData/debug/stepping/delegation.kt");
