@@ -8,7 +8,7 @@ description = "Infrastructure for running Swift Export Standalone integration te
 dependencies {
     compileOnly(kotlinStdlib())
 
-    api(project(":native:swift:swift-export-standalone"))
+    api(project(":native:swift:swift-export-embeddable"))
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         api(projectTests(":native:native.tests"))
