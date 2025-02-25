@@ -90,6 +90,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
                 "-Xallow-kotlin-package",
                 "-Xno-new-java-annotation-targets",
                 "-Xdont-warn-on-error-suppression",
+                "-Xskip-prerelease-check",
             )
         )
         moduleName.set("kotlin-reflection")

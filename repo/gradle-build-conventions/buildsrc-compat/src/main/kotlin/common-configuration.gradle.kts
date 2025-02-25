@@ -127,6 +127,7 @@ fun Project.configureKotlinCompilationOptions() {
             "-Xmulti-dollar-interpolation", // KT-2425
             "-Xwhen-guards", // KT-13626
             "-Xnon-local-break-continue", // KT-1436
+            "-Xnested-type-aliases", // KT-45285
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
