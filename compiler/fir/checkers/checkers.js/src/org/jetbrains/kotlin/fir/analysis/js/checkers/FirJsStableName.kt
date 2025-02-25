@@ -82,8 +82,8 @@ internal data class FirJsStableName(
 
     private fun FirBasedSymbol<*>.doesJSManglingChangeName(): Boolean {
         return when (this) {
-            is FirFunctionSymbol<*> -> isExtension || valueParameterSymbols.isNotEmpty() || typeParameterSymbols.isNotEmpty()
-            is FirPropertySymbol -> isExtension
+            is FirFunctionSymbol<*> -> isExtension || valueParameterSymbols.isNotEmpty() || resolvedContextParameters.isNotEmpty() || typeParameterSymbols.isNotEmpty()
+            is FirPropertySymbol -> isExtension || resolvedContextParameters.isNotEmpty()
             else -> false
         }
     }

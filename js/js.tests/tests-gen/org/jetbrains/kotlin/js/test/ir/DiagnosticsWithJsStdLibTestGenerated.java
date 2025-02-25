@@ -1024,6 +1024,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     public void testTopLevelMethodAndProperty() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelMethodAndProperty.kt");
     }
+
+    @Test
+    @TestMetadata("withContextParameters.kt")
+    public void testWithContextParameters() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/withContextParameters.kt");
+    }
   }
 
   @Nested
