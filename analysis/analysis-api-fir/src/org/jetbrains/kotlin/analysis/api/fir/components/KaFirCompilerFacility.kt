@@ -214,7 +214,7 @@ internal class KaFirCompilerFacility(
             }
 
             if (chunk.attachPrecompiledBinaries) {
-                val targetModule = generateSequence(module) { (module as? KaDanglingFileModule)?.contextModule }
+                val targetModule = generateSequence(module) { (it as? KaDanglingFileModule)?.contextModule }
                     .firstIsInstanceOrNull<KaSourceModule>()
 
                 if (targetModule != null) {
