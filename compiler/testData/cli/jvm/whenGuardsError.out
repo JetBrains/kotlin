@@ -1,10 +1,19 @@
-compiler/testData/cli/jvm/whenGuards.kt:13:18: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:-WhenGuards
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/cli/jvm/whenGuards.kt:13:18: error: the feature "when guards" is disabled
     is Status.Ok if status.info.isEmpty() -> "no data"
                  ^^^^^^^^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/whenGuards.kt:15:21: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+compiler/testData/cli/jvm/whenGuards.kt:15:21: error: the feature "when guards" is disabled
     is Status.Error if status.problem == Problem.CONNECTION -> "problems with connection"
                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/whenGuards.kt:16:21: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+compiler/testData/cli/jvm/whenGuards.kt:16:21: error: the feature "when guards" is disabled
     is Status.Error if status.problem == Problem.AUTHENTICATION -> "could not be authenticated"
                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR
