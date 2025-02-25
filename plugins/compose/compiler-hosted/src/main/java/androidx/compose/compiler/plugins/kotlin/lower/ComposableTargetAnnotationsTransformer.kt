@@ -41,29 +41,7 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import kotlin.collections.Iterable
-import kotlin.collections.List
-import kotlin.collections.all
-import kotlin.collections.any
-import kotlin.collections.emptyList
-import kotlin.collections.filter
-import kotlin.collections.filterIndexed
-import kotlin.collections.filterNotNull
-import kotlin.collections.firstNotNullOfOrNull
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.lastOrNull
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
-import kotlin.collections.mutableMapOf
-import kotlin.collections.plus
 import kotlin.collections.set
-import kotlin.collections.take
-import kotlin.collections.toList
-import kotlin.collections.toMutableList
-import kotlin.collections.zip
 
 /**
  * This transformer walks the IR tree to infer the applier annotations such as ComposableTarget,
@@ -645,7 +623,7 @@ class InferenceFunctionDeclaration(
 
     private fun IrFunction.toScheme(defaultTarget: Item): Scheme = with(transformer) {
         val target = function.annotations.target.let { target ->
-            if (target.isUnspecified && function.body == null) {
+            if (target.isUnspecified && function.fileOrNull == null) {
                 defaultTarget
             } else if (target.isUnspecified) {
                 // Default to the target specified at the file scope, if one.
