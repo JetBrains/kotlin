@@ -37,6 +37,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
+    embeddableTestRuntime(project(":compiler:tests-mutes:mutes-junit4"))
     embeddableTestRuntime(project(":kotlin-scripting-ide-services"))
     embeddableTestRuntime(project(":kotlin-scripting-compiler-impl-embeddable"))
     embeddableTestRuntime(project(":kotlin-scripting-dependencies"))
