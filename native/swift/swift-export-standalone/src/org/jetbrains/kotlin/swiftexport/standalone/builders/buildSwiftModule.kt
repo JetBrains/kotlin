@@ -91,20 +91,32 @@ private fun KaSession.traverseTopLevelDeclarationsInScopes(
 internal data class ModuleWithScopeProvider(
     val useSiteModule: KaModule,
     val mainModule: KaModule,
+    val platformLibs: List<KaLibraryModule>,
     val scopeProvider: KaSession.() -> List<KaScope>,
 )
 
 internal fun createModuleWithScopeProviderFromBinary(
     input: InputModule,
     stdLibPath: String,
+    platformLibs: String,
     dependencies: Set<InputModule>,
 ): ModuleWithScopeProvider {
     lateinit var binaryModule: KaLibraryModule
     lateinit var fakeSourceModule: KaSourceModule
+    lateinit var createdPlatformLibs: List<KaLibraryModule>
+    val platformLibsFile = Path(platformLibs).toFile()
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform
-
+            createdPlatformLibs = platformLibsFile.list()!!.map {
+                addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(platformLibsFile.resolve(it).toPath())
+                        platform = NativePlatforms.unspecifiedNativePlatform
+                        libraryName = it.split(".").last()
+                    }
+                )
+            }
             val stdlib = addModule(
                 buildKtLibraryModule {
                     addBinaryRoot(Path(stdLibPath))
@@ -112,9 +124,9 @@ internal fun createModuleWithScopeProviderFromBinary(
                     libraryName = "stdlib"
                 }
             )
-            binaryModule = addModule(addModuleForSwiftExportConsumption(input, stdlib))
+            binaryModule = addModule(addModuleForSwiftExportConsumption(input, stdlib, createdPlatformLibs))
             val kaDeps = dependencies.map {
-                addModule(addModuleForSwiftExportConsumption(it, stdlib))
+                addModule(addModuleForSwiftExportConsumption(it, stdlib, createdPlatformLibs))
             }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
@@ -123,12 +135,13 @@ internal fun createModuleWithScopeProviderFromBinary(
                     moduleName = "fakeSourceModule"
                     addRegularDependency(binaryModule)
                     addRegularDependency(stdlib)
+                    createdPlatformLibs.forEach { addRegularDependency(it) }
                     kaDeps.forEach { addRegularDependency(it) }
                 }
             )
         }
     }
-    return ModuleWithScopeProvider(fakeSourceModule, binaryModule) {
+    return ModuleWithScopeProvider(fakeSourceModule, binaryModule, createdPlatformLibs) {
         listOf(KlibScope(binaryModule, useSiteSession))
     }
 }
@@ -136,9 +149,11 @@ internal fun createModuleWithScopeProviderFromBinary(
 private fun KtModuleProviderBuilder.addModuleForSwiftExportConsumption(
     input: InputModule,
     stdlib: KaLibraryModule,
+    platformLibs: List<KaLibraryModule>,
 ): KaLibraryModule = buildKtLibraryModule {
     addBinaryRoot(input.path)
     platform = NativePlatforms.unspecifiedNativePlatform
     libraryName = input.name
     addRegularDependency(stdlib)
+    platformLibs.forEach { addRegularDependency(it) }
 }

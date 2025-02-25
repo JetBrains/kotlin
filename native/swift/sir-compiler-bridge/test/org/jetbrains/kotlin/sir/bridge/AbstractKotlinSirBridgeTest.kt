@@ -128,14 +128,8 @@ private fun parseType(typeName: String): SirType {
             }
             "closure_with_parameter" -> {
                 SirFunctionalType(
-                    returnType = SirNominalType(buildClass {
-                        name = "MyClass"
-                        origin = SirOrigin.ExternallyDefined(name = "MyClass")
-                    }),
-                    parameterTypes = listOf(SirNominalType(buildClass {
-                        name = "MyAnotherClass"
-                        origin = SirOrigin.ExternallyDefined(name = "MyAnotherClass")
-                    })),
+                    returnType = SirNominalType(buildClass("MyClass")),
+                    parameterTypes = listOf(SirNominalType(buildClass("MyAnotherClass"))),
                 )
             }
             else -> error("unknown tag for predefined closure")
@@ -156,10 +150,7 @@ private fun parseType(typeName: String): SirType {
 
             "void" -> SirSwiftModule.void
 
-            "any" -> buildClass {
-                name = "MyClass"
-                origin = SirOrigin.ExternallyDefined(name = "MyClass")
-            }
+            "any" -> buildClass("MyClass")
 
             else -> error("Unknown type: $typeName")
         }.let { SirNominalType(it) }
@@ -291,4 +282,17 @@ private fun readRequestFromFile(file: File, testHelper: TemporaryTestHelper): Fu
 
 private enum class BridgeRequestKind {
     FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER
+}
+
+private fun buildClass(named: String): SirClass {
+    val clazz = buildClass {
+        name = named
+        origin = SirOrigin.ExternallyDefined(name = named)
+    }
+    buildModule {
+        name = "BridgeTest"
+    }.apply {
+        addChild { clazz }
+    }
+    return clazz
 }

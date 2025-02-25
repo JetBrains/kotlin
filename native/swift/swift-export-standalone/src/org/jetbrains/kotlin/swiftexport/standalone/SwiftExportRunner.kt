@@ -154,11 +154,16 @@ public fun runSwiftExport(
 }
 
 private fun translateModule(module: InputModule, dependencies: Set<InputModule>, config: SwiftExportConfig): TranslationResult {
-    val moduleWithScopeProvider = createModuleWithScopeProviderFromBinary(module, config.distribution.stdlib, dependencies)
+    val moduleWithScopeProvider = createModuleWithScopeProviderFromBinary(
+        module,
+        config.distribution.stdlib,
+        config.distribution.platformLibs(config.konanTarget),
+        dependencies
+    )
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(moduleWithScopeProvider.useSiteModule) {
-        val buildResult = initializeSirModule(moduleWithScopeProvider, config, module.config, SirOneToOneModuleProvider())
+        val buildResult = initializeSirModule(moduleWithScopeProvider, config, module.config, SirOneToOneModuleProvider(moduleWithScopeProvider.platformLibs))
 
         // Assume that parts of the KotlinRuntimeSupport module are used.
         // It might not be the case, but precise tracking seems like an overkill at the moment.
@@ -185,6 +190,7 @@ private fun translateModule(module: InputModule, dependencies: Set<InputModule>,
             config = config,
             moduleConfig = module.config,
             bridgesModuleName = module.bridgesModuleName,
+            platformLibs = moduleWithScopeProvider.platformLibs.map { it.libraryName },
         )
     }
 }
@@ -199,6 +205,7 @@ private class TranslationResult(
     val config: SwiftExportConfig,
     val moduleConfig: SwiftModuleConfig,
     val bridgesModuleName: String,
+    val platformLibs: List<String>,
 )
 
 private fun Collection<TranslationResult>.createModuleForPackages(config: SwiftExportConfig): SirModule = buildModule {
@@ -270,7 +277,7 @@ private fun TranslationResult.writeModule(): SwiftExportModule {
     return SwiftExportModule.BridgesToKotlin(
         name = sirModule.name,
         dependencies = sirModule.imports
-            .filter { it.moduleName !in setOf(KotlinRuntimeModule.name, bridgesModuleName) }
+            .filter { it.moduleName !in setOf(KotlinRuntimeModule.name, bridgesModuleName) + platformLibs }
             .map { SwiftExportModule.Reference(it.moduleName) },
         bridgeName = bridgesModuleName,
         files = outputFiles

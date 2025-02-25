@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.config
 
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.swiftexport.standalone.ErrorTypeStrategy
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
 import org.jetbrains.kotlin.swiftexport.standalone.createDummyLogger
@@ -17,6 +18,7 @@ public data class SwiftExportConfig(
     val stableDeclarationsOrder: Boolean = false,
     val renderDocComments: Boolean = false,
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
+    val konanTarget: KonanTarget,
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
     val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.SpecialType,
     val logger: SwiftExportLogger = createDummyLogger(),

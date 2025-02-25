@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
@@ -20,7 +21,8 @@ internal data class KlibExportSettings(
 internal fun KlibExportSettings.createConfig(outputPath: Path): SwiftExportConfig {
     return SwiftExportConfig(
         distribution = Distribution(KonanHome.konanHomePath),
-        outputPath = outputPath
+        outputPath = outputPath,
+        konanTarget = KonanTarget.MACOS_ARM64
     )
 }
 

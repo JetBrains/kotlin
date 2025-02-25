@@ -44,7 +44,7 @@ abstract class AbstractSwiftExportTest {
 
     private val binariesDir get() = testRunSettings.get<Binaries>().testBinariesDir
     protected fun buildDir(testName: String) = binariesDir.resolve(testName)
-    private val targets: KotlinNativeTargets get() = testRunSettings.get()
+    protected val targets: KotlinNativeTargets get() = testRunSettings.get()
     protected val testCompilationFactory = TestCompilationFactory()
     private val compiledSwiftCache = ThreadSafeCache<SwiftExportModule, TestCompilationArtifact.Swift.Module>()
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
@@ -74,6 +74,7 @@ abstract class AbstractSwiftExportTest {
             outputPath = tmpdir.toPath().resolve(testDir),
             stableDeclarationsOrder = true,
             distribution = Distribution(KonanHome.konanHomePath),
+            konanTarget = targets.testTarget,
             errorTypeStrategy = ErrorTypeStrategy.Fail,
             unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType
         )

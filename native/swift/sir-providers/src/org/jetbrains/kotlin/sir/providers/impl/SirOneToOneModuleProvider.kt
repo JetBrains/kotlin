@@ -12,13 +12,16 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
+import org.jetbrains.kotlin.sir.util.SirPlatformModule
 
 /**
  * A module provider implementation that generates a [SirModule] for each given [KaModule]
  */
-public class SirOneToOneModuleProvider : SirModuleProvider {
+public class SirOneToOneModuleProvider(platformLibs: List<KaLibraryModule>) : SirModuleProvider {
 
-    private val moduleCache = mutableMapOf<KaModule, SirModule>()
+    private val moduleCache: MutableMap<KaModule, SirModule> = platformLibs.associate {
+        it to SirPlatformModule(it.moduleName)
+    }.toMutableMap()
 
     public val modules: Map<KaModule, SirModule>
         get() = moduleCache.toMap()
