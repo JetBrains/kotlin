@@ -1,20 +1,18 @@
 // LANGUAGE: +ExpectRefinement
-// FIR_IDENTICAL
-// SKIP_K1
 // WITH_STDLIB
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: common
-<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
-fun <!EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET!>nonExpect<!>() {}
+<!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalExpectRefinement<!><!>
+fun nonExpect() {}
 
 expect class Foo {
-    <!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
-    fun <!EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET!>foo<!>()
+    <!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalExpectRefinement<!><!>
+    fun foo()
 }
 
 // MODULE: main()()(common)
 actual class Foo {
-    actual fun foo() {}
+    actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>() {}
 }
