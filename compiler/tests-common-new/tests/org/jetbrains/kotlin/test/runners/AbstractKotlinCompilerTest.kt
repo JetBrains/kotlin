@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.frontend.classic.handlers.SkipK1MetaTestConfigurator
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
@@ -44,7 +43,6 @@ abstract class AbstractKotlinCompilerTest {
         }
 
         val defaultConfiguration: TestConfigurationBuilder.() -> Unit = {
-            useMetaTestConfigurators(::SkipK1MetaTestConfigurator)
             assertions = JUnit5Assertions
             useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
             useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
