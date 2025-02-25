@@ -1,23 +1,23 @@
-/whenWithGuardDisabled.fir.kt:(392,402): error: The feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.fir.kt:(392,402): error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.fir.kt:(435,491): error: The feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.fir.kt:(435,491): error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.fir.kt:(513,533): error: The feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.fir.kt:(513,533): error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.fir.kt:(679,689): error: The feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.fir.kt:(679,689): error: The feature "when guards" is disabled
 
 /whenWithGuardDisabled.fir.kt:(679,689): error: Guard statements are only allowed in 'when' with subject.
 
-/whenWithGuardDisabled.fir.kt:(761,776): error: The feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.fir.kt:(761,776): error: The feature "when guards" is disabled
 
 /whenWithGuardDisabled.fir.kt:(761,776): error: Guard statements are only allowed in 'when' with subject.
 
-/whenWithGuardDisabled.fir.kt:(932,942): error: The feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.fir.kt:(932,942): error: The feature "when guards" is disabled
 
 /whenWithGuardDisabled.fir.kt:(932,942): error: Use of comma in 'when' condition with guard statement is not allowed.
 
 /whenWithGuardDisabled.fir.kt:(1039,1043): error: 'when' expression must be exhaustive. Add the 'False' branch or an 'else' branch.
 
-/whenWithGuardDisabled.fir.kt:(1091,1101): error: The feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.fir.kt:(1091,1101): error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.fir.kt:(1226,1236): error: The feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+/whenWithGuardDisabled.fir.kt:(1226,1236): error: The feature "when guards" is disabled

@@ -380,6 +380,8 @@ enum class LanguageFeature(
     AllowDnnTypeOverridingFlexibleType(KOTLIN_2_2, kind = OTHER), // KT-74049
     PreferDependentTypeVariablesWithProperArgumentConstraint(KOTLIN_2_2, kind = OTHER), // KT-71854
     ForbidEnumEntryNamedEntries(KOTLIN_2_2, kind = BUG_FIX), // KT-72829, KT-58920
+    WhenGuards(KOTLIN_2_2, kind = OTHER), // KT-13626
+    MultiDollarInterpolation(KOTLIN_2_2, kind = OTHER), // KT-2425
 
     // 2.3
 
@@ -465,8 +467,6 @@ enum class LanguageFeature(
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, kind = OTHER), // KT-64358
     JavaTypeParameterDefaultRepresentationWithDNN(sinceVersion = null, kind = OTHER), // KT-59138
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, kind = OTHER), // KT-56386
-    WhenGuards(sinceVersion = null, kind = OTHER), // KT-13626
-    MultiDollarInterpolation(sinceVersion = null, kind = OTHER), // KT-2425
     IrInlinerBeforeKlibSerialization(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-69765
     NestedTypeAliases(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-45285
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, kind = BUG_FIX), // KT-66691, KT-66742
