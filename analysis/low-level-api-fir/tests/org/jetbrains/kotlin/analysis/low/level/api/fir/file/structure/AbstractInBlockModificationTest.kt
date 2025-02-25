@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 abstract class AbstractInBlockModificationTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
@@ -99,19 +100,27 @@ private fun doTestInBlockModification(
     val textBefore = declarationToRender.render()
 
     val modificationService = LLFirDeclarationModificationService.getInstance(elementToModify.project)
-    val isOutOfBlock = modificationService.modifyElement(elementToModify)
-    if (isOutOfBlock) {
+
+    val isApplicable = runWriteAction {
+        val isOutOfBlock = modificationService.modifyElement(elementToModify)
+        if (isOutOfBlock) {
+            return@runWriteAction false
+        }
+
+        elementToModify.modify()
+
+        val textAfterPsiModification = declarationToRender.render()
+        testServices.assertions.assertEquals(textBefore, textAfterPsiModification) {
+            "The declaration before and after modification must be in the same state, because changes in not flushed yet"
+        }
+
+        modificationService.flushModifications()
+        true
+    }
+
+    if (!isApplicable) {
         return "IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE"
     }
-
-    elementToModify.modify()
-
-    val textAfterPsiModification = declarationToRender.render()
-    testServices.assertions.assertEquals(textBefore, textAfterPsiModification) {
-        "The declaration before and after modification must be in the same state, because changes in not flushed yet"
-    }
-
-    modificationService.flushModifications()
 
     val textAfterModification = declarationToRender.render()
     testServices.assertions.assertNotEquals(textBefore, textAfterModification) {

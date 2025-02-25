@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.nio.file.Path
 
 abstract class AnalysisApiTestConfigurator {
@@ -38,7 +39,9 @@ abstract class AnalysisApiTestConfigurator {
     open fun prepareFilesInModule(ktTestModule: KtTestModule, testServices: TestServices) {}
 
     open fun doGlobalModuleStateModification(project: Project) {
-        project.publishGlobalModuleStateModificationEvent()
+        runWriteAction {
+            project.publishGlobalModuleStateModificationEvent()
+        }
     }
 
     open fun computeTestDataPath(path: Path): Path = path

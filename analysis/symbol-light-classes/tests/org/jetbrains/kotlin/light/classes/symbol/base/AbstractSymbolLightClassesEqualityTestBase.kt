@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.nio.file.Path
 
 abstract class AbstractSymbolLightClassesEqualityTestBase(
@@ -46,10 +47,12 @@ abstract class AbstractSymbolLightClassesEqualityTestBase(
     }
 
     private fun invalidateCaches(project: Project) {
-        if (isTestAgainstCompiledCode) {
-            project.publishGlobalModuleStateModificationEvent()
-        } else {
-            project.publishGlobalSourceOutOfBlockModificationEvent()
+        runWriteAction {
+            if (isTestAgainstCompiledCode) {
+                project.publishGlobalModuleStateModificationEvent()
+            } else {
+                project.publishGlobalSourceOutOfBlockModificationEvent()
+            }
         }
     }
 

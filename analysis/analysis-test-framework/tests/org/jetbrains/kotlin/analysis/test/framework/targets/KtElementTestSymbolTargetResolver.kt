@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 /**
  * A [KtElement] [TestSymbolTargetResolver] which resolves *all* possible [KtElement]s for a [TestSymbolTarget]. The resolver may return
@@ -92,7 +93,9 @@ internal class KtElementTestSymbolTargetResolver(private val project: Project) :
         }
 
         // Destroy all evidence of analysis. The test symbol target resolver should not prime the global resolution state.
-        project.publishGlobalModuleStateModificationEvent()
+        runWriteAction {
+            project.publishGlobalModuleStateModificationEvent()
+        }
 
         return callables.ifEmpty { error("Cannot find a callable `$callableId`.") }
     }

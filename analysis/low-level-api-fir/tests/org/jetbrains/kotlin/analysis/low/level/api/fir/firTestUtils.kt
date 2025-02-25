@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 
 internal fun FirElement.renderWithClassName(): String =
@@ -55,7 +56,9 @@ internal inline fun <R> withResolveSession(module: KaModule, action: (LLFirResol
 }
 
 internal fun clearCaches(project: Project) {
-    project.publishGlobalModuleStateModificationEvent()
+    runWriteAction {
+        project.publishGlobalModuleStateModificationEvent()
+    }
 }
 
 internal val LLFirResolveSession.isSourceSession: Boolean
