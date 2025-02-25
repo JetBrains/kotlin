@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
+import org.jetbrains.kotlin.util.getLinesPerSecond
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
@@ -658,20 +659,20 @@ abstract class IncrementalCompilerRunner<
     }
 
     protected fun reportPerformanceData(defaultPerformanceManager: PerformanceManager) {
-        val lines = defaultPerformanceManager.lines.takeIf { it > 0 }
-        if (lines != null) {
-            reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, lines.toLong())
+        val moduleStats = defaultPerformanceManager.unitStats
+        if (moduleStats.linesCount > 0) {
+            reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong())
         }
 
         fun reportLps(lpsMetrics: GradleBuildPerformanceMetric, time: Time) {
-            if (lines != null && time != Time.ZERO) {
-                reporter.addMetric(lpsMetrics, lines * 1000 / time.millis)
+            if (time != Time.ZERO) {
+                reporter.addMetric(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong())
             }
         }
 
         var codegenTime: Time = Time.ZERO
 
-        defaultPerformanceManager.unitStats.forEachPhaseMeasurement { phaseType, time ->
+        moduleStats.forEachPhaseMeasurement { phaseType, time ->
             if (time == null) return@forEachPhaseMeasurement
 
             val gradleBuildTime = when (phaseType) {

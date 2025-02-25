@@ -148,8 +148,7 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
         action(
             "%20s%8s ms".format(name, time.millis) +
                     if (phaseType != PhaseType.Initialization && linesCount != 0) {
-                        val lps = linesCount.toDouble() * 1000 / time.millis
-                        "%12.3f loc/s".format(lps)
+                        "%12.3f loc/s".format(getLinesPerSecond(time))
                     } else {
                         ""
                     }
@@ -176,4 +175,10 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
     }
 
     extendedStats.forEach { action(it) }
+}
+
+private val nanosInSecond = TimeUnit.SECONDS.toNanos(1)
+
+fun UnitStats.getLinesPerSecond(time: Time): Double {
+    return linesCount.toDouble() / time.nanos * nanosInSecond // Assume `nanos` is never zero because it's unlikely possible to measure such a small time
 }

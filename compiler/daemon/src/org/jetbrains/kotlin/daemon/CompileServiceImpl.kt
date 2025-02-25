@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
+import org.jetbrains.kotlin.util.getLinesPerSecond
 import java.io.File
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
@@ -278,20 +279,20 @@ abstract class CompileServiceImplBase(
     protected fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
         val performanceMetrics = ArrayList<BuildMetricsValue>()
         val performanceManager = compiler.defaultPerformanceManager
-        val lines = performanceManager.lines.takeIf { it > 0 }
-        if (lines != null) {
-            performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, lines.toLong()))
+        val moduleStats = performanceManager.unitStats
+        if (moduleStats.linesCount > 0) {
+            performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong()))
         }
 
         var codegenTime = Time.ZERO
 
         fun reportLps(lpsMetrics: CompilationPerformanceMetrics, time: Time) {
-            if (lines != null && time != Time.ZERO) {
-                performanceMetrics.add(BuildMetricsValue(lpsMetrics, lines * 1000 / time.millis))
+            if (time != Time.ZERO) {
+                performanceMetrics.add(BuildMetricsValue(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong()))
             }
         }
 
-        performanceManager.unitStats.forEachPhaseMeasurement { phaseType, time ->
+        moduleStats.forEachPhaseMeasurement { phaseType, time ->
             if (time == null) return@forEachPhaseMeasurement
 
             val metrics = when (phaseType) {
