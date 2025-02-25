@@ -148,6 +148,7 @@ val firVisitorVoidType = generatedType("visitors", "FirVisitorVoid")
 val firDefaultVisitorType = generatedType("visitors", "FirDefaultVisitor")
 val firDefaultVisitorVoidType = generatedType("visitors", "FirDefaultVisitorVoid")
 val firTransformerType = generatedType("visitors", "FirTransformer")
+val firCompositeVisitorType = generatedType("visitors", "FirCompositeVisitor")
 
 val resolveStateAccessAnnotation = type("fir.declarations", "ResolveStateAccess", kind = TypeKind.Class)
 val unresolvedExpressionTypeAccessAnnotation = type("fir.expressions", "UnresolvedExpressionTypeAccess", kind = TypeKind.Class)

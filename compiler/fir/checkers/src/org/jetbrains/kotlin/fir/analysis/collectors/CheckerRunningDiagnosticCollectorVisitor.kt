@@ -9,20 +9,21 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.visitors.FirCompositeVisitor
 
 open class CheckerRunningDiagnosticCollectorVisitor(
     context: CheckerContextForProvider,
     protected val components: DiagnosticCollectorComponents
 ) : AbstractDiagnosticCollectorVisitor(context) {
 
+    private val visitor = FirCompositeVisitor(components.regularComponents)
+
     override fun checkSettings() {
         components.regularComponents.forEach { it.checkSettings(context) }
     }
 
     override fun checkElement(element: FirElement) {
-        components.regularComponents.forEach {
-            element.accept(it, context)
-        }
+        element.accept(visitor, context)
         element.accept(components.reportCommitter, context)
     }
 

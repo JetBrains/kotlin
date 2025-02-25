@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticColl
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.visitors.FirCompositeVisitor
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
@@ -27,6 +28,8 @@ internal open class LLFirDiagnosticVisitor(
     components: DiagnosticCollectorComponents,
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
     private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
+
+    private val visitor = FirCompositeVisitor(components.regularComponents)
 
     override fun visitNestedElements(element: FirElement) {
         if (element is FirDeclaration) {
@@ -38,11 +41,9 @@ internal open class LLFirDiagnosticVisitor(
 
     override fun checkElement(element: FirElement) {
         beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
-        components.regularComponents.forEach { diagnosticVisitor ->
-            checkCanceled()
-            suppressAndLogExceptions {
-                element.accept(diagnosticVisitor, context)
-            }
+        checkCanceled()
+        suppressAndLogExceptions {
+            element.accept(visitor, context)
         }
 
         checkCanceled()
