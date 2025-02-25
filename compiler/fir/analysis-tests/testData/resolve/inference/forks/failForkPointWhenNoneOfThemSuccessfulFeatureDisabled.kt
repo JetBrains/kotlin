@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75444
+// LANGUAGE: -ForkIsNotSuccessfulWhenNoBranchIsSuccessful
 
 interface Data
 
@@ -21,5 +22,5 @@ fun <A : Type.TypeA<out K>, K : Data> Base<A, Token.TokenA, K>.foo() {}
 
 fun test_3_2(algorithm: Base.A<*, Token.TokenB, Data>) {
     algorithm <!UNCHECKED_CAST!>as Base.B<Type<out Data>, Data><!>
-    algorithm.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // should be wrong receiver
+    algorithm.foo() // should be wrong receiver
 }

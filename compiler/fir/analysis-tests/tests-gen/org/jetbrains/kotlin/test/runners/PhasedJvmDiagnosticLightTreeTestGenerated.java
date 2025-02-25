@@ -53995,6 +53995,17 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/forks")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Forks {
+        @Test
+        @TestMetadata("failForkPointWhenNoneOfThemSuccessfulFeatureDisabled.kt")
+        public void testFailForkPointWhenNoneOfThemSuccessfulFeatureDisabled() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/forks/failForkPointWhenNoneOfThemSuccessfulFeatureDisabled.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/incorporation")
       @TestDataPath("$PROJECT_ROOT")
       public class Incorporation {

@@ -354,6 +354,11 @@ enum class LanguageFeature(
     // We enable it for already released 2.1 because it's a bug fix
     StricterConstraintIncorporationRecursionDetector(KOTLIN_2_1, kind = OTHER), // KT-73434
 
+    // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes
+    // See the single usage at org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.runForkingPoint
+    // We enable it for already released 2.1 because it's a bug fix
+    ForkIsNotSuccessfulWhenNoBranchIsSuccessful(KOTLIN_2_1, kind = OTHER), // KT-75444
+
     // 2.2
 
     BreakContinueInInlineLambdas(KOTLIN_2_2), // KT-1436

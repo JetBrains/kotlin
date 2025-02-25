@@ -371,7 +371,10 @@ class ConstraintInjector(
                     forkPointsData!!.addIfNotNull(
                         constraintSets
                     )
-                    return true
+                    return if (languageVersionSettings.supportsFeature(LanguageFeature.ForkIsNotSuccessfulWhenNoBranchIsSuccessful))
+                        isThereSuccessfulFork
+                    else
+                        true
                 }
                 else -> {
                     // The emptiness case has been already handled above

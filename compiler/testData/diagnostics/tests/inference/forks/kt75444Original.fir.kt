@@ -72,7 +72,7 @@ fun test_1_3(algorithm: Algorithm<AuthCapability<out KeyType>, NonceTrait, KeyTy
 
 fun test_1_4(algorithm: Algorithm<AuthCapability<out KeyType>, NonceTrait, KeyType>) {
     if (!algorithm.requiresNonce() && algorithm.isAuthenticated()) {
-        algorithm.foo() // OK, but should be wrong receiver
+        algorithm.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // OK, but should be wrong receiver
     }
 }
 

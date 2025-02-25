@@ -4392,6 +4392,22 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/forks")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Forks {
+        @Test
+        public void testAllFilesPresentInForks() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/forks"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("failForkPointWhenNoneOfThemSuccessfulFeatureDisabled.kt")
+        public void testFailForkPointWhenNoneOfThemSuccessfulFeatureDisabled() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/forks/failForkPointWhenNoneOfThemSuccessfulFeatureDisabled.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/incorporation")
       @TestDataPath("$PROJECT_ROOT")
       public class Incorporation {
