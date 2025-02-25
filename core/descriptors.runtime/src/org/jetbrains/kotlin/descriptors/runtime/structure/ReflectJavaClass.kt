@@ -146,7 +146,7 @@ class ReflectJavaClass(
     override fun toString() = this::class.java.name + ": " + klass
 }
 
-private object Java16SealedRecordLoader {
+object Java16SealedRecordLoader {
     class Cache(
         val isSealed: Method?,
         val getPermittedSubclasses: Method?,

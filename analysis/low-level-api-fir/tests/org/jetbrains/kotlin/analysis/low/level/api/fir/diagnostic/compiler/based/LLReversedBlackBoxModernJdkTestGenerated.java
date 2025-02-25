@@ -443,6 +443,32 @@ public class LLReversedBlackBoxModernJdkTestGenerated extends AbstractLLReversed
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Reflection {
+      @Test
+      public void testAllFilesPresentInReflection() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Modifiers {
+        @Test
+        public void testAllFilesPresentInModifiers() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("javaClassModifiers.kt")
+        public void testJavaClassModifiers() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers/javaClassModifiers.kt");
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag")
     @TestDataPath("$PROJECT_ROOT")
     public class ReleaseFlag {

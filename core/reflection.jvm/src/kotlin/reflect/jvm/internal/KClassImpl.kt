@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
+import org.jetbrains.kotlin.descriptors.runtime.structure.Java16SealedRecordLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -37,19 +38,30 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.utils.compact
+import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.TypeIntrinsics
+import kotlin.metadata.KmClass
+import kotlin.metadata.Modality
+import kotlin.metadata.internal.toKmClass
+import kotlin.metadata.modality
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
+import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
 internal class KClassImpl<T : Any>(
-    override val jClass: Class<T>
+    override val jClass: Class<T>,
 ) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KTypeParameterOwnerImpl {
     inner class Data : KDeclarationContainerImpl.Data() {
+        val kmClass: KmClass? by lazy(PUBLICATION) {
+            (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
+                descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+            }
+        }
+
         val descriptor: ClassDescriptor by ReflectProperties.lazySoft {
             val classId = classId
             val moduleData = data.value.moduleData
@@ -192,6 +204,8 @@ internal class KClassImpl<T : Any>(
 
     override val descriptor: ClassDescriptor get() = data.value.descriptor
 
+    private val kmClass: KmClass? get() = data.value.kmClass
+
     override val annotations: List<Annotation> get() = data.value.annotations
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
@@ -271,17 +285,26 @@ internal class KClassImpl<T : Any>(
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
 
+    private val modality: Modality
+        get() = kmClass?.modality ?: when {
+            jClass.isAnnotation || jClass.isEnum -> Modality.FINAL
+            Java16SealedRecordLoader.loadIsSealed(jClass) == true -> Modality.SEALED
+            Modifier.isAbstract(jClass.modifiers) -> Modality.ABSTRACT
+            !Modifier.isFinal(jClass.modifiers) -> Modality.OPEN
+            else -> Modality.FINAL
+        }
+
     override val isFinal: Boolean
-        get() = descriptor.modality == Modality.FINAL
+        get() = modality == Modality.FINAL
 
     override val isOpen: Boolean
-        get() = descriptor.modality == Modality.OPEN
+        get() = modality == Modality.OPEN
 
     override val isAbstract: Boolean
-        get() = descriptor.modality == Modality.ABSTRACT
+        get() = modality == Modality.ABSTRACT
 
     override val isSealed: Boolean
-        get() = descriptor.modality == Modality.SEALED
+        get() = modality == Modality.SEALED
 
     override val isData: Boolean
         get() = descriptor.isData
@@ -327,7 +350,8 @@ internal class KClassImpl<T : Any>(
             KotlinClassHeader.Kind.FILE_FACADE,
             KotlinClassHeader.Kind.MULTIFILE_CLASS,
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART,
-            KotlinClassHeader.Kind.SYNTHETIC_CLASS ->
+            KotlinClassHeader.Kind.SYNTHETIC_CLASS,
+                ->
                 return createSyntheticClass(classId, moduleData)
             KotlinClassHeader.Kind.UNKNOWN -> {
                 // Should not happen since ABI-related exception must have happened earlier
@@ -344,7 +368,7 @@ internal class KClassImpl<T : Any>(
         ClassDescriptorImpl(
             EmptyPackageFragmentDescriptor(moduleData.module, classId.packageFqName),
             classId.shortClassName,
-            Modality.FINAL,
+            DescriptorModality.FINAL,
             ClassKind.CLASS,
             listOf(moduleData.module.builtIns.any.defaultType),
             SourceElement.NO_SOURCE,
