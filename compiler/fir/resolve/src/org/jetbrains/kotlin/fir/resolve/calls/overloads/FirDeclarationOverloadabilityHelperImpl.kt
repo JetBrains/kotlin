@@ -62,9 +62,12 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         return FlatSignature(
             origin = declaration,
             typeParameters = declaration.typeParameterSymbols.map { it.toLookupTag() },
-            valueParameterTypes = valueParameters.map { it.resolvedReturnType },
+            valueParameterTypes = buildList<KotlinTypeMarker> {
+                declaration.resolvedContextParameters.mapTo(this) { it.returnTypeRef.coneType }
+                valueParameters.mapTo(this) { it.resolvedReturnType }
+            },
             hasExtensionReceiver = false,
-            contextReceiverCount = 0,
+            contextReceiverCount = declaration.resolvedContextParameters.size,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = valueParameters.count { it.hasDefaultValue },
             isExpect = declaration.isExpect,

@@ -34994,6 +34994,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("extensionWithContext.kt")
+        public void testExtensionWithContext() {
+          runTest("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionWithContext.kt");
+        }
+
+        @Test
         @TestMetadata("infixExtensionVsNonInfixMember.kt")
         public void testInfixExtensionVsNonInfixMember() {
           runTest("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/infixExtensionVsNonInfixMember.kt");
