@@ -103,6 +103,26 @@ internal class FastJarVirtualFile(
     override fun getModificationStamp(): Long {
         return 0
     }
+
+    /**
+     * According to `VirtualFile` spec:
+     *
+     *  VirtualFile instances are created on request, so there can be several instances corresponding to the same file.
+     *  All of them are equal, have the same {@code hashCode} and use shared storage for all related data, including user data
+     *  (see {@link UserDataHolder}).</p>
+     *
+     * Different instances of `FastJarVirtualFile` with the same path should be equal
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other is FastJarVirtualFile && handler == other.handler && path == other.path
+    }
+
+    override fun hashCode(): Int {
+        var result = handler.hashCode()
+        result = 31 * result + path.hashCode()
+        return result
+    }
 }
 
 private val EMPTY_BYTE_ARRAY = ByteArray(0)
