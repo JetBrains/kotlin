@@ -44,6 +44,29 @@ class TestFixturesTest {
         "jvm"
     )
 
+    @Test
+    fun kt75262PluginApplicationOrderInJvm() {
+        val project = buildProjectWithJvm(
+            preApplyCode = { plugins.apply("java-test-fixtures") }
+        )
+
+        project.evaluate()
+    }
+
+    @Test
+    fun kt75262PluginApplicationOrderInKMP() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { plugins.apply("java-test-fixtures") }
+        ) {
+            kotlin {
+                jvm()
+            }
+        }
+
+        project.evaluate()
+    }
+
+
     private fun testNoDuplicatedResourcesInClasspath(project: ProjectInternal, targetPrefix: String? = null) = with(project) {
         plugins.apply("java-test-fixtures")
         repositories {
