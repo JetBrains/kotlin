@@ -43,13 +43,14 @@ import org.jetbrains.kotlin.utils.compact
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.TypeIntrinsics
-import kotlin.metadata.KmClass
+import kotlin.metadata.*
+import kotlin.metadata.ClassKind
 import kotlin.metadata.Modality
 import kotlin.metadata.internal.toKmClass
-import kotlin.metadata.modality
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
+import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
 internal class KClassImpl<T : Any>(
@@ -130,7 +131,7 @@ internal class KClassImpl<T : Any>(
         @Suppress("UNCHECKED_CAST")
         val objectInstance: T? by lazy(PUBLICATION) {
             val descriptor = descriptor
-            if (descriptor.kind != ClassKind.OBJECT) return@lazy null
+            if (descriptor.kind != DescriptorClassKind.OBJECT) return@lazy null
 
             val field = if (descriptor.isCompanionObject && !CompanionObjectMapping.isMappedIntrinsicCompanionObject(descriptor)) {
                 jClass.enclosingClass.getDeclaredField(descriptor.name.asString())
@@ -166,7 +167,7 @@ internal class KClassImpl<T : Any>(
             }
             if (!KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor) && result.all {
                     val classKind = DescriptorUtils.getClassDescriptorForType(it.type).kind
-                    classKind == ClassKind.INTERFACE || classKind == ClassKind.ANNOTATION_CLASS
+                    classKind == DescriptorClassKind.INTERFACE || classKind == DescriptorClassKind.ANNOTATION_CLASS
                 }) {
                 result += KTypeImpl(descriptor.builtIns.anyType) { Any::class.java }
             }
@@ -222,7 +223,7 @@ internal class KClassImpl<T : Any>(
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
             val descriptor = descriptor
-            if (descriptor.kind == ClassKind.INTERFACE || descriptor.kind == ClassKind.OBJECT) {
+            if (descriptor.kind == DescriptorClassKind.INTERFACE || descriptor.kind == DescriptorClassKind.OBJECT) {
                 return emptyList()
             }
             return descriptor.constructors
@@ -307,19 +308,22 @@ internal class KClassImpl<T : Any>(
         get() = modality == Modality.SEALED
 
     override val isData: Boolean
-        get() = descriptor.isData
+        get() = kmClass?.isData == true
 
     override val isInner: Boolean
-        get() = descriptor.isInner
+        get() = when (val kmClass = kmClass) {
+            null -> jClass.declaringClass != null && !Modifier.isStatic(jClass.modifiers)
+            else -> kmClass.isInner
+        }
 
     override val isCompanion: Boolean
-        get() = descriptor.isCompanionObject
+        get() = kmClass?.kind == ClassKind.COMPANION_OBJECT
 
     override val isFun: Boolean
-        get() = descriptor.isFun
+        get() = kmClass?.isFunInterface == true
 
     override val isValue: Boolean
-        get() = descriptor.isValue
+        get() = kmClass?.isValue == true
 
     override fun equals(other: Any?): Boolean =
         other is KClassImpl<*> && javaObjectType == other.javaObjectType
@@ -369,7 +373,7 @@ internal class KClassImpl<T : Any>(
             EmptyPackageFragmentDescriptor(moduleData.module, classId.packageFqName),
             classId.shortClassName,
             DescriptorModality.FINAL,
-            ClassKind.CLASS,
+            DescriptorClassKind.CLASS,
             listOf(moduleData.module.builtIns.any.defaultType),
             SourceElement.NO_SOURCE,
             false,
