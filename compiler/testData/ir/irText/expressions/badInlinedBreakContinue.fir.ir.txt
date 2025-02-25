@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
         CALL 'public final fun invoke <T, R> (<this>: kotlin.DeepRecursiveFunction<T of kotlin.invoke, R of kotlin.invoke>, value: T of kotlin.invoke): R of kotlin.invoke declared in kotlin' type=IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R]) origin=null
           TYPE_ARG T: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter T])
           TYPE_ARG R: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R])
-          ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN IR_EXTERNAL_DECLARATION_STUB name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
+          ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN FUNCTION_INTERFACE_MEMBER name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
             FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
                 BLOCK_BODY
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
             CALL 'public final fun invoke <T, R> (<this>: kotlin.DeepRecursiveFunction<T of kotlin.invoke, R of kotlin.invoke>, value: T of kotlin.invoke): R of kotlin.invoke declared in kotlin' type=IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R]) origin=null
               TYPE_ARG T: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter T])
               TYPE_ARG R: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R])
-              ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN IR_EXTERNAL_DECLARATION_STUB name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
+              ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN FUNCTION_INTERFACE_MEMBER name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
                 FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
                     BLOCK_BODY
@@ -134,7 +134,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                     CALL 'public final fun invoke <T, R> (<this>: kotlin.DeepRecursiveFunction<T of kotlin.invoke, R of kotlin.invoke>, value: T of kotlin.invoke): R of kotlin.invoke declared in kotlin' type=IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R]) origin=null
                       TYPE_ARG T: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter T])
                       TYPE_ARG R: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R])
-                      ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN IR_EXTERNAL_DECLARATION_STUB name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
+                      ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN FUNCTION_INTERFACE_MEMBER name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
                         FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
                             BLOCK_BODY

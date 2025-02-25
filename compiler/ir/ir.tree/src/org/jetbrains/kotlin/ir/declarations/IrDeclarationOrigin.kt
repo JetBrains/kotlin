@@ -111,6 +111,11 @@ interface IrDeclarationOrigin {
         val FILLED_FOR_UNBOUND_SYMBOL by IrDeclarationOriginImpl
 
         val INLINE_LAMBDA by IrDeclarationOriginImpl
+
+        /**
+         * Used on synthetic `invoke` methods for `[K][Suspend]FunctionN` interfaces.
+         */
+        val FUNCTION_INTERFACE_MEMBER by IrDeclarationOriginImpl
     }
 
     /**

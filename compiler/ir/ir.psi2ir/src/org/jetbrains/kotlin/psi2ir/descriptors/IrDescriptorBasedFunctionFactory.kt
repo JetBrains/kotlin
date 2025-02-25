@@ -80,7 +80,7 @@ abstract class IrAbstractDescriptorBasedFunctionFactory {
 
     companion object {
         val classOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_CLASS")
-        val memberOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_MEMBER")
+        val memberOrigin = IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
         const val offset = SYNTHETIC_OFFSET
 
         internal fun functionClassName(isK: Boolean, isSuspend: Boolean, arity: Int): String =

@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.isFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
+import org.jetbrains.kotlin.fir.resolve.isKSuspendFunctionInvoke
+import org.jetbrains.kotlin.fir.resolve.isSuspendFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -72,9 +75,11 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     ): IrSimpleFunction = convertCatching(function) {
         val simpleFunction = function as? FirSimpleFunction
         val isLambda = function is FirAnonymousFunction && function.isLambda
+        val isBaseInvokeFunction = function.symbol.callableId
+            .run { isFunctionInvoke() || isSuspendFunctionInvoke() || isKFunctionInvoke() || isKSuspendFunctionInvoke() }
         val updatedOrigin = when {
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-            function.symbol.callableId.isKFunctionInvoke() -> IrDeclarationOrigin.FAKE_OVERRIDE
+            isBaseInvokeFunction -> IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
             !predefinedOrigin.isExternal && // we should preserve origin for external enums
                     simpleFunction?.isStatic == true &&
                     simpleFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
@@ -91,6 +96,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 fakeOverrideOwnerLookupTag
             )
         }
+        val isSynthetic = updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER ||
+                updatedOrigin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER ||
+                updatedOrigin == IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
         if (irParent.isExternalParent()) {
             require(function is FirSimpleFunction)
             if (!allowLazyDeclarationsCreation) {
@@ -98,7 +106,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             }
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             if (symbol.isBound) return symbol.owner
-            return lazyDeclarationsGenerator.createIrLazyFunction(function, symbol, irParent, updatedOrigin)
+            return lazyDeclarationsGenerator.createIrLazyFunction(function, symbol, irParent, updatedOrigin, isSynthetic)
         }
         val name = simpleFunction?.name
             ?: if (isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
@@ -106,8 +114,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val isSuspend =
             if (isLambda) (function.typeRef as? FirResolvedTypeRef)?.coneType?.isSuspendOrKSuspendFunctionType(session) == true
             else function.isSuspend
-        val isSynthetic =
-            updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER || updatedOrigin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
         val created = function.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(function)
             IrFactoryImpl.createSimpleFunction(

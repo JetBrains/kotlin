@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -29,13 +30,17 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         fir: FirSimpleFunction,
         symbol: IrSimpleFunctionSymbol,
         lazyParent: IrDeclarationParent,
-        declarationOrigin: IrDeclarationOrigin
+        declarationOrigin: IrDeclarationOrigin,
+        isSynthetic: Boolean,
     ): Fir2IrLazySimpleFunction {
         val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
             val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
             val isFakeOverride = fir.isFakeOverride(firContainingClass)
             Fir2IrLazySimpleFunction(
-                c, startOffset, endOffset, declarationOrigin,
+                c,
+                startOffset = if (isSynthetic) SYNTHETIC_OFFSET else startOffset,
+                endOffset = if (isSynthetic) SYNTHETIC_OFFSET else endOffset,
+                declarationOrigin,
                 fir, firContainingClass, symbol, lazyParent, isFakeOverride
             )
         }

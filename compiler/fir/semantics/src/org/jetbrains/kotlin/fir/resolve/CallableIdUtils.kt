@@ -25,6 +25,11 @@ fun CallableId.isSuspendFunctionInvoke(): Boolean =
             && className?.asString()?.startsWith("SuspendFunction") == true
             && packageName == StandardClassIds.BASE_COROUTINES_PACKAGE
 
+fun CallableId.isKSuspendFunctionInvoke(): Boolean =
+    callableName.asString() == "invoke"
+            && className?.asString()?.startsWith("KSuspendFunction") == true
+            && packageName == StandardClassIds.BASE_REFLECT_PACKAGE
+
 fun CallableId.isFunctionInvoke(): Boolean =
     callableName.asString() == "invoke"
             && className?.asString()?.startsWith("Function") == true
