@@ -762,6 +762,7 @@ fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic):
     return when (calleeReference.candidateSymbol) {
         is FirErrorPropertySymbol, is FirErrorFunctionSymbol -> buildErrorNamedReference {
             source = calleeReference.source
+            name = calleeReference.name
             this.diagnostic = diagnostic
         }
         else -> buildResolvedErrorReference {

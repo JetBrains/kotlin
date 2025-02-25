@@ -585,9 +585,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             kind = Object
         }
 
-        impl(errorNamedReference) {
-            default("name", "Name.special(\"<\${diagnostic.reason}>\")")
-        }
+        impl(errorNamedReference)
 
         impl(breakExpression) {
             defaultBuiltInType("Nothing")

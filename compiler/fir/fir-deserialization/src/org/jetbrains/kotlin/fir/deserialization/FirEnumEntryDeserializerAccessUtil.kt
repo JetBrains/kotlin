@@ -40,6 +40,7 @@ fun FirEnumEntryDeserializedAccessExpression.toQualifiedPropertyAccessExpression
                         "Strange deserialized enum value: $enumClassId.$enumEntryName",
                         DiagnosticKind.Java,
                     )
+                    name = enumEntryName
                 }
             }
         }

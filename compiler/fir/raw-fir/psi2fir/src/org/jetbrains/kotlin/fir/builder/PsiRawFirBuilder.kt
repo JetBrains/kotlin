@@ -27,7 +27,11 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.references.buildErrorNamedReferenceWithNoName
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -3284,11 +3288,11 @@ open class PsiRawFirBuilder(
 
                 calleeExpression is KtSuperExpression || parenthesizedArgument is FirSuperReceiverExpression -> {
                     CalleeAndReceiver(
-                        buildErrorNamedReference {
+                        buildErrorNamedReferenceWithNoName(
                             source = (calleeExpression as? KtSuperExpression)?.toFirSourceElement()
-                                ?: (parenthesizedArgument as? FirResolvable)?.calleeReference?.source
-                            diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
-                        }
+                                ?: (parenthesizedArgument as? FirResolvable)?.calleeReference?.source,
+                            diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed),
+                        )
                     )
                 }
 
@@ -3304,10 +3308,10 @@ open class PsiRawFirBuilder(
 
                 calleeExpression == null -> {
                     CalleeAndReceiver(
-                        buildErrorNamedReference {
-                            source = defaultSource
-                            diagnostic = ConeSyntaxDiagnostic("Call has no callee")
-                        }
+                        buildErrorNamedReferenceWithNoName(
+                            source = defaultSource,
+                            diagnostic = ConeSyntaxDiagnostic("Call has no callee"),
+                        )
                     )
                 }
 

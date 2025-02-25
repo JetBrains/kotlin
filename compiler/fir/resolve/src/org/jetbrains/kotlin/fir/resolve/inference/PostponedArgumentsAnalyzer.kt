@@ -123,6 +123,7 @@ class PostponedArgumentsAnalyzer(
         val namedReference = atom.resultingReference ?: buildErrorNamedReference {
             source = callableReferenceAccess.source
             diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
+            name = callableReferenceAccess.calleeReference.name
         }
 
         callableReferenceAccess.apply {

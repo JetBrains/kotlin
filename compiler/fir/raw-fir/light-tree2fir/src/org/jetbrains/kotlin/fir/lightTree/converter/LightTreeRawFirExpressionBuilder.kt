@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
 import org.jetbrains.kotlin.fir.lightTree.fir.addDestructuringStatements
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.buildErrorNamedReferenceWithNoName
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -756,10 +756,10 @@ class LightTreeRawFirExpressionBuilder(
 
             superNode != null || additionalArgument is FirSuperReceiverExpression -> {
                 CalleeAndReceiver(
-                    buildErrorNamedReference {
-                        this.source = superNode?.toFirSourceElement() ?: (additionalArgument as? FirResolvable)?.calleeReference?.source
-                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
-                    }
+                    buildErrorNamedReferenceWithNoName(
+                        source = superNode?.toFirSourceElement() ?: (additionalArgument as? FirResolvable)?.calleeReference?.source,
+                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed),
+                    )
                 )
             }
 
@@ -774,10 +774,10 @@ class LightTreeRawFirExpressionBuilder(
             }
 
             else -> CalleeAndReceiver(
-                buildErrorNamedReference {
-                    this.source = source
-                    diagnostic = ConeSyntaxDiagnostic("Call has no callee")
-                }
+                buildErrorNamedReferenceWithNoName(
+                    diagnostic = ConeSyntaxDiagnostic("Call has no callee"),
+                    source,
+                )
             )
         }
 

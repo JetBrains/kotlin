@@ -212,6 +212,7 @@ class FirSyntheticCallGenerator(
                 )
             } ?: buildErrorNamedReference {
                 diagnostic = ConeUnresolvedNameError(ArrayFqNames.ARRAY_OF_FUNCTION)
+                name = ArrayFqNames.ARRAY_OF_FUNCTION
             }
             source = arrayLiteral.source
         }.also {
@@ -411,6 +412,7 @@ class FirSyntheticCallGenerator(
                         CandidateApplicability.INAPPLICABLE,
                         it.candidates,
                     )
+                    name = it.name
                 }
                 replaceCalleeReference(newCalleeReference)
             }
