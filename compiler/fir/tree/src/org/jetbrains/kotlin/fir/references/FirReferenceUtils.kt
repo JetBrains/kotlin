@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.fir.references
 
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -82,3 +86,9 @@ fun FirReference.isError(): Boolean {
     }
 }
 
+fun buildErrorNamedReferenceWithNoName(diagnostic: ConeDiagnostic, source: KtSourceElement? = null): FirErrorNamedReference =
+    buildErrorNamedReference {
+        this.diagnostic = diagnostic
+        this.source = source
+        this.name = Name.special("<${diagnostic.reason}>")
+    }
