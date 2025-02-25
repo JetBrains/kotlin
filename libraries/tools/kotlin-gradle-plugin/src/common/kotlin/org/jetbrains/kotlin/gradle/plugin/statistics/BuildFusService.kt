@@ -58,6 +58,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
     }
 
     interface Parameters : BuildServiceParameters {
+        val generalMetricsFinalized: Property<Boolean>
         val generalConfigurationMetrics: Property<MetricContainer>
         val buildStatisticsConfiguration: Property<KotlinBuildStatsConfiguration>
         val buildId: Property<String>
@@ -82,6 +83,18 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
     companion object {
         internal val serviceName = "${BuildFusService::class.simpleName}_${BuildFusService::class.java.classLoader.hashCode()}"
         private var buildStartTime: Long = System.currentTimeMillis()
+
+        internal fun getBuildFusService(project: Project) =
+            if (project.buildServiceShouldBeCreated) {
+                project.gradle.sharedServices.registrations.findByName(serviceName).also {
+                    if (it == null) {
+                        project.logger.info("BuildFusService was not registered")
+                    }
+                }
+            } else {
+                null
+            }
+
 
         fun registerIfAbsent(project: Project, pluginVersion: String, buildUidService: Provider<BuildUidService>) =
             if (project.buildServiceShouldBeCreated) {
@@ -225,3 +238,12 @@ class MetricContainer : Serializable {
 
 private val Project.buildServiceShouldBeCreated
     get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection
+
+internal fun BuildFusService.Parameters.finalizeGeneralConfigurationMetrics() {
+    if (generalMetricsFinalized.get()) return
+    synchronized(this) {
+        if (generalMetricsFinalized.get()) return
+        generalMetricsFinalized.set(true)
+        generalConfigurationMetrics.finalizeValue()
+    }
+}
