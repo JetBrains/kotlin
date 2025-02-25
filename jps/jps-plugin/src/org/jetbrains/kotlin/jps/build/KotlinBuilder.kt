@@ -377,8 +377,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         outputConsumer: OutputConsumer,
         fsOperations: FSOperationsHelper,
     ): ExitCode {
-        // Workaround for Android Studio
-        if (representativeTarget is KotlinJvmModuleBuildTarget && !JavaBuilder.IS_ENABLED[context, true]) {
+        if (!System.getProperty("kotlin.jps.enabled", "true")!!.toBoolean()) {
             messageCollector.report(INFO, KotlinJpsBundle.message("info.text.kotlin.jps.plugin.is.disabled"))
             return NOTHING_DONE
         }
