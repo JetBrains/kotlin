@@ -22,12 +22,16 @@ import org.jetbrains.kotlin.types.KotlinType
 class MemberDeserializer(private val c: DeserializationContext) {
     private val annotationDeserializer = AnnotationDeserializer(c.components.moduleDescriptor, c.components.notFoundClasses)
 
-    fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
+    fun loadProperty(proto: ProtoBuf.Property, loadAnnotationsFromMetadata: Boolean = false): PropertyDescriptor {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
+
+        val annotationsFromMetadata = if (loadAnnotationsFromMetadata) Annotations.create(
+            proto.annotationList.map { annotationDeserializer.deserializeAnnotation(it, c.nameResolver) }
+        ) else null
 
         val property = DeserializedPropertyDescriptor(
             c.containingDeclaration, null,
-            getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
+            annotationsFromMetadata ?: getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             ProtoEnumFlags.descriptorVisibility(Flags.VISIBILITY.get(flags)),
             Flags.IS_VAR.get(flags),

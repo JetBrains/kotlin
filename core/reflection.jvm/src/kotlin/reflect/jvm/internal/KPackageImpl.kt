@@ -98,9 +98,8 @@ internal class KPackageImpl(
         return data.value.metadata?.let { (nameResolver, packageProto, metadataVersion) ->
             packageProto.getExtensionOrNull(JvmProtoBuf.packageLocalVariable, index)?.let { proto ->
                 deserializeToDescriptor(
-                    jClass, proto, nameResolver, TypeTable(packageProto.typeTable), metadataVersion,
-                    MemberDeserializer::loadProperty
-                )
+                    jClass, proto, nameResolver, TypeTable(packageProto.typeTable), metadataVersion
+                ) { proto -> loadProperty(proto, loadAnnotationsFromMetadata = true) }
             }
         }
     }
