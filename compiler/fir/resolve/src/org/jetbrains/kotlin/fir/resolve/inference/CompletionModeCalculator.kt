@@ -45,14 +45,14 @@ fun Candidate.computeCompletionMode(
     }
 }
 
-private typealias CsCompleterContext = ConstraintSystemCompletionContext
-
 private class CalculatorForNestedCall(
     private val candidate: Candidate,
     private val returnType: ConeKotlinType?,
     private val context: CsCompleterContext,
     private val oracle: TrivialConstraintTypeInferenceOracle
 ) {
+    typealias CsCompleterContext = ConstraintSystemCompletionContext
+
     private enum class FixationDirection {
         TO_SUBTYPE, EQUALITY
     }

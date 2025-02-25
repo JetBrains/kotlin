@@ -55,12 +55,12 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 val FirSession.javaElementFinder: FirJavaElementFinder? by FirSession.nullableSessionComponentAccessor<FirJavaElementFinder>()
 
-private typealias PropertyEvaluator = (FirProperty) -> String?
-
 class FirJavaElementFinder(
     private val session: FirSession,
     project: Project
 ) : PsiElementFinder(), KotlinFinderMarker, FirSessionComponent {
+    typealias PropertyEvaluator = (FirProperty) -> String?
+
     private val psiManager = PsiManager.getInstance(project)
     var propertyEvaluator: PropertyEvaluator? = null
 

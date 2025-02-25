@@ -137,6 +137,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
     private class InvocationDataCollector(
         val lambdaSymbols: Set<FirCallableSymbol<*>>
     ) : EventCollectingControlFlowGraphVisitor<LambdaInvocationEvent>() {
+        typealias PathAwareLambdaInvocationInfo = PathAwareEventOccurrencesRangeInfo<LambdaInvocationEvent>
+
         override fun visitFunctionCallExitNode(
             node: FunctionCallExitNode,
             data: PathAwareLambdaInvocationInfo
@@ -184,4 +186,4 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 }
 
 private typealias LambdaInvocationEvent = FirBasedSymbol<*>
-private typealias PathAwareLambdaInvocationInfo = PathAwareEventOccurrencesRangeInfo<LambdaInvocationEvent>
+
