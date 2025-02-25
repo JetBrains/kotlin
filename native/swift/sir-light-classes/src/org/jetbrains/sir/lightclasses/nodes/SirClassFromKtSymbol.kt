@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -183,8 +184,12 @@ internal abstract class SirAbstractClassFromKtSymbol(
                         ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
                     }
                 }
-            }
+            } + listOfNotNull(kotlinBridgedProtocol)
     }
+
+    private val kotlinBridgedProtocol: SirProtocol? get() = KotlinRuntimeSupportModule.kotlinBridged.takeIf {
+            superClass == SirNominalType(KotlinRuntimeModule.kotlinBase)
+        }
 }
 
 internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() {

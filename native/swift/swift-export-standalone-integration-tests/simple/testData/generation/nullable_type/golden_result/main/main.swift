@@ -6,7 +6,7 @@ public typealias NonoptionalRef = main.Bar
 public typealias OptOptRef = main.OptionalRef
 public typealias OptToNonOptTypealias = main.NonoptionalRef?
 public typealias OptionalRef = main.Bar?
-public final class Bar: KotlinRuntime.KotlinBase {
+public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public override init() {
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -18,7 +18,7 @@ public final class Bar: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class Foo: KotlinRuntime.KotlinBase {
+public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var any_value: KotlinRuntime.KotlinBase? {
         get {
             return switch Foo_any_value_get(self.__externalRCRef()) { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); }

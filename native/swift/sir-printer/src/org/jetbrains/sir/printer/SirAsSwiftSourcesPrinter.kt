@@ -130,6 +130,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
         print("extension ")
         printName()
         printInheritanceClause()
+        printWhereClause()
         printBody()
     }
 
@@ -282,6 +283,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
         get() = when (this) {
             is SirClass -> superClass to protocols
             is SirProtocol -> superClass to protocols
+            is SirExtension -> null to protocols
             else -> null to emptyList()
         }
 
@@ -292,6 +294,19 @@ public class SirAsSwiftSourcesPrinter private constructor(
             .takeIf { it.isNotEmpty() }
             ?.joinToString(", ")
             ?.let { print(": $it") }
+    }
+
+    private fun SirConstrainedDeclaration.printWhereClause() {
+        constraints.takeIf { it.isNotEmpty() }?.joinToString(", ", prefix = "where ") {
+            listOf(
+                "Self" + (it.subjectPath.takeIf { it.isNotEmpty() }?.joinToString(separator = ".", prefix = ".") ?: ""),
+                when (it) {
+                    is SirTypeConstraint.Conformance -> ":"
+                    is SirTypeConstraint.Equality -> "=="
+                },
+                it.constraint.swiftRender
+            ).joinToString(separator = " ")
+        }?.let { print(" $it") }
     }
 
     private fun SirElement.printName() = print(

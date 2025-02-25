@@ -10,7 +10,7 @@ public func flattenedPackageClass(
     ExportedKotlinPackages.flattenedPackage.flattenedPackageClass(i: i)
 }
 public extension ExportedKotlinPackages.flattenedPackage {
-    public final class FlattenedPackageClass: KotlinRuntime.KotlinBase {
+    public final class FlattenedPackageClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = flattenedPackage_FlattenedPackageClass_init_allocate()
             super.init(__externalRCRef: __kt)

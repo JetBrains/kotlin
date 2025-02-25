@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class Object: KotlinRuntime.KotlinBase {
+public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package override init(
         __externalRCRef: Swift.UInt
     ) {

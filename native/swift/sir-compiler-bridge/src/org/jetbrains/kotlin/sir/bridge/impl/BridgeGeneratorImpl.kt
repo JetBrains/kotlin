@@ -224,10 +224,11 @@ private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFun
         returnType = bridgeType(callable.returnType),
         kotlinFqName = fqName,
         selfParameter = if (callable.kind == SirCallableKind.INSTANCE_METHOD) {
-            val selfType = when (callable) {
-                is SirFunction -> SirNominalType(callable.parent as SirNamedDeclaration)
-                is SirAccessor -> SirNominalType((callable.parent as SirVariable).parent as SirNamedDeclaration)
-                is SirInit -> error("Init node cannot be an instance method")
+            val selfType: SirType = when (val parent = callable.parent) {
+                is SirNamedDeclaration -> SirNominalType(parent as SirNamedDeclaration)
+                is SirVariable -> SirNominalType(parent.parent as SirNamedDeclaration)
+                is SirExtension -> parent.extendedType
+                else -> error("Only a member can have a self parameter")
             }
             BridgeParameter("self", bridgeType(selfType))
         } else null,

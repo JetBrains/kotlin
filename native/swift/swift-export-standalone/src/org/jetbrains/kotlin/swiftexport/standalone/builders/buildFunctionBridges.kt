@@ -91,6 +91,9 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
         return null
     if (allParameters.any { it.type.isNever })
         return null // If any of the parameters is never - there should be no ability to call this function - therefor we can skip the bridge generation
+    if (parent is SirProtocol) {
+        return null
+    }
     val suffix = bridgeSuffix
     val request = FunctionBridgeRequest(
         this,

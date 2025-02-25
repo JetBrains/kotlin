@@ -39,7 +39,7 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: inheritance.OPEN_CLASS {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-open class OPEN_CLASS: KotlinRuntime.KotlinBase {
+open class OPEN_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public override init() {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)

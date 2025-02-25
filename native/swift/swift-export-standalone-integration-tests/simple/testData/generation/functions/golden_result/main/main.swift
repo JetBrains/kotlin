@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class Foo: KotlinRuntime.KotlinBase {
+public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public override init() {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -167,7 +167,7 @@ public extension ExportedKotlinPackages.namespace2 {
     }
 }
 public extension ExportedKotlinPackages.overload {
-    public final class Foo: KotlinRuntime.KotlinBase {
+    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = overload_Foo_init_allocate()
             super.init(__externalRCRef: __kt)

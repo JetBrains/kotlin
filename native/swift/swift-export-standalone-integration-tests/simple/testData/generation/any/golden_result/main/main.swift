@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class MyObject: KotlinRuntime.KotlinBase {
+public final class MyObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.MyObject {
         get {
             return main.MyObject(__externalRCRef: __root___MyObject_get())

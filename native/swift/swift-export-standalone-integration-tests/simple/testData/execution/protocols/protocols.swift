@@ -59,3 +59,17 @@ func testInterfaceMembers() throws {
     #expect(propertyResult !== instance, "These should not be same")
 }
 
+@Test
+func testInterfaceMembersOfExistential() throws {
+    let instance: any Foo = SomeFoo()
+
+    let expected = SomeFoo()
+    let functionResult = instance.identity(obj: expected)
+    try #require(functionResult === expected)
+    try #require(functionResult !== instance)
+
+    instance.property = expected
+    let propertyResult = instance.property
+    try #require(propertyResult === expected)
+    try #require(propertyResult !== instance)
+}

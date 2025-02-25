@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryMod
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
@@ -69,16 +69,18 @@ private fun KaSession.traverseTopLevelDeclarationsInScopes(
     sirSession: StandaloneSirSession,
     scopeProvider: KaSession.() -> List<KaScope>,
 ) {
-    with(sirSession) {
-        scopeProvider().flatMap { scope ->
-            scope.extractDeclarations(useSiteSession)
-        }.forEach { topLevelDeclaration ->
-            val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
-                ?: error("top level declaration can contain only module or extension to package as a parent")
-            parent.addChild { topLevelDeclaration }
-        }
-    }
+    scopeProvider().asSequence()
+        .flatMap { it.allDeclarations(sirSession, useSiteSession) }
+        .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
+        .forEach { it.first.addChild { it.second } }
 }
+
+private fun KaScope.allDeclarations(sirSession: StandaloneSirSession, kaSession: KaSession): Sequence<SirDeclaration> =
+    with(sirSession) {
+        generateSequence(this@allDeclarations.extractDeclarations(kaSession)) {
+            it.filterIsInstance<SirDeclarationContainer>().flatMap { it.declarations }.takeIf { it.count() > 0 }
+        }.flatMap { it }
+    }
 
 /**
  * Post-processed result of [buildStandaloneAnalysisAPISession].

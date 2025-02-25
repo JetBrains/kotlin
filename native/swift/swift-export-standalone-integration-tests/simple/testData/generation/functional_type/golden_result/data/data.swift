@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class Bar: KotlinRuntime.KotlinBase {
+public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public override init() {
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -14,7 +14,7 @@ public final class Bar: KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class Foo: KotlinRuntime.KotlinBase {
+public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public override init() {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRef: __kt)

@@ -5,21 +5,25 @@
 object MyObject
 
 interface Foeble {
-    fun bar(arg: Int): Int
-    val baz: Int
+    fun bar(arg: Foeble): Foeble
+    val baz: Foeble
 }
 
-interface Barable: Foeble
+interface Barable: Foeble {
+    override fun bar(arg: Foeble): Barable
+    override val baz: Foeble
+}
 
 interface Bazzable
 
-class Bar: Barable, Foeble, Bazzable {
-    override fun bar(arg: Int): Int {
-        TODO("Not yet implemented")
-    }
+class Foo: Foeble {
+    override fun bar(arg: Foeble): Foo = this
+    override val baz: Foeble get() = this
+}
 
-    override val baz: Int
-        get() = TODO("Not yet implemented")
+class Bar: Barable, Foeble, Bazzable {
+    override fun bar(arg: Foeble): Bar = this
+    override val baz: Bar get() = this
 }
 
 // FILE: less_trivial.kt

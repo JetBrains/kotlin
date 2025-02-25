@@ -4,7 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public extension ExportedKotlinPackages.test.factory.modules {
-    public final class ClassFromDependency: KotlinRuntime.KotlinBase {
+    public final class ClassFromDependency: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = test_factory_modules_ClassFromDependency_init_allocate()
             super.init(__externalRCRef: __kt)

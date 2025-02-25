@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class Enum: KotlinRuntime.KotlinBase, Swift.CaseIterable {
+public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
     public static var a: main.Enum {
         get {
             return main.Enum(__externalRCRef: Enum_a_get())

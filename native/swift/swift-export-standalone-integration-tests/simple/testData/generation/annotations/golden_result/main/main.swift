@@ -47,8 +47,8 @@ public final class deprecatedChildT: main.deprecatedT {
     }
 }
 @available(*, deprecated, message: "Deprecated")
-open class deprecatedT: KotlinRuntime.KotlinBase {
-    open class deprecationInheritedT: KotlinRuntime.KotlinBase {
+open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class deprecationInheritedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = deprecatedT_deprecationInheritedT_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -61,7 +61,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
         }
     }
     @available(*, deprecated, message: "Deprecated")
-    open class deprecationRestatedT: KotlinRuntime.KotlinBase {
+    open class deprecationRestatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = deprecatedT_deprecationRestatedT_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -219,9 +219,9 @@ public final class normalChildT: main.normalT {
         return normalChildT_removedF(self.__externalRCRef())
     }
 }
-open class normalT: KotlinRuntime.KotlinBase {
+open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     @available(*, deprecated, message: "Deprecated")
-    open class deprecatedT: KotlinRuntime.KotlinBase {
+    open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         package override init(
             __externalRCRef: Swift.UInt
         ) {
@@ -236,7 +236,7 @@ open class normalT: KotlinRuntime.KotlinBase {
             normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, deprecated)
         }
     }
-    open class normalT: KotlinRuntime.KotlinBase {
+    open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public override init() {
             let __kt = normalT_normalT_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -364,7 +364,7 @@ open class normalT: KotlinRuntime.KotlinBase {
     }
 }
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
-public final class renamedT: KotlinRuntime.KotlinBase {
+public final class renamedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public override init() {
         let __kt = __root___renamedT_init_allocate()
         super.init(__externalRCRef: __kt)
