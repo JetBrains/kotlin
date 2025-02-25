@@ -1630,6 +1630,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("uselessCast.kt")
+      public void testUselessCast() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/checkers/uselessCast.kt");
+      }
+
+      @Test
       @TestMetadata("uselessCastLeadsToRecursiveProblem.kt")
       public void testUselessCastLeadsToRecursiveProblem() {
         runTest("compiler/fir/analysis-tests/testData/resolve/checkers/uselessCastLeadsToRecursiveProblem.kt");

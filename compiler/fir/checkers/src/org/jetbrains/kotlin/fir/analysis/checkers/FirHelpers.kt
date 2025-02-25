@@ -696,7 +696,9 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
     fun FirTypeRef.isBadType() =
         coneType.contains { (it.lowerBoundIfFlexible() as? ConeTypeParameterType)?.lookupTag == typeParameterSymbol.toLookupTag() }
 
-    return valueParameterSymbols.none { it.resolvedReturnTypeRef.isBadType() } || resolvedReceiverTypeRef?.isBadType() == true
+    return valueParameterSymbols.none { it.resolvedReturnTypeRef.isBadType() }
+            && resolvedReceiverTypeRef?.isBadType() != true
+            && resolvedContextParameters.none { it.returnTypeRef.isBadType() }
 }
 
 private val FirCallableDeclaration.isMember get() = dispatchReceiverType != null
