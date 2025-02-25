@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.jvm.compiler.io
 
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -115,23 +116,58 @@ class FastJarFSTest : AbstractFastJarFSTest() {
         val tmpDir = KotlinTestUtils.tmpDirForTest(this)
         val jarFile = File(tmpDir, "tmp.jar")
 
-        val data = "someFlatData"
-        ZipOutputStream(FileOutputStream(jarFile)).use { out ->
-            val buf = data.toByteArray()
+        val fileName = "flat.txt"
+        val fileContent = "someFlatData"
+        jarFile.addChildFile(fileName, fileContent)
+        assertEquals(fileContent, String(jarFile.getChildFile(fs, fileName).contentsToByteArray()))
+    }
+
+    fun testFastJarVirtualFileEquality() {
+        val fs = fs ?: return
+        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val jarFile = File(tmpDir, "tmp.jar")
+
+        val childFileName = "child.txt"
+        val childFileContent = "Hello world"
+
+        jarFile.addChildFile(childFileName, childFileContent)
+        val file0 = jarFile.getChildFile(fs, childFileName)
+
+        fs.clearHandlersCache() // Invalidate caches
+
+        jarFile.addChildFile(childFileName, childFileContent)
+        val file1 = jarFile.getChildFile(fs, childFileName)
+
+        assertFalse(file0 === file1) // Files are different by reference
+
+        // Files are different because modified date of parent jar has been changed despite the same content.
+        // Unfortunately, it's not possible to check this equality when it's true because `FastJarVirtualFile` is created internally.
+        // And it's not possible to get different instances with the same path.
+        assertFalse(file0 == file1)
+        assertFalse(file0.hashCode() == file1.hashCode())
+    }
+
+    private fun File.addChildFile(fileName: String, fileContent: String) {
+        ZipOutputStream(FileOutputStream(this)).use { out ->
+            val buf = fileContent.toByteArray()
             out.setMethod(ZipOutputStream.STORED)
-            val entry = ZipEntry("flat.txt").apply {
-                size = buf.size.toLong()
-                compressedSize = buf.size.toLong()
+            val entry = ZipEntry(fileName).apply {
+                this.size = buf.size.toLong()
+                this.compressedSize = buf.size.toLong()
                 val crc32compute = CRC32()
                 crc32compute.update(buf)
-                crc = crc32compute.value
+                this.crc = crc32compute.value
             }
             out.putNextEntry(entry)
             out.write(buf)
             out.closeEntry()
         }
-        assertEquals(data, String(fs.findFileByPath(jarFile.absolutePath + "!/flat.txt")!!.contentsToByteArray()))
     }
+
+    private fun File.getChildFile(
+        fs: FastJarFileSystem,
+        childFileName: String,
+    ): VirtualFile = fs.findFileByPath(this.absolutePath + "!/${childFileName}")!!
 }
 
 private fun captureErr(body: () -> Unit): String {

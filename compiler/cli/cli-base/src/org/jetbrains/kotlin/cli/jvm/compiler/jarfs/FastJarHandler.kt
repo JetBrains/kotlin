@@ -16,6 +16,7 @@ import java.nio.channels.FileChannel
 class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
     private val myRoot: VirtualFile?
     internal val file = File(path)
+    internal val timeStamp = file.lastModified()
 
     private val cachedManifest: ByteArray?
 
