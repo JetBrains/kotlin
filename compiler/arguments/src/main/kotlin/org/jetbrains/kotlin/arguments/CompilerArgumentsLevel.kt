@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.arguments
 
 import KotlinArgumentsDslMarker
 import kotlinx.serialization.Serializable
+import kotlin.properties.ReadOnlyProperty
 
 interface CompilerArgumentsLevelBase {
     val name: String
@@ -19,7 +20,27 @@ data class CompilerArgumentsLevel(
     override val name: String,
     override val arguments: Set<CompilerArgument>,
     override val nestedLevels: Set<CompilerArgumentsLevel>
-) : CompilerArgumentsLevelBase
+) : CompilerArgumentsLevelBase {
+
+    fun mergeWith(another: CompilerArgumentsLevel): CompilerArgumentsLevel {
+        require(name == another.name) {
+            "Names for compiler arguments level should be the same! We are trying to merge $name with ${another.name}"
+        }
+
+        val intersectingNestedLevels = nestedLevels.filter { level -> another.nestedLevels.any { level.name == it.name } }.toSet()
+
+        val mergedNestedLevels = nestedLevels.subtract(intersectingNestedLevels) +
+                another.nestedLevels.filter { level -> intersectingNestedLevels.none { level.name == it.name } } +
+                intersectingNestedLevels.map { level ->
+                    level.mergeWith(another.nestedLevels.single { it.name == level.name} )
+                }
+        return CompilerArgumentsLevel(
+            name,
+            arguments + another.arguments,
+            mergedNestedLevels
+        )
+    }
+}
 
 @Serializable
 data class CompilerArgumentsTopLevel(
@@ -53,11 +74,16 @@ abstract class CompilerArgumentsLevelBuilderBase(
 
     fun subLevel(
         name: String,
+        mergeWith: Set<CompilerArgumentsLevel> = emptySet(),
         config: CompilerArgumentsLevelBuilder.() -> Unit
     ) {
         val levelBuilder = CompilerArgumentsLevelBuilder(name)
         config(levelBuilder)
-        _nestedLevels.add(levelBuilder.build())
+        _nestedLevels.add(
+            mergeWith.fold(levelBuilder.build()) { current, mergingWith ->
+                current.mergeWith(mergingWith)
+            }
+        )
     }
 }
 
@@ -70,6 +96,16 @@ class CompilerArgumentsLevelBuilder(
         arguments,
         nestedLevels
     )
+}
+
+fun compilerArgumentsLevel(
+    name: String,
+    config: CompilerArgumentsLevelBuilder.() -> Unit
+) = ReadOnlyProperty<Any?, CompilerArgumentsLevel> { _, _ ->
+    val levelBuilder = CompilerArgumentsLevelBuilder(name)
+    config(levelBuilder)
+    val compilerArgumentsLevel = levelBuilder.build()
+    compilerArgumentsLevel
 }
 
 @KotlinArgumentsDslMarker

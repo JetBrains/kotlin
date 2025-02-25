@@ -3,6 +3,36 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.arguments.CompilerArgumentsTopLevel
 import org.jetbrains.kotlin.arguments.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
+import java.io.File
+
+val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
+    compilerArgument {
+        name = "another-test"
+        description = "TBA"
+
+        valueType = KotlinArgumentValueType.BooleanType()
+        valueDescription = "true|false"
+
+        addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0
+        deprecatedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
+        removedInVersion = KotlinReleaseVersion.KOTLIN_2_0_0
+    }
+
+    subLevel("jvmCompilerArguments") {
+        compilerArgument {
+            name = "old-option"
+            description = "TBA"
+
+            valueType = KotlinArgumentValueType.BooleanType()
+            valueDescription = "true|false"
+
+            addedInVersion = KotlinReleaseVersion.KOTLIN_1_4_0
+            deprecatedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
+            removedInVersion = KotlinReleaseVersion.KOTLIN_2_0_0
+        }
+    }
+}
 
 val kotlinCompilerArguments = compilerArguments("commonToolArguments") {
     compilerArgument {
@@ -79,7 +109,7 @@ val kotlinCompilerArguments = compilerArguments("commonToolArguments") {
         addedInVersion = KotlinReleaseVersion.KOTLIN_1_9_20
     }
 
-    subLevel("commonCompilerArguments") {
+    subLevel("commonCompilerArguments", mergeWith = setOf(deprecatedCommonArgs)) {
 
         compilerArgument {
             name = "language-version"
