@@ -141,7 +141,7 @@ class TestConfigurationBuilder {
         init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit
     ) where InputArtifact : ResultingArtifact<InputArtifact>,
             InputArtifactKind : TestArtifactKind<InputArtifact> {
-        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name) ?: error { "Step \"$name\" not found" }
+        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name) ?: error("Step \"$name\" not found" )
         require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
         step.apply(init)
     }
