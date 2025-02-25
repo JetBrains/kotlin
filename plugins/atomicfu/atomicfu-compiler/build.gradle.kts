@@ -100,6 +100,8 @@ dependencies {
         testImplementation(projectTests(":native:native.tests"))
     }
     testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(projectTests(":native:native.tests:klib-ir-inliner"))
+    testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
     // todo: remove unnecessary dependencies
@@ -194,6 +196,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
         systemProperty("atomicfuJsIrRuntimeForTests.classpath", localAtomicfuJsIrRuntimeForTests.asPath)
         systemProperty("atomicfuJs.classpath", localAtomicfuJsClasspath.asPath)
         systemProperty("atomicfuJvm.classpath", localAtomicfuJvmClasspath.asPath)
+        systemProperty("atomicfu.compiler.plugin", atomicfuCompilerPluginForTests.asPath)
     }
 }
 
@@ -215,6 +218,10 @@ val nativeTest = nativeTest(
     customTestDependencies = listOf(atomicfuNativeKlib),
     compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
 ) {
+    doFirst {
+        systemProperty("atomicfuNative.classpath", atomicfuNativeKlib.asPath)
+    }
+
     // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
     // Kotlin test infra uses reflection to access JDK internals.
     // With JDK 11, some JVM args are required to silence the warnings caused by that:
@@ -227,4 +234,9 @@ tasks.named("check") {
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
         dependsOn(nativeTest)
     }
+}
+
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateAtomicfuTestsKt") {
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    dependsOn(":compiler:generateTestData")
 }
