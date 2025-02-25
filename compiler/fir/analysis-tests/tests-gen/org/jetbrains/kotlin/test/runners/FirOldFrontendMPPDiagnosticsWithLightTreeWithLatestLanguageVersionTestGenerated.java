@@ -572,6 +572,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
+  @TestMetadata("valueClassWithExtraProperty.kt")
+  public void testValueClassWithExtraProperty() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/valueClassWithExtraProperty.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassWithPrivateConstructor.kt")
   public void testValueClassWithPrivateConstructor() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/valueClassWithPrivateConstructor.kt");

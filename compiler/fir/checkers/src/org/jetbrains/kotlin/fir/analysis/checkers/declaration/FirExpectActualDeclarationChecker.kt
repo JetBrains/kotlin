@@ -362,6 +362,5 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         platformSession: FirSession
     ): Boolean = (actualContainingClass.isInlineOrValue) &&
             symbol is FirPropertySymbol &&
-            symbol.receiverParameter == null &&
-            actualContainingClass.primaryConstructorSymbol(platformSession)?.valueParameterSymbols?.singleOrNull()?.name == symbol.name
+            actualContainingClass.primaryConstructorSymbol(platformSession)?.valueParameterSymbols?.singleOrNull() == symbol.correspondingValueParameterFromPrimaryConstructor
 }
