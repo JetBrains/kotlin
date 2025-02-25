@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -17,7 +16,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
-import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -37,6 +39,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("K/N compiler can be started in-process in parallel")
     @GradleTest
+    @TestMetadata("native-parallel")
     fun shouldCheckKNativeCompilerStartedInParallel(gradleVersion: GradleVersion) {
         nativeProject("native-parallel", gradleVersion) {
             buildGradleKts.appendText(
@@ -78,6 +81,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Can produce native libraries")
     @GradleTest
+    @TestMetadata("native-binaries/libraries")
     fun testCanProduceNativeLibraries(gradleVersion: GradleVersion) {
         nativeProject(
             "native-binaries/libraries",
@@ -150,6 +154,7 @@ class GeneralNativeIT : KGPBaseTest() {
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
     @DisplayName("Can provide native framework")
     @GradleTest
+    @TestMetadata("native-binaries/frameworks")
     fun testCanProduceNativeFrameworks(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/frameworks", gradleVersion = gradleVersion) {
             fun assemble(assertions: BuildResult.() -> Unit) {
@@ -235,6 +240,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks exporting non api library")
     @GradleTest
+    @TestMetadata("native-binaries/libraries")
     fun shouldFailOnExportingNonApiLibrary(gradleVersion: GradleVersion) {
         testExportApi(
             nativeProject("native-binaries/libraries", gradleVersion, configureSubProjects = true),
@@ -248,6 +254,7 @@ class GeneralNativeIT : KGPBaseTest() {
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
     @DisplayName("Checks exporting non api framework")
     @GradleTest
+    @TestMetadata("native-binaries/frameworks")
     fun testExportApiOnlyToFrameworks(gradleVersion: GradleVersion) {
         testExportApi(
             nativeProject("native-binaries/frameworks", gradleVersion),
@@ -259,6 +266,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks generating lldbinit file")
     @GradleTest
+    @TestMetadata("native-binaries/frameworks")
     fun testGenerateLLDBInitFile(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/frameworks", gradleVersion = gradleVersion) {
             val lldbPath = projectPath.resolve("build").resolve("lldbinit")
@@ -301,6 +309,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Transitive export is not required for exporting variant")
     @GradleTest
+    @TestMetadata("native-binaries/export-published-lib")
     fun testTransitiveExportIsNotRequiredForExportingVariant(gradleVersion: GradleVersion) {
         project(
             "native-binaries/export-published-lib",
@@ -322,6 +331,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checking native executables")
     @GradleTest
+    @TestMetadata("native-binaries/executables")
     fun testNativeExecutables(gradleVersion: GradleVersion) {
         nativeProject(
             "native-binaries/executables",
@@ -335,25 +345,25 @@ class GeneralNativeIT : KGPBaseTest() {
                 configurationCache = enableConfigurationCacheSinceGradle(TestVersions.Gradle.G_8_0, gradleVersion)
             )
         ) {
-            val binaries = mutableListOf(
+            val binaries = listOf(
                 "debugExecutable" to "native-binary",
                 "releaseExecutable" to "native-binary",
                 "bazDebugExecutable" to "my-baz",
             )
             val linkTasks =
                 binaries.map { (name, _) -> "link${name.capitalize()}Host" }
-            val outputFiles = binaries.map { (name, fileBaseName) ->
-                val outputKind = NativeOutputKind.values().single { name.endsWith(it.taskNameClassifier, true) }.compilerOutputKind
+            val outputFiles = binaries.associate { (name, fileBaseName) ->
+                val outputKind = NativeOutputKind.entries.single { name.endsWith(it.taskNameClassifier, true) }.compilerOutputKind
                 val prefix = outputKind.prefix(HostManager.host)
                 val suffix = outputKind.suffix(HostManager.host)
                 val fileName = "$prefix$fileBaseName$suffix"
                 name to "build/bin/host/$name/$fileName"
-            }.toMap()
+            }
             val runTasks = listOf(
                 "runDebugExecutable",
                 "runReleaseExecutable",
                 "runBazDebugExecutable",
-            ).map { it + "Host" }.toMutableList()
+            ).map { it + "Host" }
 
             // Check building
             build("hostMainBinaries") {
@@ -367,7 +377,7 @@ class GeneralNativeIT : KGPBaseTest() {
             // Check run tasks are generated.
             build("tasks") {
                 runTasks.forEach {
-                    assertOutputContains((it), "The 'tasks' output doesn't contain a task ${it}")
+                    assertOutputContains((it), "The 'tasks' output doesn't contain a task $it")
                 }
             }
 
@@ -383,12 +393,11 @@ class GeneralNativeIT : KGPBaseTest() {
     }
 
     private fun testNativeBinaryDsl(project: String, gradleVersion: GradleVersion) {
-        nativeProject("native-binaries" + "/" + project, gradleVersion)
+        nativeProject("native-binaries/$project", gradleVersion)
         {
             val hostSuffix = nativeHostTargetName.capitalize()
 
             build("tasks") {
-
                 // Check that getters work fine.
                 assertOutputContains("Check link task: linkReleaseShared$hostSuffix")
                 assertOutputContains("Check run task: runFooReleaseExecutable$hostSuffix")
@@ -399,18 +408,21 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Native binaries with kotlin-dsl")
     @GradleTest
+    @TestMetadata("native-binaries/kotlin-dsl")
     fun testNativeBinaryKotlinDSL(gradleVersion: GradleVersion) {
         testNativeBinaryDsl("kotlin-dsl", gradleVersion)
     }
 
     @DisplayName("Native binaries with groovy-dsl")
     @GradleTest
+    @TestMetadata("native-binaries/groovy-dsl")
     fun testNativeBinaryGroovyDSL(gradleVersion: GradleVersion) {
         testNativeBinaryDsl("groovy-dsl", gradleVersion)
     }
 
     @DisplayName("Checking kotlinOptions property")
     @GradleTest
+    @TestMetadata("native-kotlin-options")
     fun testKotlinOptions(gradleVersion: GradleVersion) {
         nativeProject("native-kotlin-options", gradleVersion) {
             build(":compileKotlinHost") {
@@ -437,6 +449,7 @@ class GeneralNativeIT : KGPBaseTest() {
     @Disabled
     @DisplayName("Native free args warning check")
     @GradleTest
+    @TestMetadata("native-binaries/kotlin-dsl")
     fun testNativeFreeArgsWarning(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/kotlin-dsl", gradleVersion) {
             buildGradleKts.appendText(
@@ -476,16 +489,19 @@ class GeneralNativeIT : KGPBaseTest() {
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("Checking native tests")
     @GradleTest
+    @TestMetadata("native-tests")
     fun testNativeTests(gradleVersion: GradleVersion) {
         nativeProject("native-tests", gradleVersion) {
             val hostTestTask = "hostTest"
-            val testTasks = listOf(hostTestTask, "iosTest", "iosArm64Test")
+            val testTasks = setOf(hostTestTask, "iosTest", "iosArm64Test")
 
-            val testsToExecute = mutableListOf(":$hostTestTask")
-            when (HostManager.host) {
-                KonanTarget.MACOS_X64 -> testsToExecute.add(":iosTest")
-                KonanTarget.MACOS_ARM64 -> testsToExecute.add(":iosArm64Test")
-                else -> {}
+            val testsToExecute = buildSet {
+                add(":$hostTestTask")
+                when (HostManager.host) {
+                    KonanTarget.MACOS_X64 -> add(":iosTest")
+                    KonanTarget.MACOS_ARM64 -> add(":iosArm64Test")
+                    else -> {}
+                }
             }
             val testsToSkip = testTasks.map { ":$it" } - testsToExecute
 
@@ -509,14 +525,13 @@ class GeneralNativeIT : KGPBaseTest() {
                 assertFileInProjectNotExists(anotherOutputFile)
             }
 
-            // Store currently booted simulators to check that they don't leak (MacOS only).
+            // Store currently booted simulators to check that they don't leak (macOS only).
             val bootedSimulatorsBefore = getBootedSimulators()
 
             // Check the case when all tests pass.
             build("check") {
-
-                assertTasksExecuted(*testsToExecute.toTypedArray())
-                assertTasksSkipped(*testsToSkip.toTypedArray())
+                assertTasksExecuted(testsToExecute)
+                assertTasksSkipped(testsToSkip)
 
                 assertOutputContains("org.foo.test.TestKt.fooTest[host] PASSED")
                 assertOutputContains("org.foo.test.TestKt.barTest[host] PASSED")
@@ -530,7 +545,7 @@ class GeneralNativeIT : KGPBaseTest() {
                 EnvironmentalVariables(mapOf("ANDROID_HOME" to projectPath.absolutePathString()))
             )
 
-            // Check simulator process leaking.
+            // Check if the simulator process leaks.
             val bootedSimulatorsAfter = getBootedSimulators()
             assertEquals(bootedSimulatorsBefore, bootedSimulatorsAfter)
 
@@ -555,16 +570,15 @@ class GeneralNativeIT : KGPBaseTest() {
         }
 
     private fun TestProject.checkTestsUpToDate(
-        testsToExecute: List<String>,
-        testsToSkip: List<String>,
+        testsToExecute: Collection<String>,
+        testsToSkip: Collection<String>,
         newEnv: EnvironmentalVariables,
     ) {
 
-        // Check that test tasks are up-to-date on second run
+        // Check that test tasks are up to date on second run
         build("check") {
-
-            assertTasksUpToDate(*testsToExecute.toTypedArray())
-            assertTasksSkipped(*testsToSkip.toTypedArray())
+            assertTasksUpToDate(testsToExecute)
+            assertTasksSkipped(testsToSkip)
         }
 
         // Check that setting new value to tracked environment variable triggers tests rerun
@@ -572,22 +586,24 @@ class GeneralNativeIT : KGPBaseTest() {
             "check",
             environmentVariables = newEnv
         ) {
-
-            assertTasksExecuted(*testsToExecute.toTypedArray())
-            assertTasksSkipped(*testsToSkip.toTypedArray())
+            assertTasksExecuted(testsToExecute)
+            assertTasksSkipped(testsToSkip)
         }
 
         build(
             "check",
             environmentVariables = newEnv
         ) {
-
-            assertTasksUpToDate(*testsToExecute.toTypedArray())
-            assertTasksSkipped(*testsToSkip.toTypedArray())
+            assertTasksUpToDate(testsToExecute)
+            assertTasksSkipped(testsToSkip)
         }
     }
 
-    private fun TestProject.checkFailedTests(hostTestTask: String, testsToExecute: List<String>, testsToSkip: List<String>) {
+    private fun TestProject.checkFailedTests(
+        hostTestTask: String,
+        testsToExecute: Collection<String>,
+        testsToSkip: Collection<String>,
+    ) {
         projectPath.resolve("src/commonTest/kotlin/test.kt").appendText(
             """
                 @Test
@@ -597,23 +613,26 @@ class GeneralNativeIT : KGPBaseTest() {
             """.trimIndent()
         )
         buildAndFail("check") {
-
             assertTasksFailed(":allTests")
             // In the aggregation report mode platform-specific tasks
             // are executed successfully even if there are failing tests.
-            assertTasksExecuted(*testsToExecute.toTypedArray())
-            assertTasksSkipped(*testsToSkip.toTypedArray())
+            assertTasksExecuted(testsToExecute)
+            assertTasksSkipped(testsToSkip)
 
             assertOutputContains("org.foo.test.TestKt.fail[host] FAILED")
         }
 
         // Check that individual test reports are created correctly.
-        buildAndFail("check", "-Pkotlin.tests.individualTaskReports=true", "--continue") {
+        buildAndFail(
+            "check",
+            "-Pkotlin.tests.individualTaskReports=true",
+            buildOptions = defaultBuildOptions.copy(continueAfterFailure = true)
+        ) {
 
             // In the individual report mode platform-specific tasks
             // fail if there are failing tests.
-            assertTasksFailed(*testsToExecute.toTypedArray())
-            assertTasksSkipped(*testsToSkip.toTypedArray())
+            assertTasksFailed(testsToExecute)
+            assertTasksSkipped(testsToSkip)
 
 
             fun assertStacktrace(taskName: String, targetName: String) {
@@ -654,6 +673,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checking work with tests' getters")
     @GradleTest
+    @TestMetadata("native-tests")
     fun testNativeTestGetters(gradleVersion: GradleVersion) {
         nativeProject("native-tests", gradleVersion) {
             // Check that test binaries can be accessed in a buildscript.
@@ -672,6 +692,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks that build fails if a test executable crashes")
     @GradleTest
+    @TestMetadata("native-tests")
     fun kt33750(gradleVersion: GradleVersion) {
         nativeProject("native-tests", gradleVersion) {
             projectPath.resolve("src/commonTest/kotlin/test.kt")
@@ -684,6 +705,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks builds with cinterop tool")
     @GradleTest
+    @TestMetadata("native-cinterop")
     fun testCinterop(gradleVersion: GradleVersion) {
         nativeProject(
             "native-cinterop",
@@ -722,6 +744,7 @@ class GeneralNativeIT : KGPBaseTest() {
     @DisplayName("Checks builds with changing compiler version")
     @GradleTestVersions
     @GradleTest
+    @TestMetadata("native-compiler-version")
     fun testCompilerVersionChange(gradleVersion: GradleVersion) {
         nativeProject("native-compiler-version", gradleVersion) {
             val compileTasks = ":compileKotlinHost"
@@ -747,6 +770,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Assert that a project with a native target can be configure")
     @GradleTest
+    @TestMetadata("native-compiler-version")
     fun testKt29725(gradleVersion: GradleVersion) {
         nativeProject("native-compiler-version", gradleVersion) {
             build("tasks")
@@ -756,6 +780,7 @@ class GeneralNativeIT : KGPBaseTest() {
     @DisplayName("Assert that a project with a native target can be configured on platforms without frameworks")
     @GradleTest
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS])
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
     fun testIgnoreDisabledNativeTargets(gradleVersion: GradleVersion) {
         nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             build {
@@ -779,19 +804,25 @@ class GeneralNativeIT : KGPBaseTest() {
                 "path with spaces and \""
             }
 
-            val fileWithSpacesInPath = projectPath.resolve("src/commonMain/kotlin/$complicatedDirectoryName").toFile()
-                .apply { mkdirs() }
-                .absoluteFile
+            val fileWithSpacesInPath = projectPath.resolve("src/commonMain/kotlin/$complicatedDirectoryName")
+                .createDirectories()
+                .absolute()
+                .normalize()
+                .toRealPath()
                 .resolve("B.kt")
             fileWithSpacesInPath.writeText("fun foo() = 42")
+
+            val expectedEscapeQuotedPath =
+                fileWithSpacesInPath.absolutePathString()
+                    .replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .let { "\"$it\"" }
 
             build(
                 "compileKotlin${nativeHostTargetName.capitalize()}",
             ) {
                 extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlin${nativeHostTargetName.capitalize()}") {
-                    val escapedQuotedPath =
-                        "\"${fileWithSpacesInPath.absolutePath.replace("\\", "\\\\").replace("\"", "\\\"")}\""
-                    assertCommandLineArgumentsContain(escapedQuotedPath)
+                    assertCommandLineArgumentsContain(expectedEscapeQuotedPath)
                 }
             }
         }
@@ -799,6 +830,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options dsl")
     @GradleTest
+    @TestMetadata("native-binaries")
     fun testBinaryOptionsDSL(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -818,6 +850,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options property")
     @GradleTest
+    @TestMetadata("native-binaries")
     fun testBinaryOptionsProperty(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             build(
@@ -833,6 +866,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options priority")
     @GradleTest
+    @TestMetadata("native-binaries")
     fun testBinaryOptionsPriority(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -854,8 +888,9 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Checks citerop configuration variant aware resolution")
+    @DisplayName("Checks cinterop configuration variant aware resolution")
     @GradleTest
+    @TestMetadata("native-cinterop")
     fun testCinteropConfigurationsVariantAwareResolution(gradleVersion: GradleVersion) {
         nativeProject(
             "native-cinterop",
@@ -888,6 +923,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks allowing to override download url")
     @GradleTest
+    @TestMetadata("native-parallel")
     fun shouldAllowToOverrideDownloadUrl(gradleVersion: GradleVersion, @TempDir customKonanDir: Path) {
         nativeProject(
             "native-parallel", gradleVersion,
@@ -906,7 +942,7 @@ class GeneralNativeIT : KGPBaseTest() {
                 "build",
                 buildOptions = defaultBuildOptions.copy(
                     nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                        distributionDownloadFromMaven = false // please remove this test, when this flag will be removed
+                        distributionDownloadFromMaven = false // please remove this test, when this flag is removed
                     ),
                     konanDataDir = customKonanDir.toAbsolutePath()
                 )
@@ -919,6 +955,7 @@ class GeneralNativeIT : KGPBaseTest() {
     // KT-52303
     @DisplayName("Checks that changing build dir applied to binaries")
     @GradleTest
+    @TestMetadata("native-binaries")
     fun testBuildDirChangeAppliedToBinaries(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -936,6 +973,7 @@ class GeneralNativeIT : KGPBaseTest() {
     // KT-54439
     @DisplayName("Checks Language settings sync ")
     @GradleTest
+    @TestMetadata("native-kotlin-options")
     fun testLanguageSettingsSyncToNativeTasks(gradleVersion: GradleVersion) {
         nativeProject("native-kotlin-options", gradleVersion) {
             buildGradle.modify {
@@ -962,6 +1000,7 @@ class GeneralNativeIT : KGPBaseTest() {
     // KT-58537
     @DisplayName("Build native project with name containing space")
     @GradleTest
+    @TestMetadata("native-root-project-name-with-space")
     fun testProjectNameWithSpaces(gradleVersion: GradleVersion) {
         nativeProject("native-root-project-name-with-space", gradleVersion, configureSubProjects = true) {
             build("assemble") {
@@ -972,6 +1011,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Test compiler arguments for K/Native Tasks")
     @GradleTest
+    @TestMetadata("native-binaries")
     fun testCompilerArgumentsLogLevel(gradleVersion: GradleVersion) {
         nativeProject("native-libraries", gradleVersion) {
             val updatedBuildOptions = buildOptions.copy(

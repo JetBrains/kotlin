@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
@@ -102,8 +104,8 @@ fun TestProject.makeSnapshotTo(
     val wrapperDir = dest.resolve("gradle").resolve("wrapper").apply { createDirectories() }
     wrapperDir.resolve("gradle-wrapper.properties").writeText(
         """
-            distributionUrl=https\://services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip
-            """.trimIndent()
+        distributionUrl=https\://services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip
+        """.trimIndent()
     )
     // Copied from 'Wrapper' task class implementation
     val projectRoot = Paths.get("../../../")
@@ -145,7 +147,7 @@ private fun TestProject.formatEnvironmentForScript(envCommand: String): String {
  */
 fun GradleProject.addPropertyToGradleProperties(
     propertyName: String,
-    propertyValues: Map<String, String>
+    propertyValues: Map<String, String>,
 ) {
     if (!gradleProperties.exists()) gradleProperties.createFile()
 
@@ -203,7 +205,7 @@ fun GradleProject.addPropertyToGradleProperties(
  * deprecation warnings.
  */
 internal fun TestProject.addArchivesBaseNameCompat(
-    archivesBaseName: String
+    archivesBaseName: String,
 ) {
     if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)) {
         buildGradle.appendText(
@@ -247,17 +249,13 @@ internal fun TestProject.chooseCompilerVersion(
 }
 
 internal fun TestProject.enablePassedTestLogging(level: LogLevel = DEFAULT_LOG_LEVEL) {
-    buildGradle.append(
-        //language=Gradle
-        """
-
-        tasks.withType(AbstractTestTask).configureEach {
-            testLogging {
-                get(LogLevel.$level).events("passed")
+    buildScriptInjection {
+        project.tasks.withType(AbstractTestTask::class.java).configureEach { task ->
+            task.testLogging {
+                it.get(level).events(TestLogEvent.PASSED)
             }
         }
-        """.trimIndent()
-    )
+    }
 }
 
 internal val TestProject.kmpIsolatedProjectsSupportEnabled: Boolean

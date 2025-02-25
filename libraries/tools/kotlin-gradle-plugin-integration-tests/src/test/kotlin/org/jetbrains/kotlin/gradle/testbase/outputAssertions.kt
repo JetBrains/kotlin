@@ -353,7 +353,7 @@ fun CommandLineArguments.assertCommandLineArgumentsContain(
     expectedArgs.forEach {
         assert(args.contains(it)) {
             this.buildResult.printBuildOutput()
-            "There is no ${it} in actual command line arguments are: ${args}"
+            "There is no $it in actual command line arguments are: $args"
         }
     }
 }

@@ -69,6 +69,13 @@ fun BuildResult.assertTasksExecuted(taskPaths: Collection<String>) {
 /**
  * Asserts given [taskPaths] have [TaskOutcome.FAILED] execution state.
  */
+fun BuildResult.assertTasksFailed(taskPaths: Collection<String>) {
+    assertTasksHaveOutcome(TaskOutcome.FAILED, taskPaths)
+}
+
+/**
+ * Asserts given [taskPaths] have [TaskOutcome.FAILED] execution state.
+ */
 fun BuildResult.assertTasksFailed(vararg taskPaths: String) {
     assertTasksHaveOutcome(TaskOutcome.FAILED, taskPaths.asList())
 }
@@ -91,7 +98,14 @@ fun BuildResult.assertTasksUpToDate(taskPaths: Collection<String>) {
  * Asserts given [taskPaths] have [TaskOutcome.SKIPPED] execution state.
  */
 fun BuildResult.assertTasksSkipped(vararg taskPaths: String) {
-    assertTasksHaveOutcome(TaskOutcome.SKIPPED, taskPaths.asList())
+    assertTasksSkipped(taskPaths.asList())
+}
+
+/**
+ * Asserts given [taskPaths] have [TaskOutcome.SUCCESS] execution state.
+ */
+fun BuildResult.assertTasksSkipped(taskPaths: Collection<String>) {
+    assertTasksHaveOutcome(TaskOutcome.SKIPPED, taskPaths)
 }
 
 /**
