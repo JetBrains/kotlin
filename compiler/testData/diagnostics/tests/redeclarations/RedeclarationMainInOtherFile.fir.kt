@@ -7,14 +7,14 @@
 
 <!CONFLICTING_OVERLOADS!>fun nonmain(): (Array<String>) -> Unit<!> = { args: Array<String> -> Unit }
 
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(c: <!DEBUG_INFO_MISSING_UNRESOLVED!>Array<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>>)<!> fun main()<!> {}
+context(c: Array<String>) <!CONFLICTING_OVERLOADS!>fun main()<!> {}
 
 // FILE: fake_main2.kt
 <!CONFLICTING_OVERLOADS!>fun main(): Any<!> = ""
 
 <!CONFLICTING_OVERLOADS!>fun nonmain(): Any<!> = ""
 
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(c: <!DEBUG_INFO_MISSING_UNRESOLVED!>Array<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>>)<!> fun main()<!> {}
+context(c: Array<String>) <!CONFLICTING_OVERLOADS!>fun main()<!> {}
 
 // FILE: real_main.kt
 <!CONFLICTING_OVERLOADS!>fun main()<!> {}
