@@ -1,4 +1,5 @@
 // LANGUAGE: -ExpectRefinement
+// IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: common1

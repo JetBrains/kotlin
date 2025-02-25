@@ -10,7 +10,7 @@ expect val x2: Int
 expect val x3: Int
 
 // MODULE: intermediate()()(common)
-expect val x1: Int
+<!UNSUPPORTED_FEATURE!>expect val <!EXPECT_REFINEMENT_ANNOTATION_MISSING!>x1<!>: Int<!>
 
 val <!ACTUAL_MISSING!>x2<!> = 2
 

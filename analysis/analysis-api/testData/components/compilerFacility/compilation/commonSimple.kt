@@ -1,10 +1,12 @@
-// LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects, +ExpectRefinement
+//                                   ^^^ Circumvent misconfiguration in the test infra KT-75281
 
 // MODULE: main
 // TARGET_PLATFORM: Common
 // FILE: main.kt
 package app
 
+@kotlin.experimental.ExperimentalExpectRefinement // Circumvent misconfiguration in the test infra KT-75281
 expect class Foo() {
     val text: String
 }

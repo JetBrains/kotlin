@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -14,13 +15,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.expectForActual
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
-object FirExpectRefinementAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val hasExpectRefinementAnnotation =
             declaration.hasAnnotation(StandardClassIds.Annotations.ExperimentalExpectRefinement, context.session)
@@ -36,15 +39,22 @@ object FirExpectRefinementAnnotationChecker : FirBasicDeclarationChecker(MppChec
         if (declaration !is FirMemberDeclaration) return
         val matchingData = declaration.symbol.expectForActual.orEmpty()
         val matchedWithAnotherExpect = matchingData.contains(ExpectActualMatchingCompatibility.MatchedSuccessfully)
-        if (matchedWithAnotherExpect && declaration.isExpect &&
-            !declaration.isActual && !hasExpectRefinementAnnotation &&
-            context.isTopLevel
-        ) {
-            reporter.reportOn(
-                declaration.source,
-                FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING,
-                context
-            )
+        if (matchedWithAnotherExpect && declaration.isExpect && !declaration.isActual && context.isTopLevel) {
+            if (!hasExpectRefinementAnnotation) {
+                reporter.reportOn(
+                    declaration.source,
+                    FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING,
+                    context
+                )
+            }
+            if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ExpectRefinement)) {
+                reporter.reportOn(
+                    declaration.source,
+                    FirErrors.UNSUPPORTED_FEATURE,
+                    LanguageFeature.ExpectRefinement to context.languageVersionSettings,
+                    context
+                )
+            }
         }
         if (!matchedWithAnotherExpect && hasExpectRefinementAnnotation) {
             reporter.reportOn(
