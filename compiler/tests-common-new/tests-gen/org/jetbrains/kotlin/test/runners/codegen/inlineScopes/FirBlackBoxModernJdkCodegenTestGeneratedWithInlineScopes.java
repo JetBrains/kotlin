@@ -466,6 +466,12 @@ public class FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes extends Ab
         public void testJavaClassModifiers() {
           runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers/javaClassModifiers.kt");
         }
+
+        @Test
+        @TestMetadata("javaClasses.kt")
+        public void testJavaClasses() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers/javaClasses.kt");
+        }
       }
     }
 

@@ -44,9 +44,7 @@ val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
  */
 @SinceKotlin("1.1")
 val KClass<*>.companionObject: KClass<*>?
-    get() = nestedClasses.firstOrNull {
-        (it as KClassImpl<*>).descriptor.isCompanionObject
-    }
+    get() = nestedClasses.firstOrNull(KClass<*>::isCompanion)
 
 /**
  * Returns an instance of the companion object of a given class,
