@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.ClassId
@@ -42,6 +43,12 @@ object FirNativeObjCNameUtilities {
                 add(resolvedReceiverTypeRef?.getObjCName(session))
                 add(receiverParameter?.getObjCName(session))
                 valueParameterSymbols.forEach { add(it.getObjCName(session)) }
+                resolvedContextParameters.forEach { add(it.getObjCName(session)) }
+            }
+            is FirPropertySymbol -> buildList {
+                add((this@getObjCNames as FirBasedSymbol<*>).getObjCName(session))
+                add(receiverParameter?.getObjCName(session))
+                resolvedContextParameters.forEach { add(it.getObjCName(session)) }
             }
             else -> listOf(getObjCName(session))
         }

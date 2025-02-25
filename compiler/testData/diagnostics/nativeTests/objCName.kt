@@ -1,3 +1,4 @@
+// LANGUAGE: +ContextParameters
 // FILE: kotlin.kt
 package kotlin.native
 
@@ -17,6 +18,7 @@ open class KotlinClass {
     @ObjCName("objCProperty")
     open var kotlinProperty: Int = 0
     @ObjCName(swiftName = "swiftFunction")
+    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(@<!DEBUG_INFO_MISSING_UNRESOLVED!>ObjCName<!>("objCContext") c: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
     open fun @receiver:ObjCName("objCReceiver") Int.kotlinFunction(
         @ObjCName("objCParam") kotlinParam: Int
     ): Int = this + kotlinParam
@@ -27,6 +29,7 @@ class KotlinSubClass: KotlinClass() {
     <!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCProperty")<!>
     override var kotlinProperty: Int = 1
     <!INAPPLICABLE_OBJC_NAME!>@ObjCName(swiftName = "swiftFunction")<!>
+    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(@<!DEBUG_INFO_MISSING_UNRESOLVED!>ObjCName<!>("objCContext") c: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
     override fun <!INAPPLICABLE_OBJC_NAME!>@receiver:ObjCName("objCReceiver")<!> Int.kotlinFunction(
         <!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCParam")<!> kotlinParam: Int
     ): Int = this + kotlinParam * 2
