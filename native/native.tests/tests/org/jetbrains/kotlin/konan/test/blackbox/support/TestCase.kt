@@ -111,7 +111,7 @@ sealed class TestModule {
 
         private lateinit var directRegularDependencies: Set<TestModule>
         private lateinit var directFriendDependencies: Set<TestModule>
-        private lateinit var directDependsOnDependencies: Set<TestModule>
+        lateinit var directDependsOnDependencies: Set<TestModule>
 
         // N.B. The following two properties throw an exception on attempt to resolve cyclic dependencies.
         val allRegularDependencies: Set<TestModule> by SM.lazyNeighbors({ directRegularDependencies }, { it.allRegularDependencies })
@@ -178,6 +178,12 @@ sealed class TestModule {
         val TestModule.allDependsOnDependencies: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> allDependsOnDependencies
+                is Shared, is Given -> emptySet()
+            }
+
+        val TestModule.directDependsOnDependencies: Set<TestModule>
+            get() = when (this) {
+                is Exclusive -> directDependsOnDependencies
                 is Shared, is Given -> emptySet()
             }
 
