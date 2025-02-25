@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
@@ -35,24 +35,25 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var garbageCollectorMXBeans: List<GarbageCollectorMXBean> = emptyList()
 
     private val phaseMeasurements: SortedMap<PhaseType, Time> = sortedMapOf()
-    private val phaseSideMeasurements: SortedMap<PhaseType, SortedMap<PhaseSideType, SidePerformanceMeasurement>> = sortedMapOf()
-    private var gcMeasurements: SortedMap<String, GarbageCollectionMeasurement> = sortedMapOf()
-    private var jitMeasurement: JitCompilationMeasurement? = null
-    private val extraMeasurements: MutableList<PerformanceMeasurement> = mutableListOf()
+    private val phaseSideMeasurements: SortedMap<PhaseSideType, SideStats> = sortedMapOf()
+    private var gcMeasurements: SortedMap<String, GarbageCollectionStats> = sortedMapOf()
+    private var jitTimeMillis: Long? = null
+    private val extendedStats: MutableList<String> = mutableListOf()
 
-    var isEnabled: Boolean = false
-        protected set
-    var isK2: Boolean = true
+    var isExtendedStatsEnabled: Boolean = false
+        private set
+    var compilerType: CompilerType = CompilerType.K2
+    var hasErrors: Boolean = false
         private set
 
     var targetDescription: String? = null
     var files: Int = 0
-        protected set
+        private set
     var lines: Int = 0
-        protected set
+        private set
     var isFinalized: Boolean = false
         private set
-    val isMeasuring: Boolean
+    val isPhaseMeasuring: Boolean
         get() = phaseStartTime != null
 
     fun getTargetInfo(): String =
@@ -62,120 +63,127 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         thread = Thread.currentThread()
     }
 
-    fun getLoweringAndBackendTimeMs(): Long = (measurements.filterIsInstance<IrLoweringMeasurement>().sumOf { it.time.millis }) +
-            (measurements.filterIsInstance<BackendMeasurement>().sumOf { it.time.millis })
-
-    val measurements: List<PerformanceMeasurement> by lazy {
+    val unitStats: UnitStats by lazy {
         isFinalized = true
-        buildList {
-            for ((phaseType, time) in phaseMeasurements) {
-                var refinedTime = time
 
-                // Subtract side measurement times to get a more refined result
-                phaseSideMeasurements[phaseType]?.values?.forEach {
-                    refinedTime -= it.time
-                }
-                add(
-                    when (phaseType) {
-                        PhaseType.Initialization -> CompilerInitializationMeasurement(refinedTime)
-                        PhaseType.Analysis -> CodeAnalysisMeasurement(refinedTime)
-                        PhaseType.TranslationToIr -> TranslationToIrMeasurement(refinedTime)
-                        PhaseType.IrLowering -> IrLoweringMeasurement(refinedTime)
-                        PhaseType.Backend -> BackendMeasurement(refinedTime)
-                    }
-                )
+        var initTime: Time? = null
+        var analysisTime: Time? = null
+        var translationToIrTime: Time? = null
+        var irLoweringTime: Time? = null
+        var backendTime: Time? = null
+
+        for ((phaseType, time) in phaseMeasurements) {
+            when (phaseType) {
+                PhaseType.Initialization -> initTime = time
+                PhaseType.Analysis -> analysisTime = time
+                PhaseType.TranslationToIr -> translationToIrTime = time
+                PhaseType.IrLowering -> irLoweringTime = time
+                PhaseType.Backend -> backendTime = time
             }
-
-            val aggregatePhaseSideMeasurements = sortedMapOf<PhaseSideType, SidePerformanceMeasurement>()
-            for (sideMeasurements in phaseSideMeasurements.values) {
-                for ((sideMeasurementType, sideMeasurement) in sideMeasurements) {
-                    aggregatePhaseSideMeasurements.addSideMeasurement(sideMeasurementType, sideMeasurement)
-                }
-            }
-
-            addAll(aggregatePhaseSideMeasurements.map { it.value })
-            gcMeasurements.values.forEach { add(it) }
-            addIfNotNull(jitMeasurement)
-            addAll(extraMeasurements)
         }
+
+        var findJavaClassStats: SideStats? = null
+        var findKotlinClassStats: SideStats? = null
+
+        for ((phaseSideType, sideStats) in phaseSideMeasurements) {
+            when (phaseSideType) {
+                PhaseSideType.FindJavaClass -> findJavaClassStats = sideStats
+                PhaseSideType.BinaryClassFromKotlinFile -> findKotlinClassStats = sideStats
+            }
+        }
+
+        UnitStats(
+            targetDescription,
+            targetPlatform.getPlatformEnumValue(),
+            compilerType,
+            hasErrors,
+            files,
+            lines,
+            initTime,
+            analysisTime,
+            translationToIrTime,
+            irLoweringTime,
+            backendTime,
+            findJavaClassStats,
+            findKotlinClassStats,
+            gcMeasurements.values.toList(),
+            jitTimeMillis,
+            extendedStats,
+        )
     }
 
-    fun addMeasurementResults(otherPerformanceManager: PerformanceManager?) {
+    fun addOtherUnitStats(otherUnitStats: UnitStats?) {
         ensureNotFinalizedAndSameThread()
 
-        if (otherPerformanceManager == null) return
+        if (otherUnitStats == null) return
 
-        files += otherPerformanceManager.files
-        lines += otherPerformanceManager.lines
+        assert(targetPlatform.getPlatformEnumValue() == otherUnitStats.platform)
+        compilerType += otherUnitStats.compilerType
+        hasErrors = hasErrors || otherUnitStats.hasErrors
 
-        for ((phase, otherPhaseMeasurement) in otherPerformanceManager.phaseMeasurements) {
-            phaseMeasurements[phase] = (phaseMeasurements[phase] ?: Time.ZERO) + otherPhaseMeasurement
-        }
+        addSourcesStats(otherUnitStats.filesCount, otherUnitStats.linesCount)
 
-        for ((phaseType, otherSideMeasurements) in otherPerformanceManager.phaseSideMeasurements) {
-            val sideMeasurements = phaseSideMeasurements.getOrPut(phaseType) { sortedMapOf() }
-            for ((sideMeasurementType, otherSideMeasurement) in otherSideMeasurements) {
-                sideMeasurements.addSideMeasurement(sideMeasurementType, otherSideMeasurement)
+        otherUnitStats.forEachPhaseMeasurement { phaseType, time ->
+            if (time != null) {
+                phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + time
             }
         }
 
-        for ((garbageCollectionKind, otherGcMeasurement) in otherPerformanceManager.gcMeasurements) {
-            val existingGcMeasurement = gcMeasurements[garbageCollectionKind]
-            gcMeasurements[garbageCollectionKind] = GarbageCollectionMeasurement(
-                garbageCollectionKind,
-                (existingGcMeasurement?.milliseconds ?: 0) + otherGcMeasurement.milliseconds,
-                (existingGcMeasurement?.count ?: 0) + otherGcMeasurement.count,
+        otherUnitStats.forEachPhaseSideMeasurement { phaseSideType, sideStats ->
+            if (sideStats != null) {
+                phaseSideMeasurements[phaseSideType] = (phaseSideMeasurements[phaseSideType] ?: SideStats.EMPTY) + sideStats
+            }
+        }
+
+        for (otherGcStats in otherUnitStats.gcStats) {
+            val existingGcMeasurement = gcMeasurements[otherGcStats.kind]
+            gcMeasurements[otherGcStats.kind] = GarbageCollectionStats(
+                otherGcStats.kind,
+                (existingGcMeasurement?.millis ?: 0) + otherGcStats.millis,
+                (existingGcMeasurement?.count ?: 0) + otherGcStats.count,
             )
         }
 
-        if (jitMeasurement != null || otherPerformanceManager.jitMeasurement != null) {
-            jitMeasurement =
-                JitCompilationMeasurement((jitMeasurement?.milliseconds ?: 0) + (otherPerformanceManager.jitMeasurement?.milliseconds ?: 0))
+        if (jitTimeMillis != null || otherUnitStats.jitTimeMillis != null) {
+            jitTimeMillis = (jitTimeMillis ?: 0) + (otherUnitStats.jitTimeMillis ?: 0)
         }
 
-        extraMeasurements.addAll(otherPerformanceManager.extraMeasurements)
+        extendedStats.addAll(otherUnitStats.extendedStats)
     }
 
-    private fun SortedMap<PhaseSideType, SidePerformanceMeasurement>.addSideMeasurement(
-        sideMeasurementType: PhaseSideType,
-        otherSideMeasurement: SidePerformanceMeasurement,
-    ) {
-        val existingSideMeasurement = this[sideMeasurementType]
-        this[sideMeasurementType] =
-            sideMeasurementType.createSideMeasurement(
-                (existingSideMeasurement?.count ?: 0) + otherSideMeasurement.count,
-                (existingSideMeasurement?.time ?: Time.ZERO) + otherSideMeasurement.time
-            )
+    private fun TargetPlatform.getPlatformEnumValue(): PlatformType {
+        val firstPlatformName = componentPlatforms.first().platformName
+        val platform = when {
+            firstPlatformName.contains("JVM") -> PlatformType.JVM
+            firstPlatformName.contains("Native") -> PlatformType.Native
+            targetPlatform.isJs() -> PlatformType.JS
+            targetPlatform.isCommon() -> PlatformType.Common
+            else -> error("Unexpected platform $targetPlatform")
+        }
+        return platform
     }
 
-    fun enableCollectingPerformanceStatistics(isK2: Boolean) {
-        isEnabled = true
-        this.isK2 = isK2
-        if (!isK2) {
+    fun enableExtendedStats() {
+        isExtendedStatsEnabled = true
+        if (!compilerType.isK2) {
             PerformanceCounter.setTimeCounterEnabled(true)
         }
         compilationMXBean = ManagementFactory.getCompilationMXBean()
         jitStartTime = compilationMXBean?.totalCompilationTime
         garbageCollectorMXBeans = ManagementFactory.getGarbageCollectorMXBeans()
         garbageCollectorMXBeans.associateTo(gcMeasurements) {
-            it.name to GarbageCollectionMeasurement(it.name, it.collectionTime, it.collectionCount)
+            it.name to GarbageCollectionStats(it.name, it.collectionTime, it.collectionCount)
         }
     }
 
     open fun addSourcesStats(files: Int, lines: Int) {
-        if (!isEnabled) return
-
         ensureNotFinalizedAndSameThread()
 
-        this.files = this.files + files
-        this.lines = this.lines + lines
+        this.files += files
+        this.lines += lines
     }
 
     fun notifyPhaseStarted(newPhaseType: PhaseType) {
-        // Here should be the following check: `if (!isEnabled) return`.
-        // However, currently it's dropped to keep compatibility with build systems that don't call `enableCollectingPerformanceStatistics`,
-        // but take some measurements from this manager (old behavior is preserved).
-
         assert(phaseStartTime == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
 
         // Ideally, all phases always should be executed sequentially.
@@ -191,10 +199,6 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun notifyPhaseFinished(phaseType: PhaseType) {
-        // Here should be the following check: `if (!isEnabled) return`.
-        // However, currently it's dropped to keep compatibility with build systems that don't call `enableCollectingPerformanceStatistics`
-        // but take some measurements from this manager (old behavior is preserved).
-
         ensureNotFinalizedAndSameThread()
 
         assert(phaseStartTime != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
@@ -202,10 +206,12 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     open fun notifyCompilationFinished() {
-        if (!isEnabled) return
-
         ensureNotFinalizedAndSameThread()
         isFinalized = true
+
+        if (currentPhaseType != PhaseType.Backend || phaseStartTime != null) {
+            hasErrors = true
+        }
 
         // Ideally, all phases should be finished explicitly by using `notifyPhaseFinished` call.
         // However, sometimes exceptions are thrown, and it's not always easy to handle them properly.
@@ -213,22 +219,23 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         notifyCurrentPhaseFinishedIfNeeded()
 
+        if (!isExtendedStatsEnabled) return
+
         for (garbageCollectorMXBean in garbageCollectorMXBeans) {
             val startGcMeasurement = gcMeasurements.getValue(garbageCollectorMXBean.name)
-            gcMeasurements[garbageCollectorMXBean.name] = GarbageCollectionMeasurement(
+            gcMeasurements[garbageCollectorMXBean.name] = GarbageCollectionStats(
                 garbageCollectorMXBean.name,
-                garbageCollectorMXBean.collectionTime - startGcMeasurement.milliseconds,
+                garbageCollectorMXBean.collectionTime - startGcMeasurement.millis,
                 garbageCollectorMXBean.collectionCount - startGcMeasurement.count,
             )
         }
 
         if (compilationMXBean != null && jitStartTime != null) {
-            jitMeasurement = JitCompilationMeasurement(compilationMXBean!!.totalCompilationTime - jitStartTime!!)
+            jitTimeMillis = compilationMXBean!!.totalCompilationTime - jitStartTime!!
         }
 
-        if (!isK2) {
-            @OptIn(DeprecatedPerformanceDeclaration::class)
-            PerformanceCounter.report { s -> extraMeasurements += PerformanceCounterMeasurement(s) }
+        if (!compilerType.isK2) {
+            PerformanceCounter.report { s -> extendedStats += s }
         }
     }
 
@@ -247,7 +254,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         phaseStartTime = null
     }
 
-    internal fun <T> measureTime(phaseSideType: PhaseSideType, block: () -> T): T {
+    internal fun <T> measureSideTime(phaseSideType: PhaseSideType, block: () -> T): T {
         ensureNotFinalizedAndSameThread()
 
         val startTime = currentTime()
@@ -256,18 +263,15 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         } finally {
             val elapsedTime = currentTime() - startTime
 
-            assert(phaseStartTime != null) { "No phase started for $phaseSideType side measurement" }
-
-            val sideMeasurements = phaseSideMeasurements.getOrPut(currentPhaseType) { sortedMapOf() }
-            sideMeasurements.addSideMeasurement(phaseSideType, phaseSideType.createSideMeasurement(1, elapsedTime))
+            if (isPhaseMeasuring) {
+                // Subtract side measurement time to get a more refined result
+                // The time could be negative at the moment but should be normalized after the `notifyPhaseFinished` call.
+                phaseMeasurements[currentPhaseType] = (phaseMeasurements[currentPhaseType] ?: Time.ZERO) - elapsedTime
+            }
+            phaseSideMeasurements[phaseSideType] =
+                (phaseSideMeasurements[phaseSideType] ?: SideStats.EMPTY) + SideStats(1, elapsedTime)
         }
     }
-
-    private fun PhaseSideType.createSideMeasurement(newCount: Int, newElapsed: Time): SidePerformanceMeasurement =
-        when (this) {
-            PhaseSideType.FindJavaClass -> FindJavaClassMeasurement(newCount, newElapsed)
-            PhaseSideType.BinaryClassFromKotlinFile -> BinaryClassFromKotlinFileMeasurement(newCount, newElapsed)
-        }
 
     fun dumpPerformanceReport(destination: File) {
         destination.writeBytes(createPerformanceReport().toByteArray())
@@ -275,11 +279,13 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     fun createPerformanceReport(): String = buildString {
         append("$presentableName performance report\n")
-        measurements.map { it.render(lines) }.forEach { append("$it\n") }
+        unitStats.forEachStringMeasurement { appendLine(it) }
     }
 
     private fun ensureNotFinalizedAndSameThread() {
-        assert(!isFinalized) { "Cannot add performance measurements because it's already finalized" }
+        if (!targetPlatform.isJs()) { // TODO: KT-75227
+            assert(!isFinalized) { "Cannot add a performance measurements because it's already finalized" }
+        }
         assert(Thread.currentThread() == thread) { "PerformanceManager functions can be run only from the same thread" }
     }
 }
@@ -292,8 +298,9 @@ class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: St
         fun createAndEnableChildIfNeeded(mainPerformanceManager: PerformanceManager?): PerformanceManagerImpl? {
             return if (mainPerformanceManager != null) {
                 PerformanceManagerImpl(mainPerformanceManager.targetPlatform, mainPerformanceManager.presentableName + " (Child)").also {
-                    if (mainPerformanceManager.isEnabled) {
-                        it.enableCollectingPerformanceStatistics(mainPerformanceManager.isK2)
+                    it.compilerType = mainPerformanceManager.compilerType
+                    if (mainPerformanceManager.isExtendedStatsEnabled) {
+                        it.enableExtendedStats()
                     }
                 }
             } else {
@@ -304,7 +311,7 @@ class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: St
 }
 
 fun <T> PerformanceManager?.tryMeasureSideTime(phaseSideType: PhaseSideType, block: () -> T): T {
-    return if (this == null) return block() else measureTime(phaseSideType, block)
+    return if (this == null) return block() else measureSideTime(phaseSideType, block)
 }
 
 inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseType, block: () -> T): T {

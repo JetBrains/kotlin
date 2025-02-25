@@ -197,7 +197,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     private static void doComparePerformanceLogs(@NotNull String fileName, @NotNull CLICompiler<?> compiler) {
         @NotNull PerformanceManager perfManager = compiler.getDefaultPerformanceManager();
-        if (!perfManager.isEnabled()) return;
+        if (!perfManager.isExtendedStatsEnabled()) return;
 
         File expectedPerfLogFile = new File(fileName.replaceFirst("\\.args$", ".perf.log"));
         @NotNull String actualPerfReport = perfManager.createPerformanceReport();

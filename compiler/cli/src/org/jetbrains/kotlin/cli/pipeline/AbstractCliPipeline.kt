@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.forEachStringMeasurement
 import java.io.File
 
 abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
@@ -34,9 +36,9 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
         val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
         setIdeaIoUseFallback() // TODO (KT-73573): probably could be removed
-        val performanceManager = createPerformanceManager(arguments, services)
+        val performanceManager = createPerformanceManager(arguments, services).apply { compilerType = CompilerType.K2 }
         if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableCollectingPerformanceStatistics(isK2 = true)
+            performanceManager.enableExtendedStats()
         }
 
         val messageCollector = GroupingMessageCollector(
@@ -67,8 +69,8 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
             performanceManager.notifyCompilationFinished()
             if (arguments.reportPerf) {
                 messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
-                for (measurement in performanceManager.measurements) {
-                    messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + measurement.render(performanceManager.lines), null)
+                performanceManager.unitStats.forEachStringMeasurement {
+                    messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: $it", null)
                 }
             }
 

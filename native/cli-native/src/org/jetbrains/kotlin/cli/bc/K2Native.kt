@@ -139,7 +139,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     ) {
         val mainPerfManager = configuration.perfManager
         val childPerfManager = if (spawning) {
-            if (mainPerfManager?.isMeasuring == true) {
+            if (mainPerfManager?.isPhaseMeasuring == true) {
                 mainPerfManager.notifyPhaseFinished(PhaseType.Initialization)
             }
             PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)
@@ -192,7 +192,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         try {
             konanDriver.run()
         } finally {
-            mainPerfManager?.addMeasurementResults(childPerfManager)
+            mainPerfManager?.addOtherUnitStats(childPerfManager?.unitStats)
         }
     }
 
