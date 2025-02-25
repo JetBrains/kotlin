@@ -126,6 +126,8 @@ fun main() {
     println("=== arguments in JSON ===")
     println(jsonArguments)
     println("=== end of JSON ===")
+    val jsonFile = File("./compiler/arguments/arguments.json")
+    jsonFile.writeText(jsonArguments)
 
     val decodedCompilerArguments = format.decodeFromString<CompilerArgumentsTopLevel>(jsonArguments)
     println("Decoded arguments: $decodedCompilerArguments")
