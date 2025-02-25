@@ -68,7 +68,7 @@ KtCallExpression(521,538): 'invoke(MyClass())'
 
 KtNameReferenceExpression(521,527): 'invoke'
   KtSimpleNameReference:
-    (in kotlin.reflect.KFunction1) operator fun invoke(p1: P1): R
+    (in kotlin.reflect.KFunction1) override operator fun invoke(p1: P1): R
 
 KtCallExpression(528,537): 'MyClass()'
   KtInvokeFunctionReference:
@@ -104,7 +104,7 @@ KtCallExpression(599,614): 'invoke(Child())'
 
 KtNameReferenceExpression(599,605): 'invoke'
   KtSimpleNameReference:
-    (in kotlin.reflect.KFunction1) operator fun invoke(p1: P1): R
+    (in kotlin.reflect.KFunction1) override operator fun invoke(p1: P1): R
 
 KtCallExpression(606,613): 'Child()'
   KtInvokeFunctionReference:

@@ -251,45 +251,47 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                             .toFirResolvedTypeRef()
                     }
 
-                    addDeclaration(
-                        buildSimpleFunction {
-                            moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
-                            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                            origin = builtInOrigin
-                            returnTypeRef = typeArguments.last()
-                            this.name = name
-                            status = functionStatus
-                            symbol = FirNamedFunctionSymbol(
-                                CallableId(packageFqName, relativeClassName, name)
-                            )
-                            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                            valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
-                                val parameterName = Name.identifier("p${index + 1}")
-                                buildValueParameter {
-                                    moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
-                                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
-                                    origin = builtInOrigin
-                                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                                    returnTypeRef = typeArgument
-                                    this.name = parameterName
-                                    symbol = FirValueParameterSymbol(parameterName)
-                                    defaultValue = null
-                                    isCrossinline = false
-                                    isNoinline = false
-                                    isVararg = false
+                    if (!kind.isReflectType) {
+                        addDeclaration(
+                            buildSimpleFunction {
+                                moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
+                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                                origin = builtInOrigin
+                                returnTypeRef = typeArguments.last()
+                                this.name = name
+                                status = functionStatus
+                                symbol = FirNamedFunctionSymbol(
+                                    CallableId(packageFqName, relativeClassName, name)
+                                )
+                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                                valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
+                                    val parameterName = Name.identifier("p${index + 1}")
+                                    buildValueParameter {
+                                        moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
+                                        containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                                        origin = builtInOrigin
+                                        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                                        returnTypeRef = typeArgument
+                                        this.name = parameterName
+                                        symbol = FirValueParameterSymbol(parameterName)
+                                        defaultValue = null
+                                        isCrossinline = false
+                                        isNoinline = false
+                                        isVararg = false
+                                    }
+                                }
+                                dispatchReceiverType = classId.defaultType(this@klass.typeParameters.map { it.symbol })
+                                kind.annotationOnInvokeClassId?.let { annotationClassId ->
+                                    annotations += buildAnnotation {
+                                        annotationTypeRef = annotationClassId
+                                            .constructClassLikeType()
+                                            .toFirResolvedTypeRef()
+                                        argumentMapping = FirEmptyAnnotationArgumentMapping
+                                    }
                                 }
                             }
-                            dispatchReceiverType = classId.defaultType(this@klass.typeParameters.map { it.symbol })
-                            kind.annotationOnInvokeClassId?.let { annotationClassId ->
-                                annotations += buildAnnotation {
-                                    annotationTypeRef = annotationClassId
-                                        .constructClassLikeType()
-                                        .toFirResolvedTypeRef()
-                                    argumentMapping = FirEmptyAnnotationArgumentMapping
-                                }
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

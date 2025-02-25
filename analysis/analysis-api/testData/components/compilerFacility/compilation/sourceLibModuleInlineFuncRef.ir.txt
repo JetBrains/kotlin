@@ -11,5 +11,5 @@ MODULE_FRAGMENT
             ARG <this>: STRING_CONCATENATION type=kotlin.String
               GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
               CONST String type=kotlin.String value="!"
-            ARG other: CALL 'public abstract fun invoke (): R of kotlin.reflect.KFunction0 [operator] declared in kotlin.reflect.KFunction0' type=kotlin.String origin=INVOKE
+            ARG other: CALL 'public abstract fun invoke (): R of kotlin.reflect.KFunction0 [fake_override,operator] declared in kotlin.reflect.KFunction0' type=kotlin.String origin=INVOKE
               ARG <this>: GET_VAR 'val ref: kotlin.reflect.KFunction0<kotlin.String> [val] declared in home.Greeting' type=kotlin.reflect.KFunction0<kotlin.String> origin=VARIABLE_AS_FUNCTION
