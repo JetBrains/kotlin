@@ -44,9 +44,9 @@ internal class FastJarVirtualFile(
         return handler.fileSystem
     }
 
-    override fun getPath(): String {
+    private val calculatedPath by lazy(LazyThreadSafetyMode.PUBLICATION) {
         if (parent == null) {
-            return FileUtil.toSystemIndependentName(handler.file.path) + "!/"
+            return@lazy FileUtil.toSystemIndependentName(handler.file.path) + "!/"
         }
         val parentPath = parent.path
         val answer = StringBuilder(parentPath.length + 1 + name.length)
@@ -55,8 +55,10 @@ internal class FastJarVirtualFile(
             answer.append('/')
         }
         answer.append(name)
-        return answer.toString()
+        return@lazy answer.toString()
     }
+
+    override fun getPath(): String = calculatedPath
 
     override fun isWritable(): Boolean {
         return false
