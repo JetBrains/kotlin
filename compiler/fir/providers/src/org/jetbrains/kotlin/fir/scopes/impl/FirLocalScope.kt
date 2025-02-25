@@ -64,10 +64,8 @@ class FirLocalScope private constructor(
         )
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        for (function in functions[name]) {
-            processor(function)
-        }
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return functions[name]
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

@@ -55,14 +55,14 @@ abstract class FirAbstractImportingScope(
         }
     }
 
-    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> processCallablesFromImportsByName(
+    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> collectCallablesFromImportsByName(
         name: Name?,
         imports: List<FirResolvedImport>,
-        crossinline processor: (S) -> Unit,
         crossinline buildImportedCopy: S.(ClassId) -> S,
-        processCallablesByName: FirContainingNamesAwareScope.(Name, (S) -> Unit) -> Unit,
+        collectCallables: FirContainingNamesAwareScope.(Name) -> List<S>,
         getTopLevelCallableSymbols: (FqName, Name) -> List<S>
-    ) {
+    ): List<S> {
+        val result = mutableListOf<S>()
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
             if (isExcluded(import, importedName)) continue
@@ -71,33 +71,52 @@ abstract class FirAbstractImportingScope(
                 val staticsScopeOwnerSymbol = provider.getClassLikeSymbolByClassId(parentClassId)?.fullyExpandedClass(session)
                 val staticsScope = staticsScopeOwnerSymbol?.getStaticsScope()
                 if (staticsScope != null) {
-                    staticsScope.processCallablesByName(importedName) {
+                    result.addAll(staticsScope.collectCallables(importedName).map {
                         if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
-                            processor(it.buildImportedCopy(staticsScopeOwnerSymbol.classId))
+                            it.buildImportedCopy(staticsScopeOwnerSymbol.classId)
                         } else {
-                            processor(it)
+                            it
                         }
-                    }
+                    })
                     continue
                 }
             }
             if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
-                for (symbol in getTopLevelCallableSymbols(import.packageFqName, importedName)) {
-                    processor(symbol)
-                }
+                result.addAll(getTopLevelCallableSymbols(import.packageFqName, importedName))
             }
         }
+        return result
+    }
+
+    private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> processCallablesFromImportsByName(
+        name: Name?,
+        imports: List<FirResolvedImport>,
+        crossinline processor: (S) -> Unit,
+        crossinline buildImportedCopy: S.(ClassId) -> S,
+        processCallablesByName: FirContainingNamesAwareScope.(Name, (S) -> Unit) -> Unit,
+        getTopLevelCallableSymbols: (FqName, Name) -> List<S>
+    ) {
+        collectCallablesFromImportsByName(
+            name,
+            imports,
+            buildImportedCopy,
+            { n -> mutableListOf<S>().apply { processCallablesByName(n) { add(it) } } },
+            getTopLevelCallableSymbols
+        ).forEach(processor)
+    }
+
+    protected fun collectFunctionsByName(name: Name?, imports: List<FirResolvedImport>): List<FirNamedFunctionSymbol> {
+        return collectCallablesFromImportsByName(
+            name,
+            imports,
+            { classId -> fir.buildImportedVersion(classId).symbol },
+            FirContainingNamesAwareScope::collectFunctionsByName,
+            provider::getTopLevelFunctionSymbols
+        )
     }
 
     protected fun processFunctionsByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processCallablesFromImportsByName(
-            name,
-            imports,
-            processor,
-            { classId -> fir.buildImportedVersion(classId).symbol },
-            FirContainingNamesAwareScope::processFunctionsByName,
-            provider::getTopLevelFunctionSymbols
-        )
+        collectFunctionsByName(name, imports).forEach(processor)
     }
 
     protected fun processPropertiesByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirVariableSymbol<*>) -> Unit) {

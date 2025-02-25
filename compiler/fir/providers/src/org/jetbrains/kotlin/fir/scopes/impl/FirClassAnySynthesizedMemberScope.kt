@@ -95,30 +95,29 @@ class FirClassAnySynthesizedMemberScope(
         declaredMemberScope.processPropertiesByName(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
         if (name !in ANY_MEMBER_NAMES) {
-            declaredMemberScope.processFunctionsByName(name, processor)
-            return
+            return declaredMemberScope.collectFunctionsByName(name)
         }
-        var synthesizedFunctionIsNeeded = true
-        declaredMemberScope.processFunctionsByName(name) process@{ fromDeclaredScope ->
-            if (fromDeclaredScope.matchesSomeAnyMember(name)) {
-                // TODO: should we handle fromDeclaredScope.origin == FirDeclarationOrigin.Delegated somehow?
-                // See also KT-58926
-                synthesizedFunctionIsNeeded = false
-            }
-            processor(fromDeclaredScope)
+
+        val declaredFunctions = declaredMemberScope.collectFunctionsByName(name)
+
+        // Check if any declared function matches Any member
+        if (declaredFunctions.any { it.matchesSomeAnyMember(name) }) {
+            return declaredFunctions
         }
-        if (!synthesizedFunctionIsNeeded) return
-        superKlassScope?.processFunctionsByName(name) { fromSuperType ->
-            if (synthesizedFunctionIsNeeded) {
-                if (fromSuperType.rawStatus.modality == Modality.FINAL && fromSuperType.matchesSomeAnyMember(name)) {
-                    synthesizedFunctionIsNeeded = false
-                }
-            }
+
+        // Check super scope for final matching members
+        val hasFinalMatchingMember = superKlassScope?.collectFunctionsByName(name)
+            ?.any { it.rawStatus.modality == Modality.FINAL && it.matchesSomeAnyMember(name) }
+            ?: false
+
+        if (hasFinalMatchingMember) {
+            return declaredFunctions
         }
-        if (!synthesizedFunctionIsNeeded) return
-        processor(synthesizedCache.synthesizedFunction.getValue(name, this))
+
+        // Need to synthesize a function
+        return declaredFunctions + synthesizedCache.synthesizedFunction.getValue(name, this)
     }
 
     private fun FirNamedFunctionSymbol.matchesSomeAnyMember(name: Name): Boolean {

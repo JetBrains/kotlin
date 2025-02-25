@@ -43,7 +43,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         // When generating code for IDE debugger we may get an empty session and empty scope caches
         // We work it around by forcing cache initialization
         if (c.configuration.allowNonCachedDeclarations) {
-            klass.unsubstitutedScope(c).processFunctionsByName(originalFunction.name) {}
+            klass.unsubstitutedScope(c).collectFunctionsByName(originalFunction.name)
         }
         return computeFakeOverrideKeysImpl(
             klass,

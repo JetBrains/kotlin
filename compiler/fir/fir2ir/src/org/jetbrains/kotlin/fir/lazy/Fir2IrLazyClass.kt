@@ -175,16 +175,13 @@ class Fir2IrLazyClass(
         fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
             if (scope == null) return
             for (name in scope.getCallableNames()) {
-                scope.processFunctionsByName(name) { symbol ->
-                    when {
-                        !shouldBuildStub(symbol.fir) -> {}
-                        else -> {
-                            // Lazy declarations are created together with their symbol, so it's safe to take the owner here
-                            @OptIn(UnsafeDuringIrConstructionAPI::class)
-                            result += declarationStorage.getIrFunctionSymbol(symbol, lookupTag).owner
-                        }
+                scope.collectFunctionsByName(name)
+                    .filter { shouldBuildStub(it.fir) }
+                    .forEach { symbol ->
+                        // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                        @OptIn(UnsafeDuringIrConstructionAPI::class)
+                        result += declarationStorage.getIrFunctionSymbol(symbol, lookupTag).owner
                     }
-                }
                 scope.processPropertiesByName(name) { symbol ->
                     when {
                         !shouldBuildStub(symbol.fir) -> {}

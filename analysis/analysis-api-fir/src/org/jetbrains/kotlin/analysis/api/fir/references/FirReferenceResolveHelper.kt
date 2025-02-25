@@ -519,7 +519,7 @@ internal object FirReferenceResolveHelper {
         return buildList {
             if (selectedFqName == fullFqName) {
                 // callables cannot be used as receiver expressions in imports
-                scope.processFunctionsByName(selectedName) { add(it.fir.buildSymbol(builder)) }
+                scope.collectFunctionsByName(selectedName).forEach { add(it.fir.buildSymbol(builder)) }
                 scope.processPropertiesByName(selectedName) { add(it.fir.buildSymbol(builder)) }
             }
             scope.processClassifiersByName(selectedName) { addIfNotNull(it.fir.buildSymbol(builder)) }

@@ -21,7 +21,7 @@ abstract class FirContainingNamesAwareScope : FirScope() {
 
 fun FirContainingNamesAwareScope.processAllFunctions(processor: (FirNamedFunctionSymbol) -> Unit) {
     for (name in getCallableNames()) {
-        processFunctionsByName(name, processor)
+        collectFunctionsByName(name).forEach(processor)
     }
 }
 
@@ -33,7 +33,7 @@ fun FirContainingNamesAwareScope.processAllProperties(processor: (FirVariableSym
 
 fun FirContainingNamesAwareScope.processAllCallables(processor: (FirCallableSymbol<*>) -> Unit) {
     for (name in getCallableNames()) {
-        processFunctionsByName(name, processor)
+        collectFunctionsByName(name).forEach(processor)
         processPropertiesByName(name, processor)
     }
 }
@@ -51,7 +51,5 @@ fun FirContainingNamesAwareScope.collectAllProperties(): Collection<FirVariableS
 }
 
 fun FirContainingNamesAwareScope.collectAllFunctions(): Collection<FirNamedFunctionSymbol> {
-    return mutableListOf<FirNamedFunctionSymbol>().apply {
-        processAllFunctions(this::add)
-    }
+    return getCallableNames().flatMap { collectFunctionsByName(it) }
 }

@@ -161,10 +161,13 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         val reservedNames = boxAndUnboxNames + if (isCustomEqualsSupported) emptySet() else equalsAndHashCodeNames
         val classScope = declaration.unsubstitutedScope(context)
         for (reservedName in reservedNames) {
-            classScope.processFunctionsByName(Name.identifier(reservedName)) {
-                val functionSymbol = it.unwrapFakeOverrides()
-                if (functionSymbol.isAbstract) return@processFunctionsByName
-                val containingClassSymbol = functionSymbol.getContainingClassSymbol() ?: return@processFunctionsByName
+            classScope.collectFunctionsByName(Name.identifier(reservedName))
+                .map { it.unwrapFakeOverrides() }
+                .filter { !it.isAbstract }
+                .mapNotNull { functionSymbol ->
+                    functionSymbol.getContainingClassSymbol()?.let { functionSymbol to it }
+                }
+                .forEach { (functionSymbol, containingClassSymbol) ->
                 if (containingClassSymbol == declaration.symbol) {
                     if (functionSymbol.source?.kind is KtRealSourceElementKind) {
                         reporter.reportOn(

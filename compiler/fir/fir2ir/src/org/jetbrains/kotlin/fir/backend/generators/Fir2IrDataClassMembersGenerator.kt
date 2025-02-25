@@ -143,21 +143,24 @@ class Fir2IrDataClassMembersGenerator(
 
         private fun calculateSyntheticFirFunctions(): Map<Name, FirSimpleFunction> {
             val scope = klass.unsubstitutedScope(c)
-            val contributedSyntheticFunctions =
-                buildMap<Name, FirSimpleFunction> {
-                    for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
-                        scope.processFunctionsByName(name) {
-                            // We won't synthesize a function if there is a user-contributed (non-synthetic) one.
-                            if (it.origin !is FirDeclarationOrigin.Synthetic) return@processFunctionsByName
-                            if (it.containingClassLookupTag() != klass.symbol.toLookupTag()) return@processFunctionsByName
-                            require(!contains(name)) {
-                                "Two synthetic functions $name were found in data/value class ${klass.name}:\n" +
-                                        "${this[name]?.render()}\n${it.fir.render()}"
-                            }
-                            this[name] = it.fir
+            val contributedSyntheticFunctions = buildMap<Name, FirSimpleFunction> {
+                for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
+                    val syntheticFunctions = scope.collectFunctionsByName(name)
+                        .filter { symbol ->
+                            symbol.origin is FirDeclarationOrigin.Synthetic &&
+                            symbol.containingClassLookupTag() == klass.symbol.toLookupTag()
                         }
+                        .map { it.fir }
+
+                    if (syntheticFunctions.isNotEmpty()) {
+                        require(syntheticFunctions.size == 1) {
+                            "Multiple synthetic functions $name were found in data/value class ${klass.name}:\n" +
+                            syntheticFunctions.joinToString("\n") { it.render() }
+                        }
+                        this[name] = syntheticFunctions.first()
                     }
                 }
+            }
             return contributedSyntheticFunctions
         }
 

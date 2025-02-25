@@ -32,11 +32,9 @@ fun FirRegularClass.generatedMembers(session: FirSession): List<FirCallableDecla
     val scope = session.declaredMemberScope(this, memberRequiredPhase = null)
     val result = mutableListOf<FirCallableDeclaration>()
     for (name in scope.getCallableNames()) {
-        scope.processFunctionsByName(name) {
-            if (it.fir.origin.generated) {
-                result += it.fir
-            }
-        }
+        result.addAll(scope.collectFunctionsByName(name)
+            .filter { it.fir.origin.generated }
+            .map { it.fir })
         scope.processPropertiesByName(name) {
             if (it.fir.origin.generated) {
                 result += it.fir

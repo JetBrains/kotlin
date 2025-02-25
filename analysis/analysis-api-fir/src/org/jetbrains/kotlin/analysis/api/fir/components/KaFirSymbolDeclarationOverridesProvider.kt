@@ -77,7 +77,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
     }
 
     private fun FirTypeScope.processCallableByName(declaration: FirDeclaration) = when (declaration) {
-        is FirSimpleFunction -> processFunctionsByName(declaration.name) { }
+        is FirSimpleFunction -> collectFunctionsByName(declaration.name).let { }
         is FirProperty -> processPropertiesByName(declaration.name) { }
         else -> Unit
     }

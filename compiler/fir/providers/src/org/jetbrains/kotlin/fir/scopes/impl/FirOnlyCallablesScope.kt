@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirOnlyCallablesScope(val delegate: FirScope) : FirScope() {
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        return delegate.processFunctionsByName(name, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return delegate.collectFunctionsByName(name)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -36,8 +36,8 @@ class FirNameAwareOnlyCallablesScope(val delegate: FirContainingNamesAwareScope)
     // We want to *avoid* delegation to certain scope functions, so we delegate explicitly instead of using
     // `FirDelegatingContainingNamesAwareScope`.
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        return delegate.processFunctionsByName(name, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return delegate.collectFunctionsByName(name)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

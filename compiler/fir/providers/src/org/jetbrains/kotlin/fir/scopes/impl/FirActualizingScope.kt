@@ -39,12 +39,38 @@ class FirActualizingScope(private val delegate: FirScope) : FirScope() {
         delegate.processDeclaredConstructors(processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processCallableSymbolsByName(name, FirScope::processFunctionsByName, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return collectCallableSymbols(name) { delegate.collectFunctionsByName(name) }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         processCallableSymbolsByName(name, FirScope::processPropertiesByName, processor)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <S : FirCallableSymbol<*>> collectCallableSymbols(
+        name: Name,
+        collect: () -> List<S>
+    ): List<S> {
+        val filteredSymbols = mutableSetOf<S>()
+        // All matched `expect` callables should be preserved to make it possible to filter them out later if corresponding actuals are found
+        val ignoredExpectSymbols = mutableSetOf<FirBasedSymbol<*>>()
+
+        collect().forEach { symbol ->
+            if (symbol.isActual) {
+                val matchedExpectSymbol = symbol.getSingleMatchedExpectForActualOrNull()
+                if (matchedExpectSymbol != null) {
+                    filteredSymbols.remove(matchedExpectSymbol as S) // Filter out matched expects candidates
+                    ignoredExpectSymbols.add(matchedExpectSymbol)
+                }
+            } else if (symbol.isExpect && symbol in ignoredExpectSymbols) {
+                // Skip the found `expect` because there is already a matched actual
+                return@forEach
+            }
+            filteredSymbols.add(symbol)
+        }
+
+        return filteredSymbols.toList()
     }
 
     private fun <S : FirCallableSymbol<*>> processCallableSymbolsByName(
@@ -52,27 +78,11 @@ class FirActualizingScope(private val delegate: FirScope) : FirScope() {
         processingFactory: FirScope.(Name, (S) -> Unit) -> Unit,
         processor: (S) -> Unit,
     ) {
-        val filteredSymbols = mutableSetOf<S>()
-        // All matched `expect` callables should be preserved to make it possible to filter them out later if corresponding actuals are found
-        val ignoredExpectSymbols = mutableSetOf<FirBasedSymbol<*>>()
-
-        delegate.processingFactory(name) { symbol ->
-            if (symbol.isActual) {
-                val matchedExpectSymbol = symbol.getSingleMatchedExpectForActualOrNull()
-                if (matchedExpectSymbol != null) {
-                    filteredSymbols.remove(matchedExpectSymbol) // Filter out matched expects candidates
-                    ignoredExpectSymbols.add(matchedExpectSymbol)
-                }
-            } else if (symbol.isExpect && symbol in ignoredExpectSymbols) {
-                // Skip the found `expect` because there is already a matched actual
-                return@processingFactory
-            }
-            filteredSymbols.add(symbol)
-        }
-
-        for (symbol in filteredSymbols) {
-            processor(symbol)
-        }
+        collectCallableSymbols(name) {
+            val symbols = mutableListOf<S>()
+            delegate.processingFactory(name) { symbols.add(it) }
+            symbols
+        }.forEach(processor)
     }
 
     @DelicateScopeAPI

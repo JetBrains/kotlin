@@ -321,7 +321,7 @@ fun FirTypeScope.getDirectOverriddenProperties(
 fun FirTypeScope.retrieveDirectOverriddenOf(memberSymbol: FirCallableSymbol<*>): List<FirCallableSymbol<*>> {
     return when (memberSymbol) {
         is FirNamedFunctionSymbol -> {
-            processFunctionsByName(memberSymbol.name) {}
+            collectFunctionsByName(memberSymbol.name) // Side effect to ensure scope is initialized
             getDirectOverriddenFunctions(memberSymbol)
         }
 

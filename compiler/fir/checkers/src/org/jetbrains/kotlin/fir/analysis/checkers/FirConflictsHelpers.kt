@@ -176,11 +176,15 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirCla
 
         collect(declaredFunction, FirRedeclarationPresenter.represent(declaredFunction), functionDeclarations)
 
-        unsubstitutedScope.processFunctionsByName(declaredFunction.name) { anotherFunction ->
-            if (anotherFunction != declaredFunction && anotherFunction.isCollectable() && anotherFunction.isVisibleInClass(klass)) {
+        unsubstitutedScope.collectFunctionsByName(declaredFunction.name)
+            .filter { anotherFunction -> 
+                anotherFunction != declaredFunction && 
+                anotherFunction.isCollectable() && 
+                anotherFunction.isVisibleInClass(klass)
+            }
+            .forEach { anotherFunction ->
                 collect(anotherFunction, FirRedeclarationPresenter.represent(anotherFunction), functionDeclarations)
             }
-        }
     }
 
     // Constructors of nested classes
@@ -387,9 +391,9 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
 
         // Function source
         if (groupHasSimpleFunctions || group.constructors.isNotEmpty()) {
-            packageMemberScope.processFunctionsByName(declarationName) {
-                collect(group.simpleFunctions, it)
-                collect(group.constructors, it)
+            packageMemberScope.collectFunctionsByName(declarationName).forEach { symbol ->
+                collect(group.simpleFunctions, symbol)
+                collect(group.constructors, symbol)
             }
         }
 

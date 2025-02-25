@@ -53,8 +53,22 @@ class FirUnstableSmartcastTypeScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        return processComposite(FirScope::processFunctionsByName, name, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        val result = mutableListOf<FirNamedFunctionSymbol>()
+        val unique = mutableSetOf<FirNamedFunctionSymbol>()
+
+        // Process original scope first
+        result.addAll(originalScope.collectFunctionsByName(name).also { unique.addAll(it) })
+
+        // Process smartcast scope and mark new symbols
+        smartcastScope.collectFunctionsByName(name).forEach { symbol ->
+            if (symbol !in unique) {
+                markSymbolFromUnstableSmartcast(symbol)
+                result.add(symbol)
+            }
+        }
+
+        return result
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

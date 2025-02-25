@@ -56,9 +56,11 @@ class FirScriptDeclarationsScope(
         result
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (name == SpecialNames.INIT) return
-        processCallables(name, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        if (name == SpecialNames.INIT) return emptyList()
+        val result = mutableListOf<FirNamedFunctionSymbol>()
+        processCallables<FirNamedFunctionSymbol>(name) { result.add(it) }
+        return result
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

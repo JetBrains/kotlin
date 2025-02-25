@@ -74,13 +74,13 @@ class FirSyntheticPropertiesScope private constructor(
         val getterNames = syntheticNamesProvider.possibleGetterNamesByPropertyName(name)
         var getterFound = false
         for (getterName in getterNames) {
-            baseScope.processFunctionsByName(getterName) {
+            baseScope.collectFunctionsByName(getterName).forEach {
                 checkGetAndCreateSynthetic(name, getterName, it, needCheckForSetter = true, processor)
                 getterFound = true
             }
         }
         if (!getterFound && shouldSearchForJavaRecordComponents()) {
-            baseScope.processFunctionsByName(name) {
+            baseScope.collectFunctionsByName(name).forEach {
                 if (it.fir.isJavaRecordComponent == true) {
                     checkGetAndCreateSynthetic(name, name, it, needCheckForSetter = false, processor)
                 }
@@ -136,17 +136,16 @@ class FirSyntheticPropertiesScope private constructor(
         var matchingSetter: FirSimpleFunction? = null
         if (needCheckForSetter && getterReturnType != null) {
             val setterName = syntheticNamesProvider.setterNameByGetterName(getterName)
-            baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirNamedFunctionSymbol) {
-                if (matchingSetter != null) return
+            baseScope.collectFunctionsByName(setterName).forEach { setterSymbol ->
+                if (matchingSetter != null) return@forEach
 
                 val setter = setterSymbol.fir
-                if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
-                val parameter = setter.valueParameters.singleOrNull() ?: return
-                if (parameter.isVararg) return
-                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.coneType ?: return
-                if (!setterTypeIsConsistentWithGetterType(propertyName, getterSymbol, setterSymbol, parameterType)) return
+                if (setter.typeParameters.isNotEmpty() || setter.isStatic) return@forEach
+                val parameter = setter.valueParameters.singleOrNull() ?: return@forEach
+                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.coneType ?: return@forEach
+                if (!setterTypeIsConsistentWithGetterType(propertyName, getterSymbol, setterSymbol, parameterType)) return@forEach
                 matchingSetter = setterSymbol.fir
-            })
+            }
         }
 
         val property = buildSyntheticProperty(propertyName, getter, matchingSetter, getterCompatibility, deprecatedOverrideOfHidden)
@@ -405,4 +404,3 @@ private var FirSyntheticProperty.deprecatedOverrideOfHidden: Boolean? by FirDecl
 
 val FirSimpleSyntheticPropertySymbol.deprecatedOverrideOfHidden: Boolean
     get() = (fir as FirSyntheticProperty).deprecatedOverrideOfHidden == true
-

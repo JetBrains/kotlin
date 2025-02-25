@@ -833,7 +833,7 @@ fun FirCallableDeclaration.getDirectOverriddenSymbols(context: CheckerContext): 
     val scope = classSymbol.unsubstitutedScope(context)
     //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
     //and not in processDirectOverriddenFunctionsWithBaseScope
-    scope.processFunctionsByName(this.symbol.name) { }
+    scope.collectFunctionsByName(this.symbol.name) // Side effect: initializes AbstractFirUseSiteMemberScope
     return scope.getDirectOverriddenMembers(this.symbol, true)
 }
 
@@ -846,7 +846,7 @@ fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeS
         memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
-    scope.processFunctionsByName(name) { }
+    scope.collectFunctionsByName(name) // Side effect: initializes AbstractFirUseSiteMemberScope
     return scope.getDirectOverriddenFunctions(this, true)
 }
 
@@ -860,7 +860,7 @@ inline fun FirNamedFunctionSymbol.processOverriddenFunctions(
     val containingClass = getContainingClassSymbol() as? FirClassSymbol ?: return
     val firTypeScope = containingClass.unsubstitutedScope(context)
 
-    firTypeScope.processFunctionsByName(callableId.callableName) { }
+    firTypeScope.collectFunctionsByName(callableId.callableName) // Side effect: initializes AbstractFirUseSiteMemberScope
 
     firTypeScope.processOverriddenFunctions(this) {
         action(it)

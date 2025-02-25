@@ -37,7 +37,8 @@ class FirWhenSubjectImportingScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return emptyList()
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {

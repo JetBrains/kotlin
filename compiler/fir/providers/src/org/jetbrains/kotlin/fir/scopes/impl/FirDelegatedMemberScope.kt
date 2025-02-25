@@ -43,15 +43,14 @@ class FirDelegatedMemberScope(
     private val overrideChecker = session.firOverrideChecker
     private val delegatedMembersFilter = session.delegatedMembersFilter
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        declaredMemberScope.processFunctionsByName(name, processor)
-        val result = mutableListOf<FirNamedFunctionSymbol>()
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        val result = declaredMemberScope.collectFunctionsByName(name).toMutableList()
 
         for (delegateField in delegateFields) {
             collectFunctionsFromSpecificField(delegateField, name, result)
         }
 
-        result.forEach(processor)
+        return result
     }
 
     private fun buildScope(delegateField: FirField): FirTypeScope? = delegateField.symbol.resolvedReturnType.scope(
@@ -68,7 +67,7 @@ class FirDelegatedMemberScope(
     ) {
         val scope = buildScope(delegateField) ?: return
 
-        scope.processFunctionsByName(name) processor@{ functionSymbol ->
+        for (functionSymbol in scope.collectFunctionsByName(name)) {
             val original = functionSymbol.fir
             // KT-6014: If the original is abstract, we still need a delegation
             // For example,
@@ -76,26 +75,26 @@ class FirDelegatedMemberScope(
             //   object BaseImpl : IBase { override fun toString(): String = ... }
             //   class Test : IBase by BaseImpl
             if (original.isPublicInAny() && original.modality != Modality.ABSTRACT) {
-                return@processor
+                continue
             }
 
             if (original.modality == Modality.FINAL || original.visibility == Visibilities.Private) {
-                return@processor
+                continue
             }
 
             if (delegatedMembersFilter.shouldNotGenerateDelegatedMember(original.symbol)) {
-                return@processor
+                continue
             }
 
             if (declaredMemberScope.getFunctions(name).any { overrideChecker.isOverriddenFunction(it.fir, original) }) {
-                return@processor
+                continue
             }
 
             result.firstOrNull {
                 overrideChecker.isOverriddenFunction(it.fir, original)
             }?.let {
                 it.fir.multipleDelegatesWithTheSameSignature = true
-                return@processor
+                return
             }
 
             val delegatedSymbol =

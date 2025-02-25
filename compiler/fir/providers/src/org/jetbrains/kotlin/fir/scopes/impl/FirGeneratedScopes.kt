@@ -77,11 +77,9 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
         nestedClassifierScope?.processClassifiersByNameWithSubstitution(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (name !in getCallableNames()) return
-        for (functionSymbol in storage.functionCache.getValue(name)) {
-            processor(functionSymbol)
-        }
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        if (name !in getCallableNames()) return emptyList()
+        return storage.functionCache.getValue(name)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

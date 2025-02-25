@@ -35,14 +35,17 @@ class JavaAnnotationSyntheticPropertiesScope(
     private val names: Set<Name> = owner.fir.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirSimpleFunction)?.name }
     private val syntheticPropertiesCache = mutableMapOf<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (name in names) return
-        super.processFunctionsByName(name, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return if (name !in names) {
+            super.collectFunctionsByName(name)
+        } else {
+            emptyList()
+        }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         if (name !in names) return
-        delegateScope.processFunctionsByName(name) { functionSymbol ->
+        delegateScope.collectFunctionsByName(name).forEach { functionSymbol ->
             val function = functionSymbol.fir
             val symbol = syntheticPropertiesCache.getOrPut(functionSymbol) {
                 val callableId = CallableId(classId, name)

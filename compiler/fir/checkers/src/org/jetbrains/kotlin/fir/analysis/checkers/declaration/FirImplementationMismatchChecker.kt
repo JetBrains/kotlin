@@ -77,7 +77,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         val dedupReporter = reporter.deduplicating()
 
         for (name in classScope.getCallableNames()) {
-            classScope.processFunctionsByName(name) {
+            classScope.collectFunctionsByName(name).forEach {
                 checkInheritanceClash(declaration, context, dedupReporter, typeCheckerState, it, classScope)
                 checkDifferentNamesForTheSameParameterInSupertypes(declaration, context, dedupReporter, it, classScope)
             }
@@ -263,7 +263,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
     ): List<FirCallableSymbol<*>> {
         val allCallables = mutableListOf<FirCallableSymbol<*>>()
 
-        processFunctionsByName(name) { sym ->
+        collectFunctionsByName(name).forEach { sym ->
             when (sym) {
                 is FirIntersectionOverrideFunctionSymbol -> sym
                     .getNonSubsumedOverriddenSymbols(context.session, context.scopeSession)

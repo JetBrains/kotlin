@@ -166,23 +166,18 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
 
     private fun FirRegularClass.hasAbstractMembersInScope(): Boolean {
         val scope = unsubstitutedScope(c)
-        val names = scope.getCallableNames()
-        var hasAbstract = false
-        for (name in names) {
-            scope.processFunctionsByName(name) {
-                if (it.isAbstract) {
-                    hasAbstract = true
+        return scope.getCallableNames().any { name ->
+            scope.collectFunctionsByName(name).any { it.isAbstract } ||
+            run {
+                var hasAbstractProperty = false
+                scope.processPropertiesByName(name) {
+                    if (it.isAbstract) {
+                        hasAbstractProperty = true
+                    }
                 }
+                hasAbstractProperty
             }
-            if (hasAbstract) return true
-            scope.processPropertiesByName(name) {
-                if (it.isAbstract) {
-                    hasAbstract = true
-                }
-            }
-            if (hasAbstract) return true
         }
-        return false
     }
 
     // ------------------------------------ local classes ------------------------------------

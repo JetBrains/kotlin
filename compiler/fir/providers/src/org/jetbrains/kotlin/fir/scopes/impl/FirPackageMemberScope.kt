@@ -50,14 +50,10 @@ class FirPackageMemberScope(
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (name in excludedNames) return
-
-        val symbols = functionCache.getOrPut(name) {
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        if (name in excludedNames) return emptyList()
+        return functionCache.getOrPut(name) {
             symbolProvider.getTopLevelFunctionSymbols(fqName, name)
-        }
-        for (symbol in symbols) {
-            processor(symbol)
         }
     }
 

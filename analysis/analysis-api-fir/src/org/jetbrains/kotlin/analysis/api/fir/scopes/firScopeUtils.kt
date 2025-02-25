@@ -21,7 +21,7 @@ internal fun FirScope.getCallableSymbols(
 ): Sequence<KaCallableSymbol> = sequence {
     callableNames.forEach { name ->
         yieldList {
-            processFunctionsByName(name) { firSymbol ->
+            collectFunctionsByName(name).forEach { firSymbol ->
                 add(builder.functionBuilder.buildNamedFunctionSymbol(firSymbol))
             }
         }
@@ -39,7 +39,7 @@ internal fun FirScope.getCallableSignatures(
 ): Sequence<KaCallableSignature<*>> = sequence {
     callableNames.forEach { name ->
         yieldList {
-            processFunctionsByName(name) { firSymbol ->
+            collectFunctionsByName(name).forEach { firSymbol ->
                 add(builder.functionBuilder.buildFunctionSignature(firSymbol))
             }
         }

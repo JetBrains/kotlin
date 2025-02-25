@@ -26,10 +26,8 @@ class FirReplHistoryScope(
     val useSiteSession: FirSession,
 ) : FirContainingNamesAwareScope() {
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        for (function in functions[name].orEmpty()) {
-            processor(function)
-        }
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return functions[name].orEmpty()
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

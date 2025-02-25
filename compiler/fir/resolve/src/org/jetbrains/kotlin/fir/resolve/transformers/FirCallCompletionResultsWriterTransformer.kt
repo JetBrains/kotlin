@@ -310,7 +310,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         return findSingleSubstitutedSymbolWithOriginal(original.symbol) { processor ->
             when (original) {
-                is FirSimpleFunction -> scope.processFunctionsByName(original.name, processor)
+                is FirSimpleFunction -> scope.collectFunctionsByName(original.name).forEach(processor)
                 is FirProperty -> scope.processPropertiesByName(original.name, processor)
                 is FirConstructor -> scope.processDeclaredConstructors(processor)
                 else -> error("Unexpected declaration kind ${original.render()}")

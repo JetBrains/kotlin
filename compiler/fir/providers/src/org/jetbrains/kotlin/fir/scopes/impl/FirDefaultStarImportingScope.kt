@@ -47,24 +47,28 @@ class FirDefaultStarImportingScope(
         }
     }
 
+    private fun <S : FirCallableSymbol<*>> collectSymbolsByName(
+        name: Name,
+        collect: FirScope.(Name) -> List<S>
+    ): List<S> {
+        val fromFirst = first.collect(name)
+        return if (fromFirst.isNotEmpty()) {
+            fromFirst
+        } else {
+            second.collect(name)
+        }
+    }
+
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return collectSymbolsByName(name, FirScope::collectFunctionsByName)
+    }
+
     private fun <S : FirCallableSymbol<*>> processSymbolsByName(
         name: Name,
         processingFactory: FirScope.(Name, (S) -> Unit) -> Unit,
         processor: (S) -> Unit,
     ) {
-        var wasFoundAny = false
-        first.processingFactory(name) {
-            wasFoundAny = true
-            processor(it)
-        }
-
-        if (!wasFoundAny) {
-            second.processingFactory(name, processor)
-        }
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processSymbolsByName(name, FirScope::processFunctionsByName, processor)
+        collectSymbolsByName(name) { processingFactory(it) { symbol -> processor(symbol) }; emptyList() }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

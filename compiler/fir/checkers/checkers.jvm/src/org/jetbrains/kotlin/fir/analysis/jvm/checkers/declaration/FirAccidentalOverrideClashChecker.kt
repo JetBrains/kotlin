@@ -36,24 +36,24 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
         if (!mayBeRenamedBuiltIn && !mayBeSameAsBuiltInWithErasedParameters) return
         val containingClass = declaration.getContainingClass() ?: return
 
-        var reported = false
-        containingClass.unsubstitutedScope(context).processFunctionsByName(name) {
-            @OptIn(SymbolInternals::class)
-            val hiddenFir = it.fir
-            if (!reported && hiddenFir.isHiddenToOvercomeSignatureClash == true && !hiddenFir.isFinal) {
-                if (declaration.computeJvmDescriptor() == hiddenFir.computeJvmDescriptor()) {
-                    val regularBase = hiddenFir.initialSignatureAttr ?: return@processFunctionsByName
-                    val description = when {
-                        mayBeRenamedBuiltIn -> "a renamed function"
-                        else -> "a function with erased parameters"
-                    }
-                    reporter.reportOn(
-                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, it, description, regularBase, context
-                    )
-                    reported = true
+        @OptIn(SymbolInternals::class)
+        containingClass.unsubstitutedScope(context).collectFunctionsByName(name)
+            .firstOrNull { symbol ->
+                val hiddenFir = symbol.fir
+                hiddenFir.isHiddenToOvercomeSignatureClash == true && 
+                !hiddenFir.isFinal && 
+                declaration.computeJvmDescriptor() == hiddenFir.computeJvmDescriptor()
+            }?.let { symbol ->
+                val hiddenFir = symbol.fir
+                val regularBase = hiddenFir.initialSignatureAttr ?: return
+                val description = when {
+                    mayBeRenamedBuiltIn -> "a renamed function"
+                    else -> "a function with erased parameters"
                 }
+                reporter.reportOn(
+                    declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, symbol, description, regularBase, context
+                )
             }
-        }
     }
 
     private val namesPossibleForRenamedBuiltin = JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP.values.toSet()

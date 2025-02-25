@@ -271,13 +271,9 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         name: Name,
         predicate: (FirNamedFunctionSymbol) -> Boolean
     ): Boolean {
-        var result = false
-        context.session.declaredMemberScope(this, memberRequiredPhase = null).processFunctionsByName(name) { sym ->
-            if (!result) {
-                result = predicate(sym)
-            }
-        }
-        return result
+        return context.session.declaredMemberScope(this, memberRequiredPhase = null)
+            .collectFunctionsByName(name)
+            .any(predicate)
     }
 
     private sealed class ImportStatus {
@@ -315,21 +311,25 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         name: Name,
         crossinline isApplicable: (FirCallableSymbol<*>) -> Boolean
     ): ImportStatus {
-        var found = false
         var symbol: FirCallableSymbol<*>? = null
 
         for (scope in scopes) {
-            scope.processFunctionsByName(name) { sym ->
-                if (sym.isVisible(context) && isApplicable(sym)) found = true
+            val functions = scope.collectFunctionsByName(name)
+            for (sym in functions) {
                 symbol = sym
+                if (sym.isVisible(context) && isApplicable(sym)) {
+                    return ImportStatus.OK
+                }
             }
-            if (found) return ImportStatus.OK
 
-            scope.processPropertiesByName(name) { sym ->
-                if (sym.isVisible(context) && isApplicable(sym)) found = true
+            val properties = mutableListOf<FirVariableSymbol<*>>()
+            scope.processPropertiesByName(name) { properties.add(it) }
+            for (sym in properties) {
                 symbol = sym
+                if (sym.isVisible(context) && isApplicable(sym)) {
+                    return ImportStatus.OK
+                }
             }
-            if (found) return ImportStatus.OK
         }
 
         return when {

@@ -47,13 +47,11 @@ class FirClassSubstitutionScope(
     private val substitutionOverrideCache = session.substitutionOverrideStorage.substitutionOverrideCacheByScope.getValue(key, null)
     private val newOwnerClassId = dispatchReceiverTypeForSubstitutedMembers.lookupTag.classId
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        useSiteMemberScope.processFunctionsByName(name) process@{ original ->
-            val function = substitutionOverrideCache.overridesForFunctions.getValue(original, this)
-            processor(function)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        val fromUseSite = useSiteMemberScope.collectFunctionsByName(name).map { original ->
+            substitutionOverrideCache.overridesForFunctions.getValue(original, this)
         }
-
-        return super.processFunctionsByName(name, processor)
+        return fromUseSite + super.collectFunctionsByName(name)
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(

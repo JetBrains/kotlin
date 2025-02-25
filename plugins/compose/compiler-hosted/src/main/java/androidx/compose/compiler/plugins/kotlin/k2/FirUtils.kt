@@ -110,7 +110,7 @@ fun FirFunction.getDirectOverriddenFunctions(
 
     return when (val symbol = symbol) {
         is FirNamedFunctionSymbol -> {
-            scope.processFunctionsByName(symbol.name) {}
+            scope.collectFunctionsByName(symbol.name)
             scope.getDirectOverriddenFunctions(symbol, true)
         }
         is FirPropertyAccessorSymbol -> {

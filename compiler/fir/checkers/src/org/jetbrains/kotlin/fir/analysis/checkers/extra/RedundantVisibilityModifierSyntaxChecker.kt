@@ -294,7 +294,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         )
 
         return findBiggestVisibility {
-            scope.processFunctionsByName(function.symbol.name) {}
+            scope.collectFunctionsByName(function.symbol.name).isEmpty()
             scope.processOverriddenFunctions(function.symbol, it)
         }
     }

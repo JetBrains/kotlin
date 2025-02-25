@@ -48,18 +48,16 @@ class FirSingleLevelDefaultStarImportingScope(
             } ?: emptyList()
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (name.isSpecial || name.identifier.isNotEmpty()) {
-            for (import in starImports) {
-                if (isExcluded(import, name)) {
-                    continue
-                }
-
-                for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, name)) {
-                    processor(symbol)
-                }
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        if (!name.isSpecial && name.identifier.isEmpty()) return emptyList()
+        val result = mutableListOf<FirNamedFunctionSymbol>()
+        for (import in starImports) {
+            if (isExcluded(import, name)) {
+                continue
             }
+            result.addAll(provider.getTopLevelFunctionSymbols(import.packageFqName, name))
         }
+        return result
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

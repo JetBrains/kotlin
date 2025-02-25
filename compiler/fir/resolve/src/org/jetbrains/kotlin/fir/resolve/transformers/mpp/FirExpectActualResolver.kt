@@ -56,9 +56,11 @@ object FirExpectActualResolver {
                         }
                         else -> {
                             val scope = FirPackageMemberScope(callableId.packageName, useSiteSession, useSiteSession.dependenciesSymbolProvider)
-                            mutableListOf<FirCallableSymbol<*>>().apply {
-                                scope.processFunctionsByName(callableId.callableName) { add(it) }
-                                scope.processPropertiesByName(callableId.callableName) { add(it) }
+                            buildList {
+                                addAll(scope.collectFunctionsByName(callableId.callableName))
+                                val properties = mutableListOf<FirCallableSymbol<*>>()
+                                scope.processPropertiesByName(callableId.callableName) { properties.add(it) }
+                                addAll(properties)
                             }
                         }
                     }

@@ -111,7 +111,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
         }
 
         for (name in classScope.getCallableNames()) {
-            classScope.processFunctionsByName(name, ::collectSymbol)
+            classScope.collectFunctionsByName(name).forEach(::collectSymbol)
             classScope.processPropertiesByName(name, ::collectSymbol)
         }
 

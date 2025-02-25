@@ -69,9 +69,11 @@ class FirClassDeclaredMemberScopeImpl(
 
     private val FirClass.supportsEnumEntries get() = useSiteSession.enumEntriesSupport.canSynthesizeEnumEntriesFor(this)
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (name == SpecialNames.INIT) return
-        processCallables(name, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        if (name == SpecialNames.INIT) return emptyList()
+        val result = mutableListOf<FirNamedFunctionSymbol>()
+        processCallables<FirNamedFunctionSymbol>(name) { result.add(it) }
+        return result
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {

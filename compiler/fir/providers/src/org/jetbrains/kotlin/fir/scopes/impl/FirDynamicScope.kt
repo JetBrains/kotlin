@@ -68,24 +68,13 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
         )
     }
 
-    override fun processFunctionsByName(
-        name: Name,
-        processor: (FirNamedFunctionSymbol) -> Unit
-    ) {
-        var foundMemberInAny = false
-
-        anyTypeScope?.processFunctionsByName(name) {
-            foundMemberInAny = true
-            processor(it)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        val fromAny = anyTypeScope?.collectFunctionsByName(name).orEmpty()
+        if (fromAny.isNotEmpty()) {
+            return fromAny
         }
 
-        if (foundMemberInAny) {
-            return
-        }
-
-        session.dynamicMembersStorage.functionsCacheByName.getValue(name, null).also {
-            processor(it.symbol)
-        }
+        return listOf(session.dynamicMembersStorage.functionsCacheByName.getValue(name, null).symbol)
     }
 
     override fun processPropertiesByName(

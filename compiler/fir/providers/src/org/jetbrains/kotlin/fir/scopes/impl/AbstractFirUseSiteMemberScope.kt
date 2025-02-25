@@ -57,14 +57,12 @@ abstract class AbstractFirUseSiteMemberScope(
         }
     }
 
-    final override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
         // Important optimization: avoid creating cache keys for names that are definitely absent
-        if (name !in getCallableNames()) return
-        functions.getOrPut(name) {
+        if (name !in getCallableNames()) return emptyList()
+        return functions.getOrPut(name) {
             collectFunctions(name)
-        }.forEach {
-            processor(it)
-        }
+        }.toList()
     }
 
     protected open fun collectFunctions(
@@ -76,13 +74,14 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     protected fun collectDeclaredFunctions(name: Name, destination: MutableList<FirNamedFunctionSymbol>) {
-        declaredMemberScope.processFunctionsByName(name) { symbol ->
-            if (symbol.isStatic) return@processFunctionsByName
-            if (!symbol.isVisibleInCurrentClass()) return@processFunctionsByName
-            val directOverridden = computeDirectOverriddenForDeclaredFunction(symbol)
-            directOverriddenFunctions[symbol] = directOverridden
-            destination += symbol.replaceWithWrapperSymbolIfNeeded()
-        }
+        declaredMemberScope.collectFunctionsByName(name)
+            .filterNot { it.isStatic }
+            .filter { it.isVisibleInCurrentClass() }
+            .forEach { symbol ->
+                val directOverridden = computeDirectOverriddenForDeclaredFunction(symbol)
+                directOverriddenFunctions[symbol] = directOverridden
+                destination += symbol.replaceWithWrapperSymbolIfNeeded()
+            }
     }
 
     protected abstract fun FirNamedFunctionSymbol.isVisibleInCurrentClass(): Boolean
@@ -146,7 +145,7 @@ abstract class AbstractFirUseSiteMemberScope(
 
     private fun getFunctionsFromSupertypesByName(name: Name): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
         return functionsFromSupertypes.getOrPut(name) {
-            supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
+            supertypeScopeContext.collectFunctions(name)
         }
     }
 

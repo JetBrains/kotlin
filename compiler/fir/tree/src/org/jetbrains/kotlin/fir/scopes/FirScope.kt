@@ -21,10 +21,17 @@ abstract class FirScope {
     ) {
     }
 
-    open fun processFunctionsByName(
+
+    @Deprecated("Obsolete API, please use collectFunctionsByName instead", ReplaceWith("collectFunctionsByName()"), DeprecationLevel.ERROR)
+    final fun processFunctionsByName(
         name: Name,
         processor: (FirNamedFunctionSymbol) -> Unit
     ) {
+        return collectFunctionsByName(name).forEach(processor)
+    }
+
+    open fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return emptyList()
     }
 
     open fun processPropertiesByName(
@@ -63,9 +70,7 @@ fun FirScope.getClassifiers(name: Name): List<FirClassifierSymbol<*>> = mutableL
     processClassifiersByName(name, this::add)
 }
 
-fun FirScope.getFunctions(name: Name): List<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
-    processFunctionsByName(name, this::add)
-}
+fun FirScope.getFunctions(name: Name): List<FirNamedFunctionSymbol> = collectFunctionsByName(name)
 
 fun FirScope.getProperties(name: Name): List<FirVariableSymbol<*>> = mutableListOf<FirVariableSymbol<*>>().apply {
     processPropertiesByName(name, this::add)

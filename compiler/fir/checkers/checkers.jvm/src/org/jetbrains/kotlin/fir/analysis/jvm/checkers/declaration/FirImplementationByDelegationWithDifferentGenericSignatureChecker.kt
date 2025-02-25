@@ -34,8 +34,8 @@ object FirImplementationByDelegationWithDifferentGenericSignatureChecker : FirCl
             ) ?: return@processAllFunctions
             var reported = false
             val genericSymbolToCompare = wrappedGenericFunction.symbol.unwrapFakeOverrides()
-            fieldScope.processFunctionsByName(symbol.name) { clashedSymbol ->
-                if (reported || clashedSymbol.typeParameterSymbols.isNotEmpty()) return@processFunctionsByName
+            fieldScope.collectFunctionsByName(symbol.name).forEach { clashedSymbol ->
+                if (reported || clashedSymbol.typeParameterSymbols.isNotEmpty()) return@forEach
                 fieldScope.processOverriddenFunctions(clashedSymbol) { overriddenSymbol ->
                     if (overriddenSymbol.unwrapFakeOverrides() === genericSymbolToCompare) {
                         reporter.reportOn(

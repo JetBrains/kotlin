@@ -205,11 +205,7 @@ internal class KaFirResolver(
             memberRequiredPhase = FirResolvePhase.STATUS,
         )
 
-        var result: FirNamedFunctionSymbol? = null
-        scope.processFunctionsByName(EQUALS) {
-            result = it
-        }
-        result
+        scope.collectFunctionsByName(EQUALS).firstOrNull()
     }
 
     private inline fun <T> getCallInfo(

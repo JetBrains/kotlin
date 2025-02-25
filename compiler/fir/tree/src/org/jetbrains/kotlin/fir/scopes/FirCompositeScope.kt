@@ -53,8 +53,12 @@ class FirCompositeScope(val scopes: Iterable<FirScope>) : FirScope() {
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        return processComposite(FirScope::processFunctionsByName, name, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        val result = mutableSetOf<FirNamedFunctionSymbol>()
+        for (scope in scopes) {
+            result.addAll(scope.collectFunctionsByName(name))
+        }
+        return result.toList()
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -86,8 +90,8 @@ class FirNameAwareCompositeScope(val scopes: Iterable<FirContainingNamesAwareSco
         delegate.processClassifiersByNameWithSubstitution(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        delegate.processFunctionsByName(name, processor)
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return delegate.collectFunctionsByName(name)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

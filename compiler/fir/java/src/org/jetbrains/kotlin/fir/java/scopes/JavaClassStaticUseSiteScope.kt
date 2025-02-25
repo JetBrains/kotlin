@@ -27,28 +27,24 @@ class JavaClassStaticUseSiteScope internal constructor(
     private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
     private val overrideChecker = JavaOverrideChecker(session, klass, baseScopes = null, considerReturnTypeKinds = false)
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        functions.getOrPut(name) {
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+        return functions.getOrPut(name) {
             computeFunctions(name)
-        }.forEach(processor)
+        }.toList()
     }
 
     private fun computeFunctions(name: Name): MutableList<FirNamedFunctionSymbol> {
-        val superClassSymbols = mutableListOf<FirNamedFunctionSymbol>()
-        superClassScope.processFunctionsByName(name) {
-            superClassSymbols.add(it)
-        }
-
+        val superClassSymbols = superClassScope.collectFunctionsByName(name).toMutableList()
         val result = mutableListOf<FirNamedFunctionSymbol>()
 
-        declaredMemberScope.processFunctionsByName(name) l@{ functionSymbol ->
-            if (!functionSymbol.isStatic) return@l
-
-            result.add(functionSymbol)
-            superClassSymbols.removeAll { superClassSymbol ->
-                overrideChecker.isOverriddenFunction(functionSymbol.fir, superClassSymbol.fir)
+        declaredMemberScope.collectFunctionsByName(name)
+            .filter { it.isStatic }
+            .forEach { functionSymbol ->
+                result.add(functionSymbol)
+                superClassSymbols.removeAll { superClassSymbol ->
+                    overrideChecker.isOverriddenFunction(functionSymbol.fir, superClassSymbol.fir)
+                }
             }
-        }
 
         result += superClassSymbols
 

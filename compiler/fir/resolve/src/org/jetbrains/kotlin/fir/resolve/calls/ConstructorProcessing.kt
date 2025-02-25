@@ -77,7 +77,7 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
         processor
     )
 
-    processFunctionsByName(callInfo.name, processor)
+    collectFunctionsByName(callInfo.name).forEach(processor)
 }
 
 private fun FirScope.getFirstClassifierOrNull(

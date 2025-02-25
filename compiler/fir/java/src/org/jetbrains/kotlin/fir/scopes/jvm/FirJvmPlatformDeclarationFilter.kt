@@ -14,13 +14,9 @@ internal object FirJvmPlatformDeclarationFilter {
     fun isFunctionAvailable(function: FirSimpleFunction, javaClassScope: FirTypeScope, session: FirSession): Boolean {
         if (FirPlatformDeclarationFilter.isFunctionAvailable(function, session)) return true
 
-        var isFunctionPresentInJavaAnalogue = false
         val jvmDescriptorOfKotlinFunction = function.computeJvmDescriptor()
-        javaClassScope.processFunctionsByName(function.name) { javaAnalogueFunctionSymbol ->
-            if (javaAnalogueFunctionSymbol.fir.computeJvmDescriptor() == jvmDescriptorOfKotlinFunction) {
-                isFunctionPresentInJavaAnalogue = true
-            }
+        return javaClassScope.collectFunctionsByName(function.name).any { javaAnalogueFunctionSymbol ->
+            javaAnalogueFunctionSymbol.fir.computeJvmDescriptor() == jvmDescriptorOfKotlinFunction
         }
-        return isFunctionPresentInJavaAnalogue
     }
 }
