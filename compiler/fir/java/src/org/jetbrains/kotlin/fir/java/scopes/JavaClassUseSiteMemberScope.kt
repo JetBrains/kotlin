@@ -346,11 +346,9 @@ class JavaClassUseSiteMemberScope(
     private fun FirNamedFunctionSymbol.doesOverrideRenamedBuiltins(): Boolean {
         // e.g. 'removeAt' or 'toInt'
         val builtinName = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name) ?: return false
-        val builtinSpecialFromSuperTypes = supertypeScopeContext.collectFunctions(builtinName)
-            .flatMap { result ->
-                result.overriddenMembers.filter { (symbol, scope) ->
-                    symbol.doesOverrideBuiltinWithDifferentJvmName(scope, session)
-                }.map { it.member }
+        val builtinSpecialFromSuperTypes = supertypeScopeContext.collectMembersGroupedByScope(builtinName, FirScope::processFunctionsByName)
+            .flatMap { (scope, symbols) ->
+                symbols.filter { it.doesOverrideBuiltinWithDifferentJvmName(scope, session) }
             }
         if (builtinSpecialFromSuperTypes.isEmpty()) return false
 
@@ -388,7 +386,7 @@ class JavaClassUseSiteMemberScope(
      */
     private fun FirNamedFunctionSymbol.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters(): Boolean {
         if (!name.sameAsBuiltinMethodWithErasedValueParameters) return false
-        val candidatesToOverride = supertypeScopeContext.collectFunctions(name)
+        val candidatesToOverride = supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
             .flatMap { it.overriddenMembers }
             .filterNot { (member, _) ->
                 member.valueParameterSymbols.all { it.resolvedReturnType.lowerBoundIfFlexible().isAny }
@@ -432,7 +430,7 @@ class JavaClassUseSiteMemberScope(
         collectDeclaredFunctions(name, result)
         val explicitlyDeclaredFunctions = result.toSet()
 
-        val functionsWithScopeFromSupertypes = supertypeScopeContext.collectFunctions(name).map { it.overriddenMembers.first().baseScope to listOf(it.chosenSymbol) }
+        val functionsWithScopeFromSupertypes = supertypeScopeContext.collectMembersGroupedByScope(name, FirScope::processFunctionsByName)
 
         if (
             !name.sameAsRenamedInJvmBuiltin &&

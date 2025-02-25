@@ -50,13 +50,13 @@ class FirActualizingScope(private val delegate: FirScope) : FirScope() {
     @Suppress("UNCHECKED_CAST")
     private fun <S : FirCallableSymbol<*>> collectCallableSymbols(
         name: Name,
-        collect: () -> List<S>
+        collect: (Name) -> List<S>
     ): List<S> {
         val filteredSymbols = mutableSetOf<S>()
         // All matched `expect` callables should be preserved to make it possible to filter them out later if corresponding actuals are found
         val ignoredExpectSymbols = mutableSetOf<FirBasedSymbol<*>>()
 
-        collect().forEach { symbol ->
+        collect(name).forEach { symbol ->
             if (symbol.isActual) {
                 val matchedExpectSymbol = symbol.getSingleMatchedExpectForActualOrNull()
                 if (matchedExpectSymbol != null) {

@@ -103,11 +103,9 @@ class FirTypeIntersectionScopeContext(
     }
 
     fun collectFunctions(name: Name): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
-        val membersByScope = scopes.mapNotNull { scope ->
-            val members = scope.collectFunctionsByName(name)
-            if (members.isNotEmpty()) scope to members else null
-        }
-        return convertGroupedCallablesToIntersectionResults(membersByScope)
+        return collectIntersectionResultsForCallables(name, processCallables = { name, proc ->
+            collectFunctionsByName(name).forEach(proc)
+        })
     }
 
     inline fun <D : FirCallableSymbol<*>> collectMembersGroupedByScope(

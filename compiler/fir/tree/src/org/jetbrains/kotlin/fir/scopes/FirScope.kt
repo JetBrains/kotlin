@@ -22,7 +22,7 @@ abstract class FirScope {
     }
 
 
-    @Deprecated("Obsolete API, please use collectFunctionsByName instead", ReplaceWith("collectFunctionsByName()"), DeprecationLevel.ERROR)
+    //@Deprecated("Obsolete API, please use collectFunctionsByName instead", ReplaceWith("collectFunctionsByName()"), DeprecationLevel.ERROR)
     final fun processFunctionsByName(
         name: Name,
         processor: (FirNamedFunctionSymbol) -> Unit

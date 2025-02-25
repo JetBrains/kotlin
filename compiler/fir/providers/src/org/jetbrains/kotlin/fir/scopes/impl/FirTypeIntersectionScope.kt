@@ -35,24 +35,27 @@ class FirTypeIntersectionScope private constructor(
     override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
         // Important optimization: avoid creating cache keys for names that are definitely absent
         if (name !in getCallableNames()) return emptyList()
-
-        val callablesWithOverridden = intersectionContext.collectFunctions(name)
-
-        return callablesWithOverridden.map { resultOfIntersection ->
-            val symbol = resultOfIntersection.chosenSymbol
-            overriddenSymbols[symbol] = resultOfIntersection.overriddenMembers
-            symbol
+        return buildList {
+            processCallablesByName(name, processor = {
+                this.add(it)
+            }, processCallables = { name, proc ->
+                collectFunctionsByName(name).forEach(proc)
+            })
         }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         // Important optimization: avoid creating cache keys for names that are definitely absent
         if (name !in getCallableNames()) return
+        processCallablesByName(name, processor, FirScope::processPropertiesByName)
+    }
 
-        val callablesWithOverridden = intersectionContext.collectIntersectionResultsForCallables(
-            name,
-            FirScope::processPropertiesByName
-        )
+    private inline fun <D : FirCallableSymbol<*>> processCallablesByName(
+        name: Name,
+        noinline processor: (D) -> Unit,
+        processCallables: FirScope.(Name, (D) -> Unit) -> Unit
+    ) {
+        val callablesWithOverridden = intersectionContext.collectIntersectionResultsForCallables(name, processCallables)
 
         for (resultOfIntersection in callablesWithOverridden) {
             val symbol = resultOfIntersection.chosenSymbol

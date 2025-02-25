@@ -115,10 +115,6 @@ abstract class FirAbstractImportingScope(
         )
     }
 
-    protected fun processFunctionsByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirNamedFunctionSymbol) -> Unit) {
-        collectFunctionsByName(name, imports).forEach(processor)
-    }
-
     protected fun processPropertiesByName(name: Name?, imports: List<FirResolvedImport>, processor: (FirVariableSymbol<*>) -> Unit) {
         processCallablesFromImportsByName(
             name,

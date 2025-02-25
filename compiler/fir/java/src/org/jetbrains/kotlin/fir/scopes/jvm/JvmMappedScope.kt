@@ -116,78 +116,80 @@ class JvmMappedScope(
         }
     }
 
-    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol> {
+    override fun collectFunctionsByName(name: Name): List<FirNamedFunctionSymbol>  {
         val result = mutableListOf<FirNamedFunctionSymbol>()
-
-        // Collect declared functions
-        val declared = declaredMemberScope.collectFunctionsByName(name).filter { symbol ->
-            !filterOutJvmPlatformDeclarations || FirJvmPlatformDeclarationFilter.isFunctionAvailable(
-                symbol.fir,
-                javaMappedClassUseSiteScope,
-                session
-            )
+        val declared = mutableListOf<FirNamedFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name) { symbol ->
+            if (!filterOutJvmPlatformDeclarations || FirJvmPlatformDeclarationFilter.isFunctionAvailable(
+                    symbol.fir,
+                    javaMappedClassUseSiteScope,
+                    session
+                )
+            ) {
+                declared += symbol
+                result.add(symbol)
+            }
         }
-        result.addAll(declared)
 
-        // Collect declared signatures
-        val declaredSignatures = buildSet {
-            declared.mapTo(this) { it.fir.computeJvmDescriptor() }
-            declaredScopeOfMutableVersion?.collectFunctionsByName(name)?.forEach {
-                add(it.fir.computeJvmDescriptor())
+        val declaredSignatures: Set<String> by lazy {
+            buildSet {
+                declared.mapTo(this) { it.fir.computeJvmDescriptor() }
+                declaredScopeOfMutableVersion?.processFunctionsByName(name) {
+                    add(it.fir.computeJvmDescriptor())
+                }
             }
         }
 
         var needsHiddenFake = isList && (name == GET_FIRST_NAME || name == GET_LAST_NAME)
 
-        // Process Java mapped functions
-        javaMappedClassUseSiteScope.collectFunctionsByName(name)
-            .filter { symbol ->
-                symbol.isDeclaredInMappedJavaClass() && 
-                (symbol.fir.status as FirResolvedDeclarationStatus).visibility.isPublicAPI
-            }
-            .forEach { symbol ->
-                val jvmDescriptor = symbol.fir.computeJvmDescriptor()
-
-                // Skip if already declared or special cases
-                if (jvmDescriptor in declaredSignatures ||
-                    isRenamedJdkMethod(jvmDescriptor) ||
-                    symbol.isOverrideOfKotlinBuiltinPropertyGetter() ||
-                    isOverrideOfKotlinDeclaredFunction(symbol) ||
-                    isMutabilityViolation(symbol, jvmDescriptor)
-                ) {
-                    return@forEach
-                }
-
-                val jdkMemberStatus = getJdkMethodStatus(jvmDescriptor)
-
-                // Skip based on JDK member status
-                if (jdkMemberStatus == JDKMemberStatus.DROP ||
-                    ((jdkMemberStatus == JDKMemberStatus.HIDDEN || jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) && firKotlinClass.isFinal)
-                ) {
-                    return@forEach
-                }
-
-                val newSymbol = mappedSymbolCache.mappedFunctions.getValue(symbol, this to jdkMemberStatus)
-
-                if (needsHiddenFake &&
-                    allJavaMappedSuperClassIds.any {
-                        SignatureBuildingComponents.signature(it, jvmDescriptor) in JvmBuiltInsSignatures.DEPRECATED_LIST_METHODS
-                    }
-                ) {
-                    needsHiddenFake = false
-                }
-
-                result.add(newSymbol)
+        javaMappedClassUseSiteScope.processFunctionsByName(name) processor@{ symbol ->
+            if (!symbol.isDeclaredInMappedJavaClass() || !(symbol.fir.status as FirResolvedDeclarationStatus).visibility.isPublicAPI) {
+                return@processor
             }
 
-        if (needsHiddenFake) {
-            // Add hidden fake function for List methods in JDK < 21
-            result.add(mappedSymbolCache.hiddenFakeFunctions.getValue(name, this))
+            val jvmDescriptor = symbol.fir.computeJvmDescriptor()
+            // We don't need adding what is already declared
+            if (jvmDescriptor in declaredSignatures) return@processor
+
+            // That condition means that the member is already declared in the built-in class, but has a non-trivially mapped JVM descriptor
+            if (isRenamedJdkMethod(jvmDescriptor) || symbol.isOverrideOfKotlinBuiltinPropertyGetter()) return@processor
+
+            // If it's java.lang.List.contains(Object) it being loaded as contains(E) and treated as an override
+            // of kotlin.collections.Collection.contains(E), thus we're not loading it as an additional JDK member
+            if (isOverrideOfKotlinDeclaredFunction(symbol)) return@processor
+
+            if (isMutabilityViolation(symbol, jvmDescriptor)) return@processor
+
+            val jdkMemberStatus = getJdkMethodStatus(jvmDescriptor)
+
+            if (jdkMemberStatus == JDKMemberStatus.DROP) return@processor
+            // hidden methods in final class can't be overridden or called with 'super'
+            if ((jdkMemberStatus == JDKMemberStatus.HIDDEN || jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) && firKotlinClass.isFinal) return@processor
+
+            val newSymbol = mappedSymbolCache.mappedFunctions.getValue(symbol, this to jdkMemberStatus)
+
+            if (needsHiddenFake &&
+                allJavaMappedSuperClassIds.any {
+                    SignatureBuildingComponents.signature(it, jvmDescriptor) in JvmBuiltInsSignatures.DEPRECATED_LIST_METHODS
+                }
+            ) {
+                needsHiddenFake = false
+            }
+
+            result.add(newSymbol)
         }
 
+        if (needsHiddenFake) {
+            // We're in JDK < 21, i.e., getFirst/getLast don't exist in the List interface yet.
+            // We create a fake version of them for the sole purpose of reporting deprecations on to-become-overrides like in LinkedList.
+            // This is because we want to rename these two methods in the future,
+            // and we want to warn users of older JDKs of a potential breaking change caused by upgrading to JDK >= 21.
+            // See KT-65440.
+            val fakeSymbol = mappedSymbolCache.hiddenFakeFunctions.getValue(name, this)
+            result.add(fakeSymbol)
+        }
         return result
     }
-
 
     private fun createHiddenFakeFunction(name: Name): FirNamedFunctionSymbol {
         return buildSimpleFunction {
