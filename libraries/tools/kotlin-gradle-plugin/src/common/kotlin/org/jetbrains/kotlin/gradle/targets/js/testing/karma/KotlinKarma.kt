@@ -173,7 +173,6 @@ class KotlinKarma(
                 "firefox-nightly-headless" -> useFirefoxNightlyHeadless()
                 "ie" -> useIe()
                 "opera" -> useOpera()
-//                "phantom-js" -> usePhantomJS()
                 "safari" -> useSafari()
                 else -> project.logger.warn("Unrecognised `kotlin.js.browser.karma.browsers` value [$it]. Ignoring...")
             }
@@ -264,8 +263,6 @@ class KotlinKarma(
 
         useChromeLike(debuggableChrome)
     }
-
-//    fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomjsLauncher)
 
     private fun useFirefoxLike(id: String) = useBrowser(id, versions.karmaFirefoxLauncher)
 
