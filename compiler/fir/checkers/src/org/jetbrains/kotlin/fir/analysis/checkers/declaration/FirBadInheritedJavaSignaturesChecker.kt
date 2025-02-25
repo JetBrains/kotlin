@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllCallables
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FunctionN
 
@@ -37,8 +38,11 @@ object FirBadInheritedJavaSignaturesChecker : FirClassChecker(MppCheckerKind.Pla
             val hasBadValueParameter = symbol is FirFunctionSymbol<*> && symbol.valueParameterSymbols.any { valueParameter ->
                 valueParameter.resolvedReturnType.contains(::containsFunctionN)
             }
+            val hasBadContextParameter = symbol.resolvedContextParameters.any { valueParameter ->
+                valueParameter.returnTypeRef.coneType.contains(::containsFunctionN)
+            }
 
-            if (hasBadReturnType || hasBadReceiverType || hasBadValueParameter) {
+            if (hasBadReturnType || hasBadReceiverType || hasBadValueParameter || hasBadContextParameter) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION,
