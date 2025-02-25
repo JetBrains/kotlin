@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * receiving [KotlinModificationEvent]s.
  */
 public abstract class KotlinModificationTrackerByEventFactoryBase(project: Project) : KotlinModificationTrackerFactory, Disposable {
-    protected val eventOutOfBlockModificationTracker: SimpleModificationTracker = SimpleModificationTracker()
+    protected val eventSourceModificationTracker: SimpleModificationTracker = SimpleModificationTracker()
 
-    protected val eventLibrariesModificationTracker: SimpleModificationTracker = SimpleModificationTracker()
+    protected val eventLibraryModificationTracker: SimpleModificationTracker = SimpleModificationTracker()
 
     init {
         // It's generally best practice to register listeners in plugin XMLs. However, we don't know whether the platform intends to
@@ -27,27 +27,28 @@ public abstract class KotlinModificationTrackerByEventFactoryBase(project: Proje
             KotlinModificationEvent.TOPIC,
             KotlinModificationEventListener { event ->
                 when (event) {
-                    is KotlinModuleOutOfBlockModificationEvent,
-                    KotlinGlobalSourceOutOfBlockModificationEvent
-                        -> eventOutOfBlockModificationTracker.incModificationCount()
-
                     is KotlinModuleStateModificationEvent,
                     KotlinGlobalModuleStateModificationEvent,
-                        -> eventLibrariesModificationTracker.incModificationCount()
-
-                    is KotlinCodeFragmentContextModificationEvent,
                     KotlinGlobalScriptModuleStateModificationEvent,
-                    KotlinGlobalSourceModuleStateModificationEvent
                         -> {
+                        eventSourceModificationTracker.incModificationCount()
+                        eventLibraryModificationTracker.incModificationCount()
                     }
+
+                    is KotlinModuleOutOfBlockModificationEvent,
+                    KotlinGlobalSourceModuleStateModificationEvent,
+                    KotlinGlobalSourceOutOfBlockModificationEvent,
+                        -> eventSourceModificationTracker.incModificationCount()
+
+                    is KotlinCodeFragmentContextModificationEvent -> {}
                 }
             }
         )
     }
 
-    override fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker = eventOutOfBlockModificationTracker
+    override fun createProjectWideSourceModificationTracker(): ModificationTracker = eventSourceModificationTracker
 
-    override fun createLibrariesWideModificationTracker(): ModificationTracker = eventLibrariesModificationTracker
+    override fun createProjectWideLibraryModificationTracker(): ModificationTracker = eventLibraryModificationTracker
 
     override fun dispose() {}
 }

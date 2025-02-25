@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideSourceModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(project) {
     override fun getAnalysisSession(useSiteElement: KtElement): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
-        val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
+        val token = tokenFactory.create(project, project.createProjectWideSourceModificationTracker())
         val context = facade.getAnalysisContext(useSiteElement, token)
         val useSiteModule = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
         return createSession(context, useSiteModule, token)
@@ -27,7 +27,7 @@ internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(p
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
-        val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
+        val token = tokenFactory.create(project, project.createProjectWideSourceModificationTracker())
         val context = facade.getAnalysisContext(useSiteModule, token)
         return createSession(context, useSiteModule, token)
     }

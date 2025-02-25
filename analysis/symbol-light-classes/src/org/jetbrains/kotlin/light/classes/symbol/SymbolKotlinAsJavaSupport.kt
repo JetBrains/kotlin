@@ -16,8 +16,8 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.modification.createAllLibrariesModificationTracker
-import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideLibraryModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideSourceModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
@@ -224,15 +224,15 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
     }
 
     override fun projectWideOutOfBlockModificationTracker(): ModificationTracker {
-        return project.createProjectWideOutOfBlockModificationTracker()
+        return project.createProjectWideSourceModificationTracker()
     }
 
     override fun outOfBlockModificationTracker(element: PsiElement): ModificationTracker {
-        return project.createProjectWideOutOfBlockModificationTracker()
+        return project.createProjectWideSourceModificationTracker()
     }
 
     override fun librariesTracker(element: PsiElement): ModificationTracker {
-        return project.createAllLibrariesModificationTracker()
+        return project.createProjectWideLibraryModificationTracker()
     }
 
     override fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
