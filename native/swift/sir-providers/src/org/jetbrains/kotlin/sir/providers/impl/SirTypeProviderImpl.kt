@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -113,7 +114,7 @@ public class SirTypeProviderImpl(
                                 if (classSymbol is KaClassSymbol && classSymbol.classKind == KaClassKind.INTERFACE) {
                                     SirExistentialType(classSymbol.toSir().allDeclarations.firstIsInstance<SirProtocol>())
                                 } else {
-                                    classSymbol.toSir().allDeclarations.firstIsInstanceOrNull<SirNamedDeclaration>()?.let(::SirNominalType)
+                                    ctx.nominalTypeFromClassSymbol(classSymbol)
                                 }
                             } else {
                                 null
@@ -185,6 +186,10 @@ public class SirTypeProviderImpl(
             }
         }
         return this
+    }
+
+    private fun TypeTranslationCtx.nominalTypeFromClassSymbol(symbol: KaClassLikeSymbol): SirNominalType? = with(ktAnalysisSession) {
+        with(sirSession) { symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirNamedDeclaration>()?.let(::SirNominalType) }
     }
 }
 

@@ -50,6 +50,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("external_types")
+  public void testExternal_types() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/external_types/");
+  }
+
+  @Test
   @TestMetadata("functional_type")
   public void testFunctional_type() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/functional_type/");

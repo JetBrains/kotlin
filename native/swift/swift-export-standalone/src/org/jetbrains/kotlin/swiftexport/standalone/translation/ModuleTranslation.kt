@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
+import org.jetbrains.kotlin.swiftexport.standalone.builders.SwiftExportDependencies
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.createKaModulesForStandaloneAnalysis
 import org.jetbrains.kotlin.swiftexport.standalone.builders.initializeSirModule
@@ -26,12 +27,21 @@ import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
 /**
  * Translates the whole public API surface of the given [module] to [SirModule] and generates compiler bridges between them.
  */
-internal fun translateModulePublicApi(module: InputModule, dependencies: Set<InputModule>, config: SwiftExportConfig): TranslationResult {
-    val moduleWithScopeProvider = createKaModulesForStandaloneAnalysis(module, dependencies)
+internal fun translateModulePublicApi(
+    module: InputModule,
+    dependencies: SwiftExportDependencies<InputModule>,
+    config: SwiftExportConfig
+): TranslationResult {
+    val moduleWithScopeProvider = createKaModulesForStandaloneAnalysis(module, config.targetPlatform, dependencies)
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(moduleWithScopeProvider.useSiteModule) {
-        val buildResult = initializeSirModule(moduleWithScopeProvider, config, module.config, SirOneToOneModuleProvider())
+        val buildResult = initializeSirModule(
+            moduleWithScopeProvider,
+            config,
+            module.config,
+            SirOneToOneModuleProvider(moduleWithScopeProvider.dependencies.platform)
+        )
         // Assume that parts of the KotlinRuntimeSupport module are used.
         // It might not be the case, but precise tracking seems like an overkill at the moment.
         buildResult.module.updateImport(SirImport(config.runtimeSupportModuleName))

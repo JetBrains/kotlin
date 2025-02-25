@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.sir.providers.SirParentProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
+import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.sir.util.addChild
 
 public class SirParentProviderImpl(
@@ -38,7 +39,7 @@ public class SirParentProviderImpl(
 
             val ktModule = with(ktAnalysisSession) { symbol.containingModule }
             val sirModule = with(sirSession) { ktModule.sirModule() }
-            return if (packageFqName.isRoot) {
+            return if (packageFqName.isRoot || sirModule is SirPlatformModule) {
                 sirModule
             } else {
                 val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum() }

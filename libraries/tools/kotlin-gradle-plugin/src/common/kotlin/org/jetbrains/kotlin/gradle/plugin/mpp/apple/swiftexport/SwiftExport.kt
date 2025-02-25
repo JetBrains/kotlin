@@ -145,6 +145,7 @@ private fun Project.registerSwiftExportRun(
 
         // Input
         task.swiftExportClasspath.from(SwiftExportClasspathResolvableConfiguration)
+        task.parameters.konanTarget.set(target.konanTarget)
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(

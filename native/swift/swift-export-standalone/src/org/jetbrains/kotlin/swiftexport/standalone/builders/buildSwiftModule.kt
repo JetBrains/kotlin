@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderB
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
@@ -86,43 +87,66 @@ private fun KaScope.allDeclarations(sirSession: StandaloneSirSession, kaSession:
  * [mainModule] is the parent for declarations from [scopeProvider].
  * We have to make this difference because Analysis API is not suited to work
  * without a root source module (yet?).
+ * [dependencies] are dependencies for the translated module.
  */
 internal class KaModules(
     val useSiteModule: KaModule,
     val mainModule: KaLibraryModule,
+    val dependencies: SwiftExportDependencies<KaLibraryModule>,
 )
 
 internal fun createKaModulesForStandaloneAnalysis(
     input: InputModule,
-    dependencies: Set<InputModule>,
+    targetPlatform: TargetPlatform,
+    dependencies: SwiftExportDependencies<InputModule>,
 ): KaModules {
     lateinit var binaryModule: KaLibraryModule
     lateinit var fakeSourceModule: KaSourceModule
+    lateinit var resultedDependencies: SwiftExportDependencies<KaLibraryModule>
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
-            platform = NativePlatforms.unspecifiedNativePlatform
-            binaryModule = addModule(buildKaLibraryModule(input))
-            val kaDeps = dependencies.map {
-                addModule(buildKaLibraryModule(it))
-            }
+            platform = targetPlatform
+            binaryModule = inputModuleIntoKaLibraryModule(input, targetPlatform)
+            resultedDependencies = dependencies.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
                 buildKtSourceModule {
-                    platform = NativePlatforms.unspecifiedNativePlatform
+                    platform = targetPlatform
                     moduleName = "fakeSourceModule"
                     addRegularDependency(binaryModule)
-                    kaDeps.forEach { addRegularDependency(it) }
+                    resultedDependencies.forEach(::addRegularDependency)
                 }
             )
         }
     }
-    return KaModules(fakeSourceModule, binaryModule)
+    return KaModules(
+        fakeSourceModule,
+        binaryModule,
+        resultedDependencies
+    )
 }
 
-private fun KtModuleProviderBuilder.buildKaLibraryModule(
-    input: InputModule,
-): KaLibraryModule = buildKtLibraryModule {
-    addBinaryRoot(input.path)
-    platform = NativePlatforms.unspecifiedNativePlatform
-    libraryName = input.name
+internal class SwiftExportDependencies<T>(
+    val user: Set<T>,
+    val stdlib: T,
+    val platform: Set<T>,
+) {
+    inline fun <R> map(transform: (T) -> R) = SwiftExportDependencies(
+        user = user.map(transform).toSet(),
+        stdlib = transform(stdlib),
+        platform = platform.map(transform).toSet(),
+    )
+
+    inline fun forEach(block: (T) -> Unit): Unit = (user + stdlib + platform).forEach(block)
 }
+
+private fun KtModuleProviderBuilder.inputModuleIntoKaLibraryModule(
+    input: InputModule,
+    targetPlatform: TargetPlatform,
+): KaLibraryModule = addModule(
+    buildKtLibraryModule {
+        addBinaryRoot(input.path)
+        platform = targetPlatform
+        libraryName = input.name
+    }
+)

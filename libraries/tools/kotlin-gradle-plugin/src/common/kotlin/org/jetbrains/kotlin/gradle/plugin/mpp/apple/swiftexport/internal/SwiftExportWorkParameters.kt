@@ -11,6 +11,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal interface SwiftExportTaskParameters {
 
@@ -31,6 +32,9 @@ internal interface SwiftExportTaskParameters {
 
     @get:Input
     val swiftModules: ListProperty<SwiftExportedModule>
+
+    @get:Input
+    val konanTarget: Property<KonanTarget>
 
     @get:OutputDirectory
     val outputPath: DirectoryProperty

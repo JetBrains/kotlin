@@ -24,6 +24,7 @@ class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
     fun `full export of testLibraryA`() {
         val klibSettings = KlibExportSettings(
             testLibraryAKlibFile,
+            targets.testTarget,
             "testLibraryA",
         )
         validateFullLibraryDump(klibSettings, "testLibraryA_full_dump")
@@ -33,6 +34,7 @@ class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
     fun `kotlinx-serialization-core`() {
         val klibSettings = KlibExportSettings(
             testLibraryKotlinxSerializationCore,
+            targets.testTarget,
             "KotlinSerialization",
             "kotlinx.serialization",
         )

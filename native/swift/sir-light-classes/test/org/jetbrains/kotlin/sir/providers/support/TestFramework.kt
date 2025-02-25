@@ -28,7 +28,7 @@ class TestSirSession(
     kaModule: KaModule,
 ) : SirSession {
     override val declarationNamer: SirDeclarationNamer = SirDeclarationNamerImpl()
-    override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider()
+    override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider(emptyList())
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = SirDeclarationFromKtSymbolProvider(
             ktModule = kaModule,
@@ -45,7 +45,10 @@ class TestSirSession(
         unsupportedTypeStrategy = SirTypeProvider.ErrorTypeStrategy.ErrorType,
         sirSession = sirSession,
     )
-    override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(SilentUnsupportedDeclarationReporter)
+    override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(
+        sirSession = sirSession,
+        unsupportedDeclarationReporter = SilentUnsupportedDeclarationReporter,
+    )
     override val childrenProvider: SirChildrenProvider = SirDeclarationChildrenProviderImpl(
         sirSession = sirSession,
     )

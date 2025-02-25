@@ -468,7 +468,11 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
         is SirTypealias -> bridgeType(subtype.type)
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
-        else -> Bridge.AsObject(type, KotlinType.KotlinObject, CType.Object)
+        else -> if (type.typeDeclaration.parent is SirPlatformModule) {
+            Bridge.AsNSObject(type)
+        } else {
+            Bridge.AsObject(type, KotlinType.KotlinObject, CType.Object)
+        }
     }
 }
 
@@ -519,6 +523,7 @@ private sealed class CType {
     data object id : Predefined("id")
     data object NSString : Predefined("NSString *")
     data object NSNumber : Predefined("NSNumber *")
+    data object NSObject : Predefined("id<NSObject>") // NSProxy and NSObject conforms to this
 
     sealed class Generic(base: String, vararg args: CType) : Predefined(
         repr = "$base<${args.joinToString(", ") { it.render("").trim() }}> *"
@@ -545,7 +550,7 @@ private sealed class CType {
     }
 }
 
-private enum class KotlinType(val repr: kotlin.String) {
+private enum class KotlinType(val repr: String) {
     Unit("Unit"),
 
     Boolean("Boolean"),
@@ -742,6 +747,16 @@ private sealed class Bridge(
         override val inKotlinSources = object : ValueConversion by super.inKotlinSources {
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
                 super@OptionalChar.inKotlinSources.kotlinToSwift(typeNamer, "${valueExpression}?.code")
+        }
+    }
+
+    class AsNSObject(
+        swiftType: SirNominalType,
+    ) : AsObjCBridged(swiftType, CType.NSObject) {
+        override val inSwiftSources: InSwiftSourcesConversion = object : NilableIdentityValueConversion {
+            override fun renderNil(): String = "nil"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "$valueExpression as! ${typeNamer.swiftFqName(swiftType)}"
         }
     }
 

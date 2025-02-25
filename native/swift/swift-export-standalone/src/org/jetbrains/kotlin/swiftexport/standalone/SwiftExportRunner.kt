@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
+import org.jetbrains.kotlin.swiftexport.standalone.builders.SwiftExportDependencies
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.Serializable
 import java.nio.file.Path
-import kotlin.io.path.Path
 import kotlin.io.path.div
 
 public enum class UnsupportedDeclarationReporterKind {
@@ -46,7 +45,7 @@ public enum class ErrorTypeStrategy {
     }
 }
 
-public data class InputModule(
+public class InputModule(
     public val name: String,
     public val path: Path,
     public val config: SwiftModuleConfig,
@@ -126,7 +125,8 @@ public fun runSwiftExport(
     config: SwiftExportConfig,
 ): Result<Set<SwiftExportModule>> = runCatching {
     logConfigIssues(input, config.logger)
-    val stdlibInputModule = createInputModuleForStdlib(config.distribution)
+    val stdlibInputModule = config.stdlibInputModule
+    val platformLibsInputModule = config.platformLibsInputModule
     val translatedModules = input.map { rootModule ->
         /**
          * This value represents dependencies of current module.
@@ -135,7 +135,15 @@ public fun runSwiftExport(
          * a need to remove the current translation module from the list of dependencies.
          */
         val dependencies = input - rootModule
-        translateModulePublicApi(rootModule, dependencies + stdlibInputModule, config)
+        translateModulePublicApi(
+            rootModule,
+            SwiftExportDependencies(
+                user = dependencies,
+                stdlib = stdlibInputModule,
+                platform = platformLibsInputModule
+            ),
+            config
+        )
     }
 
     val packagesModule = writeKotlinPackagesModule(
@@ -148,9 +156,6 @@ public fun runSwiftExport(
     )
     return@runCatching setOf(packagesModule, runtimeSupportModule) + translatedModules.map { it.writeModule(config) }
 }
-
-private fun createInputModuleForStdlib(distribution: Distribution) =
-    InputModule("stdlib", Path(distribution.stdlib), SwiftModuleConfig())
 
 private fun Collection<TranslationResult>.createModuleForPackages(config: SwiftExportConfig): SirModule = buildModule {
     name = config.moduleForPackagesName
@@ -221,7 +226,7 @@ private fun TranslationResult.writeModule(config: SwiftExportConfig): SwiftExpor
     return SwiftExportModule.BridgesToKotlin(
         name = sirModule.name,
         dependencies = sirModule.imports
-            .filter { it.moduleName !in setOf(KotlinRuntimeModule.name, bridgesModuleName) }
+            .filter { it.moduleName !in setOf(KotlinRuntimeModule.name, bridgesModuleName) + config.platformLibsInputModule.map { it.name } }
             .map { SwiftExportModule.Reference(it.moduleName) },
         bridgeName = bridgesModuleName,
         files = outputFiles

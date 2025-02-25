@@ -23,4 +23,5 @@ public inline fun <T> KaSession.withSirSession(
     moduleForPackageEnums = buildModule { name = configuration.moduleForPackagesName },
     unsupportedDeclarationReporter = SilentUnsupportedDeclarationReporter,
     targetPackageFqName = null,
+    platformLibs = setOf() // todo: in ideal world IDE should pass platform libs to the sirSession
 ).block()

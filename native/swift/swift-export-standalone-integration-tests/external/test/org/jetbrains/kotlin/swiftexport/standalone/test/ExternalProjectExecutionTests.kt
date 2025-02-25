@@ -31,6 +31,7 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
         val testPath = testDataDir.resolve("testLibraryA_smoke").absoluteFile
         val klibSettings = KlibExportSettings(
             path = testLibraryAKlibFile,
+            konanTarget = targets.testTarget,
             swiftModuleName = "LibraryA",
             rootPackage = "org.jetbrains.a",
         )
@@ -42,11 +43,13 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
         val testPath = testDataDir.resolve("testLibraryA_testLibraryB_combined").absoluteFile
         val klibSettingsA = KlibExportSettings(
             path = testLibraryAKlibFile,
+            konanTarget = targets.testTarget,
             swiftModuleName = "LibraryA",
             rootPackage = "org.jetbrains.a",
         )
         val klibSettingsB = KlibExportSettings(
             path = testLibraryBKlibFile,
+            konanTarget = targets.testTarget,
             swiftModuleName = "LibraryB",
             rootPackage = "org.jetbrains.b",
         )
@@ -60,7 +63,8 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
         }.toSet()
 
         val swiftConfig = SwiftExportConfig(
-            outputPath = buildDir(testPath.name).toPath().resolve("swift_export_results")
+            outputPath = buildDir(testPath.name).toPath().resolve("swift_export_results"),
+            konanTarget = targets.testTarget
         )
 
         val swiftExportResult = runSwiftExport(inputModules, swiftConfig).getOrThrow()
