@@ -38,12 +38,12 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirImplementationMismatchChecker(MppCheckerKind.Platform) {
@@ -294,13 +294,19 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
     ) {
         val allCallables = scope.collectCallablesNamed(name, containingClass, context)
 
+        data class GroupingKey(
+            val contextParamets: List<ConeKotlinType>,
+            val extensionReceiver: ConeKotlinType?,
+            // null and empty list distinguish between function and property
+            val valueParameters: List<ConeKotlinType>?,
+        )
+
         val sameArgumentGroups = allCallables.groupBy { callable ->
-            buildList {
-                addIfNotNull(callable.resolvedReceiverTypeRef?.coneType)
-                if (callable is FirNamedFunctionSymbol) {
-                    callable.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
-                }
-            } to (callable is FirPropertySymbol) // Needed to split properties and functions into separate groups
+            GroupingKey(
+                contextParamets = callable.resolvedContextParameters.map { it.returnTypeRef.coneType },
+                extensionReceiver = callable.resolvedReceiverTypeRef?.coneType,
+                valueParameters = (callable as? FirNamedFunctionSymbol)?.valueParameterSymbols?.map { it.resolvedReturnTypeRef.coneType },
+            )
         }.values
 
         val clashes = sameArgumentGroups.mapNotNull { fs ->

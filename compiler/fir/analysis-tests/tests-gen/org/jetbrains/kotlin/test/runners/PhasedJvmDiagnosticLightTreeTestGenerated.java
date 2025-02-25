@@ -30838,6 +30838,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("conflictingOverloadsWithContextParameters.kt")
+      public void testConflictingOverloadsWithContextParameters() {
+        runTest("compiler/testData/diagnostics/tests/overload/conflictingOverloadsWithContextParameters.kt");
+      }
+
+      @Test
       @TestMetadata("ConstructorVsFunOverload.kt")
       public void testConstructorVsFunOverload() {
         runTest("compiler/testData/diagnostics/tests/overload/ConstructorVsFunOverload.kt");
