@@ -24,10 +24,13 @@ public class SirVisibilityCheckerImpl(
     private val unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
 ) : SirVisibilityChecker {
 
+    @OptIn(KaExperimentalApi::class)
     override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility = with(ktAnalysisSession) {
         val ktSymbol = this@sirVisibility
 
         val isHidden = ktSymbol.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN
+
+        val containsContextParameters = ktSymbol is KaCallableSymbol && ktSymbol.contextParameters.isNotEmpty()
 
         val isConsumable = isPublic() && when (ktSymbol) {
             is KaNamedClassSymbol -> {
@@ -54,7 +57,7 @@ public class SirVisibilityCheckerImpl(
             else -> false
         }
 
-        return if (isConsumable && !isHidden) SirVisibility.PUBLIC else SirVisibility.PRIVATE
+        return if (isConsumable && !isHidden && !containsContextParameters) SirVisibility.PUBLIC else SirVisibility.PRIVATE
     }
 
     private fun KaNamedFunctionSymbol.isConsumableBySirBuilder(parent: KaClassSymbol?): Boolean {

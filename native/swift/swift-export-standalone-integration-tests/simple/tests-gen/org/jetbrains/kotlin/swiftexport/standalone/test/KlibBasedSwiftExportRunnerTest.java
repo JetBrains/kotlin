@@ -52,6 +52,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("contextParameters")
+  public void testContextParameters() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/contextParameters/");
+  }
+
+  @Test
   @TestMetadata("enums")
   public void testEnums() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/enums/");
