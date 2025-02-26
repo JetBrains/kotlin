@@ -22,16 +22,16 @@ Tower Data Context:
                 Qualified name: java.util.stream.Stream
                 Is all under: false
     Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+    Element 9
         Scope: FirScriptDeclarationsScope
             Properties:
                 FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
                     public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
-    Element 9
-        Scope: FirLocalScope
     Element 10
-        Implicit receiver:
-            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
-                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        Scope: FirLocalScope
     Element 11
         Scope: FirLocalScope
     Element 12

@@ -16,6 +16,10 @@ Tower Data Context:
     Element 7
         Scope: FirExplicitSimpleImportingScope
     Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 9
         Scope: FirScriptDeclarationsScope
             Classifiers:
                 FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
@@ -24,12 +28,8 @@ Tower Data Context:
                     public get(): R|kotlin/Int|
                 FirPropertySymbol public final val two: <implicit>
                     public get(): <implicit>
-    Element 9
-        Scope: FirLocalScope
     Element 10
-        Implicit receiver:
-            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_subProperty.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelDestructuring_subProperty.kts>
