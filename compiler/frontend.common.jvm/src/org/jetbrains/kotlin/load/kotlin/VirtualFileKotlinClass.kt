@@ -69,7 +69,7 @@ class VirtualFileKotlinClass private constructor(
             metadataVersion: MetadataVersion,
             fileContent: ByteArray?,
             perfManager: PerformanceManager?,
-        ): KotlinClassFinder.Result? {
+        ): KotlinClassFinder.Result {
             return perfManager.tryMeasureSideTime(PhaseSideType.BinaryClassFromKotlinFile) {
                 assert(file.extension == JavaClassFileType.INSTANCE.defaultExtension || file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
@@ -91,7 +91,7 @@ class VirtualFileKotlinClass private constructor(
                     if (e is ControlFlowException) throw e
                     throw logFileReadingErrorMessage(e, file)
                 }
-                null
+                KotlinClassFinder.Result.Empty
             }
         }
 
