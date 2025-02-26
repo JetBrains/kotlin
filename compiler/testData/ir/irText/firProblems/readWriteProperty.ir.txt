@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
           CALL 'private final fun setting <V, T> (reference: <root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting>): <root>.IdeWizard.setting.<no name provided><V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting> declared in <root>.IdeWizard' type=<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> origin=null
             <V>: kotlin.Int
             <T>: <root>.SettingType<kotlin.Int>
-            $this: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard' type=<root>.IdeWizard origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard' type=<root>.IdeWizard origin=null
             reference: CONSTRUCTOR_CALL 'public constructor <init> (t: T of <root>.SettingReference, v: V of <root>.SettingReference) declared in <root>.SettingReference' type=<root>.SettingReference<kotlin.Int, <root>.SettingType<kotlin.Int>> origin=null
               <class: V>: kotlin.Int
               <class: T>: <root>.SettingType<kotlin.Int>

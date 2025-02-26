@@ -146,7 +146,7 @@ FILE fqName:<root> fileName:/Modality.kt
         VAR name:candidateDescriptor type:<root>.CallableDescriptor [val]
           CALL 'public final fun <get-candidateDescriptor> (): <root>.CallableDescriptor declared in <root>.Atom' type=<root>.CallableDescriptor origin=GET_PROPERTY
             $this: CALL 'public final fun <get-resolvedCall> (): <root>.Atom declared in <root>.KotlinResolutionCandidate' type=<root>.Atom origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.KotlinResolutionCandidate declared in <root>.Owner.process' type=<root>.KotlinResolutionCandidate origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.KotlinResolutionCandidate declared in <root>.Owner.process' type=<root>.KotlinResolutionCandidate origin=null
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: WHEN type=kotlin.Boolean origin=ANDAND

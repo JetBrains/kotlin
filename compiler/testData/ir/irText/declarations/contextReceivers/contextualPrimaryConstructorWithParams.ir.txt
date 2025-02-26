@@ -49,10 +49,10 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
         EXPRESSION_BODY
           CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
             $this: CALL 'public final fun <get-o> (): kotlin.String declared in <root>.O' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final] declared in <root>.OK' type=<root>.O origin=IMPLICIT_ARGUMENT
+              $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final] declared in <root>.OK' type=<root>.O origin=null
                 receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
             other: CALL 'public final fun <get-k> (): kotlin.String declared in <root>.OK' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> visibility:public modality:FINAL <> ($this:<root>.OK) returnType:kotlin.String
         correspondingProperty: PROPERTY name:result visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.OK
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
               BLOCK_BODY
                 VAR name:ok type:<root>.OK [val]
                   CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: <root>.O, k: kotlin.String) declared in <root>.OK' type=<root>.OK origin=null
-                    $context_receiver_0: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=IMPLICIT_ARGUMENT
+                    $context_receiver_0: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
                     k: CONST String type=kotlin.String value="K"
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   CALL 'public final fun <get-result> (): kotlin.String declared in <root>.OK' type=kotlin.String origin=GET_PROPERTY

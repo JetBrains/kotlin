@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 // FILE: protectedJavaFieldRef.kt

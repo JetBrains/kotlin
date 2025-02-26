@@ -18,5 +18,5 @@ MODULE_FRAGMENT name:<fun.kt>
           RETURN type=<unbound IrClassSymbolImpl> from='public final fun bar (z: <unbound IrClassSymbolImpl>): <unbound IrClassSymbolImpl> declared in test.A'
             CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=<unbound IrClassSymbolImpl> origin=PLUS
               $this: CALL 'private final fun foo (): <unbound IrClassSymbolImpl> declared in test.A' type=<unbound IrClassSymbolImpl> origin=null
-                $this: GET_VAR '<this>: test.A declared in test.A.bar' type=test.A origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '<this>: test.A declared in test.A.bar' type=test.A origin=null
               1: GET_VAR 'z: <unbound IrClassSymbolImpl> declared in test.A.bar' type=<unbound IrClassSymbolImpl> origin=null

@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.Z.ENTRY.A
             BLOCK_BODY
               CALL 'public final fun test (): kotlin.Unit declared in <root>.Z.ENTRY' type=kotlin.Unit origin=null
-                $this: GET_VAR '<this>: <root>.Z.ENTRY declared in <root>.Z.ENTRY' type=<root>.Z.ENTRY origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '<this>: <root>.Z.ENTRY declared in <root>.Z.ENTRY' type=<root>.Z.ENTRY origin=null
         CONSTRUCTOR visibility:private <> () returnType:<root>.Z.ENTRY [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Z'

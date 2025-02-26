@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/kt23030.kt
         RETURN type=kotlin.Nothing from='public final fun testMemberExtensionCompareToCall (x: kotlin.Int, y: kotlin.Char): kotlin.Boolean declared in <root>.C'
           CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
             arg0: CALL 'public final fun compareTo (c: kotlin.Char): kotlin.Int declared in <root>.C' type=kotlin.Int origin=LT
-              $this: GET_VAR '<this>: <root>.C declared in <root>.C.testMemberExtensionCompareToCall' type=<root>.C origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.C declared in <root>.C.testMemberExtensionCompareToCall' type=<root>.C origin=null
               $receiver: GET_VAR 'x: kotlin.Int declared in <root>.C.testMemberExtensionCompareToCall' type=kotlin.Int origin=null
               c: GET_VAR 'y: kotlin.Char declared in <root>.C.testMemberExtensionCompareToCall' type=kotlin.Char origin=null
             arg1: CONST Int type=kotlin.Int value=0
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/kt23030.kt
                   then: CONST Boolean type=kotlin.Boolean value=false
               then: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
                 arg0: CALL 'public final fun compareTo (c: kotlin.Char): kotlin.Int declared in <root>.C' type=kotlin.Int origin=LT
-                  $this: GET_VAR '<this>: <root>.C declared in <root>.C.testMemberExtensionCompareToCallWithSmartCast' type=<root>.C origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '<this>: <root>.C declared in <root>.C.testMemberExtensionCompareToCallWithSmartCast' type=<root>.C origin=null
                   $receiver: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
                     GET_VAR 'x: kotlin.Any declared in <root>.C.testMemberExtensionCompareToCallWithSmartCast' type=kotlin.Any origin=null
                   c: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char

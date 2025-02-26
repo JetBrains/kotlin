@@ -47,13 +47,13 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.P'
           CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component1' type=<root>.P origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component1' type=<root>.P origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.P'
           CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component2' type=<root>.P origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.P declared in <root>.P.component2' type=<root>.P origin=null
   CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -104,13 +104,13 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T1 of <root>.Q declared in <root>.Q'
           CALL 'public final fun <get-x> (): T1 of <root>.Q declared in <root>.Q' type=T1 of <root>.Q origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component1' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component1' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
     FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>) returnType:T2 of <root>.Q [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Q<T1 of <root>.Q, T2 of <root>.Q>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): T2 of <root>.Q declared in <root>.Q'
           CALL 'public final fun <get-y> (): T2 of <root>.Q declared in <root>.Q' type=T2 of <root>.Q origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component2' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Q<T1 of <root>.Q, T2 of <root>.Q> declared in <root>.Q.component2' type=<root>.Q<T1 of <root>.Q, T2 of <root>.Q> origin=null
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION

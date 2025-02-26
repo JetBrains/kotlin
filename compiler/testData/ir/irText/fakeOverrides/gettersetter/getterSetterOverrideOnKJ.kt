@@ -1,4 +1,5 @@
 // SKIP_KT_DUMP
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 
 // FILE: Java1.java

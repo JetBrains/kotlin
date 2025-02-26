@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 class TestInitValInLambdaCalledOnce {
     val x: Int
     init {

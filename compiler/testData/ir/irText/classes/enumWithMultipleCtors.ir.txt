@@ -192,13 +192,13 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         RETURN type=kotlin.Nothing from='public open fun f (): kotlin.String declared in <root>.A'
           STRING_CONCATENATION type=kotlin.String
             CALL 'public final fun <get-prop1> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
             CONST String type=kotlin.String value="#"
             CALL 'public final fun <get-prop2> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
             CONST String type=kotlin.String value="#"
             CALL 'public final fun <get-prop3> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.A>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]

@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Unit declared in <root>.A'
           CALL 'public open fun foo (t: kotlin.Number): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test1' type=<root>.A origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test1' type=<root>.A origin=null
             t: CONST Int type=kotlin.Int value=1
     FUN name:test2 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.A
@@ -74,28 +74,28 @@ FILE fqName:<root> fileName:/1.kt
         RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Int declared in <root>.A'
           CALL 'public open fun bar <T> (): T of <root>.A.bar declared in <root>.A' type=kotlin.Int origin=null
             <T>: kotlin.Int
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test2' type=<root>.A origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test2' type=<root>.A origin=null
     FUN name:test3 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Unit declared in <root>.A'
           CALL 'public open fun foo <T> (t: T of <root>.A.foo): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
             <T>: kotlin.String
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test3' type=<root>.A origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test3' type=<root>.A origin=null
             t: CONST String type=kotlin.String value=""
     FUN name:test4 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test4 (): kotlin.Unit declared in <root>.A'
           CALL 'public open fun foo (t: kotlin.Number): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test4' type=<root>.A origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test4' type=<root>.A origin=null
             t: CONST Double type=kotlin.Double value=1.5
     FUN name:test5 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.Unit declared in <root>.A'
           CALL 'public open fun foo (t: kotlin.Number, t2: kotlin.Int): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test5' type=<root>.A origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test5' type=<root>.A origin=null
             t: CONST Double type=kotlin.Double value=1.5
             t2: CONST Int type=kotlin.Int value=8
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2]

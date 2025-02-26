@@ -126,38 +126,38 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
             BLOCK_BODY
               CALL 'public final fun plusAssign ($context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
                 $receiver: GET_VAR 'val result: <root>.Result declared in <root>.box' type=<root>.Result origin=PLUSEQ
-                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 other: CALL 'public final fun plus ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result declared in <root>' type=<root>.Result origin=PLUS
                   $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=1
-                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=1
               CALL 'public final fun minusAssign ($context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MINUSEQ
                 $receiver: GET_VAR 'val result: <root>.Result declared in <root>.box' type=<root>.Result origin=MINUSEQ
-                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 other: CALL 'public final fun minus ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result declared in <root>' type=<root>.Result origin=MINUS
                   $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=1
-                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=0
               CALL 'public final fun timesAssign ($context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MULTEQ
                 $receiver: GET_VAR 'val result: <root>.Result declared in <root>.box' type=<root>.Result origin=MULTEQ
-                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 other: CALL 'public final fun times ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result declared in <root>' type=<root>.Result origin=MUL
                   $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=1
-                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=2
               CALL 'public final fun divAssign ($context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit declared in <root>' type=kotlin.Unit origin=DIVEQ
                 $receiver: GET_VAR 'val result: <root>.Result declared in <root>.box' type=<root>.Result origin=DIVEQ
-                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 other: CALL 'public final fun div ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result declared in <root>' type=<root>.Result origin=DIV
                   $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=4
-                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=2
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
@@ -194,7 +194,7 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIV
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Result declared in <root>.div' type=<root>.Result origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.Result declared in <root>.div' type=<root>.Result origin=null
             other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'other: <root>.Result declared in <root>.div' type=<root>.Result origin=null
   FUN name:divAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
@@ -233,7 +233,7 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Result declared in <root>.minus' type=<root>.Result origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.Result declared in <root>.minus' type=<root>.Result origin=null
             other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'other: <root>.Result declared in <root>.minus' type=<root>.Result origin=null
   FUN name:minusAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
@@ -272,7 +272,7 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Result declared in <root>.plus' type=<root>.Result origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.Result declared in <root>.plus' type=<root>.Result origin=null
             other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'other: <root>.Result declared in <root>.plus' type=<root>.Result origin=null
   FUN name:plusAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
@@ -311,7 +311,7 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Result declared in <root>.times' type=<root>.Result origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.Result declared in <root>.times' type=<root>.Result origin=null
             other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'other: <root>.Result declared in <root>.times' type=<root>.Result origin=null
   FUN name:timesAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]

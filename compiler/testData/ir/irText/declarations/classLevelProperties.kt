@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 // IGNORE_BACKEND: JS_IR
 // KT-61141: kotlin.collections.HashMap instead of java.util.HashMap

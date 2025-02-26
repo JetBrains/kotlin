@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/elvisOnBackingFieldInGetter.kt
                     receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-resourceTable>' type=<root>.Test origin=null
           VAR name:fileData type:kotlin.String? [val]
             CALL 'public final fun getFileData (): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-              $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-resourceTable>' type=<root>.Test origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-resourceTable>' type=<root>.Test origin=null
           WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ

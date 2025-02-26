@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
             $this: CALL 'public final fun <get-arguments> (): kotlin.collections.MutableList<<root>.Expression> declared in <root>.ArgumentsBuilder' type=kotlin.collections.MutableList<<root>.Expression> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.ArgumentsBuilder declared in <root>.ArgumentsBuilder.unaryPlus' type=<root>.ArgumentsBuilder origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.ArgumentsBuilder declared in <root>.ArgumentsBuilder.unaryPlus' type=<root>.ArgumentsBuilder origin=null
             element: GET_VAR '<this>: <root>.Expression declared in <root>.ArgumentsBuilder.unaryPlus' type=<root>.Expression origin=null
   CLASS CLASS name:Column modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Column
@@ -126,7 +126,7 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
               $receiver: VALUE_PARAMETER name:$this$countIssues type:<root>.ArgumentsBuilder
               BLOCK_BODY
                 CALL 'public final fun unaryPlus (): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=null
-                  $this: GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=null
                   $receiver: CALL 'public final fun lessEq <T> (t: T of <root>.lessEq): <root>.Expression declared in <root>' type=<root>.Expression origin=null
                     <T>: kotlin.Int
                     $receiver: CALL 'public final fun <get-spentTime> (): <root>.Column declared in <root>' type=<root>.Column origin=GET_PROPERTY
@@ -134,7 +134,7 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
                       $this: CONST Int type=kotlin.Int value=2
                       other: CONST Int type=kotlin.Int value=60
                 CALL 'public final fun unaryPlus (): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=null
-                  $this: GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=null
                   $receiver: CALL 'public final fun lessEq <T> (t: T of <root>.lessEq): <root>.Expression declared in <root>' type=<root>.Expression origin=null
                     <T>: kotlin.Int
                     $receiver: CALL 'public final fun <get-spentTime> (): <root>.Column declared in <root>' type=<root>.Column origin=GET_PROPERTY
@@ -144,7 +144,7 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
                         $this: CONST Int type=kotlin.Int value=2
                         other: CONST Int type=kotlin.Int value=60
                 CALL 'public final fun unaryPlus (): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=null
-                  $this: GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=null
                   $receiver: CALL 'public final fun select <T> (t: T of <root>.select, r: T of <root>.select): <root>.Expression declared in <root>' type=<root>.Expression origin=null
                     <T>: kotlin.Long
                     $receiver: CALL 'public final fun <get-spentTime> (): <root>.Column declared in <root>' type=<root>.Column origin=GET_PROPERTY

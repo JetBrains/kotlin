@@ -773,13 +773,13 @@ FILE fqName:<root> fileName:/1.kt
           $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getFirst (): @[FlexibleNullability] kotlin.Int? declared in <root>.A' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
-          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun reversed (): java.util.SortedSet<kotlin.Int> declared in <root>.B' type=java.util.SortedSet<kotlin.Int> origin=null
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getFirst (): @[FlexibleNullability] kotlin.Int? declared in <root>.B' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
-          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public abstract fun <get-size> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
@@ -808,7 +808,7 @@ FILE fqName:<root> fileName:/1.kt
           $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getFirst (): kotlin.Int? declared in <root>.C' type=kotlin.Int? origin=GET_PROPERTY
-          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun reversed (): java.util.SortedSet<kotlin.Int?>? declared in <root>.D' type=java.util.SortedSet<kotlin.Int?>? origin=null
           $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null

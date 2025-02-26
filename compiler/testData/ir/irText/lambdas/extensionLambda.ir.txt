@@ -12,4 +12,4 @@ FILE fqName:<root> fileName:/extensionLambda.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test1'
                   CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
-                    $this: GET_VAR '$this$run: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=IMPLICIT_ARGUMENT
+                    $this: GET_VAR '$this$run: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=null

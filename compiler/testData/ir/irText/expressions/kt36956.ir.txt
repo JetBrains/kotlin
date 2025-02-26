@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/kt36956.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun get (i: kotlin.Int): T of <root>.A declared in <root>.A'
           CALL 'private final fun <get-value> (): T of <root>.A declared in <root>.A' type=T of <root>.A origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.get' type=<root>.A<T of <root>.A> origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.get' type=<root>.A<T of <root>.A> origin=null
     FUN name:set visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>, i:kotlin.Int, v:T of <root>.A) returnType:kotlin.Unit [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
       VALUE_PARAMETER name:i index:0 type:kotlin.Int

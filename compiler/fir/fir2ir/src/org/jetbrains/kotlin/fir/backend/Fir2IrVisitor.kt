@@ -793,11 +793,10 @@ class Fir2IrVisitor(
         val irClass = conversionScope.findDeclarationInParentsStack<IrClass>(irClassSymbol)
 
         val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass) ?: return null
-        val origin = if (thisReceiverExpression.isImplicit) IrStatementOrigin.IMPLICIT_ARGUMENT else null
         return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
             val thisRef = callGenerator.findInjectedValue(calleeReference)?.let {
                 callGenerator.useInjectedValue(it, calleeReference, startOffset, endOffset)
-            } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol, origin)
+            } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
 
             val referencedFir = calleeReference.boundSymbol?.fir
             if (referencedFir !is FirValueParameter) {
@@ -812,7 +811,7 @@ class Fir2IrVisitor(
             if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
                 val constructorParameter =
                     constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[contextParameterNumber]
-                IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol, origin)
+                IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol)
             } else {
                 val contextReceivers =
                     c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, firClass)
@@ -825,7 +824,6 @@ class Fir2IrVisitor(
                     startOffset, endOffset, contextReceivers[contextParameterNumber].symbol,
                     thisReceiverExpression.resolvedType.toIrType(c),
                     thisRef,
-                    origin,
                 )
             }
         }
@@ -837,14 +835,13 @@ class Fir2IrVisitor(
     ): IrElement {
         val calleeReference = thisReceiverExpression.calleeReference
         val firScript = firScriptSymbol.fir
-        val origin = if (thisReceiverExpression.isImplicit) IrStatementOrigin.IMPLICIT_ARGUMENT else null
         val irScript = declarationStorage.getCachedIrScript(firScript) ?: error("IrScript for ${firScript.name} not found")
         val contextParameterNumber = firScriptSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
         val receiverParameter =
             irScript.implicitReceiversParameters.find { it.indexInOldValueParameters == contextParameterNumber } ?: irScript.thisReceiver
         if (receiverParameter != null) {
             return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol, origin)
+                IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol)
             }
         } else {
             error("No script receiver found") // TODO: check if any valid situations possible here
@@ -856,7 +853,6 @@ class Fir2IrVisitor(
         firCallableSymbol: FirCallableSymbol<*>
     ): IrElement? {
         val calleeReference = thisReceiverExpression.calleeReference
-        val origin = if (thisReceiverExpression.isImplicit) IrStatementOrigin.IMPLICIT_ARGUMENT else null
         callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
 
         val irFunction = when (firCallableSymbol) {
@@ -879,7 +875,7 @@ class Fir2IrVisitor(
         } ?: return null
 
         return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-            IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol, origin)
+            IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
         }
     }
 
@@ -1024,7 +1020,6 @@ class Fir2IrVisitor(
             else -> convertToIrExpression(receiver)
         } ?: return null
 
-        if (irReceiver is IrValueAccessExpression && receiver != selector.explicitReceiver) irReceiver.origin = IrStatementOrigin.IMPLICIT_ARGUMENT
         if (receiver is FirQualifiedAccessExpression && receiver.calleeReference is FirSuperReference) return irReceiver
 
         return implicitCastInserter.implicitCastFromReceivers(

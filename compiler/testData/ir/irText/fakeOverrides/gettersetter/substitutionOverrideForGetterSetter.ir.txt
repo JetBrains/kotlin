@@ -99,37 +99,37 @@ FILE fqName:<root> fileName:/test.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getA (): @[FlexibleNullability] kotlin.Int? declared in <root>.A' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
-          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public open fun setA (t: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         t: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun isB (): @[FlexibleNullability] kotlin.Int? declared in <root>.A' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
-          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public open fun setB (t: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         t: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getC (): @[FlexibleNullability] kotlin.Int? declared in <root>.A' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
-          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public open fun setD (t: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         t: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getA (): @[FlexibleNullability] kotlin.Boolean? declared in <root>.B' type=@[FlexibleNullability] kotlin.Boolean? origin=GET_PROPERTY
-          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       CALL 'public open fun setA (t: @[FlexibleNullability] kotlin.Boolean?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         t: CONST Boolean type=kotlin.Boolean value=true
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun isB (): @[FlexibleNullability] kotlin.Boolean? declared in <root>.B' type=@[FlexibleNullability] kotlin.Boolean? origin=GET_PROPERTY
-          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       CALL 'public open fun setB (t: @[FlexibleNullability] kotlin.Boolean?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         t: CONST Boolean type=kotlin.Boolean value=true
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getC (): @[FlexibleNullability] kotlin.Boolean? declared in <root>.B' type=@[FlexibleNullability] kotlin.Boolean? origin=GET_PROPERTY
-          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       CALL 'public open fun setD (t: @[FlexibleNullability] kotlin.Boolean?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         t: CONST Boolean type=kotlin.Boolean value=true

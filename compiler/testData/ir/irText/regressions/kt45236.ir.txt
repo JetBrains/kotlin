@@ -193,7 +193,7 @@ FILE fqName:<root> fileName:/kt45236.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 CALL 'public abstract fun implies (booleanExpression: kotlin.Boolean): kotlin.contracts.ConditionalEffect declared in kotlin.contracts.Returns' type=kotlin.contracts.ConditionalEffect origin=null
                   $this: CALL 'public abstract fun returns (value: kotlin.Any?): kotlin.contracts.Returns declared in kotlin.contracts.ContractBuilder' type=kotlin.contracts.Returns origin=null
-                    $this: GET_VAR '$this$contract: kotlin.contracts.ContractBuilder declared in <root>.isError.<anonymous>' type=kotlin.contracts.ContractBuilder origin=IMPLICIT_ARGUMENT
+                    $this: GET_VAR '$this$contract: kotlin.contracts.ContractBuilder declared in <root>.isError.<anonymous>' type=kotlin.contracts.ContractBuilder origin=null
                     value: CONST Boolean type=kotlin.Boolean value=true
                   booleanExpression: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.NetRequestStatus.Error<T of <root>.isError>
                     GET_VAR '<this>: <root>.NetRequestStatus<T of <root>.isError> declared in <root>.isError' type=<root>.NetRequestStatus<T of <root>.isError> origin=null

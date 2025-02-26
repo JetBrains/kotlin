@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/typeOfNonExhaustiveWhen.kt
                               then: BREAK label=null loop.label=null
                     TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                       CALL 'public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
-                        $this: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.Int> declared in <root>.box.<anonymous>' type=kotlin.collections.MutableList<kotlin.Int> origin=IMPLICIT_ARGUMENT
+                        $this: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.Int> declared in <root>.box.<anonymous>' type=kotlin.collections.MutableList<kotlin.Int> origin=null
                         element: GET_VAR 'var index: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                     TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                       BLOCK type=kotlin.Int origin=POSTFIX_INCR

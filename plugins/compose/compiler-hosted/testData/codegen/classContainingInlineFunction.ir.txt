@@ -29,7 +29,7 @@ MODULE_FRAGMENT
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.OtherModule'
             CALL 'internal final fun secret (): kotlin.String declared in com.example.myModule.OtherModule' type=kotlin.String origin=null
-              $this: GET_VAR '<this>: com.example.myModule.OtherModule declared in com.example.myModule.OtherModule.giveMeString' type=com.example.myModule.OtherModule origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: com.example.myModule.OtherModule declared in com.example.myModule.OtherModule.giveMeString' type=com.example.myModule.OtherModule origin=null
       FUN name:secret visibility:internal modality:FINAL <> ($this:com.example.myModule.OtherModule) returnType:kotlin.String
         annotations:
           PublishedApi

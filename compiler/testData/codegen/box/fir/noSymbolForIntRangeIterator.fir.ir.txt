@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
                                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                                     BLOCK type=java.lang.StringBuilder origin=null
                                       CALL 'public final fun appendLine (value: kotlin.String?): java.lang.StringBuilder declared in kotlin.text' type=java.lang.StringBuilder origin=null
-                                        $receiver: GET_VAR '$this$buildString: java.lang.StringBuilder declared in <root>.test.localFunc.<anonymous>' type=java.lang.StringBuilder origin=IMPLICIT_ARGUMENT
+                                        $receiver: GET_VAR '$this$buildString: java.lang.StringBuilder declared in <root>.test.localFunc.<anonymous>' type=java.lang.StringBuilder origin=null
                                         value: STRING_CONCATENATION type=kotlin.String
                                           CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
                                             $this: GET_VAR 'val i: kotlin.Int declared in <root>.test.localFunc' type=kotlin.Int origin=null

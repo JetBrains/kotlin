@@ -346,7 +346,7 @@ FILE fqName:<root> fileName:/kt44814.kt
               treeStructure: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.FlyweightCapableTreeStructure' type=<root>.FlyweightCapableTreeStructure origin=null
           VAR name:result type:<root>.FirModifierList? [val]
             CALL 'public final fun getModifierList (): <root>.FirModifierList? declared in <root>.FirModifierList.Companion' type=<root>.FirModifierList? origin=null
-              $this: GET_VAR '<this>: <root>.FirModifierList.Companion declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirModifierList.Companion origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.FirModifierList.Companion declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirModifierList.Companion origin=null
               $receiver: GET_VAR 'val sourceElement: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirSourceElement? origin=null
           RETURN type=kotlin.Nothing from='public final fun boxImpl (): kotlin.String declared in <root>.FirModifierList.Companion'
             WHEN type=kotlin.String origin=IF
@@ -381,7 +381,7 @@ FILE fqName:<root> fileName:/kt44814.kt
                           TYPE_OP type=<root>.KtModifierListOwner? origin=SAFE_CAST typeOperand=<root>.KtModifierListOwner
                             CALL 'public final fun <get-psi> (): <root>.PsiElement declared in <root>.FirPsiSourceElement' type=<root>.PsiElement origin=GET_PROPERTY
                               $this: TYPE_OP type=<root>.FirPsiSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirPsiSourceElement
-                                GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=IMPLICIT_ARGUMENT
+                                GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                         WHEN type=<root>.KtModifierList? origin=null
                           BRANCH
                             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -423,10 +423,10 @@ FILE fqName:<root> fileName:/kt44814.kt
                             $receiver: CALL 'public final fun getChildren (treeStructure: <root>.FlyweightCapableTreeStructure): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
                               $this: CALL 'public open fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirLightSourceElement' type=<root>.LighterASTNode origin=GET_PROPERTY
                                 $this: TYPE_OP type=<root>.FirLightSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirLightSourceElement
-                                  GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=IMPLICIT_ARGUMENT
+                                  GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                               treeStructure: CALL 'public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement' type=<root>.FlyweightCapableTreeStructure origin=GET_PROPERTY
                                 $this: TYPE_OP type=<root>.FirLightSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirLightSourceElement
-                                  GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=IMPLICIT_ARGUMENT
+                                  GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                             predicate: FUN_EXPR type=kotlin.Function1<<root>.LighterASTNode?, kotlin.Boolean> origin=LAMBDA
                               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.LighterASTNode?) returnType:kotlin.Boolean
                                 VALUE_PARAMETER name:it index:0 type:<root>.LighterASTNode?
@@ -462,7 +462,7 @@ FILE fqName:<root> fileName:/kt44814.kt
                       modifierList: GET_VAR 'val modifierListNode: <root>.LighterASTNode declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.LighterASTNode origin=null
                       tree: CALL 'public open fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirLightSourceElement' type=<root>.FlyweightCapableTreeStructure origin=GET_PROPERTY
                         $this: TYPE_OP type=<root>.FirLightSourceElement origin=IMPLICIT_CAST typeOperand=<root>.FirLightSourceElement
-                          GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=IMPLICIT_ARGUMENT
+                          GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
@@ -715,7 +715,7 @@ FILE fqName:<root> fileName:/kt44814.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getChildren (treeStructure: <root>.FlyweightCapableTreeStructure): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode'
           CALL 'public final fun <get-_children> (): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode' type=kotlin.collections.List<<root>.LighterASTNode?> origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.LighterASTNode declared in <root>.LighterASTNode.getChildren' type=<root>.LighterASTNode origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.LighterASTNode declared in <root>.LighterASTNode.getChildren' type=<root>.LighterASTNode origin=null
   CLASS CLASS name:PsiElement modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PsiElement
     CONSTRUCTOR visibility:public <> () returnType:<root>.PsiElement [primary]

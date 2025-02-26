@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/propertyTypeNarrowing.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Int declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p>' type=<root>.A origin=IMPLICIT_ARGUMENT
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p>' type=<root>.A origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/propertyTypeNarrowing.kt
         RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>.A'
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-it> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=null
             other: CONST Int type=kotlin.Int value=3
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY

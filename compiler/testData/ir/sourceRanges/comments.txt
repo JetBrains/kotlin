@@ -39,7 +39,7 @@
       @30:4..32:5 VALUE_PARAMETER name:<this> type:<root>.Foo
       @30:15..32:5 BLOCK_BODY
         @31:8..41 CALL 'protected open fun foo (y: kotlin.Int): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
-          @31:8..41 GET_VAR '<this>: <root>.Foo declared in <root>.Foo.test' type=<root>.Foo origin=IMPLICIT_ARGUMENT
+          @31:8..41 GET_VAR '<this>: <root>.Foo declared in <root>.Foo.test' type=<root>.Foo origin=null
           @31:38..40 CONST Int type=kotlin.Int value=42
     @1:0..33:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @1:0..33:1 VALUE_PARAMETER name:<this> type:kotlin.Any

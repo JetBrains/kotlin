@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
         VAR name:result type:<root>.Flaf? [var]
           CALL 'public abstract fun get (key: K of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=<root>.Flaf? origin=GET_ARRAY_ELEMENT
             $this: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=null
             key: GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
         WHEN type=kotlin.Unit origin=IF
           BRANCH
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
               SET_VAR 'var result: <root>.Flaf? declared in <root>.Flaf.forJavaName' type=kotlin.Unit origin=EQ
                 CALL 'public abstract fun get (key: K of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=<root>.Flaf? origin=GET_ARRAY_ELEMENT
                   $this: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY
-                    $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=IMPLICIT_ARGUMENT
+                    $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=null
                   key: STRING_CONCATENATION type=kotlin.String
                     GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
                     CONST String type=kotlin.String value="_alternative"
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
                 <K>: kotlin.String
                 <V>: <root>.Flaf
                 $receiver: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY
-                  $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=null
                 key: GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
                 value: GET_VAR 'var result: <root>.Flaf? declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
         RETURN type=kotlin.Nothing from='public final fun forJavaName (javaName: kotlin.String): <root>.Flaf declared in <root>.Flaf'

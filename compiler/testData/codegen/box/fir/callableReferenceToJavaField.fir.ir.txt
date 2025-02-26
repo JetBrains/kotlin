@@ -53,11 +53,11 @@ FILE fqName:foo fileName:/main.kt
       $this: VALUE_PARAMETER name:<this> type:foo.Derived
       BLOCK_BODY
         CALL 'protected open fun foo (): kotlin.Unit declared in foo.Derived' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: foo.Derived declared in foo.Derived.box' type=foo.Derived origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: foo.Derived declared in foo.Derived.box' type=foo.Derived origin=null
         RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.Derived'
           CALL 'public final fun <get-s> (): kotlin.String declared in foo.A' type=kotlin.String origin=GET_PROPERTY
             $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] foo.A? visibility:protected/*protected and package*/ declared in bar.Base' type=@[FlexibleNullability] foo.A? superQualifierSymbol=foo.Derived origin=null
-              receiver: GET_VAR '<this>: foo.Derived declared in foo.Derived.box' type=foo.Derived origin=IMPLICIT_ARGUMENT
+              receiver: GET_VAR '<this>: foo.Derived declared in foo.Derived.box' type=foo.Derived origin=null
     FUN name:foo visibility:protected modality:OPEN <> ($this:foo.Derived) returnType:kotlin.Unit
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in bar.Base

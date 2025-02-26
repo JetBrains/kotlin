@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
       RETURN type=kotlin.Nothing from='public final fun test1 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
           arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int declared in <root>.IB' type=kotlin.Int origin=GT
-            $this: GET_VAR '<this>: <root>.IB declared in <root>.test1' type=<root>.IB origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.IB declared in <root>.test1' type=<root>.IB origin=null
             $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test1' type=<root>.IA origin=null
             other: GET_VAR 'a2: <root>.IA declared in <root>.test1' type=<root>.IA origin=null
           arg1: CONST Int type=kotlin.Int value=0
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
       RETURN type=kotlin.Nothing from='public final fun test2 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         CALL 'public final fun greaterOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GTEQ
           arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int declared in <root>.IB' type=kotlin.Int origin=GTEQ
-            $this: GET_VAR '<this>: <root>.IB declared in <root>.test2' type=<root>.IB origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.IB declared in <root>.test2' type=<root>.IB origin=null
             $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test2' type=<root>.IA origin=null
             other: GET_VAR 'a2: <root>.IA declared in <root>.test2' type=<root>.IA origin=null
           arg1: CONST Int type=kotlin.Int value=0
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
       RETURN type=kotlin.Nothing from='public final fun test3 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
           arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int declared in <root>.IB' type=kotlin.Int origin=LT
-            $this: GET_VAR '<this>: <root>.IB declared in <root>.test3' type=<root>.IB origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.IB declared in <root>.test3' type=<root>.IB origin=null
             $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test3' type=<root>.IA origin=null
             other: GET_VAR 'a2: <root>.IA declared in <root>.test3' type=<root>.IA origin=null
           arg1: CONST Int type=kotlin.Int value=0
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/conventionComparisons.kt
       RETURN type=kotlin.Nothing from='public final fun test4 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         CALL 'public final fun lessOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LTEQ
           arg0: CALL 'public abstract fun compareTo (other: <root>.IA): kotlin.Int declared in <root>.IB' type=kotlin.Int origin=LTEQ
-            $this: GET_VAR '<this>: <root>.IB declared in <root>.test4' type=<root>.IB origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.IB declared in <root>.test4' type=<root>.IB origin=null
             $receiver: GET_VAR 'a1: <root>.IA declared in <root>.test4' type=<root>.IA origin=null
             other: GET_VAR 'a2: <root>.IA declared in <root>.test4' type=<root>.IA origin=null
           arg1: CONST Int type=kotlin.Int value=0

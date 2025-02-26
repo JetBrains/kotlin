@@ -79,13 +79,13 @@ FILE fqName:<root> fileName:/kt16904.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.A]' type=kotlin.Unit
         CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=PLUSEQ
           $this: CALL 'public final fun <get-x> (): <root>.B declared in <root>.Test1' type=<root>.B origin=PLUSEQ
-            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
           x: CONST Int type=kotlin.Int value=42
         CALL 'public final fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Test1' type=kotlin.Unit origin=PLUSEQ
-          $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
           <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
             $this: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.Test1' type=kotlin.Int origin=PLUSEQ
-              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
             other: CONST Int type=kotlin.Int value=42
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -127,7 +127,7 @@ FILE fqName:<root> fileName:/kt16904.kt
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.Test2 origin=EQ
-          receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=IMPLICIT_ARGUMENT
+          receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
           value: CONST Int type=kotlin.Int value=42
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test2 [primary]
       BLOCK_BODY

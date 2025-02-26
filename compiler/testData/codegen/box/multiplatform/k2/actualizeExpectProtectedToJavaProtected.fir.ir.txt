@@ -27,7 +27,7 @@ FILE fqName:pkg fileName:/common.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.String declared in pkg.Bar'
           CALL 'protected/*protected and package*/ open fun foo (): @[FlexibleNullability] kotlin.String? declared in pkg.Bar' type=kotlin.String origin=null
-            $this: GET_VAR '<this>: pkg.Bar declared in pkg.Bar.bar' type=pkg.Bar origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: pkg.Bar declared in pkg.Bar.bar' type=pkg.Bar origin=null
 FILE fqName:pkg fileName:/jvm.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY

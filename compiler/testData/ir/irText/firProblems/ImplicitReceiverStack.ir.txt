@@ -137,7 +137,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
           CALL 'public final fun lastOrNull <T> (): T of kotlin.collections.lastOrNull? declared in kotlin.collections' type=<root>.ImplicitReceiverValue<*>? origin=null
             <T>: <root>.ImplicitReceiverValue<*>
             $receiver: CALL 'private final fun <get-stack> (): kotlin.collections.List<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack' type=kotlin.collections.List<<root>.ImplicitReceiverValue<*>> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.get' type=<root>.PersistentImplicitReceiverStack origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.get' type=<root>.PersistentImplicitReceiverStack origin=null
     FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.PersistentImplicitReceiverStack) returnType:kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> [operator]
       overridden:
         public abstract fun iterator (): kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> declared in <root>.ImplicitReceiverStack
@@ -147,7 +147,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
         RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack'
           CALL 'public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.List> declared in kotlin.collections.List' type=kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> origin=null
             $this: CALL 'private final fun <get-stack> (): kotlin.collections.List<<root>.ImplicitReceiverValue<*>> declared in <root>.PersistentImplicitReceiverStack' type=kotlin.collections.List<<root>.ImplicitReceiverValue<*>> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.iterator' type=<root>.PersistentImplicitReceiverStack origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.PersistentImplicitReceiverStack declared in <root>.PersistentImplicitReceiverStack.iterator' type=<root>.PersistentImplicitReceiverStack origin=null
   CLASS INTERFACE name:ReceiverValue modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ReceiverValue
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

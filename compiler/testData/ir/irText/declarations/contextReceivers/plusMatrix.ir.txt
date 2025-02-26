@@ -53,10 +53,10 @@ FILE fqName:<root> fileName:/plusMatrix.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun plus ($context_receiver_0: <root>.NumberOperations, other: <root>.Matrix): <root>.Matrix declared in <root>' type=<root>.Matrix origin=null
           $receiver: GET_VAR 'm1: <root>.Matrix declared in <root>.plusMatrix' type=<root>.Matrix origin=null
-          $context_receiver_0: GET_VAR '<this>: <root>.NumberOperations declared in <root>.plusMatrix' type=<root>.NumberOperations origin=IMPLICIT_ARGUMENT
+          $context_receiver_0: GET_VAR '<this>: <root>.NumberOperations declared in <root>.plusMatrix' type=<root>.NumberOperations origin=null
           other: GET_VAR 'm2: <root>.Matrix declared in <root>.plusMatrix' type=<root>.Matrix origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun plus ($context_receiver_0: <root>.NumberOperations, other: <root>.Matrix): <root>.Matrix declared in <root>' type=<root>.Matrix origin=null
           $receiver: GET_VAR 'm2: <root>.Matrix declared in <root>.plusMatrix' type=<root>.Matrix origin=null
-          $context_receiver_0: GET_VAR '<this>: <root>.NumberOperations declared in <root>.plusMatrix' type=<root>.NumberOperations origin=IMPLICIT_ARGUMENT
+          $context_receiver_0: GET_VAR '<this>: <root>.NumberOperations declared in <root>.plusMatrix' type=<root>.NumberOperations origin=null
           other: GET_VAR 'm1: <root>.Matrix declared in <root>.plusMatrix' type=<root>.Matrix origin=null

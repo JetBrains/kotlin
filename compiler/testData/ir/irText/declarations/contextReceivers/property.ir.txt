@@ -43,6 +43,6 @@ FILE fqName:<root> fileName:/property.kt
         RETURN type=kotlin.Nothing from='public final fun <get-c> ($context_receiver_0: <root>.A, $context_receiver_1: <root>.B): kotlin.Int declared in <root>'
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public abstract fun a (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-              $this: GET_VAR '$context_receiver_0: <root>.A declared in <root>.<get-c>' type=<root>.A origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '$context_receiver_0: <root>.A declared in <root>.<get-c>' type=<root>.A origin=null
             other: CALL 'public abstract fun b (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
-              $this: GET_VAR '$context_receiver_1: <root>.B declared in <root>.<get-c>' type=<root>.B origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '$context_receiver_1: <root>.B declared in <root>.<get-c>' type=<root>.B origin=null

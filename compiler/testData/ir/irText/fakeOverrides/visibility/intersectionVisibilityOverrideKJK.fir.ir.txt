@@ -32,9 +32,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinDefault
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.JavaDefault; <root>.KotlinPrivate]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -120,9 +120,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-a> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=null
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.JavaDefault; <root>.KotlinProtected]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -156,9 +156,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'protected open fun <get-a> (): kotlin.Int declared in <root>.D' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.D declared in <root>.D.test' type=<root>.D origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.D declared in <root>.D.test' type=<root>.D origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.D declared in <root>.D.test' type=<root>.D origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.D declared in <root>.D.test' type=<root>.D origin=null
     PROPERTY name:a visibility:protected modality:OPEN [val]
       overridden:
         protected open a: kotlin.Int declared in <root>.KotlinProtected
@@ -203,9 +203,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.E' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.E declared in <root>.E.test' type=<root>.E origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.E declared in <root>.E.test' type=<root>.E origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.E' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.E declared in <root>.E.test' type=<root>.E origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.E declared in <root>.E.test' type=<root>.E origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinPublic
@@ -250,9 +250,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.F' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.F declared in <root>.F.test' type=<root>.F origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.F declared in <root>.F.test' type=<root>.F origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.F declared in <root>.F.test' type=<root>.F origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.F declared in <root>.F.test' type=<root>.F origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         internal open a: kotlin.Int declared in <root>.KotlinInternal
@@ -295,9 +295,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.G' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.G declared in <root>.G.test' type=<root>.G origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.G declared in <root>.G.test' type=<root>.G origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.G declared in <root>.G.test' type=<root>.G origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.G declared in <root>.G.test' type=<root>.G origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinDefault
@@ -338,9 +338,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.H' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.H declared in <root>.H.test' type=<root>.H origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.H declared in <root>.H.test' type=<root>.H origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.H declared in <root>.H.test' type=<root>.H origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.H declared in <root>.H.test' type=<root>.H origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinDefault
@@ -405,9 +405,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.J' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.J declared in <root>.J.test' type=<root>.J origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.J declared in <root>.J.test' type=<root>.J origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.J declared in <root>.J.test' type=<root>.J origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.J declared in <root>.J.test' type=<root>.J origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinPublic
@@ -448,9 +448,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.K' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.K declared in <root>.K.test' type=<root>.K origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.K declared in <root>.K.test' type=<root>.K origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.K' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.K declared in <root>.K.test' type=<root>.K origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.K declared in <root>.K.test' type=<root>.K origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinPublic
@@ -557,9 +557,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.L' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.L declared in <root>.L.test' type=<root>.L origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.L declared in <root>.L.test' type=<root>.L origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.L' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.L declared in <root>.L.test' type=<root>.L origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.L declared in <root>.L.test' type=<root>.L origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
         protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
@@ -605,9 +605,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int superQualifierSymbol=<root>.M origin=null
-            receiver: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=IMPLICIT_ARGUMENT
+            receiver: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=null
         CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
         protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
@@ -654,9 +654,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-a> (): kotlin.Int declared in <root>.N' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.N declared in <root>.N.test' type=<root>.N origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.N declared in <root>.N.test' type=<root>.N origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.N' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.N declared in <root>.N.test' type=<root>.N origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.N declared in <root>.N.test' type=<root>.N origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
         protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
@@ -693,9 +693,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.O declared in <root>.O.test' type=<root>.O origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.O declared in <root>.O.test' type=<root>.O origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.O declared in <root>.O.test' type=<root>.O origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.O declared in <root>.O.test' type=<root>.O origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
         protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
@@ -743,9 +743,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.P declared in <root>.P.test' type=<root>.P origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.P declared in <root>.P.test' type=<root>.P origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.P' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.P declared in <root>.P.test' type=<root>.P origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.P declared in <root>.P.test' type=<root>.P origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinDefault
@@ -800,9 +800,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-a> (): kotlin.Int declared in <root>.Q' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Q declared in <root>.Q.test' type=<root>.Q origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Q declared in <root>.Q.test' type=<root>.Q origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.Q' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.Q declared in <root>.Q.test' type=<root>.Q origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.Q declared in <root>.Q.test' type=<root>.Q origin=null
   CLASS CLASS name:R modality:FINAL visibility:public superTypes:[<root>.JavaPublic; <root>.KotlinProtected]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.R
     CONSTRUCTOR visibility:public <> () returnType:<root>.R [primary]
@@ -836,9 +836,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'protected open fun <get-a> (): kotlin.Int declared in <root>.R' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.R declared in <root>.R.test' type=<root>.R origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.R declared in <root>.R.test' type=<root>.R origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.R' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.R declared in <root>.R.test' type=<root>.R origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.R declared in <root>.R.test' type=<root>.R origin=null
     PROPERTY name:a visibility:protected modality:OPEN [val]
       overridden:
         protected open a: kotlin.Int declared in <root>.KotlinProtected
@@ -883,9 +883,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.S' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.S declared in <root>.S.test' type=<root>.S origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.S declared in <root>.S.test' type=<root>.S origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.S' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.S declared in <root>.S.test' type=<root>.S origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.S declared in <root>.S.test' type=<root>.S origin=null
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinPublic
@@ -930,9 +930,9 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'internal open fun <get-a> (): kotlin.Int declared in <root>.T' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.T declared in <root>.T.test' type=<root>.T origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.T declared in <root>.T.test' type=<root>.T origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.T' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.T declared in <root>.T.test' type=<root>.T origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.T declared in <root>.T.test' type=<root>.T origin=null
     PROPERTY name:a visibility:internal modality:OPEN [val]
       overridden:
         internal open a: kotlin.Int declared in <root>.KotlinInternal

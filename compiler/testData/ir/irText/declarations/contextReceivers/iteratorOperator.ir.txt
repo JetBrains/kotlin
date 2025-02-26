@@ -234,9 +234,9 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
           CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
             arg0: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Counter' type=kotlin.Int origin=GET_PROPERTY
               $this: CALL 'private final fun <get-counter> (): <root>.Counter declared in <root>.CounterIterator' type=<root>.Counter origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator.hasNext' type=<root>.CounterIterator origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator.hasNext' type=<root>.CounterIterator origin=null
             arg1: CALL 'public final fun <get-max> (): kotlin.Int declared in <root>.CounterConfig' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.CounterConfig visibility:private [final] declared in <root>.CounterIterator' type=<root>.CounterConfig origin=IMPLICIT_ARGUMENT
+              $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.CounterConfig visibility:private [final] declared in <root>.CounterIterator' type=<root>.CounterConfig origin=null
                 receiver: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator.hasNext' type=<root>.CounterIterator origin=null
     FUN name:next visibility:public modality:OPEN <> ($this:<root>.CounterIterator) returnType:kotlin.Int [operator]
       overridden:
@@ -247,7 +247,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Counter [val]
               CALL 'private final fun <get-counter> (): <root>.Counter declared in <root>.CounterIterator' type=<root>.Counter origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator.next' type=<root>.CounterIterator origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator.next' type=<root>.CounterIterator origin=null
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
               VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
                 CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Counter' type=kotlin.Int origin=POSTFIX_INCR
@@ -273,7 +273,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
                 VAR FOR_LOOP_ITERATOR name:tmp_4 type:<root>.CounterIterator [val]
                   CALL 'public final fun iterator ($context_receiver_0: <root>.CounterConfig): <root>.CounterIterator declared in <root>' type=<root>.CounterIterator origin=FOR_LOOP_ITERATOR
                     $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Counter' type=<root>.Counter origin=null
-                    $context_receiver_0: GET_VAR '$this$with: <root>.CounterConfig declared in <root>.box.<anonymous>' type=<root>.CounterConfig origin=IMPLICIT_ARGUMENT
+                    $context_receiver_0: GET_VAR '$this$with: <root>.CounterConfig declared in <root>.box.<anonymous>' type=<root>.CounterConfig origin=null
                 WHILE label=null origin=FOR_LOOP_INNER_WHILE
                   condition: CALL 'public open fun hasNext (): kotlin.Boolean declared in <root>.CounterIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
                     $this: GET_VAR 'val tmp_4: <root>.CounterIterator declared in <root>.box.<anonymous>' type=<root>.CounterIterator origin=null
@@ -312,5 +312,5 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.CounterIterator declared in <root>.iterator'
                   CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: <root>.CounterConfig, counter: <root>.Counter) declared in <root>.CounterIterator' type=<root>.CounterIterator origin=null
-                    $context_receiver_0: GET_VAR '$this$with: <root>.CounterConfig declared in <root>.iterator.<anonymous>' type=<root>.CounterConfig origin=IMPLICIT_ARGUMENT
+                    $context_receiver_0: GET_VAR '$this$with: <root>.CounterConfig declared in <root>.iterator.<anonymous>' type=<root>.CounterConfig origin=null
                     counter: GET_VAR '<this>: <root>.Counter declared in <root>.iterator' type=<root>.Counter origin=null

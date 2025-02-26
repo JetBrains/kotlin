@@ -368,33 +368,33 @@ FILE fqName:<root> fileName:/main.kt
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public abstract fun externalInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=null
                   a: CONST Int type=kotlin.Int value=42
               CALL 'public abstract fun <set-externalInterfaceVar> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=null
                 <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public abstract fun <get-externalInterfaceVar> (): kotlin.String declared in <root>.ExternalInterface' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=null
               CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
                 <T>: <root>.ExternalInterface.NestedInterface
                 <R>: kotlin.Unit
                 receiver: CALL 'public abstract fun getNestedInterface (): <root>.ExternalInterface.NestedInterface declared in <root>.ExternalInterface' type=<root>.ExternalInterface.NestedInterface origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalInterface declared in <root>.main.<anonymous>' type=<root>.ExternalInterface origin=null
                 block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface.NestedInterface, kotlin.Unit> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalInterface.NestedInterface) returnType:kotlin.Unit
                     $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalInterface.NestedInterface
                     BLOCK_BODY
                       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                         message: CALL 'public abstract fun nestedInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface.NestedInterface' type=kotlin.String origin=null
-                          $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
+                          $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=null
                           a: CONST Int type=kotlin.Int value=42
                       CALL 'public abstract fun <set-nestedInterfaceVar> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface.NestedInterface' type=kotlin.Unit origin=EQ
-                        $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
+                        $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=null
                         <set-?>: CONST String type=kotlin.String value="a"
                       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                         message: CALL 'public abstract fun <get-nestedInterfaceVar> (): kotlin.String declared in <root>.ExternalInterface.NestedInterface' type=kotlin.String origin=GET_PROPERTY
-                          $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=IMPLICIT_ARGUMENT
+                          $this: GET_VAR '$this$with: <root>.ExternalInterface.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalInterface.NestedInterface origin=null
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
         <T>: <root>.ExternalInterface.Companion
         <R>: kotlin.Unit
@@ -405,20 +405,20 @@ FILE fqName:<root> fileName:/main.kt
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun companionObjectFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=null
                   a: CONST Int type=kotlin.Int value=42
               CALL 'public final fun <set-companionObjectVar1> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface.Companion' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=null
                 <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun <get-companionObjectVar1> (): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=null
               CALL 'public final fun <set-companionObjectVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalInterface.Companion' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=null
                 value: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun <get-companionObjectVar2> (): kotlin.String declared in <root>.ExternalInterface.Companion' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalInterface.Companion declared in <root>.main.<anonymous>' type=<root>.ExternalInterface.Companion origin=null
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
         <T>: <root>.ExternalClass
         <R>: kotlin.Unit
@@ -429,39 +429,39 @@ FILE fqName:<root> fileName:/main.kt
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun externalClassFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=null
                   a: CONST Int type=kotlin.Int value=42
               CALL 'public final fun <set-externalClassVar1> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalClass' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=null
                 <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun <get-externalClassVar1> (): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=null
               CALL 'public final fun <set-externalClassVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=null
                 value: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun <get-externalClassVar2> (): kotlin.String declared in <root>.ExternalClass' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=null
               CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
                 <T>: <root>.ExternalClass.NestedInterface
                 <R>: kotlin.Unit
                 receiver: CALL 'public final fun getNestedInterface (): <root>.ExternalClass.NestedInterface declared in <root>.ExternalClass' type=<root>.ExternalClass.NestedInterface origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass origin=null
                 block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass.NestedInterface, kotlin.Unit> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalClass.NestedInterface) returnType:kotlin.Unit
                     $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalClass.NestedInterface
                     BLOCK_BODY
                       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                         message: CALL 'public abstract fun nestedInterfaceFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedInterface' type=kotlin.String origin=null
-                          $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
+                          $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=null
                           a: CONST Int type=kotlin.Int value=42
                       CALL 'public abstract fun <set-nestedInterfaceVar> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedInterface' type=kotlin.Unit origin=EQ
-                        $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
+                        $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=null
                         <set-?>: CONST String type=kotlin.String value="a"
                       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                         message: CALL 'public abstract fun <get-nestedInterfaceVar> (): kotlin.String declared in <root>.ExternalClass.NestedInterface' type=kotlin.String origin=GET_PROPERTY
-                          $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=IMPLICIT_ARGUMENT
+                          $this: GET_VAR '$this$with: <root>.ExternalClass.NestedInterface declared in <root>.main.<anonymous>.<anonymous>' type=<root>.ExternalClass.NestedInterface origin=null
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
         <T>: <root>.ExternalClass.NestedClass
         <R>: kotlin.Unit
@@ -472,20 +472,20 @@ FILE fqName:<root> fileName:/main.kt
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun nestedClassFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=null
                   a: CONST Int type=kotlin.Int value=42
               CALL 'public final fun <set-nestedClassVar1> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedClass' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=null
                 <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun <get-nestedClassVar1> (): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=null
               CALL 'public final fun <set-nestedClassVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedClass' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=null
                 value: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun <get-nestedClassVar2> (): kotlin.String declared in <root>.ExternalClass.NestedClass' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedClass declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedClass origin=null
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
         <T>: <root>.ExternalClass.NestedObject
         <R>: kotlin.Unit
@@ -496,17 +496,17 @@ FILE fqName:<root> fileName:/main.kt
             BLOCK_BODY
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun nestedObjectFun (a: kotlin.Int): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=null
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=null
                   a: CONST Int type=kotlin.Int value=42
               CALL 'public final fun <set-nestedObjectVar1> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedObject' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=null
                 <set-?>: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun <get-nestedObjectVar1> (): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=null
               CALL 'public final fun <set-nestedObjectVar2> (value: kotlin.String): kotlin.Unit declared in <root>.ExternalClass.NestedObject' type=kotlin.Unit origin=EQ
-                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=null
                 value: CONST String type=kotlin.String value="a"
               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                 message: CALL 'public final fun <get-nestedObjectVar2> (): kotlin.String declared in <root>.ExternalClass.NestedObject' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '$this$with: <root>.ExternalClass.NestedObject declared in <root>.main.<anonymous>' type=<root>.ExternalClass.NestedObject origin=null

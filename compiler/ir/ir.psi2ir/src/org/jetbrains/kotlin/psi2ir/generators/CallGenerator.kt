@@ -167,9 +167,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 this.dispatchReceiver = dispatchReceiver?.load()
                 this.extensionReceiver = extensionReceiver?.load()
             }
-            val contextReceivers = contextReceivers.map { it.load() }
-            updateOriginForImplicitReceivers(call.original, irCall.dispatchReceiver, contextReceivers, irCall.extensionReceiver)
-            addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType, contextReceivers)
+            addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType, contextReceivers.map { it.load() })
         }
 
     fun generateEnumConstructorSuperCall(startOffset: Int, endOffset: Int, call: CallBuilder): IrExpression {
@@ -193,7 +191,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 hasExtensionReceiver = descriptor.extensionReceiverParameter != null,
             )
             context.callToSubstitutedDescriptorMap[irCall] = constructorDescriptor
-            updateOriginForImplicitReceivers(call.original, dispatchReceiver, emptyList(), extensionReceiver)
             addParametersToCall(startOffset, endOffset, call, irCall, irCall.type, emptyList())
         }
     }
@@ -258,7 +255,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                             dispatchReceiver = dispatchReceiverValue?.load()
                             extensionReceiver = extensionReceiverValue?.load()
                             val contextReceivers = contextReceiverValues.map { it.load() }
-                            updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
                             addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
                         }
                     }
@@ -308,7 +304,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 dispatchReceiver = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
                 val contextReceivers = contextReceiverValues.map { it.load() }
-                updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
                 addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
             }
         }
@@ -337,7 +332,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                     dispatchReceiver = dispatchReceiverValue?.load()
                     extensionReceiver = extensionReceiverValue?.load()
                     val contextReceivers = contextReceiverValues.map { it.load() }
-                    updateOriginForImplicitReceivers(call.original, dispatchReceiver, contextReceivers, extensionReceiver)
                     addParametersToCall(startOffset, endOffset, call, this, type, contextReceivers)
                 }
             }
@@ -424,30 +418,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 irCall.putValueArgument(index + contextReceivers.size, valueArgument)
             }
             irCall
-        }
-    }
-
-    private fun updateOriginForImplicitReceivers(
-        resolvedCall: ResolvedCall<*>,
-        dispatchReceiver: IrExpression?,
-        contextReceivers: List<IrExpression>,
-        extensionReceiver: IrExpression?,
-    ) {
-        fun IrExpression.setImplicit() {
-            when (this) {
-                is IrGetValue -> origin = IrStatementOrigin.IMPLICIT_ARGUMENT
-                is IrGetField -> origin = IrStatementOrigin.IMPLICIT_ARGUMENT
-            }
-        }
-
-        if (dispatchReceiver != null && !resolvedCall.explicitReceiverKind.isDispatchReceiver) {
-            dispatchReceiver.setImplicit()
-        }
-        for (expression in contextReceivers) {
-            expression.setImplicit()
-        }
-        if (extensionReceiver != null && !resolvedCall.explicitReceiverKind.isExtensionReceiver) {
-            extensionReceiver.setImplicit()
         }
     }
 

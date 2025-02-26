@@ -92,18 +92,18 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=null
             $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-b> (): kotlin.String declared in <root>.B' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=null
             $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2' type=<root>.Java2 origin=null
         CALL 'public open fun foo (a: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=null
           $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
           a: CONST Int type=kotlin.Int value=1
         CALL 'public open fun bar (a: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.B declared in <root>.B.test' type=<root>.B origin=null
           $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2' type=<root>.Java2 origin=null
           a: CONST Int type=kotlin.Int value=1
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
@@ -176,18 +176,18 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=null
             $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-b> (): kotlin.String declared in <root>.C' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=null
             $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2' type=<root>.Java2 origin=null
         CALL 'public open fun foo (a: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=null
           $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
           a: CONST Int type=kotlin.Int value=1
         CALL 'public open fun bar (a: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.C declared in <root>.C.test' type=<root>.C origin=null
           $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2' type=<root>.Java2 origin=null
           a: CONST Int type=kotlin.Int value=1
     PROPERTY name:a visibility:public modality:OPEN [var]

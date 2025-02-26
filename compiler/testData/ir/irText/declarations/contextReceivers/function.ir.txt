@@ -41,11 +41,11 @@ FILE fqName:<root> fileName:/function.kt
             $receiver: VALUE_PARAMETER name:$this$with type:<root>.C
             BLOCK_BODY
               CALL 'public final fun foo ($context_receiver_0: <root>.C): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                $context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.bar.<anonymous>' type=<root>.C origin=IMPLICIT_ARGUMENT
+                $context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.bar.<anonymous>' type=<root>.C origin=null
   FUN name:foo visibility:public modality:FINAL <> ($context_receiver_0:<root>.C) returnType:kotlin.Unit
     contextReceiverParametersCount: 1
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.C
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_VAR '$context_receiver_0: <root>.C declared in <root>.foo' type=<root>.C origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '$context_receiver_0: <root>.C declared in <root>.foo' type=<root>.C origin=null

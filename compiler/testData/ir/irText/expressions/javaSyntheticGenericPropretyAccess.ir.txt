@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/javaSyntheticGenericPropertyAccess.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getFoo (): kotlin.Int declared in <root>.J' type=kotlin.Int origin=GET_PROPERTY
           <1>: F of <root>.test
-          $this: GET_VAR 'j: <root>.J<F of <root>.test> declared in <root>.test' type=<root>.J<F of <root>.test> origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'j: <root>.J<F of <root>.test> declared in <root>.test' type=<root>.J<F of <root>.test> origin=null
       CALL 'public open fun setFoo (x: kotlin.Int): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=EQ
         <1>: F of <root>.test
         $this: GET_VAR 'j: <root>.J<F of <root>.test> declared in <root>.test' type=<root>.J<F of <root>.test> origin=null

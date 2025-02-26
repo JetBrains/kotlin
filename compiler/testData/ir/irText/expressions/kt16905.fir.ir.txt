@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/kt16905.kt
         $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Outer.Inner'
-            $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerDerived0 modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.Inner]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/kt16905.kt
         $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Outer.Inner'
-            $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerDerived1 modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.Inner]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:

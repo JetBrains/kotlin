@@ -25,4 +25,4 @@ FILE fqName:<root> fileName:/suppressedNonPublicCall.kt
     $receiver: VALUE_PARAMETER name:<this> type:<root>.C
     BLOCK_BODY
       CALL 'internal final fun bar (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR '<this>: <root>.C declared in <root>.foo' type=<root>.C origin=IMPLICIT_ARGUMENT
+        $this: GET_VAR '<this>: <root>.C declared in <root>.foo' type=<root>.C origin=null

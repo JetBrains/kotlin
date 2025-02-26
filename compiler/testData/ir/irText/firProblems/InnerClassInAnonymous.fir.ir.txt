@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
                 VALUE_PARAMETER name:s index:0 type:kotlin.String
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.box.<no name provided>.Base'
-                    $this: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=IMPLICIT_ARGUMENT
+                    $this: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=null
                     s: GET_VAR 's: kotlin.String declared in <root>.box.<no name provided>.Some.<init>' type=kotlin.String origin=null
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:local [inner] superTypes:[<root>.box.<no name provided>.Base]' type=kotlin.Unit
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -77,9 +77,9 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
                   RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.String declared in <root>.box.<no name provided>.Some'
                     CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
                       $this: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.box.<no name provided>.Some' type=kotlin.String origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <root>.box.<no name provided>.Some declared in <root>.box.<no name provided>.Some.bar' type=<root>.box.<no name provided>.Some origin=IMPLICIT_ARGUMENT
+                        $this: GET_VAR '<this>: <root>.box.<no name provided>.Some declared in <root>.box.<no name provided>.Some.bar' type=<root>.box.<no name provided>.Some origin=null
                       other: CALL 'public final fun <get-end> (): kotlin.String declared in <root>.box.<no name provided>' type=kotlin.String origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=IMPLICIT_ARGUMENT
+                        $this: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=null
               PROPERTY FAKE_OVERRIDE name:s visibility:public modality:FINAL [fake_override,val]
                 overridden:
                   public final s: kotlin.String declared in <root>.box.<no name provided>.Base
@@ -111,7 +111,7 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
                 RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in <root>.box.<no name provided>'
                   CALL 'public final fun bar (): kotlin.String declared in <root>.box.<no name provided>.Some' type=kotlin.String origin=null
                     $this: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.box.<no name provided>.Some' type=<root>.box.<no name provided>.Some origin=null
-                      $outer: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.foo' type=<root>.box.<no name provided> origin=IMPLICIT_ARGUMENT
+                      $outer: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.foo' type=<root>.box.<no name provided> origin=null
                       s: CONST String type=kotlin.String value="O"
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

@@ -53,7 +53,7 @@ FILE fqName:foo fileName:/main.kt
       $this: VALUE_PARAMETER name:<this> type:foo.Derived
       BLOCK_BODY
         CALL 'protected open fun foo (): kotlin.Unit declared in foo.Derived' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: foo.Derived declared in foo.Derived.box' type=foo.Derived origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: foo.Derived declared in foo.Derived.box' type=foo.Derived origin=null
         RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.Derived'
           CALL 'public final fun <get-s> (): kotlin.String declared in foo.A' type=kotlin.String origin=GET_PROPERTY
             $this: TYPE_OP type=foo.A origin=IMPLICIT_NOTNULL typeOperand=foo.A

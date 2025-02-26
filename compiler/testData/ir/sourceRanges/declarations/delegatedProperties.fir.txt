@@ -19,7 +19,7 @@
           @6:20..8:5 RETURN type=kotlin.Nothing from='public final fun <get-lazyProp> (): kotlin.Int declared in <root>.MyClass'
             @6:20..8:5 CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue [inline,operator] declared in kotlin' type=kotlin.Int origin=null
               @6:20..8:5 GET_FIELD 'FIELD PROPERTY_DELEGATE name:lazyProp$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final] declared in <root>.MyClass' type=kotlin.Lazy<kotlin.Int> origin=null
-                @6:20..8:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-lazyProp>' type=<root>.MyClass origin=IMPLICIT_ARGUMENT
+                @6:20..8:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-lazyProp>' type=<root>.MyClass origin=null
               @6:20..8:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-lazyProp>' type=<root>.MyClass origin=null
               @6:20..8:5 PROPERTY_REFERENCE 'public final lazyProp: kotlin.Int [delegated,val] declared in <root>.MyClass' field=null getter='public final fun <get-lazyProp> (): kotlin.Int declared in <root>.MyClass' setter=null type=kotlin.reflect.KProperty1<<root>.MyClass, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     @10:4..12:5 PROPERTY name:observableProp visibility:public modality:FINAL [delegated,var]
@@ -46,7 +46,7 @@
           @10:34..12:5 RETURN type=kotlin.Nothing from='public final fun <get-observableProp> (): kotlin.String declared in <root>.MyClass'
             @10:34..12:5 CALL 'public abstract fun getValue (thisRef: T of kotlin.properties.ReadWriteProperty, property: kotlin.reflect.KProperty<*>): V of kotlin.properties.ReadWriteProperty [operator] declared in kotlin.properties.ReadWriteProperty' type=kotlin.String origin=null
               @10:34..12:5 GET_FIELD 'FIELD PROPERTY_DELEGATE name:observableProp$delegate type:kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.String> visibility:private [final] declared in <root>.MyClass' type=kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.String> origin=null
-                @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-observableProp>' type=<root>.MyClass origin=IMPLICIT_ARGUMENT
+                @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-observableProp>' type=<root>.MyClass origin=null
               @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-observableProp>' type=<root>.MyClass origin=null
               @10:34..12:5 PROPERTY_REFERENCE 'public final observableProp: kotlin.String [delegated,var] declared in <root>.MyClass' field=null getter='public final fun <get-observableProp> (): kotlin.String declared in <root>.MyClass' setter='public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass' type=kotlin.reflect.KMutableProperty1<<root>.MyClass, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       @10:4..12:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<set-observableProp> visibility:public modality:FINAL <> ($this:<root>.MyClass, <set-?>:kotlin.String) returnType:kotlin.Unit
@@ -56,7 +56,7 @@
           @10:34..12:5 RETURN type=kotlin.Nothing from='public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass'
             @10:34..12:5 CALL 'public abstract fun setValue (thisRef: T of kotlin.properties.ReadWriteProperty, property: kotlin.reflect.KProperty<*>, value: V of kotlin.properties.ReadWriteProperty): kotlin.Unit [operator] declared in kotlin.properties.ReadWriteProperty' type=kotlin.Unit origin=null
               @10:34..12:5 GET_FIELD 'FIELD PROPERTY_DELEGATE name:observableProp$delegate type:kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.String> visibility:private [final] declared in <root>.MyClass' type=kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.String> origin=null
-                @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<set-observableProp>' type=<root>.MyClass origin=IMPLICIT_ARGUMENT
+                @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<set-observableProp>' type=<root>.MyClass origin=null
               @10:34..12:5 GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<set-observableProp>' type=<root>.MyClass origin=null
               @10:34..12:5 PROPERTY_REFERENCE 'public final observableProp: kotlin.String [delegated,var] declared in <root>.MyClass' field=null getter='public final fun <get-observableProp> (): kotlin.String declared in <root>.MyClass' setter='public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass' type=kotlin.reflect.KMutableProperty1<<root>.MyClass, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               @10:34..12:5 GET_VAR '<set-?>: kotlin.String declared in <root>.MyClass.<set-observableProp>' type=kotlin.String origin=null

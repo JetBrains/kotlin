@@ -55,7 +55,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value="Base2: "
             CALL 'public final fun <get-s> (): kotlin.String declared in foo.Base2Impl' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: foo.Base2Impl declared in foo.Base2Impl.bar' type=foo.Base2Impl origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: foo.Base2Impl declared in foo.Base2Impl.bar' type=foo.Base2Impl origin=null
             CONST String type=kotlin.String value=":"
             GET_VAR 'x: kotlin.String declared in foo.Base2Impl.bar' type=kotlin.String origin=null
   CLASS CLASS name:BaseImpl modality:FINAL visibility:public superTypes:[foo.Base]
@@ -99,7 +99,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value="Base: "
             CALL 'public final fun <get-s> (): kotlin.String declared in foo.BaseImpl' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: foo.BaseImpl declared in foo.BaseImpl.foo' type=foo.BaseImpl origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: foo.BaseImpl declared in foo.BaseImpl.foo' type=foo.BaseImpl origin=null
             CONST String type=kotlin.String value=":"
             GET_VAR 'x: kotlin.String declared in foo.BaseImpl.foo' type=kotlin.String origin=null
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[foo.DerivedBase; foo.Base; foo.Base2]

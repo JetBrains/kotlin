@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
           $this: CONST Double type=kotlin.Double value=0.0
           other: TYPE_OP type=kotlin.Double origin=IMPLICIT_NOTNULL typeOperand=kotlin.Double
             CALL 'public open fun null0 (): @[FlexibleNullability] kotlin.Double? declared in <root>.JavaClass' type=@[FlexibleNullability] kotlin.Double? origin=null
-              $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testKotlinCompareToPlatform' type=<root>.JavaClass origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testKotlinCompareToPlatform' type=<root>.JavaClass origin=null
   FUN name:testKotlinEqualsPlatform visibility:public modality:FINAL <> ($receiver:<root>.JavaClass) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
     BLOCK_BODY
@@ -15,14 +15,14 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
         CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Double' type=kotlin.Boolean origin=null
           $this: CONST Double type=kotlin.Double value=0.0
           other: CALL 'public open fun null0 (): @[FlexibleNullability] kotlin.Double? declared in <root>.JavaClass' type=@[FlexibleNullability] kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testKotlinEqualsPlatform' type=<root>.JavaClass origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testKotlinEqualsPlatform' type=<root>.JavaClass origin=null
   FUN name:testPlatformCompareToKotlin visibility:public modality:FINAL <> ($receiver:<root>.JavaClass) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testPlatformCompareToKotlin (): kotlin.Int declared in <root>'
         CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
           $this: CALL 'public open fun null0 (): @[FlexibleNullability] kotlin.Double? declared in <root>.JavaClass' type=@[FlexibleNullability] kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToKotlin' type=<root>.JavaClass origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToKotlin' type=<root>.JavaClass origin=null
           other: CONST Double type=kotlin.Double value=0.0
   FUN name:testPlatformCompareToPlatform visibility:public modality:FINAL <> ($receiver:<root>.JavaClass) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
@@ -30,17 +30,17 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
       RETURN type=kotlin.Nothing from='public final fun testPlatformCompareToPlatform (): kotlin.Int declared in <root>'
         CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
           $this: CALL 'public open fun null0 (): @[FlexibleNullability] kotlin.Double? declared in <root>.JavaClass' type=@[FlexibleNullability] kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToPlatform' type=<root>.JavaClass origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToPlatform' type=<root>.JavaClass origin=null
           other: TYPE_OP type=kotlin.Double origin=IMPLICIT_NOTNULL typeOperand=kotlin.Double
             CALL 'public open fun null0 (): @[FlexibleNullability] kotlin.Double? declared in <root>.JavaClass' type=@[FlexibleNullability] kotlin.Double? origin=null
-              $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToPlatform' type=<root>.JavaClass origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToPlatform' type=<root>.JavaClass origin=null
   FUN name:testPlatformEqualsKotlin visibility:public modality:FINAL <> ($receiver:<root>.JavaClass) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testPlatformEqualsKotlin (): kotlin.Boolean declared in <root>'
         CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Double' type=kotlin.Boolean origin=null
           $this: CALL 'public open fun null0 (): @[FlexibleNullability] kotlin.Double? declared in <root>.JavaClass' type=@[FlexibleNullability] kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformEqualsKotlin' type=<root>.JavaClass origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformEqualsKotlin' type=<root>.JavaClass origin=null
           other: CONST Double type=kotlin.Double value=0.0
   FUN name:testPlatformEqualsPlatform visibility:public modality:FINAL <> ($receiver:<root>.JavaClass) returnType:kotlin.Boolean
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
@@ -48,6 +48,6 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
       RETURN type=kotlin.Nothing from='public final fun testPlatformEqualsPlatform (): kotlin.Boolean declared in <root>'
         CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Double' type=kotlin.Boolean origin=null
           $this: CALL 'public open fun null0 (): @[FlexibleNullability] kotlin.Double? declared in <root>.JavaClass' type=@[FlexibleNullability] kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformEqualsPlatform' type=<root>.JavaClass origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformEqualsPlatform' type=<root>.JavaClass origin=null
           other: CALL 'public open fun null0 (): @[FlexibleNullability] kotlin.Double? declared in <root>.JavaClass' type=@[FlexibleNullability] kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformEqualsPlatform' type=<root>.JavaClass origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformEqualsPlatform' type=<root>.JavaClass origin=null

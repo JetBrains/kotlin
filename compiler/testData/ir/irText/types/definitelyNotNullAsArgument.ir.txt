@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/definitelyNotNullAsArgument.kt
           CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=TT of <root>.C origin=EXCLEXCL
             <T0>: TT of <root>.C
             arg0: CALL 'public final fun <get-t> (): TT of <root>.C declared in <root>.C' type=TT of <root>.C origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.C<TT of <root>.C> declared in <root>.C.output' type=<root>.C<TT of <root>.C> origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.C<TT of <root>.C> declared in <root>.C.output' type=<root>.C<TT of <root>.C> origin=null
   CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I<T of <root>.I>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

@@ -84,13 +84,13 @@ FILE fqName:<root> fileName:/kt69534.kt
                     if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Throwable
                       CALL 'public final fun <get-error> (): E of <root>.Sas2 declared in <root>.Sas2' type=kotlin.Any origin=GET_PROPERTY
                         $this: TYPE_OP type=<root>.Sas2<out kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Sas2<out kotlin.Any>
-                          GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=IMPLICIT_ARGUMENT
+                          GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=null
                     then: BLOCK type=kotlin.Nothing origin=null
                       THROW type=kotlin.Nothing
                         TYPE_OP type=kotlin.Throwable origin=IMPLICIT_CAST typeOperand=kotlin.Throwable
                           CALL 'public final fun <get-error> (): E of <root>.Sas2 declared in <root>.Sas2' type=kotlin.Any origin=GET_PROPERTY
                             $this: TYPE_OP type=<root>.Sas2<out kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Sas2<out kotlin.Any>
-                              GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=IMPLICIT_ARGUMENT
+                              GET_VAR '<this>: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: BLOCK type=kotlin.Nothing origin=null

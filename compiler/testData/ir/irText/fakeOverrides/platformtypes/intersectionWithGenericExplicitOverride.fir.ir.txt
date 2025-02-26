@@ -256,7 +256,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:o index:0 type:R of <root>.E
       BLOCK_BODY
         CALL 'public open fun bar (o: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java3 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.bar' type=<root>.E<R of <root>.E> origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.bar' type=<root>.E<R of <root>.E> origin=null
           o: GET_VAR 'o: R of <root>.E declared in <root>.E.bar' type=R of <root>.E origin=null
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.E<R of <root>.E>) returnType:R of <root>.E
       overridden:
@@ -267,7 +267,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): R of <root>.E declared in <root>.E'
           CALL 'public open fun foo (): @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java3 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=@[FlexibleNullability] R of <root>.E? origin=null
-            $this: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.foo' type=<root>.E<R of <root>.E> origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.foo' type=<root>.E<R of <root>.E> origin=null
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
         public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3

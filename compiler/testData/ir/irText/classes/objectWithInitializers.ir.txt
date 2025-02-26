@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null
           value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'

@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/reflectFindAnnotationOnDefaultMethodParameter.kt
             TYPE_OP type=kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>
               CALL 'public open fun getParameters (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>? declared in java.lang.reflect.Method' type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Parameter?>? origin=GET_PROPERTY
                 $this: TYPE_OP type=java.lang.reflect.Method origin=IMPLICIT_NOTNULL typeOperand=java.lang.reflect.Method
-                  GET_VAR 'val method: @[FlexibleNullability] java.lang.reflect.Method? declared in <root>.box' type=@[FlexibleNullability] java.lang.reflect.Method? origin=IMPLICIT_ARGUMENT
+                  GET_VAR 'val method: @[FlexibleNullability] java.lang.reflect.Method? declared in <root>.box' type=@[FlexibleNullability] java.lang.reflect.Method? origin=null
           index: CONST Int type=kotlin.Int value=0
       VAR name:size type:kotlin.Int [val]
         CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/reflectFindAnnotationOnDefaultMethodParameter.kt
             TYPE_OP type=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>
               CALL 'public open fun getAnnotations (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? declared in java.lang.reflect.Parameter' type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? origin=GET_PROPERTY
                 $this: TYPE_OP type=java.lang.reflect.Parameter origin=IMPLICIT_NOTNULL typeOperand=java.lang.reflect.Parameter
-                  GET_VAR 'val parameter: @[FlexibleNullability] java.lang.reflect.Parameter? declared in <root>.box' type=@[FlexibleNullability] java.lang.reflect.Parameter? origin=IMPLICIT_ARGUMENT
+                  GET_VAR 'val parameter: @[FlexibleNullability] java.lang.reflect.Parameter? declared in <root>.box' type=@[FlexibleNullability] java.lang.reflect.Parameter? origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ

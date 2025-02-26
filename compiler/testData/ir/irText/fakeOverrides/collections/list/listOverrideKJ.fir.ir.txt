@@ -566,7 +566,7 @@ FILE fqName:<root> fileName:/1.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.C'
             CALL 'public open fun <get-size> (): kotlin.Int declared in java.util.LinkedList' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:LinkedList modality:OPEN visibility:public superTypes:[java.util.AbstractSequentialList<@[FlexibleNullability] E of java.util.LinkedList?>; java.util.Deque<@[FlexibleNullability] E of java.util.LinkedList?>; kotlin.Cloneable; java.io.Serializable; kotlin.collections.MutableList<E of java.util.LinkedList>]' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.C declared in <root>.C.<get-size>' type=<root>.C origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.C declared in <root>.C.<get-size>' type=<root>.C origin=null
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[java.util.LinkedList<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]

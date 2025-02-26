@@ -146,11 +146,11 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
                     <class: P2>: kotlin.Any?
                     p1: TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
                       CALL 'private final fun <get-deepO> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' type=kotlin.Any? origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=IMPLICIT_ARGUMENT
+                        $this: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
                         $receiver: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
                     p2: TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
                       CALL 'private final fun <get-deepK> (): kotlin.Any? declared in <root>.additionalText$delegate.<no name provided>' type=kotlin.Any? origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=IMPLICIT_ARGUMENT
+                        $this: GET_VAR '<this>: <root>.additionalText$delegate.<no name provided><kotlin.Any?> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.additionalText$delegate.<no name provided><kotlin.Any?> origin=null
                         $receiver: GET_VAR 't: <root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> declared in <root>.additionalText$delegate.<no name provided>.getValue' type=<root>.Value<kotlin.Any?, <root>.CR<kotlin.Any?>> origin=null
             FUN name:qux11 visibility:public modality:FINAL <F11T> ($this:<root>.additionalText$delegate.<no name provided><kotlin.Any?>, t:F11T of <root>.additionalText$delegate.<no name provided>.qux11) returnType:F11T of <root>.additionalText$delegate.<no name provided>.qux11
               TYPE_PARAMETER name:F11T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -219,7 +219,7 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): R of <root>.CR declared in <root>.CR'
           CALL 'public final fun <get-r> (): R of <root>.CR declared in <root>.CR' type=R of <root>.CR origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.CR<R of <root>.CR> declared in <root>.CR.foo' type=<root>.CR<R of <root>.CR> origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.CR<R of <root>.CR> declared in <root>.CR.foo' type=<root>.CR<R of <root>.CR> origin=null
   CLASS CLASS name:P modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.P<P1 of <root>.P, P2 of <root>.P>
     TYPE_PARAMETER name:P1 index:0 variance: superTypes:[kotlin.Any?] reified:false

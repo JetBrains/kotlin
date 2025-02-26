@@ -11,4 +11,4 @@ MODULE_FRAGMENT
           BLOCK type=kotlin.String origin=null
             CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=INVOKE
               $this: CALL 'private final fun <get-lam> (): kotlin.Function0<kotlin.String> declared in <root>.EnumClass' type=kotlin.Function0<kotlin.String> origin=GET_PROPERTY
-                $this: GET_VAR 'p0: <root>.EnumClass declared in <root>.CodeFragment.run' type=<root>.EnumClass origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR 'p0: <root>.EnumClass declared in <root>.CodeFragment.run' type=<root>.EnumClass origin=null

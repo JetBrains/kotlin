@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/kt68806.kt
                                 arg1: CONST Int type=kotlin.Int value=0
                               then: BLOCK type=kotlin.Unit origin=null
                                 CALL 'public abstract fun yield (value: T of kotlin.sequences.SequenceScope): kotlin.Unit declared in kotlin.sequences.SequenceScope' type=kotlin.Unit origin=null
-                                  $this: GET_VAR '$this$sequence: kotlin.sequences.SequenceScope<kotlin.Int> declared in <root>.parse.<anonymous>' type=kotlin.sequences.SequenceScope<kotlin.Int> origin=IMPLICIT_ARGUMENT
+                                  $this: GET_VAR '$this$sequence: kotlin.sequences.SequenceScope<kotlin.Int> declared in <root>.parse.<anonymous>' type=kotlin.sequences.SequenceScope<kotlin.Int> origin=null
                                   value: CONST Int type=kotlin.Int value=1
                             BRANCH
                               if: CONST Boolean type=kotlin.Boolean value=true

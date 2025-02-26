@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/canvas.kt
           CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
             $this: CONST String type=kotlin.String value="OK"
             other: CALL 'public abstract fun <get-suffix> (): kotlin.String declared in <root>.Canvas' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '$context_receiver_0: <root>.Canvas declared in <root>.Circle.draw' type=<root>.Canvas origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '$context_receiver_0: <root>.Canvas declared in <root>.Circle.draw' type=<root>.Canvas origin=null
   CLASS INTERFACE name:Canvas modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Canvas
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -116,4 +116,4 @@ FILE fqName:<root> fileName:/canvas.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   CALL 'public open fun draw ($context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle' type=kotlin.String origin=null
                     $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Circle' type=<root>.Circle origin=null
-                    $context_receiver_0: GET_VAR '$this$with: <root>.MyCanvas declared in <root>.box.<anonymous>' type=<root>.MyCanvas origin=IMPLICIT_ARGUMENT
+                    $context_receiver_0: GET_VAR '$this$with: <root>.MyCanvas declared in <root>.box.<anonymous>' type=<root>.MyCanvas origin=null

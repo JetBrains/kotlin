@@ -50,14 +50,14 @@ FILE fqName:<root> fileName:/smartcastFromGenericToString.kt
                 <K>: kotlin.String
                 <V>: V of <root>.Some
                 $receiver: CALL 'public final fun <get-map> (): kotlin.collections.Map<kotlin.String, V of <root>.Some> declared in <root>.Some' type=kotlin.collections.Map<kotlin.String, V of <root>.Some> origin=GET_PROPERTY
-                  $this: GET_VAR '<this>: <root>.Some<V of <root>.Some> declared in <root>.Some.test' type=<root>.Some<V of <root>.Some> origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '<this>: <root>.Some<V of <root>.Some> declared in <root>.Some.test' type=<root>.Some<V of <root>.Some> origin=null
                 key: GET_VAR 'key: kotlin.String declared in <root>.Some.test' type=kotlin.String origin=null
             WHEN type=kotlin.String origin=WHEN
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
                   GET_VAR 'val value: V of <root>.Some declared in <root>.Some.test' type=V of <root>.Some origin=null
                 then: CALL 'public final fun addK (s: kotlin.String): kotlin.String declared in <root>.Some' type=kotlin.String origin=null
-                  $this: GET_VAR '<this>: <root>.Some<V of <root>.Some> declared in <root>.Some.test' type=<root>.Some<V of <root>.Some> origin=IMPLICIT_ARGUMENT
+                  $this: GET_VAR '<this>: <root>.Some<V of <root>.Some> declared in <root>.Some.test' type=<root>.Some<V of <root>.Some> origin=null
                   s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                     GET_VAR 'val value: V of <root>.Some declared in <root>.Some.test' type=V of <root>.Some origin=null
               BRANCH

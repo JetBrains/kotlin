@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                     CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.Visitor origin=EXCLEXCL
                       <T0>: <root>.Visitor
                       arg0: CALL 'public final fun loadAnnotation (): <root>.Visitor? declared in <root>.AnnotationLoader' type=<root>.Visitor? origin=null
-                        $this: GET_VAR '<this>: <root>.AnnotationLoader declared in <root>.AnnotationLoader.loadAnnotation' type=<root>.AnnotationLoader origin=IMPLICIT_ARGUMENT
+                        $this: GET_VAR '<this>: <root>.AnnotationLoader declared in <root>.AnnotationLoader.loadAnnotation' type=<root>.AnnotationLoader origin=null
                   RETURN type=kotlin.Nothing from='public open fun visitAnnotation (): <root>.Visitor? declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>'
                     BLOCK type=<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> origin=OBJECT_LITERAL
                       CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Visitor]
@@ -148,7 +148,7 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                           $this: VALUE_PARAMETER name:<this> type:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitArray.<no name provided>
                           BLOCK_BODY
                             CALL 'private final fun foo (): kotlin.Unit declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>' type=kotlin.Unit origin=null
-                              $this: GET_VAR '<this>: <root>.AnnotationLoader.loadAnnotation.<no name provided> declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitArray' type=<root>.AnnotationLoader.loadAnnotation.<no name provided> origin=IMPLICIT_ARGUMENT
+                              $this: GET_VAR '<this>: <root>.AnnotationLoader.loadAnnotation.<no name provided> declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitArray' type=<root>.AnnotationLoader.loadAnnotation.<no name provided> origin=null
                       CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitArray.<no name provided>' type=<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitArray.<no name provided> origin=OBJECT_LITERAL
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>' type=<root>.AnnotationLoader.loadAnnotation.<no name provided> origin=OBJECT_LITERAL
   CLASS INTERFACE name:Visitor modality:ABSTRACT visibility:public superTypes:[kotlin.Any]

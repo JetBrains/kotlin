@@ -319,7 +319,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:e index:0 type:kotlin.Int?
       BLOCK_BODY
         CALL 'public open fun addFirst (p0: @[FlexibleNullability] E of java.util.LinkedHashSet?): kotlin.Unit declared in java.util.LinkedHashSet' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:LinkedHashSet modality:OPEN visibility:public superTypes:[java.util.HashSet<@[FlexibleNullability] E of java.util.LinkedHashSet?>; java.util.SequencedSet<@[FlexibleNullability] E of java.util.LinkedHashSet?>; kotlin.Cloneable; java.io.Serializable; kotlin.collections.MutableSet<E of java.util.LinkedHashSet>]' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.B declared in <root>.B.addFirst' type=<root>.B origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR '<this>: <root>.B declared in <root>.B.addFirst' type=<root>.B origin=null
           p0: GET_VAR 'e: kotlin.Int? declared in <root>.B.addFirst' type=kotlin.Int? origin=null
     FUN name:reversed visibility:public modality:OPEN <> ($this:<root>.B) returnType:java.util.LinkedHashSet<kotlin.Int>
       overridden:

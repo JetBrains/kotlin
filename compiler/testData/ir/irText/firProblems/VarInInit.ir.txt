@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/VarInInit.kt
           BRANCH
             if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: CALL 'public final fun <get-foo> (): kotlin.Int declared in <root>.Some' type=kotlin.Int origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.Some declared in <root>.Some' type=<root>.Some origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '<this>: <root>.Some declared in <root>.Some' type=<root>.Some origin=null
               arg1: CONST Int type=kotlin.Int value=0
             then: BLOCK type=kotlin.Unit origin=null
               CALL 'public final fun <set-foo> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Some' type=kotlin.Unit origin=EQ

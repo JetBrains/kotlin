@@ -787,7 +787,7 @@ FILE fqName:<root> fileName:/1.kt
           $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun getB (): kotlin.String declared in <root>.E' type=kotlin.String origin=GET_PROPERTY
-          $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.String declared in <root>.E' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
@@ -805,7 +805,7 @@ FILE fqName:<root> fileName:/1.kt
           $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun getB (): kotlin.String declared in <root>.F' type=kotlin.String origin=GET_PROPERTY
-          $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=IMPLICIT_ARGUMENT
+          $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.String declared in <root>.F' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null

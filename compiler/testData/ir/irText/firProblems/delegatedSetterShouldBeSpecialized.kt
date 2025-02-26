@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_REFLECT
 
 var topLevelInt: Int = 0

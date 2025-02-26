@@ -29,4 +29,4 @@ FILE fqName:<root> fileName:/overloading.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test'
                   CALL 'public final fun foo ($context_receiver_0: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.test.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
+                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.test.<anonymous>' type=kotlin.Int origin=null

@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
         EXPRESSION_BODY
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-a> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
             other: CONST Int type=kotlin.Int value=2
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Number
         correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
         EXPRESSION_BODY
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
             other: CONST Int type=kotlin.Int value=2
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:d visibility:public modality:FINAL [val]

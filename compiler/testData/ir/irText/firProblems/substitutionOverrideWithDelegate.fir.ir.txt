@@ -93,7 +93,7 @@ FILE fqName:<root> fileName:/substitutionOverrideWithDelegate.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun invoke (value: kotlin.String): kotlin.Unit declared in <root>.A'
           CALL 'public final fun bar (value: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            $receiver: GET_VAR '<this>: <root>.A declared in <root>.A.invoke' type=<root>.A origin=IMPLICIT_ARGUMENT
+            $receiver: GET_VAR '<this>: <root>.A declared in <root>.A.invoke' type=<root>.A origin=null
             value: GET_VAR 'value: kotlin.String declared in <root>.A.invoke' type=kotlin.String origin=null
   CLASS INTERFACE name:B modality:ABSTRACT visibility:public superTypes:[<root>.A]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B<T of <root>.B>

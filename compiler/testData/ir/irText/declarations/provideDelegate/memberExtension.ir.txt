@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
       FIELD PROPERTY_DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final]
         EXPRESSION_BODY
           CALL 'public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): <root>.Host.StringDelegate declared in <root>.Host' type=<root>.Host.StringDelegate origin=null
-            $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
             $receiver: CONST String type=kotlin.String value="K"
             host: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
             p: PROPERTY_REFERENCE 'public final plusK: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
       FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CALL 'public final fun <get-plusK> (): kotlin.String declared in <root>.Host' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
             $receiver: CONST String type=kotlin.String value="O"
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.String
         correspondingProperty: PROPERTY name:ok visibility:public modality:FINAL [val]
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
               $this: GET_VAR 'receiver: kotlin.String declared in <root>.Host.StringDelegate.getValue' type=kotlin.String origin=null
               other: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.Host.StringDelegate' type=kotlin.String origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.Host.StringDelegate declared in <root>.Host.StringDelegate.getValue' type=<root>.Host.StringDelegate origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '<this>: <root>.Host.StringDelegate declared in <root>.Host.StringDelegate.getValue' type=<root>.Host.StringDelegate origin=null
     CONSTRUCTOR visibility:private <> () returnType:<root>.Host [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

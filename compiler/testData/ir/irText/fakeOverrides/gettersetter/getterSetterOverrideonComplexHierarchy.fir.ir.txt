@@ -478,7 +478,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Boolean
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Boolean visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.I declared in <root>.I.<set-b>' type=<root>.I origin=IMPLICIT_ARGUMENT
+            receiver: GET_VAR '<this>: <root>.I declared in <root>.I.<set-b>' type=<root>.I origin=null
             value: CONST Boolean type=kotlin.Boolean value=false
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
       BLOCK_BODY

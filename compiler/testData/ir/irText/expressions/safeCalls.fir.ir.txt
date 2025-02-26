@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun extLength (): kotlin.Int declared in <root>.IHost'
           CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: kotlin.String declared in <root>.IHost.extLength' type=kotlin.String origin=IMPLICIT_ARGUMENT
+            $this: GET_VAR '<this>: kotlin.String declared in <root>.IHost.extLength' type=kotlin.String origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -169,5 +169,5 @@ FILE fqName:<root> fileName:/safeCalls.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public open fun extLength (): kotlin.Int declared in <root>.IHost' type=kotlin.Int origin=null
-                $this: GET_VAR '<this>: <root>.IHost declared in <root>.test5' type=<root>.IHost origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '<this>: <root>.IHost declared in <root>.test5' type=<root>.IHost origin=null
                 $receiver: GET_VAR 'val tmp_5: kotlin.String? declared in <root>.test5' type=kotlin.String? origin=null

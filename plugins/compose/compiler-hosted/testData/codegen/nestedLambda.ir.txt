@@ -81,7 +81,7 @@ MODULE_FRAGMENT
             CALL 'public final fun mutableStateOf <T> (value: T of androidx.compose.runtime.mutableStateOf, policy: androidx.compose.runtime.SnapshotMutationPolicy<T of androidx.compose.runtime.mutableStateOf>): androidx.compose.runtime.MutableState<T of androidx.compose.runtime.mutableStateOf> declared in androidx.compose.runtime' type=androidx.compose.runtime.MutableState<home.Color> origin=null
               <T>: home.Color
               value: CALL 'private final fun <get-defaultColor> (): home.Color declared in home.DominantColorState' type=home.Color origin=GET_PROPERTY
-                $this: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState' type=home.DominantColorState origin=IMPLICIT_ARGUMENT
+                $this: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState' type=home.DominantColorState origin=null
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-color> visibility:public modality:FINAL <> ($this:home.DominantColorState) returnType:home.Color
           correspondingProperty: PROPERTY name:color visibility:public modality:FINAL [delegated,var]
           $this: VALUE_PARAMETER name:<this> type:home.DominantColorState
@@ -90,7 +90,7 @@ MODULE_FRAGMENT
               CALL 'public final fun getValue <T> (thisObj: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of androidx.compose.runtime.getValue [inline,operator] declared in androidx.compose.runtime' type=home.Color origin=null
                 <T>: home.Color
                 $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:color$delegate type:androidx.compose.runtime.MutableState<home.Color> visibility:private [final] declared in home.DominantColorState' type=androidx.compose.runtime.MutableState<home.Color> origin=null
-                  receiver: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<get-color>' type=home.DominantColorState origin=IMPLICIT_ARGUMENT
+                  receiver: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<get-color>' type=home.DominantColorState origin=null
                 thisObj: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<get-color>' type=home.DominantColorState origin=null
                 property: PROPERTY_REFERENCE 'public final color: home.Color [delegated,var] declared in home.DominantColorState' field=null getter='public final fun <get-color> (): home.Color declared in home.DominantColorState' setter='private final fun <set-color> (<set-?>: home.Color): kotlin.Unit declared in home.DominantColorState' type=kotlin.reflect.KMutableProperty1<home.DominantColorState, home.Color> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<set-color> visibility:private modality:FINAL <> ($this:home.DominantColorState, <set-?>:home.Color) returnType:kotlin.Unit
@@ -102,7 +102,7 @@ MODULE_FRAGMENT
               CALL 'public final fun setValue <T> (thisObj: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: T of androidx.compose.runtime.setValue): kotlin.Unit [inline,operator] declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                 <T>: home.Color
                 $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:color$delegate type:androidx.compose.runtime.MutableState<home.Color> visibility:private [final] declared in home.DominantColorState' type=androidx.compose.runtime.MutableState<home.Color> origin=null
-                  receiver: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<set-color>' type=home.DominantColorState origin=IMPLICIT_ARGUMENT
+                  receiver: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<set-color>' type=home.DominantColorState origin=null
                 thisObj: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<set-color>' type=home.DominantColorState origin=null
                 property: PROPERTY_REFERENCE 'public final color: home.Color [delegated,var] declared in home.DominantColorState' field=null getter='public final fun <get-color> (): home.Color declared in home.DominantColorState' setter='private final fun <set-color> (<set-?>: home.Color): kotlin.Unit declared in home.DominantColorState' type=kotlin.reflect.KMutableProperty1<home.DominantColorState, home.Color> origin=PROPERTY_REFERENCE_FOR_DELEGATE
                 value: GET_VAR '<set-?>: home.Color declared in home.DominantColorState.<set-color>' type=home.Color origin=null
