@@ -347,15 +347,15 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
-  @TestMetadata("moveToLeft.kt")
-  public void testMoveToLeft() {
-    runTest("testData/box/moveToLeft.kt");
+  @TestMetadata("moveToEnd.kt")
+  public void testMoveToEnd() {
+    runTest("testData/box/moveToEnd.kt");
   }
 
   @Test
-  @TestMetadata("moveToRight.kt")
-  public void testMoveToRight() {
-    runTest("testData/box/moveToRight.kt");
+  @TestMetadata("moveToStart.kt")
+  public void testMoveToStart() {
+    runTest("testData/box/moveToStart.kt");
   }
 
   @Test
