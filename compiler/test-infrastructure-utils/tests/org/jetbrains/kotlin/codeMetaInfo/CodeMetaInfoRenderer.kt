@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codeMetaInfo
 
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
+import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import java.io.File
 
 object CodeMetaInfoRenderer {
@@ -28,7 +29,7 @@ object CodeMetaInfoRenderer {
             builder.append(originalText)
             return
         }
-        val sortedMetaInfos = getSortedCodeMetaInfos(codeMetaInfos).groupBy { it.start }
+        val sortedMetaInfos = mergeAttributesAndSortInfos(codeMetaInfos).groupBy { it.start }
         val opened = Stack<CodeMetaInfo>()
 
         for ((i, c) in originalText.withIndex()) {
@@ -88,8 +89,35 @@ object CodeMetaInfoRenderer {
 
     private val metaInfoComparator = (compareBy<CodeMetaInfo> { it.start } then compareByDescending { it.end }) then compareBy { it.tag }
 
-    private fun getSortedCodeMetaInfos(metaInfos: Collection<CodeMetaInfo>): List<CodeMetaInfo> {
-        return metaInfos.sortedWith(metaInfoComparator)
+    private fun mergeAttributesAndSortInfos(metaInfos: Collection<CodeMetaInfo>): List<CodeMetaInfo> {
+        return mergeIdenticalInfosWithDifferentAttributes(metaInfos)
+            .sortedWith(metaInfoComparator)
+    }
+
+    private fun mergeIdenticalInfosWithDifferentAttributes(metaInfos: Collection<CodeMetaInfo>): List<CodeMetaInfo> {
+        return metaInfos.groupBy { it.start }.map { (_, withSameStart) ->
+            withSameStart.groupBy { it.end }.map { (_, withSameEnd) ->
+                withSameEnd.groupBy { it.tag }.map { (_, withSameTag) ->
+                    val visited = mutableSetOf<CodeMetaInfo>()
+                    buildList {
+                        for (info in withSameTag) {
+                            if (!visited.add(info)) continue
+                            add(info)
+                            if (info.attributes.isEmpty()) {
+                                continue
+                            }
+                            val otherInfosWithAttributes = withSameTag
+                                .filter { it.attributes.isNotEmpty() && (it !in visited || it is ParsedCodeMetaInfo && it !== info) }
+                                .onEach { visited.add(it) }
+                            val newAttributes = (listOf(info) + otherInfosWithAttributes).flatMap { it.attributes }
+                            info.attributes.clear()
+                            info.attributes.addAll(newAttributes)
+                            info.renderConfiguration.postProcessAttributes(info)
+                        }
+                    }
+                }.flatten()
+            }.flatten()
+        }.flatten()
     }
 
     private fun checkOpenedAndCloseStringIfNeeded(opened: Stack<CodeMetaInfo>, end: Int, result: StringBuilder) {

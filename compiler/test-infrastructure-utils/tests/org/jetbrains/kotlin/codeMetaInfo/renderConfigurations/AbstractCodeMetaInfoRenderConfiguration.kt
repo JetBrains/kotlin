@@ -14,6 +14,8 @@ abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean
 
     open fun getAdditionalParams(codeMetaInfo: CodeMetaInfo) = ""
 
+    open fun postProcessAttributes(codeMetaInfo: CodeMetaInfo) {}
+
     protected fun sanitizeLineMarkerTooltip(originalText: String?): String {
         if (originalText == null) return "null"
         val noHtmlTags = StringUtil.removeHtmlTags(originalText)

@@ -90,15 +90,17 @@ object CodeMetaInfoParser {
                 val attributes = it[3]?.value?.split(";") ?: emptyList()
                 val description = it[5]?.value
 
-                result.add(
+                val distinctAttributes = attributes.distinct()
+                val duplications = attributes.size - distinctAttributes.size
+                (0..duplications).mapTo(result) {
                     ParsedCodeMetaInfo(
                         openingMatchResult.startOffset,
                         closingMatchResult,
-                        attributes.toMutableList(),
+                        distinctAttributes.toMutableList(),
                         tag,
                         description
                     )
-                )
+                }
             }
         }
         return result

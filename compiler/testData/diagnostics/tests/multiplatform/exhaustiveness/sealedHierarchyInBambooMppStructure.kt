@@ -5,7 +5,7 @@
 
 // MODULE: a
 
-expect sealed <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Base<!>()
+expect sealed <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM;JVM}!>class Base<!>()
 class A : Base() // OK, A in same module with Base
 
 // MODULE: b()()(a)
