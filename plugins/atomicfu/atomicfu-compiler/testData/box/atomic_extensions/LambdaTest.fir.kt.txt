@@ -43,7 +43,7 @@ class LambdaTest {
 
   fun loopInLambda1(to: Int) {
     return <this>.inlineLambda<Int>(arg = to, block = local fun <anonymous>(arg: Int) {
-      <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+      <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
         return LambdaTest<this>::a$volatile
       }
 , action$atomicfu = local fun <anonymous>(value: Int) {
@@ -58,7 +58,7 @@ class LambdaTest {
   fun loopInLambda2(to: Int) {
     return <this>.inlineLambda<Int>(arg = to, block = local fun <anonymous>(arg1: Int) {
       <this>.inlineLambda<Int>(arg = arg1, block = local fun <anonymous>(arg2: Int) {
-        <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+        <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
           return LambdaTest<this>::a$volatile
         }
 , action$atomicfu = local fun <anonymous>(value: Int) {
@@ -75,7 +75,7 @@ class LambdaTest {
   fun loopInLambda2Ref(to: String) {
     return <this>.inlineLambda<String>(arg = to, block = local fun <anonymous>(arg1: String) {
       <this>.inlineLambda<String>(arg = arg1, block = local fun <anonymous>(arg2: String) {
-        <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <rs$volatile-getter>(): Any? {
+        <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <rs$volatile-getter>(): KMutableProperty0<Any?> {
           return LambdaTest<this>::rs$volatile
         }
 , action$atomicfu = local fun <anonymous>(value: String) {

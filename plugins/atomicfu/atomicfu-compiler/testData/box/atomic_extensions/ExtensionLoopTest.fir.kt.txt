@@ -179,7 +179,7 @@ class LoopTest {
   private inline fun extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int(handler$atomicfu: AtomicIntArray, index$atomicfu: Int, to: Int): Int {
     <this>.loop$atomicfu$ATOMIC_ARRAY$Int(handler$atomicfu = handler$atomicfu, index$atomicfu = index$atomicfu, action$atomicfu = local fun <anonymous>(cur: Int) {
       handler$atomicfu.compareAndSet(index = index$atomicfu, expectedValue = cur, newValue = to) /*~> Unit */
-      <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+      <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
         return LoopTest<this>::a$volatile
       }
 , to = 5) /*~> Unit */
@@ -191,7 +191,7 @@ class LoopTest {
   private inline fun extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int(crossinline handler$atomicfu: Function0<KMutableProperty0<Int>>, to: Int): Int {
     <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = handler$atomicfu, action$atomicfu = local fun <anonymous>(cur: Int) {
       compareAndSetField<Int>(/* <this> = handler$atomicfu.invoke(), */ expectedValue = cur, newValue = to) /*~> Unit */
-      <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+      <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
         return LoopTest<this>::a$volatile
       }
 , to = 5) /*~> Unit */
@@ -235,7 +235,7 @@ class LoopTest {
   }
 
   private inline fun casLoop(to: Int): Int {
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Int) {
@@ -248,7 +248,7 @@ class LoopTest {
   }
 
   private inline fun casLoopExpression(to: Int): Int {
-    return <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    return <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Int) {
@@ -263,23 +263,23 @@ class LoopTest {
   fun testIntExtensionLoops() {
     assertEquals<Int>(expected = 5, actual = <this>.casLoop(to = 5))
     assertEquals<Int>(expected = 6, actual = <this>.casLoopExpression(to = 6))
-    assertEquals<Int>(expected = 66, actual = <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    assertEquals<Int>(expected = 66, actual = <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , to = 66))
-    assertEquals<Int>(expected = 77, actual = <this>.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    assertEquals<Int>(expected = 77, actual = <this>.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , to = 777))
-    assertEquals<Int>(expected = 99, actual = <this>.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    assertEquals<Int>(expected = 99, actual = <this>.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , first = 88, second = 99))
-    assertEquals<Int>(expected = 5, actual = <this>.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    assertEquals<Int>(expected = 5, actual = <this>.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , to = 100))
-    assertEquals<Int>(expected = 777, actual = <this>.bar$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    assertEquals<Int>(expected = 777, actual = <this>.bar$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , delta = 100))
@@ -418,19 +418,19 @@ fun box(): String {
 }
 
 fun testTopLevelExtensionLoop() {
-  assertEquals<Int>(expected = 110, actual = topLevelExtensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+  assertEquals<Int>(expected = 110, actual = topLevelExtensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
     return ::a$volatile
   }
 , to = 100))
-  assertEquals<Long>(expected = 110L, actual = topLevelExtensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): Long {
+  assertEquals<Long>(expected = 110L, actual = topLevelExtensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): KMutableProperty0<Long> {
     return ::l$volatile
   }
 , to = 100L))
-  assertEquals<Boolean>(expected = true, actual = topLevelExtensionLoop$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): Boolean {
+  assertEquals<Boolean>(expected = true, actual = topLevelExtensionLoop$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): KMutableProperty0<Boolean> {
     return ::b$volatile
   }
 , to = true))
-  assertEquals<String>(expected = "aaattt", actual = topLevelExtensionLoop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <ref$volatile-getter>(): Any? {
+  assertEquals<String>(expected = "aaattt", actual = topLevelExtensionLoop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <ref$volatile-getter>(): KMutableProperty0<Any?> {
     return ::ref$volatile
   }
 , to = "ttt"))

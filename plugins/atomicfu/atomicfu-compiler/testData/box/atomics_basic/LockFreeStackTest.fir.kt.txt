@@ -67,7 +67,7 @@ class LockFreeStack<T : Any?> {
   }
 
   fun popLoop(): T? {
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <top$volatile-getter>(): Any? {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <top$volatile-getter>(): KMutableProperty0<Any?> {
       return LockFreeStack<this>::top$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Node<T>?) {
@@ -83,7 +83,7 @@ class LockFreeStack<T : Any?> {
 
   fun popUpdate(): T? {
     return { // BLOCK
-      val tmp_5: Node<T>? = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <top$volatile-getter>(): Any? {
+      val tmp_5: Node<T>? = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <top$volatile-getter>(): KMutableProperty0<Any?> {
         return LockFreeStack<this>::top$volatile
       }
 , action$atomicfu = local fun <anonymous>(cur: Node<T>?): Node<T>? {
@@ -104,7 +104,7 @@ class LockFreeStack<T : Any?> {
   }
 
   fun pushLoop(value: T) {
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <top$volatile-getter>(): Any? {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <top$volatile-getter>(): KMutableProperty0<Any?> {
       return LockFreeStack<this>::top$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Node<T>?) {
@@ -117,7 +117,7 @@ class LockFreeStack<T : Any?> {
   }
 
   fun pushUpdate(value: T) {
-    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <top$volatile-getter>(): Any? {
+    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <top$volatile-getter>(): KMutableProperty0<Any?> {
       return LockFreeStack<this>::top$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Node<T>?): Node<T>? {

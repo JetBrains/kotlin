@@ -132,7 +132,7 @@ class UncheckedCastTest {
   @Suppress(names = ["UNCHECKED_CAST"])
   fun testAtomicRefUncheckedCastGetAndUpdate() {
     atomicSetField<Any?>(/* <this> = UncheckedCastTest<this>::bs$volatile, */ newValue = arrayOf<Array<Box>>(elements = [arrayOf<Box>(elements = [Box(b = 1), Box(b = 2)]), arrayOf<Box>(elements = [Box(b = 3)])]))
-    val res: Array<Array<Box>> = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <bs$volatile-getter>(): Any? {
+    val res: Array<Array<Box>> = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <bs$volatile-getter>(): KMutableProperty0<Any?> {
       return UncheckedCastTest<this>::bs$volatile
     }
 , action$atomicfu = local fun <anonymous>(it: Array<Array<Box>>): Array<Array<Box>> {
@@ -146,7 +146,7 @@ class UncheckedCastTest {
   @Suppress(names = ["UNCHECKED_CAST"])
   fun testAtomicRefUncheckedCastUpdate() {
     atomicSetField<Any?>(/* <this> = UncheckedCastTest<this>::bs$volatile, */ newValue = arrayOf<Array<Box>>(elements = [arrayOf<Box>(elements = [Box(b = 1), Box(b = 2)]), arrayOf<Box>(elements = [Box(b = 3)])]))
-    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <bs$volatile-getter>(): Any? {
+    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <bs$volatile-getter>(): KMutableProperty0<Any?> {
       return UncheckedCastTest<this>::bs$volatile
     }
 , action$atomicfu = local fun <anonymous>(it: Array<Array<Box>>): Array<Array<Box>> {
@@ -160,7 +160,7 @@ class UncheckedCastTest {
   fun testAtomicRefUncheckedCastUpdateAndGet() {
     atomicSetField<Any?>(/* <this> = UncheckedCastTest<this>::bs$volatile, */ newValue = arrayOf<Array<Box>>(elements = [arrayOf<Box>(elements = [Box(b = 1), Box(b = 2)]), arrayOf<Box>(elements = [Box(b = 3)])]))
     assertEquals<Int>(expected = 2, actual = CHECK_NOT_NULL<Box>(arg0 = atomicGetField<Array<Array<Box>>>(/* <this> = UncheckedCastTest<this>::bs$volatile */) as Array<Array<Box>>.get(index = 0).get(index = 1)).<get-b>())
-    val res: Array<Array<Box>> = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <bs$volatile-getter>(): Any? {
+    val res: Array<Array<Box>> = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <bs$volatile-getter>(): KMutableProperty0<Any?> {
       return UncheckedCastTest<this>::bs$volatile
     }
 , action$atomicfu = local fun <anonymous>(it: Array<Array<Box>>): Array<Array<Box>> {
@@ -179,7 +179,7 @@ class UncheckedCastTest {
   }
 
   fun testInlineFunc() {
-    assertEquals<String>(expected = "AAA", actual = <this>.getString$atomicfu$NATIVE_PROPERTY_REF$Any<Any>(handler$atomicfu = local inline fun <s$volatile-getter>(): Any? {
+    assertEquals<String>(expected = "AAA", actual = <this>.getString$atomicfu$NATIVE_PROPERTY_REF$Any<Any>(handler$atomicfu = local inline fun <s$volatile-getter>(): KMutableProperty0<Any?> {
       return UncheckedCastTest<this>::s$volatile
     }
 ))

@@ -191,19 +191,19 @@ class ExtensionsTest {
   }
 
   fun testExtension() {
-    <this>.intExtensionArithmetic$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    <this>.intExtensionArithmetic$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return ExtensionsTest<this>::a$volatile
     }
 )
-    <this>.longExtensionArithmetic$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): Long {
+    <this>.longExtensionArithmetic$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): KMutableProperty0<Long> {
       return ExtensionsTest<this>::l$volatile
     }
 )
-    <this>.refExtension$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <s$volatile-getter>(): Any? {
+    <this>.refExtension$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <s$volatile-getter>(): KMutableProperty0<Any?> {
       return ExtensionsTest<this>::s$volatile
     }
 )
-    <this>.booleanExtensionArithmetic$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): Boolean {
+    <this>.booleanExtensionArithmetic$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): KMutableProperty0<Boolean> {
       return ExtensionsTest<this>::b$volatile
     }
 )

@@ -134,11 +134,11 @@ FILE fqName:<root> fileName:/LockFreeIntBitsTest.kt
       BLOCK_BODY
         CALL 'private final fun update$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.LockFreeIntBits' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.bitUpdate' type=<root>.LockFreeIntBits origin=null
-          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
-            FUN ATOMICFU_GENERATED_FUNCTION name:<bits$volatile-getter> visibility:local modality:FINAL returnType:kotlin.Int [inline]
+          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+            FUN ATOMICFU_GENERATED_FUNCTION name:<bits$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <bits$volatile-getter> (): kotlin.Int declared in <root>.LockFreeIntBits.bitUpdate'
-                  PROPERTY_REFERENCE 'private final bits$volatile: kotlin.Int declared in <root>.LockFreeIntBits' field='FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' getter='private final fun <get-bits$volatile> (): kotlin.Int declared in <root>.LockFreeIntBits' setter='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun <bits$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LockFreeIntBits.bitUpdate'
+                  PROPERTY_REFERENCE 'private final bits$volatile: kotlin.Int declared in <root>.LockFreeIntBits' field='FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' getter='private final fun <get-bits$volatile> (): kotlin.Int declared in <root>.LockFreeIntBits' setter='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                     ARG 1: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.bitUpdate' type=<root>.LockFreeIntBits origin=IMPLICIT_ARGUMENT
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
@@ -168,7 +168,7 @@ FILE fqName:<root> fileName:/LockFreeIntBitsTest.kt
                 ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
                   CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
                     TYPE_ARG T: kotlin.Int
-                    ARG <this>: PROPERTY_REFERENCE 'private final bits$volatile: kotlin.Int declared in <root>.LockFreeIntBits' field='FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' getter='private final fun <get-bits$volatile> (): kotlin.Int declared in <root>.LockFreeIntBits' setter='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits' type=kotlin.Int origin=null
+                    ARG <this>: PROPERTY_REFERENCE 'private final bits$volatile: kotlin.Int declared in <root>.LockFreeIntBits' field='FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' getter='private final fun <get-bits$volatile> (): kotlin.Int declared in <root>.LockFreeIntBits' setter='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                       ARG 1: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.get' type=<root>.LockFreeIntBits origin=IMPLICIT_ARGUMENT
                 ARG other: CALL 'private final fun mask (<this>: kotlin.Int): kotlin.Int declared in <root>.LockFreeIntBits' type=kotlin.Int origin=null
                   ARG <this>(index:0): GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.get' type=<root>.LockFreeIntBits origin=IMPLICIT_ARGUMENT

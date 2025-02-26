@@ -33,7 +33,7 @@ class ParameterizedInlineFunExtensionTest {
   }
 
   fun testClose() {
-    val res: String = <this>.foo$atomicfu$NATIVE_PROPERTY_REF$Any<String>(handler$atomicfu = local inline fun <tail$volatile-getter>(): Any? {
+    val res: String = <this>.foo$atomicfu$NATIVE_PROPERTY_REF$Any<String>(handler$atomicfu = local inline fun <tail$volatile-getter>(): KMutableProperty0<Any?> {
       return ParameterizedInlineFunExtensionTest<this>::tail$volatile
     }
 , res1 = "bbb", res2 = "ccc", foo = local fun <anonymous>(s: String): String {
