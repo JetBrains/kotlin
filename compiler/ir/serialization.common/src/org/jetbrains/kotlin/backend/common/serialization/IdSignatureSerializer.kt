@@ -8,18 +8,21 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.LocalFakeOverrideSignature as ProtoLocalFakeOverrideSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as ProtoFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
 import java.util.ArrayList
 
 class IdSignatureSerializer(
     private val serializeString: (String) -> Int,
     private val serializeDebugInfo: (String) -> Int,
     private val protoIdSignatureMap: MutableMap<IdSignature, Int>,
-    private val protoIdSignatureArray: ArrayList<ProtoIdSignature>
+    private val protoIdSignatureArray: ArrayList<ProtoIdSignature>,
+    private val abiCompatibilityLevel: KlibAbiCompatibilityLevel?,
 ) {
 
     private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map { serializeString(it) }
@@ -74,6 +77,20 @@ class IdSignatureSerializer(
         return proto.build()
     }
 
+    private fun serializeLocalFakeOverrideSignature(signature: IdSignature.LocalFakeOverrideSignature): ProtoLocalFakeOverrideSignature {
+        val proto = ProtoLocalFakeOverrideSignature.newBuilder()
+        proto.containerClass = protoIdSignature(signature.containingClass)
+
+        proto.hash = signature.id
+        if (signature.mask != 0L) {
+            proto.flags = signature.mask
+        }
+
+        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
+
+        return proto.build()
+    }
+
     @Suppress("UNUSED_PARAMETER")
     private fun serializeFileSignature(signature: IdSignature.FileSignature): ProtoFileSignature = ProtoFileSignature.getDefaultInstance()
 
@@ -96,6 +113,14 @@ class IdSignatureSerializer(
             is IdSignature.CompositeSignature -> proto.compositeSig = serializeCompositeSignature(idSignature)
             is IdSignature.LocalSignature -> proto.localSig = serializeLocalSignature(idSignature)
             is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature(idSignature)
+            is IdSignature.LocalFakeOverrideSignature -> {
+                if (abiCompatibilityLevel != null) {
+                    require(abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_2)) {
+                        "LocalFakeOverrideSignature serialization is not supported at ABI compatibility level $abiCompatibilityLevel"
+                    }
+                }
+                proto.fakeOverrideSig = serializeLocalFakeOverrideSignature(idSignature)
+            }
             is IdSignature.SpecialFakeOverrideSignature,
             is IdSignature.LoweredDeclarationSignature,
                 -> error("${idSignature::class.java} is not expected here")

@@ -169,7 +169,8 @@ open class IrFileSerializer(
         ::serializeString,
         ::serializeDebugInfo,
         protoIdSignatureMap,
-        protoIdSignatureArray
+        protoIdSignatureArray,
+        settings.abiCompatibilityLevel,
     )
 
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()

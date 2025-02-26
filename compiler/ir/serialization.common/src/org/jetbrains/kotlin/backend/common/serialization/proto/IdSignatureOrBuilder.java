@@ -44,6 +44,15 @@ public interface IdSignatureOrBuilder extends
   int getScopedLocalSig();
 
   /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LocalFakeOverrideSignature fake_override_sig = 8;</code>
+   */
+  boolean hasFakeOverrideSig();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LocalFakeOverrideSignature fake_override_sig = 8;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.LocalFakeOverrideSignature getFakeOverrideSig();
+
+  /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature composite_sig = 5;</code>
    */
   boolean hasCompositeSig();

@@ -18,6 +18,7 @@ class IdSignatureRenderer private constructor(private val showDescriptionForPubl
         is IdSignature.LocalSignature -> render(signature)
         is IdSignature.FileLocalSignature -> render(signature)
         is IdSignature.ScopeLocalDeclaration -> render(signature)
+        is IdSignature.LocalFakeOverrideSignature -> render(signature)
         is IdSignature.SpecialFakeOverrideSignature -> render(signature)
         is IdSignature.LoweredDeclarationSignature -> render(signature)
     }
@@ -49,6 +50,15 @@ class IdSignatureRenderer private constructor(private val showDescriptionForPubl
 
     private fun StringBuilder.render(signature: IdSignature.ScopeLocalDeclaration): StringBuilder = with(signature) {
         append('#').append(id)
+    }
+
+    private fun StringBuilder.render(signature: IdSignature.LocalFakeOverrideSignature): StringBuilder = with(signature) {
+        append("F/O[")
+        append(if (showDescriptionForPublicSignatures) signature.description ?: id else id)
+        append('[').append(mask.toString(2)).append(']')
+        append(" in ")
+        append(containingClass)
+        append("]")
     }
 
     private fun StringBuilder.render(signature: IdSignature.SpecialFakeOverrideSignature): StringBuilder =
