@@ -1155,6 +1155,12 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
+      @TestMetadata("kt75483.kt")
+      public void testKt75483() {
+        runTest("compiler/testData/codegen/box/basics/kt75483.kt");
+      }
+
+      @Test
       @TestMetadata("kt7972.kt")
       public void testKt7972() {
         runTest("compiler/testData/codegen/box/basics/kt7972.kt");
@@ -2054,6 +2060,10 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @FirPipeline()
     @Tag("klib")
     public class Bridges {
+      public Bridges() {
+        register("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+      }
+
       @Test
       @TestMetadata("abstractOverrideBridge.kt")
       public void testAbstractOverrideBridge() {
@@ -2267,7 +2277,8 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       @Test
       @TestMetadata("kt74377.kt")
       public void testKt74377() {
-        runTest("compiler/testData/codegen/box/bridges/kt74377.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+        runTest("compiler/testData/codegen/box/bridges/kt74377.kt");
       }
 
       @Test
