@@ -166,8 +166,6 @@ private fun renamePackagesInSingleFile(javaFile: File) {
     javaFile.writeText(
         javaFile.readLines().joinToString(System.lineSeparator()) { line ->
             line.replace("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
-                // Memory footprint optimizations: do not allocate too big bytes buffers that effectively remain unused
-                .replace("            unknownFieldsOutput);", "            unknownFieldsOutput, 1);")
         }
     )
 }
