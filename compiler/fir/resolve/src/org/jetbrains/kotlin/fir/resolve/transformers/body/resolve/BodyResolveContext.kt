@@ -625,17 +625,6 @@ class BodyResolveContext(
         return withContainer(replSnippet) {
             withTowerDataCleanup {
 
-                // TODO: robuster matching and error reporting on no extension (KT-72969)
-                for (resolveExt in holder.session.extensionService.replSnippetResolveExtensions) {
-                    val scope = resolveExt.getSnippetScope(replSnippet, holder.session)
-                    if (scope != null) {
-                        addNonLocalTowerDataElement(scope.asTowerDataElement(isLocal = false))
-                        break
-                    }
-                }
-
-                addLocalScope(FirLocalScope(holder.session))
-
                 replSnippet.receivers.mapIndexed { index, receiver ->
                     ImplicitReceiverValueForScriptOrSnippet(
                         receiver.symbol,
@@ -646,6 +635,15 @@ class BodyResolveContext(
                 }.asReversed().forEach {
                     val additionalLabelName = it.type.abbreviatedTypeOrSelf.labelName(holder.session)
                     addReceiver(null, it, additionalLabelName)
+                }
+
+                // TODO: robuster matching and error reporting on no extension (KT-72969)
+                for (resolveExt in holder.session.extensionService.replSnippetResolveExtensions) {
+                    val scope = resolveExt.getSnippetScope(replSnippet, holder.session)
+                    if (scope != null) {
+                        addNonLocalTowerDataElement(scope.asTowerDataElement(isLocal = false))
+                        break
+                    }
                 }
 
                 f()

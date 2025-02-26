@@ -54,6 +54,20 @@ class CustomK2ReplTest {
             }
         )
     }
+
+    @Test
+    fun testWithImplicitReceiverWithShadowing() {
+        evalAndCheckSnippets(
+            sequenceOf("val ok = 42", "ok",),
+            sequenceOf(null, 42),
+            baseCompilationConfiguration.with {
+                implicitReceivers(ReplReceiver1::class)
+            },
+            baseEvaluationConfiguration.with {
+                implicitReceivers(ReplReceiver1())
+            }
+        )
+    }
 }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =
