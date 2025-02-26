@@ -14,7 +14,7 @@ import kotlinx.serialization.encoding.Encoder
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable(with = KotlinReleaseVersionAsNameSerializer::class)
 @KeepGeneratedSerializer
-class KotlinReleaseVersion(
+data class KotlinReleaseVersion(
     val name: String,
     val major: Int,
     val minor: Int,
