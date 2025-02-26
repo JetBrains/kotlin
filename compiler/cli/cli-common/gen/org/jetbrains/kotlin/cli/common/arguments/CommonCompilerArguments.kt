@@ -917,6 +917,16 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             field = value
         }
 
+    @Argument(
+        value = "-XXlenient-mode",
+        description = "Lenient compiler mode. When actuals are missing, placeholder declarations are generated.",
+    )
+    var lenientMode: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @get:Transient
     abstract val configurator: CommonCompilerArgumentsConfigurator
 

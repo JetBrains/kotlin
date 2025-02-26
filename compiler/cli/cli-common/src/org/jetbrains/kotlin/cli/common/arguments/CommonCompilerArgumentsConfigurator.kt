@@ -39,6 +39,7 @@ open class CommonCompilerArgumentsConfigurator {
                 put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
                 put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
                 put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
+                put(AnalysisFlags.lenientMode, lenientMode)
                 fillWarningLevelMap(arguments, collector)
                 ReturnValueCheckerMode.fromString(returnValueChecker)?.also { put(AnalysisFlags.returnValueCheckerMode, it) }
                     ?: collector.report(

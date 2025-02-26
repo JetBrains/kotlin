@@ -46,6 +46,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion
     to.legacySmartCastAfterTry = from.legacySmartCastAfterTry
+    to.lenientMode = from.lenientMode
     to.listPhases = from.listPhases
     to.metadataKlib = from.metadataKlib
     to.metadataVersion = from.metadataVersion
