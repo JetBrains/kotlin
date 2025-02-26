@@ -6,9 +6,10 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertExactOutput
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -28,33 +29,19 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 snapshotInlinedClassesInDependencies = true,
             )
 
-            app.executeCompiledCode("com.example.ictest.CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("com/example/ictest/inlinedLambda.kt", "changeLambdaBody")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "com/example/ictest/inlinedLambda.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "com/example/ictest/callSite.kt")
-            }
-            app.executeCompiledCode("com.example.ictest.CallSiteKt") {
-                assertExactOutput(WITH_NEW_LAMBDA_BODY)
-            }
+            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlinedLambda.kt"))
+            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
 
             lib.replaceFileWithVersion("com/example/ictest/inlinedLambda.kt", "changeFunctionBody")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "com/example/ictest/inlinedLambda.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "com/example/ictest/callSite.kt")
-            }
-            app.executeCompiledCode("com.example.ictest.CallSiteKt") {
-                assertExactOutput(WITH_BOTH_CHANGES)
-            }
+            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlinedLambda.kt"))
+            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = WITH_BOTH_CHANGES)
         }
     }
 
@@ -65,19 +52,13 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         scenario(strategyConfig) {
             val app = module("ic-scenarios/inline-local-class/single-module/app")
 
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             app.replaceFileWithVersion("inlinedLambda.kt", "changeLambdaBody")
 
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedLambda.kt")
-                //interestingly, in this version we don't recompile the call site, but the build works.
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(WITH_NEW_LAMBDA_BODY)
-            }
+            app.compile(expectedDirtySet = setOf("inlinedLambda.kt"))
+            //interestingly, in this version we don't recompile the call site, but the build works.
+            app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
 
@@ -93,21 +74,13 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 snapshotInlinedClassesInDependencies = true,
             )
 
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "changeInnerComputation")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedLocalClass.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "callSite.kt")
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(WITH_NEW_LAMBDA_BODY)
-            }
+            lib.compile(expectedDirtySet = setOf("inlinedLocalClass.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
 
@@ -130,21 +103,13 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 snapshotInlinedClassesInDependencies = true,
             )
 
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "changeInnerComputation")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedLocalClass.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "callSite.kt")
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput("46")
-            }
+            lib.compile(expectedDirtySet = setOf("inlinedLocalClass.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = NEW_LAMBDA_BODY_WITH_DUPLICATED_LAMBDA_USAGE)
         }
     }
 
@@ -161,21 +126,13 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 snapshotInlinedClassesInDependencies = true,
             )
 
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "changeInnerComputation")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedLocalClass.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "callSite.kt")
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput("46")
-            }
+            lib.compile(expectedDirtySet = setOf("inlinedLocalClass.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = NEW_LAMBDA_BODY_WITH_DUPLICATED_LAMBDA_USAGE)
         }
     }
 
@@ -191,21 +148,13 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 snapshotInlinedClassesInDependencies = true,
             )
 
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedFunction.kt", "changeUnusedCode")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedFunction.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, setOf())
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            lib.compile(expectedDirtySet = setOf("inlinedFunction.kt"))
+            app.compile(expectedDirtySet = setOf())
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
         }
     }
 
@@ -221,24 +170,16 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 snapshotInlinedClassesInDependencies = true,
             )
 
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedB.kt", "changeLambdaInB")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedB.kt")
-                // It so happens that we don't need to recompile A.
-                // As far as IC is concerned, the compiler can do whatever it wants:
-                // the main criteria for these tests is that the expected output is generated by the built & executed app.
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "callSite.kt")
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(WITH_NEW_LAMBDA_BODY)
-            }
+            // It so happens that we don't need to recompile A.
+            // As far as IC is concerned, the compiler can do whatever it wants:
+            // the main criteria for these tests is that the expected output is generated by the built & executed app.
+            lib.compile(expectedDirtySet = setOf("inlinedB.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
 
@@ -254,21 +195,13 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 snapshotInlinedClassesInDependencies = true,
             )
 
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedProperty.kt", "changeLambdaBody")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedProperty.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, "callSite.kt")
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(WITH_NEW_LAMBDA_BODY)
-            }
+            lib.compile(expectedDirtySet = setOf("inlinedProperty.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
 
@@ -284,21 +217,13 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
                 snapshotInlinedClassesInDependencies = true,
             )
 
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedFunction.kt", "changeUnusedLambdas")
 
-            lib.compile { module, scenarioModule ->
-                assertCompiledSources(module, "inlinedFunction.kt")
-            }
-            app.compile { module, scenarioModule ->
-                assertCompiledSources(module, setOf())
-            }
-            app.executeCompiledCode("CallSiteKt") {
-                assertExactOutput(INITIAL_OUTPUT)
-            }
+            lib.compile(expectedDirtySet = setOf("inlinedFunction.kt"))
+            app.compile(expectedDirtySet = setOf())
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
         }
     }
 
@@ -306,5 +231,6 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
         const val INITIAL_OUTPUT = "42"
         const val WITH_NEW_LAMBDA_BODY = "45"
         const val WITH_BOTH_CHANGES = "48"
+        const val NEW_LAMBDA_BODY_WITH_DUPLICATED_LAMBDA_USAGE = "46"
     }
 }
