@@ -6,7 +6,9 @@ import kotlin.Boolean
 @Serializable
 class KotlinArgumentTypes {
     val kotlinVersions = KotlinVersionDetails.allKotlinVersions
-    val jvmTargets = JvmTargetDetails.allJvmTargets
+
+    @Serializable(with = AllDetailsJvmTargetSerializer::class)
+    val jvmTargets = JvmTargets.allJvmTargets
 }
 
 @Serializable
@@ -33,6 +35,6 @@ sealed interface KotlinArgumentValueType<T : Any> {
     class KotlinJvmTargetType(
         override val name: String = JvmTarget::class.simpleName!!,
         override val isNullable: Boolean = true,
-        override val defaultValue: JvmTarget? = JvmTarget.JvmTarget_1_8,
+        override val defaultValue: JvmTarget? = JvmTargets.jvm1_8
     ) : KotlinArgumentValueType<JvmTarget>
 }

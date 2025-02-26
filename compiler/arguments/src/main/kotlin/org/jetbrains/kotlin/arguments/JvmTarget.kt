@@ -6,50 +6,79 @@
 package org.jetbrains.kotlin.arguments
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonClassDiscriminator
+import kotlinx.serialization.builtins.SetSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @OptIn(ExperimentalSerializationApi::class)
-@JsonClassDiscriminator("name")
-@Serializable
-sealed class JvmTargetDetails(
-    val addedInVersion: KotlinReleaseVersion,
-    val deprecatedInVersion: KotlinReleaseVersion? = null,
-    val removedInVersion: KotlinReleaseVersion? = null,
-) {
+@Serializable(with = KotlinJvmTargetAsNameSerializer::class)
+@KeepGeneratedSerializer
+data class JvmTarget(
+    val name: String,
+    override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle
+) : WithKotlinReleaseVersionsMetadata
 
-    @Serializable
-    @SerialName("1.6")
-    class JvmTargetDetails16 : JvmTargetDetails(
-        addedInVersion = KotlinReleaseVersions.v1_4_0,
-        deprecatedInVersion = KotlinReleaseVersions.v1_9_20,
-        removedInVersion = KotlinReleaseVersions.v2_0_0,
-    )
-
-    @Serializable
-    @SerialName("1.8")
-    class JvmTargetDetails18 : JvmTargetDetails(
-        addedInVersion = KotlinReleaseVersions.v1_4_0
-    )
-
-    companion object {
-        val allJvmTargets = listOf(
-            JvmTargetDetails16(),
-            JvmTargetDetails18(),
+object JvmTargets {
+    val jvm1_6 = JvmTarget(
+        name = "1.6",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersions.v1_4_0,
+            stabilizedVersion = KotlinReleaseVersions.v1_4_0,
+            deprecatedVersion = KotlinReleaseVersions.v1_9_20,
+            removedVersion = KotlinReleaseVersions.v2_0_0
         )
+    )
+    val jvm1_8 = JvmTarget(
+        name = "1.8",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersions.v1_4_0,
+            stabilizedVersion = KotlinReleaseVersions.v1_4_0,
+        )
+    )
+
+    val allJvmTargets = setOf(
+        jvm1_6,
+        jvm1_8,
+    )
+}
+
+object KotlinJvmTargetAsNameSerializer : KSerializer<JvmTarget> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        serialName = "org.jetbrains.kotlin.arguments.JvmTarget",
+        kind = PrimitiveKind.STRING,
+    )
+
+    override fun serialize(
+        encoder: Encoder,
+        value: JvmTarget
+    ) {
+        encoder.encodeString(value.name)
+    }
+
+    override fun deserialize(decoder: Decoder): JvmTarget {
+        val jvmTargetName = decoder.decodeString()
+        return JvmTargets.allJvmTargets.single { jvmTarget -> jvmTarget.name == jvmTargetName }
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
-@JsonClassDiscriminator("name")
-@Serializable
-sealed class JvmTarget(val details: JvmTargetDetails) {
-    @Serializable
-    @SerialName("1.6")
-    object JvmTarget_1_6 : JvmTarget(JvmTargetDetails.JvmTargetDetails16())
+object AllDetailsJvmTargetSerializer : KSerializer<Set<JvmTarget>> {
+    private val delegateSerializer: KSerializer<Set<JvmTarget>> = SetSerializer(JvmTarget.generatedSerializer())
+    override val descriptor: SerialDescriptor = delegateSerializer.descriptor
 
-    @Serializable
-    @SerialName("1.8")
-    object JvmTarget_1_8 : JvmTarget(JvmTargetDetails.JvmTargetDetails18())
+    override fun serialize(
+        encoder: Encoder,
+        value: Set<JvmTarget>,
+    ) {
+        delegateSerializer.serialize(encoder, value)
+    }
+
+    override fun deserialize(decoder: Decoder): Set<JvmTarget> {
+        return delegateSerializer.deserialize(decoder)
+    }
 }

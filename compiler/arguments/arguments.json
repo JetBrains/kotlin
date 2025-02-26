@@ -44,15 +44,21 @@
         "jvmTargets": [
             {
                 "name": "1.6",
-                "addedInVersion": "1.4.0",
-                "deprecatedInVersion": "1.9.20",
-                "removedInVersion": "2.0.0"
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.4.0",
+                    "stabilizedVersion": "1.4.0",
+                    "deprecatedVersion": "1.9.20",
+                    "removedVersion": "2.0.0"
+                }
             },
             {
                 "name": "1.8",
-                "addedInVersion": "1.4.0",
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.4.0",
+                    "stabilizedVersion": "1.4.0",
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             }
         ]
     },
@@ -235,9 +241,7 @@
                                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinJvmTargetType",
                                     "name": "JvmTarget",
                                     "isNullable": true,
-                                    "defaultValue": {
-                                        "name": "1.8"
-                                    }
+                                    "defaultValue": "1.8"
                                 },
                                 "valueDescription": "<version>",
                                 "addedInVersion": "1.4.0",
