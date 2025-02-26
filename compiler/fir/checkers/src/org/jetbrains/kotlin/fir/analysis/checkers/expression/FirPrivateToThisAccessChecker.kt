@@ -95,6 +95,11 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
                 }
             }
         }
+        for (parameter in symbol.resolvedContextParameters) {
+            if (parameter.returnTypeRef.coneType.contradictsWith(Variance.IN_VARIANCE, session)) {
+                return true
+            }
+        }
         return false
     }
 
