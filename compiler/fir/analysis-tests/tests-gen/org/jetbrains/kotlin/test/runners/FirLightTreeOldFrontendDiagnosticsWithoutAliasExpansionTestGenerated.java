@@ -96,6 +96,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Test
+    @TestMetadata("identityCheckOnJavaValueBasedWarning.kt")
+    public void testIdentityCheckOnJavaValueBasedWarning() {
+      runTest("compiler/testData/diagnostics/tests/identityCheckOnJavaValueBasedWarning.kt");
+    }
+
+    @Test
     @TestMetadata("KotlinActualAnnotationHasNoEffectInKotlin.kt")
     public void testKotlinActualAnnotationHasNoEffectInKotlin() {
       runTest("compiler/testData/diagnostics/tests/KotlinActualAnnotationHasNoEffectInKotlin.kt");
@@ -171,6 +177,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("resolutionToTypealiasInsteadOfProperty.kt")
     public void testResolutionToTypealiasInsteadOfProperty() {
       runTest("compiler/testData/diagnostics/tests/resolutionToTypealiasInsteadOfProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("synchronizedOnJavaValueBasedWarning.kt")
+    public void testSynchronizedOnJavaValueBasedWarning() {
+      runTest("compiler/testData/diagnostics/tests/synchronizedOnJavaValueBasedWarning.kt");
     }
 
     @Test

@@ -45,7 +45,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJavaGenericVarianceViolationTypeChecker,
             FirSuperCallWithDefaultsChecker,
             FirJvmSuspensionPointInsideMutexLockChecker,
-            FirJvmSynchronizedByValueClassOrPrimitiveChecker,
+            FirJvmSynchronizedByValueTypeObjectChecker,
             FirJvmInconsistentOperatorFromJavaCallChecker,
             FirJvmPolymorphicSignatureCallChecker,
             FirJvmAtomicReferenceToPrimitiveCallChecker,

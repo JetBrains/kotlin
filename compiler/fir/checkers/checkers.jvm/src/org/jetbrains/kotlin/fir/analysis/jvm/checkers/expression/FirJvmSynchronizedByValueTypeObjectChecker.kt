@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-object FirJvmSynchronizedByValueClassOrPrimitiveChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirJvmSynchronizedByValueTypeObjectChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
     private val lockParameterName = Name.identifier("lock")
 
@@ -37,6 +38,9 @@ object FirJvmSynchronizedByValueClassOrPrimitiveChecker : FirFunctionCallChecker
             val type = argument.resolvedType
             if (type.isPrimitive || type.isValueClass(context.session)) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type, context)
+            }
+            if (type.isJavaValueBasedClassAndWarningsEnabled(context.session)) {
+                reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type, context)
             }
         }
     }
