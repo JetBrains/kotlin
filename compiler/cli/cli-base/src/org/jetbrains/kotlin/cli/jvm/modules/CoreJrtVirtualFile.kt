@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.load.kotlin.FileThatCanBeCachedAcrossEntireApp
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -33,7 +34,7 @@ internal class CoreJrtVirtualFile(
     private val jdkHomePath: String,
     private val path: Path,
     private val parent: CoreJrtVirtualFile?,
-) : VirtualFile() {
+) : VirtualFile(), FileThatCanBeCachedAcrossEntireApp {
     // TODO: catch IOException?
     private val attributes: BasicFileAttributes get() = Files.readAttributes(path, BasicFileAttributes::class.java)
 
