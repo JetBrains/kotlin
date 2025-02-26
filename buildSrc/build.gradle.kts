@@ -122,8 +122,8 @@ val generateCompilerVersion by tasks.registering(VersionGenerator::class) {
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     dependsOn(generateCompilerVersion)
-    kotlinOptions.languageVersion = "1.6"
-    kotlinOptions.apiVersion = "1.6"
+    kotlinOptions.languageVersion = "1.9"
+    kotlinOptions.apiVersion = "1.9"
 }
 
 tasks.clean {
