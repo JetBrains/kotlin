@@ -10,55 +10,55 @@
 // ISSUE: KT-67804
 
 fun <E1> addFirstLast(s: MutableList<String>, e: MutableList<E1>, sa: ArrayList<String>, ea: ArrayList<E1>, ev: E1) {
-    s.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    s.addFirst(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     s.addFirst("")
-    s.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    s.addLast(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     s.addLast("")
 
-    e.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    e.addFirst(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     e.addFirst(ev)
-    e.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    e.addLast(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     e.addLast(ev)
 
-    sa.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    sa.addFirst(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     sa.addFirst("")
-    sa.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    sa.addLast(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     sa.addLast("")
 
-    ea.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    ea.addFirst(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     ea.addFirst(ev)
-    ea.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    ea.addLast(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     ea.addLast(ev)
 }
 
 fun removeFirstLastString(s: MutableList<String>) {
     var x1 = s.removeFirst()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
     var x2 = s.removeLast()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 fun <E> removeFirstLastE(s: MutableList<E>) {
     var x1 = s.removeFirst()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
     var x2 = s.removeLast()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 fun removeFirstLastArrayListString(s: ArrayList<String>) {
     var x1 = s.removeFirst()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
     var x2 = s.removeLast()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 fun <E> removeFirstLastArrayListE(s: ArrayList<E>) {
     var x1 = s.removeFirst()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
     var x2 = s.removeLast()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }

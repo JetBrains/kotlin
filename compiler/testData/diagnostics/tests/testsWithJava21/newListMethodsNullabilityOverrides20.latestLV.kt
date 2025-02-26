@@ -18,11 +18,11 @@ abstract class A1<E1> : MutableList<E1> {
 }
 
 abstract class A2<E2> : MutableList<E2> {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: E2?) {}
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: E2?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addFirst(element: E2?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addLast(element: E2?) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): E2? = super.removeFirst()
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): E2? = super.removeLast()
+    override fun removeFirst(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>E2?<!> = super.removeFirst()
+    override fun removeLast(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>E2?<!> = super.removeLast()
 }
 
 abstract class A3 : MutableList<String> {
@@ -34,11 +34,11 @@ abstract class A3 : MutableList<String> {
 }
 
 abstract class A4 : MutableList<String> {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: String?) {}
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: String?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addFirst(element: String?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addLast(element: String?) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): String? = super.removeFirst()
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): String? = super.removeLast()
+    override fun removeFirst(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.removeFirst()
+    override fun removeLast(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.removeLast()
 }
 
 abstract class A5<E5> : ArrayList<E5>() {
@@ -50,11 +50,11 @@ abstract class A5<E5> : ArrayList<E5>() {
 }
 
 abstract class A6<E6> : ArrayList<E6>()  {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: E6?) {}
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: E6?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addFirst(element: E6?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addLast(element: E6?) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): E6? = super.removeFirst()
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): E6? = super.removeLast()
+    override fun removeFirst(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>E6?<!> = super.removeFirst()
+    override fun removeLast(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>E6?<!> = super.removeLast()
 }
 
 abstract class A7 : ArrayList<String>() {
@@ -66,9 +66,9 @@ abstract class A7 : ArrayList<String>() {
 }
 
 abstract class A8 : ArrayList<String>() {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: String?) {}
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: String?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addFirst(element: String?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addLast(element: String?) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): String? = super.removeFirst()
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): String? = super.removeLast()
+    override fun removeFirst(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.removeFirst()
+    override fun removeLast(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.removeLast()
 }
