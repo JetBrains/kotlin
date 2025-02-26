@@ -635,6 +635,9 @@ private class ContextCollectorVisitor(
 
             context.withSimpleFunction(simpleFunction, holder.session) {
                 processList(simpleFunction.typeParameters)
+                onActive {
+                    process(simpleFunction.receiverParameter)
+                }
 
                 onActiveBody {
                     context.forFunctionBody(simpleFunction, holder) {
@@ -670,7 +673,13 @@ private class ContextCollectorVisitor(
 
             context.withProperty(property) {
                 processList(property.typeParameters)
-                dumpContext(property, ContextKind.BODY)
+                onActive {
+                    process(property.receiverParameter)
+                }
+
+                onActiveBody {
+                    dumpContext(property, ContextKind.BODY)
+                }
 
                 onActive {
                     context.withParameters(property, getSessionHolder(property)) {
@@ -818,6 +827,9 @@ private class ContextCollectorVisitor(
             @OptIn(PrivateForInline::class)
             context.withTypeParametersOf(anonymousFunction) {
                 processList(anonymousFunction.typeParameters)
+                onActive {
+                    process(anonymousFunction.receiverParameter)
+                }
 
                 onActiveBody {
                     context.withAnonymousFunction(anonymousFunction, bodyHolder) {
