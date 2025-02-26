@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
@@ -185,7 +184,8 @@ class NonLinkingIrInlineFunctionDeserializer(
             dummyFileSymbol,
             enqueueLocalTopLevelDeclaration = {},
             irInterner,
-            deserializePublicSymbol = ::referencePublicSymbol
+            deserializePublicSymbol = ::referencePublicSymbol,
+            createFOSymbolForLocalFO = true,
         )
 
         private val declarationDeserializer = IrDeclarationDeserializer(

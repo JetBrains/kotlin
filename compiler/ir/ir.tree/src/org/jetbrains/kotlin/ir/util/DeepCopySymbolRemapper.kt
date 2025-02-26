@@ -165,7 +165,27 @@ open class DeepCopySymbolRemapper(
         }
 
     private fun <T : IrSymbol> Map<T, T>.getReferenced(symbol: T) =
-        getOrElse(symbol) { symbol }
+        remapLocalFakeOverrideSymbol(symbol) ?: getOrElse(symbol) { symbol }
+
+    private fun <T : IrSymbol> remapLocalFakeOverrideSymbol(symbol: IrSymbol): T? {
+        if (symbol is IrFakeOverrideSymbolBase<*, *, *>) {
+            val containingClassSymbol = getReferencedClass(symbol.containingClassSymbol)
+            @Suppress("UNCHECKED_CAST")
+            return when (symbol) {
+                is IrFunctionFakeOverrideSymbol -> IrFunctionFakeOverrideSymbol(
+                    getReferencedSimpleFunction(symbol.originalSymbol), containingClassSymbol, null
+                )
+                is IrPropertyFakeOverrideSymbol -> IrPropertyFakeOverrideSymbol(
+                    getReferencedProperty(symbol.originalSymbol), containingClassSymbol, null
+                )
+                is IrFieldFakeOverrideSymbol -> IrFieldFakeOverrideSymbol(
+                    getReferencedField(symbol.originalSymbol), containingClassSymbol, null,
+                    getReferencedProperty(symbol.correspondingPropertySymbol)
+                )
+            } as T
+        }
+        return null
+    }
 
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = classes.getDeclared(symbol)
 

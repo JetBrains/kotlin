@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.signature
 
+import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
+import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrBasedKotlinManglerImpl
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -14,10 +19,13 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 
 class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
 
@@ -218,27 +226,42 @@ class FileLocalIdSignatureComputer(
         is IrValueDeclaration -> generateScopeLocalSignature(declaration.name.asString())
         is IrAnonymousInitializer -> generateScopeLocalSignature("ANON INIT")
         is IrLocalDelegatedProperty -> generateScopeLocalSignature(declaration.name.asString())
+        is IrOverridableDeclaration<*> if (declaration.isFakeOverride) -> {
+            val fakeOverriddenInClass = declaration.parent as IrClass
+            val oldFormat = run {
+                val file = fakeOverriddenInClass.getPackageFragment() as? IrFile ?: return@run false
+                val klibOrigin = file.module.descriptor.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin ?: return@run false
+                val version = klibOrigin.library.versions.abiVersion ?: return@run false
+                !version.isAtLeast(2, 2, 0)
+                        || klibOrigin.library.versions.compilerVersion == "2.2.0-dev-4719"
+            }
 
-        is IrSimpleFunction -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(declaration, compatibleMode),
-            id = if (declaration.isFakeOverride) {
-                declaration.stableIndexForFakeOverride(compatibleMode)
+            if (oldFormat) {
+                // Prior to kotlin 2.2.0, local fake overrides used FileLocalSignature, like other local declarations, but with id
+                // based on the declaration's name, instead of the location in a file.
+                // This was the solution to have a stable signature, that at the same time is predictable by the fake override builder,
+                // which does not know anything about locations in the IR file.
+                // It was changed to use a dedicated LocalFakeOverrideSignature (KT-72296), but we still need to create signatures
+                // in the old format for declarations in the fake override builder, so that they will match with deserialized signatures
+                // at call-site, if the call-site comes from an older KLib.
+                // Fortunately, since this is a local declaration, it and all its call-sites must have been compiled within the same
+                // compilation, and so with the same ABI version.
+                IdSignature.FileLocalSignature(
+                    container = computeContainerIdSignature(declaration, compatibleMode),
+                    id = mangler.run { declaration.signatureMangle(compatibleMode) },
+                )
             } else {
-                ++localIndex
-            },
-            description = declaration.render()
-        )
-
-        is IrProperty -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(declaration, compatibleMode),
-            id = if (declaration.isFakeOverride) {
-                declaration.stableIndexForFakeOverride(compatibleMode)
-            } else {
-                ++localIndex
-            },
-            description = declaration.render()
-        )
-
+                LocalFakeOverrideMangler.run {
+                    val mangledName = declaration.signatureString(compatibleMode = false)
+                    IdSignature.LocalFakeOverrideSignature(
+                        containingClass = signatureByDeclaration(fakeOverriddenInClass, compatibleMode),
+                        id = mangledName.hashMangle,
+                        mask = 0,
+                        description = mangledName,
+                    )
+                }
+            }
+        }
         else -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
             id = ++localIndex,
@@ -249,16 +272,27 @@ class FileLocalIdSignatureComputer(
     fun generateScopeLocalSignature(description: String): IdSignature =
         IdSignature.ScopeLocalDeclaration(scopeIndex++, description)
 
-    /**
-     * We shall have stable indices for local fake override functions/properties.
-     * This is necessary to be able to match the signature at the fake override call site
-     * with the fake override declaration constructed by the fake override builder component
-     * (which does not know anything about indices in the IR file).
-     *
-     * TODO: Consider using specialized signatures for local fake overrides, KT-72296
-     */
-    private fun IrOverridableDeclaration<*>.stableIndexForFakeOverride(compatibleMode: Boolean): Long =
-        mangler.run { this@stableIndexForFakeOverride.signatureMangle(compatibleMode) }
+    private object LocalFakeOverrideMangler : IrBasedKotlinManglerImpl() {
+        override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> {
+            return object : KotlinExportChecker<IrDeclaration> {
+                override fun check(declaration: IrDeclaration, type: SpecialDeclarationType): Boolean = false
+                override fun IrDeclaration.isPlatformSpecificExported(): Boolean = false
+            }
+        }
+
+        override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean) =
+            object : IrMangleComputer(
+                StringBuilder(100),
+                MangleMode.SIGNATURE,
+                compatibleMode = false,
+                allowOutOfScopeTypeParameters = true,
+            ) {
+                // Avoid including parent (the containing class) in the signature's id.
+                // It will be pointed to in the [LocalFakeOverrideSignature.containingClass] field instead.
+                override fun IrDeclaration.visitParent() {}
+                override fun IrDeclaration.visitParentForFunctionMangling() {}
+            }
+    }
 
     companion object {
         private const val START_INDEX = 0

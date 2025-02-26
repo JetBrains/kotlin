@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrFakeOverrideSymbolBase
+import org.jetbrains.kotlin.ir.symbols.impl.IrFunctionFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isFakeOverride
@@ -284,27 +286,39 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
-        val signature: IdSignature = runIf(settings.reuseExistingSignaturesForSymbols) { symbol.signature }
-            ?: when (symbol) {
-                is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
-                else -> {
-                    val symbolOwner = symbol.owner
+        val signature: IdSignature = runIf(settings.reuseExistingSignaturesForSymbols) { symbol.signature } ?: when (symbol) {
+            is IrFakeOverrideSymbolBase<*, *, *> -> {
+                val clazz = symbol.containingClassSymbol
+                val classSig = clazz.privateSignature ?: declarationTable.signatureByDeclaration(
+                    clazz.owner,
+                    compatibleMode = false,
+                    recordInSignatureClashDetector = false,
+                )
+                val memberSig = symbol.originalSymbol.privateSignature as IdSignature.LocalFakeOverrideSignature
+                IdSignature.LocalFakeOverrideSignature(
+                    classSig,
+                    memberSig.id, memberSig.mask, memberSig.description
+                )
+            }
+            is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
+            else -> {
+                val symbolOwner = symbol.owner
 
-                    // Compute the signature:
-                    when {
-                        symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
-                            symbolOwner,
-                            settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
-                            recordInSignatureClashDetector = isDeclared
-                        )
+                // Compute the signature:
+                when {
+                    symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
+                        symbolOwner,
+                        settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+                        recordInSignatureClashDetector = isDeclared
+                    )
 
-                        symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
-                            declarationTable.signatureByReturnableBlock(symbolOwner)
+                    symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
+                        declarationTable.signatureByReturnableBlock(symbolOwner)
 
-                        else -> error("Expected symbol owner: ${symbolOwner.render()}")
-                    }
+                    else -> error("Expected symbol owner: ${symbolOwner.render()}")
                 }
             }
+        }
 
         val signatureId = idSignatureSerializer.protoIdSignature(signature)
         val symbolKind = protoSymbolKind(symbol)
