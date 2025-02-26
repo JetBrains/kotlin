@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
-import kotlin.io.path.Path
+import kotlin.sequences.forEach
 
 internal class SwiftModuleBuildResults(
     val module: SirModule,
@@ -35,7 +34,7 @@ internal class SwiftModuleBuildResults(
 )
 
 internal fun KaSession.initializeSirModule(
-    moduleWithScope: ModuleWithScopeProvider,
+    moduleWithScope: KaModules,
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
     moduleProvider: SirModuleProvider,
@@ -55,7 +54,7 @@ internal fun KaSession.initializeSirModule(
     // this lines produce critical side effect
     // This will traverse every top level declaration of a given provider
     // This in turn inits every root declaration that will be consumed down the pipe by swift export
-    traverseTopLevelDeclarationsInScopes(sirSession, moduleWithScope.scopeProvider)
+    traverseTopLevelDeclarationsInScopes(sirSession, moduleWithScope.mainModule)
 
     return with(moduleProvider) {
         SwiftModuleBuildResults(
@@ -67,10 +66,9 @@ internal fun KaSession.initializeSirModule(
 
 private fun KaSession.traverseTopLevelDeclarationsInScopes(
     sirSession: StandaloneSirSession,
-    scopeProvider: KaSession.() -> List<KaScope>,
+    module: KaLibraryModule,
 ) {
-    scopeProvider().asSequence()
-        .flatMap { it.allDeclarations(sirSession, useSiteSession) }
+    KlibScope(module, useSiteSession).allDeclarations(sirSession, useSiteSession)
         .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
         .forEach { it.first.addChild { it.second } }
 }
@@ -87,36 +85,25 @@ private fun KaScope.allDeclarations(sirSession: StandaloneSirSession, kaSession:
  * [useSiteModule] is the module that should be passed to [analyze].
  * [mainModule] is the parent for declarations from [scopeProvider].
  * We have to make this difference because Analysis API is not suited to work
- * without root source module (yet?).
- * [scopeProvider] provides declarations that should be worked with.
+ * without a root source module (yet?).
  */
-internal data class ModuleWithScopeProvider(
+internal class KaModules(
     val useSiteModule: KaModule,
-    val mainModule: KaModule,
-    val scopeProvider: KaSession.() -> List<KaScope>,
+    val mainModule: KaLibraryModule,
 )
 
-internal fun createModuleWithScopeProviderFromBinary(
+internal fun createKaModulesForStandaloneAnalysis(
     input: InputModule,
-    stdLibPath: String,
     dependencies: Set<InputModule>,
-): ModuleWithScopeProvider {
+): KaModules {
     lateinit var binaryModule: KaLibraryModule
     lateinit var fakeSourceModule: KaSourceModule
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform
-
-            val stdlib = addModule(
-                buildKtLibraryModule {
-                    addBinaryRoot(Path(stdLibPath))
-                    platform = NativePlatforms.unspecifiedNativePlatform
-                    libraryName = "stdlib"
-                }
-            )
-            binaryModule = addModule(addModuleForSwiftExportConsumption(input, stdlib))
+            binaryModule = addModule(buildKaLibraryModule(input))
             val kaDeps = dependencies.map {
-                addModule(addModuleForSwiftExportConsumption(it, stdlib))
+                addModule(buildKaLibraryModule(it))
             }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
@@ -124,23 +111,18 @@ internal fun createModuleWithScopeProviderFromBinary(
                     platform = NativePlatforms.unspecifiedNativePlatform
                     moduleName = "fakeSourceModule"
                     addRegularDependency(binaryModule)
-                    addRegularDependency(stdlib)
                     kaDeps.forEach { addRegularDependency(it) }
                 }
             )
         }
     }
-    return ModuleWithScopeProvider(fakeSourceModule, binaryModule) {
-        listOf(KlibScope(binaryModule, useSiteSession))
-    }
+    return KaModules(fakeSourceModule, binaryModule)
 }
 
-private fun KtModuleProviderBuilder.addModuleForSwiftExportConsumption(
+private fun KtModuleProviderBuilder.buildKaLibraryModule(
     input: InputModule,
-    stdlib: KaLibraryModule,
 ): KaLibraryModule = buildKtLibraryModule {
     addBinaryRoot(input.path)
     platform = NativePlatforms.unspecifiedNativePlatform
     libraryName = input.name
-    addRegularDependency(stdlib)
 }
