@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
@@ -127,7 +128,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     ): WasmCompilerResult {
         val performanceManager = configuration.perfManager
         performanceManager?.let {
-            it.notifyPhaseFinished(PhaseType.Initialization)
+            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+            it.notifyCurrentPhaseFinishedIfNeeded() // TODO: KT-75227
             it.notifyPhaseStarted(PhaseType.TranslationToIr)
         }
 
