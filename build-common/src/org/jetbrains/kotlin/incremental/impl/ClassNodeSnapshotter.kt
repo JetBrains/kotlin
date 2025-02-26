@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental.impl
 
-import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
@@ -60,6 +59,10 @@ object ClassNodeSnapshotter {
         classNode.methods.sortWith(compareBy({ it.name }, { it.desc }))
     }
 
+    /**
+     * Internally snapshotter uses emptyClass() a lot, so if you want to change its name, you need to update
+     * the tests with golden class snapshots - all abi hashes would shift.
+     */
     private fun emptyClass() = ClassNode().also {
         // A name is required
         it.name = "SomeClass"

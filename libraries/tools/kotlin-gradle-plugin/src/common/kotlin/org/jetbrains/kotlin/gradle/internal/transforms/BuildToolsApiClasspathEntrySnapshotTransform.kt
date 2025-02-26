@@ -53,6 +53,9 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
 
         @get:Internal
         internal abstract val suppressVersionInconsistencyChecks: Property<Boolean>
+
+        @get:Input
+        abstract val parseInlinedLocalClasses: Property<Boolean>
     }
 
     @get:Classpath
@@ -86,11 +89,12 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
             parameters.gradleUserHomeDir.get().asFile,
             parameters.gradleReadOnlyDependenciesCacheDir.orNull?.asFile
         )
+        val parseInlinedLocalClasses = parameters.parseInlinedLocalClasses.get()
 
         val classLoader = parameters.classLoadersCachingService.get()
             .getClassLoader(parameters.classpath.toList(), SharedApiClassesClassLoaderProvider)
         val compilationService = CompilationService.loadImplementation(classLoader)
-        val snapshot = compilationService.calculateClasspathSnapshot(classpathEntryInputDirOrJar, granularity)
+        val snapshot = compilationService.calculateClasspathSnapshot(classpathEntryInputDirOrJar, granularity, parseInlinedLocalClasses)
         snapshot.saveSnapshot(snapshotOutputFile)
     }
 

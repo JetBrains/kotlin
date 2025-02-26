@@ -18,7 +18,6 @@ import org.junit.jupiter.api.DisplayName
 
 // When adding or changing tests, make sure that test sources don't have unintended changes in whitespace, copyright notices and similar things:
 // debug info is sensitive to changes in line numbers, and it's part of default inline function abiHash
-@Disabled("KT-62555")
 class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("When inlined lambda's body changes, its call site is recompiled")

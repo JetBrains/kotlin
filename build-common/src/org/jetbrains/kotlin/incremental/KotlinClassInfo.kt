@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
+import org.jetbrains.kotlin.incremental.impl.KotlinClassInfoGenerator
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -106,20 +106,10 @@ class KotlinClassInfo(
     }
 
     companion object {
+        private val defaultKotlinClassInfoGenerator = KotlinClassInfoGenerator()
 
         fun createFrom(kotlinClass: LocalFileKotlinClass): KotlinClassInfo {
-            return createFrom(kotlinClass.classId, kotlinClass.classHeader, kotlinClass.fileContents)
-        }
-
-        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
-            return KotlinClassInfo(
-                classId,
-                classHeader.kind,
-                classHeader.data ?: classHeader.incompatibleData ?: emptyArray(),
-                classHeader.strings ?: emptyArray(),
-                classHeader.multifileClassName,
-                extraInfo = ExtraClassInfoGenerator.getExtraInfo(classHeader, classContents)
-            )
+            return defaultKotlinClassInfoGenerator.createFrom(kotlinClass.classId, kotlinClass.classHeader, kotlinClass.fileContents)
         }
     }
 }

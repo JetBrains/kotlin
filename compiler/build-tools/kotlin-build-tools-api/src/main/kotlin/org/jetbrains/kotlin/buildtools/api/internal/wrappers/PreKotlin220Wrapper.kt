@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
@@ -49,6 +51,14 @@ internal class PreKotlin220Wrapper(
             sources,
             arguments
         )
+    }
+
+    override fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+        parseInlinedLocalClasses: Boolean
+    ): ClasspathEntrySnapshot {
+        return base.calculateClasspathSnapshot(classpathEntry, granularity)
     }
 }
 

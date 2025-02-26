@@ -10,22 +10,63 @@ import org.jetbrains.kotlin.incremental.KotlinClassInfo.ExtraInfo
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotClassExcludingMembers
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotMethod
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.sortClassMembers
-import org.jetbrains.kotlin.incremental.storage.DelegateDataExternalizer
-import org.jetbrains.kotlin.incremental.storage.DoubleExternalizer
-import org.jetbrains.kotlin.incremental.storage.FloatExternalizer
-import org.jetbrains.kotlin.incremental.storage.IntExternalizer
-import org.jetbrains.kotlin.incremental.storage.LongExternalizer
-import org.jetbrains.kotlin.incremental.storage.StringExternalizer
-import org.jetbrains.kotlin.incremental.storage.toByteArray
+import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.inline.inlineFunctionsAndAccessors
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
+
 internal object ExtraClassInfoGenerator {
+    fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray, context: ClassInfoGeneratorContext): ExtraInfo {
+        /**
+         * Implementation is short-lived, because in default mode it's basically nothing, and in inlined-snapshotting mode
+         * it holds class-local method-to-usages mapping (one fun can't be defined in multiple classfiles)
+         */
+        val impl = when (context) {
+            is DefaultClassInfoGeneratorContext ->
+                ExtraClassInfoGeneratorImpl.Normal()
+            is ClassInfoGeneratorContextWithLocalClassSnapshotting ->
+                ExtraClassInfoGeneratorImpl.WithInlinedClassSnapshotting(context.multiHashProvider)
+        }
+        return impl.getExtraInfo(classHeader, classContents)
+    }
+}
+
+private sealed class ExtraClassInfoGeneratorImpl() {
+    abstract fun makeClassVisitor(classNode: ClassNode): ClassVisitor
+
+    abstract fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long
+
+    class Normal() : ExtraClassInfoGeneratorImpl() {
+        override fun makeClassVisitor(classNode: ClassNode): ClassVisitor {
+            return classNode
+        }
+
+        override fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long {
+            return ownMethodHash
+        }
+    }
+
+    class WithInlinedClassSnapshotting(
+        private val classMultiHashProvider: ClassInfoGeneratorContextWithLocalClassSnapshotting.ClassMultiHashProvider
+    ) : ExtraClassInfoGeneratorImpl() {
+        private val methodToUsedFqNames = mutableMapOf<JvmMemberSignature.Method, MutableSet<JvmClassName>>()
+
+        override fun makeClassVisitor(classNode: ClassNode): ClassVisitor {
+            return InstanceOwnerRecordingClassVisitor(classNode, methodToUsedClassesMap = methodToUsedFqNames)
+        }
+
+        override fun calculateInlineMethodHash(methodSignature: JvmMemberSignature.Method, ownMethodHash: Long): Long {
+            val usedInstances = methodToUsedFqNames[methodSignature] ?: mutableSetOf()
+            return ownMethodHash xor classMultiHashProvider.searchAndGetFullAbiHashOfUsedClasses(usedInstances)
+        }
+    }
+
     fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray): ExtraInfo {
         val inlineFunctionsAndAccessors: Map<JvmMemberSignature.Method, InlineFunctionOrAccessor> =
             inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true).associateBy { it.jvmMethodSignature }
@@ -41,7 +82,7 @@ internal object ExtraClassInfoGenerator {
         //        + Do not filter out method bodies
         val classReader = ClassReader(classContents)
         val selectiveClassVisitor = SelectiveClassVisitor(
-            classNode,
+            cv = makeClassVisitor(classNode),
             shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, isConstant: Boolean ->
                 !isPrivate && isConstant
             },
@@ -86,7 +127,8 @@ internal object ExtraClassInfoGenerator {
             //     class metadata (also in the source file), but not in the bytecode. However, we can safely ignore those
             //     inline functions/accessors because they are not declared in the bytecode and therefore can't be referenced.
             val methodSignature = JvmMemberSignature.Method(name = methodNode.name, desc = methodNode.desc)
-            inlineFunctionsAndAccessors[methodSignature]!! to snapshotMethod(methodNode, classNode.version)
+            var methodHash = snapshotMethod(methodNode, classNode.version)
+            inlineFunctionsAndAccessors[methodSignature]!! to calculateInlineMethodHash(methodSignature, methodHash)
         }
 
         return ExtraInfo(classSnapshotExcludingMembers, constantSnapshots, inlineFunctionOrAccessorSnapshots)

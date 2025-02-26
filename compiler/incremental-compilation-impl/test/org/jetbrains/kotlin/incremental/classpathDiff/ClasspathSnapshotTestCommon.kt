@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFileWithContentsProvider
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.PlainClassListSnapshotter
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.test.compileJavaFiles
@@ -33,7 +36,7 @@ abstract class ClasspathSnapshotTestCommon {
         ClassSnapshotExternalizer.fromByteArray(ClassSnapshotExternalizer.toByteArray(this))
     )
 
-    sealed class SourceFile(val baseDir: File, relativePath: String) {
+    internal sealed class SourceFile(val baseDir: File, relativePath: String) {
         val unixStyleRelativePath: String
 
         init {
@@ -53,7 +56,7 @@ abstract class ClasspathSnapshotTestCommon {
     }
 
     /** Same as [SourceFile] but with a [TemporaryFolder] to store the results of operations on the [SourceFile]. */
-    open class TestSourceFile(val sourceFile: SourceFile, private val tmpDir: TemporaryFolder) {
+    internal open class TestSourceFile(val sourceFile: SourceFile, private val tmpDir: TemporaryFolder) {
 
         fun asFile() = sourceFile.asFile()
 
@@ -66,7 +69,7 @@ abstract class ClasspathSnapshotTestCommon {
         fun compileAndSnapshot() = compileSingle().snapshot()
     }
 
-    object CompileUtil {
+    internal object CompileUtil {
 
         fun SourceFile.compile(tmpDir: TemporaryFolder): List<ClassFile> {
             return if (this is KotlinSourceFile) {
@@ -169,7 +172,7 @@ abstract class ClasspathSnapshotTestCommon {
         }
     }
 
-    object ClassFileUtil {
+    internal object ClassFileUtil {
 
         // `ClassFile`s in production code could be in a jar, but the `ClassFile`s in tests are currently in a directory, so converting it
         // to a File is possible.
@@ -181,7 +184,11 @@ abstract class ClasspathSnapshotTestCommon {
 
         fun List<ClassFile>.snapshot(granularity: ClassSnapshotGranularity? = null): List<ClassSnapshot> {
             val classes = map { ClassFileWithContentsProvider(it) { it.readBytes() } }
-            return ClassSnapshotter.snapshot(classes, granularity ?: ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
+            val settings = ClasspathEntrySnapshotter.Settings(
+                granularity = granularity ?: ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
+                parseInlinedLocalClasses = false
+            )
+            return PlainClassListSnapshotter(classes, settings).snapshot()
         }
     }
 }

@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.incremental.classpathDiff
+package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
 import java.io.File
 
 /** Information about the location of a .class file. */
-class ClassFile(
+internal class ClassFile(
 
     /** Directory or jar containing the .class file. */
     val classRoot: File,
@@ -22,15 +22,11 @@ class ClassFile(
 ) {
 
     /** The Unix-style relative path (with '/' as separators) from [classRoot] to the .class file. */
-    val unixStyleRelativePath: String
-
-    init {
-        unixStyleRelativePath = File(relativePath).invariantSeparatorsPath
-    }
+    val unixStyleRelativePath: String = File(relativePath).invariantSeparatorsPath
 }
 
 /** Information about the location of a .class file ([ClassFile]) and how to load its contents. */
-class ClassFileWithContentsProvider(
+internal class ClassFileWithContentsProvider(
     val classFile: ClassFile,
     val contentsProvider: () -> ByteArray
 ) {
@@ -38,7 +34,7 @@ class ClassFileWithContentsProvider(
 }
 
 /** Information about the location of a .class file ([ClassFile]) and its contents. */
-class ClassFileWithContents(
+internal class ClassFileWithContents(
     @Suppress("unused") val classFile: ClassFile,
     val contents: ByteArray
 ) {
