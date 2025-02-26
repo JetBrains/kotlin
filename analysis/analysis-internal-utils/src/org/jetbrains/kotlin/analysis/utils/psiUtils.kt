@@ -65,5 +65,11 @@ public fun PsiClass.isLocalClass(): Boolean {
 public fun KtDeclaration.isInsideDanglingModifierList(): Boolean {
     val argument = parent as? KtValueArgument ?: return false
     val modifierList = argument.parentOfType<KtDeclarationModifierList>() ?: return false
-    return modifierList.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement
+    if (modifierList.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement) {
+        return true // top level
+    }
+    if (argument.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement) {
+        return true // class member
+    }
+    return false
 }

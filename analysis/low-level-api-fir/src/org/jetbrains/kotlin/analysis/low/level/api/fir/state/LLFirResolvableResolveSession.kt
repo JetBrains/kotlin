@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
+import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -125,16 +126,24 @@ internal class LLFirResolvableResolveSession(
     }
 
     private fun findDeclarationInSourceViaResolve(ktDeclaration: KtExpression): FirBasedSymbol<*> {
-        val firDeclaration = when (val fir = getOrBuildFirFor(ktDeclaration)) {
-            is FirDeclaration -> fir
-            is FirAnonymousFunctionExpression -> fir.anonymousFunction
-            is FirAnonymousObjectExpression -> fir.anonymousObject
-            else -> errorWithFirSpecificEntries(
+        val fir = getOrBuildFirFor(ktDeclaration)
+
+        fun error(): Nothing {
+            errorWithFirSpecificEntries(
                 "FirDeclaration was not found for ${ktDeclaration::class}, fir is ${fir?.let { it::class }}",
                 fir = fir,
                 psi = ktDeclaration,
             )
         }
+
+        val firDeclaration = when (fir) {
+            is FirDeclaration -> fir
+            is FirAnonymousFunctionExpression -> fir.anonymousFunction
+            is FirAnonymousObjectExpression -> fir.anonymousObject
+            is FirErrorExpression -> fir.nonExpressionElement as? FirDeclaration ?: error()
+            else -> error()
+        }
+
         return firDeclaration.symbol
     }
 

@@ -1254,6 +1254,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+    public void testDanglingAnnotationOnMemberFunction() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationOnMemberFunction.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
     public void testDanglingAnnotationOnTopLevelFunction() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationOnTopLevelFunction.kt");
