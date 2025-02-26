@@ -5,11 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.d8
 
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec.Companion.register
 
-@Deprecated(
-    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec' instead",
-    ReplaceWith("D8Exec", "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec")
-)
 @OptIn(ExperimentalWasmDsl::class)
-typealias D8Exec = org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "For compatibility only")
+abstract class D8Exec() {
+    companion object {
+        fun create(
+            compilation: KotlinJsIrCompilation,
+            name: String,
+            configuration: D8Exec.() -> Unit = {},
+        ): TaskProvider<D8Exec> = register(compilation, name, configuration)
+    }
+}

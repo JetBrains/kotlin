@@ -2633,6 +2633,16 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec : org/
 public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec$Companion {
 }
 
+public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion;
+	public fun <init> ()V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion {
+	public final fun create (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
+	public static synthetic fun create$default (Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
 public class org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin : org/gradle/api/Plugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
