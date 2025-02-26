@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @java.lang.annotation.Target[Unresolved](ElementType#.TYPE_USE#) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @java.lang.annotation.Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @java.lang.annotation.Target[Unresolved](ElementType#.TYPE_USE#) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @java.lang.annotation.Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @java.lang.annotation.Target[Unresolved](ElementType#.TYPE_USE#) public final? [ResolvedTo(SUPER_TYPES)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @java.lang.annotation.Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(SUPER_TYPES)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @<ERROR TYPE REF: Symbol not found for java>[Types](ElementType#.TYPE_USE#) public final? [ResolvedTo(TYPES)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @<ERROR TYPE REF: Symbol not found for java>[Types](LAZY_EXPRESSION) public final? [ResolvedTo(TYPES)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @<ERROR TYPE REF: Symbol not found for java>[Types](ElementType#.TYPE_USE#) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @<ERROR TYPE REF: Symbol not found for java>[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @<ERROR TYPE REF: Symbol not found for java>[Types](ElementType#.TYPE_USE#) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @<ERROR TYPE REF: Symbol not found for java>[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @<ERROR TYPE REF: Symbol not found for java>[Types](ElementType#.TYPE_USE#) public final [ResolvedTo(CONTRACTS)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @<ERROR TYPE REF: Symbol not found for java>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @<ERROR TYPE REF: Symbol not found for java>[Types](ElementType#.TYPE_USE#) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @<ERROR TYPE REF: Symbol not found for java>[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @<ERROR TYPE REF: Symbol not found for java>[Types](ElementType#.TYPE_USE#) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @<ERROR TYPE REF: Symbol not found for java>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] anno.kt
-    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(TYPES)] main.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] anno.kt
-    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(TYPES)] main.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] anno.kt
-    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(TYPES)] main.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anno.kt
-    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(TYPES)] main.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] anno.kt
-    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(TYPES)] main.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] anno.kt
-    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(TYPES)] main.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anno.kt
-    @Target[Unresolved](AnnotationTarget#.FILE#) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) internal final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class JvmBuiltin : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JvmBuiltin] constructor(): R|kotlin/internal/JvmBuiltin| {
             LAZY_super<R|kotlin/Any|>
         }

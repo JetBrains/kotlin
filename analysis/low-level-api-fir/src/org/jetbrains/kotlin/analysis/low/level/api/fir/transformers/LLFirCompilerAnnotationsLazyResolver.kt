@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeprecationProviderIsResolved
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.extensions.withGeneratedDeclarationsSymbolProviderDisabled
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnno
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.util.PrivateForInline
 
 internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
@@ -73,6 +73,20 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         }
 
         override val useCacheForImportScope: Boolean get() = true
+
+        /**
+         * In the Analysis API we still need to transform non-source declarations like `componentN` functions
+         */
+        override val treatNonSourceDeclarationsAsResolved: Boolean get() = false
+
+        /**
+         * Annotation arguments should be calculated even if they are not from
+         * [org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSupportComponent.requiredAnnotationsWithArguments]
+         * as compiler plugins still may access unresolved arguments for some computations (like to get a class literal)
+         */
+        override fun annotationResolved(annotation: FirAnnotationCall) {
+            FirLazyBodiesCalculator.calculateAnnotation(annotation, resolveTargetSession)
+        }
     }
 
     private val transformer = FirCompilerRequiredAnnotationsResolveTransformer(
@@ -85,6 +99,29 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     private val llFirComputationSession: LLFirCompilerRequiredAnnotationsComputationSession
         get() = transformer.annotationTransformer.computationSession as LLFirCompilerRequiredAnnotationsComputationSession
 
+    /**
+     * It is a valid scenario as meta-annotations might have a cycle.
+     *
+     * Simple example: [Target].
+     * The annotation marks itself.
+     *
+     * Usually such situations can be detected by [CompilerRequiredAnnotationsComputationSession.annotationResolutionWasAlreadyStarted],
+     * but in multithreaded scenarios it is not always possible.
+     * ```kotlin
+     * @Two
+     * annotation class One
+     *
+     * @Three
+     * annotation class Two
+     *
+     * @One
+     * annotation class Three
+     * ```
+     * in this case if two or three classes start resolution at the same time, there will be no any thread that is able
+     * to visit all classes with the same [CompilerRequiredAnnotationsComputationSession].
+     */
+    override fun handleCycleInResolution(target: FirElementWithResolveState) {}
+
     @Deprecated("Should never be called directly, only for override purposes, please use withFile", level = DeprecationLevel.ERROR)
     override fun withContainingFile(firFile: FirFile, action: () -> Unit) {
         transformer.annotationTransformer.withFileAndFileScopes(firFile, action)
@@ -96,234 +133,104 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     }
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
-        when (target) {
-            is FirFile, is FirScript, is FirRegularClass, is FirCodeFragment -> {}
-            else -> {
-                if (!target.isRegularDeclarationWithAnnotation) {
-                    throwUnexpectedFirElementError(target)
-                }
-            }
-        }
+        val alreadyResolved = target is FirAnnotationContainer && llFirComputationSession.annotationsAreResolved(target) ||
+                target is FirClassLikeDeclaration && llFirComputationSession.annotationResolutionWasAlreadyStarted(target)
 
-        requireIsInstance<FirAnnotationContainer>(target)
-        if (target is FirFile) {
-            transformer.annotationTransformer.withFileAndFileScopes(target) {
-                resolveTargetDeclaration(target)
-            }
-        } else {
-            resolveTargetDeclaration(target)
-        }
-
-        return true
+        return alreadyResolved
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        throwUnexpectedFirElementError(target)
-    }
-
-    private fun <T> resolveTargetDeclaration(target: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
-        // 1. Check that we should process this target
-        if (llFirComputationSession.annotationsAreResolved(target, treatNonSourceDeclarationsAsResolved = false)) return
-
-        // 2. Mark this target as resolved to avoid cycle
-        llFirComputationSession.recordThatAnnotationsAreResolved(target)
-
-        // 3. Create annotation transformer for targets we want to transform (under read lock)
-        // Exit if another thread is already resolved this target
-        val annotationTransformer = target.createAnnotationTransformer() ?: return
-
-        // 4. Exit if there are no applicable annotations, so we can just update the phase
-        if (annotationTransformer.isNothingToResolve()) {
-            return performCustomResolveUnderLock(target) {
-                // just update deprecations
-                annotationTransformer.publishResult(target)
+        when (target) {
+            is FirProperty -> resolve(target, CompilerAnnotationsStateKeepers.PROPERTY)
+            is FirFunction -> resolve(target, CompilerAnnotationsStateKeepers.FUNCTION)
+            is FirCallableDeclaration -> resolve(target, CompilerAnnotationsStateKeepers.CALLABLE_DECLARATION)
+            is FirClassLikeDeclaration -> resolve(target, CompilerAnnotationsStateKeepers.CLASS_LIKE_DECLARATION)
+            is FirCodeFragment -> {}
+            is FirFile, is FirScript, is FirAnonymousInitializer, is FirDanglingModifierList -> {
+                resolve(target, CompilerAnnotationsStateKeepers.ANNOTATION_CONTAINER)
             }
-        }
 
-        // N.B. We disable generated declarations provider to avoid infinite resolve problems (see KT-67483)
-        @OptIn(FirSymbolProviderInternals::class)
-        transformer.session.withGeneratedDeclarationsSymbolProviderDisabled {
-
-            // 5. Transform annotations in the air
-            annotationTransformer.transformAnnotations()
-
-            // 6. Move some annotations to the proper positions
-            annotationTransformer.balanceAnnotations(target)
-
-            // 7. Calculate deprecations in the air
-            annotationTransformer.calculateDeprecations(target)
-
-        }
-
-        // 8. Publish result
-        performCustomResolveUnderLock(target) {
-            annotationTransformer.publishResult(target)
+            else -> throwUnexpectedFirElementError(target)
         }
     }
 
-    private fun <T> T.createAnnotationTransformer(): AnnotationTransformer? where T : FirAnnotationContainer, T : FirElementWithResolveState {
-        if (!hasAnnotationsToResolve()) {
-            return (AnnotationTransformer(mutableMapOf()))
-        }
-
-        val map = hashMapOf<FirElementWithResolveState, List<FirAnnotation>>()
-        var isUnresolved = false
-        withReadLock(this) {
-            isUnresolved = true
-            annotationsForTransformationTo(map)
-        }
-
-        return map.takeIf { isUnresolved }?.let(::AnnotationTransformer)
-    }
-
-    private inner class AnnotationTransformer(
-        private val annotationMap: MutableMap<FirElementWithResolveState, List<FirAnnotation>>,
-    ) {
-        private val deprecations: MutableMap<FirElementWithResolveState, DeprecationsProvider> = hashMapOf()
-
-        fun isNothingToResolve(): Boolean = annotationMap.isEmpty()
-
-        fun transformAnnotations() {
-            for (annotations in annotationMap.values) {
-                for (annotation in annotations) {
-                    if (annotation !is FirAnnotationCall) continue
-                    val typeRef = annotation.annotationTypeRef as? FirUserTypeRef ?: continue
-                    if (!transformer.annotationTransformer.shouldRunAnnotationResolve(typeRef)) continue
-                    transformer.annotationTransformer.transformAnnotationCall(annotation, typeRef)
-                }
-            }
-        }
-
-        fun balanceAnnotations(target: FirElementWithResolveState) {
-            if (target !is FirProperty) return
-            val backingField = target.backingField ?: return
-            val updatedAnnotations = transformer.session.annotationPlatformSupport.extractBackingFieldAnnotationsFromProperty(
-                target,
-                transformer.session,
-                annotationMap[target].orEmpty(),
-                annotationMap[backingField].orEmpty(),
-            ) ?: return
-
-            annotationMap[target] = updatedAnnotations.propertyAnnotations
-            annotationMap[backingField] = updatedAnnotations.backingFieldAnnotations
-        }
-
-        fun calculateDeprecations(target: FirElementWithResolveState) {
-            val session = target.llFirSession
-            val cacheFactory = session.firCachesFactory
-            if (target is FirProperty) {
-                deprecations[target] = target.extractDeprecationInfoPerUseSite(
-                    session = session,
-                    customAnnotations = annotationMap[target].orEmpty(),
-                    getterAnnotations = target.getter?.let(annotationMap::get).orEmpty(),
-                    setterAnnotations = target.setter?.let(annotationMap::get).orEmpty(),
-                ).toDeprecationsProvider(cacheFactory)
-            }
-
-            for ((declaration, annotations) in annotationMap) {
-                if (declaration is FirProperty || declaration is FirFile) continue
-
-                requireIsInstance<FirAnnotationContainer>(declaration)
-                deprecations[declaration] = declaration.extractDeprecationInfoPerUseSite(
-                    session = session,
-                    customAnnotations = annotations,
-                ).toDeprecationsProvider(cacheFactory)
-            }
-        }
-
-        fun <T> publishResult(target: T) where T : FirElementWithResolveState, T : FirAnnotationContainer {
-            val newAnnotations = annotationMap[target]
-            if (newAnnotations != null) {
-                target.replaceAnnotations(newAnnotations)
-            }
-
-            val deprecationProvider = deprecations[target] ?: EmptyDeprecationsProvider
-            when (target) {
-                is FirClassLikeDeclaration -> target.replaceDeprecationsProvider(deprecationProvider)
-                is FirCallableDeclaration -> target.replaceDeprecationsProvider(deprecationProvider)
-            }
-
-            when (target) {
-                is FirFunction -> {
-                    target.contextParameters.forEach(::publishResult)
-                    target.valueParameters.forEach(::publishResult)
-                }
-                is FirProperty -> {
-                    target.contextParameters.forEach(::publishResult)
-                    target.getter?.let(::publishResult)
-                    target.setter?.let(::publishResult)
-                    target.backingField?.let(::publishResult)
-                }
-                is FirRegularClass -> {
-                    target.contextParameters.forEach(::publishResult)
-                }
+    private fun <T : FirDeclaration> resolve(target: T, keeper: StateKeeper<T, Unit>) {
+        resolveWithKeeper(target, Unit, keeper) {
+            // N.B. We disable generated declarations provider to avoid infinite resolve problems (see KT-67483)
+            @OptIn(FirSymbolProviderInternals::class)
+            transformer.session.withGeneratedDeclarationsSymbolProviderDisabled {
+                rawResolve(target)
             }
         }
     }
 
-    /**
-     * @return true if at least one applicable annotation is present
-     */
-    private fun <T> T.annotationsForTransformationTo(
-        map: MutableMap<FirElementWithResolveState, List<FirAnnotation>>,
-    ) where T : FirAnnotationContainer, T : FirElementWithResolveState {
-        when (this) {
-            is FirFunction -> {
-                valueParameters.forEach {
-                    it.annotationsForTransformationTo(map)
-                }
-            }
-
-            is FirProperty -> {
-                getter?.annotationsForTransformationTo(map)
-                setter?.annotationsForTransformationTo(map)
-                backingField?.annotationsForTransformationTo(map)
-            }
-        }
-
-        if (annotations.isEmpty()) return
-
-        var hasApplicableAnnotation = false
-        val containerForAnnotations = ArrayList<FirAnnotation>(annotations.size)
-        for (annotation in annotations) {
-            val userTypeRef = (annotation as? FirAnnotationCall)?.annotationTypeRef as? FirUserTypeRef
-            containerForAnnotations += if (userTypeRef != null && transformer.annotationTransformer.shouldRunAnnotationResolve(userTypeRef)) {
-                hasApplicableAnnotation = true
-                buildAnnotationCallCopy(annotation) {
-                    /**
-                     * CRA transformer won't modify this type reference,
-                     * but we create a deep copy
-                     * to be sure that no one another thread can't modify this reference during another phase,
-                     * while we do deep copy during
-                     * [org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer.transformAnnotationCall]
-                     * without lock
-                     */
-                    annotationTypeRef = transformer.annotationTransformer.createDeepCopyOfTypeRef(userTypeRef)
-
-                    // Non-empty arguments must be lazy expressions
-                    if (FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation)) {
-                        argumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, resolveTargetSession)
-                    }
-                }
-            } else {
-                annotation
-            }
-        }
-
-        if (hasApplicableAnnotation) {
-            map[this] = containerForAnnotations
+    private fun rawResolve(target: FirDeclaration) {
+        val annotationTransformer = transformer.annotationTransformer
+        when (target) {
+            is FirFile -> annotationTransformer.resolveFile(target) {}
+            is FirRegularClass -> annotationTransformer.resolveRegularClass(target) {}
+            is FirScript -> annotationTransformer.resolveScript(target) {}
+            else -> target.transformSingle(annotationTransformer, null)
         }
     }
 }
 
-private fun FirAnnotationContainer.hasAnnotationsToResolve(): Boolean {
-    if (annotations.isNotEmpty()) return true
+private object CompilerAnnotationsStateKeepers {
+    val PROPERTY: StateKeeper<FirProperty, Unit> = stateKeeper { builder, property, context ->
+        builder.entity(property, CALLABLE_DECLARATION, context)
+        builder.entity(property.getter, CALLABLE_DECLARATION, context)
+        builder.entity(property.setter, CALLABLE_DECLARATION, context)
+        builder.entity(property.backingField, CALLABLE_DECLARATION, context)
+    }
 
-    return when (this) {
-        is FirFunction -> valueParameters.any(FirAnnotationContainer::hasAnnotationsToResolve)
-        is FirProperty -> this.getter?.hasAnnotationsToResolve() == true ||
-                this.setter?.hasAnnotationsToResolve() == true ||
-                this.backingField?.hasAnnotationsToResolve() == true
-        else -> false
+    val FUNCTION: StateKeeper<FirFunction, Unit> = stateKeeper { builder, function, context ->
+        builder.entity(function, CALLABLE_DECLARATION, context)
+        builder.entityList(function.valueParameters, CALLABLE_DECLARATION, context)
+    }
+
+    val CALLABLE_DECLARATION: StateKeeper<FirCallableDeclaration, Unit> = stateKeeper { builder, declaration, context ->
+        builder.add(FirCallableDeclaration::deprecationsProvider, FirCallableDeclaration::replaceDeprecationsProvider)
+
+        builder.entity(declaration, ANNOTATION_CONTAINER, context)
+        builder.entityList(declaration.contextParameters, CALLABLE_DECLARATION, context)
+    }
+
+    val CLASS_LIKE_DECLARATION: StateKeeper<FirClassLikeDeclaration, Unit> = stateKeeper { builder, declaration, context ->
+        builder.add(FirClassLikeDeclaration::deprecationsProvider, FirClassLikeDeclaration::replaceDeprecationsProvider)
+
+        builder.entity(declaration, ANNOTATION_CONTAINER, context)
+    }
+
+    val ANNOTATION_CONTAINER: StateKeeper<FirAnnotationContainer, Unit> = stateKeeper { builder, container, context ->
+        // For containers where the annotations might be rotated
+        builder.add(FirAnnotationContainer::annotations, FirAnnotationContainer::replaceAnnotations)
+
+        builder.entityList(container.annotations, ANNOTATION, context)
+    }
+
+    private val ANNOTATION: StateKeeper<FirAnnotation, Unit> = stateKeeper { builder, annotation, context ->
+        if (annotation is FirAnnotationCall) {
+            builder.entity(annotation, ANNOTATION_CALL, context)
+        }
+    }
+
+    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, Unit> = stateKeeper { builder, annotationCall, _ ->
+        builder.add(FirAnnotationCall::annotationResolvePhase, FirAnnotationCall::replaceAnnotationResolvePhase)
+        builder.add(FirAnnotationCall::annotationTypeRef, FirAnnotationCall::replaceAnnotationTypeRef)
+
+        if (annotationCall.argumentList !is FirEmptyArgumentList) {
+            builder.add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
+                if (oldList.arguments.all { it is FirLazyExpression }) {
+                    oldList
+                } else {
+                    buildArgumentList {
+                        source = oldList.source
+                        for (argument in oldList.arguments) {
+                            arguments.add(expressionGuard(argument))
+                        }
+                    }
+                }
+            }
+        }
     }
 }

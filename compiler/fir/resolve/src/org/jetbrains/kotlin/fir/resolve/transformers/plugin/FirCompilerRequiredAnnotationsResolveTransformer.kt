@@ -1,17 +1,15 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.util.PrivateForInline
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -22,16 +20,16 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 /**
@@ -186,6 +184,12 @@ open class CompilerRequiredAnnotationsComputationSession {
         }
     }
 
+    /**
+     * This function will be called as soon as [FirAnnotationResolvePhase.CompilerRequiredAnnotations] is set
+     * and before potential arguments' transformation.
+     */
+    open fun annotationResolved(annotation: FirAnnotationCall) {}
+
     private val declarationsWithAnnotationResolutionInProgress: MutableSet<FirClassLikeDeclaration> = mutableSetOf()
     private val declarationsWithResolvedAnnotations: MutableSet<FirAnnotationContainer> = mutableSetOf()
 
@@ -193,7 +197,7 @@ open class CompilerRequiredAnnotationsComputationSession {
         return klass in declarationsWithAnnotationResolutionInProgress
     }
 
-    fun annotationsAreResolved(declaration: FirAnnotationContainer, treatNonSourceDeclarationsAsResolved: Boolean): Boolean {
+    fun annotationsAreResolved(declaration: FirAnnotationContainer): Boolean {
         if (declaration is FirFile) return false
         if (treatNonSourceDeclarationsAsResolved && declaration is FirDeclaration && declaration.origin != FirDeclarationOrigin.Source) {
             return true
@@ -201,6 +205,8 @@ open class CompilerRequiredAnnotationsComputationSession {
 
         return declaration in declarationsWithResolvedAnnotations
     }
+
+    open val treatNonSourceDeclarationsAsResolved: Boolean get() = true
 
     fun recordThatAnnotationResolutionStarted(klass: FirClassLikeDeclaration) {
         val wasNotStartedBefore = declarationsWithAnnotationResolutionInProgress.add(klass)
@@ -216,7 +222,7 @@ open class CompilerRequiredAnnotationsComputationSession {
 
     fun resolveAnnotationsOnAnnotationIfNeeded(symbol: FirRegularClassSymbol, scopeSession: ScopeSession) {
         val regularClass = symbol.fir
-        if (annotationsAreResolved(regularClass, treatNonSourceDeclarationsAsResolved = true)) return
+        if (annotationsAreResolved(regularClass)) return
         if (regularClass.annotations.isEmpty()) return
         resolveAnnotationSymbol(symbol, scopeSession)
     }
@@ -262,8 +268,9 @@ class FirSpecificAnnotationResolveTransformer(
          * It may happen if we visited a top-level class with designated transformer with this class as target of designation
          */
         if (declaration is FirRegularClass) return true
+
         @OptIn(PrivateForInline::class)
-        return !computationSession.annotationsAreResolved(declaration, treatNonSourceDeclarationsAsResolved = true)
+        return !computationSession.annotationsAreResolved(declaration)
     }
 }
 

@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fileAnnotationsScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(COMPANION_GENERATION)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(COMPANION_GENERATION)] fileAnnotationsScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(SUPER_TYPES)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String())
+    @FILE:Deprecated[Unresolved](LAZY_EXPRESSION)
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(SUPER_TYPES)] fileAnnotationsScript.kts
 
 TYPES:
 FILE: [ResolvedTo(TYPES)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(TYPES)] fileAnnotationsScript.kts
 
 STATUS:
 FILE: [ResolvedTo(STATUS)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(STATUS)] fileAnnotationsScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileAnnotationsScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(CONTRACTS)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(CONTRACTS)] fileAnnotationsScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileAnnotationsScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(CONSTANT_EVALUATION)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](String())
+    @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

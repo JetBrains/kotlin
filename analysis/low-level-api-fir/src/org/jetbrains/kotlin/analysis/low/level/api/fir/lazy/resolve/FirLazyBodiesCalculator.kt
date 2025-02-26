@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -80,9 +80,8 @@ internal object FirLazyBodiesCalculator {
         firElement.accept(LazyAnnotationCalculatorVisitor, firElement.moduleData.session)
     }
 
-    fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
-        require(needCalculatingAnnotationCall(annotationCall))
-        return createArgumentsForAnnotation(annotationCall, session)
+    fun calculateAnnotation(annotationCall: FirAnnotationCall, session: FirSession) {
+        calculateAnnotationCallIfNeeded(annotationCall, session)
     }
 
     fun createArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
@@ -663,7 +662,7 @@ private object LazyAnnotationCalculatorVisitor : NonLocalAnnotationVisitor<FirSe
 private fun calculateAnnotationCallIfNeeded(annotation: FirAnnotation, session: FirSession) {
     if (annotation !is FirAnnotationCall || !FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation)) return
 
-    val newArgumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, session)
+    val newArgumentList = FirLazyBodiesCalculator.createArgumentsForAnnotation(annotation, session)
     annotation.replaceArgumentList(newArgumentList)
 }
 

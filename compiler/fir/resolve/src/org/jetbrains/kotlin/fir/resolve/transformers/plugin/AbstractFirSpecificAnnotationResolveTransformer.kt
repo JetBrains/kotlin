@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -326,9 +326,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
         annotationCall.replaceAnnotationTypeRef(transformedAnnotationType)
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.CompilerRequiredAnnotations)
+        computationSession.annotationResolved(annotationCall)
 
         val requiredAnnotationsWithArguments = session.annotationPlatformSupport.requiredAnnotationsWithArguments
-
         if (transformedAnnotationType.coneType.classLikeLookupTagIfAny?.classId in requiredAnnotationsWithArguments) {
             argumentsTransformer.transformAnnotation(annotationCall, ResolutionMode.ContextDependent)
         }
@@ -343,7 +343,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         error("Should not be there")
     }
 
-    fun shouldRunAnnotationResolve(typeRef: FirUserTypeRef): Boolean {
+    private fun shouldRunAnnotationResolve(typeRef: FirUserTypeRef): Boolean {
         val name = typeRef.shortName
         if (metaAnnotationsFromPlugins.isNotEmpty()) return true
         return name in session.annotationPlatformSupport.requiredAnnotationsShortClassNames || annotationsFromPlugins.any { it.shortName() == name }
@@ -372,19 +372,15 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             regularClass,
             transformChildren = {
                 regularClass.transformDeclarations(this, data)
-                regularClass.transformContextParameters(this, data)
             },
-            afterChildrenTransform = {
-                calculateDeprecations(regularClass)
-            }
         )
+
         return regularClass
     }
 
     inline fun resolveRegularClass(
         regularClass: FirRegularClass,
         transformChildren: () -> Unit,
-        afterChildrenTransform: () -> Unit
     ) {
         withRegularClass(regularClass) {
             if (!shouldTransformDeclaration(regularClass)) return
@@ -393,10 +389,27 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                 transformDeclaration(regularClass, null)
                 computationSession.recordThatAnnotationsAreResolved(regularClass)
             }
+
             transformChildren(regularClass) {
+                regularClass.transformContextParameters(this, null)
                 transformChildren()
             }
-            afterChildrenTransform()
+
+            calculateDeprecations(regularClass)
+        }
+    }
+
+    inline fun resolveScript(
+        script: FirScript,
+        transformChildren: () -> Unit,
+    ) {
+        if (!shouldTransformDeclaration(script)) return
+
+        computationSession.recordThatAnnotationsAreResolved(script)
+        transformDeclaration(script, null).also {
+            transformChildren(script) {
+                transformChildren()
+            }
         }
     }
 
@@ -404,14 +417,10 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         script: FirScript,
         data: Nothing?,
     ): FirScript {
-        if (shouldTransformDeclaration(script)) {
-            computationSession.recordThatAnnotationsAreResolved(script)
-            transformDeclaration(script, null).also {
-                transformChildren(script) {
-                    script.transformDeclarations(this, data)
-                }
-            }
+        resolveScript(script) {
+            script.transformDeclarations(this, data)
         }
+
         return script
     }
 
@@ -432,6 +441,12 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         } as FirTypeAlias
     }
 
+    override fun transformDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: Nothing?): FirDanglingModifierList {
+        if (!shouldTransformDeclaration(danglingModifierList)) return danglingModifierList
+        computationSession.recordThatAnnotationsAreResolved(danglingModifierList)
+        return transformDeclaration(danglingModifierList, data) as FirDanglingModifierList
+    }
+
     @OptIn(FirExtensionApiInternals::class)
     override fun transformDeclaration(declaration: FirDeclaration, data: Nothing?): FirDeclaration {
         return (transformAnnotationContainer(declaration, data) as FirDeclaration).also {
@@ -442,12 +457,21 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
-        if (!shouldTransformDeclaration(file)) return file
-        withFileAndFileScopes(file) {
+        resolveFile(file) {
             file.transformDeclarations(this, data)
         }
 
         return file
+    }
+
+    inline fun resolveFile(
+        file: FirFile,
+        crossinline transformChildren: () -> Unit,
+    ) {
+        if (!shouldTransformDeclaration(file)) return
+        withFileAndFileScopes(file) {
+            transformChildren()
+        }
     }
 
     fun withFileAndFileScopes(file: FirFile, action: () -> Unit) {
@@ -469,9 +493,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         currentFile = file
         return try {
             argumentsTransformer.context.withFile(file, argumentsTransformer.components) {
-                return withFileAnalysisExceptionWrapping(file) {
-                    f()
-                }
+                withFileAnalysisExceptionWrapping(file, f)
             }
         } finally {
             currentFile = oldValue
@@ -493,12 +515,18 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     private fun <T> transformCallableDeclarationForDeprecations(
         callableDeclaration: T,
         data: Nothing?,
-    ): FirStatement where T : FirCallableDeclaration, T : FirStatement {
+    ): T where T : FirCallableDeclaration, T : FirStatement {
         if (!shouldTransformDeclaration(callableDeclaration)) return callableDeclaration
         computationSession.recordThatAnnotationsAreResolved(callableDeclaration)
+
+        @Suppress("UNCHECKED_CAST")
         return transformDeclaration(callableDeclaration, data).also {
+            transformChildren(callableDeclaration) {
+                callableDeclaration.transformContextParameters(this, data)
+            }
+
             calculateDeprecations(callableDeclaration)
-        } as FirStatement
+        } as T
     }
 
     lateinit var scopes: List<FirScope>
@@ -515,7 +543,25 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?): FirStatement {
-        return transformCallableDeclarationForDeprecations(propertyAccessor, data)
+        return transformFunctionDeclarationForDeprecations(propertyAccessor, data)
+    }
+
+    private fun <T> transformFunctionDeclarationForDeprecations(
+        function: T,
+        data: Nothing?,
+    ): T where T : FirFunction, T : FirStatement {
+        if (!shouldTransformDeclaration(function)) return function
+        computationSession.recordThatAnnotationsAreResolved(function)
+
+        @Suppress("UNCHECKED_CAST")
+        return transformDeclaration(function, data).also {
+            transformChildren(function) {
+                function.transformContextParameters(this, data)
+                function.transformValueParameters(this, data)
+            }
+
+            calculateDeprecations(function)
+        } as T
     }
 
     override fun transformProperty(property: FirProperty, data: Nothing?): FirStatement {
@@ -525,6 +571,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             property.moveJavaDeprecatedAnnotationToBackingField()
 
             transformChildren(property) {
+                property.transformContextParameters(this, data)
                 property.transformSetter(this, data)
                 property.transformGetter(this, data)
                 property.transformBackingField(this, data)
@@ -543,32 +590,12 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: Nothing?
-    ): FirSimpleFunction {
-        if (!shouldTransformDeclaration(simpleFunction)) return simpleFunction
-        computationSession.recordThatAnnotationsAreResolved(simpleFunction)
-        return transformDeclaration(simpleFunction, data).also {
-            transformChildren(simpleFunction) {
-                simpleFunction.transformValueParameters(this, data)
-            }
-
-            calculateDeprecations(simpleFunction)
-        } as FirSimpleFunction
-    }
+    ): FirSimpleFunction = transformFunctionDeclarationForDeprecations(simpleFunction, data)
 
     override fun transformConstructor(
         constructor: FirConstructor,
         data: Nothing?
-    ): FirConstructor {
-        if (!shouldTransformDeclaration(constructor)) return constructor
-        computationSession.recordThatAnnotationsAreResolved(constructor)
-        return transformDeclaration(constructor, data).also {
-            transformChildren(constructor) {
-                constructor.transformValueParameters(this, data)
-            }
-
-            calculateDeprecations(constructor)
-        } as FirConstructor
-    }
+    ): FirConstructor = transformFunctionDeclarationForDeprecations(constructor, data)
 
     override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?): FirConstructor =
         transformConstructor(errorPrimaryConstructor, data)
@@ -583,6 +610,10 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): FirStatement {
         return transformCallableDeclarationForDeprecations(valueParameter, data)
+    }
+
+    override fun transformErrorProperty(errorProperty: FirErrorProperty, data: Nothing?): FirStatement {
+        return transformProperty(errorProperty, data)
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): FirTypeRef {
@@ -634,7 +665,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
     }
 
-    fun createDeepCopyOfTypeRef(original: FirUserTypeRef): FirUserTypeRef = buildUserTypeRef {
+    private fun createDeepCopyOfTypeRef(original: FirUserTypeRef): FirUserTypeRef = buildUserTypeRef {
         source = original.source
         isMarkedNullable = original.isMarkedNullable
         annotations.addAll(original.annotations)
