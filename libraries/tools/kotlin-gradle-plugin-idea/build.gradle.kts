@@ -7,8 +7,8 @@ plugins {
 }
 
 kotlin.sourceSets.configureEach {
-    languageSettings.apiVersion = "1.6"
-    languageSettings.languageVersion = "1.6"
+    languageSettings.apiVersion = "1.7"
+    languageSettings.languageVersion = "1.7"
     languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
 }
 
