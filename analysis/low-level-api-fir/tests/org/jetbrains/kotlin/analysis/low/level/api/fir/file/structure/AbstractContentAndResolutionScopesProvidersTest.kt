@@ -105,7 +105,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
                     }
             }.toMap()
 
-        val restrictionScopes = workingModules.entries.zip(refinerModules.entries) { workingModule, refiner ->
+        val shadowedScopes = workingModules.entries.zip(refinerModules.entries) { workingModule, refiner ->
             workingModule.key to workingModule.value.files + refiner.value.files
         }.associate { (moduleName, files) ->
             moduleName to files.filter { file -> file.ktTestFile.testFile.directives.contains(Directives.SHADOWED) }
@@ -116,7 +116,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         }
 
 
-        val inputData = InputData(baseContentScopes, enlargementScopes, restrictionScopes)
+        val inputData = InputData(baseContentScopes, enlargementScopes, shadowedScopes)
 
         val computedContentScopes = workingModules.map { (moduleName, _) ->
             val scope = TreeSet(virtualFilesComparator).apply {
@@ -152,9 +152,9 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
 
         refinerToRegister.apply {
             enlargementScope.clear()
-            restrictionScope.clear()
+            shadowedScope.clear()
             enlargementScope.putAll(enlargementScopes)
-            restrictionScope.putAll(restrictionScopes)
+            shadowedScope.putAll(shadowedScopes)
         }
 
         testContentScope(moduleData, testServices)
@@ -290,7 +290,7 @@ private class ContentScopeProviderRegistrar(private val scopeRefinerToRegister: 
 
 private class DummyContentScopeRefiner(
     val enlargementScope: MutableMap<String, List<VirtualFile>> = mutableMapOf(),
-    val restrictionScope: MutableMap<String, List<VirtualFile>> = mutableMapOf()
+    val shadowedScope: MutableMap<String, List<VirtualFile>> = mutableMapOf()
 ) : KotlinContentScopeRefiner {
     override fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> {
         val moduleName = (module as? KaSourceModule)?.name ?: return emptyList()
@@ -304,11 +304,11 @@ private class DummyContentScopeRefiner(
 
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
         val moduleName = (module as? KaSourceModule)?.name ?: return emptyList()
-        val files = restrictionScope[moduleName] ?: return emptyList()
+        val files = shadowedScope[moduleName] ?: return emptyList()
         val scope = GlobalSearchScope.filesScope(
             module.project,
             files
         )
-        return listOf(scope)
+        return listOf(GlobalSearchScope.notScope(scope))
     }
 }

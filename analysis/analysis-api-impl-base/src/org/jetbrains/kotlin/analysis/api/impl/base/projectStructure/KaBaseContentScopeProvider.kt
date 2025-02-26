@@ -21,28 +21,41 @@ internal class KaBaseContentScopeProvider : KaContentScopeProvider {
             return baseContentScope
         }
 
-        val enlargementScopes = mutableListOf<GlobalSearchScope>(baseContentScope)
-        val shadowedScopes = mutableListOf<GlobalSearchScope>()
+        val enlargementScopes = mutableListOf(baseContentScope)
+        val restrictionScopes = mutableListOf<GlobalSearchScope>()
 
         refiners.forEach { refiner ->
             enlargementScopes.addAll(
                 refiner.getEnlargementScopes(module).filter { !GlobalSearchScope.isEmptyScope(it) }
             )
 
-            shadowedScopes.addAll(
-                refiner.getRestrictionScopes(module).filter { !GlobalSearchScope.isEmptyScope(it) }
-            )
+            val refinerRestrictionScopes = refiner.getRestrictionScopes(module)
+
+            // Since we have to intersect the content scope with each restriction scope, if any restriction scope is empty, the resulting
+            // content scope will be completely empty.
+            if (refinerRestrictionScopes.any { GlobalSearchScope.isEmptyScope(it) }) {
+                return GlobalSearchScope.EMPTY_SCOPE
+            }
+            restrictionScopes.addAll(refinerRestrictionScopes)
         }
 
+        return mergeScopes(module, enlargementScopes, restrictionScopes)
+    }
+
+    private fun mergeScopes(
+        module: KaModule,
+        enlargementScopes: MutableList<GlobalSearchScope>,
+        restrictionScopes: MutableList<GlobalSearchScope>,
+    ): GlobalSearchScope {
         val scopeMerger = KotlinGlobalSearchScopeMerger.getInstance(module.project)
 
         val mergedEnlargementScope = scopeMerger.union(enlargementScopes)
-        if (shadowedScopes.isEmpty()) {
+        if (restrictionScopes.isEmpty()) {
             return mergedEnlargementScope
         }
 
-        val mergedShadowedScope = scopeMerger.union(shadowedScopes)
-
-        return mergedEnlargementScope.intersectWith(GlobalSearchScope.notScope(mergedShadowedScope))
+        // `KotlinGlobalSearchScopeMerger` cannot merge intersections of scopes, so for now we have to apply the scopes as individual
+        // intersections. In the future, we might consider to implement intersection merging as well.
+        return restrictionScopes.fold(mergedEnlargementScope) { resultScope, scope -> resultScope.intersectWith(scope) }
     }
 }

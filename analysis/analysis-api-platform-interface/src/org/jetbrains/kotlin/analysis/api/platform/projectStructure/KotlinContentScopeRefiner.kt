@@ -28,22 +28,20 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  */
 public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
     /**
-     * Given a [KaModule], [getEnlargementScopes] returns [GlobalSearchScope]s,
-     * which should enlarge [KaModule.baseContentScope] to form [KaModule.contentScope].
+     * Given a [KaModule], [getEnlargementScopes] returns [GlobalSearchScope]s which enlarge [KaModule.baseContentScope] to form
+     * [KaModule.contentScope]. An enlargement *expands* the base content scope with the files contained in the enlargement scope.
      *
-     * If some file from [getEnlargementScopes] is already contained in [KaModule.baseContentScope],
-     * the resulting [KaModule.contentScope] will function the same way w.r.t. this file,
-     * i.e., as if this file wasn't initially present.
+     * If some file contained in [getEnlargementScopes] is also already contained in [KaModule.baseContentScope], the enlargement scope will
+     * have no additional effect with respect to this file.
      */
     public fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
 
     /**
-     * Given a [KaModule], [getRestrictionScopes] returns [GlobalSearchScope]s,
-     * which should restrict [KaModule.baseContentScope] to form [KaModule.contentScope].
+     * Given a [KaModule], [getRestrictionScopes] returns [GlobalSearchScope]s which restrict [KaModule.baseContentScope] to form
+     * [KaModule.contentScope]. A restriction *limits* the base content scope to the files contained in the restriction scope.
      *
-     * If some file from [getRestrictionScopes] is not contained in [KaModule.baseContentScope],
-     * the resulting [KaModule.contentScope] will function the same way w.r.t. this file,
-     * i.e., as if this file was initially present.
+     * If some file not contained in [getRestrictionScopes] is also not contained in [KaModule.baseContentScope], the restriction scope will
+     * have no additional effect with respect to this file.
      */
     public fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
 

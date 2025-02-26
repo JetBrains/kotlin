@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 
-@KaExperimentalApi
 internal class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
-    override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
-        return KaResolveExtensionProvider.provideExtensionsFor(module).map { it.getShadowedScope() }
-    }
+    override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> =
+        KaResolveExtensionProvider.provideExtensionsFor(module).map { resolveExtension ->
+            GlobalSearchScope.notScope(resolveExtension.getShadowedScope())
+        }
 }
