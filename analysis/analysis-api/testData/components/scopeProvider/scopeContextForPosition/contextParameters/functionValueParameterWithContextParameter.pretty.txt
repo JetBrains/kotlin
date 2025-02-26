@@ -1,0 +1,75 @@
+element: param: Int
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = B
+    ownerSymbol = KaNamedFunctionSymbol:
+      /foo(<extension receiver>: B, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = A
+    symbol = KaContextParameterSymbol:
+      a: A
+
+scopes:
+  TypeScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 3
+      a: A
+      param: kotlin.Int
+      param2: kotlin.String
+    constructors: 0
+
+  TypeParameterScope, index = 3
+    packages: 0
+    classifiers: 1
+      T1
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 5
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 2
+      class A
+      class B
+    callables: 1
+      context(a@A)
+      fun <T1> B.foo(param: kotlin.Int, param2: kotlin.String)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 6
+
+  DefaultSimpleImportingScope, index = 7
+
+  ExplicitStarImportingScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 9
+

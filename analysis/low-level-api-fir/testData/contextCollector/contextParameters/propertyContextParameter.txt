@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T1
+
+FILE: [ResolvedTo(IMPORTS)] propertyContextParameter.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    context([ResolvedTo(BODY_RESOLVE)] a: R|A|)
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T1> [ResolvedTo(BODY_RESOLVE)] R|B|.foo: R|kotlin/Boolean|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean| {
+            ^ Boolean(false)
+        }

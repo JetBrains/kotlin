@@ -1,0 +1,88 @@
+element: context(B)
+    val <T2, T3> C.foo get() = false
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = A
+    ownerSymbol = KaContextParameterSymbol:
+      A: A
+
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = TopLevel<T1>
+    ownerSymbol = KaNamedClassSymbol:
+      /TopLevel
+
+scopes:
+  TypeParameterScope, index = 0
+    packages: 0
+    classifiers: 2
+      T2
+      T3
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  TypeScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 4
+      context(B@B)
+      val <T2, T3> C.foo: kotlin.Boolean
+        get()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  TypeParameterScope, index = 3
+    packages: 0
+    classifiers: 1
+      T1
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 5
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 4
+      class A
+      class B
+      class C
+      context(A@A)
+      class TopLevel<T1>
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 6
+
+  DefaultSimpleImportingScope, index = 7
+
+  ExplicitStarImportingScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 9

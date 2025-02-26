@@ -242,6 +242,12 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
     }
 
     @Test
+    @TestMetadata("anonymousFunctionContextParameter.kt")
+    public void testAnonymousFunctionContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextParameter.kt");
+    }
+
+    @Test
     @TestMetadata("anonymousFunctionContextReceiver.kt")
     public void testAnonymousFunctionContextReceiver() {
       runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiver.kt");
@@ -263,6 +269,54 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
     @TestMetadata("anonymousFunctionContextReceiverExpression.kt")
     public void testAnonymousFunctionContextReceiverExpression() {
       runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiverExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionReceiverParameterWithContextParameter.kt")
+    public void testAnonymousFunctionReceiverParameterWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionReceiverParameterWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionReceiverParameterWithContextReceiver.kt")
+    public void testAnonymousFunctionReceiverParameterWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionReceiverParameterWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionTypeParameterWithContextParameter.kt")
+    public void testAnonymousFunctionTypeParameterWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionTypeParameterWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionTypeParameterWithContextReceiver.kt")
+    public void testAnonymousFunctionTypeParameterWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionTypeParameterWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionValueParameterWithContextParameter.kt")
+    public void testAnonymousFunctionValueParameterWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionValueParameterWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionValueParameterWithContextParameterWithDefaultValue.kt")
+    public void testAnonymousFunctionValueParameterWithContextParameterWithDefaultValue() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionValueParameterWithContextParameterWithDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionValueParameterWithContextReceiver.kt")
+    public void testAnonymousFunctionValueParameterWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionValueParameterWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionValueParameterWithContextReceiverWithDefaultValue.kt")
+    public void testAnonymousFunctionValueParameterWithContextReceiverWithDefaultValue() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionValueParameterWithContextReceiverWithDefaultValue.kt");
     }
 
     @Test
@@ -290,9 +344,75 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
     }
 
     @Test
+    @TestMetadata("functionContextParameter.kt")
+    public void testFunctionContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionContextParameter.kt");
+    }
+
+    @Test
     @TestMetadata("functionContextReceiver.kt")
     public void testFunctionContextReceiver() {
       runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionReceiverParameterWithContextParameter.kt")
+    public void testFunctionReceiverParameterWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionReceiverParameterWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionReceiverParameterWithContextReceiver.kt")
+    public void testFunctionReceiverParameterWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionReceiverParameterWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypeParameterWithContextParameter.kt")
+    public void testFunctionTypeParameterWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionTypeParameterWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypeParameterWithContextReceiver.kt")
+    public void testFunctionTypeParameterWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionTypeParameterWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionValueParameterWithContextParameter.kt")
+    public void testFunctionValueParameterWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionValueParameterWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionValueParameterWithContextParameterWithDefaultValue.kt")
+    public void testFunctionValueParameterWithContextParameterWithDefaultValue() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionValueParameterWithContextParameterWithDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("functionValueParameterWithContextReceiver.kt")
+    public void testFunctionValueParameterWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionValueParameterWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("functionValueParameterWithContextReceiverWithDefaultValue.kt")
+    public void testFunctionValueParameterWithContextReceiverWithDefaultValue() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionValueParameterWithContextReceiverWithDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithContextParameter.kt")
+    public void testFunctionWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithContextReceiver.kt")
+    public void testFunctionWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/functionWithContextReceiver.kt");
     }
 
     @Test
@@ -392,9 +512,51 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
     }
 
     @Test
+    @TestMetadata("propertyContextParameter.kt")
+    public void testPropertyContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyContextParameter.kt");
+    }
+
+    @Test
     @TestMetadata("propertyContextReceiver.kt")
     public void testPropertyContextReceiver() {
       runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyReceiverParameterWithContextParameter.kt")
+    public void testPropertyReceiverParameterWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyReceiverParameterWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyReceiverParameterWithContextReceiver.kt")
+    public void testPropertyReceiverParameterWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyReceiverParameterWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyTypeParameterWithContextParameter.kt")
+    public void testPropertyTypeParameterWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyTypeParameterWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyTypeParameterWithContextReceiver.kt")
+    public void testPropertyTypeParameterWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyTypeParameterWithContextReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithContextParameter.kt")
+    public void testPropertyWithContextParameter() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyWithContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithContextReceiver.kt")
+    public void testPropertyWithContextReceiver() {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/propertyWithContextReceiver.kt");
     }
 
     @Test

@@ -1,0 +1,120 @@
+element: anonParam: Boolean
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 0
+    type = D
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(anonParam: kotlin.Boolean, anonParam2: kotlin.Long): kotlin.Unit
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = B
+    symbol = KaContextParameterSymbol:
+      b: B
+
+  KaImplicitReceiver:
+    scopeIndexInTower = 5
+    type = C
+    ownerSymbol = KaNamedFunctionSymbol:
+      /foo(<extension receiver>: C, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 6
+    type = A
+    symbol = KaContextParameterSymbol:
+      a: A
+
+scopes:
+  TypeScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 2
+      b: B
+      anonParam: kotlin.Boolean
+    constructors: 0
+
+  TypeParameterScope, index = 3
+    packages: 0
+    classifiers: 1
+      T2
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 3
+      a: A
+      param: kotlin.Int
+      param2: kotlin.String
+    constructors: 0
+
+  TypeParameterScope, index = 8
+    packages: 0
+    classifiers: 1
+      T1
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 10
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 4
+      class A
+      class B
+      class C
+      class D
+    callables: 1
+      context(a@A)
+      fun <T1> C.foo(param: kotlin.Int, param2: kotlin.String)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 11
+
+  DefaultSimpleImportingScope, index = 12
+
+  ExplicitStarImportingScope, index = 13
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 14
+

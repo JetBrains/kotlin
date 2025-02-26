@@ -1,0 +1,45 @@
+element: B
+implicit values:
+scopes:
+  TypeParameterScope, index = 0
+    packages: 0
+    classifiers: 1
+      T1
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 2
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 2
+      class A
+      class B
+    callables: 1
+      context(a@A)
+      val <T1> B.foo: kotlin.Boolean
+        get()
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 3
+
+  DefaultSimpleImportingScope, index = 4
+
+  ExplicitStarImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 6
+
