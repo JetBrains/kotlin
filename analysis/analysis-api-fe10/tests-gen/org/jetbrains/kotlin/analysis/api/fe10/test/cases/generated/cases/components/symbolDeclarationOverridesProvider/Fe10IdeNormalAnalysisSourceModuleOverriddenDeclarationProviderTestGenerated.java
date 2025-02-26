@@ -58,6 +58,12 @@ public class Fe10IdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestG
   }
 
   @Test
+  @TestMetadata("danglingAnnotationOnAnonymousFunction.kt")
+  public void testDanglingAnnotationOnAnonymousFunction() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/danglingAnnotationOnAnonymousFunction.kt");
+  }
+
+  @Test
   @TestMetadata("delegateOverrideWithImplicitTypeInsideAnonymousObject.kt")
   public void testDelegateOverrideWithImplicitTypeInsideAnonymousObject() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/delegateOverrideWithImplicitTypeInsideAnonymousObject.kt");
