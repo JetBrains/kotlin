@@ -64,11 +64,12 @@ kotlin {
 }
 
 tasks.register("resolveRuntimeDependencies") {
-    notCompatibleWithConfigurationCache("Resolving the configuration should happen during the execution phase")
+    val configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
+    val runtimeDependencies = configurations[configName].incoming.files
+    inputs.files(runtimeDependencies).withPropertyName("runtimeDependencies")
     doFirst {
         // KT-26301
-        val configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
-        configurations[configName].resolve()
+        runtimeDependencies.files
     }
 }
 
