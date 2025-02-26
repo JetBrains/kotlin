@@ -24,19 +24,21 @@ open class CompilationCanceledException : ProcessCanceledException()
 class IncrementalNextRoundException : CompilationCanceledException()
 
 interface CompilationCanceledStatus {
-    fun checkCanceled(): Unit
+    fun checkCanceled()
 }
 
 object ProgressIndicatorAndCompilationCanceledStatus {
-    private var canceledStatus: CompilationCanceledStatus? = null
+    private var canceledStatus: ThreadLocal<CompilationCanceledStatus?> = ThreadLocal.withInitial { null }
 
     @JvmStatic
-    @Synchronized fun setCompilationCanceledStatus(newCanceledStatus: CompilationCanceledStatus?): Unit {
-        canceledStatus = newCanceledStatus
+    @Synchronized
+    fun setCompilationCanceledStatus(newCanceledStatus: CompilationCanceledStatus?) {
+        canceledStatus.set(newCanceledStatus)
     }
 
-    @JvmStatic fun checkCanceled(): Unit {
+    @JvmStatic
+    fun checkCanceled() {
         ProgressIndicatorProvider.checkCanceled()
-        canceledStatus?.checkCanceled()
+        canceledStatus.get()?.checkCanceled()
     }
 }
