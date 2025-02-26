@@ -515,8 +515,8 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
 
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions.languageVersion = "1.6"
-        kotlinOptions.apiVersion = "1.6"
+        kotlinOptions.languageVersion = "1.9"
+        kotlinOptions.apiVersion = "1.9"
         kotlinOptions.freeCompilerArgs += listOf(
             "-Xskip-prerelease-check",
             "-Xsuppress-version-warnings",
