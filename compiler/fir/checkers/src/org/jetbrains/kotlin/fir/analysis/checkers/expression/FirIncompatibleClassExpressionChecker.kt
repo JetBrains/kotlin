@@ -27,6 +27,9 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
 
         checkType(symbol.resolvedReturnType, expression, context, reporter)
+        for (parameter in symbol.resolvedContextParameters) {
+            checkType(parameter.returnTypeRef.coneType, expression, context, reporter)
+        }
         checkType(symbol.receiverParameter?.typeRef?.coneType, expression, context, reporter)
         if (symbol is FirFunctionSymbol) {
             for (parameter in symbol.valueParameterSymbols) {
