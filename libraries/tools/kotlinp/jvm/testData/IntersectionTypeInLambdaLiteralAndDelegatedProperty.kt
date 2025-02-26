@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 interface A
 interface B
 class Inv<T>(e: T)

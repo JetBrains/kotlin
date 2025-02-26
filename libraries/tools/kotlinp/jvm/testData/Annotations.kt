@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.TYPE)

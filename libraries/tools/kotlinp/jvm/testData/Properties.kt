@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 class C(val constructorParam: String = "") {
     val getterOnlyVal: Double get() = 0.0
     var accessorOnlyVar: Int

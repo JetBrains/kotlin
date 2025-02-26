@@ -1,3 +1,6 @@
+// WITH_STDLIB
+// LAMBDAS: INDY
+
 import kotlin.annotation.AnnotationTarget.*
 
 @Target(

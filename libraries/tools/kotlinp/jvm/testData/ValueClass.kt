@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 @JvmInline
 value class A(private val i: Int?)
 

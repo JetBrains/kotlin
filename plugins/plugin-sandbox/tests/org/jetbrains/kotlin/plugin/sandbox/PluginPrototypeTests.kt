@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.plugin.sandbox
 
-import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
-import org.jetbrains.kotlin.kotlinp.Settings
-import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
-import org.jetbrains.kotlin.kotlinp.jvm.readKotlinClassHeader
+import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.JvmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -29,19 +25,11 @@ import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
-import org.jetbrains.org.objectweb.asm.ClassReader
-import kotlin.metadata.jvm.KotlinClassMetadata
 
 open class AbstractFirLightTreePluginBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -98,30 +86,9 @@ open class AbstractFirMetadataPluginSandboxTest : AbstractKotlinCompilerWithTarg
             configureFirParser(FirParser.LightTree)
             commonFirWithPluginFrontendConfiguration(dumpFir = false)
             configureJvmArtifactsHandlersStep {
-                useHandlers(::CompareMetadataHandler)
+                useHandlers({ CompareMetadataHandler(it, extension = ".metadata.txt") })
             }
         }
-    }
-}
-
-class CompareMetadataHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
-    private val multiModuleInfoDumper = MultiModuleInfoDumper()
-
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        val kotlinp = JvmKotlinp(Settings(isVerbose = false, sortDeclarations = false))
-        multiModuleInfoDumper.builderForModule(module).append(buildString {
-            for (outputFile in info.classFileFactory.getClassFiles()) {
-                val metadata = ClassReader(outputFile.asByteArray().inputStream()).readKotlinClassHeader()!!
-                appendLine("// ${outputFile.relativePath}")
-                appendLine("// ------------------------------------------")
-                append(kotlinp.printClassFile(KotlinClassMetadata.readStrict(metadata)))
-            }
-        })
-    }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
-        assertions.assertEqualsToFile(sourceFile.withExtension(".metadata.txt"), multiModuleInfoDumper.generateResultingDump())
     }
 }
 

@@ -1,10 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // OPT_IN: kotlin.ExperimentalMultiplatform
 // NO_READ_WRITE_COMPARE
-// IGNORE_BACKEND_K1: JVM_IR
-
-// MODULE: common
-// FILE: common.kt
+// IGNORE_BACKEND_K2: JVM_IR
 
 package test
 
@@ -20,15 +17,11 @@ expect annotation class C()
 @OptionalExpectation
 expect annotation class D()
 
+actual annotation class D actual constructor()
+
+@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @A(42)
 @B(["OK", ""])
 @C
 @D()
 fun ok() {}
-
-// MODULE: jvm()()(common)
-// FILE: jvm.kt
-
-package test
-
-actual annotation class D actual constructor()

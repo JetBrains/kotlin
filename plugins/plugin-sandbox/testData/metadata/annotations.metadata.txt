@@ -32,3 +32,7 @@ public final class test/Some.Derived : kotlin/Any {
   @org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])])
   public constructor()
 }
+// META-INF/main.kotlin_module
+// ------------------------------------------
+module {
+}

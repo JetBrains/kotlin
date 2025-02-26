@@ -36,13 +36,12 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.net.URLClassLoader
-import java.util.*
 import java.util.regex.Pattern
 
 abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
@@ -141,7 +140,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                     LOG.info("root: $root")
                 }
                 val ktFile = KtTestUtil.createFile(file.path, text, environment.project)
-                GenerationUtils.compileFileTo(ktFile, environment, tmpdir)
+                GenerationUtils.compileFilesTo(listOf(ktFile), environment, tmpdir)
             }
         }
     }
