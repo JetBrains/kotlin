@@ -51,6 +51,10 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             }
             return StepResult.Artifact(outputArtifact)
         }
+
+        override fun toString(): String {
+            return "Facade: ${facade::class.simpleName}"
+        }
     }
 
     class HandlersStep<InputArtifact : ResultingArtifact<InputArtifact>>(
@@ -85,6 +89,10 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                 }
             }
             return StepResult.HandlersResult(exceptions, shouldRunNextSteps = true)
+        }
+
+        override fun toString(): String {
+            return "Handlers for $inputArtifactKind"
         }
     }
 
