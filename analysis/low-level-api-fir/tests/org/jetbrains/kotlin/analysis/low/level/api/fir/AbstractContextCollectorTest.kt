@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
@@ -45,7 +46,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
     private fun createFileCopy(file: KtFile): KtFile {
         val fakeFile = file.copy() as KtFile
 
-        assert(fakeFile.originalFile == file)
+        assert(fakeFile.copyOrigin == file)
         assert(!fakeFile.isPhysical)
         assert(!fakeFile.viewProvider.isEventSystemEnabled)
 

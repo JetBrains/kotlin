@@ -188,6 +188,12 @@ public class FirIdeDependentAnalysisSourceModuleResolveDanglingFileReferenceTest
     }
 
     @Test
+    @TestMetadata("userDataCopy.kt")
+    public void testUserDataCopy() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/userDataCopy.kt");
+    }
+
+    @Test
     @TestMetadata("valueParameter.kt")
     public void testValueParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/valueParameter.kt");
@@ -285,6 +291,12 @@ public class FirIdeDependentAnalysisSourceModuleResolveDanglingFileReferenceTest
     @TestMetadata("topLevelFunction.kt")
     public void testTopLevelFunction() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/topLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("userDataCopy.kt")
+    public void testUserDataCopy() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/userDataCopy.kt");
     }
 
     @Test

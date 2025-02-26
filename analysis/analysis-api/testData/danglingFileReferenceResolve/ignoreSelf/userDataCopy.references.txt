@@ -1,0 +1,3 @@
+KtNameReferenceExpression(81,85): 'name'
+  KtSimpleNameReference:
+    (in Foo) val name: kotlin.String [userDataCopy.kt]
