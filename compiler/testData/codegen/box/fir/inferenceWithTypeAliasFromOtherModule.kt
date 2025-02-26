@@ -1,4 +1,6 @@
 // ISSUE: KT-68747
+// DISABLE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: Compilation timeout
 
 // MODULE: m1
 // FILE: result.kt
