@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 class JvmEvaluatorData(
     // This is populated by LocalDeclarationsLowering with the intermediate data allowing mapping from local function captures to parameters
@@ -13,5 +15,8 @@ class JvmEvaluatorData(
     val localDeclarationsLoweringData: MutableMap<IrFunction, JvmBackendContext.LocalFunctionData>,
     // In K2, it is IR for synthetic evaluator-generated method which returns evaluated expression value
     // In K1, it is null
-    val evaluatorGeneratedFunction: IrFunction?
+    val evaluatorGeneratedFunction: IrFunction?,
+    // If the code fragment captures some reified type parameters, we will need the corresponding arguments for the proper codegen
+    // Bytecode might not contain all the required data, so we extract it from the debugger API and store here
+    val capturedTypeParametersMapping: Map<IrTypeParameterSymbol, IrType>
 )

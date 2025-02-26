@@ -13,13 +13,12 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.allParametersCount
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
@@ -38,7 +37,7 @@ import org.jetbrains.org.objectweb.asm.tree.InsnList
 
 class IrInlineIntrinsicsSupport(
     private val classCodegen: ClassCodegen,
-    private val reportErrorsOn: IrExpression,
+    private val reportErrorsOn: IrElement,
     private val containingFile: IrFile,
 ) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
     override val config: JvmBackendConfig

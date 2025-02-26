@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -131,7 +132,7 @@ internal class KaFe10CompilerFacility(
 
         codegenFactory.convertAndGenerate(filesToCompile, state, bindingContext)
         val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
-        return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
+        return KaCompilationResult.Success(outputFiles, capturedValues = emptyList(), canBeCached = true)
     }
 
     private fun computeErrors(diagnostics: Diagnostics, allowedErrorFilter: (KaDiagnostic) -> Boolean): List<KaDiagnostic> {

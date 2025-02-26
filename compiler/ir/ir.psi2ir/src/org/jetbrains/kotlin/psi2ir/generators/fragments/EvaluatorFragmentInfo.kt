@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 /**
  *  Information for compilation of code fragments for `evaluate expression`
@@ -26,6 +28,7 @@ class EvaluatorFragmentInfo(
     // Might be null if IR for `methodDescriptor` has not been built yet (namely in K1 setup)
     val methodIR: IrFunction?,
     val parameters: List<EvaluatorFragmentParameterInfo>,
+    val typeArgumentsMap: Map<IrTypeParameterSymbol, IrType>
 ) {
     companion object {
         // Used in the IntelliJ Kotlin JVM Debugger Plug-In (CodeFragmentCompiler)
@@ -36,7 +39,7 @@ class EvaluatorFragmentInfo(
             methodDescriptor: FunctionDescriptor,
             parametersWithInfo: List<EvaluatorFragmentParameterInfo>
         ) =
-            EvaluatorFragmentInfo(classDescriptor, methodDescriptor, null, parametersWithInfo)
+            EvaluatorFragmentInfo(classDescriptor, methodDescriptor, null, parametersWithInfo, emptyMap())
     }
 }
 

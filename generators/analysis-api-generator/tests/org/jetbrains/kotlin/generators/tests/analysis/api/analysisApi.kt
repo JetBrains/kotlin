@@ -142,7 +142,11 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                 and analysisSessionModeIs(AnalysisSessionMode.Normal)
                 and analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
-        test<AbstractCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
+        test<AbstractCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.LibrarySource)) {
+            model("compilation", pattern = TestGeneratorUtil.KT, excludeDirs = listOf("codeFragments/reifiedTypeParams"))
+        }
+
+        test<AbstractCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.Source)) {
             model("compilation", pattern = TestGeneratorUtil.KT)
         }
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
+import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
@@ -124,6 +125,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             try {
                 val adapter = InstructionAdapter(methodVisitor)
                 ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, sourceMapper, reifiedTypeParameters).generate()
+                postReifyEvaluatorGeneratedMethod(methodNode)
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
             }
@@ -132,6 +134,24 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         }
         methodVisitor.visitEnd()
         return SMAPAndMethodNode(methodNode, smap)
+    }
+
+    private fun postReifyEvaluatorGeneratedMethod(methodNode: MethodNode) {
+        if (context.evaluatorData?.evaluatorGeneratedFunction != irFunction) return
+        val mappings = TypeParameterMappings(
+            classCodegen.typeMapper.typeSystem,
+            context.evaluatorData!!.capturedTypeParametersMapping,
+            allReified = false,
+            classCodegen.typeMapper::mapTypeParameter
+        )
+        val reifiedTypeInliner = ReifiedTypeInliner(
+            mappings,
+            IrInlineIntrinsicsSupport(classCodegen, irFunction, irFunction.fileParent),
+            context.typeSystem,
+            context.config.languageVersionSettings,
+            context.config.unifiedNullChecks,
+        )
+        reifiedTypeInliner.reifyInstructions(methodNode)
     }
 
     private fun shouldGenerateAnnotationsOnValueParameters(): Boolean =

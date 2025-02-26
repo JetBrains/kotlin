@@ -43,7 +43,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
 
   @Test
   public void testAllFilesPresentInCompilation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "codeFragments/reifiedTypeParams");
   }
 
   @Test
@@ -214,7 +214,7 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
   public class CodeFragments {
     @Test
     public void testAllFilesPresentInCodeFragments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "reifiedTypeParams");
     }
 
     @Test

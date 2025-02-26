@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility
 
 import com.intellij.openapi.extensions.LoadingOrder
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -41,10 +43,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.plugin.sandbox.PluginRuntimeAnnotationsProvider
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -123,8 +127,24 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 ?.let { put(KaCompilerFacility.CODE_FRAGMENT_METHOD_NAME, it) }
         }
 
+        val callStack = mutableListOf<PsiElement>()
+        var stackDepth = 0
+        while (true) {
+            val callStackExpr = testServices.ktTestModuleStructure.mainModules.flatMap { it.psiFiles }.firstNotNullOfOrNull { file ->
+                val offset =
+                    testServices.expressionMarkerProvider.getCaretOrNull(file, "stack_$stackDepth") ?: return@firstNotNullOfOrNull null
+                file.findElementAt(offset)?.getParentOfType<KtElement>(strict = false)
+            }
+            if (callStackExpr != null) callStack.add(callStackExpr) else break
+            stackDepth++
+        }
+
         analyze(mainFile) {
-            val target = KaCompilerTarget.Jvm(isTestMode = true)
+            val target = KaCompilerTarget.Jvm(
+                isTestMode = true,
+                compiledClassHandler = null,
+                debuggerExtension = DebuggerExtension(callStack.asSequence())
+            )
             val allowedErrorFilter: (KaDiagnostic) -> Boolean = { it.factoryName in ALLOWED_ERRORS }
 
             val exceptionExpected = mainModule.testModule.directives.contains(Directives.CODE_COMPILATION_EXCEPTION)

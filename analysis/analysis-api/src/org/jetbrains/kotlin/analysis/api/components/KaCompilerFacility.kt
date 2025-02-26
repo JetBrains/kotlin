@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import java.io.File
 
 /**
@@ -34,11 +31,26 @@ public sealed class KaCompilationResult {
      *
      * @property output Output files produced by the compiler. For the JVM target, these are class files and '.kotlin_module'.
      * @property capturedValues Context values captured by a [KtCodeFragment]. Empty for an ordinary [KtFile].
+     * @property canBeCached When the flag is raised, this compilation result is safe to cache and avoid re-compilation
+     *  Suppose we have the following code and evaluating `T::class`
+     *
+     *  inline fun <reified T> foo() {
+     *      //Breakpoint!
+     *      println()
+     *  }
+     *
+     *  fun main() {
+     *      foo<Int>()
+     *      foo<String>()
+     *  }
+     *
+     *  We should emit different bytecode in <Int> and <String> calls, yet we are at the same line and compiling the same code.
      */
     @KaExperimentalApi
     public class Success(
         public val output: List<KaCompiledFile>,
-        public val capturedValues: List<CodeFragmentCapturedValue>
+        public val capturedValues: List<CodeFragmentCapturedValue>,
+        public var canBeCached: Boolean,
     ) : KaCompilationResult()
 
     /**
@@ -89,7 +101,8 @@ public sealed class KaCompilerTarget {
     @KaExperimentalApi
     public class Jvm(
         public val isTestMode: Boolean,
-        public val compiledClassHandler: KaCompiledClassHandler? = null,
+        public val compiledClassHandler: KaCompiledClassHandler?,
+        public val debuggerExtension: DebuggerExtension?,
     ) : KaCompilerTarget()
 }
 
@@ -158,3 +171,14 @@ public interface KaCompilerFacility : KaSessionComponent {
  */
 @KaExperimentalApi
 public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cause)
+
+/**
+ * Provides an extension point for compiler to retrieve additional information from debugger API
+ *
+ * Used for debugger's code fragments compilation.
+ *
+ * @property stack A sequence of PSI elements of the expressions (function calls or property accesses) in the current execution stack,
+ * listed from the top to the bottom.
+ */
+@KaExperimentalApi
+public class DebuggerExtension(public val stack: Sequence<PsiElement?>)

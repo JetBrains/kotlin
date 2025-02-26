@@ -1570,7 +1570,9 @@ class ExpressionCodegen(
 
     override fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
         require(typeParameter is IrTypeParameterSymbol)
-        if (irFunction != typeParameter.owner.parent) {
+        // For type parameter captured in code fragment, IR of method declaring it might be not built.
+        // Thus, we first check if we are inside the evaluator-generated method and avoid accessing non-existing typeParameter.owner.parent
+        if (context.evaluatorData?.evaluatorGeneratedFunction == irFunction || irFunction != typeParameter.owner.parent) {
             reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
         }
     }
