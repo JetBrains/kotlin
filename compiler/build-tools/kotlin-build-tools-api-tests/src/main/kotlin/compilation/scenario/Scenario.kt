@@ -19,6 +19,7 @@ interface Scenario {
      *
      * @param moduleName The name of the module.
      * @param dependencies (optional) The list of scenario modules that this module depends on. Defaults to an empty list.
+     * @param snapshotInlinedClassesInDependencies (optional) Snapshotter setting to enable snapshotting inlined classes. Defaults to false.
      * @param additionalCompilationArguments (optional) The list of additional compilation arguments for this module. Defaults to an empty list.
      * @param compilationOptionsModifier (optional) A function that can be used to modify the compilation configuration for this module.
      * @param incrementalCompilationOptionsModifier (optional) A function that can be used to modify the incremental compilation configuration for this module.
@@ -27,6 +28,7 @@ interface Scenario {
     fun module(
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
+        snapshotInlinedClassesInDependencies: Boolean = false,
         additionalCompilationArguments: List<String> = emptyList(),
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)? = null,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)? = null,
@@ -43,6 +45,7 @@ interface Scenario {
      *
      * @param moduleName The name of the module.
      * @param dependencies (optional) The list of scenario modules that this module depends on. Defaults to an empty list.
+     * @param snapshotInlinedClassesInDependencies (optional) Snapshotter setting to enable snapshotting inlined classes. Defaults to false.
      * @param additionalCompilationArguments (optional) The list of additional compilation arguments for this module. Defaults to an empty list.
      * @param compilationOptionsModifier (optional) A function that can be used to modify the compilation configuration for this module.
      * @param incrementalCompilationOptionsModifier (optional) A function that can be used to modify the incremental compilation configuration for this module.
@@ -51,6 +54,7 @@ interface Scenario {
     fun trackedModule(
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
+        snapshotInlinedClassesInDependencies: Boolean = false,
         additionalCompilationArguments: List<String> = emptyList(),
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)? = null,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)? = null,
