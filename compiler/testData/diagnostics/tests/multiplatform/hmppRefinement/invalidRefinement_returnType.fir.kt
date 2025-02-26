@@ -3,14 +3,14 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: common
-expect class Foo {
-    fun foo(): Int
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+    fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>(): Int
 }
 
 // MODULE: intermediate()()(common)
 @kotlin.experimental.ExperimentalExpectRefinement
-expect class Foo {
-    fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>()
+expect class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> {
+    fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>foo<!>()
 }
 
 // MODULE: main()()(intermediate)
