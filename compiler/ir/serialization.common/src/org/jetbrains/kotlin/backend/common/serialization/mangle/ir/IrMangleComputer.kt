@@ -48,7 +48,7 @@ open class IrMangleComputer(
 
     override fun copy(newMode: MangleMode) = IrMangleComputer(builder, newMode, compatibleMode)
 
-    final override fun IrDeclaration.visitParent() {
+    override fun IrDeclaration.visitParent() {
         parent.acceptVoid(Visitor())
     }
 

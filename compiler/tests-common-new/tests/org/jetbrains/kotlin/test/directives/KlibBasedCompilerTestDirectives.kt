@@ -52,11 +52,8 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
         """
             This is a directive to skip some test data files in unbound IR serialization tests
             (see `AbstractNativeUnboundIrSerializationTest` and generated subclasses).
-            
-            Some tests are known to have call sites of local fake overrides inside inline functions.
-            Currently, serialization of such call sites is not supported. It should be supported in KT-72296.
 
-            Other tests use exposure of private types from internal inline functions. This is already a compiler
+            Some tests use exposure of private types from internal inline functions. This is already a compiler
             warning in 2.1.0 (KT-69681), but soon will become a compiler error (KT-70916).
         """.trimIndent()
     )
