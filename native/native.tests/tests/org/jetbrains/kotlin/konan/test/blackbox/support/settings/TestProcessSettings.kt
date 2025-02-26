@@ -80,10 +80,20 @@ enum class TestMode(private val description: String) {
     override fun toString() = description
 }
 
-enum class CompatibilityTestMode(private val description: String, val isBackward: Boolean = false) {
+enum class CompatibilityTestMode(
+    private val description: String,
+    val supportsXVerifyIrVisibility: Boolean = true,
+    val isBackward: Boolean = false
+) {
     NONE(description = "Produce KLIBs and executable file using current compiler"),
+    BACKWARD_1_9(
+        isBackward = true,
+        supportsXVerifyIrVisibility = false,
+        description = "Produce KLIBs using released compiler v1.9.24. Produce an executable file using current compiler"
+    ),
     BACKWARD_2_0(
         isBackward = true,
+        supportsXVerifyIrVisibility = false,
         description = "Produce KLIBs using released compiler v2.0.0. Produce an executable file using current compiler"
     ),
     BACKWARD_2_1(

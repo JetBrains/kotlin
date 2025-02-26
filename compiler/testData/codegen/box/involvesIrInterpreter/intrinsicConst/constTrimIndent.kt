@@ -1,4 +1,6 @@
 // LANGUAGE: +IntrinsicConstEvaluation
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_1_9
+// ^^^ Compiler v1.9.24: error: const 'val' initializer should be a constant value
 // IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM
 // WITH_STDLIB
 fun <T> T.id() = this

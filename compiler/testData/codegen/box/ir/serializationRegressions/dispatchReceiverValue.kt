@@ -1,6 +1,8 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // LANGUAGE: +MultiPlatformProjects
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_1_9
+// ^^^ +MultiPlatformProjects is not supported for mix of K1 and K2 compilers
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND_K2: JVM_IR, NATIVE

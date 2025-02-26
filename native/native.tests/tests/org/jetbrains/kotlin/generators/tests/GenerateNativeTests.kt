@@ -26,6 +26,7 @@ fun main() {
     System.setProperty("java.awt.headless", "true")
     val k1BoxTestDir = listOf("multiplatform/k1")
     val k2BoxTestDir = listOf("multiplatform/k2")
+    val excludeBackward19CompatibilityTestDir = listOf("controlStructures/breakContinueInExpressions/inlinedBreakContinue")
 
     generateSources()
 
@@ -159,6 +160,19 @@ fun main() {
 
         // Klib backward/forward compatibility tests.
         // TODO: After 2.2.0 release, generate also backward/forward compatibility tests for "klib/syntheticAccessors"
+        testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData/codegen") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "NativeCodegenBoxBackward19CompatibilityTestGenerated",
+                annotations = listOf(
+                    *compatibilityTestMode(CompatibilityTestMode.BACKWARD_1_9),
+                    *frontendClassic(),
+                    provider<UseExtTestCaseGroupProvider>(),
+                )
+            ) {
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir + k2BoxTestDir + excludeBackward19CompatibilityTestDir)
+                model("boxInline", targetBackend = TargetBackend.NATIVE)
+            }
+        }
         testGroup("native/native.tests/klib-compatibility-2.0/tests-gen", "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxBackward20CompatibilityTestGenerated",

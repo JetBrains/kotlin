@@ -1,4 +1,7 @@
 // LANGUAGE: +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_1_9
+// ^^^ Compiler v1.9.24: error: assigning single elements to varargs in named form is forbidden
+
 // ISSUE: KT-63514
 // WITH_STDLIB
 

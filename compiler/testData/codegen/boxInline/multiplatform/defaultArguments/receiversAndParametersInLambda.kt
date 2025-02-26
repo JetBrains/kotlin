@@ -1,4 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_1_9
+// ^^^ +MultiPlatformProjects is not supported for mix of K1 and K2 compilers
 // IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_K2: JVM_IR, NATIVE
 // IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR JVM_IR_SERIALIZE

@@ -1,4 +1,7 @@
 // LANGUAGE: +ContextReceivers
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_1_9
+// ^^^ Compiler v1.9.24: Can't find built-in class kotlin.ContextFunctionTypeParams
+
 // SKIP_NODE_JS
 
 open class A {
