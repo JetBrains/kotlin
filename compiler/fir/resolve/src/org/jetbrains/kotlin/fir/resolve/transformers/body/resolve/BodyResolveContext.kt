@@ -575,6 +575,12 @@ class BodyResolveContext(
 
         val base = towerDataContext.addNonLocalTowerDataElements(emptyList())
         val statics = base
+            // TODO: temporary solution for avoiding problem described in KT-62712, flatten back after fix
+            .let { baseCtx ->
+                towerElementsForScript.implicitReceivers.fold(baseCtx) { ctx, it ->
+                    ctx.addReceiver(it.type.classId?.shortClassName, it)
+                }
+            }
             .addNonLocalScopeIfNotNull(towerElementsForScript.staticScope)
 
         val parameterScope = owner.parameters.filter {
@@ -588,12 +594,6 @@ class BodyResolveContext(
         val forMembersResolution =
             statics
                 .addLocalScope(parameterScope)
-                // TODO: temporary solution for avoiding problem described in KT-62712, flatten back after fix
-                .let { baseCtx ->
-                    towerElementsForScript.implicitReceivers.fold(baseCtx) { ctx, it ->
-                        ctx.addReceiver(it.type.classId?.shortClassName, it)
-                    }
-                }
 
         val newContexts = FirRegularTowerDataContexts(
             regular = forMembersResolution,
