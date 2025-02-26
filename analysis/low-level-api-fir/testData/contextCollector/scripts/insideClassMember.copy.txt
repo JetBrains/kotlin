@@ -16,6 +16,10 @@ Tower Data Context:
     Element 7
         Scope: FirExplicitSimpleImportingScope
     Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 9
         Scope: FirScriptDeclarationsScope
             Classifiers:
                 FirRegularClassSymbol public final? class After_OtherClass : R|kotlin/Any|
@@ -29,14 +33,10 @@ Tower Data Context:
                     public? get(): <implicit>
                 FirPropertySymbol public? final? val before_Val: <implicit>
                     public? get(): <implicit>
-    Element 9
+    Element 10
         Scope: FirLocalScope
             Classifiers:
                 FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
-    Element 10
-        Implicit receiver:
-            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
     Element 11
         Implicit receiver:
             FirRegularClassSymbol public final class MyClass : R|kotlin/Any|

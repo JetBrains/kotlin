@@ -36,6 +36,18 @@ class ConstructorArgumentsOrderTest {
     }
 
     @Test
+    fun testScriptWithImplicitReceiverWithShadowing() {
+        val res = evalString<ScriptWithImplicitReceiver>("""val receiverString1 = 42; receiverString1.toChar()""") {
+            implicitReceivers(ImplicitReceiverClass("Hello Receiver!"))
+        }
+
+        assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.render()}"
+        )
+    }
+
+    @Test
     fun testScriptWithBoth() {
         val res = evalString<ScriptWithBoth>("""println(providedString + receiverString)""") {
             providedProperties("providedString" to "Hello")
