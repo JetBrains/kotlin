@@ -153,8 +153,8 @@ fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest(includeAllDumpH
 /**
  * Add all handlers usually used in codegen tests and the [JvmBoxRunner] handler
  */
-fun TestConfigurationBuilder.configureCommonHandlersForBoxTest() {
-    commonHandlersForCodegenTest()
+fun TestConfigurationBuilder.configureCommonHandlersForBoxTest(includeK1Handlers: Boolean = true) {
+    commonHandlersForCodegenTest(includeK1Handlers)
     configureJvmArtifactsHandlersStep {
         useHandlers(::JvmBoxRunner)
     }
@@ -163,9 +163,11 @@ fun TestConfigurationBuilder.configureCommonHandlersForBoxTest() {
 /**
  * Add all handlers usually used in codegen tests
  */
-fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
-    configureClassicFrontendHandlersStep {
-        commonClassicFrontendHandlersForCodegenTest()
+fun TestConfigurationBuilder.commonHandlersForCodegenTest(includeK1Handlers: Boolean = true) {
+    if (includeK1Handlers) {
+        configureClassicFrontendHandlersStep {
+            commonClassicFrontendHandlersForCodegenTest()
+        }
     }
 
     configureFirHandlersStep {

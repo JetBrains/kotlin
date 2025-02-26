@@ -319,6 +319,9 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = k1BoxTestDir)
             }
+            testClass<AbstractJvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest> {
+                model("codegen/box/${k2BoxTestDir.first()}")
+            }
 
             testClass<AbstractFirLightTreeBlackBoxCodegenTest>("FirLightTreeBlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")

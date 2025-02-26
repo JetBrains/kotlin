@@ -48,6 +48,11 @@ class FirDiagnosticCodeMetaRenderConfiguration(
 ) : AbstractCodeMetaInfoRenderConfiguration(renderParams = false) {
     private val crossPlatformLineBreak = """\r?\n""".toRegex()
 
+    companion object {
+        const val METADATA_TAG = "METADATA"
+        const val PLATFORM_TAG = "PLATFORM"
+    }
+
     override fun asString(codeMetaInfo: CodeMetaInfo): String {
         if (codeMetaInfo !is FirDiagnosticCodeMetaInfo) return ""
         return (getTag(codeMetaInfo)
@@ -84,5 +89,13 @@ class FirDiagnosticCodeMetaRenderConfiguration(
 
     fun getTag(codeMetaInfo: FirDiagnosticCodeMetaInfo): String {
         return codeMetaInfo.diagnostic.factory.name
+    }
+
+    override fun postProcessAttributes(codeMetaInfo: CodeMetaInfo) {
+        val attributes = codeMetaInfo.attributes
+        if (METADATA_TAG in attributes && PLATFORM_TAG in attributes) {
+            attributes.remove(PLATFORM_TAG)
+            attributes.remove(METADATA_TAG)
+        }
     }
 }

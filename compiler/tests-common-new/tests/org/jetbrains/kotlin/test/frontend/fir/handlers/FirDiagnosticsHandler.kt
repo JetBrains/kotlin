@@ -56,14 +56,17 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.SEPARATE_KMP_COMPILATION
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedJvmOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.FirCliBasedMetadataFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -578,8 +581,11 @@ fun KtDiagnostic.toMetaInfos(
             else -> error("Should not be here")
         }
     }
+    if (SEPARATE_KMP_COMPILATION in module.directives && kmpCompilationMode == KmpCompilationMode.PLATFORM) {
+        metaInfo.attributes += FirDiagnosticCodeMetaRenderConfiguration.PLATFORM_TAG
+    }
     if (kmpCompilationMode == KmpCompilationMode.METADATA) {
-        metaInfo.attributes += "METADATA"
+        metaInfo.attributes += FirDiagnosticCodeMetaRenderConfiguration.METADATA_TAG
     }
     metaInfo
 }
@@ -637,17 +643,25 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module)
             val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
+            fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
+                val diagnosticsPerFirFile = buildMap {
+                    for ((filePath, diagnostics) in diagnosticsCollector.diagnosticsByFilePath) {
+                        if (filePath == null) continue
+                        val firFile = allFiles.first { it.sourceFile?.path == filePath }
+                        put(firFile, diagnostics)
+                    }
+                }
+                result += diagnosticsPerFirFile.convertToTestDiagnostics(mode)
+            }
+
             when (info) {
                 is FirCliBasedJvmOutputArtifact -> {
                     val diagnosticsCollector = info.cliArtifact.diagnosticCollector
-                    val diagnosticsPerFirFile = buildMap {
-                        for ((filePath, diagnostics) in diagnosticsCollector.diagnosticsByFilePath) {
-                            if (filePath == null) continue
-                            val firFile = allFiles.first { it.sourceFile?.path == filePath }
-                            put(firFile, diagnostics)
-                        }
-                    }
-                    result += diagnosticsPerFirFile.convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                    processDiagnosticsFromCliPhase(diagnosticsCollector, KmpCompilationMode.PLATFORM)
+                }
+                is FirCliBasedMetadataFrontendOutputArtifact -> {
+                    val diagnosticsCollector = info.cliArtifact.diagnosticCollector
+                    processDiagnosticsFromCliPhase(diagnosticsCollector, KmpCompilationMode.METADATA)
                 }
                 else -> {
                     result += platformPart.session.runCheckers(
@@ -672,15 +686,16 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     }
                 }
             }
-
-            for (part in info.partsForDependsOnModules.dropLast(1)) {
-                part.session.turnOnMetadataCompilationAnalysisFlag {
-                    result += part.session.runCheckers(
-                        part.scopeSession,
-                        part.firFiles.values,
-                        DiagnosticReporterFactory.createPendingReporter(messageCollector),
-                        mppCheckerKind = MppCheckerKind.Platform
-                    ).convertToTestDiagnostics(KmpCompilationMode.METADATA)
+            if (DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS !in testServices.defaultDirectives) {
+                for (part in info.partsForDependsOnModules.dropLast(1)) {
+                    part.session.turnOnMetadataCompilationAnalysisFlag {
+                        result += part.session.runCheckers(
+                            part.scopeSession,
+                            part.firFiles.values,
+                            DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                            mppCheckerKind = MppCheckerKind.Platform
+                        ).convertToTestDiagnostics(KmpCompilationMode.METADATA)
+                    }
                 }
             }
 

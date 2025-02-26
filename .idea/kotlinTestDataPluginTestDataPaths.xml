@@ -407,6 +407,15 @@
             </array>
           </value>
         </entry>
+        <entry key="Jvm.*BlackBoxCodegenWithSeparateKmpCompilationTestGenerated">
+          <value>
+            <array>
+              <option value="FIR" />
+              <option value="JVM" />
+              <option value="HMPP" />
+            </array>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

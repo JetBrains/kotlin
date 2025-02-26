@@ -131,9 +131,13 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
     )
 
     val SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE by stringDirective(
-        description = """S
+        description = """
             Suppresses AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest
         """
+    )
+
+    val DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS by directive(
+        description = "Disables additional run of platform checkers in common environment"
     )
 }
 
