@@ -14,23 +14,26 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
-import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import java.io.File
+import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNpmResolutionManager as wasmKotlinNpmResolutionManager
 
 @DisableCachingByDefault
-abstract class KotlinPackageJsonTask :
-    DefaultTask(),
+abstract class KotlinPackageJsonTask
+@InternalKotlinGradlePluginApi
+@Inject
+constructor(
+) : DefaultTask(),
     UsesKotlinNpmResolutionManager,
     UsesGradleNodeModulesCache {
 
@@ -116,23 +119,21 @@ abstract class KotlinPackageJsonTask :
 
                 val projectPath = project.path
                 val compilationDisambiguatedName = compilation.disambiguatedName
+                val compilationResolver = project.provider {
+                    getCompilationResolver(nodeJsRoot, projectPath, compilationDisambiguatedName)
+                }
 
                 task.producerInputs.value(
-                    project.provider {
+                    compilationResolver.map { resolver ->
                         // nested inputs are processed in configuration phase
                         // so npmResolutionManager must not be used
-                        getCompilationResolver(nodeJsRoot, projectPath, compilationDisambiguatedName)
-                            .compilationNpmResolution.inputs
+                        resolver.compilationNpmResolution.inputs
                     }
                 ).disallowChanges()
 
                 task.compositeFiles.from(
-                    project.provider {
-                        getCompilationResolver(
-                            nodeJsRoot,
-                            projectPath,
-                            compilationDisambiguatedName
-                        ).aggregatedConfiguration
+                    compilationResolver.map { resolver ->
+                        resolver.aggregatedConfiguration
                             .incoming
                             .artifactView { artifactView ->
                                 artifactView.componentFilter { componentIdentifier ->
@@ -140,9 +141,9 @@ abstract class KotlinPackageJsonTask :
                                 }
                             }
                             .artifacts
-                            .filter {
-                                it.id `is` CompositeProjectComponentArtifactMetadata
-                            }
+//                            .filter @Suppress("DEPRECATION") {
+//                                it.id `is` CompositeProjectComponentArtifactMetadata
+//                            }
                             .map { it.file }
                             .toSet()
                     }
@@ -164,7 +165,7 @@ abstract class KotlinPackageJsonTask :
                 }
 
                 task.dependsOn(
-                    target.project.provider {
+                    project.provider {
                         findDependentTasks(
                             nodeJsRoot.resolver,
                             getCompilationResolver(

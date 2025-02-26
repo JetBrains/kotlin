@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.ResolvedArtifact
@@ -16,6 +17,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
+import org.gradle.util.Path
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigura
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -44,32 +47,38 @@ class KotlinCompilationNpmResolver(
     val projectResolver: KotlinProjectNpmResolver,
     val compilation: KotlinJsIrCompilation,
 ) : Serializable {
-    var rootResolver = projectResolver.resolver
+    var rootResolver: KotlinRootNpmResolver = projectResolver.resolver
 
-    val npmProject = compilation.npmProject
+    val npmProject: NpmProject = compilation.npmProject
 
-    val compilationDisambiguatedName = compilation.disambiguatedName
+    val compilationDisambiguatedName: String = compilation.disambiguatedName
 
-    val npmVersion by lazy {
+    val npmVersion: String by lazy {
         project.version.toString()
     }
 
-    val target get() = compilation.target
+    val target: KotlinJsIrTarget get() = compilation.target
 
-    val project get() = target.project
+    val project: Project get() = target.project
 
     val projectPath: String = project.path
 
     val packageJsonTaskHolder: TaskProvider<KotlinPackageJsonTask> =
         KotlinPackageJsonTask.create(compilation)
 
-    val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask> = run {
+    val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask>
+
+    init {
         val npmResolutionManager = compilation.webTargetVariant(
             { project.kotlinNpmResolutionManager },
             { project.wasmKotlinNpmResolutionManager },
         )
+        val nodeJsRoot = compilation.webTargetVariant(
+            { project.rootProject.kotlinNodeJsRootExtension },
+            { project.rootProject.wasmKotlinNodeJsRootExtension },
+        )
 
-        project.registerTask<PublicPackageJsonTask>(
+        publicPackageJsonTaskHolder = project.registerTask<PublicPackageJsonTask>(
             npmProject.publicPackageJsonTaskName
         ) {
             it.dependsOn(packageJsonTaskHolder)
@@ -84,43 +93,35 @@ class KotlinCompilationNpmResolver(
             it.npmProjectName.set(npmProject.name)
             it.npmProjectMain.set(npmProject.main)
             it.extension.set(compilation.fileExtension)
-        }.also { packageJsonTask ->
-            project.dependencies.attributesSchema {
-                it.attribute(publicPackageJsonAttribute)
-            }
+        }
 
-            val nodeJsRoot = compilation.webTargetVariant(
-                { project.rootProject.kotlinNodeJsRootExtension },
-                { project.rootProject.wasmKotlinNodeJsRootExtension },
-            )
+        project.dependencies.attributesSchema {
+            it.attribute(publicPackageJsonAttribute)
+        }
 
-            nodeJsRoot.packageJsonUmbrellaTaskProvider.configure {
-                it.dependsOn(packageJsonTask)
-            }
+        nodeJsRoot.packageJsonUmbrellaTaskProvider.configure {
+            it.dependsOn(publicPackageJsonTaskHolder)
+        }
 
-            if (compilation.isMain()) {
-                project.tasks
-                    .withType(Zip::class.java)
-                    .configureEach {
-                        if (it.name == npmProject.target.artifactsTaskName) {
-                            it.dependsOn(packageJsonTask)
-                        }
-                    }
-
-                val publicPackageJsonConfiguration = createPublicPackageJsonConfiguration()
-
-                target.project.artifacts.add(publicPackageJsonConfiguration.name, packageJsonTask.map { it.packageJsonFile }) {
-                    it.builtBy(packageJsonTask)
+        if (compilation.isMain()) {
+            project.tasks
+                .withType(Zip::class.java)
+                .matching { it.name == npmProject.target.artifactsTaskName }
+                .configureEach {
+                    it.dependsOn(publicPackageJsonTaskHolder)
                 }
+
+            val publicPackageJsonConfiguration = createPublicPackageJsonConfiguration()
+
+            project.artifacts.add(publicPackageJsonConfiguration.name, publicPackageJsonTaskHolder.map { it.packageJsonFile }) {
+                it.builtBy(publicPackageJsonTaskHolder)
             }
         }
     }
 
     override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
-    val aggregatedConfiguration: Configuration = run {
-        createAggregatedConfiguration()
-    }
+    val aggregatedConfiguration: Configuration = createAggregatedConfiguration()
 
     private var _compilationNpmResolution: KotlinCompilationNpmResolution? = null
 
@@ -239,7 +240,7 @@ class KotlinCompilationNpmResolver(
 
         private fun visitArtifacts(
             dependency: ResolvedDependency,
-            artifacts: MutableSet<ResolvedArtifact>,
+            artifacts: Set<ResolvedArtifact>,
         ) {
             artifacts.forEach { visitArtifact(dependency, it) }
         }
@@ -251,11 +252,15 @@ class KotlinCompilationNpmResolver(
             val artifactId = artifact.id
             val componentIdentifier = artifactId.componentIdentifier
 
-            if (artifactId `is` CompositeProjectComponentArtifactMetadata) {
+            // TODO update
+            @Suppress("DEPRECATION")
+            val isComposeProjectDep = artifactId `is` CompositeProjectComponentArtifactMetadata
+
+            if (isComposeProjectDep) {
                 visitCompositeProjectDependency(dependency, componentIdentifier as ProjectComponentIdentifier)
             }
 
-            if (componentIdentifier is ProjectComponentIdentifier && !(artifactId `is` CompositeProjectComponentArtifactMetadata)) {
+            if (componentIdentifier is ProjectComponentIdentifier && !isComposeProjectDep) {
                 visitProjectDependency(componentIdentifier)
                 return
             }
@@ -267,12 +272,11 @@ class KotlinCompilationNpmResolver(
             dependency: ResolvedDependency,
             componentIdentifier: ProjectComponentIdentifier,
         ) {
-            (componentIdentifier as DefaultProjectComponentIdentifier).let { identifier ->
-                val includedBuild = project.gradle.includedBuild(identifier.identityPath.topRealPath().name!!)
-                internalCompositeDependencies.add(
-                    CompositeDependency(dependency.moduleName, dependency.moduleVersion, includedBuild.projectDir, includedBuild)
-                )
-            }
+            componentIdentifier as DefaultProjectComponentIdentifier
+            val includedBuild = project.gradle.includedBuild(componentIdentifier.identityPath.topRealPath().name!!)
+            internalCompositeDependencies.add(
+                CompositeDependency(dependency.moduleName, dependency.moduleVersion, includedBuild.projectDir, includedBuild)
+            )
         }
 
         private fun visitProjectDependency(
@@ -293,24 +297,25 @@ class KotlinCompilationNpmResolver(
                 }
         }
 
-        fun toPackageJsonProducer() = KotlinCompilationNpmResolution(
-            internalDependencies,
-            internalCompositeDependencies,
-            externalGradleDependencies.map {
-                FileExternalGradleDependency(
-                    it.dependency.moduleName,
-                    it.dependency.moduleVersion,
-                    it.artifact.file
-                )
-            },
-            externalNpmDependencies,
-            fileCollectionDependencies,
-            projectPath,
-            compilationDisambiguatedName,
-            compilation.outputModuleName.get(),
-            npmVersion,
-            rootResolver.tasksRequirements
-        )
+        fun toPackageJsonProducer(): KotlinCompilationNpmResolution =
+            KotlinCompilationNpmResolution(
+                internalDependencies = internalDependencies,
+                internalCompositeDependencies = internalCompositeDependencies,
+                externalGradleDependencies = externalGradleDependencies.map {
+                    FileExternalGradleDependency(
+                        dependencyName = it.dependency.moduleName,
+                        dependencyVersion = it.dependency.moduleVersion,
+                        file = it.artifact.file,
+                    )
+                },
+                externalNpmDependencies = externalNpmDependencies,
+                fileCollectionDependencies = fileCollectionDependencies,
+                projectPath = projectPath,
+                compilationDisambiguatedName = compilationDisambiguatedName,
+                npmProjectName = compilation.outputModuleName.get(),
+                npmProjectVersion = npmVersion,
+                tasksRequirements = rootResolver.tasksRequirements,
+            )
     }
 
     companion object {
@@ -320,5 +325,12 @@ class KotlinCompilationNpmResolver(
         )
 
         const val PUBLIC_PACKAGE_JSON_ATTR_VALUE = "public-package-json"
+
+        private tailrec fun Path.topRealPath(): Path {
+            val parent = parent
+            parent?.parent ?: return this
+
+            return parent.topRealPath()
+        }
     }
 }

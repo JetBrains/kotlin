@@ -1,26 +1,29 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 kotlin {
     js {
         nodejs()
-        binaries.executable()
-    }
-}
-
-kotlin {
-    js {
         browser()
         binaries.executable()
     }
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation("com.example:lib-2")
+                implementation(npm("node-fetch", "3.2.8"))
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+    }
 }
 
-tasks.named("browserTest") {
-    enabled = false
-}
-
-tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
     args.addAll(
         listOf(
             "--network-concurrency",
@@ -29,10 +32,4 @@ tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTas
             "network"
         )
     )
-}
-
-dependencies {
-    implementation("com.example:lib-2")
-    implementation(npm("node-fetch", "3.2.8"))
-    testImplementation(kotlin("test"))
 }

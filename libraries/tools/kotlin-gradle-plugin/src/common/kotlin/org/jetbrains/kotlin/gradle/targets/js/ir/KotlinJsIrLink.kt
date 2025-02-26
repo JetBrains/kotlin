@@ -81,17 +81,18 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Internal
     @get:Deprecated("Internal development property. Scheduled for removal in Kotlin 2.4.")
     var mode: KotlinJsBinaryMode
-        get() = _mode.get()
+        get() = modeProperty.get()
         set(value) {
-            _mode.set(value)
+            modeProperty.set(value)
         }
 
     @get:Internal
-    internal abstract val _mode: Property<KotlinJsBinaryMode>
+    internal abstract val modeProperty: Property<KotlinJsBinaryMode>
 
     @get:Input
+    @InternalKotlinGradlePluginApi // used in integration tests
     val modeProvider: Provider<KotlinJsBinaryMode>
-        get() = _mode
+        get() = modeProperty
 
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
@@ -130,7 +131,7 @@ abstract class KotlinJsIrLink @Inject constructor(
                 args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
             }
 
-            if (isWasmPlatform && _mode.get() == DEVELOPMENT) {
+            if (isWasmPlatform && modeProperty.get() == DEVELOPMENT) {
                 args.debuggerCustomFormatters = true
             }
         }
@@ -152,5 +153,5 @@ abstract class KotlinJsIrLink @Inject constructor(
     }
 
     private fun usingCacheDirectory() =
-        (if (isWasmPlatform) incrementalWasm else incrementalJsIr) && _mode.get() == DEVELOPMENT
+        (if (isWasmPlatform) incrementalWasm else incrementalJsIr) && modeProperty.get() == DEVELOPMENT
 }

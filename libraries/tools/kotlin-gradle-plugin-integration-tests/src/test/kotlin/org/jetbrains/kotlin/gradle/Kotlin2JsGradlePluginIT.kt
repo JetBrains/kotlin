@@ -93,6 +93,11 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     fun testJsCompositeBuild(gradleVersion: GradleVersion) {
         project("js-composite-build", gradleVersion) {
 
+            projectPath.resolve("lib").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("base").addDefaultSettingsToSettingsGradle(gradleVersion)
+
+            makeSnapshotTo("/Users/dev/projects/tmp/kmp-tests/")
+
             fun assertModuleVersion(
                 expectedModuleVersion: String,
                 rootModulePath: String,
@@ -138,7 +143,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 })
             }
 
-            build("build") {
+            build("assemble") {
                 assertModuleVersion("1.1.1", "build/js/node_modules/lib-lib-2", "decamelize")
 
                 assertModuleVersion("2.6.2", "build/js/node_modules/lib-lib-2", "async")

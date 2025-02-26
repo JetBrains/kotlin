@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
@@ -9,13 +9,16 @@ kotlin {
         nodejs()
         browser()
     }
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(npm("decamelize", "1.1.1"))
+            }
+        }
+    }
 }
 
-tasks.named("browserTest") {
-    enabled = false
-}
-
-rootProject.tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
     args.addAll(
         listOf(
             "--network-concurrency",
@@ -24,8 +27,4 @@ rootProject.tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinN
             "network"
         )
     )
-}
-
-dependencies {
-    implementation(npm("decamelize", "1.1.1"))
 }

@@ -1,24 +1,25 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
+kotlin {
+    js {
+        nodejs()
+        browser()
+    }
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation("com.example:base")
+                implementation(npm("async", "2.6.2"))
+            }
+        }
+    }
 }
 
-kotlin.js {
-    nodejs()
-    browser()
-}
-
-tasks.named("browserTest") {
-    enabled = false
-}
-
-rootProject.tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
     args.addAll(
         listOf(
             "--network-concurrency",
@@ -27,9 +28,4 @@ rootProject.tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinN
             "network"
         )
     )
-}
-
-dependencies {
-    implementation("com.example:base")
-    implementation(npm("async", "2.6.2"))
 }
