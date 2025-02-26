@@ -1,4 +1,6 @@
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0 does not know this option
 
 open class Base<T> {
     open fun foo(x: T): Int = 42

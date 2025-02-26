@@ -1,4 +1,6 @@
 // LANGUAGE: +EnumEntries -PrioritizedEnumEntries -ForbidEnumEntryNamedEntries
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0 does not know this language feature
 // KT-59611
 // WITH_STDLIB
 // IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1

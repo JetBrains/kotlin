@@ -1,5 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-68801
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: No override for FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.String [fake_override] in CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]
 
 // MODULE: common
 // FILE: common.kt

@@ -1,4 +1,6 @@
 // LANGUAGE: +WhenGuards
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0 does not know this language feature
 // IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 

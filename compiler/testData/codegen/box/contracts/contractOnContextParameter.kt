@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_K1: ANY
 // SKIP_IR_DESERIALIZATION_CHECKS
 // ^ Context parameter names aren't serialized to metadata yet KT-74546
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
 // IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
 // ^^^ Compiler v2.1.0 does not know this language feature
 

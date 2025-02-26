@@ -1,4 +1,6 @@
 // ISSUE: KT-68523
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: Unknown classifier kind null
 
 data class Some<T>(val data: T & Any)
 

@@ -1,3 +1,5 @@
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Test failed with: FAIL: -81985529216486896
 // WITH_STDLIB
 
 fun box(): String {

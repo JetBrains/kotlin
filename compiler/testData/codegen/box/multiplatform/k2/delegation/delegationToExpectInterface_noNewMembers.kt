@@ -1,5 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-68517
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: IrSimpleFunctionSymbolImpl is unbound. Signature: null
 
 // MODULE: common
 // FILE: common.kt

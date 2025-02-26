@@ -5,6 +5,8 @@
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0:  error: argument type mismatch: actual type is 'box.coroutines.suspendConversion
 
 import helpers.*
 import kotlin.coroutines.*

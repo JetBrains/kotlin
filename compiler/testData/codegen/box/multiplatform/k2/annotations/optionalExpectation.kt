@@ -2,6 +2,8 @@
 // OPT_IN: kotlin.ExperimentalMultiplatform
 // WITH_STDLIB
 // ISSUE: KT-69024
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: Annotation class 'AnnWithOptionalExpectation' uses unlinked class symbol 'usage/C|null[1]'
 
 // MODULE: common
 // FILE: expected.kt

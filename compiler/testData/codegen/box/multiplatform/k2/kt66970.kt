@@ -1,6 +1,8 @@
 // ISSUE: KT-66970
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: error: unresolved reference 'JsStatic'
 
 // MODULE: lib-common
 // FILE: lib-common.kt

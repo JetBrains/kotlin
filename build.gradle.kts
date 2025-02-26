@@ -854,6 +854,7 @@ tasks {
         dependsOn(":native:native.tests:driver:check")
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:native.tests:klib-compatibility:check")
+        dependsOn(":native:native.tests:klib-compatibility-2.0:check")
         dependsOn(":native:native.tests:klib-compatibility-2.1:check")
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-standalone:check")

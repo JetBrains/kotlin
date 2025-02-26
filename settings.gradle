@@ -738,6 +738,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":native:native.tests:stress",
             ":native:native.tests:klib-ir-inliner",
             ":native:native.tests:klib-compatibility",
+            ":native:native.tests:klib-compatibility-2.0",
             ":native:native.tests:klib-compatibility-2.1",
             ":native:native.tests:litmus-tests"
 

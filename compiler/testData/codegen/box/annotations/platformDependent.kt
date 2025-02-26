@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM, NATIVE
 // ISSUE: KT-57858
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: Unresolved reference: PlatformDependent
 
 // FILE: Main.kt
 

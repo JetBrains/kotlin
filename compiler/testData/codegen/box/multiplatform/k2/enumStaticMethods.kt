@@ -1,4 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: This function should be invoked only for declarations in the same kind of container (both members or both top level): FirNamedFunctionSymbol /E.values, FirNamedFunctionSymbol /E.values
 
 // MODULE: common
 // FILE: common.kt

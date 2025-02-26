@@ -1,4 +1,6 @@
 // ISSUE: KT-73399
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: error: argument type mismatch
 
 fun interface Some {
     fun myInvoke(): Any?

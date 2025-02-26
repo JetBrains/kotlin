@@ -1,4 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Test failed with: FAIL test_intermediate1
 
 // MODULE: common
 // FILE: common.kt

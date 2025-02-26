@@ -159,6 +159,19 @@ fun main() {
 
         // Klib backward/forward compatibility tests.
         // TODO: After 2.2.0 release, generate also backward/forward compatibility tests for "klib/syntheticAccessors"
+        testGroup("native/native.tests/klib-compatibility-2.0/tests-gen", "compiler/testData/codegen") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenBoxBackward20CompatibilityTestGenerated",
+                annotations = listOf(
+                    *compatibilityTestMode(CompatibilityTestMode.BACKWARD_2_0),
+                    *frontendFir(),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
+                model("boxInline", targetBackend = TargetBackend.NATIVE)
+            }
+        }
         testGroup("native/native.tests/klib-compatibility-2.1/tests-gen", "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxBackward21CompatibilityTestGenerated",

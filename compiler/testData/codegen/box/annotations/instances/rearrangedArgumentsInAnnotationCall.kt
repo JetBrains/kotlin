@@ -1,4 +1,5 @@
 // ISSUE: KT-73845
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
 // IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
 // ^^^ KT-73845: Compiler v2.1.0 has a bug in 1st compilation phase
 

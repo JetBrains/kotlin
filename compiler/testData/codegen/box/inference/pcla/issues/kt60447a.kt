@@ -1,4 +1,6 @@
 // ISSUE: KT-60447
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: error: unresolved reference 'consumeConcreteType'
 
 // IGNORE_BACKEND_K1: ANY
 // REASON: red code (see corresponding diagnostic test)

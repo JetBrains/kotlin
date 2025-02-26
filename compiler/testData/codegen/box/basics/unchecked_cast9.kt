@@ -1,4 +1,6 @@
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0 does not know this option
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 
 fun <T> foo(x: Int = 0): T = Any() as T

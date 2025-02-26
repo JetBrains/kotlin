@@ -1,4 +1,6 @@
 // ISSUE: KT-68446
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: Internal error in body lowering
 
 fun <T> test_1(arg: T): String {
     if (arg is Char) {

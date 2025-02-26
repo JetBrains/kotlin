@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_K1: JVM_IR
 // LANGUAGE: +AllowAccessToProtectedFieldFromSuperCompanion
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0 does not know this language feature
 // WITH_STDLIB
 // FILE: A.kt
 package a

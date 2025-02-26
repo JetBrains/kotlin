@@ -1,4 +1,6 @@
 // LANGUAGE: -ForbidParenthesizedLhsInAssignments
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0 does not know this language feature
 // ISSUE: KT-68834
 // IGNORE_BACKEND_K1: ANY
 // IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1

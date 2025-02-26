@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: Expected ObjHeader but was i32
 
 interface Value2<out T> {
     val value: T

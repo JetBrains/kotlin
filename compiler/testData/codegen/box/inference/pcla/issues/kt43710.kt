@@ -1,4 +1,6 @@
 // ISSUE: KT-43710
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: error: the type of a receiver hasn't been inferred yet. Please specify type argument for generic parameter 'PTV' of 'build' explicitly
 
 // IGNORE_BACKEND_K1: ANY
 // REASON: red code (see corresponding diagnostic test)

@@ -1,4 +1,6 @@
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
 // IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
+// ^^^ error: 'Inner' is a member and an extension at the same time. References to such elements are prohibited.
 // DUMP_IR
 // ISSUE: KT-73454
 

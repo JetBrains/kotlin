@@ -1,4 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: error: overload resolution ambiguity between candidates
 // IGNORE_BACKEND: JVM_IR
 // ISSUE: KT-69201
 // Notes: Ignore JVM backend because of "Platform declaration clash".

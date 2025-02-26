@@ -2,6 +2,8 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 // ISSUE: KT-62906 (related)
+// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// ^^^ Compiler v2.0.0: Unknown classifier kind null
 
 // MODULE: lib
 // FILE: lib.kt

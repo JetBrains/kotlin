@@ -186,7 +186,8 @@ private class ExtTestDataFile(
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
-            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny
+            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
+            settings.get<CompatibilityTestMode>() != CompatibilityTestMode.BACKWARD_2_0
         ) {
             args.add("-Xverify-ir-visibility")
         }
