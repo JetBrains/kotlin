@@ -250,6 +250,11 @@ internal class KaFirSymbolRelationProvider(
                     return null
                 }
 
+                if (psi.parentOfType<KtModifierList>() != null) {
+                    // Invalid code: the declaration is nested inside a dangling annotation
+                    return null
+                }
+
                 errorWithAttachment("Containing declaration should present for nested declaration ${psi::class}") {
                     withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
                 }

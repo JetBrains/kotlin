@@ -64,6 +64,30 @@ public class FirIdeNormalAnalysisSourceModuleContainingDeclarationProviderByPsiT
   }
 
   @Test
+  @TestMetadata("danglingAnnotationOnMemberAnonymousFunction.kt")
+  public void testDanglingAnnotationOnMemberAnonymousFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberAnonymousFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+  public void testDanglingAnnotationOnMemberFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelAnonymousFunction.kt")
+  public void testDanglingAnnotationOnTopLevelAnonymousFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelAnonymousFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
+  public void testDanglingAnnotationOnTopLevelFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelFunction.kt");
+  }
+
+  @Test
   @TestMetadata("deeplyNestedCode.kt")
   public void testDeeplyNestedCode() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/deeplyNestedCode.kt");
