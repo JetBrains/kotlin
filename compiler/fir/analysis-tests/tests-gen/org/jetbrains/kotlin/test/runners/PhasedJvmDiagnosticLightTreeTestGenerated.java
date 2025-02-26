@@ -756,6 +756,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("identityCheckOnJavaValueBasedWarning.kt")
+    public void testIdentityCheckOnJavaValueBasedWarning() {
+      runTest("compiler/testData/diagnostics/tests/identityCheckOnJavaValueBasedWarning.kt");
+    }
+
+    @Test
     @TestMetadata("IdentityComparisonWithPrimitives.kt")
     public void testIdentityComparisonWithPrimitives() {
       runTest("compiler/testData/diagnostics/tests/IdentityComparisonWithPrimitives.kt");
@@ -999,6 +1005,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestMetadata("IsExpressions.kt")
     public void testIsExpressions() {
       runTest("compiler/testData/diagnostics/tests/IsExpressions.kt");
+    }
+
+    @Test
+    @TestMetadata("javaValueBasedWarningsDisabled.kt")
+    public void testJavaValueBasedWarningsDisabled() {
+      runTest("compiler/testData/diagnostics/tests/javaValueBasedWarningsDisabled.kt");
     }
 
     @Test
@@ -1899,6 +1911,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestMetadata("suspendFunAndPrivateJava.kt")
     public void testSuspendFunAndPrivateJava() {
       runTest("compiler/testData/diagnostics/tests/suspendFunAndPrivateJava.kt");
+    }
+
+    @Test
+    @TestMetadata("synchronizedOnJavaValueBasedWarning.kt")
+    public void testSynchronizedOnJavaValueBasedWarning() {
+      runTest("compiler/testData/diagnostics/tests/synchronizedOnJavaValueBasedWarning.kt");
     }
 
     @Test

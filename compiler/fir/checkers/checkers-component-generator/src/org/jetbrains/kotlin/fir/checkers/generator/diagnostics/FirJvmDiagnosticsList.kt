@@ -250,6 +250,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val INAPPLICABLE_JVM_FIELD_WARNING by warning<KtAnnotationEntry> {
             parameter<String>("message")
         }
+        val SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
         val SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE by deprecationError<PsiElement>(ProhibitSynchronizationByValueClassesAndPrimitives) {
             parameter<ConeKotlinType>("valueClassOrPrimitive")
         }
