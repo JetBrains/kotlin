@@ -28801,6 +28801,13 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lenientMode")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("klib")
+        public class LenientMode {
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("klib")
