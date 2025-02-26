@@ -19,6 +19,7 @@ private fun IdSignature.containsFileSignature(moduleName: String): Boolean = whe
     is IdSignature.LocalSignature -> false
     is IdSignature.LoweredDeclarationSignature -> original.containsFileSignature(moduleName)
     is IdSignature.ScopeLocalDeclaration -> false
+    is IdSignature.LocalFakeOverrideSignature -> containingClass.containsFileSignature(moduleName)
     is IdSignature.SpecialFakeOverrideSignature ->
         memberSignature.containsFileSignature(moduleName) || overriddenSignatures.any { it.containsFileSignature(moduleName) }
     is IdSignature.FileSignature -> true
@@ -32,6 +33,7 @@ private fun IdSignature.rebuildSignature(moduleName: String) = when (this) {
     is IdSignature.LocalSignature -> this
     is IdSignature.LoweredDeclarationSignature -> rebuildSignature(moduleName)
     is IdSignature.ScopeLocalDeclaration -> this
+    is IdSignature.LocalFakeOverrideSignature -> rebuildSignature(moduleName)
     is IdSignature.SpecialFakeOverrideSignature -> rebuildSignature(moduleName)
     is IdSignature.FileSignature -> rebuildSignature(moduleName)
 }
@@ -48,6 +50,11 @@ private fun IdSignature.FileLocalSignature.rebuildSignature(moduleName: String):
 private fun IdSignature.LoweredDeclarationSignature.rebuildSignature(moduleName: String): IdSignature =
     IdSignature.LoweredDeclarationSignature(original.rebuildSignature(moduleName), stage, index)
 
+private fun IdSignature.LocalFakeOverrideSignature.rebuildSignature(moduleName: String): IdSignature =
+    IdSignature.LocalFakeOverrideSignature(
+        containingClass.rebuildSignature(moduleName),
+        id, mask, description
+    )
 
 private fun IdSignature.SpecialFakeOverrideSignature.rebuildSignature(moduleName: String): IdSignature =
     IdSignature.SpecialFakeOverrideSignature(

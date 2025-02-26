@@ -126,6 +126,7 @@ internal object IdSignatureTags {
     const val LOCAL = 4u
     const val LOWERED_DECLARATION = 5u
     const val SCOPE_LOCAL_DECLARATION = 6u
+    const val LOCAL_FAKE_OVERRIDE = 9u
     const val SPECIAL_FAKE_OVERRIDE = 7u
     const val FILE = 8u
 }

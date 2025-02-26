@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.LocalFakeOverrideSignature as ProtoLocalFakeOverrideSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as ProtoFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
@@ -75,6 +76,20 @@ class IdSignatureSerializer(
         return proto.build()
     }
 
+    private fun serializeLocalFakeOverrideSignature(signature: IdSignature.LocalFakeOverrideSignature): ProtoLocalFakeOverrideSignature {
+        val proto = ProtoLocalFakeOverrideSignature.newBuilder()
+        proto.containerClass = protoIdSignature(signature.containingClass)
+
+        proto.memberUniqId = signature.id
+        if (signature.mask != 0L) {
+            proto.flags = signature.mask
+        }
+
+        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
+
+        return proto.build()
+    }
+
     @Suppress("UNUSED_PARAMETER")
     private fun serializeFileSignature(signature: IdSignature.FileSignature): ProtoFileSignature = ProtoFileSignature.getDefaultInstance()
 
@@ -98,6 +113,7 @@ class IdSignatureSerializer(
             is IdSignature.CompositeSignature -> proto.compositeSig = serializeCompositeSignature(idSignature)
             is IdSignature.LocalSignature -> proto.localSig = serializeLocalSignature(idSignature)
             is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature(idSignature)
+            is IdSignature.LocalFakeOverrideSignature -> proto.fakeOverrideSig = serializeLocalFakeOverrideSignature(idSignature)
             is IdSignature.SpecialFakeOverrideSignature -> {}
             is IdSignature.LoweredDeclarationSignature -> error("LoweredDeclarationSignature is not expected here")
         }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.LocalFakeOverrideSignature as ProtoLocalFakeOverrideSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as ProtoFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
@@ -85,6 +86,13 @@ class IdSignatureDeserializer(
         return IdSignature.CompositeSignature(containerSig, innerSig)
     }
 
+    private fun deserializeLocalFakeOverrideSignature(proto: ProtoLocalFakeOverrideSignature): IdSignature.LocalFakeOverrideSignature {
+        val containerClass = deserializeIdSignature(proto.containerClass)
+        val memberId = proto.memberUniqId
+        val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(irInterner::string) else null
+        return IdSignature.LocalFakeOverrideSignature(containerClass, memberId, proto.flags, description)
+    }
+
     private fun deserializeLocalIdSignature(proto: ProtoLocalSignature): IdSignature.LocalSignature {
         val localFqn = irInterner.string(libraryFile.deserializeFqName(proto.localFqNameList))
         val localHash = if (proto.hasLocalHash()) proto.localHash else null
@@ -102,6 +110,7 @@ class IdSignatureDeserializer(
             ProtoIdSignature.IdSigCase.PRIVATE_SIG -> deserializeFileLocalIdSignature(proto.privateSig)
             ProtoIdSignature.IdSigCase.SCOPED_LOCAL_SIG -> deserializeScopeLocalIdSignature(proto.scopedLocalSig)
             ProtoIdSignature.IdSigCase.COMPOSITE_SIG -> deserializeCompositeIdSignature(proto.compositeSig)
+            ProtoIdSignature.IdSigCase.FAKE_OVERRIDE_SIG -> deserializeLocalFakeOverrideSignature(proto.fakeOverrideSig)
             ProtoIdSignature.IdSigCase.LOCAL_SIG -> deserializeLocalIdSignature(proto.localSig)
             ProtoIdSignature.IdSigCase.FILE_SIG -> deserializeFileIdSignature(proto.fileSig)
             else -> error("Unexpected IdSignature kind: ${proto.idSigCase}")

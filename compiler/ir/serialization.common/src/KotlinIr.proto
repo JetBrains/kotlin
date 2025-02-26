@@ -44,6 +44,13 @@ message AccessorIdSignature {
   optional int32 debug_info = 5;
 }
 
+message LocalFakeOverrideSignature {
+  required int32 container_class = 1;
+  required int64 member_uniq_id = 2;
+  optional int64 flags = 3 [default = 0];
+  optional int32 debug_info = 4;
+}
+
 message FileLocalIdSignature {
   required int32 container = 1;
   required int64 local_id = 2;
@@ -69,6 +76,7 @@ message IdSignature {
     FileLocalIdSignature private_sig = 2;
     AccessorIdSignature accessor_sig = 3;
     int32 scoped_local_sig = 4;
+    LocalFakeOverrideSignature fake_override_sig = 8;
     CompositeSignature composite_sig = 5;
     LocalSignature local_sig = 6;
     FileSignature file_sig = 7;
