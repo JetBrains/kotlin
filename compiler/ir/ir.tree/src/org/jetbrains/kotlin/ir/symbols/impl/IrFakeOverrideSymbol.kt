@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-abstract class IrFakeOverrideSymbolBase<S : IrBindableSymbol<D, I>, I : IrDeclaration, D : CallableDescriptor>(
+sealed class IrFakeOverrideSymbolBase<S : IrBindableSymbol<D, I>, I : IrDeclaration, D : CallableDescriptor>(
     val originalSymbol: S,
     val containingClassSymbol: IrClassSymbol,
     override val signature: IdSignature?
