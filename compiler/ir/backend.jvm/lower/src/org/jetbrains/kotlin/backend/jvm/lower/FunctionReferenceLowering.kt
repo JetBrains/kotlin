@@ -61,7 +61,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 crossinlineLambdas.add(argument.symbol.owner as IrSimpleFunction)
             }
         }
-        irFile.transformChildrenVoid(this)
+        withinScope(irFile) {
+            irFile.transformChildrenVoid(this)
+        }
         crossinlineLambdas.clear()
     }
 
