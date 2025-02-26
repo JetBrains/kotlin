@@ -814,15 +814,6 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    fun <T> withAnonymousFunctionIncludingTypeParameters(
-        anonymousFunction: FirAnonymousFunction,
-        holder: SessionHolder,
-        f: () -> T
-    ): T = withTypeParametersOf(anonymousFunction) {
-        withAnonymousFunction(anonymousFunction, holder, f)
-    }
-
-    @OptIn(PrivateForInline::class)
     fun <T> withAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         holder: SessionHolder,

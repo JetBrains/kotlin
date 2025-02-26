@@ -19,10 +19,6 @@ Tower Data Context:
         Scope: FirMemberTypeParameterScope
             Classifiers:
                 FirTypeParameterSymbol T
-    Element 9
-        Scope: FirLocalScope
-            Properties:
-                FirValueParameterSymbol x: R|T|
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionTypeParameter.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {

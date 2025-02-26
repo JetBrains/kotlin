@@ -804,22 +804,27 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousFunction)
 
         onActiveBody {
-            context.withAnonymousFunctionIncludingTypeParameters(anonymousFunction, bodyHolder) {
-                for (contextParameter in anonymousFunction.contextParameters) {
-                    context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
-                }
+            @OptIn(PrivateForInline::class)
+            context.withTypeParametersOf(anonymousFunction) {
+                processList(anonymousFunction.typeParameters)
 
-                for (valueParameter in anonymousFunction.valueParameters) {
-                    context.storeValueParameterIfNeeded(valueParameter, bodyHolder.session)
-                }
+                context.withAnonymousFunction(anonymousFunction, bodyHolder) {
+                    for (contextParameter in anonymousFunction.contextParameters) {
+                        context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
+                    }
 
-                dumpContext(anonymousFunction, ContextKind.BODY)
+                    for (valueParameter in anonymousFunction.valueParameters) {
+                        context.storeValueParameterIfNeeded(valueParameter, bodyHolder.session)
+                    }
 
-                processList(anonymousFunction.contextParameters)
-                processList(anonymousFunction.valueParameters)
+                    dumpContext(anonymousFunction, ContextKind.BODY)
 
-                onActive {
-                    process(anonymousFunction.body)
+                    processList(anonymousFunction.contextParameters)
+                    processList(anonymousFunction.valueParameters)
+
+                    onActive {
+                        process(anonymousFunction.body)
+                    }
                 }
 
                 onActive {

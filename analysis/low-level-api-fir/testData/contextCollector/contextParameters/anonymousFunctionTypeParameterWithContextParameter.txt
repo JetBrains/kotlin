@@ -36,20 +36,6 @@ Tower Data Context:
             Classifiers:
                 FirTypeParameterSymbol T2
                 FirTypeParameterSymbol T3
-    Element 12
-        Scope: FirLocalScope
-            Properties:
-                FirValueParameterSymbol anonParam: R|kotlin/Boolean|
-                FirValueParameterSymbol anonParam2: R|kotlin/Long|
-                FirValueParameterSymbol b: R|B|
-    Element 13
-        Context parameters:
-            FirValueParameterSymbol b: R|B|
-                Type: B
-    Element 14
-        Implicit receiver:
-            FirReceiverParameterSymbol <explicit receiver parameter>: R|D|
-                Type: D
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionTypeParameterWithContextParameter.kt
     public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
