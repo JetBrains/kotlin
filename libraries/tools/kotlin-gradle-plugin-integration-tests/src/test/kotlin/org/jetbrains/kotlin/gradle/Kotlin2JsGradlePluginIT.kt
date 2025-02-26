@@ -306,14 +306,14 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 |  }
                 |}
                 |
-                |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs").configure {
+                |tasks.withType<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>().configureEach {
                 |   val projectDir = projectDir
-                |   doLast { Utils.makeTypeScriptFileInvalid("development", projectDir) }
-                |}
-                |
-                |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileProductionExecutableKotlinJs").configure {
-                |   val projectDir = projectDir
-                |   doLast { Utils.makeTypeScriptFileInvalid("production", projectDir) }
+                |   @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+                |   doLast("make TypeScriptFile invalid") {
+                |      val mode = modeProvider.get().name.toLowerCase()
+                |      val dts = projectDir.resolve("build/compileSync/js/main/" + mode + "Executable/kotlin/js-ir-validate-ts.d.ts")
+                |      dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
+                |   }
                 |}
                """.trimMargin()
             )

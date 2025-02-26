@@ -10,6 +10,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
@@ -84,6 +85,11 @@ abstract class KotlinJsIrLink @Inject constructor(
         set(value) {
             modeProperty.set(value)
         }
+
+    @InternalKotlinGradlePluginApi
+    @get:Internal
+    @Suppress("unused") // used in integration test
+    val modeProvider: Provider<KotlinJsBinaryMode> get() = modeProperty
 
     @get:Input
     internal abstract val modeProperty: Property<KotlinJsBinaryMode>
