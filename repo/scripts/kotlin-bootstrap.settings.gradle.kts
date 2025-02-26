@@ -83,13 +83,13 @@ val kotlinRootDir: File = when (rootSettings.rootProject.name) {
     "buildSrc" -> {
         val parentDir = rootSettings.rootDir.parentFile
         when (parentDir.name) {
-            "benchmarksAnalyzer", "performance-server" -> parentDir.parentFile.parentFile.parentFile
+            "benchmarksAnalyzer" -> parentDir.parentFile.parentFile.parentFile
             "performance" -> parentDir.parentFile.parentFile
             "ui" -> parentDir.parentFile.parentFile.parentFile.parentFile
             else -> parentDir
         }
     }
-    "benchmarksAnalyzer", "performance-server" -> rootSettings.rootDir.parentFile.parentFile.parentFile
+    "benchmarksAnalyzer" -> rootSettings.rootDir.parentFile.parentFile.parentFile
     "gradle-settings-conventions" -> rootSettings.rootDir.parentFile.parentFile
     "gradle-build-conventions" -> rootSettings.rootDir.parentFile.parentFile
     "performance" -> rootSettings.rootDir.parentFile.parentFile

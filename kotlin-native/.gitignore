@@ -57,9 +57,6 @@ backend.native/tests/teamcity-test.property
 samples/**/*.kt.bc-build
 
 # CMake
-tools/performance-server/node_modules
-tools/performance-server/server
-tools/performance-server/ui/js
 cmake-build-debug/
 
 # compilation database
