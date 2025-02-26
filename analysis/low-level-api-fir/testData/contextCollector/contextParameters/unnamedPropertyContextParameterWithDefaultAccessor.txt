@@ -11,6 +11,16 @@ Tower Data Context:
         Scope: FirPackageMemberScope
     Element 5
         Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol s: R|kotlin/String|
+    Element 7
+        Context parameters:
+            FirValueParameterSymbol <unused var>: R|kotlin/Int|
+                Type: kotlin.Int
+            FirValueParameterSymbol s: R|kotlin/String|
+                Type: kotlin.String
 
 FILE: [ResolvedTo(IMPORTS)] unnamedPropertyContextParameterWithDefaultAccessor.kt
     context([ResolvedTo(BODY_RESOLVE)] <unused var>: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|)

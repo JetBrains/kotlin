@@ -673,23 +673,28 @@ private class ContextCollectorVisitor(
                 dumpContext(property, ContextKind.BODY)
 
                 onActive {
-                    context.forPropertyInitializerIfNonLocal(property) {
-                        process(property.initializer)
-
-                        onActive {
-                            process(property.delegate)
-
-                            onActive {
-                                process(property.backingField)
-                            }
-                        }
+                    context.withParameters(property, getSessionHolder(property)) {
+                        processList(property.contextParameters)
                     }
 
                     onActive {
-                        processChildren(property)
+                        context.forPropertyInitializerIfNonLocal(property) {
+                            process(property.initializer)
+
+                            onActive {
+                                process(property.delegate)
+
+                                onActive {
+                                    process(property.backingField)
+                                }
+                            }
+                        }
+
+                        onActive {
+                            processChildren(property)
+                        }
                     }
                 }
-
             }
         }
 

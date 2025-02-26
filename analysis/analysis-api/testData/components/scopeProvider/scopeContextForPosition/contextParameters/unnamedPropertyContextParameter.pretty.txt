@@ -1,13 +1,32 @@
 element: _: Int
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 0
+    type = kotlin.Int
+    symbol = KaContextParameterSymbol:
+      <unused var>: kotlin.Int
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 0
+    type = kotlin.String
+    symbol = KaContextParameterSymbol:
+      s: kotlin.String
+
 scopes:
-  ExplicitSimpleImportingScope, index = 0
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 1
+      s: kotlin.String
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 2
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 1
+  PackageMemberScope, index = 3
     packages: 6
       META-INF
       java
@@ -22,15 +41,15 @@ scopes:
         get()
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 2
+  DefaultSimpleImportingScope, index = 4
 
-  DefaultSimpleImportingScope, index = 3
+  DefaultSimpleImportingScope, index = 5
 
-  ExplicitStarImportingScope, index = 4
+  ExplicitStarImportingScope, index = 6
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 5
+  DefaultStarImportingScope, index = 7
 

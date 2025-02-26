@@ -1,13 +1,56 @@
 element: _: Int
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 0
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    symbol = KaContextParameterSymbol:
+      <unused var>: kotlin.Int
+
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 0
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    symbol = KaContextParameterSymbol:
+      s: kotlin.String
+
 scopes:
-  ExplicitSimpleImportingScope, index = 0
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 1
+      KaContextParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: s
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+        visibility: PUBLIC
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 2
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 1
+  PackageMemberScope, index = 3
     packages: 6
       KaPackageSymbol:
         fqName: META-INF
@@ -165,15 +208,15 @@ scopes:
         visibility: PUBLIC
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 2
+  DefaultSimpleImportingScope, index = 4
 
-  DefaultSimpleImportingScope, index = 3
+  DefaultSimpleImportingScope, index = 5
 
-  ExplicitStarImportingScope, index = 4
+  ExplicitStarImportingScope, index = 6
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 5
+  DefaultStarImportingScope, index = 7
 

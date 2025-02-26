@@ -750,33 +750,43 @@ class BodyResolveContext(
         }
     }
 
+    /**
+     * Invokes [f] in the scope which contains parameters such as value, receiver and context.
+     * Also contains required implicit receivers.
+     */
+    @OptIn(PrivateForInline::class)
+    fun <T> withParameters(callable: FirCallableDeclaration, holder: SessionHolder, f: () -> T): T = withTowerDataCleanup {
+        addLocalScope(FirLocalScope(holder.session))
+        for (contextParameter in callable.contextParameters) {
+            storeValueParameterIfNeeded(contextParameter, holder.session)
+        }
+
+        if (callable is FirFunction) {
+            // Make all value parameters available in the local scope so that even one parameter that refers to another parameter,
+            // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
+            // if an uninitialized parameter is accessed by a preceding parameter.
+            for (parameter in callable.valueParameters) {
+                storeVariable(parameter, holder.session)
+            }
+        }
+
+        val receiverTypeRef = callable.receiverParameter?.typeRef
+        val type = receiverTypeRef?.coneType
+        val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
+        withLabelAndReceiverType(callable.symbol.name, callable, type, holder, additionalLabelName, f)
+    }
+
     @OptIn(PrivateForInline::class)
     fun <T> forFunctionBody(
         function: FirFunction,
         holder: SessionHolder,
         f: () -> T
-    ): T {
-        return withTowerDataCleanup {
+    ): T = withTowerDataCleanup {
+        if (function is FirSimpleFunction) {
+            withParameters(function, holder, f)
+        } else {
             addLocalScope(FirLocalScope(holder.session))
-            if (function is FirSimpleFunction) {
-                for (contextParameter in function.contextParameters) {
-                    storeValueParameterIfNeeded(contextParameter, holder.session)
-                }
-
-                // Make all value parameters available in the local scope so that even one parameter that refers to another parameter,
-                // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
-                // if an uninitialized parameter is accessed by a preceding parameter.
-                for (parameter in function.valueParameters) {
-                    storeVariable(parameter, holder.session)
-                }
-
-                val receiverTypeRef = function.receiverParameter?.typeRef
-                val type = receiverTypeRef?.coneType
-                val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
-                withLabelAndReceiverType(function.name, function, type, holder, additionalLabelName, f)
-            } else {
-                f()
-            }
+            f()
         }
     }
 
