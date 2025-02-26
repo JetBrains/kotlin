@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootM
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.api.projectStructure.explicitModule
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
@@ -54,8 +55,9 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         return null
     }
 
+    @OptIn(KaExperimentalApi::class)
     private fun computeDefaultDanglingFileResolutionMode(file: KtFile): KaDanglingFileResolutionMode {
-        if (!file.isPhysical && !file.viewProvider.isEventSystemEnabled && file.originalFile != file) {
+        if (!file.isPhysical && !file.viewProvider.isEventSystemEnabled && file.copyOrigin != null) {
             return KaDanglingFileResolutionMode.IGNORE_SELF
         }
 
@@ -64,7 +66,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
 
     @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
     private fun computeContextModule(file: KtFile): KaModule {
-        val originalFile = file.originalFile.takeIf { it !== file }
+        val originalFile = file.copyOrigin
         originalFile?.virtualFile?.analysisContextModule?.let { return it }
 
         file.contextModule?.let { return it }
