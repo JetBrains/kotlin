@@ -1,19 +1,17 @@
 // LANGUAGE: +ExpectRefinement
-// FIR_IDENTICAL
-// SKIP_K1
 // WITH_STDLIB
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-expect fun foo()
-expect class Foo
+<!CONFLICTING_OVERLOADS{JVM}, CONFLICTING_OVERLOADS{JVM}!>expect fun foo()<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
 // MODULE: intermediate()()(common)
-<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
-expect fun foo()
-@kotlin.experimental.ExperimentalExpectRefinement
-expect class Foo
+<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}!><!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalExpectRefinement<!><!>
+expect fun foo()<!>
+@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalExpectRefinement<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
 // MODULE: main()()(common, intermediate)
-<!AMBIGUOUS_EXPECTS!>actual<!> fun foo() {}
-<!AMBIGUOUS_EXPECTS!>actual<!> class Foo
+actual fun <!AMBIGUOUS_EXPECTS!>foo<!>() {}
+actual class <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>

@@ -1,25 +1,23 @@
 // LANGUAGE: +ExpectRefinement
 // IGNORE_FIR_DIAGNOSTICS
-// FIR_IDENTICAL
-// SKIP_K1
 // WITH_STDLIB
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-expect fun foo()
-expect class Foo
+<!CONFLICTING_OVERLOADS{JVM}, CONFLICTING_OVERLOADS{JVM}, CONFLICTING_OVERLOADS{JVM}!>expect fun foo()<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
 // MODULE: intermediate1()()(common)
-<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
-expect fun foo()
-@kotlin.experimental.ExperimentalExpectRefinement
-expect class Foo
+<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}, CONFLICTING_OVERLOADS{JVM}!><!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE{JVM}!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, DEBUG_INFO_MISSING_UNRESOLVED{JVM}!>ExperimentalExpectRefinement<!><!>
+expect fun foo()<!>
+@kotlin.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE{JVM}!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, DEBUG_INFO_MISSING_UNRESOLVED{JVM}!>ExperimentalExpectRefinement<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
 // MODULE: intermediate2()()(intermediate1)
-<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
-expect fun foo()
-@kotlin.experimental.ExperimentalExpectRefinement
-expect class Foo
+<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}!><!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalExpectRefinement<!><!>
+expect fun foo()<!>
+@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalExpectRefinement<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
 // MODULE: main()()(intermediate2)
-actual fun foo() {}
-actual class Foo
+actual fun <!AMBIGUOUS_EXPECTS!>foo<!>() {}
+actual class <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>

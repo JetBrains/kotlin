@@ -1,19 +1,17 @@
 // LANGUAGE: +ExpectRefinement
-// FIR_IDENTICAL
-// SKIP_K1
 // WITH_STDLIB
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-expect class Foo
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
 // MODULE: intermediate1()()(common)
-@kotlin.experimental.ExperimentalExpectRefinement
-expect class Foo
+@kotlin.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE{JVM}!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, DEBUG_INFO_MISSING_UNRESOLVED{JVM}!>ExperimentalExpectRefinement<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
 // MODULE: intermediate2()()(intermediate1)
-@kotlin.experimental.ExperimentalExpectRefinement
-expect class Foo
+@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalExpectRefinement<!>
+expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 
 // MODULE: main()()(intermediate2)
-actual typealias Foo = Bar
+actual typealias <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> = Bar
 class Bar
