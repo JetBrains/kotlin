@@ -130,6 +130,7 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
             LOAD_CONTENTS_OF_CLASSES(parent = SNAPSHOT_CLASSES, "Load contents of classes"),
             SNAPSHOT_KOTLIN_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot Kotlin classes"),
             SNAPSHOT_JAVA_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot Java classes"),
+            SNAPSHOT_INLINED_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot inlined classes"),
         SAVE_CLASSPATH_ENTRY_SNAPSHOT(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM, "Save classpath entry snapshot"),
     ;
     // @formatter:on
@@ -148,7 +149,7 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
     override fun getName(): String = this.name
 
     companion object {
-        const val serialVersionUID = 2L
+        const val serialVersionUID = 2121L // to avoid collision between release branch and mainline versions
 
         val children by lazy {
             entries.filter { it.parent != null }.groupBy { it.parent }

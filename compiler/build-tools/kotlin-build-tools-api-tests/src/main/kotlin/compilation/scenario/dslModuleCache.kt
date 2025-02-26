@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfigur
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DependencyScenarioDslCacheKey
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -20,6 +21,7 @@ import kotlin.io.path.walk
 
 private data class GlobalCompiledProjectsCacheKey(
     val moduleKey: DependencyScenarioDslCacheKey,
+    val snapshotConfig: SnapshotConfig,
     val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
     val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
 )
@@ -33,12 +35,14 @@ internal object GlobalCompiledProjectsCache {
     fun getProjectFromCache(
         module: Module,
         strategyConfig: CompilerExecutionStrategyConfiguration,
+        snapshotConfig: SnapshotConfig,
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
         icSourceTracking: Boolean,
     ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
+            snapshotConfig,
             compilationOptionsModifier,
             incrementalCompilationOptionsModifier
         )] ?: return null
@@ -53,6 +57,7 @@ internal object GlobalCompiledProjectsCache {
     fun putProjectIntoCache(
         module: Module,
         strategyConfig: CompilerExecutionStrategyConfiguration,
+        snapshotConfig: SnapshotConfig,
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
         icSourceTracking: Boolean,
@@ -72,6 +77,7 @@ internal object GlobalCompiledProjectsCache {
         module.buildDirectory.copyToRecursively(moduleCacheDirectory, followLinks = false, overwrite = false)
         compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
+            snapshotConfig,
             compilationOptionsModifier,
             incrementalCompilationOptionsModifier
         )] = Pair(initialOutputs, moduleCacheDirectory)
