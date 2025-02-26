@@ -153,6 +153,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
             createIncrementalCompilationSymbolProviders = { null },
             extensionRegistrars = replCompilationEnvironment.extensionRegistrars,
             languageVersionSettings = module.languageVersionSettings,
+            useExtraCheckers = FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
             jvmTarget = compilerConfiguration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
             lookupTracker = null,
             enumWhenTracker = null,

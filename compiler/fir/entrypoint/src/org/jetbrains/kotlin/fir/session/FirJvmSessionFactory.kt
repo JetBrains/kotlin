@@ -107,6 +107,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         createIncrementalCompilationSymbolProviders: (FirSession) -> FirJvmIncrementalCompilationSymbolProviders?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
+        useExtraCheckers: Boolean,
         jvmTarget: JvmTarget,
         lookupTracker: LookupTracker?,
         enumWhenTracker: EnumWhenTracker?,
@@ -122,6 +123,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
+            useExtraCheckers,
             lookupTracker,
             enumWhenTracker,
             importTracker,
@@ -172,6 +174,10 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
 
     override fun FirSessionConfigurator.registerPlatformCheckers(c: SourceContext) {
         registerJvmCheckers()
+    }
+
+
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: SourceContext) {
     }
 
     override fun FirSession.registerSourceSessionComponents(c: SourceContext) {

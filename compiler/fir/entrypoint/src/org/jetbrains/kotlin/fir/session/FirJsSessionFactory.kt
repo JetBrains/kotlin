@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.session
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.useFirExtraCheckers
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -95,6 +96,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Conte
             sessionProvider,
             extensionRegistrars,
             compilerConfiguration.languageVersionSettings,
+            compilerConfiguration.useFirExtraCheckers,
             lookupTracker,
             enumWhenTracker = null,
             importTracker = null,
@@ -128,6 +130,8 @@ object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Conte
     override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
         registerJsCheckers()
     }
+
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Context) {}
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
         registerComponents(c.configuration)

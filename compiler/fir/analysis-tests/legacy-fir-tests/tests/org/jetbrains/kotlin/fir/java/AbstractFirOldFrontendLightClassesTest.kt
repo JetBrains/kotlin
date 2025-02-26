@@ -92,6 +92,7 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
                 externalSessionProvider = sessionProvider,
                 projectEnvironment,
                 config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT,
+                useExtraCheckers = false,
                 javaSourcesScope = PsiBasedProjectFileSearchScope(scope),
                 librariesScope = PsiBasedProjectFileSearchScope(allProjectScope),
                 lookupTracker = null,

@@ -88,6 +88,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
+        extraCheckers: Boolean,
         lookupTracker: LookupTracker?,
         enumWhenTracker: EnumWhenTracker?,
         importTracker: ImportTracker?,
@@ -116,6 +117,9 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
                 registerPlatformCheckers(context)
+                if (extraCheckers) {
+                    registerExtraPlatformCheckers(context)
+                }
 
                 for (extensionRegistrar in extensionRegistrars) {
                     registerExtensions(extensionRegistrar.configure())
@@ -153,6 +157,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
     ): FirKotlinScopeProvider
 
     protected abstract fun FirSessionConfigurator.registerPlatformCheckers(c: SOURCE_CONTEXT)
+    protected abstract fun FirSessionConfigurator.registerExtraPlatformCheckers(c: SOURCE_CONTEXT)
     protected abstract fun FirSession.registerSourceSessionComponents(c: SOURCE_CONTEXT)
 
     // ==================================== Common parts ====================================

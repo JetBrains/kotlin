@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.useFirExtraCheckers
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.PlatformConflictDeclarationsDiagnosticDispatcher
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeCastChecker
@@ -13,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeConflictDeclarati
 import org.jetbrains.kotlin.fir.backend.native.FirNativeClassMapper
 import org.jetbrains.kotlin.fir.backend.native.FirNativeOverrideChecker
 import org.jetbrains.kotlin.fir.checkers.registerNativeCheckers
+import org.jetbrains.kotlin.fir.checkers.registerExtraNativeCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -78,6 +83,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
+        useExtraCheckers: Boolean,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
         return createModuleBasedSession(
@@ -86,6 +92,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
+            useExtraCheckers,
             lookupTracker = null,
             enumWhenTracker = null,
             importTracker = null,
@@ -109,6 +116,10 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
 
     override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
         registerNativeCheckers()
+    }
+
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {
+        registerExtraNativeCheckers()
     }
 
     override fun FirSession.registerSourceSessionComponents(c: Nothing?) {

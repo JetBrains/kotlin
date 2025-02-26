@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.useFirExtraCheckers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleCapabilities
@@ -323,6 +324,7 @@ private fun compileImpl(
         createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,
         compilerConfiguration.languageVersionSettings,
+        compilerConfiguration.useFirExtraCheckers,
         jvmTarget = JvmTarget.DEFAULT, // TODO: from script config
         lookupTracker = null,
         enumWhenTracker = null,

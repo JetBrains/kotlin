@@ -360,6 +360,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     incrementalCompilationContext = null,
                     extensionRegistrars = extensionRegistrars,
                     languageVersionSettings = languageVersionSettings,
+                    useExtraCheckers = FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -372,6 +373,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     languageVersionSettings,
+                    FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
                     jvmTarget = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
                         .get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
                     lookupTracker = null,
@@ -398,6 +400,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     sessionProvider,
                     extensionRegistrars,
                     languageVersionSettings,
+                    FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
                     init = sessionConfigurator
                 ).also(::registerExtraComponents)
             }
@@ -407,6 +410,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     sessionProvider,
                     extensionRegistrars,
                     languageVersionSettings,
+                    FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
                     testServices.compilerConfigurationProvider.getCompilerConfiguration(module).wasmTarget,
                     lookupTracker = null,
                     sessionConfigurator,

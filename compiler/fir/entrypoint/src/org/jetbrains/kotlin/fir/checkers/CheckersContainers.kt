@@ -56,6 +56,10 @@ fun FirSessionConfigurator.registerNativeCheckers() {
     useCheckers(NativeTypeCheckers)
 }
 
+fun FirSessionConfigurator.registerExtraNativeCheckers() {
+    // TODO
+}
+
 fun FirSessionConfigurator.registerWasmCheckers(target: WasmTarget) {
     useCheckers(WasmBaseDeclarationCheckers)
     useCheckers(WasmBaseExpressionCheckers)

@@ -36,6 +36,7 @@ object FirTestSessionFactoryHelper {
         externalSessionProvider = null,
         projectEnvironment,
         languageVersionSettings,
+        useExtraCheckers = false,
         javaSourceScope,
         librariesScope,
         lookupTracker = null,
@@ -68,6 +69,7 @@ object FirTestSessionFactoryHelper {
                 getPackagePartProvider
             ),
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+            useExtraCheckers = false,
             PsiBasedProjectFileSearchScope(sourceScope),
             PsiBasedProjectFileSearchScope(librariesScope),
             lookupTracker = null,

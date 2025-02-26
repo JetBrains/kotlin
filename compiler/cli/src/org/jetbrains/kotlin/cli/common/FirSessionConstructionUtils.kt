@@ -182,6 +182,7 @@ fun <F> prepareNativeSessions(
             sessionProvider,
             extensionRegistrars,
             configuration.languageVersionSettings,
+            configuration.useFirExtraCheckers,
             sessionConfigurator,
         )
     }
@@ -231,6 +232,7 @@ fun <F> prepareWasmSessions(
             sessionProvider,
             extensionRegistrars,
             configuration.languageVersionSettings,
+            configuration.useFirExtraCheckers,
             configuration.wasmTarget,
             lookupTracker,
             icData = icData,
@@ -281,6 +283,7 @@ fun <F> prepareCommonSessions(
             incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
             extensionRegistrars,
             configuration.languageVersionSettings,
+            configuration.useFirExtraCheckers,
             lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
             importTracker = configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
@@ -322,8 +325,8 @@ object SessionConstructionUtils {
         val sessionProvider = FirProjectSessionProvider()
 
         val librarySession = createLibrarySession(sessionProvider)
-        val extraAnalysisMode = configuration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS)
-        val experimentalAnalysisMode = configuration.getBoolean(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS)
+        val extraAnalysisMode = configuration.useFirExtraCheckers
+        val experimentalAnalysisMode = configuration.useFirExperimentalCheckers
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
             registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)
 

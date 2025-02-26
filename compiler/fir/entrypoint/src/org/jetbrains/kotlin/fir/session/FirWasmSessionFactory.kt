@@ -69,7 +69,8 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        languageVersionSettings: LanguageVersionSettings,
+        useExtraCheckers: Boolean,
         wasmTarget: WasmTarget,
         lookupTracker: LookupTracker?,
         icData: KlibIcData? = null,
@@ -81,6 +82,7 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
+            useExtraCheckers,
             lookupTracker,
             enumWhenTracker = null,
             importTracker = null,
@@ -113,6 +115,8 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
     override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
         registerWasmCheckers(c.wasmTarget)
     }
+
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Context) {}
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
         registerDefaultComponents()

@@ -98,6 +98,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        useExtraCheckers: Boolean,
         lookupTracker: LookupTracker? = null,
         enumWhenTracker: EnumWhenTracker? = null,
         importTracker: ImportTracker? = null,
@@ -109,6 +110,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
+            useExtraCheckers,
             lookupTracker,
             enumWhenTracker,
             importTracker,
@@ -157,6 +159,8 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
     }
 
     override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {}
+
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {}
 
     override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
         registerDefaultComponents()
