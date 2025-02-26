@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -118,9 +120,9 @@ import kotlin.collections.plus
  * Note that as all these classes are defined as local ones, they don't need to explicitly capture local variables or any type parameters.
  * But it can happen, that [LocalDeclarationsLowering] would later capture something additional into the classes.
  */
-abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val context: C) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.transform(object : IrTransformer<IrDeclarationParent>() {
+abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val context: C) : BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transform(object : IrTransformer<IrDeclarationParent>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
                 return super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
             }
@@ -150,7 +152,7 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
             override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
                 shouldNotBeCalled()
             }
-        }, data = irFile)
+        }, container as? IrDeclarationParent ?: container.parent)
     }
 
     // SAM class used as a superclass can sometimes have type projections.
