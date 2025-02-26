@@ -17,9 +17,11 @@ dependencies {
 kotlin {
     js {
         tasks.register("checkConfigurationsResolve") {
-            notCompatibleWithConfigurationCache("Resolving the configuration should happen during the execution phase")
+            val npmAggregatedFiles = configurations.named(kotlin.js().compilations["main"].npmAggregatedConfigurationName)
+                .get().incoming.files
+            inputs.files(npmAggregatedFiles).withPropertyName("npmAggregatedFiles")
             doLast {
-                configurations.named(compilations["main"].npmAggregatedConfigurationName).get().resolve()
+                npmAggregatedFiles.files
             }
         }
     }
