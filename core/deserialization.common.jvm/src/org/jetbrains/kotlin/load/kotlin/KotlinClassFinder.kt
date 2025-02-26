@@ -35,6 +35,8 @@ interface KotlinClassFinder : KotlinMetadataFinder {
         }
 
         class ClassFileContent(val content: ByteArray) : Result()
+
+        object Empty : Result()
     }
 }
 
