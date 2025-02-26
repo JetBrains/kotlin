@@ -99,6 +99,11 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
     runTest("libraries/tools/kotlinp/jvm/testData/NestedClasses.kt");
   }
 
+  @TestMetadata("NestedTypeAlias.kt")
+  public void testNestedTypeAlias() {
+    runTest("libraries/tools/kotlinp/jvm/testData/NestedTypeAlias.kt");
+  }
+
   @TestMetadata("NotEnumWithEnumEntriesEnabled.kt")
   public void testNotEnumWithEnumEntriesEnabled() {
     runTest("libraries/tools/kotlinp/jvm/testData/NotEnumWithEnumEntriesEnabled.kt");
