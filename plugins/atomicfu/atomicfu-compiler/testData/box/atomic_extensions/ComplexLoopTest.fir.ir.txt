@@ -395,11 +395,11 @@ FILE fqName:<root> fileName:/ComplexLoopTest.kt
         RETURN type=kotlin.Nothing from='private final fun embeddedLoops (to: kotlin.Int): kotlin.Int declared in <root>.LoopTest'
           CALL 'private final fun loop$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
             ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedLoops' type=<root>.LoopTest origin=null
-            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
-              FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.Int [inline]
+            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+              FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.Int declared in <root>.LoopTest.embeddedLoops'
-                    PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Int origin=null
+                  RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LoopTest.embeddedLoops'
+                    PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                       ARG 1: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedLoops' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
@@ -407,11 +407,11 @@ FILE fqName:<root> fileName:/ComplexLoopTest.kt
                 BLOCK_BODY
                   CALL 'private final fun loop$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
                     ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedLoops' type=<root>.LoopTest origin=null
-                    ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
-                      FUN ATOMICFU_GENERATED_FUNCTION name:<b$volatile-getter> visibility:local modality:FINAL returnType:kotlin.Int [inline]
+                    ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+                      FUN ATOMICFU_GENERATED_FUNCTION name:<b$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
                         BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='local final fun <b$volatile-getter> (): kotlin.Int declared in <root>.LoopTest.embeddedLoops.<anonymous>'
-                            PROPERTY_REFERENCE 'private final b$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Int origin=null
+                          RETURN type=kotlin.Nothing from='local final fun <b$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LoopTest.embeddedLoops.<anonymous>'
+                            PROPERTY_REFERENCE 'private final b$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                               ARG 1: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedLoops' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
                     ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
@@ -421,7 +421,7 @@ FILE fqName:<root> fileName:/ComplexLoopTest.kt
                             BRANCH
                               if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
                                 TYPE_ARG T: kotlin.Int
-                                ARG <this>: PROPERTY_REFERENCE 'private final b$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Int origin=null
+                                ARG <this>: PROPERTY_REFERENCE 'private final b$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                                   ARG 1: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedLoops' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
                                 ARG expectedValue: GET_VAR 'bValue: kotlin.Int declared in <root>.LoopTest.embeddedLoops.<anonymous>.<anonymous>' type=kotlin.Int origin=null
                                 ARG newValue: GET_VAR 'to: kotlin.Int declared in <root>.LoopTest.embeddedLoops' type=kotlin.Int origin=null
@@ -436,11 +436,11 @@ FILE fqName:<root> fileName:/ComplexLoopTest.kt
         RETURN type=kotlin.Nothing from='private final fun embeddedUpdate (to: kotlin.Int): kotlin.Int declared in <root>.LoopTest'
           CALL 'private final fun loop$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
             ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedUpdate' type=<root>.LoopTest origin=null
-            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
-              FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.Int [inline]
+            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+              FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.Int declared in <root>.LoopTest.embeddedUpdate'
-                    PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Int origin=null
+                  RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LoopTest.embeddedUpdate'
+                    PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                       ARG 1: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedUpdate' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
@@ -449,18 +449,18 @@ FILE fqName:<root> fileName:/ComplexLoopTest.kt
                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
                       TYPE_ARG T: kotlin.Int
-                      ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Int origin=null
+                      ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                         ARG 1: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedUpdate' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
                       ARG expectedValue: GET_VAR 'aValue: kotlin.Int declared in <root>.LoopTest.embeddedUpdate.<anonymous>' type=kotlin.Int origin=null
                       ARG newValue: GET_VAR 'to: kotlin.Int declared in <root>.LoopTest.embeddedUpdate' type=kotlin.Int origin=null
                   RETURN type=kotlin.Nothing from='private final fun embeddedUpdate (to: kotlin.Int): kotlin.Int declared in <root>.LoopTest'
                     CALL 'private final fun updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.LoopTest' type=kotlin.Int origin=null
                       ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedUpdate' type=<root>.LoopTest origin=null
-                      ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
-                        FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.Int [inline]
+                      ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+                        FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
                           BLOCK_BODY
-                            RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.Int declared in <root>.LoopTest.embeddedUpdate.<anonymous>'
-                              PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Int origin=null
+                            RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LoopTest.embeddedUpdate.<anonymous>'
+                              PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                                 ARG 1: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.embeddedUpdate' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
                       ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
                         FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
@@ -484,11 +484,11 @@ FILE fqName:<root> fileName:/ComplexLoopTest.kt
           ARG expected: CONST Int type=kotlin.Int value=77
           ARG actual: CALL 'private final fun extensionEmbeddedLoops$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, to: kotlin.Int): kotlin.Int declared in <root>.LoopTest' type=kotlin.Int origin=null
             ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.test' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
-            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
-              FUN ATOMICFU_GENERATED_FUNCTION name:<c$volatile-getter> visibility:local modality:FINAL returnType:kotlin.Int [inline]
+            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
+              FUN ATOMICFU_GENERATED_FUNCTION name:<c$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <c$volatile-getter> (): kotlin.Int declared in <root>.LoopTest.test'
-                    PROPERTY_REFERENCE 'private final c$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:c$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-c$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-c$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Int origin=null
+                  RETURN type=kotlin.Nothing from='local final fun <c$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.LoopTest.test'
+                    PROPERTY_REFERENCE 'private final c$volatile: kotlin.Int declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:c$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' getter='private final fun <get-c$volatile> (): kotlin.Int declared in <root>.LoopTest' setter='private final fun <set-c$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                       ARG 1: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.test' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
             ARG to: CONST Int type=kotlin.Int value=77
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
@@ -511,11 +511,11 @@ FILE fqName:<root> fileName:/ComplexLoopTest.kt
           ARG expected: CONST String type=kotlin.String value="bbbAAA"
           ARG actual: CALL 'private final fun extesntionEmbeddedRefUpdate$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, to: kotlin.String): kotlin.String declared in <root>.LoopTest' type=kotlin.String origin=null
             ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.test' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
-            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
-              FUN ATOMICFU_GENERATED_FUNCTION name:<r$volatile-getter> visibility:local modality:FINAL returnType:kotlin.Any? [inline]
+            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
+              FUN ATOMICFU_GENERATED_FUNCTION name:<r$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <r$volatile-getter> (): kotlin.Any? declared in <root>.LoopTest.test'
-                    PROPERTY_REFERENCE 'private final r$volatile: kotlin.Any? declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:r$volatile type:kotlin.Any? visibility:private declared in <root>.LoopTest' getter='private final fun <get-r$volatile> (): kotlin.Any? declared in <root>.LoopTest' setter='private final fun <set-r$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Any? origin=null
+                  RETURN type=kotlin.Nothing from='local final fun <r$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.LoopTest.test'
+                    PROPERTY_REFERENCE 'private final r$volatile: kotlin.Any? declared in <root>.LoopTest' field='FIELD ATOMICFU_GENERATED_FIELD name:r$volatile type:kotlin.Any? visibility:private declared in <root>.LoopTest' getter='private final fun <get-r$volatile> (): kotlin.Any? declared in <root>.LoopTest' setter='private final fun <set-r$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LoopTest' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
                       ARG 1: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.test' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
             ARG to: CONST String type=kotlin.String value="bbb"
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String

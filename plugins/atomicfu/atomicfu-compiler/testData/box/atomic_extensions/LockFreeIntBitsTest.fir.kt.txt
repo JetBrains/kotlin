@@ -47,7 +47,7 @@ class LockFreeIntBits {
   }
 
   private inline fun bitUpdate(check: Function1<Int, Boolean>, upd: Function1<Int, Int>): Boolean {
-    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <bits$volatile-getter>(): Int {
+    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <bits$volatile-getter>(): KMutableProperty0<Int> {
       return LockFreeIntBits<this>::bits$volatile
     }
 , action$atomicfu = local fun <anonymous>(it: Int): Int {

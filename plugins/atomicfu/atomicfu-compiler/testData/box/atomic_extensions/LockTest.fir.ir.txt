@@ -48,11 +48,11 @@ FILE fqName:<root> fileName:/LockTest.kt
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'private final fun tryAcquire$atomicfu$NATIVE_PROPERTY_REF$Boolean (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
-              ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
-                FUN ATOMICFU_GENERATED_FUNCTION name:<inProgressLock$volatile-getter> visibility:local modality:FINAL returnType:kotlin.Boolean [inline]
+              ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=LAMBDA
+                FUN ATOMICFU_GENERATED_FUNCTION name:<inProgressLock$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Boolean> [inline]
                   BLOCK_BODY
-                    RETURN type=kotlin.Nothing from='local final fun <inProgressLock$volatile-getter> (): kotlin.Boolean declared in <root>.LockTest.testLock'
-                      PROPERTY_REFERENCE 'private final inProgressLock$volatile: kotlin.Boolean declared in <root>.LockTest' field='FIELD ATOMICFU_GENERATED_FIELD name:inProgressLock$volatile type:kotlin.Boolean visibility:private declared in <root>.LockTest' getter='private final fun <get-inProgressLock$volatile> (): kotlin.Boolean declared in <root>.LockTest' setter='private final fun <set-inProgressLock$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.LockTest' type=kotlin.Boolean origin=null
+                    RETURN type=kotlin.Nothing from='local final fun <inProgressLock$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.LockTest.testLock'
+                      PROPERTY_REFERENCE 'private final inProgressLock$volatile: kotlin.Boolean declared in <root>.LockTest' field='FIELD ATOMICFU_GENERATED_FIELD name:inProgressLock$volatile type:kotlin.Boolean visibility:private declared in <root>.LockTest' getter='private final fun <get-inProgressLock$volatile> (): kotlin.Boolean declared in <root>.LockTest' setter='private final fun <set-inProgressLock$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.LockTest' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
                         ARG 1: GET_VAR '<this>: <root>.LockTest declared in <root>.LockTest.testLock' type=<root>.LockTest origin=IMPLICIT_ARGUMENT
             then: BLOCK type=kotlin.Unit origin=null
               SET_VAR 'var result: kotlin.String declared in <root>.LockTest.testLock' type=kotlin.Unit origin=EQ

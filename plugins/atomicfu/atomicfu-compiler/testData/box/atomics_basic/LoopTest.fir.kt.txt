@@ -222,7 +222,7 @@ class LoopTest {
 
   fun atomicfuBooleanGetAndUpdateTest() {
     atomicSetField<Boolean>(/* <this> = LoopTest<this>::b$volatile, */ newValue = false)
-    val resBool: Boolean = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): Boolean {
+    val resBool: Boolean = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): KMutableProperty0<Boolean> {
       return LoopTest<this>::b$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Boolean): Boolean {
@@ -242,7 +242,7 @@ class LoopTest {
 
   fun atomicfuBooleanLoopTest(newValue: Boolean): Boolean {
     atomicSetField<Boolean>(/* <this> = LoopTest<this>::b$volatile, */ newValue = true)
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): Boolean {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): KMutableProperty0<Boolean> {
       return LoopTest<this>::b$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Boolean) {
@@ -265,7 +265,7 @@ class LoopTest {
 
   fun atomicfuBooleanUpdateAndGetTest() {
     atomicSetField<Boolean>(/* <this> = LoopTest<this>::b$volatile, */ newValue = false)
-    val resBool: Boolean = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): Boolean {
+    val resBool: Boolean = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): KMutableProperty0<Boolean> {
       return LoopTest<this>::b$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Boolean): Boolean {
@@ -285,7 +285,7 @@ class LoopTest {
 
   fun atomicfuBooleanUpdateTest() {
     atomicSetField<Boolean>(/* <this> = LoopTest<this>::b$volatile, */ newValue = false)
-    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): Boolean {
+    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <b$volatile-getter>(): KMutableProperty0<Boolean> {
       return LoopTest<this>::b$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Boolean): Boolean {
@@ -312,7 +312,7 @@ class LoopTest {
 
   fun atomicfuIntGetAndUpdateTest() {
     atomicSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ newValue = 0)
-    val resInt: Int = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    val resInt: Int = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Int): Int {
@@ -332,7 +332,7 @@ class LoopTest {
 
   fun atomicfuIntLoopTest(newValue: Int): Int {
     atomicSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ newValue = 0)
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Int) {
@@ -352,7 +352,7 @@ class LoopTest {
 
   fun atomicfuIntUpdateAndGetTest() {
     atomicSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ newValue = 0)
-    val resInt: Int = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    val resInt: Int = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Int): Int {
@@ -372,7 +372,7 @@ class LoopTest {
 
   fun atomicfuIntUpdateTest() {
     atomicSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ newValue = 0)
-    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): Int {
+    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
       return LoopTest<this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Int): Int {
@@ -391,7 +391,7 @@ class LoopTest {
 
   fun atomicfuLongGetAndUpdateTest() {
     atomicSetField<Long>(/* <this> = LoopTest<this>::l$volatile, */ newValue = 0L)
-    val resLong: Long = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): Long {
+    val resLong: Long = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): KMutableProperty0<Long> {
       return LoopTest<this>::l$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Long): Long {
@@ -411,7 +411,7 @@ class LoopTest {
 
   fun atomicfuLongLoopTest(newValue: Long): Long {
     atomicSetField<Long>(/* <this> = LoopTest<this>::l$volatile, */ newValue = 5000000000L)
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): Long {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): KMutableProperty0<Long> {
       return LoopTest<this>::l$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Long) {
@@ -434,7 +434,7 @@ class LoopTest {
 
   fun atomicfuLongUpdateAndGetTest() {
     atomicSetField<Long>(/* <this> = LoopTest<this>::l$volatile, */ newValue = 0L)
-    val resLong: Long = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): Long {
+    val resLong: Long = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): KMutableProperty0<Long> {
       return LoopTest<this>::l$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Long): Long {
@@ -454,7 +454,7 @@ class LoopTest {
 
   fun atomicfuLongUpdateTest() {
     atomicSetField<Long>(/* <this> = LoopTest<this>::l$volatile, */ newValue = 0L)
-    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): Long {
+    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <l$volatile-getter>(): KMutableProperty0<Long> {
       return LoopTest<this>::l$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: Long): Long {
@@ -480,7 +480,7 @@ class LoopTest {
 
   fun atomicfuRefGetAndUpdateTest() {
     atomicSetField<Any?>(/* <this> = LoopTest<this>::r$volatile, */ newValue = A(s = "aaaa"))
-    val resRef: A = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): Any? {
+    val resRef: A = <this>.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): KMutableProperty0<Any?> {
       return LoopTest<this>::r$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: A): A {
@@ -501,7 +501,7 @@ class LoopTest {
 
   fun atomicfuRefLoopTest(newValue: A): A {
     atomicSetField<Any?>(/* <this> = LoopTest<this>::r$volatile, */ newValue = A(s = "aaa"))
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): Any? {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): KMutableProperty0<Any?> {
       return LoopTest<this>::r$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: A) {
@@ -521,7 +521,7 @@ class LoopTest {
 
   fun atomicfuRefUpdateAndGetTest() {
     atomicSetField<Any?>(/* <this> = LoopTest<this>::r$volatile, */ newValue = A(s = "aaaa"))
-    val resRef: A = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): Any? {
+    val resRef: A = <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): KMutableProperty0<Any?> {
       return LoopTest<this>::r$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: A): A {
@@ -542,7 +542,7 @@ class LoopTest {
 
   fun atomicfuRefUpdateTest() {
     atomicSetField<Any?>(/* <this> = LoopTest<this>::r$volatile, */ newValue = A(s = "aaaa"))
-    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): Any? {
+    <this>.update$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): KMutableProperty0<Any?> {
       return LoopTest<this>::r$volatile
     }
 , action$atomicfu = local fun <anonymous>(value: A): A {

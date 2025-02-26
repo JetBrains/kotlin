@@ -17,7 +17,7 @@ class LockTest {
   fun testLock() {
     var result: String = ""
     when {
-      tryAcquire$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <inProgressLock$volatile-getter>(): Boolean {
+      tryAcquire$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <inProgressLock$volatile-getter>(): KMutableProperty0<Boolean> {
         return LockTest<this>::inProgressLock$volatile
       }
 ) -> { // BLOCK

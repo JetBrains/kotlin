@@ -53,7 +53,7 @@ class LockFreeQueue {
   }
 
   fun dequeue(): Int {
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <head$volatile-getter>(): Any? {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <head$volatile-getter>(): KMutableProperty0<Any?> {
       return LockFreeQueue<this>::head$volatile
     }
 , action$atomicfu = local fun <anonymous>(curHead: Node) {
@@ -73,7 +73,7 @@ class LockFreeQueue {
 
   fun enqueue(value: Int) {
     val node: Node = Node(value = value)
-    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <tail$volatile-getter>(): Any? {
+    <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <tail$volatile-getter>(): KMutableProperty0<Any?> {
       return LockFreeQueue<this>::tail$volatile
     }
 , action$atomicfu = local fun <anonymous>(curTail: Node) {

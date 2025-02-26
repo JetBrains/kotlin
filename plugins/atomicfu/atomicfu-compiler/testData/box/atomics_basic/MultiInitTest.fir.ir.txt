@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/MultiInitTest.kt
         RETURN type=kotlin.Nothing from='public final fun incA (): kotlin.Int declared in <root>.MultiInit'
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
             ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Int>, delta: kotlin.Int): kotlin.Int declared in kotlin.concurrent' type=kotlin.Int origin=null
-              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.MultiInit' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.MultiInit' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit' type=kotlin.Int origin=null
+              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.MultiInit' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.MultiInit' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                 ARG 1: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.incA' type=<root>.MultiInit origin=IMPLICIT_ARGUMENT
               ARG delta: CONST Int type=kotlin.Int value=1
             ARG other: CONST Int type=kotlin.Int value=1
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/MultiInitTest.kt
         RETURN type=kotlin.Nothing from='public final fun incB (): kotlin.Int declared in <root>.MultiInit'
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
             ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Int>, delta: kotlin.Int): kotlin.Int declared in kotlin.concurrent' type=kotlin.Int origin=null
-              ARG <this>: PROPERTY_REFERENCE 'private final b$volatile: kotlin.Int declared in <root>.MultiInit' field='FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' getter='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.MultiInit' setter='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit' type=kotlin.Int origin=null
+              ARG <this>: PROPERTY_REFERENCE 'private final b$volatile: kotlin.Int declared in <root>.MultiInit' field='FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' getter='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.MultiInit' setter='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
                 ARG 1: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.incB' type=<root>.MultiInit origin=IMPLICIT_ARGUMENT
               ARG delta: CONST Int type=kotlin.Int value=1
             ARG other: CONST Int type=kotlin.Int value=1
