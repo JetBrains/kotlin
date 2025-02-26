@@ -91,6 +91,8 @@ object AnalysisFlags {
 
     @JvmStatic
     val returnValueCheckerMode by AnalysisFlag.Delegates.ReturnValueCheckerDisabledByDefault
+
+    val lenientMode by AnalysisFlag.Delegates.Boolean
 }
 
 @Deprecated(
