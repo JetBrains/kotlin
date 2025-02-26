@@ -11,6 +11,18 @@ Tower Data Context:
         Scope: FirPackageMemberScope
     Element 5
         Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/Boolean|
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|kotlin/Int|
+                Type: kotlin.Int
+                Label: Int
+            FirValueParameterSymbol R|kotlin/String|
+                Type: kotlin.String
+                Label: String
 
 FILE: [ResolvedTo(IMPORTS)] functionContextReceiver.kt
     context([ResolvedTo(BODY_RESOLVE)] R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|)

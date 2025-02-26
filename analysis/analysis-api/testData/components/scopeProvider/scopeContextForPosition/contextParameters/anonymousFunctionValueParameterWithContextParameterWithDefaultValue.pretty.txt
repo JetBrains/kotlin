@@ -38,9 +38,10 @@ scopes:
   LocalScope, index = 2
     packages: 0
     classifiers: 0
-    callables: 2
+    callables: 3
       b: B
       anonParam: kotlin.Boolean
+      anonParam2: kotlin.Long
     constructors: 0
 
   TypeParameterScope, index = 3

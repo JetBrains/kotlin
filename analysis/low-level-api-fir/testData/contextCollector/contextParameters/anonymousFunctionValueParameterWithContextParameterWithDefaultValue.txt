@@ -39,6 +39,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol anonParam: R|kotlin/Boolean| = R|/usage|()
+                FirValueParameterSymbol anonParam2: R|kotlin/Long|
                 FirValueParameterSymbol b: R|B|
     Element 13
         Context parameters:

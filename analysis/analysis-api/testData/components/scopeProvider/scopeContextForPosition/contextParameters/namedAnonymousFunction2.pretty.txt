@@ -10,8 +10,9 @@ scopes:
   LocalScope, index = 1
     packages: 0
     classifiers: 0
-    callables: 1
+    callables: 2
       named: kotlin.String
+      p: kotlin.Int
     constructors: 0
 
   LocalScope, index = 2

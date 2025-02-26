@@ -15,6 +15,20 @@ Tower Data Context:
         Scope: FirMemberTypeParameterScope
             Classifiers:
                 FirTypeParameterSymbol T1
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|A|
+                FirValueParameterSymbol param: R|kotlin/Int|
+                FirValueParameterSymbol param2: R|kotlin/String|
+    Element 8
+        Context parameters:
+            FirValueParameterSymbol a: R|A|
+                Type: A
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|B|
+                Type: B
 
 FILE: [ResolvedTo(IMPORTS)] functionContextParameter.kt
     public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {

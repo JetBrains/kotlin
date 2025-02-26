@@ -635,9 +635,10 @@ private class ContextCollectorVisitor(
 
             context.withSimpleFunction(simpleFunction, holder.session) {
                 context.forFunctionBody(simpleFunction, holder) {
-                    processList(simpleFunction.valueParameters)
-
                     dumpContext(simpleFunction, ContextKind.BODY)
+
+                    processList(simpleFunction.contextParameters)
+                    processList(simpleFunction.valueParameters)
 
                     onActive {
                         process(simpleFunction.body)
@@ -804,10 +805,18 @@ private class ContextCollectorVisitor(
 
         onActiveBody {
             context.withAnonymousFunctionIncludingTypeParameters(anonymousFunction, bodyHolder) {
-                processList(anonymousFunction.contextParameters)
-                processList(anonymousFunction.valueParameters)
+                for (contextParameter in anonymousFunction.contextParameters) {
+                    context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
+                }
+
+                for (valueParameter in anonymousFunction.valueParameters) {
+                    context.storeValueParameterIfNeeded(valueParameter, bodyHolder.session)
+                }
 
                 dumpContext(anonymousFunction, ContextKind.BODY)
+
+                processList(anonymousFunction.contextParameters)
+                processList(anonymousFunction.valueParameters)
 
                 onActive {
                     process(anonymousFunction.body)

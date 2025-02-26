@@ -13,7 +13,7 @@ scopes:
   LocalScope, index = 1
     packages: 0
     classifiers: 0
-    callables: 1
+    callables: 2
       KaContextParameterSymbol:
         annotations: []
         callableId: null
@@ -32,6 +32,31 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
+        visibility: PUBLIC
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: p
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Int
         visibility: PUBLIC
     constructors: 0
 
