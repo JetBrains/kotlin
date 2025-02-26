@@ -10,6 +10,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
@@ -80,13 +81,17 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Internal
     @get:Deprecated("Internal development property. Scheduled for removal in Kotlin 2.4.")
     var mode: KotlinJsBinaryMode
-        get() = modeProperty.get()
+        get() = _mode.get()
         set(value) {
-            modeProperty.set(value)
+            _mode.set(value)
         }
 
+    @get:Internal
+    internal abstract val _mode: Property<KotlinJsBinaryMode>
+
     @get:Input
-    internal abstract val modeProperty: Property<KotlinJsBinaryMode>
+    val modeProvider: Provider<KotlinJsBinaryMode>
+        get() = _mode
 
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
@@ -125,7 +130,7 @@ abstract class KotlinJsIrLink @Inject constructor(
                 args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
             }
 
-            if (isWasmPlatform && modeProperty.get() == DEVELOPMENT) {
+            if (isWasmPlatform && _mode.get() == DEVELOPMENT) {
                 args.debuggerCustomFormatters = true
             }
         }
@@ -147,5 +152,5 @@ abstract class KotlinJsIrLink @Inject constructor(
     }
 
     private fun usingCacheDirectory() =
-        (if (isWasmPlatform) incrementalWasm else incrementalJsIr) && modeProperty.get() == DEVELOPMENT
+        (if (isWasmPlatform) incrementalWasm else incrementalJsIr) && _mode.get() == DEVELOPMENT
 }

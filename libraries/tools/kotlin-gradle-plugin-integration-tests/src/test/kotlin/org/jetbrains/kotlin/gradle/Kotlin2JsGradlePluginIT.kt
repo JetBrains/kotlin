@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 import com.google.gson.Gson
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
@@ -29,7 +28,6 @@ import kotlin.test.assertTrue
 
 @JsGradlePluginTests
 class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
-
 
     @DisplayName("TS type declarations are generated")
     @GradleTest
@@ -91,69 +89,61 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("js composite build works")
     @GradleTest
+    @TestMetadata("js-composite-build")
     fun testJsCompositeBuild(gradleVersion: GradleVersion) {
         project("js-composite-build", gradleVersion) {
 
-            fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
-                projectPath.resolve(rootModulePath).toFile()
-                    .resolve(NpmProject.PACKAGE_JSON)
-                    .also {
-                        if (!it.exists()) {
-                            it
-                                .parentFile // lib2
-                                .parentFile // node_modules
-                                .parentFile // js
-                                .resolve(NpmProject.PACKAGE_JSON)
-                                .let {
-                                    println("root package.json:")
-                                    println(it.readText())
-                                }
+            fun assertModuleVersion(
+                expectedModuleVersion: String,
+                rootModulePath: String,
+                moduleName: String,
+            ) {
+                val modulePackageJsonFile = projectPath.resolve(rootModulePath).resolve(NpmProject.PACKAGE_JSON)
 
-                            it
-                                .parentFile // lib2
-                                .parentFile // node_modules
-                                .parentFile // js
-                                .resolve("packages_imported")
-                                .also {
-                                    println("ALL IMPORTED: ")
-                                    it.listFiles()
-                                        ?.forEach {
-                                            println(it.absolutePath)
-                                        }
-                                    it.resolve(".visited-gradle").let {
-                                        println("visited-gradle content")
-                                        println(it.readText())
-                                    }
-                                }
-                                .resolve("lib2")
-                                .resolve("0.0.0-unspecified")
-                                .resolve(NpmProject.PACKAGE_JSON)
-                                .let {
-                                    println("lib2 package.json state:")
-                                    if (it.exists()) {
-                                        println(it.readText())
-                                    } else {
-                                        println("lib2 package.json does not exists")
-                                    }
-                                }
+                val packageJson = fromSrcPackageJson(modulePackageJsonFile.toFile())
+                    ?: error("Could not parse $modulePackageJsonFile")
 
-                            printBuildOutput()
+                val actualModuleVersion = packageJson.dependencies[moduleName]
+                    ?: error("Could not find dependency \"$moduleName\" in $modulePackageJsonFile")
+
+                assertEquals(expectedModuleVersion, actualModuleVersion, buildString {
+                    appendLine("Expected module $moduleName had version $expectedModuleVersion, but was $actualModuleVersion")
+
+                    if (!modulePackageJsonFile.exists()) {
+                        appendLine()
+
+                        val jsDir = modulePackageJsonFile
+                            .parent // lib2
+                            .parent // node_modules
+                            .parent // js
+
+                        appendLine("root package.json:")
+                        appendLine(jsDir.resolve(NpmProject.PACKAGE_JSON).readText())
+
+                        val packagesImportedDir = jsDir.resolve("packages_imported")
+                        appendLine("ALL IMPORTED: ")
+                        appendLine(packagesImportedDir.listDirectoryEntries().joinToString { "\t-$it" })
+
+                        appendLine("visited-gradle content")
+                        appendLine(packagesImportedDir.resolve(".visited-gradle").readText().prependIndent())
+
+                        val lib2PackageJson = packagesImportedDir.resolve("lib2/0.0.0-unspecified/${NpmProject.PACKAGE_JSON}")
+                        appendLine("lib2 package.json state:")
+                        if (lib2PackageJson.exists()) {
+                            appendLine(lib2PackageJson.readText().prependIndent())
+                        } else {
+                            appendLine("lib2 package.json does not exists".prependIndent())
                         }
                     }
-                    .let { fromSrcPackageJson(it) }
-                    .let { it?.dependencies }
-                    ?.getValue(moduleName)
-                    ?: error("Not found package $moduleName in $rootModulePath")
+                })
+            }
 
             build("build") {
-                val libDecamelizeVersion = moduleVersion("build/js/node_modules/lib-lib-2", "decamelize")
-                assertEquals("1.1.1", libDecamelizeVersion)
+                assertModuleVersion("1.1.1", "build/js/node_modules/lib-lib-2", "decamelize")
 
-                val libAsyncVersion = moduleVersion("build/js/node_modules/lib-lib-2", "async")
-                assertEquals("2.6.2", libAsyncVersion)
+                assertModuleVersion("2.6.2", "build/js/node_modules/lib-lib-2", "async")
 
-                val appNodeFetchVersion = moduleVersion("build/js/node_modules/js-composite-build", "node-fetch")
-                assertEquals("3.2.8", appNodeFetchVersion)
+                assertModuleVersion("3.2.8", "build/js/node_modules/js-composite-build", "node-fetch")
             }
         }
     }

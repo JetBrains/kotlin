@@ -2,17 +2,13 @@ plugins {
     kotlin("js")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     js {
         nodejs()
         binaries.executable()
     }
 }
+
 kotlin {
     js {
         browser()
@@ -24,23 +20,19 @@ tasks.named("browserTest") {
     enabled = false
 }
 
-rootProject.tasks
-    .withType(org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask::class.java)
-    .named("kotlinNpmInstall")
-    .configure {
-        args.addAll(
-            listOf(
-                "--network-concurrency",
-                "1",
-                "--mutex",
-                "network"
-            )
+tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
+    args.addAll(
+        listOf(
+            "--network-concurrency",
+            "1",
+            "--mutex",
+            "network"
         )
-    }
+    )
+}
 
 dependencies {
-    implementation(kotlin("stdlib-js"))
     implementation("com.example:lib-2")
     implementation(npm("node-fetch", "3.2.8"))
-    testImplementation(kotlin("test-js"))
+    testImplementation(kotlin("test"))
 }

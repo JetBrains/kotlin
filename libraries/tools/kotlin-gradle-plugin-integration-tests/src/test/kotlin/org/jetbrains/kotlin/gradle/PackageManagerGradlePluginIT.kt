@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.deleteRecursively
@@ -131,6 +132,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("js composite build works with lock file persistence")
     @GradleTest
+    @TestMetadata("js-composite-build")
     fun testJsCompositeBuildWithUpgradeLockFile(gradleVersion: GradleVersion) {
         project("js-composite-build", gradleVersion) {
             testJsCompositeBuildWithUpgradeLockFile(

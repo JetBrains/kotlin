@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourc
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -336,17 +336,14 @@ constructor(
     }
 
     override fun generateTypeScriptDefinitions() {
-        compilations
-            .all {
-                it.binaries
-                    .withType(JsIrBinary::class.java)
-                    .all {
-                        it.generateTs = true
-                        it.linkTask.configure { linkTask ->
-                            linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
-                        }
-                    }
+        compilations.all { jsComp ->
+            jsComp.binaries.withType(JsIrBinary::class.java).all { binary ->
+                binary.generateTs = true
+                binary.linkTask.configure { linkTask ->
+                    linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
+                }
             }
+        }
     }
 
     override val compilerOptions: KotlinJsCompilerOptions = project.objects
