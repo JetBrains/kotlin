@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import org.jetbrains.kotlin.load.kotlin.FileThatCanBeCachedAcrossEntireApp
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.*
 
@@ -16,7 +17,7 @@ class KotlinLocalVirtualFile(
     val file: File,
     private val _fileSystem: KotlinLocalFileSystem,
     parent: KotlinLocalVirtualFile? = null,
-) : VirtualFile() {
+) : VirtualFile(), FileThatCanBeCachedAcrossEntireApp {
     // File system operations can be slow, so we're caching high-impact properties.
     // except ones that are used in `hashCode` or `equals` function.
     private val _name: String = file.name

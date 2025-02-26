@@ -8,6 +8,7 @@ import com.intellij.openapi.util.io.BufferExposingByteArrayInputStream
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import org.jetbrains.kotlin.load.kotlin.FileThatCanBeCachedAcrossEntireApp
 import org.jetbrains.kotlin.load.kotlin.LibraryContainerAwareVirtualFile
 import java.io.IOException
 import java.io.InputStream
@@ -20,7 +21,7 @@ internal class FastJarVirtualFile(
     private val length: Long,
     private val parent: FastJarVirtualFile?,
     private val entryDescription: ZipEntryDescription?,
-) : VirtualFile(), LibraryContainerAwareVirtualFile {
+) : VirtualFile(), LibraryContainerAwareVirtualFile, FileThatCanBeCachedAcrossEntireApp {
 
     private var myChildrenArray = EMPTY_ARRAY
     private val myChildrenList: MutableList<VirtualFile> = mutableListOf()
