@@ -51,8 +51,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                     afterEvaluate {
                         tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
                             // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-                            compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${latestStableKotlinVersion.name})
-                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${latestStableKotlinVersion.name})
+                            compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${firstNonDeprecatedKotlinVersion.name})
+                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${firstNonDeprecatedKotlinVersion.name})
                         }
                     }
                     """.trimIndent()
