@@ -20,6 +20,7 @@ import kotlin.io.path.walk
 
 private data class GlobalCompiledProjectsCacheKey(
     val moduleKey: DependencyScenarioDslCacheKey,
+    val snapshotInlinedClassesInDependencies: Boolean,
     val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
     val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
 )
@@ -33,12 +34,14 @@ internal object GlobalCompiledProjectsCache {
     fun getProjectFromCache(
         module: Module,
         strategyConfig: CompilerExecutionStrategyConfiguration,
+        snapshotInlinedClassesInDependencies: Boolean,
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
         icSourceTracking: Boolean,
     ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
+            snapshotInlinedClassesInDependencies,
             compilationOptionsModifier,
             incrementalCompilationOptionsModifier
         )] ?: return null
@@ -53,6 +56,7 @@ internal object GlobalCompiledProjectsCache {
     fun putProjectIntoCache(
         module: Module,
         strategyConfig: CompilerExecutionStrategyConfiguration,
+        snapshotInlinedClassesInDependencies: Boolean,
         compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
         incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
         icSourceTracking: Boolean,
@@ -72,6 +76,7 @@ internal object GlobalCompiledProjectsCache {
         module.buildDirectory.copyToRecursively(moduleCacheDirectory, followLinks = false, overwrite = false)
         compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
+            snapshotInlinedClassesInDependencies,
             compilationOptionsModifier,
             incrementalCompilationOptionsModifier
         )] = Pair(initialOutputs, moduleCacheDirectory)

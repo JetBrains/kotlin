@@ -26,11 +26,20 @@ class Project(
     fun module(
         moduleName: String,
         dependencies: List<Module> = emptyList(),
+        snapshotInlinedClassesInDependencies: Boolean = false,
         additionalCompilationArguments: List<String> = emptyList(),
     ): Module {
         val moduleDirectory = projectDirectory.resolve(moduleName)
         val sanitizedModuleName = moduleName.replace(invalidModuleNameCharactersRegex, "_")
-        val module = JvmModule(this, sanitizedModuleName, moduleDirectory, dependencies, defaultStrategyConfig, additionalCompilationArguments)
+        val module = JvmModule(
+            project = this,
+            moduleName = sanitizedModuleName,
+            moduleDirectory = moduleDirectory,
+            dependencies = dependencies,
+            defaultStrategyConfig = defaultStrategyConfig,
+            snapshotInlinedClasses = snapshotInlinedClassesInDependencies,
+            additionalCompilationArguments = additionalCompilationArguments
+        )
         module.sourcesDirectory.createDirectories()
         val templatePath = Paths.get("src/main/resources/modules/$moduleName")
         assert(templatePath.isDirectory()) {

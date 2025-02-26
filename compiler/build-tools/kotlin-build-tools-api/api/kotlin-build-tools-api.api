@@ -10,6 +10,7 @@ public final class org/jetbrains/kotlin/buildtools/api/CompilationResult : java/
 public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilationService {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/CompilationService$Companion;
 	public abstract fun calculateClasspathSnapshot (Ljava/io/File;Lorg/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathEntrySnapshot;
+	public abstract fun calculateClasspathSnapshot (Ljava/io/File;Lorg/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity;Z)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClasspathEntrySnapshot;
 	public abstract fun compileJvm (Lorg/jetbrains/kotlin/buildtools/api/ProjectId;Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmCompilationConfiguration;Ljava/util/List;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
 	public abstract fun finishProjectCompilation (Lorg/jetbrains/kotlin/buildtools/api/ProjectId;)V
 	public abstract fun getCompilerVersion ()Ljava/lang/String;

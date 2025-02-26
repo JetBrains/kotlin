@@ -34,8 +34,25 @@ public interface CompilationService {
      *
      * @param classpathEntry path to existent classpath entry
      * @param granularity determines granularity of tracking.
+     * @param parseInlinedLocalClasses enables an experimental snapshotting mode for inline methods and accessors
      */
-    public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity): ClasspathEntrySnapshot
+    public fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+        parseInlinedLocalClasses: Boolean
+    ): ClasspathEntrySnapshot
+
+    /**
+     * Compatibility-driven version of [calculateClasspathSnapshot]. Please drop it whenever a breaking change of BTA is introduced.
+     */
+    @Deprecated(
+        "Use three-argument version of [calculateClasspathSnapshot] instead",
+        level = DeprecationLevel.WARNING
+    )
+    public fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity
+    ): ClasspathEntrySnapshot
 
     /**
      * Provides a default [CompilerExecutionStrategyConfiguration] allowing to use it as is or customizing for specific requirements.
