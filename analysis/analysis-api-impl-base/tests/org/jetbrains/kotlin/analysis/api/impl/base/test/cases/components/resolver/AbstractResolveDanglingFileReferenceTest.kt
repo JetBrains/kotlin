@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
+import com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
@@ -58,7 +59,11 @@ abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferen
         val fakeKtFile = ktPsiFactory.createFile("fake.kt", file.text)
 
         if (module.testModule.directives.contains(Directives.COPY_RESOLUTION_MODE)) {
-            fakeKtFile.originalFile = file
+            if (module.testModule.directives.contains(Directives.USER_DATA_COPY)) {
+                fakeKtFile.putUserData(PsiFileFactory.ORIGINAL_FILE, file)
+            } else {
+                fakeKtFile.originalFile = file
+            }
         }
 
         return collectElementsToResolve(caretPositions, fakeKtFile)
@@ -77,5 +82,7 @@ abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferen
         val COPY_RESOLUTION_MODE by enumDirective(description = "Dangling file resolution mode for a copy") {
             KaDanglingFileResolutionMode.valueOf(it)
         }
+
+        val USER_DATA_COPY by directive(description = "Provide the original file as a user data property")
     }
 }

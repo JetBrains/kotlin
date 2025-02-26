@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -48,7 +49,7 @@ public inline fun <R> analyze(
 /**
  * Executes the given [action] in a [KaSession] context.
  *
- * The [useSiteElement] must be inside a dangling file copy (specifically, [PsiFile.getOriginalFile] must point to the copy source).
+ * The [useSiteElement] must be inside a dangling file copy (specifically, [PsiFile.copyOrigin] must point to the copy source).
  * Depending on the passed [resolutionMode], declarations inside the file copy will be treated in a specific way.
  *
  * The project will be analyzed from the perspective of [useSiteElement]'s module, also called the use-site module.
