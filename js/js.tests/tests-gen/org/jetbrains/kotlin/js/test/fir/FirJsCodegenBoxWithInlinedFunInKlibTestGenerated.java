@@ -29737,6 +29737,16 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lenientMode")
+        @TestDataPath("$PROJECT_ROOT")
+        public class LenientMode {
+          @Test
+          public void testAllFilesPresentInLenientMode() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+          }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
         @TestDataPath("$PROJECT_ROOT")
         public class MigratedOldTests {

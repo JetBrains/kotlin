@@ -32044,6 +32044,17 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lenientMode")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        public class LenientMode {
+          @Test
+          public void testAllFilesPresentInLenientMode() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
         @TestDataPath("$PROJECT_ROOT")
         @UseExtTestCaseGroupProvider()
