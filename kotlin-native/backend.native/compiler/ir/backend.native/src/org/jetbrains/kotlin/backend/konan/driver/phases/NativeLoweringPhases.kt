@@ -454,7 +454,7 @@ private val eraseGenericCallsReturnTypesPhase = createFileLoweringPhase(
 private val autoboxPhase = createFileLoweringPhase(
         ::Autoboxing,
         name = "Autobox",
-        prerequisite = setOf(bridgesPhase, coroutinesPhase, eraseGenericCallsReturnTypesPhase)
+        prerequisite = setOf(bridgesPhase, coroutinesPhase)
 )
 
 private val constructorsLoweringPhase = createFileLoweringPhase(
@@ -609,8 +609,8 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         bridgesPhase,
         exportInternalAbiPhase.takeIf { this.produce.isCache },
         useInternalAbiPhase,
-        eraseGenericCallsReturnTypesPhase,
         autoboxPhase,
+        eraseGenericCallsReturnTypesPhase,
         constructorsLoweringPhase,
 )
 
