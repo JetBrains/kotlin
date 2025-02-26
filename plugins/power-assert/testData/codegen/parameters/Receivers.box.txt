@@ -6,9 +6,10 @@ Asserter.dispatchAssert("test".length == 5)
 ---
 test2: ---
 dispatchAssert("test".length == 5)
-                      |      |
-                      |      false
-                      4
+|                     |      |
+|                     |      false
+|                     4
+Asserter
 ---
 test3: ---
 Asserter.extensionAssert("test".length == 5)
@@ -18,19 +19,23 @@ Asserter.extensionAssert("test".length == 5)
 ---
 test4: ---
 extensionAssert("test".length == 5)
-                       |      |
-                       |      false
-                       4
+|                      |      |
+|                      |      false
+|                      4
+Asserter
 ---
 test5: ---
 Asserter.memberExtensionAssert("test".length == 5)
-                                      |      |
-                                      |      false
-                                      4
+|                                     |      |
+|                                     |      false
+|                                     4
+Asserter
 ---
 test6: ---
 memberExtensionAssert("test".length == 5)
-                             |      |
-                             |      false
-                             4
+|                            |      |
+|                            |      false
+|                            4
+Asserter
+Asserter
 ---

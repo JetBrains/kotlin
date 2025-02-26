@@ -1,48 +1,64 @@
-test1: ---Assertion failed---
+test1: ---
+2 mustEqual 6
+|
+Asserter
+---
 test2: ---
 1 mustEqual (2 + 4)
-               |
-               6
+|              |
+|              6
+Asserter
 ---
 test3: ---
 (1 + 1) mustEqual 6
-   |
-   2
+|  |
+|  2
+Asserter
 ---
 test4: ---
 (1 + 1) mustEqual (2 + 4)
-   |                 |
-   |                 6
-   2
+|  |                 |
+|  |                 6
+|  2
+Asserter
 ---
 test5: ---
 "hello".substring(1, 4).length mustEqual "world".length
-        |               |                        |
-        |               |                        5
-        |               3
-        ell
+|       |               |                        |
+|       |               |                        5
+|       |               3
+|       ell
+Asserter
 ---
-test6: ---Assertion failed---
+test6: ---
+2.mustEqual(6)
+|
+Asserter
+---
 test7: ---
 1.mustEqual(2 + 4)
-              |
-              6
+|             |
+|             6
+Asserter
 ---
 test8: ---
 (1 + 1).mustEqual(6)
-   |
-   2
+|  |
+|  2
+Asserter
 ---
 test9: ---
 (1 + 1).mustEqual(2 + 4)
-   |                |
-   |                6
-   2
+|  |                |
+|  |                6
+|  2
+Asserter
 ---
 test10: ---
 "hello".substring(1, 4).length.mustEqual("world".length)
-        |               |                        |
-        |               |                        5
-        |               3
-        ell
+|       |               |                        |
+|       |               |                        5
+|       |               3
+|       ell
+Asserter
 ---

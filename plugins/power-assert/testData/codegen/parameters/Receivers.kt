@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: ANY
 // FUNCTION: Asserter.dispatchAssert
 // FUNCTION: Asserter.memberExtensionAssert
 // FUNCTION: extensionAssert

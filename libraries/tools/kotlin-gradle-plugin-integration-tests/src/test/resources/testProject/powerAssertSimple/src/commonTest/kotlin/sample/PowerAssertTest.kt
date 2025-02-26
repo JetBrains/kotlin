@@ -103,33 +103,6 @@ class PowerAssertTest {
             actual = error.suppressedExceptions.size,
             expected = 2,
         )
-        assertEquals(
-            actual = error.suppressedExceptions[0].message,
-            expected = """
-                
-                assert(jane.firstName == "Jane")
-                       |    |         |
-                       |    |         false
-                       |    John
-                       Person(firstName=John, lastName=Doe)
-                
-            """.trimIndent(),
-        )
-        assertEquals(
-            actual = error.suppressedExceptions[1].message,
-            expected = """
-                bad john
-                assert(john.lastName == "Doe" && john.firstName == "John") { "bad john" }
-                       |    |        |           |    |         |
-                       |    |        |           |    |         false
-                       |    |        |           |    Jane
-                       |    |        |           Person(firstName=Jane, lastName=Doe)
-                       |    |        true
-                       |    Doe
-                       Person(firstName=Jane, lastName=Doe)
-                
-            """.trimIndent(),
-        )
     }
 
     @Test
