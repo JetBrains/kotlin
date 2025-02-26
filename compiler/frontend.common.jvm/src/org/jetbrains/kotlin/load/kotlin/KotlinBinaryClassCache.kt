@@ -11,12 +11,18 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
 
 class KotlinBinaryClassCache : Disposable {
+    // This global cache can be used only for `FileThatCanBeCachedAcrossApp` files (for instance, `FastJarVirtualFile`).
+    // It's assumed they have properly implemented `equals` and `hashCode` methods that return `false` for modified files.
+    // For instance, instances of `KotlinLocalVirtualFile` should be different for the same path if the real file was changed in any way.
+    private val globalCache = ContainerUtil.createConcurrentSoftKeySoftValueMap<VirtualFile, KotlinClassFinder.Result>()
+
     private val requestCaches = CopyOnWriteArrayList<WeakReference<RequestCache>>()
 
     private class RequestCache {
@@ -56,6 +62,7 @@ class KotlinBinaryClassCache : Disposable {
         // also created for each test. However all tests share the same event dispatch thread, which would collect all instances of this
         // thread-local if they're not removed properly. Each instance would transitively retain VFS resulting in OutOfMemoryError
         cache.remove()
+        globalCache.clear()
     }
 
     companion object {
@@ -87,18 +94,26 @@ class KotlinBinaryClassCache : Disposable {
 
             if (file.name == PsiJavaModule.MODULE_INFO_CLS_FILE) return null
 
-            val service = ApplicationManager.getApplication().getService(KotlinBinaryClassCache::class.java)
-            val requestCache = service.cache.get()
+            val application = ApplicationManager.getApplication()
+            val service = application.getService(KotlinBinaryClassCache::class.java)
 
-            if (file.modificationStamp == requestCache.modificationStamp && file == requestCache.virtualFile) {
-                return requestCache.result
-            }
-
-            val aClass = ApplicationManager.getApplication().runReadAction(Computable {
+            fun createKotlinClass(): KotlinClassFinder.Result = application.runReadAction(Computable {
                 VirtualFileKotlinClass.create(file, metadataVersion, fileContent, perfManager)
             })
 
-            return requestCache.cache(file, aClass)
+            if (file is FileThatCanBeCachedAcrossEntireApp) {
+                return service.globalCache.getOrPut(file) { createKotlinClass() }.takeIf { it !is KotlinClassFinder.Result.Empty }
+            } else {
+                val requestCache = service.cache.get()
+
+                if (file.modificationStamp == requestCache.modificationStamp && file == requestCache.virtualFile) {
+                    return requestCache.result
+                }
+
+                val aClass = createKotlinClass().takeIf { it !is KotlinClassFinder.Result.Empty }
+
+                return requestCache.cache(file, aClass)
+            }
         }
     }
 }
