@@ -11,6 +11,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
+/**
+ * An engine services which *must* be used to calculate a [KaModule]'s [content scope][KaModule.contentScope] lazily.
+ */
 public interface KaContentScopeProvider : KaEngineService {
     /**
      * Calculates a [KaModule.contentScope] from [KaModule.baseContentScope] for the given [KaModule] using [KotlinContentScopeRefiner]s.
