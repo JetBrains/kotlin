@@ -24,21 +24,30 @@
         "kotlinVersions": [
             {
                 "name": "1.0",
-                "addedInVersion": "1.4.0",
-                "deprecatedInVersion": "1.9.20",
-                "removedInVersion": "2.0.0"
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.4.0",
+                    "stabilizedVersion": "1.4.0",
+                    "deprecatedVersion": "1.9.20",
+                    "removedVersion": "2.0.0"
+                }
             },
             {
                 "name": "1.9",
-                "addedInVersion": "1.9.20",
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.9.20",
+                    "stabilizedVersion": "1.9.20",
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             },
             {
                 "name": "2.0",
-                "addedInVersion": "2.0.0",
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.9.20",
+                    "stabilizedVersion": "2.0.0",
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             }
         ],
         "jvmTargets": [
@@ -181,9 +190,7 @@
                             "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinVersionType",
                             "name": "KotlinVersion",
                             "isNullable": true,
-                            "defaultValue": {
-                                "name": "2.0"
-                            }
+                            "defaultValue": "2.0"
                         },
                         "valueDescription": "<version>",
                         "addedInVersion": "1.9.20",
@@ -200,9 +207,7 @@
                             "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinVersionType",
                             "name": "KotlinVersion",
                             "isNullable": true,
-                            "defaultValue": {
-                                "name": "2.0"
-                            }
+                            "defaultValue": "2.0"
                         },
                         "valueDescription": "<version>",
                         "addedInVersion": "1.4.0",

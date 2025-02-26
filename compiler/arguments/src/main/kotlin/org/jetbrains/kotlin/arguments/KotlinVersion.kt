@@ -6,60 +6,89 @@
 package org.jetbrains.kotlin.arguments
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonClassDiscriminator
+import kotlinx.serialization.builtins.SetSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @OptIn(ExperimentalSerializationApi::class)
-@JsonClassDiscriminator("name")
-@Serializable
-sealed class KotlinVersionDetails(
-    val addedInVersion: KotlinReleaseVersion,
-    val deprecatedInVersion: KotlinReleaseVersion? = null,
-    val removedInVersion: KotlinReleaseVersion? = null,
-) {
-    @Serializable
-    @SerialName("1.0")
-    class Kotlin10Details : KotlinVersionDetails(
-        addedInVersion = KotlinReleaseVersions.v1_4_0,
-        deprecatedInVersion = KotlinReleaseVersions.v1_9_20,
-        removedInVersion = KotlinReleaseVersions.v2_0_0,
-    )
+@Serializable(with = KotlinVersionAsNameSerializer::class)
+@KeepGeneratedSerializer
+data class KotlinVersion(
+    val name: String,
+    override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
+) : WithKotlinReleaseVersionsMetadata
 
-    @Serializable
-    @SerialName("1.9")
-    class Kotlin19Details : KotlinVersionDetails(
-        addedInVersion = KotlinReleaseVersions.v1_9_20,
-    )
-
-    @Serializable
-    @SerialName("2.0")
-    class Kotlin20Details : KotlinVersionDetails(
-        addedInVersion = KotlinReleaseVersions.v2_0_0,
-    )
-
-    companion object {
-        val allKotlinVersions = listOf(
-            Kotlin10Details(),
-            Kotlin19Details(),
-            Kotlin20Details(),
+object KotlinVersions {
+    val v1_0 = KotlinVersion(
+        name = "1.0",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersions.v1_4_0,
+            stabilizedVersion = KotlinReleaseVersions.v1_4_0,
+            deprecatedVersion = KotlinReleaseVersions.v1_9_20,
+            removedVersion = KotlinReleaseVersions.v2_0_0,
         )
+    )
+
+    val v1_9 = KotlinVersion(
+        name = "1.9",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersions.v1_9_20,
+            stabilizedVersion = KotlinReleaseVersions.v1_9_20,
+        )
+    )
+
+    val v2_0 = KotlinVersion(
+        name = "2.0",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersions.v1_9_20,
+            stabilizedVersion = KotlinReleaseVersions.v2_0_0,
+        )
+    )
+
+    val allKotlinVersions = setOf(
+        v1_0,
+        v1_9,
+        v2_0,
+    )
+}
+
+object KotlinVersionAsNameSerializer : KSerializer<KotlinVersion> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        serialName = "org.jetbrains.kotlin.arguments.KotlinVersion",
+        kind = PrimitiveKind.STRING,
+    )
+
+    override fun serialize(
+        encoder: Encoder,
+        value: KotlinVersion
+    ) {
+        encoder.encodeString(value.name)
+    }
+
+    override fun deserialize(decoder: Decoder): KotlinVersion {
+        val versionName = decoder.decodeString()
+        return KotlinVersions.allKotlinVersions.single { version ->  version.name == versionName }
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
-@JsonClassDiscriminator("name")
-@Serializable
-sealed class KotlinVersion(val details: KotlinVersionDetails) {
-    @Serializable
-    @SerialName("1.0")
-    object KOTLIN_1_0 : KotlinVersion(KotlinVersionDetails.Kotlin10Details())
+object AllDetailsKotlinVersionSerializer : KSerializer<Set<KotlinVersion>> {
+    private val delegateSerializer: KSerializer<Set<KotlinVersion>> = SetSerializer(KotlinVersion.generatedSerializer())
+    override val descriptor: SerialDescriptor = delegateSerializer.descriptor
 
-    @Serializable
-    @SerialName("1.9")
-    object KOTLIN_1_9 : KotlinVersion(KotlinVersionDetails.Kotlin19Details())
+    override fun serialize(
+        encoder: Encoder,
+        value: Set<KotlinVersion>,
+    ) {
+        delegateSerializer.serialize(encoder, value)
+    }
 
-    @Serializable
-    @SerialName("2.0")
-    object KOTLIN_2_0 : KotlinVersion(KotlinVersionDetails.Kotlin20Details())
+    override fun deserialize(decoder: Decoder): Set<KotlinVersion> {
+        return delegateSerializer.deserialize(decoder)
+    }
 }
