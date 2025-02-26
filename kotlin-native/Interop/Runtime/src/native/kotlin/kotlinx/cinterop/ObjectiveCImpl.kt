@@ -235,6 +235,6 @@ public external fun objc_retain(ptr: NativePtr): NativePtr
 @ExperimentalForeignApi
 public external fun objc_release(ptr: NativePtr)
 
+@PublishedApi
 @GCUnsafeCall("Kotlin_Block_copy")
-@ExperimentalForeignApi
-public external fun Block_copy(ptr: NativePtr): NativePtr
+internal external fun Block_copy(ptr: NativePtr): NativePtr
