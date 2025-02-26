@@ -64,6 +64,54 @@ public class FirIdeDependentAnalysisSourceModuleContainingDeclarationProviderByP
   }
 
   @Test
+  @TestMetadata("danglingAnnotationOnMemberAnonymousFunction.kt")
+  public void testDanglingAnnotationOnMemberAnonymousFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberAnonymousFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnMemberClass.kt")
+  public void testDanglingAnnotationOnMemberClass() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberClass.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnMemberFunction.kt")
+  public void testDanglingAnnotationOnMemberFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnMemberProperty.kt")
+  public void testDanglingAnnotationOnMemberProperty() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnMemberProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelAnonymousFunction.kt")
+  public void testDanglingAnnotationOnTopLevelAnonymousFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelAnonymousFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelClass.kt")
+  public void testDanglingAnnotationOnTopLevelClass() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelClass.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
+  public void testDanglingAnnotationOnTopLevelFunction() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingAnnotationOnTopLevelProperty.kt")
+  public void testDanglingAnnotationOnTopLevelProperty() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/danglingAnnotationOnTopLevelProperty.kt");
+  }
+
+  @Test
   @TestMetadata("deeplyNestedCode.kt")
   public void testDeeplyNestedCode() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByPsi/deeplyNestedCode.kt");
