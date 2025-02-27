@@ -130,7 +130,7 @@ abstract class MetadataLegacySerializerPhaseBase(
     preActions = setOf(PerformanceNotifications.BackendStarted),
     postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact? {
+    final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
         val (firResult, configuration, _, _) = input
         val metadataVersion = input.metadataVersion
         val destDir = configuration.metadataDestinationDirectory!!

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -16,12 +15,9 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.metadata.AbstractMetadataSerializer.OutputInfo
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.PipelineContext
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataBuiltinsSerializerPhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelinePhase
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -72,21 +68,15 @@ object BuiltInsSerializer {
                     serializer.analyzeAndSerialize()
                 }
                 true -> {
-                    val phase = MetadataFrontendPipelinePhase then MetadataBuiltinsSerializerPhase
+                    val diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(messageCollector)
                     val input = ConfigurationPipelineArtifact(
                         configuration,
-                        DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                        diagnosticCollector,
                         rootDisposable
                     )
-                    val context = PipelineContext(
-                        messageCollector,
-                        input.diagnosticCollector,
-                        performanceManager,
-                        renderDiagnosticInternalName = false,
-                        kaptMode = false
-                    )
-                    val output = phase.invokeToplevel(PhaseConfig(), context, input)
-                    output.outputInfo
+                    val frontendOutput = MetadataFrontendPipelinePhase.executePhase(input)
+                    val metadataOutput = MetadataBuiltinsSerializerPhase.executePhase(frontendOutput)
+                    metadataOutput.outputInfo
                 }
             } ?: OutputInfo(totalSize = 0, totalFiles = 0)
 

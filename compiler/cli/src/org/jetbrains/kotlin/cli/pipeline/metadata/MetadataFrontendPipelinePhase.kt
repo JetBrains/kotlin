@@ -52,7 +52,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
     name = "MetadataFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: ConfigurationPipelineArtifact): MetadataFrontendPipelineArtifact? {
+    override fun executePhase(input: ConfigurationPipelineArtifact): MetadataFrontendPipelineArtifact {
         val (configuration, diagnosticsReporter, rootDisposable) = input
         val messageCollector = configuration.messageCollector
         val rootModuleName = Name.special("<${configuration.moduleName!!}>")
