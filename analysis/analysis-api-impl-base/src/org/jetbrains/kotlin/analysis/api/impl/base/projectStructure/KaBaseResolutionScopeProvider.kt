@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
@@ -36,6 +37,17 @@ class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
 
         return buildList {
             modules.mapTo(this) { it.contentScope }
+            if (module is KaLibrarySourceModule) {
+                // `KaLibrarySourceModule` doesn't have any dependencies from the module's perspective.
+                // However, library source modules can still depend on other libraries.
+                // That's why the resolution scope of `KaLibrarySourceModule`
+                // must contain the unified content scope of all libraries the project depends on.
+                // This logic is similar to the logic used in `LLFirAbstractSessionFactory.doCreateLibrarySession`.
+                add(
+                    ProjectScope.getLibrariesScope(module.project)
+                        .intersectWith(GlobalSearchScope.notScope(module.contentScope))
+                )
+            }
             if (modules.none { it is KaBuiltinsModule }) {
                 // `KaBuiltinsModule` is a module containing builtins declarations for the target platform.
                 // It is never a dependency of any `KaModule`,
