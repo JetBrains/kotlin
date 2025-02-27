@@ -1047,7 +1047,35 @@ internal fun KotlinStubs.convertBlockPtrToKotlinFunction(builder: IrBuilderWithS
             retained = true,
             location = blockPtr
     )
-    check(valuePassing.cToBridged("foo") == "foo")
+
+    /*
+    Note: the code below checks that `valuePassing.cToBridged` simply returns its argument; this is a hack.
+    By design, using [valuePassing] to convert from C to Kotlin consists of two parts:
+    * `cToBridged` in the Obj-C code,
+    * `bridgedToKotlin` in the Kotlin code.
+
+    Generally, we could do it that way.
+    There are a couple of problems, though:
+    * That would require us to generate and call a full-blown C function, which is suboptimal.
+      Consider in particular thread state switches usually required to call a C function from Kotlin.
+      Improving it would require more changes.
+      Considering that the whole intrinsic is a temporary solution, this seems unnecessary.
+    * A straightforward black-box implementation would involve an autorelease operation.
+      To handle the `cToBridged` part properly, it would generate a function like
+          id foo(id p) { return p; }
+      which has to autorelease `p` when returning. Which is suboptimal.
+      Fixing this would anyway require breaking encapsulation of the [valuePassing],
+      since `id` return type here is a `cBridgeType`, right in the middle of the two-step conversion.
+      In other words, getting rid of the redundant autorelease would basically require us to rely
+      on the `cToBridged` implementation as well.
+
+    So, this hack is an optimization as well as a simplification at the same time.
+    Win-win.
+    */
+    val cBlockPtr = "blockPtr"
+    val cBridged = valuePassing.cToBridged(cBlockPtr)
+    check(cBridged == cBlockPtr) { "Unexpected cToBridged implementation: expected $cBlockPtr, got $cBridged" }
+
     with(valuePassing) {
         return builder.bridgedToKotlin(copiedBlockPtr, symbols)
     }
@@ -1312,6 +1340,10 @@ private class ObjCBlockPointerValuePassing(
         return "({ id $kotlinFunctionHolder = $expression; $kotlinFunctionHolder ? $blockAsId : (id)0; })"
     }
 
+    /**
+     * Note: [convertBlockPtrToKotlinFunction] relies on the fact that the implementation simply returns the argument.
+     * See the detailed comment inside that function.
+     */
     override fun cToBridged(expression: String) = expression
 
 }
