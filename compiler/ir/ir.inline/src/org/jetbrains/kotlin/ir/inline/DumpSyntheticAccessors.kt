@@ -175,7 +175,7 @@ private class SyntheticAccessorsDumper(
 ) : IrVisitorVoid() {
     private val stack = ArrayList<StackFrame>()
     private val dump = StringBuilder()
-    private val localDeclarations = mutableSetOf<IrSymbol>()
+    private val localDeclarations = LinkedHashSet<IrSymbol>()
 
     fun getDump(): String? = dump.toString().takeIf(String::isNotBlank)
 
@@ -189,6 +189,7 @@ private class SyntheticAccessorsDumper(
                     when (element) {
                         is IrDeclaration -> dumpDeclaration(element, index)
                         is IrInlinedFunctionBlock -> dumpInlinedFunctionBlock(element, index)
+                        is IrRichPropertyReference -> dump.appendIndent(index).appendLine("/* RICH PROPERTY REFERENCE */")
                     }
                 }
             }
@@ -270,6 +271,10 @@ private class SyntheticAccessorsDumper(
             dumpCurrentStackIfSymbolIsObserved(expression.invokeFunction.symbol)
             dumpInvoke(expression.invokeFunction)
         }
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference) = withNewStackFrame(expression) {
+        super.visitRichPropertyReference(expression)
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression) {

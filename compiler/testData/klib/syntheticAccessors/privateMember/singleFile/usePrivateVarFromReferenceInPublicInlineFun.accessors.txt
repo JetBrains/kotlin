@@ -7,24 +7,28 @@ public class A
         /* TARGET declaration */ private fun <get-privateVar>(): Int
         /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
     public inline fun publicInlineFunction(): KMutableProperty0<Int>
-        /* LOCAL declaration @0 */ local fun <get-privateVar>(<this>: A): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-        /* LOCAL declaration @1 */ local fun <set-privateVar>(<this>: A, p0: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+        /* RICH PROPERTY REFERENCE */
+            /* LOCAL declaration @0 */ local fun <get-privateVar>(<this>: A): Int
+                /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+            /* LOCAL declaration @1 */ local fun <set-privateVar>(<this>: A, p0: Int)
+                /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
     /* ACCESSOR declaration */ public /* static */ fun access$<get-privateVar>($this: A): Int
         /* TARGET use-site */ $this.<get-privateVar>()
     /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
 public fun box(): String
-    /* LOCAL declaration @2 */ local fun <get-privateVar>(<this>: A): Int
-        /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    /* LOCAL declaration @3 */ local fun <set-privateVar>(<this>: A, p0: Int)
-        /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
-    /* LOCAL declaration @4 */ local fun <get-privateVar>(<this>: A): Int
-        /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    /* LOCAL declaration @5 */ local fun <set-privateVar>(<this>: A, p0: Int)
-        /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
-    /* LOCAL declaration @6 */ local fun <get-privateVar>(<this>: A): Int
-        /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    /* LOCAL declaration @7 */ local fun <set-privateVar>(<this>: A, p0: Int)
-        /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    /* RICH PROPERTY REFERENCE */
+        /* LOCAL declaration @2 */ local fun <get-privateVar>(<this>: A): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+        /* LOCAL declaration @3 */ local fun <set-privateVar>(<this>: A, p0: Int)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    /* RICH PROPERTY REFERENCE */
+        /* LOCAL declaration @4 */ local fun <get-privateVar>(<this>: A): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+        /* LOCAL declaration @5 */ local fun <set-privateVar>(<this>: A, p0: Int)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    /* RICH PROPERTY REFERENCE */
+        /* LOCAL declaration @6 */ local fun <get-privateVar>(<this>: A): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+        /* LOCAL declaration @7 */ local fun <set-privateVar>(<this>: A, p0: Int)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
