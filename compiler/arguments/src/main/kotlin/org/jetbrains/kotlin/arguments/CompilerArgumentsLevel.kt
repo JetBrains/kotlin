@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.arguments
 
 import KotlinArgumentsDslMarker
 import kotlinx.serialization.Serializable
+import org.jetbrains.kotlin.arguments.types.KotlinArgumentTypes
 import kotlin.properties.ReadOnlyProperty
 
 interface CompilerArgumentsLevelBase {

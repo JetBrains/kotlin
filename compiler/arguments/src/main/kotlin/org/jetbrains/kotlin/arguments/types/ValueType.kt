@@ -1,6 +1,14 @@
-package org.jetbrains.kotlin.arguments
+package org.jetbrains.kotlin.arguments.types
 
 import kotlinx.serialization.Serializable
+import org.jetbrains.kotlin.arguments.AllDetailsJvmTargetSerializer
+import org.jetbrains.kotlin.arguments.AllDetailsKotlinVersionSerializer
+import org.jetbrains.kotlin.arguments.JvmTarget
+import org.jetbrains.kotlin.arguments.JvmTargets
+import org.jetbrains.kotlin.arguments.KotlinReleaseVersions
+import org.jetbrains.kotlin.arguments.KotlinVersion
+import org.jetbrains.kotlin.arguments.KotlinVersions
+import org.jetbrains.kotlin.arguments.ReleaseDependent
 import kotlin.Boolean
 
 @Serializable

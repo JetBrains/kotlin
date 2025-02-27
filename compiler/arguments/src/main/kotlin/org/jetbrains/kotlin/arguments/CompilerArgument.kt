@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.arguments
 
 import KotlinArgumentsDslMarker
 import kotlinx.serialization.Serializable
+import org.jetbrains.kotlin.arguments.types.KotlinArgumentValueType
 
 interface CompilerArgumentBase {
     val name: String

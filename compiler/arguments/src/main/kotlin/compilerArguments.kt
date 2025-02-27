@@ -1,9 +1,9 @@
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.jetbrains.kotlin.arguments.BooleanType
+import org.jetbrains.kotlin.arguments.types.BooleanType
 import org.jetbrains.kotlin.arguments.CompilerArguments
-import org.jetbrains.kotlin.arguments.KotlinJvmTargetType
-import org.jetbrains.kotlin.arguments.KotlinVersionType
+import org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType
+import org.jetbrains.kotlin.arguments.types.KotlinVersionType
 import org.jetbrains.kotlin.arguments.KotlinReleaseVersions
 import org.jetbrains.kotlin.arguments.asReleaseDependent
 import org.jetbrains.kotlin.arguments.compilerArgumentsLevel

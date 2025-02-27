@@ -80,7 +80,7 @@
                 "deprecatedName": null,
                 "description": "Print a synopsis of standard options.",
                 "valueType": {
-                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
+                    "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -102,7 +102,7 @@
                 "deprecatedName": null,
                 "description": "Print a synopsis of advanced options.",
                 "valueType": {
-                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
+                    "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -124,7 +124,7 @@
                 "deprecatedName": null,
                 "description": "Display the compiler version.",
                 "valueType": {
-                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
+                    "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -146,7 +146,7 @@
                 "deprecatedName": null,
                 "description": "Enable verbose logging output.",
                 "valueType": {
-                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
+                    "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -168,7 +168,7 @@
                 "deprecatedName": null,
                 "description": "Don't generate any warnings.",
                 "valueType": {
-                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
+                    "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -190,7 +190,7 @@
                 "deprecatedName": null,
                 "description": "Report an error if there are any warnings.",
                 "valueType": {
-                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
+                    "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -217,7 +217,7 @@
                         "deprecatedName": null,
                         "description": "Provide source compatibility with the specified version of Kotlin.",
                         "valueType": {
-                            "type": "org.jetbrains.kotlin.arguments.KotlinVersionType",
+                            "type": "org.jetbrains.kotlin.arguments.types.KotlinVersionType",
                             "isNullable": {
                                 "current": true,
                                 "valueInVersions": {}
@@ -241,7 +241,7 @@
                         "deprecatedName": null,
                         "description": "Allow using declarations from only the specified version of bundled libraries.",
                         "valueType": {
-                            "type": "org.jetbrains.kotlin.arguments.KotlinVersionType",
+                            "type": "org.jetbrains.kotlin.arguments.types.KotlinVersionType",
                             "isNullable": {
                                 "current": true,
                                 "valueInVersions": {}
@@ -265,7 +265,7 @@
                         "deprecatedName": null,
                         "description": "TBA",
                         "valueType": {
-                            "type": "org.jetbrains.kotlin.arguments.BooleanType",
+                            "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                             "isNullable": {
                                 "current": true,
                                 "valueInVersions": {}
@@ -292,7 +292,7 @@
                                 "deprecatedName": null,
                                 "description": "Target version of the generated JVM bytecode (1.6 or 1.8).",
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.KotlinJvmTargetType",
+                                    "type": "org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": {}
@@ -316,7 +316,7 @@
                                 "deprecatedName": null,
                                 "description": "TBA",
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
+                                    "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": {}
