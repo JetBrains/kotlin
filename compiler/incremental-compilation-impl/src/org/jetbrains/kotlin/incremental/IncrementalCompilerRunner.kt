@@ -520,6 +520,11 @@ abstract class IncrementalCompilerRunner<
             allDirtySources.addAll(dirtySources)
             dirtyFilesProvider.cachedHistory.store(transaction, allDirtySources)
 
+            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, compiledSources, exitCode)
+            bufferingMessageCollector.forward(originalMessageCollector)
+
+            if (exitCode != ExitCode.OK) break
+
             val generatedFiles = outputItemsCollector.outputs.map {
                 it.toGeneratedFile(metadataVersionFromLanguageVersion)
             }
@@ -533,11 +538,6 @@ abstract class IncrementalCompilerRunner<
                     continue
                 }
             }
-
-            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, compiledSources, exitCode)
-            bufferingMessageCollector.forward(originalMessageCollector)
-
-            if (exitCode != ExitCode.OK) break
 
             dirtyFilesProvider.cachedHistory.clear(withTransaction = transaction)
 
