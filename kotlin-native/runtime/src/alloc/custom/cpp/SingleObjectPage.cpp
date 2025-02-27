@@ -24,7 +24,7 @@ SingleObjectPage* SingleObjectPage::Create(uint64_t cellCount) noexcept {
 
 SingleObjectPage::SingleObjectPage(AllocationSize objectSize) noexcept {
     auto& heap = mm::GlobalData::Instance().allocator().impl().heap();
-    heap.allocatedSizeTracker().recordDifferenceAndNotifyScheduler(static_cast<ptrdiff_t>(objectSize.inBytes()));
+    heap.allocatedSizeTracker().recordDifferenceAndNotifyScheduler(static_cast<ptrdiff_t>(pageSize(objectSize).inBytes()));
 }
 
 uint8_t* SingleObjectPage::Data() noexcept {
@@ -49,7 +49,7 @@ std::vector<uint8_t*> SingleObjectPage::GetAllocatedBlocks() noexcept {
 
 void SingleObjectPage::destroyImpl(AllocationSize objectSize) noexcept {
     auto& heap = mm::GlobalData::Instance().allocator().impl().heap();
-    heap.allocatedSizeTracker().recordDifference(-static_cast<ptrdiff_t>(objectSize.inBytes()));
+    heap.allocatedSizeTracker().recordDifference(-static_cast<ptrdiff_t>(pageSize(objectSize).inBytes()));
 
     Free(this, pageSize(objectSize).inBytes());
 }
