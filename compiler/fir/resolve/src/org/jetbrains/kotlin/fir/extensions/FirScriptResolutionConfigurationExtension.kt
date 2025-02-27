@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import kotlin.reflect.KClass
 
@@ -25,8 +24,7 @@ abstract class FirScriptResolutionConfigurationExtension(
 
     fun interface Factory : FirExtension.Factory<FirScriptResolutionConfigurationExtension>
 
-    abstract fun getScriptDefaultImports(script: FirScript): List<FirImport>
-    abstract fun getSnippetDefaultImports(snippet: FirReplSnippet): List<FirImport>
+    abstract fun getScriptDefaultImports(script: FirScript): List<FirImport>?
 }
 
 val FirExtensionService.firScriptResolutionConfigurators: List<FirScriptResolutionConfigurationExtension> by FirExtensionService.registeredExtensions()

@@ -92,6 +92,28 @@ class CustomK2ReplTest {
             sequenceOf(null, "OK"),
         )
     }
+
+    @Test
+    fun testWithUpdatingDefaultImports() {
+        evalAndCheckSnippets(
+            sequenceOf(
+                "kotlin.random.Random.nextInt(10)/10",
+                "Random.nextInt(10)/10",
+            ),
+            sequenceOf(0, 0),
+            baseCompilationConfiguration.with {
+                refineConfiguration {
+                    beforeCompiling { (script, config, _) ->
+                        config.with {
+                            if (!script.text.contains("kotlin.random.Random")) {
+                                defaultImports("kotlin.random.Random")
+                            }
+                        }.asSuccess()
+                    }
+                }
+            }
+        )
+    }
 }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =

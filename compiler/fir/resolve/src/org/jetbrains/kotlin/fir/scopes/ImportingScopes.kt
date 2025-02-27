@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionConfigurationExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.firScriptResolutionConfigurators
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
 import org.jetbrains.kotlin.fir.importTracker
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.reportImportDirectives
@@ -67,9 +67,7 @@ internal fun computeImportingScopes(
         }
     }
 
-    val scriptingDefaultImports =
-        getDefaultImportsForScripting<FirScript>(session, file, FirScriptResolutionConfigurationExtension::getScriptDefaultImports)
-            ?: getDefaultImportsForScripting<FirReplSnippet>(session, file, FirScriptResolutionConfigurationExtension::getSnippetDefaultImports)
+    val scriptingDefaultImports = getDefaultImportsForScripting(session, file)
 
     return buildList {
         if (includeDefaultImports) {
@@ -120,18 +118,26 @@ internal fun computeImportingScopes(
     }
 }
 
-private inline fun <reified T : FirDeclaration> getDefaultImportsForScripting(
-    session: FirSession,
-    file: FirFile,
-    getDefaultImports: FirScriptResolutionConfigurationExtension.(T) -> List<FirImport>
-): Pair<List<FirImport>, List<FirImport>>? {
-    val element = file.declarations.firstOrNull() as? T ?: return null
-    val importResolveTransformer = FirImportResolveTransformer(session)
-    return session.extensionService.firScriptResolutionConfigurators.flatMap {
-        it.getDefaultImports(element).map { firImport ->
-            (importResolveTransformer.transformImport(firImport, data = null) as? FirResolvedImport) ?: firImport
+private fun getDefaultImportsForScripting(session: FirSession, file: FirFile): Pair<List<FirImport>, List<FirImport>>? {
+
+    fun List<FirImport>.transformImports(): Pair<List<FirImport>, List<FirImport>> =
+        with(FirImportResolveTransformer(session)) {
+            map { firImport ->
+                (transformImport(firImport, data = null) as? FirResolvedImport) ?: firImport
+            }.partition { it.isAllUnder }
         }
-    }.partition { it.isAllUnder }
+
+    return when (val scriptOrSnippet = file.declarations.firstOrNull()) {
+        is FirScript ->
+            session.extensionService.firScriptResolutionConfigurators.flatMap {
+                it.getScriptDefaultImports(scriptOrSnippet).orEmpty()
+            }.transformImports()
+        is FirReplSnippet ->
+            session.extensionService.replSnippetResolveExtensions.flatMap {
+                it.getSnippetDefaultImports(file.sourceFile!!, scriptOrSnippet).orEmpty()
+            }.transformImports()
+        else -> null
+    }
 }
 
 private class ListStorageFirScope(val result: List<FirScope>) : FirScope() {

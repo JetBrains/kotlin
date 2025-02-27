@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
@@ -25,6 +27,8 @@ abstract class FirReplSnippetResolveExtension(
     final override val extensionType: KClass<out FirExtension> = FirReplSnippetResolveExtension::class
 
     fun interface Factory : FirExtension.Factory<FirReplSnippetResolveExtension>
+
+    abstract fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>?
 
     abstract fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope?
 
