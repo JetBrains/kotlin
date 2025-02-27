@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.printer.*
+import org.jetbrains.kotlin.generators.tree.InterfaceAndAbstractClassConfigurator
+import org.jetbrains.kotlin.generators.tree.addPureAbstractElement
+import org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes
 import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
@@ -22,21 +25,30 @@ fun main(args: Array<String>) {
 
     val model = FirTree.build()
     TreeGenerator(generationPath, "compiler/fir/tree/tree-generator/Readme.md").run {
-        generateTree(
+        model.inheritFields()
+        detectBaseTransformerTypes(model)
+
+        ImplementationConfigurator.configureImplementations(model)
+        val implementations = model.elements.flatMap { it.implementations }
+        InterfaceAndAbstractClassConfigurator((model.elements + implementations))
+            .configureInterfacesAndAbstractClasses()
+        addPureAbstractElement(model.elements, pureAbstractElementType)
+
+        val builderConfigurator = BuilderConfigurator(model)
+        builderConfigurator.configureBuilders()
+
+        printElements(model, ::ElementPrinter)
+        printElementImplementations(implementations, ::ImplementationPrinter)
+        printElementBuilders(implementations.mapNotNull { it.builder } + builderConfigurator.intermediateBuilders, ::BuilderPrinter)
+        printVisitors(
             model,
-            pureAbstractElementType,
-            ::ElementPrinter,
             listOf(
                 firVisitorType to ::VisitorPrinter.bind(false),
                 firDefaultVisitorType to ::VisitorPrinter.bind(true),
                 firVisitorVoidType to ::VisitorVoidPrinter,
                 firDefaultVisitorVoidType to ::DefaultVisitorVoidPrinter,
                 firTransformerType to ::TransformerPrinter.bind(model.rootElement),
-            ),
-            ImplementationConfigurator,
-            BuilderConfigurator(model),
-            ::ImplementationPrinter,
-            ::BuilderPrinter,
+            )
         )
     }
 }

@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.Model
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
+import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolField
+import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolImplementation
 import org.jetbrains.kotlin.ir.generator.print.*
 import org.jetbrains.kotlin.ir.generator.print.symbol.*
 import org.jetbrains.kotlin.utils.bind
@@ -14,50 +19,83 @@ import java.io.File
 
 const val BASE_PACKAGE = "org.jetbrains.kotlin.ir"
 
-internal const val TREE_GENERATOR_README = "compiler/ir/ir.tree/tree-generator/ReadMe.md"
-
 typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
         ?: File("compiler/ir/ir.tree/gen").canonicalFile
 
-    val symbolModel = IrSymbolTree.build()
     val model = IrTree.build()
-    TreeGenerator(generationPath, TREE_GENERATOR_README).run {
-        generateTree(
-            model,
-            elementBaseType,
-            ::ElementPrinter,
-            listOf(
-                irVisitorType to ::VisitorPrinter,
-                irVisitorVoidType to ::VisitorVoidPrinter,
-                irTransformerType to ::TransformerPrinter.bind(model.rootElement),
-                elementTransformerVoidType to ::TransformerVoidPrinter,
-                typeVisitorType to ::TypeVisitorPrinter.bind(model.rootElement),
-                typeVisitorVoidType to ::TypeVisitorVoidPrinter.bind(model.rootElement),
-                deepCopyIrTreeWithSymbolsType to ::DeepCopyIrTreeWithSymbolsPrinter
-            ),
-            ImplementationConfigurator,
-            createImplementationPrinter = ::ImplementationPrinter,
-            enableBaseTransformerTypeDetection = false,
-            addFiles = {
-                add(printSymbolRemapper(generationPath, model, declaredSymbolRemapperType, ::DeclaredSymbolRemapperInterfacePrinter))
-                add(printSymbolRemapper(generationPath, model, referencedSymbolRemapperType, ::ReferencedSymbolRemapperInterfacePrinter))
-                add(printSymbolRemapper(generationPath, model, symbolRemapperType, ::SymbolRemapperInterfacePrinter))
-            }
-        )
+    TreeGenerator(generationPath, "compiler/ir/ir.tree/tree-generator/ReadMe.md").run {
+        printIrTree(model, generationPath)
+        printIrSymbolTree(generationPath, model)
+    }
+}
 
-        generateTree(
-            symbolModel,
-            pureAbstractElement = null,
-            ::SymbolPrinter.bind(model),
-            createVisitorPrinters = emptyList(),
-            SymbolImplementationConfigurator,
-            createImplementationPrinter = ::SymbolImplementationPrinter,
-            enableBaseTransformerTypeDetection = false,
-            putElementsInSingleFile = Packages.symbols to "IrSymbol",
-            putImplementationsInSingleFile = Packages.symbolsImpl to "IrSymbolImpl",
+private fun TreeGenerator.printIrTree(model: Model<Element>, generationPath: File) {
+    model.inheritFields()
+
+    ImplementationConfigurator.configureImplementations(model)
+    val implementations = model.elements.flatMap { it.implementations }
+    InterfaceAndAbstractClassConfigurator((model.elements + implementations))
+        .configureInterfacesAndAbstractClasses()
+    addPureAbstractElement(model.elements, elementBaseType)
+
+    printElements(model, ::ElementPrinter)
+    printElementImplementations(implementations, ::ImplementationPrinter)
+    printVisitors(
+        model,
+        listOf(
+            irVisitorType to ::VisitorPrinter,
+            irVisitorVoidType to ::VisitorVoidPrinter,
+            irTransformerType to ::TransformerPrinter.bind(model.rootElement),
+            elementTransformerVoidType to ::TransformerVoidPrinter,
+            typeVisitorType to ::TypeVisitorPrinter.bind(model.rootElement),
+            typeVisitorVoidType to ::TypeVisitorVoidPrinter.bind(model.rootElement),
+            deepCopyIrTreeWithSymbolsType to ::DeepCopyIrTreeWithSymbolsPrinter
         )
+    )
+}
+
+private fun TreeGenerator.printIrSymbolTree(generationPath: File, model: Model<Element>) {
+    val symbolModel = IrSymbolTree.build()
+    symbolModel.inheritFields()
+
+    SymbolImplementationConfigurator.configureImplementations(symbolModel)
+    val implementations = symbolModel.elements.flatMap { it.implementations }
+    InterfaceAndAbstractClassConfigurator((symbolModel.elements + implementations))
+        .configureInterfacesAndAbstractClasses()
+
+    val elementsToPrint = symbolModel.elements.filter { it.doPrint }
+    generatedFiles += printGeneratedTypesIntoSingleFile(
+        elementsToPrint,
+        generationPath,
+        treeGeneratorReadme,
+        Packages.symbols,
+        "IrSymbol",
+        makeTypePrinter = ::SymbolPrinter.bind(model),
+        printType = AbstractElementPrinter<Symbol, SymbolField>::printElement,
+    )
+
+    val implementationsToPrint = implementations.filter { it.doPrint }
+    generatedFiles += printGeneratedTypesIntoSingleFile(
+        implementationsToPrint,
+        generationPath,
+        treeGeneratorReadme,
+        Packages.symbolsImpl,
+        "IrSymbolImpl",
+        fileSuppressions = listOf("DuplicatedCode"),
+        makeTypePrinter = ::SymbolImplementationPrinter,
+        printType = AbstractImplementationPrinter<SymbolImplementation, Symbol, SymbolField>::printImplementation,
+    )
+
+    listOf(
+        declaredSymbolRemapperType to ::DeclaredSymbolRemapperInterfacePrinter,
+        referencedSymbolRemapperType to ::ReferencedSymbolRemapperInterfacePrinter,
+        symbolRemapperType to ::SymbolRemapperInterfacePrinter,
+    ).forEach { (type, makePrinter) ->
+        generatedFiles += printGeneratedType(generationPath, treeGeneratorReadme, type.packageName, type.simpleName) {
+            makePrinter(this, model.elements, type).printSymbolRemapper()
+        }
     }
 }
