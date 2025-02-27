@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST_BE_OBJC_OBJECT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST_BE_UNIT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NATIVE_SPECIFIC_ATOMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_LITERAL_OBJC_NAME_ARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.PROPERTY_MUST_BE_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
@@ -161,6 +162,12 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INAPPLICABLE_OBJC_OVERRIDE,
             "@ObjCSignatureOverride is only allowed on methods overriding methods from Objective-C.",
+        )
+        map.put(
+            NATIVE_SPECIFIC_ATOMIC,
+            "Native-specific atomic type ''kotlin.concurrent.{0}'' is going to be deprecated soon." +
+                    " Consider using ''kotlin.concurrent.atomics.{0}'' instead.",
+            TO_STRING
         )
     }
 }

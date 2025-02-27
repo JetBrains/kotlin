@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationExtraCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.*
@@ -57,7 +58,7 @@ fun FirSessionConfigurator.registerNativeCheckers() {
 }
 
 fun FirSessionConfigurator.registerExtraNativeCheckers() {
-    // TODO
+    useCheckers(NativeDeclarationExtraCheckers)
 }
 
 fun FirSessionConfigurator.registerWasmCheckers(target: WasmTarget) {

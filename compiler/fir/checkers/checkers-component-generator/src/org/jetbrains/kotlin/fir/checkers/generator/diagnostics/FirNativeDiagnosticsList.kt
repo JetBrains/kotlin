@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtTypeReference
 
 @Suppress("UNUSED_VARIABLE", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
@@ -107,5 +109,8 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
             parameter<Collection<Symbol>>("conflictingOverloads")
         }
         val INAPPLICABLE_OBJC_OVERRIDE by error<PsiElement>()
+        val NATIVE_SPECIFIC_ATOMIC by warning<KtTypeReference> {
+            parameter<Name>("name")
+        }
     }
 }

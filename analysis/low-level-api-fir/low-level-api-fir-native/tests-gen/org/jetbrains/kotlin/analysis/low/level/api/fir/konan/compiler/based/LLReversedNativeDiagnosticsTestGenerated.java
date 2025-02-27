@@ -171,6 +171,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("oldAtomicTypes.kt")
+  public void testOldAtomicTypes() {
+    runTest("compiler/testData/diagnostics/nativeTests/oldAtomicTypes.kt");
+  }
+
+  @Test
   @TestMetadata("resolveToDelegatedProperty.kt")
   public void testResolveToDelegatedProperty() {
     runTest("compiler/testData/diagnostics/nativeTests/resolveToDelegatedProperty.kt");
