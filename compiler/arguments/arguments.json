@@ -324,6 +324,38 @@
                         }
                     },
                     {
+                        "name": "some-argument",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "The awesome argument to make compilation fast",
+                            "valueInVersions": {
+                                "1.4.0..1.9.20": "Slows your compilation"
+                            }
+                        },
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
+                            "isNullable": {
+                                "current": true,
+                                "valueInVersions": {}
+                            },
+                            "defaultValue": {
+                                "current": null,
+                                "valueInVersions": {}
+                            }
+                        },
+                        "valueDescription": {
+                            "current": "true|false",
+                            "valueInVersions": {}
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "1.4.0",
+                            "stabilizedVersion": "1.4.0",
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "another-test",
                         "shortName": null,
                         "deprecatedName": null,

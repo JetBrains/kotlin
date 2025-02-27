@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.arguments
 import KotlinArgumentsDslMarker
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.types.KotlinArgumentValueType
+import kotlin.properties.ReadOnlyProperty
 
 interface CompilerArgumentBase : WithKotlinReleaseVersionsMetadata {
     val name: String
@@ -67,4 +68,12 @@ class CompilerArgumentBuilder : CompilerArgumentBase {
         valueDescription = valueDescription,
         releaseVersionsMetadata = releaseVersionsMetadata,
     )
+}
+
+fun compilerArgument(
+    config: CompilerArgumentBuilder.() -> Unit
+) = ReadOnlyProperty<Any?, CompilerArgument> { _, _ ->
+    val builder = CompilerArgumentBuilder()
+    config(builder)
+    builder.build()
 }

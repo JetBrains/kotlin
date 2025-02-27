@@ -5,11 +5,32 @@ import org.jetbrains.kotlin.arguments.CompilerArguments
 import org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.types.KotlinVersionType
 import org.jetbrains.kotlin.arguments.KotlinReleaseVersions
+import org.jetbrains.kotlin.arguments.ReleaseDependent
 import org.jetbrains.kotlin.arguments.asReleaseDependent
+import org.jetbrains.kotlin.arguments.compilerArgument
 import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
 import java.io.File
 
+val someArguments by compilerArgument {
+    name = "some-argument"
+    description = ReleaseDependent(
+        "The awesome argument to make compilation fast",
+        KotlinReleaseVersions.v1_4_0..KotlinReleaseVersions.v1_9_20 to "Slows your compilation"
+    )
+
+    valueType = BooleanType()
+    valueDescription = "true|false".asReleaseDependent()
+
+    lifecycle(
+        introducedVersion = KotlinReleaseVersions.v1_4_0,
+        stabilizedVersion = KotlinReleaseVersions.v1_4_0,
+    )
+}
+
 val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
+
+    addCompilerArguments(someArguments)
+
     compilerArgument {
         name = "another-test"
         description = "TBA".asReleaseDependent()

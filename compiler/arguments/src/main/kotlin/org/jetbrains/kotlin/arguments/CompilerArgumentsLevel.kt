@@ -68,6 +68,12 @@ abstract class CompilerArgumentsLevelBuilderBase(
         _arguments.add(argumentBuilder.build())
     }
 
+    fun addCompilerArguments(
+        vararg compilerArguments: CompilerArgument
+    ) {
+        _arguments.addAll(compilerArguments)
+    }
+
     private val _nestedLevels = mutableSetOf<CompilerArgumentsLevel>()
     override val nestedLevels: Set<CompilerArgumentsLevel>
         get() = _nestedLevels
