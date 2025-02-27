@@ -22,7 +22,12 @@ class KotlinLocalVirtualFile(
     private var _name: String? = null
     private var _parent: KotlinLocalVirtualFile? = parent
 
-    private var _children: Array<VirtualFile>? = null
+    private val _children: Pair<Array<KotlinLocalVirtualFile>, Map<String, KotlinLocalVirtualFile>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val fileChildren = file.listFiles() ?: emptyArray()
+        val array = fileChildren.map { KotlinLocalVirtualFile(it, _fileSystem, parent = this) }.toTypedArray()
+        val map = array.associateBy { it.name }
+        array to map
+    }
 
     private var _isDirectory: Boolean = file.isDirectory
     private val _timeStamp = file.lastModified()
@@ -60,46 +65,9 @@ class KotlinLocalVirtualFile(
         }
     }
 
-    override fun getChildren(): Array<VirtualFile> {
-        _children?.let { return it }
-        val fileChildren = file.listFiles() ?: emptyArray()
+    override fun getChildren(): Array<KotlinLocalVirtualFile> = _children.first
 
-        _children = fileChildren
-            .map { KotlinLocalVirtualFile(it, _fileSystem, parent = this) }
-            .sortedBy { it.name }
-            .toTypedArray<VirtualFile>()
-
-        return _children!!
-    }
-
-    override fun findChild(name: String): VirtualFile? = children.binarySearchBy(name) { it.name }
-
-    /**
-     * The implementation is copied from [List.binarySearch] and changed to fit our needs.
-     *
-     * We cannot use [binarySearchBy][kotlin.collections.binarySearchBy] here because we need to search in an array. And we cannot use
-     * [Arrays.binarySearch][java.util.Arrays.binarySearch] because it doesn't support searching by a key instead of the whole element.
-     */
-    private inline fun <T, K : Comparable<K>> Array<T>.binarySearchBy(key: K, selector: (T) -> K): T? {
-        var low = 0
-        var high = size - 1
-
-        while (low <= high) {
-            val mid = (low + high).ushr(1) // safe from overflows
-            val midVal = get(mid)
-            val cmp = compareValues(selector(midVal), key)
-
-            if (cmp < 0) {
-                low = mid + 1
-            } else if (cmp > 0) {
-                high = mid - 1
-            } else {
-                return midVal
-            }
-        }
-
-        return null
-    }
+    override fun findChild(name: String): VirtualFile? = _children.second[name]
 
     override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long): OutputStream {
         shouldNotBeCalled()
