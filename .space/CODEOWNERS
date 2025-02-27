@@ -25,7 +25,6 @@
 # OWNER_LIST: Brian.Norman
 # OWNER_LIST: Ilya.Chernikov Alejandro.Serrano.Mena
 # OWNER_LIST: Sergej.Jaskiewicz
-# OWNER_LIST: Wojciech.Litewka
 # Kotlin Libraries
 # OWNER_LIST: Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev Filipp.Zhinkin
 
@@ -97,7 +96,7 @@
 /compiler/ir/ir.interpreter/ "Kotlin Common Backend"
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
 /compiler/ir/ir.tree/ "Kotlin Common Backend"
-/compiler/ir/ir.tree/tree-generator "Kotlin Common Backend" Wojciech.Litewka
+/compiler/ir/ir.tree/tree-generator "Kotlin Common Backend" Sergej.Jaskiewicz
 /compiler/ir/ir.objcinterop/ "Kotlin Native"
 /compiler/ir/serialization.common/ "Kotlin Common Backend"
 /compiler/ir/serialization.js/ "Kotlin JS"
@@ -270,7 +269,7 @@
 # UNKNOWN: /generators/protobufCompare/
 /generators/test-generator/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
 /generators/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
-/generators/tree-generator-common/ "Kotlin Frontend" "Kotlin Common Backend" Wojciech.Litewka
+/generators/tree-generator-common/ "Kotlin Frontend" "Kotlin Common Backend" Sergej.Jaskiewicz
 /generators/wasm/ "Kotlin Wasm"
 
 /gradle/ "Kotlin Build Infrastructure"
