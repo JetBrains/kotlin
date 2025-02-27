@@ -123,6 +123,12 @@ internal class ExternallyTrackedScenarioModuleImpl(
 
     override fun getSourcesChanges() = sourcesChanges
 
+    override fun compile(forceOutput: LogLevel?, assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit) {
+        super.compile(forceOutput, assertions)
+
+        sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
+    }
+
     private fun addToModifiedFiles(file: Path) {
         sourcesChanges = SourcesChanges.Known(
             modifiedFiles = sourcesChanges.modifiedFiles + file.toFile(),

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.*
@@ -9,10 +14,6 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
-/*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
 
 @DisplayName("Single module IC scenarios for FIR runner")
 class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
