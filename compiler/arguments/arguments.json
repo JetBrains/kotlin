@@ -80,8 +80,7 @@
                 "deprecatedName": null,
                 "description": "Print a synopsis of standard options.",
                 "valueType": {
-                    "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
-                    "name": "Boolean",
+                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -103,8 +102,7 @@
                 "deprecatedName": null,
                 "description": "Print a synopsis of advanced options.",
                 "valueType": {
-                    "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
-                    "name": "Boolean",
+                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -126,8 +124,7 @@
                 "deprecatedName": null,
                 "description": "Display the compiler version.",
                 "valueType": {
-                    "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
-                    "name": "Boolean",
+                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -149,8 +146,7 @@
                 "deprecatedName": null,
                 "description": "Enable verbose logging output.",
                 "valueType": {
-                    "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
-                    "name": "Boolean",
+                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -172,8 +168,7 @@
                 "deprecatedName": null,
                 "description": "Don't generate any warnings.",
                 "valueType": {
-                    "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
-                    "name": "Boolean",
+                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -195,8 +190,7 @@
                 "deprecatedName": null,
                 "description": "Report an error if there are any warnings.",
                 "valueType": {
-                    "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
-                    "name": "Boolean",
+                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
                     "isNullable": {
                         "current": false,
                         "valueInVersions": {}
@@ -223,8 +217,7 @@
                         "deprecatedName": null,
                         "description": "Provide source compatibility with the specified version of Kotlin.",
                         "valueType": {
-                            "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinVersionType",
-                            "name": "KotlinVersion",
+                            "type": "org.jetbrains.kotlin.arguments.KotlinVersionType",
                             "isNullable": {
                                 "current": true,
                                 "valueInVersions": {}
@@ -248,8 +241,7 @@
                         "deprecatedName": null,
                         "description": "Allow using declarations from only the specified version of bundled libraries.",
                         "valueType": {
-                            "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinVersionType",
-                            "name": "KotlinVersion",
+                            "type": "org.jetbrains.kotlin.arguments.KotlinVersionType",
                             "isNullable": {
                                 "current": true,
                                 "valueInVersions": {}
@@ -273,8 +265,7 @@
                         "deprecatedName": null,
                         "description": "TBA",
                         "valueType": {
-                            "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
-                            "name": "Boolean",
+                            "type": "org.jetbrains.kotlin.arguments.BooleanType",
                             "isNullable": {
                                 "current": true,
                                 "valueInVersions": {}
@@ -301,8 +292,7 @@
                                 "deprecatedName": null,
                                 "description": "Target version of the generated JVM bytecode (1.6 or 1.8).",
                                 "valueType": {
-                                    "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinJvmTargetType",
-                                    "name": "JvmTarget",
+                                    "type": "org.jetbrains.kotlin.arguments.KotlinJvmTargetType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": {}
@@ -326,8 +316,7 @@
                                 "deprecatedName": null,
                                 "description": "TBA",
                                 "valueType": {
-                                    "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
-                                    "name": "Boolean",
+                                    "type": "org.jetbrains.kotlin.arguments.BooleanType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": {}

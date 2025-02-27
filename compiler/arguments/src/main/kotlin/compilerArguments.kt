@@ -1,7 +1,9 @@
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.arguments.BooleanType
 import org.jetbrains.kotlin.arguments.CompilerArguments
-import org.jetbrains.kotlin.arguments.KotlinArgumentValueType
+import org.jetbrains.kotlin.arguments.KotlinJvmTargetType
+import org.jetbrains.kotlin.arguments.KotlinVersionType
 import org.jetbrains.kotlin.arguments.KotlinReleaseVersions
 import org.jetbrains.kotlin.arguments.asReleaseDependent
 import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
@@ -12,7 +14,7 @@ val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
         name = "another-test"
         description = "TBA"
 
-        valueType = KotlinArgumentValueType.BooleanType()
+        valueType = BooleanType()
         valueDescription = "true|false"
 
         addedInVersion = KotlinReleaseVersions.v1_4_0
@@ -25,7 +27,7 @@ val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
             name = "old-option"
             description = "TBA"
 
-            valueType = KotlinArgumentValueType.BooleanType()
+            valueType = BooleanType()
             valueDescription = "true|false"
 
             addedInVersion = KotlinReleaseVersions.v1_4_0
@@ -42,7 +44,7 @@ val kotlinCompilerArguments = compilerArguments {
             shortName = "h"
             description = "Print a synopsis of standard options."
 
-            valueType = KotlinArgumentValueType.BooleanType(
+            valueType = BooleanType(
                 isNullable = false.asReleaseDependent(),
                 defaultValue = false.asReleaseDependent()
             )
@@ -55,7 +57,7 @@ val kotlinCompilerArguments = compilerArguments {
             name = "X"
             description = "Print a synopsis of advanced options."
 
-            valueType = KotlinArgumentValueType.BooleanType(
+            valueType = BooleanType(
                 isNullable = false.asReleaseDependent(),
                 defaultValue = false.asReleaseDependent()
             )
@@ -67,7 +69,7 @@ val kotlinCompilerArguments = compilerArguments {
             name = "version"
             description = "Display the compiler version."
 
-            valueType = KotlinArgumentValueType.BooleanType(
+            valueType = BooleanType(
                 isNullable = false.asReleaseDependent(),
                 defaultValue = false.asReleaseDependent()
             )
@@ -79,7 +81,7 @@ val kotlinCompilerArguments = compilerArguments {
             name = "verbose"
             description = "Enable verbose logging output."
 
-            valueType = KotlinArgumentValueType.BooleanType(
+            valueType = BooleanType(
                 isNullable = false.asReleaseDependent(),
                 defaultValue = false.asReleaseDependent()
             )
@@ -91,7 +93,7 @@ val kotlinCompilerArguments = compilerArguments {
             name = "nowarn"
             description = "Don't generate any warnings."
 
-            valueType = KotlinArgumentValueType.BooleanType(
+            valueType = BooleanType(
                 isNullable = false.asReleaseDependent(),
                 defaultValue = false.asReleaseDependent()
             )
@@ -103,7 +105,7 @@ val kotlinCompilerArguments = compilerArguments {
             name = "Werror"
             description = "Report an error if there are any warnings."
 
-            valueType = KotlinArgumentValueType.BooleanType(
+            valueType = BooleanType(
                 isNullable = false.asReleaseDependent(),
                 defaultValue = false.asReleaseDependent()
             )
@@ -117,7 +119,7 @@ val kotlinCompilerArguments = compilerArguments {
                 name = "language-version"
                 description = "Provide source compatibility with the specified version of Kotlin."
 
-                valueType = KotlinArgumentValueType.KotlinVersionType()
+                valueType = KotlinVersionType()
                 valueDescription = "<version>"
 
                 addedInVersion = KotlinReleaseVersions.v1_9_20
@@ -127,7 +129,7 @@ val kotlinCompilerArguments = compilerArguments {
                 name = "api-version"
                 description = "Allow using declarations from only the specified version of bundled libraries."
 
-                valueType = KotlinArgumentValueType.KotlinVersionType()
+                valueType = KotlinVersionType()
                 valueDescription = "<version>"
 
                 addedInVersion = KotlinReleaseVersions.v1_4_0
@@ -138,7 +140,7 @@ val kotlinCompilerArguments = compilerArguments {
                     name = "jvm-target"
                     description = "Target version of the generated JVM bytecode (1.6 or 1.8)."
 
-                    valueType = KotlinArgumentValueType.KotlinJvmTargetType()
+                    valueType = KotlinJvmTargetType()
                     valueDescription = "<version>"
 
                     addedInVersion = KotlinReleaseVersions.v1_4_0
@@ -151,7 +153,6 @@ val kotlinCompilerArguments = compilerArguments {
 fun main() {
     val format = Json {
         prettyPrint = true
-        classDiscriminator = "#class"
         encodeDefaults = true
     }
 
