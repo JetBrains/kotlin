@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.alwaysTrue
 import java.io.File
-import java.net.URL
-import kotlin.also
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.fail
 
@@ -58,10 +56,10 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             true
         )
 
-        val testData: URL = this::class.java.getResource("/$testCaseDir/$testDirectoryName")
-            ?: throw error("testData $testCaseDir/$testDirectoryName not found in resources")
-
-        return File(testData.path).also(::assertIsDirectory)
+        return File(System.getProperty(":native:kotlin-klib-commonizer:testData") ?: error("Missing testData system property"))
+            .resolve(testCaseDir)
+            .resolve(testDirectoryName)
+            .also(::assertIsDirectory)
     }
 
     protected fun doTestSuccessfulCommonization() {

@@ -56,12 +56,14 @@ sourceSets {
     "main" { projectDefault() }
     "test" {
         projectDefault()
-        resources.srcDir("testData")
     }
 }
 
 projectTest(parallel = true) {
-    workingDir = rootDir
+    val testDataPath = "testData"
+    val testDataDirectory = layout.projectDirectory.dir(testDataPath)
+    inputs.dir(testDataDirectory)
+    systemProperty("${project.path}:$testDataPath", testDataDirectory.asFile.relativeTo(projectDir))
 }
 
 runtimeJar()
