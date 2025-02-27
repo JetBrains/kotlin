@@ -107,6 +107,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Enables progressive mode"
     )
 
+    val LENIENT_MODE by directive(
+        description = "Enabled lenient compiler mode."
+    )
+
     // --------------------- Jvm Analysis Flags ---------------------
 
     val JVM_DEFAULT_MODE by enumDirective(
