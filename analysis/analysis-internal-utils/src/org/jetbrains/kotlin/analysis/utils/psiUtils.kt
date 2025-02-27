@@ -54,16 +54,20 @@ public fun PsiClass.isLocalClass(): Boolean {
 }
 
 /**
- * A common pattern of illegal code, where a declaration is preceded by an unclosed annotation, for example:
+ * A common pattern of illegal code, where a declaration is parsed
+ * as a (nested) argument of an unclosed annotation, for example:
  *
  * ```kotlin
  * @Ann(
- * fun foo() = 42
+ * fun <caret>foo() = 42
+ *
+ * @Ann(
+ * fun foo(<caret>x: Int) = 42
  * ```
  * @see org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
  */
 public fun KtDeclaration.isInsideDanglingModifierList(): Boolean {
-    val argument = parent as? KtValueArgument ?: return false
+    val argument = parentOfType<KtValueArgument>() ?: return false
     val modifierList = argument.parentOfType<KtDeclarationModifierList>() ?: return false
     if (modifierList.getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement) {
         return true // top level
