@@ -11,6 +11,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
@@ -297,26 +298,16 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testGeneratedTypeScriptDeclarationsValidation(gradleVersion: GradleVersion) {
         project("js-ir-validate-ts", gradleVersion) {
-            buildGradleKts.appendText(
-                """
-                |object Utils {
-                |  fun makeTypeScriptFileInvalid(mode: String, projectDir: File) {
-                |    val dts = projectDir.resolve("build/compileSync/js/main/" + mode + "Executable/kotlin/js-ir-validate-ts.d.ts")
-                |    dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
-                |  }
-                |}
-                |
-                |tasks.withType<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>().configureEach {
-                |   val projectDir = projectDir
-                |   @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
-                |   doLast("make TypeScriptFile invalid") {
-                |      val mode = modeProvider.get().name.toLowerCase()
-                |      val dts = projectDir.resolve("build/compileSync/js/main/" + mode + "Executable/kotlin/js-ir-validate-ts.d.ts")
-                |      dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
-                |   }
-                |}
-               """.trimMargin()
-            )
+            buildScriptInjection {
+                project.tasks.withType(KotlinJsIrLink::class.java).configureEach { task ->
+                    val projectDir = project.projectDir
+                    task.doLast {
+                        val mode = task.modeProperty.get().name.lowercase()
+                        val dts = projectDir.resolve("build/compileSync/js/main/${mode}Executable/kotlin/js-ir-validate-ts.d.ts")
+                        dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
+                    }
+                }
+            }
 
             buildAndFail("developmentExecutableCompileSync") {
                 assertTasksFailed(":developmentExecutableValidateGeneratedByCompilerTypeScript")
