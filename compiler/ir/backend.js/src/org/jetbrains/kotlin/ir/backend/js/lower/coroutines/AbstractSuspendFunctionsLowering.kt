@@ -251,7 +251,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                 isFakeOverride = false
             }.apply {
                 parent = coroutineClass
-                coroutineClass.addChild(this)
+                addOverriddenChildToCoroutineClass(this, stateMachineFunction)
 
                 typeParameters = stateMachineFunction.typeParameters.memoryOptimizedMap { parameter ->
                     parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
@@ -287,7 +287,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                 returnType = coroutineClass.defaultType
             }.apply {
                 parent = coroutineClass
-                coroutineClass.addChild(this)
+                addOverriddenChildToCoroutineClass(this, superCreateFunction)
 
                 typeParameters = function.typeParameters.memoryOptimizedMap { parameter ->
                     parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
@@ -343,6 +343,24 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                     +irReturn(irGet(instanceVal))
                 }
             }
+
+        private fun addOverriddenChildToCoroutineClass(newFunction: IrSimpleFunction, superFunction: IrSimpleFunction?) {
+            if (superFunction != null) {
+                val fakeOverrideIndex = coroutineClass
+                    .declarations
+                    .indexOfFirst {
+                        it is IrOverridableDeclaration<*> && superFunction.symbol in it.overriddenSymbols && it.isFakeOverride
+                    }
+                if (fakeOverrideIndex >= 0) {
+                    coroutineClass.declarations[fakeOverrideIndex] = newFunction
+                    fakeOverrideIndex
+                } else {
+                    coroutineClass.declarations.add(newFunction)
+                }
+            } else {
+                coroutineClass.declarations.add(newFunction)
+            }
+        }
 
         private fun transformInvokeMethod(createFunction: IrSimpleFunction, stateMachineFunction: IrSimpleFunction) {
             val irBuilder = context.createIrBuilder(function.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
