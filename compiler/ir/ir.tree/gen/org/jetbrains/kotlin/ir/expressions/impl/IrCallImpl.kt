@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -20,24 +21,40 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrCallImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var origin: IrStatementOrigin?,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
     symbol: IrSimpleFunctionSymbol,
-    override var superQualifierSymbol: IrClassSymbol?,
+    superQualifierSymbol: IrClassSymbol?,
 ) : IrCall() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var origin: IrStatementOrigin? by originAttribute
+    override val typeArguments: MutableList<IrType?> by typeArgumentsAttribute
+    override var symbol: IrSimpleFunctionSymbol by symbolAttribute
+    override var superQualifierSymbol: IrClassSymbol? by superQualifierSymbolAttribute
 
-    override val typeArguments: MutableList<IrType?> = ArrayList(0)
-
-    override var symbol: IrSimpleFunctionSymbol = symbol
-        set(value) {
-            if (field !== value) {
-                field = value
-                updateTargetSymbol()
-            }
-        }
-
-    companion object
+    init {
+        preallocateStorage(8)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(typeArgumentsAttribute, ArrayList(0))
+        initAttribute(originAttribute, origin)
+        initAttribute(superQualifierSymbolAttribute, superQualifierSymbol)
+        initAttribute(typeAttribute, type)
+        initAttribute(symbolAttribute, symbol)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrCallImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrCallImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrCallImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrCallImpl::class.java, 7, "type", null)
+        @JvmStatic private val originAttribute = IrIndexBasedAttributeRegistry.createAttr<IrStatementOrigin?>(IrCallImpl::class.java, 4, "origin", null)
+        @JvmStatic private val typeArgumentsAttribute = IrIndexBasedAttributeRegistry.createAttr<MutableList<IrType?>>(IrCallImpl::class.java, 3, "typeArguments", null)
+        @JvmStatic private val symbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrSimpleFunctionSymbol>(IrCallImpl::class.java, 12, "symbol", null)
+        @JvmStatic private val superQualifierSymbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrClassSymbol?>(IrCallImpl::class.java, 5, "superQualifierSymbol", null)
+    }
 }

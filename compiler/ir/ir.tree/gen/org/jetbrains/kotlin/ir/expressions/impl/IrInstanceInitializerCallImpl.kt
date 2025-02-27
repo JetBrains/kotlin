@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,10 +19,29 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrInstanceInitializerCallImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var classSymbol: IrClassSymbol,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    classSymbol: IrClassSymbol,
 ) : IrInstanceInitializerCall() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var classSymbol: IrClassSymbol by classSymbolAttribute
+
+    init {
+        preallocateStorage(4)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(classSymbolAttribute, classSymbol)
+        initAttribute(typeAttribute, type)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrInstanceInitializerCallImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrInstanceInitializerCallImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrInstanceInitializerCallImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrInstanceInitializerCallImpl::class.java, 7, "type", null)
+        @JvmStatic private val classSymbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrClassSymbol>(IrInstanceInitializerCallImpl::class.java, 3, "classSymbol", null)
+    }
 }

@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -23,51 +24,72 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrScriptImpl(
-    override val symbol: IrScriptSymbol,
-    override var name: Name,
-    override val factory: IrFactory,
-    override var startOffset: Int,
-    override var endOffset: Int,
+    symbol: IrScriptSymbol,
+    name: Name,
+    factory: IrFactory,
+    startOffset: Int,
+    endOffset: Int,
 ) : IrScript() {
-    override var _attributeOwnerId: IrElement? = null
-
-    override var annotations: List<IrConstructorCall> = emptyList()
-
-    override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
-
-    override val statements: MutableList<IrStatement> = ArrayList(2)
-
-    override var metadata: MetadataSource? = null
-
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var annotations: List<IrConstructorCall> by annotationsAttribute
+    override var origin: IrDeclarationOrigin by originAttribute
+    override val factory: IrFactory by factoryAttribute
+    override var name: Name by nameAttribute
+    override val statements: MutableList<IrStatement> by statementsAttribute
+    override var metadata: MetadataSource? by metadataAttribute
+    override val symbol: IrScriptSymbol by symbolAttribute
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ScriptDescriptor
         get() = symbol.descriptor
 
-    override var thisReceiver: IrValueParameter? = null
-
-    override var baseClass: IrType? = null
-
-    override lateinit var explicitCallParameters: List<IrVariable>
-
-    override lateinit var implicitReceiversParameters: List<IrValueParameter>
-
-    override lateinit var providedProperties: List<IrPropertySymbol>
-
-    override lateinit var providedPropertiesParameters: List<IrValueParameter>
-
-    override var resultProperty: IrPropertySymbol? = null
-
-    override var earlierScriptsParameter: IrValueParameter? = null
-
-    override var importedScripts: List<IrScriptSymbol>? = null
-
-    override var earlierScripts: List<IrScriptSymbol>? = null
-
-    override var targetClass: IrClassSymbol? = null
-
-    override var constructor: IrConstructor? = null
+    override var thisReceiver: IrValueParameter? by thisReceiverAttribute
+    override var baseClass: IrType? by baseClassAttribute
+    override var explicitCallParameters: List<IrVariable> by explicitCallParametersAttribute
+    override var implicitReceiversParameters: List<IrValueParameter> by implicitReceiversParametersAttribute
+    override var providedProperties: List<IrPropertySymbol> by providedPropertiesAttribute
+    override var providedPropertiesParameters: List<IrValueParameter> by providedPropertiesParametersAttribute
+    override var resultProperty: IrPropertySymbol? by resultPropertyAttribute
+    override var earlierScriptsParameter: IrValueParameter? by earlierScriptsParameterAttribute
+    override var importedScripts: List<IrScriptSymbol>? by importedScriptsAttribute
+    override var earlierScripts: List<IrScriptSymbol>? by earlierScriptsAttribute
+    override var targetClass: IrClassSymbol? by targetClassAttribute
+    override var constructor: IrConstructor? by constructorAttribute
 
     init {
+        preallocateStorage(14)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(factoryAttribute, factory)
+        initAttribute(nameAttribute, name)
+        initAttribute(statementsAttribute, ArrayList(2))
+        initAttribute(symbolAttribute, symbol)
+
         symbol.bind(this)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrScriptImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrScriptImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrScriptImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val annotationsAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrConstructorCall>>(IrScriptImpl::class.java, 3, "annotations", emptyList())
+        @JvmStatic private val originAttribute = IrIndexBasedAttributeRegistry.createAttr<IrDeclarationOrigin>(IrScriptImpl::class.java, 4, "origin", SCRIPT_ORIGIN)
+        @JvmStatic private val factoryAttribute = IrIndexBasedAttributeRegistry.createAttr<IrFactory>(IrScriptImpl::class.java, 5, "factory", null)
+        @JvmStatic private val nameAttribute = IrIndexBasedAttributeRegistry.createAttr<Name>(IrScriptImpl::class.java, 6, "name", null)
+        @JvmStatic private val statementsAttribute = IrIndexBasedAttributeRegistry.createAttr<MutableList<IrStatement>>(IrScriptImpl::class.java, 9, "statements", null)
+        @JvmStatic private val metadataAttribute = IrIndexBasedAttributeRegistry.createAttr<MetadataSource?>(IrScriptImpl::class.java, 13, "metadata", null)
+        @JvmStatic private val symbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrScriptSymbol>(IrScriptImpl::class.java, 12, "symbol", null)
+        @JvmStatic private val thisReceiverAttribute = IrIndexBasedAttributeRegistry.createAttr<IrValueParameter?>(IrScriptImpl::class.java, 17, "thisReceiver", null)
+        @JvmStatic private val baseClassAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType?>(IrScriptImpl::class.java, 7, "baseClass", null)
+        @JvmStatic private val explicitCallParametersAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrVariable>>(IrScriptImpl::class.java, 10, "explicitCallParameters", null)
+        @JvmStatic private val implicitReceiversParametersAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrValueParameter>>(IrScriptImpl::class.java, 11, "implicitReceiversParameters", null)
+        @JvmStatic private val providedPropertiesAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrPropertySymbol>>(IrScriptImpl::class.java, 14, "providedProperties", null)
+        @JvmStatic private val providedPropertiesParametersAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrValueParameter>>(IrScriptImpl::class.java, 15, "providedPropertiesParameters", null)
+        @JvmStatic private val resultPropertyAttribute = IrIndexBasedAttributeRegistry.createAttr<IrPropertySymbol?>(IrScriptImpl::class.java, 16, "resultProperty", null)
+        @JvmStatic private val earlierScriptsParameterAttribute = IrIndexBasedAttributeRegistry.createAttr<IrValueParameter?>(IrScriptImpl::class.java, 18, "earlierScriptsParameter", null)
+        @JvmStatic private val importedScriptsAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrScriptSymbol>?>(IrScriptImpl::class.java, 19, "importedScripts", null)
+        @JvmStatic private val earlierScriptsAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrScriptSymbol>?>(IrScriptImpl::class.java, 20, "earlierScripts", null)
+        @JvmStatic private val targetClassAttribute = IrIndexBasedAttributeRegistry.createAttr<IrClassSymbol?>(IrScriptImpl::class.java, 21, "targetClass", null)
+        @JvmStatic private val constructorAttribute = IrIndexBasedAttributeRegistry.createAttr<IrConstructor?>(IrScriptImpl::class.java, 22, "constructor", null)
     }
 }

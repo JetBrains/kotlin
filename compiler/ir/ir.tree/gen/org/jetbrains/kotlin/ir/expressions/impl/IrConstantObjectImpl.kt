@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrConstantObject
 import org.jetbrains.kotlin.ir.expressions.IrConstantValue
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -20,14 +21,35 @@ import org.jetbrains.kotlin.utils.SmartList
 
 class IrConstantObjectImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var constructor: IrConstructorSymbol,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    constructor: IrConstructorSymbol,
 ) : IrConstantObject() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var constructor: IrConstructorSymbol by constructorAttribute
+    override val valueArguments: MutableList<IrConstantValue> by valueArgumentsAttribute
+    override val typeArguments: MutableList<IrType> by typeArgumentsAttribute
 
-    override val valueArguments: MutableList<IrConstantValue> = SmartList()
-
-    override val typeArguments: MutableList<IrType> = SmartList()
+    init {
+        preallocateStorage(6)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(typeArgumentsAttribute, SmartList())
+        initAttribute(valueArgumentsAttribute, SmartList())
+        initAttribute(typeAttribute, type)
+        initAttribute(constructorAttribute, constructor)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrConstantObjectImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrConstantObjectImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrConstantObjectImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrConstantObjectImpl::class.java, 7, "type", null)
+        @JvmStatic private val constructorAttribute = IrIndexBasedAttributeRegistry.createAttr<IrConstructorSymbol>(IrConstantObjectImpl::class.java, 22, "constructor", null)
+        @JvmStatic private val valueArgumentsAttribute = IrIndexBasedAttributeRegistry.createAttr<MutableList<IrConstantValue>>(IrConstantObjectImpl::class.java, 4, "valueArguments", null)
+        @JvmStatic private val typeArgumentsAttribute = IrIndexBasedAttributeRegistry.createAttr<MutableList<IrType>>(IrConstantObjectImpl::class.java, 3, "typeArguments", null)
+    }
 }

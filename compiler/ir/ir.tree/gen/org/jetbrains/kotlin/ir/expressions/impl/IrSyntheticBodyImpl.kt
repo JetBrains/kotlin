@@ -11,15 +11,32 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrSyntheticBodyImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var kind: IrSyntheticBodyKind,
+    startOffset: Int,
+    endOffset: Int,
+    kind: IrSyntheticBodyKind,
 ) : IrSyntheticBody() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var kind: IrSyntheticBodyKind by kindAttribute
+
+    init {
+        preallocateStorage(3)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(kindAttribute, kind)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrSyntheticBodyImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrSyntheticBodyImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrSyntheticBodyImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val kindAttribute = IrIndexBasedAttributeRegistry.createAttr<IrSyntheticBodyKind>(IrSyntheticBodyImpl::class.java, 9, "kind", null)
+    }
 }

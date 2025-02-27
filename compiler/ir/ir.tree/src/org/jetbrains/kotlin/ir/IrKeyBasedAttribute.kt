@@ -13,18 +13,18 @@ import kotlin.properties.PropertyDelegateProvider
 import kotlin.reflect.KProperty
 
 /**
- * Creates new [IrAttribute] which can be used to store additional data of type [T] inside of [E].
+ * Creates new [IrKeyBasedAttribute] which can be used to store additional data of type [T] inside of [E].
  *
- * See [IrAttribute] for details.
+ * See [IrKeyBasedAttribute] for details.
  *
  * @param copyByDefault Whether to copy this attribute in [IrElement.copyAttributes] by default.
  * If [false], it will only be copied when specifying `copyAttributes(other, includeAll = true)`.
  */
-fun <E : IrElement, T : Any> irAttribute(copyByDefault: Boolean): IrAttribute.Delegate<E, T> =
-    IrAttribute.Delegate(copyByDefault)
+fun <E : IrElement, T : Any> irAttribute(copyByDefault: Boolean): IrKeyBasedAttribute.Delegate<E, T> =
+    IrKeyBasedAttribute.Delegate(copyByDefault)
 
 /**
- * Creates new [IrAttribute] which can be used to put an additional mark
+ * Creates new [IrKeyBasedAttribute] which can be used to put an additional mark
  * on an element of type [E].
  *
  * This is similar to using `irAttribute<E, Boolean>()`, except:
@@ -35,14 +35,14 @@ fun <E : IrElement, T : Any> irAttribute(copyByDefault: Boolean): IrAttribute.De
  *
  * See [irAttribute] for details.
  */
-fun <E : IrElement> irFlag(copyByDefault: Boolean): IrAttribute.Flag.Delegate<E> =
-    IrAttribute.Flag.Delegate<E>(IrAttribute.Delegate<E, Boolean>(copyByDefault))
+fun <E : IrElement> irFlag(copyByDefault: Boolean): IrKeyBasedAttribute.Flag.Delegate<E> =
+    IrKeyBasedAttribute.Flag.Delegate<E>(IrKeyBasedAttribute.Delegate<E, Boolean>(copyByDefault))
 
 
 /**
  * Returns a value of [attribute], or null if the value is missing.
  */
-operator fun <E : IrElement, T : Any> E.get(attribute: IrAttribute<E, T>): T? {
+operator fun <E : IrElement, T : Any> E.get(attribute: IrKeyBasedAttribute<E, T>): T? {
     return (this as IrElementBase).getAttributeInternal(attribute)
 }
 
@@ -51,8 +51,8 @@ operator fun <E : IrElement, T : Any> E.get(attribute: IrAttribute<E, T>): T? {
  *
  * @return The previous value associated with the attribute, or null if the attribute was not present.
  */
-operator fun <E : IrElement, T : Any> E.set(attribute: IrAttribute<E, T>, value: T?): T? {
-    return (this as IrElementBase).setAttributeInternal(attribute, value)
+operator fun <E : IrElement, T : Any> E.set(attribute: IrKeyBasedAttribute<E, T>, value: T?) {
+    (this as IrElementBase).setAttributeInternal(attribute, value)
 }
 
 /**
@@ -68,7 +68,7 @@ operator fun <E : IrElement, T : Any> E.set(attribute: IrAttribute<E, T>, value:
  * ```
  *
  * ##### Migration note:
- * There is also a [MutableMap] wrapper around [IrAttribute] to ease migration from maps in
+ * There is also a [MutableMap] wrapper around [IrKeyBasedAttribute] to ease migration from maps in
  * the form of `MutableMap<IrElement, T>` to attributes - you can replace such maps with
  * `irAttribute().asMap()` in-place, and the usual map-based syntax will continue to work.
  * Example:
@@ -96,11 +96,11 @@ operator fun <E : IrElement, T : Any> E.set(attribute: IrAttribute<E, T>, value:
  * @param E restricts the type of [IrElement] on which this attribute can be stored.
  * @param T the type of the data stored in the attribute.
  */
-class IrAttribute<E : IrElement, T : Any> internal constructor(
-    val name: String?,
+class IrKeyBasedAttribute<E : IrElement, T : Any> internal constructor(
+    name: String?,
     owner: Any?,
     val copyByDefault: Boolean,
-) {
+) : IrAttribute<T>(name ?: "<unnamed>") {
     /**
      * Used solely for debug, to help distinguish between multiple instances of attribute keys.
      * This may happen if the key is defined inside some class, instead of on top level.
@@ -119,8 +119,7 @@ class IrAttribute<E : IrElement, T : Any> internal constructor(
 
     override fun toString(): String {
         return when {
-            name != null && ownerForDebug?.get() != null -> "$name (inside of ${ownerForDebug.get()})"
-            name != null -> name
+            ownerForDebug?.get() != null -> "$name (inside of ${ownerForDebug.get()})"
             else -> super.toString()
         }
     }
@@ -129,7 +128,7 @@ class IrAttribute<E : IrElement, T : Any> internal constructor(
      * See [irFlag]
      */
     class Flag<E : IrElement> internal constructor(
-        private val attribute: IrAttribute<E, Boolean>,
+        private val attribute: IrKeyBasedAttribute<E, Boolean>,
     ) {
         @Suppress("NOTHING_TO_INLINE")
         inline operator fun getValue(thisRef: E, property: KProperty<*>): Boolean = get(thisRef)
@@ -146,7 +145,7 @@ class IrAttribute<E : IrElement, T : Any> internal constructor(
         }
 
         class Delegate<E : IrElement> internal constructor(
-            private val attributeDelegate: IrAttribute.Delegate<E, Boolean>,
+            private val attributeDelegate: IrKeyBasedAttribute.Delegate<E, Boolean>,
         ) {
             operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): Flag<E> {
                 val attribute = attributeDelegate.provideDelegate(thisRef, property)
@@ -163,15 +162,15 @@ class IrAttribute<E : IrElement, T : Any> internal constructor(
     class Delegate<E : IrElement, T : Any> internal constructor(
         private val copyByDefault: Boolean,
     ) {
-        fun create(owner: Any?, name: String?): IrAttribute<E, T> {
-            return IrAttribute(
+        fun create(owner: Any?, name: String?): IrKeyBasedAttribute<E, T> {
+            return IrKeyBasedAttribute(
                 name = name,
                 owner = owner,
                 copyByDefault = copyByDefault,
             )
         }
 
-        operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): IrAttribute<E, T> =
+        operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): IrKeyBasedAttribute<E, T> =
             create(thisRef, property.name)
 
 
@@ -184,11 +183,11 @@ class IrAttribute<E : IrElement, T : Any> internal constructor(
 
 /**
  * A helper for migration from `MutableMap<IrElement, T>` to `IrAttribute`.
- * See [IrAttribute]
+ * See [IrKeyBasedAttribute]
  */
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrAttributeMapWrapper<E : IrElement, T : Any> internal constructor(
-    val attribute: IrAttribute<E, T>,
+    val attribute: IrKeyBasedAttribute<E, T>,
 ) : AbstractMutableMap<E, T>() {
     override operator fun get(element: E): T? {
         return element[attribute]
@@ -199,11 +198,13 @@ class IrAttributeMapWrapper<E : IrElement, T : Any> internal constructor(
     }
 
     override fun put(element: E, value: T): T? {
-        return element.set(attribute, value)
+        element.set(attribute, value)
+        return null
     }
 
     override fun remove(element: E): T? {
-        return element.set(attribute, null)
+        element.set(attribute, null)
+        return null
     }
 
     override fun computeIfAbsent(element: E, mappingFunction: Function<in E, out T>): T {
@@ -275,10 +276,10 @@ class IrAttributeMapWrapper<E : IrElement, T : Any> internal constructor(
 
     /**
      * A helper for migration from `MutableSet<IrElement>` to `IrAttribute`.
-     * See [IrAttribute]
+     * See [IrKeyBasedAttribute]
      */
     class FlagSetWrapper<E : IrElement> internal constructor(
-        private val flag: IrAttribute.Flag<E>,
+        private val flag: IrKeyBasedAttribute.Flag<E>,
     ) : AbstractMutableSet<E>() {
         override fun contains(element: E): Boolean {
             return flag.get(element)

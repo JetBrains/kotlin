@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,15 +19,35 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrConstImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var kind: IrConstKind,
-    override var value: Any?,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    kind: IrConstKind,
+    value: Any?,
 ) : IrConst() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var kind: IrConstKind by kindAttribute
+    override var value: Any? by valueAttribute
 
+    init {
+        preallocateStorage(5)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(valueAttribute, value)
+        initAttribute(typeAttribute, type)
+        initAttribute(kindAttribute, kind)
+    }
     companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrConstImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrConstImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrConstImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrConstImpl::class.java, 7, "type", null)
+        @JvmStatic private val kindAttribute = IrIndexBasedAttributeRegistry.createAttr<IrConstKind>(IrConstImpl::class.java, 9, "kind", null)
+        @JvmStatic private val valueAttribute = IrIndexBasedAttributeRegistry.createAttr<Any?>(IrConstImpl::class.java, 3, "value", null)
+
         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
 

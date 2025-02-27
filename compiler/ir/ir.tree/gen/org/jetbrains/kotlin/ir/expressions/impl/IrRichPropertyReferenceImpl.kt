@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
@@ -21,15 +22,44 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrRichPropertyReferenceImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var reflectionTargetSymbol: IrDeclarationWithAccessorsSymbol?,
-    override var origin: IrStatementOrigin?,
-    override var getterFunction: IrSimpleFunction,
-    override var setterFunction: IrSimpleFunction?,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    reflectionTargetSymbol: IrDeclarationWithAccessorsSymbol?,
+    origin: IrStatementOrigin?,
+    getterFunction: IrSimpleFunction,
+    setterFunction: IrSimpleFunction?,
 ) : IrRichPropertyReference() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var reflectionTargetSymbol: IrDeclarationWithAccessorsSymbol? by reflectionTargetSymbolAttribute
+    override val boundValues: MutableList<IrExpression> by boundValuesAttribute
+    override var origin: IrStatementOrigin? by originAttribute
+    override var getterFunction: IrSimpleFunction by getterFunctionAttribute
+    override var setterFunction: IrSimpleFunction? by setterFunctionAttribute
 
-    override val boundValues: MutableList<IrExpression> = ArrayList()
+    init {
+        preallocateStorage(8)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(reflectionTargetSymbolAttribute, reflectionTargetSymbol)
+        initAttribute(originAttribute, origin)
+        initAttribute(boundValuesAttribute, ArrayList())
+        initAttribute(getterFunctionAttribute, getterFunction)
+        initAttribute(typeAttribute, type)
+        initAttribute(setterFunctionAttribute, setterFunction)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrRichPropertyReferenceImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrRichPropertyReferenceImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrRichPropertyReferenceImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrRichPropertyReferenceImpl::class.java, 7, "type", null)
+        @JvmStatic private val reflectionTargetSymbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrDeclarationWithAccessorsSymbol?>(IrRichPropertyReferenceImpl::class.java, 3, "reflectionTargetSymbol", null)
+        @JvmStatic private val boundValuesAttribute = IrIndexBasedAttributeRegistry.createAttr<MutableList<IrExpression>>(IrRichPropertyReferenceImpl::class.java, 5, "boundValues", null)
+        @JvmStatic private val originAttribute = IrIndexBasedAttributeRegistry.createAttr<IrStatementOrigin?>(IrRichPropertyReferenceImpl::class.java, 4, "origin", null)
+        @JvmStatic private val getterFunctionAttribute = IrIndexBasedAttributeRegistry.createAttr<IrSimpleFunction>(IrRichPropertyReferenceImpl::class.java, 6, "getterFunction", null)
+        @JvmStatic private val setterFunctionAttribute = IrIndexBasedAttributeRegistry.createAttr<IrSimpleFunction?>(IrRichPropertyReferenceImpl::class.java, 8, "setterFunction", null)
+    }
 }

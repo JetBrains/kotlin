@@ -99,7 +99,7 @@ operator fun <K, V, U> Map<K, Map<V, U>>.get(k1: K, k2: V): U {
     return getValue(k1).getValue(k2)
 }
 
-internal fun <Field : AbstractField<*>> List<Field>.reorderFieldsIfNecessary(order: List<String>?): List<Field> =
+fun <Field : AbstractField<*>> List<Field>.reorderFieldsIfNecessary(order: List<String>?): List<Field> =
     if (order == null) {
         this
     } else {

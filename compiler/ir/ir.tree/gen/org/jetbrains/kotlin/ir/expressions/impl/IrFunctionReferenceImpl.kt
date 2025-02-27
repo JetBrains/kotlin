@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -19,24 +20,40 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrFunctionReferenceImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var origin: IrStatementOrigin?,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
     symbol: IrFunctionSymbol,
-    override var reflectionTarget: IrFunctionSymbol?,
+    reflectionTarget: IrFunctionSymbol?,
 ) : IrFunctionReference() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var origin: IrStatementOrigin? by originAttribute
+    override val typeArguments: MutableList<IrType?> by typeArgumentsAttribute
+    override var symbol: IrFunctionSymbol by symbolAttribute
+    override var reflectionTarget: IrFunctionSymbol? by reflectionTargetAttribute
 
-    override val typeArguments: MutableList<IrType?> = ArrayList(0)
-
-    override var symbol: IrFunctionSymbol = symbol
-        set(value) {
-            if (field !== value) {
-                field = value
-                updateTargetSymbol()
-            }
-        }
-
-    companion object
+    init {
+        preallocateStorage(8)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(typeArgumentsAttribute, ArrayList(0))
+        initAttribute(originAttribute, origin)
+        initAttribute(reflectionTargetAttribute, reflectionTarget)
+        initAttribute(typeAttribute, type)
+        initAttribute(symbolAttribute, symbol)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrFunctionReferenceImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrFunctionReferenceImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrFunctionReferenceImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrFunctionReferenceImpl::class.java, 7, "type", null)
+        @JvmStatic private val originAttribute = IrIndexBasedAttributeRegistry.createAttr<IrStatementOrigin?>(IrFunctionReferenceImpl::class.java, 4, "origin", null)
+        @JvmStatic private val typeArgumentsAttribute = IrIndexBasedAttributeRegistry.createAttr<MutableList<IrType?>>(IrFunctionReferenceImpl::class.java, 3, "typeArguments", null)
+        @JvmStatic private val symbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrFunctionSymbol>(IrFunctionReferenceImpl::class.java, 12, "symbol", null)
+        @JvmStatic private val reflectionTargetAttribute = IrIndexBasedAttributeRegistry.createAttr<IrFunctionSymbol?>(IrFunctionReferenceImpl::class.java, 5, "reflectionTarget", null)
+    }
 }

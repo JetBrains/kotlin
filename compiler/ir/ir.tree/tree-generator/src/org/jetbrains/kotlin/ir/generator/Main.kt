@@ -42,8 +42,22 @@ private fun TreeGenerator.printIrTree(model: Model<Element>, generationPath: Fil
         .configureInterfacesAndAbstractClasses()
     model.addPureAbstractElement(elementBaseType)
 
+    assignCoreAttributeIds(model)
+    calculatePreallocatedCoreAttributeStorageSize(model)
+
     printElements(model, ::ElementPrinter)
-    printElementImplementations(implementations, ::ImplementationPrinter)
+
+    val implementationsToPrint = implementations.filter { it.doPrint }
+    implementationsToPrint.mapTo(generatedFiles) { implementation ->
+        printGeneratedType(
+            generationPath,
+            treeGeneratorReadme,
+            implementation.packageName,
+            implementation.typeName,
+            fileSuppressions = listOf("DuplicatedCode"),
+        ) { ImplementationPrinter(this).printImplementation(implementation) }
+    }
+
     printVisitors(
         model,
         listOf(

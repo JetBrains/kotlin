@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrDynamicMemberExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,11 +19,33 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrDynamicMemberExpressionImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var memberName: String,
-    override var receiver: IrExpression,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    memberName: String,
+    receiver: IrExpression,
 ) : IrDynamicMemberExpression() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var memberName: String by memberNameAttribute
+    override var receiver: IrExpression by receiverAttribute
+
+    init {
+        preallocateStorage(5)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(memberNameAttribute, memberName)
+        initAttribute(receiverAttribute, receiver)
+        initAttribute(typeAttribute, type)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrDynamicMemberExpressionImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrDynamicMemberExpressionImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrDynamicMemberExpressionImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrDynamicMemberExpressionImpl::class.java, 7, "type", null)
+        @JvmStatic private val memberNameAttribute = IrIndexBasedAttributeRegistry.createAttr<String>(IrDynamicMemberExpressionImpl::class.java, 3, "memberName", null)
+        @JvmStatic private val receiverAttribute = IrIndexBasedAttributeRegistry.createAttr<IrExpression>(IrDynamicMemberExpressionImpl::class.java, 6, "receiver", null)
+    }
 }

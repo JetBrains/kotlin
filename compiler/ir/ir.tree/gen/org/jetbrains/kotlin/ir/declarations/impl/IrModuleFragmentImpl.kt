@@ -12,13 +12,14 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.Name
 
 class IrModuleFragmentImpl(
-    override val descriptor: ModuleDescriptor,
+    descriptor: ModuleDescriptor,
 ) : IrModuleFragment() {
     override var startOffset: Int
         get() = UNDEFINED_OFFSET
@@ -32,10 +33,21 @@ class IrModuleFragmentImpl(
             error("Mutation of endOffset is not supported for this class.")
         }
 
-    override var _attributeOwnerId: IrElement? = null
-
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override val descriptor: ModuleDescriptor by descriptorAttribute
     override val name: Name
         get() = descriptor.name
 
-    override val files: MutableList<IrFile> = ArrayList()
+    override val files: MutableList<IrFile> by filesAttribute
+
+    init {
+        preallocateStorage(5)
+        initAttribute(filesAttribute, ArrayList())
+        initAttribute(descriptorAttribute, descriptor)
+    }
+    companion object {
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrModuleFragmentImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val descriptorAttribute = IrIndexBasedAttributeRegistry.createAttr<ModuleDescriptor>(IrModuleFragmentImpl::class.java, 8, "descriptor", null)
+        @JvmStatic private val filesAttribute = IrIndexBasedAttributeRegistry.createAttr<MutableList<IrFile>>(IrModuleFragmentImpl::class.java, 3, "files", null)
+    }
 }

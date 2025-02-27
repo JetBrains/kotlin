@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator.model
 import org.jetbrains.kotlin.generators.tree.AbstractImplementation
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
+import java.util.BitSet
 
 class Implementation(element: Element, name: String?) : AbstractImplementation<Implementation, Element, Field>(element, name) {
     override val allFields: List<Field> = element.allFields.map { it.copy() }
@@ -15,6 +16,7 @@ class Implementation(element: Element, name: String?) : AbstractImplementation<I
     override var kind: ImplementationKind? = ImplementationKind.FinalClass
 
     var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
+    var generationCallbackInCompanion = false
 
     var hasConstructorIndicator = false
     var bindOwnedSymbol = true
@@ -23,4 +25,7 @@ class Implementation(element: Element, name: String?) : AbstractImplementation<I
     init {
         isPublic = true
     }
+
+    val allocatedAttributes = BitSet(64)
+    var preallocateStorageSize = -1
 }

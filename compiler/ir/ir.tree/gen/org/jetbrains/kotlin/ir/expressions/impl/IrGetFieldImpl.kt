@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -21,14 +22,39 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrGetFieldImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var symbol: IrFieldSymbol,
-    override var superQualifierSymbol: IrClassSymbol?,
-    override var origin: IrStatementOrigin?,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrFieldSymbol,
+    superQualifierSymbol: IrClassSymbol?,
+    origin: IrStatementOrigin?,
 ) : IrGetField() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var symbol: IrFieldSymbol by symbolAttribute
+    override var superQualifierSymbol: IrClassSymbol? by superQualifierSymbolAttribute
+    override var receiver: IrExpression? by receiverAttribute
+    override var origin: IrStatementOrigin? by originAttribute
 
-    override var receiver: IrExpression? = null
+    init {
+        preallocateStorage(6)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(originAttribute, origin)
+        initAttribute(superQualifierSymbolAttribute, superQualifierSymbol)
+        initAttribute(typeAttribute, type)
+        initAttribute(symbolAttribute, symbol)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrGetFieldImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrGetFieldImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrGetFieldImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrGetFieldImpl::class.java, 7, "type", null)
+        @JvmStatic private val symbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrFieldSymbol>(IrGetFieldImpl::class.java, 12, "symbol", null)
+        @JvmStatic private val superQualifierSymbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrClassSymbol?>(IrGetFieldImpl::class.java, 5, "superQualifierSymbol", null)
+        @JvmStatic private val receiverAttribute = IrIndexBasedAttributeRegistry.createAttr<IrExpression?>(IrGetFieldImpl::class.java, 6, "receiver", null)
+        @JvmStatic private val originAttribute = IrIndexBasedAttributeRegistry.createAttr<IrStatementOrigin?>(IrGetFieldImpl::class.java, 4, "origin", null)
+    }
 }

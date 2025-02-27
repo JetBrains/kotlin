@@ -249,7 +249,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 printlnMultiLine("""
-                    companion object {
+
                         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl =
                             IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
                 
@@ -285,9 +285,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 
                         fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl =
                             IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
-                    }
                 """.trimIndent())
             }
+            implementation.generationCallbackInCompanion = true
         }
 
         allImplOf(memberAccessExpression) {
@@ -295,49 +295,25 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(call) {
-            implementation.generationCallback = {
-                println()
-                println("companion object")
-            }
-
             recordTargetShapeOnSymbolChange()
         }
 
         impl(constructorCall) {
             additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
             undefinedOffset()
-            implementation.generationCallback = {
-                println()
-                println("companion object")
-            }
 
             recordTargetShapeOnSymbolChange()
         }
 
         impl(delegatingConstructorCall) {
-            implementation.generationCallback = {
-                println()
-                println("companion object")
-            }
-
             recordTargetShapeOnSymbolChange()
         }
 
         impl(enumConstructorCall) {
-            implementation.generationCallback = {
-                println()
-                println("companion object")
-            }
-
             recordTargetShapeOnSymbolChange()
         }
 
         impl(functionReference) {
-            implementation.generationCallback = {
-                println()
-                println("companion object")
-            }
-
             recordTargetShapeOnSymbolChange()
         }
 

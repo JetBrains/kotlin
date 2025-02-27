@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspendableExpression
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,11 +19,33 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrSuspendableExpressionImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var suspensionPointId: IrExpression,
-    override var result: IrExpression,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    suspensionPointId: IrExpression,
+    result: IrExpression,
 ) : IrSuspendableExpression() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var suspensionPointId: IrExpression by suspensionPointIdAttribute
+    override var result: IrExpression by resultAttribute
+
+    init {
+        preallocateStorage(5)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(suspensionPointIdAttribute, suspensionPointId)
+        initAttribute(resultAttribute, result)
+        initAttribute(typeAttribute, type)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrSuspendableExpressionImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrSuspendableExpressionImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrSuspendableExpressionImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrSuspendableExpressionImpl::class.java, 7, "type", null)
+        @JvmStatic private val suspensionPointIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrExpression>(IrSuspendableExpressionImpl::class.java, 3, "suspensionPointId", null)
+        @JvmStatic private val resultAttribute = IrIndexBasedAttributeRegistry.createAttr<IrExpression>(IrSuspendableExpressionImpl::class.java, 5, "result", null)
+    }
 }

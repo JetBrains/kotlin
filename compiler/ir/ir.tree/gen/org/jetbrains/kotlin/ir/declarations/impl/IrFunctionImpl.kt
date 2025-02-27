@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -26,45 +27,101 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrFunctionImpl @IrImplementationDetail constructor(
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val factory: IrFactory,
-    override var name: Name,
-    override var isExternal: Boolean,
-    override var visibility: DescriptorVisibility,
-    override val containerSource: DeserializedContainerSource?,
-    override var isInline: Boolean,
-    override var isExpect: Boolean,
-    override var modality: Modality,
-    override var isFakeOverride: Boolean,
-    override val symbol: IrSimpleFunctionSymbol,
-    override var isTailrec: Boolean,
-    override var isSuspend: Boolean,
-    override var isOperator: Boolean,
-    override var isInfix: Boolean,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    factory: IrFactory,
+    name: Name,
+    isExternal: Boolean,
+    visibility: DescriptorVisibility,
+    containerSource: DeserializedContainerSource?,
+    isInline: Boolean,
+    isExpect: Boolean,
+    modality: Modality,
+    isFakeOverride: Boolean,
+    symbol: IrSimpleFunctionSymbol,
+    isTailrec: Boolean,
+    isSuspend: Boolean,
+    isOperator: Boolean,
+    isInfix: Boolean,
 ) : IrSimpleFunction() {
-    override var _attributeOwnerId: IrElement? = null
-
-    override var annotations: List<IrConstructorCall> = emptyList()
-
-    override var typeParameters: List<IrTypeParameter> = emptyList()
-
-    override var metadata: MetadataSource? = null
-
-    override lateinit var returnType: IrType
-
-    override var body: IrBody? = null
-
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var annotations: List<IrConstructorCall> by annotationsAttribute
+    override var origin: IrDeclarationOrigin by originAttribute
+    override val factory: IrFactory by factoryAttribute
+    override var name: Name by nameAttribute
+    override var isExternal: Boolean by isExternalAttribute
+    override var visibility: DescriptorVisibility by visibilityAttribute
+    override var typeParameters: List<IrTypeParameter> by typeParametersAttribute
+    override val containerSource: DeserializedContainerSource? by containerSourceAttribute
+    override var metadata: MetadataSource? by metadataAttribute
+    override var isInline: Boolean by isInlineAttribute
+    override var isExpect: Boolean by isExpectAttribute
+    override var returnType: IrType by returnTypeAttribute
+    override var body: IrBody? by bodyAttribute
+    override var modality: Modality by modalityAttribute
+    override var isFakeOverride: Boolean by isFakeOverrideAttribute
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
         get() = symbol.descriptor
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
-
-    override var correspondingPropertySymbol: IrPropertySymbol? = null
+    override val symbol: IrSimpleFunctionSymbol by symbolAttribute
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by overriddenSymbolsAttribute
+    override var isTailrec: Boolean by isTailrecAttribute
+    override var isSuspend: Boolean by isSuspendAttribute
+    override var isOperator: Boolean by isOperatorAttribute
+    override var isInfix: Boolean by isInfixAttribute
+    override var correspondingPropertySymbol: IrPropertySymbol? by correspondingPropertySymbolAttribute
 
     init {
+        preallocateStorage(12)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(originAttribute, origin)
+        initAttribute(factoryAttribute, factory)
+        initAttribute(nameAttribute, name)
+        initAttribute(visibilityAttribute, visibility)
+        initAttribute(containerSourceAttribute, containerSource)
+        initAttribute(symbolAttribute, symbol)
+        initAttribute(modalityAttribute, modality)
+        if (isInfix) setFlagInternal(isInfixAttribute, true)
+        if (isOperator) setFlagInternal(isOperatorAttribute, true)
+        if (isExpect) setFlagInternal(isExpectAttribute, true)
+        if (isSuspend) setFlagInternal(isSuspendAttribute, true)
+        if (isTailrec) setFlagInternal(isTailrecAttribute, true)
+        if (isFakeOverride) setFlagInternal(isFakeOverrideAttribute, true)
+        if (isInline) setFlagInternal(isInlineAttribute, true)
+        if (isExternal) setFlagInternal(isExternalAttribute, true)
+
         symbol.bind(this)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrFunctionImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrFunctionImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrFunctionImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val annotationsAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrConstructorCall>>(IrFunctionImpl::class.java, 3, "annotations", emptyList())
+        @JvmStatic private val originAttribute = IrIndexBasedAttributeRegistry.createAttr<IrDeclarationOrigin>(IrFunctionImpl::class.java, 4, "origin", null)
+        @JvmStatic private val factoryAttribute = IrIndexBasedAttributeRegistry.createAttr<IrFactory>(IrFunctionImpl::class.java, 5, "factory", null)
+        @JvmStatic private val nameAttribute = IrIndexBasedAttributeRegistry.createAttr<Name>(IrFunctionImpl::class.java, 6, "name", null)
+        @JvmStatic private val isExternalAttribute = IrIndexBasedAttributeRegistry.createFlag(IrFunctionImpl::class.java, 63, "isExternal")
+        @JvmStatic private val visibilityAttribute = IrIndexBasedAttributeRegistry.createAttr<DescriptorVisibility>(IrFunctionImpl::class.java, 10, "visibility", null)
+        @JvmStatic private val typeParametersAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrTypeParameter>>(IrFunctionImpl::class.java, 7, "typeParameters", emptyList())
+        @JvmStatic private val containerSourceAttribute = IrIndexBasedAttributeRegistry.createAttr<DeserializedContainerSource?>(IrFunctionImpl::class.java, 11, "containerSource", null)
+        @JvmStatic private val metadataAttribute = IrIndexBasedAttributeRegistry.createAttr<MetadataSource?>(IrFunctionImpl::class.java, 13, "metadata", null)
+        @JvmStatic private val isInlineAttribute = IrIndexBasedAttributeRegistry.createFlag(IrFunctionImpl::class.java, 62, "isInline")
+        @JvmStatic private val isExpectAttribute = IrIndexBasedAttributeRegistry.createFlag(IrFunctionImpl::class.java, 58, "isExpect")
+        @JvmStatic private val returnTypeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrFunctionImpl::class.java, 15, "returnType", null)
+        @JvmStatic private val bodyAttribute = IrIndexBasedAttributeRegistry.createAttr<IrBody?>(IrFunctionImpl::class.java, 9, "body", null)
+        @JvmStatic private val modalityAttribute = IrIndexBasedAttributeRegistry.createAttr<Modality>(IrFunctionImpl::class.java, 14, "modality", null)
+        @JvmStatic private val isFakeOverrideAttribute = IrIndexBasedAttributeRegistry.createFlag(IrFunctionImpl::class.java, 61, "isFakeOverride")
+        @JvmStatic private val symbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrSimpleFunctionSymbol>(IrFunctionImpl::class.java, 12, "symbol", null)
+        @JvmStatic private val overriddenSymbolsAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrSimpleFunctionSymbol>>(IrFunctionImpl::class.java, 16, "overriddenSymbols", emptyList())
+        @JvmStatic private val isTailrecAttribute = IrIndexBasedAttributeRegistry.createFlag(IrFunctionImpl::class.java, 60, "isTailrec")
+        @JvmStatic private val isSuspendAttribute = IrIndexBasedAttributeRegistry.createFlag(IrFunctionImpl::class.java, 59, "isSuspend")
+        @JvmStatic private val isOperatorAttribute = IrIndexBasedAttributeRegistry.createFlag(IrFunctionImpl::class.java, 57, "isOperator")
+        @JvmStatic private val isInfixAttribute = IrIndexBasedAttributeRegistry.createFlag(IrFunctionImpl::class.java, 56, "isInfix")
+        @JvmStatic private val correspondingPropertySymbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrPropertySymbol?>(IrFunctionImpl::class.java, 17, "correspondingPropertySymbol", null)
     }
 }

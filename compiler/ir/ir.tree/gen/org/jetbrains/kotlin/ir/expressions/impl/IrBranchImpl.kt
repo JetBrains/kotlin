@@ -11,16 +11,36 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrBranchImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var condition: IrExpression,
-    override var result: IrExpression,
+    startOffset: Int,
+    endOffset: Int,
+    condition: IrExpression,
+    result: IrExpression,
 ) : IrBranch() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var condition: IrExpression by conditionAttribute
+    override var result: IrExpression by resultAttribute
+
+    init {
+        preallocateStorage(4)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(conditionAttribute, condition)
+        initAttribute(resultAttribute, result)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrBranchImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrBranchImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrBranchImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val conditionAttribute = IrIndexBasedAttributeRegistry.createAttr<IrExpression>(IrBranchImpl::class.java, 3, "condition", null)
+        @JvmStatic private val resultAttribute = IrIndexBasedAttributeRegistry.createAttr<IrExpression>(IrBranchImpl::class.java, 5, "result", null)
+    }
 }

@@ -27,8 +27,8 @@ class IrAttributeTests {
     private fun createIrElement(): IrExpression =
         IrConstImpl.constNull(0, 0, IrErrorTypeImpl(null, listOf(), Variance.INVARIANT))
 
-    private val IrElement.allAttributes: Map<IrAttribute<*, *>, Any>
-        get() = (this as IrElementBase).attributes
+    private val IrElement.allAttributes: Map<IrKeyBasedAttribute<*, *>, Any>
+        get() = (this as IrElementBase).keyBasedAttributes
 
 
     @Test
@@ -36,11 +36,11 @@ class IrAttributeTests {
         val element = createIrElement()
 
         assertEquals(null, element.foo)
-        assertTrue(element.attributes.isEmpty())
+        assertTrue(element.keyBasedAttributes.isEmpty())
 
         element.foo = 10
         assertEquals(10, element.foo)
-        assertEquals<Map<IrAttribute<*, *>, Any?>>(mapOf(fooAttr to 10), element.attributes)
+        assertEquals<Map<IrKeyBasedAttribute<*, *>, Any?>>(mapOf(fooAttr to 10), element.keyBasedAttributes)
     }
 
     @Test
@@ -82,18 +82,18 @@ class IrAttributeTests {
         assertEquals(10, element.foo)
         assertEquals(true, element.bar)
         assertEquals("test", element.baz)
-        assertEquals<Map<IrAttribute<*, *>, Any?>>(
+        assertEquals<Map<IrKeyBasedAttribute<*, *>, Any?>>(
             mapOf(fooAttr to 10, barAttr to true, bazAttr to "test"),
-            element.attributes
+            element.keyBasedAttributes
         )
 
         element.foo = 200
         element.bar = null
         assertEquals(200, element.foo)
         assertEquals(null, element.bar)
-        assertEquals<Map<IrAttribute<*, *>, Any?>>(
+        assertEquals<Map<IrKeyBasedAttribute<*, *>, Any?>>(
             mapOf(fooAttr to 200, bazAttr to "test"),
-            element.attributes
+            element.keyBasedAttributes
         )
     }
 
@@ -107,7 +107,7 @@ class IrAttributeTests {
             element.foo = it
             assertEquals(it, element.foo)
             assertEquals(true, element.bar)
-            assertEquals(2, element.attributes.size)
+            assertEquals(2, element.keyBasedAttributes.size)
 
             element.foo = null
         }
@@ -122,7 +122,7 @@ class IrAttributeTests {
         val element2 = createIrElement()
         element2.copyAttributes(element1)
 
-        assertEquals(element1.attributes, element2.attributes)
+        assertEquals(element1.keyBasedAttributes, element2.keyBasedAttributes)
     }
 
     @Test
@@ -157,12 +157,12 @@ class IrAttributeTests {
     @Test
     fun stressTest() {
         val element = createIrElement()
-        val attributes = List(10) { irAttribute<IrExpression, Int>(copyByDefault = true).create(null, "attr$it") }
-        val realAttributeValues = mutableMapOf<IrAttribute<IrExpression, Int>, Int?>()
+        val keyBasedAttributes = List(10) { irAttribute<IrExpression, Int>(copyByDefault = true).create(null, "attr$it") }
+        val realAttributeValues = mutableMapOf<IrKeyBasedAttribute<IrExpression, Int>, Int?>()
 
         val rng = Random(1)
         repeat(1000) { i ->
-            val attr = attributes.random(rng)
+            val attr = keyBasedAttributes.random(rng)
             when (rng.nextInt(6)) {
                 0 -> {
                     element[attr] = i
@@ -179,7 +179,7 @@ class IrAttributeTests {
                     realAttributeValues[attr] = i
                 }
                 3 -> {
-                    assertEquals<Map<out IrAttribute<*, *>, Any?>>(element.attributes, realAttributeValues)
+                    assertEquals<Map<out IrKeyBasedAttribute<*, *>, Any?>>(element.keyBasedAttributes, realAttributeValues)
                 }
                 else -> {
                     assertEquals(realAttributeValues[attr], element[attr])

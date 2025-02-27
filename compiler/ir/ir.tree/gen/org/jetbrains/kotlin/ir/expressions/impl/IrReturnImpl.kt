@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -19,11 +20,33 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrReturnImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
-    override var value: IrExpression,
-    override var returnTargetSymbol: IrReturnTargetSymbol,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    value: IrExpression,
+    returnTargetSymbol: IrReturnTargetSymbol,
 ) : IrReturn() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override var value: IrExpression by valueAttribute
+    override var returnTargetSymbol: IrReturnTargetSymbol by returnTargetSymbolAttribute
+
+    init {
+        preallocateStorage(5)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(valueAttribute, value)
+        initAttribute(returnTargetSymbolAttribute, returnTargetSymbol)
+        initAttribute(typeAttribute, type)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrReturnImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrReturnImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrReturnImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrReturnImpl::class.java, 7, "type", null)
+        @JvmStatic private val valueAttribute = IrIndexBasedAttributeRegistry.createAttr<IrExpression>(IrReturnImpl::class.java, 3, "value", null)
+        @JvmStatic private val returnTargetSymbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrReturnTargetSymbol>(IrReturnImpl::class.java, 4, "returnTargetSymbol", null)
+    }
 }

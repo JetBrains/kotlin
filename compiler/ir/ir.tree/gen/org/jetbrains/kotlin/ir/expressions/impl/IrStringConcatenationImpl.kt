@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,11 +19,28 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrStringConcatenationImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var type: IrType,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
 ) : IrStringConcatenation() {
-    override var _attributeOwnerId: IrElement? = null
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var type: IrType by typeAttribute
+    override val arguments: MutableList<IrExpression> by argumentsAttribute
 
-    override val arguments: MutableList<IrExpression> = ArrayList(2)
+    init {
+        preallocateStorage(4)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(argumentsAttribute, ArrayList(2))
+        initAttribute(typeAttribute, type)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrStringConcatenationImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrStringConcatenationImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrStringConcatenationImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrStringConcatenationImpl::class.java, 7, "type", null)
+        @JvmStatic private val argumentsAttribute = IrIndexBasedAttributeRegistry.createAttr<MutableList<IrExpression>>(IrStringConcatenationImpl::class.java, 4, "arguments", null)
+    }
 }

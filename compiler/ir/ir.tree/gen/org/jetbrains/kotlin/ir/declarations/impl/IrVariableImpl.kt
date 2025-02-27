@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrIndexBasedAttributeRegistry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -25,30 +26,62 @@ import org.jetbrains.kotlin.name.Name
 
 class IrVariableImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var type: IrType,
-    override val symbol: IrVariableSymbol,
-    override var isVar: Boolean,
-    override var isConst: Boolean,
-    override var isLateinit: Boolean,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    type: IrType,
+    symbol: IrVariableSymbol,
+    isVar: Boolean,
+    isConst: Boolean,
+    isLateinit: Boolean,
 ) : IrVariable() {
-    override var _attributeOwnerId: IrElement? = null
-
-    override var annotations: List<IrConstructorCall> = emptyList()
-
+    override var startOffset: Int by startOffsetAttribute
+    override var endOffset: Int by endOffsetAttribute
+    override var _attributeOwnerId: IrElement? by _attributeOwnerIdAttribute
+    override var annotations: List<IrConstructorCall> by annotationsAttribute
+    override var origin: IrDeclarationOrigin by originAttribute
     override val factory: IrFactory
         get() = error("Create IrVariableImpl directly")
 
+    override var name: Name by nameAttribute
+    override var type: IrType by typeAttribute
     @ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptor
         get() = symbol.descriptor
 
-    override var initializer: IrExpression? = null
+    override val symbol: IrVariableSymbol by symbolAttribute
+    override var isVar: Boolean by isVarAttribute
+    override var isConst: Boolean by isConstAttribute
+    override var isLateinit: Boolean by isLateinitAttribute
+    override var initializer: IrExpression? by initializerAttribute
 
     init {
+        preallocateStorage(8)
+        initAttribute(startOffsetAttribute, startOffset)
+        initAttribute(endOffsetAttribute, endOffset)
+        initAttribute(originAttribute, origin)
+        initAttribute(nameAttribute, name)
+        initAttribute(typeAttribute, type)
+        initAttribute(symbolAttribute, symbol)
+        if (isLateinit) setFlagInternal(isLateinitAttribute, true)
+        if (isConst) setFlagInternal(isConstAttribute, true)
+        if (isVar) setFlagInternal(isVarAttribute, true)
+
         symbol.bind(this)
+    }
+    companion object {
+        @JvmStatic private val startOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrVariableImpl::class.java, 0, "startOffset", null)
+        @JvmStatic private val endOffsetAttribute = IrIndexBasedAttributeRegistry.createAttr<Int>(IrVariableImpl::class.java, 1, "endOffset", null)
+        @JvmStatic private val _attributeOwnerIdAttribute = IrIndexBasedAttributeRegistry.createAttr<IrElement?>(IrVariableImpl::class.java, 2, "_attributeOwnerId", null)
+        @JvmStatic private val annotationsAttribute = IrIndexBasedAttributeRegistry.createAttr<List<IrConstructorCall>>(IrVariableImpl::class.java, 3, "annotations", emptyList())
+        @JvmStatic private val originAttribute = IrIndexBasedAttributeRegistry.createAttr<IrDeclarationOrigin>(IrVariableImpl::class.java, 4, "origin", null)
+        @JvmStatic private val nameAttribute = IrIndexBasedAttributeRegistry.createAttr<Name>(IrVariableImpl::class.java, 6, "name", null)
+        @JvmStatic private val typeAttribute = IrIndexBasedAttributeRegistry.createAttr<IrType>(IrVariableImpl::class.java, 7, "type", null)
+        @JvmStatic private val symbolAttribute = IrIndexBasedAttributeRegistry.createAttr<IrVariableSymbol>(IrVariableImpl::class.java, 12, "symbol", null)
+        @JvmStatic private val isVarAttribute = IrIndexBasedAttributeRegistry.createFlag(IrVariableImpl::class.java, 62, "isVar")
+        @JvmStatic private val isConstAttribute = IrIndexBasedAttributeRegistry.createFlag(IrVariableImpl::class.java, 60, "isConst")
+        @JvmStatic private val isLateinitAttribute = IrIndexBasedAttributeRegistry.createFlag(IrVariableImpl::class.java, 59, "isLateinit")
+        @JvmStatic private val initializerAttribute = IrIndexBasedAttributeRegistry.createAttr<IrExpression?>(IrVariableImpl::class.java, 9, "initializer", null)
     }
 }
