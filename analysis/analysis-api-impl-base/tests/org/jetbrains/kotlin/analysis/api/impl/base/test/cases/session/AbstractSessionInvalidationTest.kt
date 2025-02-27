@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardModificationEventsByDirective
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -90,7 +90,7 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
             // Standalone modes) to have different test results (since `testPrefix` normally supports this functionality), but (1) we are
             // currently only testing the IDE mode and (2) the test results between different modes should not differ for session
             // invalidation in the first place.
-            testPrefix = resultFileSuffix,
+            testPrefixes = listOfNotNull(resultFileSuffix),
         )
     }
 

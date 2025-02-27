@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,7 @@ open class AbstractSymbolLightClassesStructureTestBase(
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override val currentExtension: String get() = throw UnsupportedOperationException()
     protected fun doTestInheritors(ktFiles: List<KtFile>, testServices: TestServices) {
-        val testData = getTestDataSibling(extension = INHERITORS_EXTENSION, testPrefix = testPrefix)
+        val testData = getTestDataSibling(extension = INHERITORS_EXTENSION, testPrefixes = listOf(testPrefix))
         if (testData.notExists()) return
         val project = ktFiles.first().project
 
@@ -63,8 +63,8 @@ open class AbstractSymbolLightClassesStructureTestBase(
 
         testServices.assertions.assertEqualsToTestDataFileSibling(
             actual = result,
-            testPrefix = testPrefix,
             extension = INHERITORS_EXTENSION,
+            testPrefixes = listOf(testPrefix),
         )
     }
 

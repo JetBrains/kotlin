@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,14 +11,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtSourceTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.*
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configureLibraryCompilationSupport
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configurePlatformEnvironmentConfigurators
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -32,11 +29,8 @@ import kotlin.io.path.nameWithoutExtension
 
 object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
-
     override val frontendKind: FrontendKind get() = FrontendKind.Fe10
-
-    override val testPrefix: String
-        get() = "descriptors"
+    override val testPrefixes: List<String> get() = listOf("descriptors")
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
@@ -72,7 +66,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
     }
 
     override fun computeTestDataPath(path: Path): Path {
-        val newPath = path.resolveSibling(path.nameWithoutExtension + "." + testPrefix + "." + path.extension)
+        val newPath = path.resolveSibling(path.nameWithoutExtension + "." + testPrefixes.single() + "." + path.extension)
         if (newPath.toFile().exists()) return newPath
         return path
     }

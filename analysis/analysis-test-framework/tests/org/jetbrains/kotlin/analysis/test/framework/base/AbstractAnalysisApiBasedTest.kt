@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -285,19 +285,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     /**
      * Checks whether the [actual] string matches the content of the test output file.
      *
-     * Check the [assertEqualsToTestDataFileSibling] overload accepting a prefix list for more information.
-     */
-    protected fun AssertionsService.assertEqualsToTestDataFileSibling(
-        actual: String,
-        extension: String = ".txt",
-        testPrefix: String? = configurator.testPrefix,
-    ) {
-        assertEqualsToTestDataFileSibling(actual, extension, listOfNotNull(testPrefix))
-    }
-
-    /**
-     * Checks whether the [actual] string matches the content of the test output file.
-     *
      * If a non-empty list of [testPrefixes] is specified, the function will firstly check whether test output file with any of the
      * specified prefixes exist. If so, it will check the [actual] content against that file (the first prefix has the highest priority).
      * Also, if files with latter prefixes, or if the non-prefixed file contains the same output, an assertion error is raised.
@@ -311,7 +298,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     protected fun AssertionsService.assertEqualsToTestDataFileSibling(
         actual: String,
         extension: String = ".txt",
-        testPrefixes: List<String>,
+        testPrefixes: List<String> = configurator.testPrefixes,
     ) {
         val expectedFiles = buildList {
             testPrefixes.mapNotNullTo(this) { findPrefixedTestDataSibling(extension, it) }
@@ -331,11 +318,11 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     /**
-     * Returns the test output file with a [testPrefix] if it exists, of the non-prefixed (default) test output file.
+     * Returns the test output file with any of [testPrefixes] if it exists, of the non-prefixed (default) test output file.
      */
-    protected fun getTestDataSibling(extension: String = "txt", testPrefix: String? = configurator.testPrefix): Path {
-        if (testPrefix != null) {
-            findPrefixedTestDataSibling(extension, testPrefix)?.let { return it }
+    protected fun getTestDataSibling(extension: String = "txt", testPrefixes: List<String> = configurator.testPrefixes): Path {
+        for (prefix in testPrefixes) {
+            findPrefixedTestDataSibling(extension, prefix)?.let { return it }
         }
 
         return getDefaultTestDataSibling(extension)
