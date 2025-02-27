@@ -65,7 +65,6 @@ class TaskOutputsBackupIT : KGPBaseTest() {
                         val projectPath = projectLayout.projectDirectory.asFile
                         return org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup(
                             fileSystemOperations = fileSystemOperations,
-                            buildDirectory = snapshotDir, // it's not actually used by TOB
                             snapshotsDir = snapshotDir,
                             outputsToRestore = listOf(
                                 projectPath.resolve("file1"),

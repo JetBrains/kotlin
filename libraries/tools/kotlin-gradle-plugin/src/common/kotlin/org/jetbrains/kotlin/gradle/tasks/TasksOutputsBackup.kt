@@ -25,7 +25,6 @@ import kotlin.streams.asSequence
 
 internal class TaskOutputsBackup(
     private val fileSystemOperations: FileSystemOperations,
-    val buildDirectory: DirectoryProperty,
     val snapshotsDir: Provider<Directory>,
 
     /**

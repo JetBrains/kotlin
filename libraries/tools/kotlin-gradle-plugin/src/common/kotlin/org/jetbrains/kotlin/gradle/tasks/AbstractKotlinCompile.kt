@@ -244,7 +244,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     buildMetrics.measure(GradleBuildTime.BACKUP_OUTPUT) {
                         TaskOutputsBackup(
                             fileSystemOperations,
-                            projectLayout.buildDirectory,
                             projectLayout.buildDirectory.dir("snapshot/kotlin/$name"),
                             outputsToRestore = allOutputFiles() - taskOutputsBackupExcludes.get(),
                             GradleKotlinLogger(logger),

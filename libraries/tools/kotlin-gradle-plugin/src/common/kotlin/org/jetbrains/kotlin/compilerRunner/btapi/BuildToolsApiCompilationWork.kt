@@ -44,7 +44,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
-        val buildDir: DirectoryProperty
         val metricsReporter: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>
     }
 
@@ -127,7 +126,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private fun initializeBackup(): TaskOutputsBackup? = if (parameters.snapshotsDir.isPresent) {
         TaskOutputsBackup(
             fileSystemOperations,
-            parameters.buildDir,
             parameters.snapshotsDir,
             parameters.taskOutputsToRestore.get(),
             log,

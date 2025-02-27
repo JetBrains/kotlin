@@ -43,7 +43,6 @@ internal class GradleCompilerRunnerWithWorkers(
             params.compilerWorkArguments.set(workArgs)
             if (taskOutputsBackup != null) {
                 params.taskOutputsToRestore.set(taskOutputsBackup.outputsToRestore)
-                params.buildDir.set(taskOutputsBackup.buildDirectory)
                 params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
                 params.metricsReporter.set(buildMetrics)
             }
@@ -61,7 +60,6 @@ internal class GradleCompilerRunnerWithWorkers(
             val taskOutputsBackup = if (parameters.snapshotsDir.isPresent) {
                 TaskOutputsBackup(
                     fileSystemOperations,
-                    parameters.buildDir,
                     parameters.snapshotsDir,
                     parameters.taskOutputsToRestore.get(),
                     logger,
@@ -98,7 +96,6 @@ internal class GradleCompilerRunnerWithWorkers(
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
-        val buildDir: DirectoryProperty
         val metricsReporter: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>
     }
 }

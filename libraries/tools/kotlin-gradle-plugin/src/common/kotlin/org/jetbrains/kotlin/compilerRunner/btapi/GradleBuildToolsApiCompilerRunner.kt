@@ -48,7 +48,6 @@ internal class GradleBuildToolsApiCompilerRunner(
             params.buildIdService.set(buildIdService)
             if (taskOutputsBackup != null) {
                 params.taskOutputsToRestore.set(taskOutputsBackup.outputsToRestore)
-                params.buildDir.set(taskOutputsBackup.buildDirectory)
                 params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
                 params.metricsReporter.set(buildMetrics)
             }
