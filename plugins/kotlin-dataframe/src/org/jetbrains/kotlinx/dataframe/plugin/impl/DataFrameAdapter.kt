@@ -35,19 +35,20 @@ fun SimpleCol.asDataColumn(): DataColumn<*> {
     return column
 }
 
-private fun List<AnyCol>.mapBack(): List<SimpleCol> =
-    map {
-        when (it) {
-            is ColumnGroup<*> -> {
-                SimpleColumnGroup(it.name(), it.columns().mapBack())
-            }
+private fun List<AnyCol>.mapBack(): List<SimpleCol> = map { it.asSimpleColumn() }
 
-            is FrameColumn<*> -> {
-                SimpleFrameColumn(it.name(), it[0].columns().mapBack())
-            }
+fun AnyCol.asSimpleColumn(): SimpleCol {
+    return when (this) {
+        is ColumnGroup<*> -> {
+            SimpleColumnGroup(name(), columns().mapBack())
+        }
 
-            else -> {
-                SimpleDataColumn(it.name(), it[0] as TypeApproximation)
-            }
+        is FrameColumn<*> -> {
+            SimpleFrameColumn(name(), this[0].columns().mapBack())
+        }
+
+        else -> {
+            SimpleDataColumn(name(), this[0] as TypeApproximation)
         }
     }
+}

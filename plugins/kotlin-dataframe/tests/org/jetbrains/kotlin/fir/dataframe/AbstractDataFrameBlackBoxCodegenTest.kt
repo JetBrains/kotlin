@@ -44,6 +44,9 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
             +IGNORE_DEXING
         }
+        builder.forTestsMatching("*/csDsl/*") {
+            builder.useAdditionalSourceProviders(::SelectionDslUtilsSourceProvider)
+        }
         builder.useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImplFixed)
         builder.useConfigurators(::DataFramePluginAnnotationsProvider)
         builder.useConfigurators(::ExperimentalExtensionRegistrarConfigurator)
@@ -74,6 +77,16 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
 
         override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
             return listOf(File(COMMON_SOURCE_PATH).toTestFile())
+        }
+    }
+
+    class SelectionDslUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+        companion object {
+            const val SELECTION_DSL_UTILS = "testData/selectionDslTestUtils.kt"
+        }
+
+        override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+            return listOf(File(SELECTION_DSL_UTILS).toTestFile())
         }
     }
 }

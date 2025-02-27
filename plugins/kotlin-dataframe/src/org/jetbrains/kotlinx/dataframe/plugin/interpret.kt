@@ -239,7 +239,7 @@ private fun KotlinTypeFacade.extractValue(
                     }
                 }
 
-                else -> null
+                else -> extractValue(it, reporter)
             }
 
         }

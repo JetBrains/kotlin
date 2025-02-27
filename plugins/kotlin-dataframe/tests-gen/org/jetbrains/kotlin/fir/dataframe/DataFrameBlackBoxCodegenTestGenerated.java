@@ -709,4 +709,110 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
       runTest("testData/box/colKinds/toDataFrame.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("testData/box/csDsl")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CsDsl {
+    @Test
+    @TestMetadata("all.kt")
+    public void testAll() {
+      runTest("testData/box/csDsl/all.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInCsDsl() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/box/csDsl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("colGroups.kt")
+    public void testColGroups() {
+      runTest("testData/box/csDsl/colGroups.kt");
+    }
+
+    @Test
+    @TestMetadata("cols.kt")
+    public void testCols() {
+      runTest("testData/box/csDsl/cols.kt");
+    }
+
+    @Test
+    @TestMetadata("colsAtAnyDepth.kt")
+    public void testColsAtAnyDepth() {
+      runTest("testData/box/csDsl/colsAtAnyDepth.kt");
+    }
+
+    @Test
+    @TestMetadata("colsOf.kt")
+    public void testColsOf() {
+      runTest("testData/box/csDsl/colsOf.kt");
+    }
+
+    @Test
+    @TestMetadata("columnNameFIlters.kt")
+    public void testColumnNameFIlters() {
+      runTest("testData/box/csDsl/columnNameFIlters.kt");
+    }
+
+    @Test
+    @TestMetadata("columnRange.kt")
+    public void testColumnRange() {
+      runTest("testData/box/csDsl/columnRange.kt");
+    }
+
+    @Test
+    @TestMetadata("drop.kt")
+    public void testDrop() {
+      runTest("testData/box/csDsl/drop.kt");
+    }
+
+    @Test
+    @TestMetadata("first.kt")
+    public void testFirst() {
+      runTest("testData/box/csDsl/first.kt");
+    }
+
+    @Test
+    @TestMetadata("frameCols.kt")
+    public void testFrameCols() {
+      runTest("testData/box/csDsl/frameCols.kt");
+    }
+
+    @Test
+    @TestMetadata("last.kt")
+    public void testLast() {
+      runTest("testData/box/csDsl/last.kt");
+    }
+
+    @Test
+    @TestMetadata("rename.kt")
+    public void testRename() {
+      runTest("testData/box/csDsl/rename.kt");
+    }
+
+    @Test
+    @TestMetadata("single.kt")
+    public void testSingle() {
+      runTest("testData/box/csDsl/single.kt");
+    }
+
+    @Test
+    @TestMetadata("take.kt")
+    public void testTake() {
+      runTest("testData/box/csDsl/take.kt");
+    }
+
+    @Test
+    @TestMetadata("valueCols.kt")
+    public void testValueCols() {
+      runTest("testData/box/csDsl/valueCols.kt");
+    }
+
+    @Test
+    @TestMetadata("withoutNulls.kt")
+    public void testWithoutNulls() {
+      runTest("testData/box/csDsl/withoutNulls.kt");
+    }
+  }
 }
