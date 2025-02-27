@@ -125,18 +125,20 @@ internal class ReadDelimStr : AbstractInterpreter<PluginDataFrameSchema>() {
 internal class ReadJsonStr : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.text: String by arg()
     val Arguments.typeClashTactic: JSON.TypeClashTactic by arg(defaultValue = Present(ARRAY_AND_VALUE_COLUMNS))
+    val Arguments.unifyNumbers: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return DataFrame.readJsonStr(text, typeClashTactic = typeClashTactic).schema().toPluginDataFrameSchema()
+        return DataFrame.readJsonStr(text, typeClashTactic = typeClashTactic, unifyNumbers = unifyNumbers).schema().toPluginDataFrameSchema()
     }
 }
 
 internal class DataRowReadJsonStr : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.text: String by arg()
     val Arguments.typeClashTactic: JSON.TypeClashTactic by arg(defaultValue = Present(ARRAY_AND_VALUE_COLUMNS))
+    val Arguments.unifyNumbers: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return DataRow.readJsonStr(text, typeClashTactic = typeClashTactic).schema().toPluginDataFrameSchema()
+        return DataRow.readJsonStr(text, typeClashTactic = typeClashTactic, unifyNumbers = unifyNumbers).schema().toPluginDataFrameSchema()
     }
 }
 
