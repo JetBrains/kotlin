@@ -248,13 +248,13 @@ fun IrFunction.getObjCFactoryInitMethodInfo(): ObjCMethodInfo? {
     return objCMethodInfo(factoryAnnotation)
 }
 
-fun inferObjCSelector(descriptor: FunctionDescriptor): String = if (descriptor.valueParameters.isEmpty()) {
-    descriptor.name.asString()
+fun inferObjCSelector(function: IrSimpleFunction): String = if (function.valueParameters.isEmpty()) {
+    function.name.asString()
 } else {
     buildString {
-        append(descriptor.name)
+        append(function.name)
         append(':')
-        descriptor.valueParameters.drop(1).forEach {
+        function.valueParameters.drop(1).forEach {
             append(it.name)
             append(':')
         }

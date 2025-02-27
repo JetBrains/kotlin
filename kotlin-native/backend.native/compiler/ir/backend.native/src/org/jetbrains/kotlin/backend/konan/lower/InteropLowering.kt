@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -338,7 +336,6 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 private class InteropTransformerPart1(
         generationState: NativeGenerationState,
         irFile: IrFile?,
@@ -471,9 +468,9 @@ private class InteropTransformerPart1(
     }
 
     private fun IrConstructor.overridesConstructor(other: IrConstructor): Boolean {
-        return this.descriptor.valueParameters.size == other.descriptor.valueParameters.size &&
-                this.descriptor.valueParameters.all {
-                    val otherParameter = other.descriptor.valueParameters[it.index]
+        return this.valueParameters.size == other.valueParameters.size &&
+                this.valueParameters.all {
+                    val otherParameter = other.valueParameters[it.indexInOldValueParameters]
                     it.name == otherParameter.name && it.type == otherParameter.type
                 }
     }
@@ -483,13 +480,14 @@ private class InteropTransformerPart1(
         require(function.valueParameters.all { it.type.isObjCObjectType() }) { renderCompilerError(function) }
         require(function.returnType.isUnit()) { renderCompilerError(function) }
 
-        return generateFunctionImp(inferObjCSelector(function.descriptor), function)
+        return generateFunctionImp(inferObjCSelector(function), function)
     }
 
     private fun generateOutletSetterImp(property: IrProperty): IrSimpleFunction {
         require(property.isVar) { renderCompilerError(property) }
-        require(property.getter?.extensionReceiverParameter == null) { renderCompilerError(property) }
-        require(property.descriptor.type.isObjCObjectType()) { renderCompilerError(property) }
+        val getter = property.getter!!
+        require(getter.extensionReceiverParameter == null) { renderCompilerError(property) }
+        require(getter.returnType.isObjCObjectType()) { renderCompilerError(property) }
 
         val name = property.name.asString()
         val selector = "set${name.replaceFirstChar(Char::uppercaseChar)}:"
@@ -616,11 +614,11 @@ private class InteropTransformerPart1(
         require(irClass.companionObject()?.getSuperClassNotAny()?.hasFields() != true) { renderCompilerError(irClass) }
 
         var hasObjCClassSupertype = false
-        irClass.descriptor.defaultType.constructor.supertypes.forEach {
-            val descriptor = it.constructor.declarationDescriptor as ClassDescriptor
-            require(descriptor.isObjCClass()) { renderCompilerError(irClass) }
+        irClass.superTypes.forEach {
+            val superClass = it.classOrNull?.owner
+            require(superClass != null && superClass.isObjCClass()) { renderCompilerError(irClass) }
 
-            if (descriptor.kind == ClassKind.CLASS) {
+            if (superClass.kind == ClassKind.CLASS) {
                 hasObjCClassSupertype = true
             }
         }
@@ -685,16 +683,11 @@ private class InteropTransformerPart1(
                 )
 
                 val superConstructor = delegatingCallConstructingClass
-                        .constructors.single { it.valueParameters.size == 0 }.symbol
+                        .constructors.single { it.valueParameters.size == 0 }
 
                 return builder.irBlock(expression) {
                     // Required for the IR to be valid, will be ignored in codegen:
-                    +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
-                            startOffset,
-                            endOffset,
-                            context.irBuiltIns.unitType,
-                            superConstructor
-                    )
+                    +irDelegatingConstructorCall(superConstructor)
                     +irCall(symbols.interopObjCObjectSuperInitCheck).apply {
                         extensionReceiver = irGet(constructedClass.thisReceiver!!)
                         putValueArgument(0, initCall)
@@ -902,7 +895,6 @@ private class InteropLoweringPart2(val generationState: NativeGenerationState) :
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 private class InteropTransformerPart2(
         generationState: NativeGenerationState,
         irFile: IrFile?,
@@ -1106,11 +1098,11 @@ private class InteropTransformerPart2(
         val signatureTypes = target.allParameters.map { it.type } + target.returnType
 
         expression.symbol.owner.typeParameters.indices.forEach { index ->
-            val typeArgument = expression.typeArguments[index]!!.toKotlinType()
-            val signatureType = signatureTypes[index].toKotlinType()
+            val typeArgument = expression.typeArguments[index]!!
+            val signatureType = signatureTypes[index]
 
-            require(typeArgument.constructor == signatureType.constructor &&
-                    typeArgument.isMarkedNullable == signatureType.isMarkedNullable) { renderCompilerError(expression) }
+            require(typeArgument.erasedUpperBound == signatureType.erasedUpperBound &&
+                    typeArgument.isNullable() == signatureType.isNullable()) { renderCompilerError(expression) }
         }
 
         builder.at(expression)
