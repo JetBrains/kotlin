@@ -19,5 +19,4 @@ abstract class SirStruct : SirDeclarationContainer(), SirNamedDeclaration {
     abstract override val attributes: List<SirAttribute>
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
-    abstract val typeParameters: List<SirParameter>
 }

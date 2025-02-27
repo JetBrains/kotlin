@@ -22,7 +22,6 @@ class SirStructBuilder {
     val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
-    val typeParameters: MutableList<SirParameter> = mutableListOf()
 
     fun build(): SirStruct {
         return SirStructImpl(
@@ -32,7 +31,6 @@ class SirStructBuilder {
             attributes,
             name,
             declarations,
-            typeParameters,
         )
     }
 
@@ -58,6 +56,5 @@ inline fun buildStructCopy(original: SirStruct, init: SirStructBuilder.() -> Uni
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
-    copyBuilder.typeParameters.addAll(original.typeParameters)
     return copyBuilder.apply(init).build()
 }

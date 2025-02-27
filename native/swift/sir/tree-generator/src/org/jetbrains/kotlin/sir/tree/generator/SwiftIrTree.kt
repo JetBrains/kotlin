@@ -100,7 +100,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
         parent(declarationContainer)
-        +listField("typeParameters", parameterType)
     }
 
     val protocol: Element by element {
