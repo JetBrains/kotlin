@@ -12,6 +12,8 @@ interface CompilationOutcome {
 
     val uniqueLogLines: Map<LogLevel, Set<String>>
 
+    val result: CompilationResult
+
     fun requireLogLevel(logLevel: LogLevel)
 
     fun expectFail()
