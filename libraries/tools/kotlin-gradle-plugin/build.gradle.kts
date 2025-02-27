@@ -472,6 +472,11 @@ gradlePlugin {
 // Gradle plugins functional tests
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
+    // Workaround for KT-75550
+    tasks.named("gradle85Jar") {
+        enabled = false
+    }
+
     val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_85
     val functionalTestSourceSet = sourceSets.create("functionalTest") {
         val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
