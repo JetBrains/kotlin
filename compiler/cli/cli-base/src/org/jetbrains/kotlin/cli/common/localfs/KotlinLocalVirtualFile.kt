@@ -21,9 +21,10 @@ class KotlinLocalVirtualFile(
     private var _name: String? = null
     private var _parent: KotlinLocalVirtualFile? = parent
 
-    private var _isDirectory: Boolean? = null
-
     private var _children: Array<VirtualFile>? = null
+
+    private var _isDirectory: Boolean = file.isDirectory
+    private val _timeStamp = file.lastModified()
 
     override fun getName(): String {
         _name?.let { return it }
@@ -43,8 +44,7 @@ class KotlinLocalVirtualFile(
     }
 
     override fun isDirectory(): Boolean {
-        _isDirectory?.let { return it }
-        return file.isDirectory.also { _isDirectory = it }
+        return _isDirectory
     }
 
     override fun isValid(): Boolean {
@@ -109,7 +109,7 @@ class KotlinLocalVirtualFile(
     }
 
     override fun getTimeStamp(): Long {
-        return file.lastModified()
+        return _timeStamp
     }
 
     override fun getLength(): Long {
@@ -133,18 +133,15 @@ class KotlinLocalVirtualFile(
     /**
      * [KotlinLocalVirtualFile] is a transparent view to the file-system, so it doesn't
      *   matter if two files came from the same instance of [KotlinLocalFileSystem] or
-     *   different instances
+     *   different instances.
+     *
+     * Two directories with the same path are always equal.
      */
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as KotlinLocalVirtualFile
-
-        return file == other.file
+        return other is KotlinLocalVirtualFile && file == other.file && (_isDirectory || _timeStamp == other._timeStamp)
     }
 
     override fun hashCode(): Int {
-        return file.hashCode()
+        return 31 * file.hashCode() + (if (_isDirectory) 0 else _timeStamp.hashCode())
     }
 }
