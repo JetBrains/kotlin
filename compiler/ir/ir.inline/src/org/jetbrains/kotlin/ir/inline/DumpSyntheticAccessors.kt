@@ -175,7 +175,7 @@ private class SyntheticAccessorsDumper(
 ) : IrVisitorVoid() {
     private val stack = ArrayList<StackFrame>()
     private val dump = StringBuilder()
-    private val localDeclarations = mutableSetOf<IrSymbol>()
+    private val localDeclarations = LinkedHashSet<IrSymbol>()
 
     fun getDump(): String? = dump.toString().takeIf(String::isNotBlank)
 
@@ -232,6 +232,12 @@ private class SyntheticAccessorsDumper(
         dump.appendIndent(indent = stack.size).append(comment).appendIrElement(function)
     }
 
+    private fun dumpSimpleFunctionUseSite(function: IrSimpleFunction) {
+        val comment = "/* LOCAL use-site @${localDeclarations.indexOf(function.symbol)} */ "
+        dump.appendIndent(indent = stack.size).append(comment).appendIrElement(function)
+    }
+
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -269,6 +275,21 @@ private class SyntheticAccessorsDumper(
         if (expression.invokeFunction.symbol in localDeclarations) {
             dumpCurrentStackIfSymbolIsObserved(expression.invokeFunction.symbol)
             dumpInvoke(expression.invokeFunction)
+        }
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
+        super.visitRichPropertyReference(expression)
+
+        if (expression.getterFunction.symbol in localDeclarations) {
+            dumpCurrentStackIfSymbolIsObserved(expression.getterFunction.symbol)
+            dumpSimpleFunctionUseSite(expression.getterFunction)
+        }
+
+        val setterFunction = expression.setterFunction
+        if (setterFunction != null && setterFunction.symbol in localDeclarations) {
+            dumpCurrentStackIfSymbolIsObserved(setterFunction.symbol)
+            dumpSimpleFunctionUseSite(setterFunction)
         }
     }
 

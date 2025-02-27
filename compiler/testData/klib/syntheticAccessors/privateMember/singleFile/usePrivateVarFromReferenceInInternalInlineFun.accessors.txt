@@ -11,6 +11,8 @@ public class A
             /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
         /* LOCAL declaration @1 */ local fun <set-privateVar>(<this>: A, p0: Int)
             /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+        /* LOCAL use-site @0 */ local fun <get-privateVar>(<this>: A): Int
+        /* LOCAL use-site @1 */ local fun <set-privateVar>(<this>: A, p0: Int)
     /* ACCESSOR declaration */ public /* static */ fun access$<get-privateVar>($this: A): Int
         /* TARGET use-site */ $this.<get-privateVar>()
     /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
@@ -20,11 +22,17 @@ public fun box(): String
         /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
     /* LOCAL declaration @3 */ local fun <set-privateVar>(<this>: A, p0: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    /* LOCAL use-site @2 */ local fun <get-privateVar>(<this>: A): Int
+    /* LOCAL use-site @3 */ local fun <set-privateVar>(<this>: A, p0: Int)
     /* LOCAL declaration @4 */ local fun <get-privateVar>(<this>: A): Int
         /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
     /* LOCAL declaration @5 */ local fun <set-privateVar>(<this>: A, p0: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    /* LOCAL use-site @4 */ local fun <get-privateVar>(<this>: A): Int
+    /* LOCAL use-site @5 */ local fun <set-privateVar>(<this>: A, p0: Int)
     /* LOCAL declaration @6 */ local fun <get-privateVar>(<this>: A): Int
         /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
     /* LOCAL declaration @7 */ local fun <set-privateVar>(<this>: A, p0: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    /* LOCAL use-site @6 */ local fun <get-privateVar>(<this>: A): Int
+    /* LOCAL use-site @7 */ local fun <set-privateVar>(<this>: A, p0: Int)
