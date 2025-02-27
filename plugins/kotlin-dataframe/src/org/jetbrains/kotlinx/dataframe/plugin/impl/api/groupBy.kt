@@ -28,7 +28,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import org.jetbrains.kotlinx.dataframe.plugin.interpret
 import org.jetbrains.kotlinx.dataframe.plugin.loadInterpreter
 
-class GroupBy(val keys: PluginDataFrameSchema, val groups: PluginDataFrameSchema)
+class GroupBy(val keys: PluginDataFrameSchema, val groups: PluginDataFrameSchema) {
+    companion object {
+        val EMPTY = GroupBy(PluginDataFrameSchema.EMPTY, PluginDataFrameSchema.EMPTY)
+    }
+}
 
 class DataFrameGroupBy : AbstractInterpreter<GroupBy>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
