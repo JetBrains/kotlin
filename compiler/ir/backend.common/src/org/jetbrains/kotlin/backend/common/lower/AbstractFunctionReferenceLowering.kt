@@ -255,24 +255,21 @@ abstract class AbstractFunctionReferenceLowering<C: CommonBackendContext>(val co
             parameters += createDispatchReceiverParameterWithClassParent()
             require(superFunction.typeParameters.isEmpty()) { "Fun interface abstract function can't have type parameters" }
 
-            val typeSubstitutor = IrTypeSubstitutor(
-                extractTypeParameters(superInterfaceType.classOrFail.owner).map { it.symbol },
-                (superInterfaceType as IrSimpleType).arguments,
-                allowEmptySubstitution = true
-            )
-
+            // In case a lambda parameter's type is inferred by the frontend to an intersection of unrelated types, in IR
+            // it will be approximated to `Nothing`, since function parameters are contravariant and `Nothing` is the ultimate subtype.
+            // We cannot use `Nothing` as a parameter type — semantically it would mean that the `invoke` method can never be called.
+            // Some targets like Wasm can break because of this.
+            // So, we just copy the type from the original lambda verbatim to account for this.
             val nonDispatchParameters = if (isLambda) {
-                superFunction.nonDispatchParameters.mapIndexed { i, it ->
-                    it.copyTo(
-                        this,
-                        startOffset = invokeFunction.parameters[i].startOffset,
-                        endOffset = invokeFunction.parameters[i].endOffset,
-                        name = invokeFunction.parameters[i].name,
-                        type = typeSubstitutor.substitute(it.type),
-                        defaultValue = null,
-                    )
+                invokeFunction.parameters.subList(boundFields.size, invokeFunction.parameters.size).map {
+                    it.copyTo(this, kind = IrParameterKind.Regular)
                 }
             } else {
+                val typeSubstitutor = IrTypeSubstitutor(
+                    extractTypeParameters(superInterfaceType.classOrFail.owner).map { it.symbol },
+                    (superInterfaceType as IrSimpleType).arguments,
+                    allowEmptySubstitution = true
+                )
                 superFunction.nonDispatchParameters.map {
                     it.copyTo(
                         this,
