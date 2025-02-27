@@ -27,7 +27,7 @@ class IrAttributeTests {
         IrConstImpl.constNull(0, 0, IrErrorTypeImpl(null, listOf(), Variance.INVARIANT))
 
     private val IrElement.allAttributes: Map<IrAttribute<*, *>, Any>
-        get() = (this as IrElementBase).allAttributes
+        get() = (this as IrElementBase).attributes
 
 
     @Test
@@ -35,11 +35,11 @@ class IrAttributeTests {
         val element = createIrElement()
 
         assertEquals(null, element.foo)
-        assertTrue(element.allAttributes.isEmpty())
+        assertTrue(element.attributes.isEmpty())
 
         element.foo = 10
         assertEquals(10, element.foo)
-        assertEquals<Map<IrAttribute<*, *>, Any?>>(mapOf(fooAttr to 10), element.allAttributes)
+        assertEquals<Map<IrAttribute<*, *>, Any?>>(mapOf(fooAttr to 10), element.attributes)
     }
 
     @Test
@@ -83,7 +83,7 @@ class IrAttributeTests {
         assertEquals("test", element.baz)
         assertEquals<Map<IrAttribute<*, *>, Any?>>(
             mapOf(fooAttr to 10, barAttr to true, bazAttr to "test"),
-            element.allAttributes
+            element.attributes
         )
 
         element.foo = 200
@@ -92,7 +92,7 @@ class IrAttributeTests {
         assertEquals(null, element.bar)
         assertEquals<Map<IrAttribute<*, *>, Any?>>(
             mapOf(fooAttr to 200, bazAttr to "test"),
-            element.allAttributes
+            element.attributes
         )
     }
 
@@ -106,7 +106,7 @@ class IrAttributeTests {
             element.foo = it
             assertEquals(it, element.foo)
             assertEquals(true, element.bar)
-            assertEquals(2, element.allAttributes.size)
+            assertEquals(2, element.attributes.size)
 
             element.foo = null
         }
@@ -131,7 +131,7 @@ class IrAttributeTests {
                     realAttributeValues.remove(attr)
                 }
                 2 -> {
-                    assertEquals<Map<out IrAttribute<*, *>, Any?>>(element.allAttributes, realAttributeValues)
+                    assertEquals<Map<out IrAttribute<*, *>, Any?>>(element.attributes, realAttributeValues)
                 }
                 else -> {
                     assertEquals(realAttributeValues[attr], element[attr])
