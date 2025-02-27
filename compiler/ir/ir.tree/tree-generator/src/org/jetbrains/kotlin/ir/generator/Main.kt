@@ -39,7 +39,7 @@ private fun TreeGenerator.printIrTree(model: Model<Element>, generationPath: Fil
     val implementations = model.elements.flatMap { it.implementations }
     InterfaceAndAbstractClassConfigurator((model.elements + implementations))
         .configureInterfacesAndAbstractClasses()
-    addPureAbstractElement(model.elements, elementBaseType)
+    model.addPureAbstractElement(elementBaseType)
 
     printElements(model, ::ElementPrinter)
     printElementImplementations(implementations, ::ImplementationPrinter)
@@ -65,6 +65,7 @@ private fun TreeGenerator.printIrSymbolTree(generationPath: File, model: Model<E
     val implementations = symbolModel.elements.flatMap { it.implementations }
     InterfaceAndAbstractClassConfigurator((symbolModel.elements + implementations))
         .configureInterfacesAndAbstractClasses()
+    model.addPureAbstractElement(elementBaseType)
 
     val elementsToPrint = symbolModel.elements.filter { it.doPrint }
     generatedFiles += printGeneratedTypesIntoSingleFile(

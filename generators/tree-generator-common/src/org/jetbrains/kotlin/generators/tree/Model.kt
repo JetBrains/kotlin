@@ -23,4 +23,12 @@ data class Model<Element : AbstractElement<Element, *, *>>(
             recurse(element)
         }
     }
+
+    fun addPureAbstractElement(pureAbstractElement: ClassRef<*>) {
+        for (el in elements) {
+            if (el.needPureAbstractElement) {
+                el.otherParents.add(pureAbstractElement)
+            }
+        }
+    }
 }

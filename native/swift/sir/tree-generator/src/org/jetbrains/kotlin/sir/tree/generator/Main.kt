@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.sir.tree.generator
 
 import org.jetbrains.kotlin.generators.tree.InterfaceAndAbstractClassConfigurator
-import org.jetbrains.kotlin.generators.tree.addPureAbstractElement
 import org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes
 import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
@@ -32,7 +31,7 @@ fun main(args: Array<String>) {
         val implementations = model.elements.flatMap { it.implementations }
         InterfaceAndAbstractClassConfigurator((model.elements + implementations))
             .configureInterfacesAndAbstractClasses()
-        addPureAbstractElement(model.elements, pureAbstractElementType)
+        model.addPureAbstractElement(pureAbstractElementType)
 
         val builderConfigurator = BuilderConfigurator(model)
         builderConfigurator.configureBuilders()

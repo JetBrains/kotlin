@@ -10,4 +10,8 @@ import org.jetbrains.kotlin.generators.tree.imports.Importable
 interface ImplementationKindOwner : TypeRef, Importable {
     var kind: ImplementationKind?
     val allParents: List<ImplementationKindOwner>
+
+    val needPureAbstractElement: Boolean
+        get() = kind?.isInterface != true &&
+                allParents.none<ImplementationKindOwner> { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
 }
