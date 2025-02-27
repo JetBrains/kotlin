@@ -12,14 +12,16 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
-import org.jetbrains.kotlin.sir.providers.SirModuleProvider
+import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
+import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
@@ -28,57 +30,44 @@ import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.sequences.forEach
 
-internal class SwiftModuleBuildResults(
-    val module: SirModule,
-    val packages: Set<FqName>,
-)
-
-internal fun KaSession.initializeSirModule(
-    moduleWithScope: KaModules,
+internal fun buildSirSession(
+    kaModules: KaModules,
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
-    moduleProvider: SirModuleProvider,
-): SwiftModuleBuildResults {
-    val moduleForPackageEnums = buildModule { name = config.moduleForPackagesName }
-    val sirSession = StandaloneSirSession(
-        useSiteModule = moduleWithScope.useSiteModule,
-        moduleToTranslate = moduleWithScope.mainModule,
+    referenceHandler: SirKaClassReferenceHandler? = null
+): StandaloneSirSession =
+    StandaloneSirSession(
+        useSiteModule = kaModules.useSiteModule,
+        moduleToTranslate = kaModules.mainModule,
         errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
         unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
-        moduleForPackageEnums = moduleForPackageEnums,
+        moduleForPackageEnums = buildModule { name = config.moduleForPackagesName },
         unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
-        moduleProvider = moduleProvider,
+        moduleProvider = SirOneToOneModuleProvider(),
         targetPackageFqName = moduleConfig.targetPackageFqName,
+        referencedTypeHandler = referenceHandler
     )
 
-    // this lines produce critical side effect
-    // This will traverse every top level declaration of a given provider
-    // This in turn inits every root declaration that will be consumed down the pipe by swift export
-    traverseTopLevelDeclarationsInScopes(sirSession, moduleWithScope.mainModule)
-
-    return with(moduleProvider) {
-        SwiftModuleBuildResults(
-            module = moduleWithScope.mainModule.sirModule(),
-            packages = sirSession.enumGenerator.collectedPackages,
-        )
-    }
-}
-
-private fun KaSession.traverseTopLevelDeclarationsInScopes(
-    sirSession: StandaloneSirSession,
+internal fun KaSession.translateModule(
+    sirSession: SirSession,
     module: KaLibraryModule,
+    scopeToDeclarations: (KaScope) -> Sequence<KaDeclarationSymbol> = { it.declarations },
 ) {
-    KlibScope(module, useSiteSession).allDeclarations(sirSession, useSiteSession)
+    val scope = KlibScope(module, useSiteSession)
+    extractAllTransitively(scopeToDeclarations(scope), sirSession, useSiteSession)
         .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
-        .forEach { it.first.addChild { it.second } }
+        .forEach { (parent, declaration) -> parent.addChild { declaration } }
 }
 
-private fun KaScope.allDeclarations(sirSession: StandaloneSirSession, kaSession: KaSession): Sequence<SirDeclaration> =
-    with(sirSession) {
-        generateSequence(this@allDeclarations.extractDeclarations(kaSession)) {
-            it.filterIsInstance<SirDeclarationContainer>().flatMap { it.declarations }.takeIf { it.count() > 0 }
-        }.flatMap { it }
-    }
+private fun extractAllTransitively(
+    declarations: Sequence<KaDeclarationSymbol>,
+    sirSession: SirSession,
+    kaSession: KaSession,
+): Sequence<SirDeclaration> = with(sirSession) {
+    generateSequence(declarations.extractDeclarations(kaSession)) {
+        it.filterIsInstance<SirDeclarationContainer>().flatMap { it.declarations }
+    }.flatten()
+}
 
 /**
  * Post-processed result of [buildStandaloneAnalysisAPISession].
