@@ -15,6 +15,7 @@ import java.util.concurrent.TimeoutException
 
 private class CompilationOutcomeImpl(
     rawLogLines: Map<LogLevel, Collection<String>>,
+    override val actualResult: CompilationResult
 ) : CompilationOutcome {
     private val _logLines by lazy {
         rawLogLines.mapValues { (_, lines) -> lines.toList() }
@@ -90,7 +91,7 @@ abstract class AbstractModule(
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
         val result = compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
-        val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel)
+        val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)
         try {
             assertions(outcome, this)
             assertEquals(outcome.expectedResult, result) {
