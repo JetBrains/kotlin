@@ -8,13 +8,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
@@ -51,23 +47,12 @@ abstract class KaBaseSymbolProvider<T : KaSession> : KaBaseSessionComponent<T>()
     protected inline fun <T : PsiElement, R> T.createPsiBasedSymbolWithValidityAssertion(builder: () -> R): R = withValidityAssertion {
         with(analysisSession) {
             if (!canBeAnalysed() && !Registry.`is`("kotlin.analysis.unrelatedSymbolCreation.allowed", false)) {
-                if (!useSiteModule.suppressException) {
-                    throw KaBaseIllegalPsiException(this, this@createPsiBasedSymbolWithValidityAssertion)
-                }
+                throw KaBaseIllegalPsiException(this, this@createPsiBasedSymbolWithValidityAssertion)
             }
         }
 
         builder()
     }
-
-    // TODO: drop this suppression for libraries as soon as KT-74960 is fixed
-    @OptIn(KaPlatformInterface::class)
-    val KaModule.suppressException: Boolean
-        get() = when (this) {
-            is KaLibrarySourceModule -> true
-            is KaDanglingFileModule -> contextModule.suppressException
-            else -> false
-        }
 
     @KaImplementationDetail
     class KaBaseIllegalPsiException(session: KaSession, psi: PsiElement) : KotlinIllegalArgumentExceptionWithAttachments(

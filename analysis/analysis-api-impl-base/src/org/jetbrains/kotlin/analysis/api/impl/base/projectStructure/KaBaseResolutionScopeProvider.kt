@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
@@ -36,6 +38,22 @@ class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
 
         return buildList {
             modules.mapTo(this) { it.contentScope }
+            if (module is KaLibrarySourceModule || module is KaLibraryModule) {
+                // `KaLibrarySourceModule` doesn't have any dependencies from the module's perspective.
+                // However, library source modules can still depend on other libraries.
+                // That's why resolution scopes of `KaLibrarySourceModule`s and `KaLibraryModule`s
+                // must contain the unified content scope of all libraries the project depends on.
+                // This logic is similar to the logic used in `LLFirAbstractSessionFactory.doCreateLibrarySession`.
+                //
+                // After KT-64236 all `KaLibrarySourceModule`s and `KaLibraryModule`
+                // will have a separate 'rest libraries module' as a regular dependency.
+                // The content scope of this module will be exactly the library scope of the given project,
+                // so this workaround will no longer be needed.
+                add(
+                    ProjectScope.getLibrariesScope(module.project)
+                        .intersectWith(GlobalSearchScope.notScope(module.contentScope))
+                )
+            }
             if (modules.none { it is KaBuiltinsModule }) {
                 // `KaBuiltinsModule` is a module containing builtins declarations for the target platform.
                 // It is never a dependency of any `KaModule`,
