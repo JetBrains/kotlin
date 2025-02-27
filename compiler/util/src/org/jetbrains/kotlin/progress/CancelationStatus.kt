@@ -31,7 +31,6 @@ object ProgressIndicatorAndCompilationCanceledStatus {
     private var canceledStatus: ThreadLocal<CompilationCanceledStatus?> = ThreadLocal.withInitial { null }
 
     @JvmStatic
-    @Synchronized
     fun setCompilationCanceledStatus(newCanceledStatus: CompilationCanceledStatus?) {
         canceledStatus.set(newCanceledStatus)
     }
