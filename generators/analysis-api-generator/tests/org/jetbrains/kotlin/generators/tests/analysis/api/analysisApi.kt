@@ -137,11 +137,14 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         }
     }
 
-    test<AbstractResolveDanglingFileReferenceTest>(
-        filter = frontendIs(FrontendKind.Fir)
-                and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
-    ) {
-        model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+    group(filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
+        test<AbstractPhysicalResolveDanglingFileReferenceTest> {
+            model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        test<AbstractNonPhysicalResolveDanglingFileReferenceTest> {
+            model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
     }
 
     component(

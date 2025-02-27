@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferenceTest() {
+    protected abstract val shouldCreatePhysicalCopy: Boolean
+
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
 
@@ -55,7 +57,7 @@ abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferen
     ): Collection<ResolveTestCaseContext<KtReference?>> {
         val caretPositions = testServices.expressionMarkerProvider.getAllCarets(file)
 
-        val ktPsiFactory = KtPsiFactory.contextual(file, markGenerated = true, eventSystemEnabled = true)
+        val ktPsiFactory = KtPsiFactory.contextual(file, markGenerated = true, eventSystemEnabled = shouldCreatePhysicalCopy)
         val fakeKtFile = ktPsiFactory.createFile("fake.kt", file.text)
 
         if (module.testModule.directives.contains(Directives.COPY_RESOLUTION_MODE)) {
@@ -85,4 +87,14 @@ abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferen
 
         val USER_DATA_COPY by directive(description = "Provide the original file as a user data property")
     }
+}
+
+abstract class AbstractPhysicalResolveDanglingFileReferenceTest : AbstractResolveDanglingFileReferenceTest() {
+    override val shouldCreatePhysicalCopy: Boolean
+        get() = true
+}
+
+abstract class AbstractNonPhysicalResolveDanglingFileReferenceTest : AbstractResolveDanglingFileReferenceTest() {
+    override val shouldCreatePhysicalCopy: Boolean
+        get() = false
 }
