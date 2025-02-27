@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleS
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.DispatchingTestModuleCompiler
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
-    override val testPrefix: String get() = "librarySource"
+    override val testPrefixes: List<String> get() = listOf("librarySource")
 
     override fun configureTest(
         builder: TestConfigurationBuilder,

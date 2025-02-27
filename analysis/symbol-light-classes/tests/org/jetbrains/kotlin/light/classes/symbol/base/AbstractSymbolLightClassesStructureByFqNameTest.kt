@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,7 +31,7 @@ abstract class AbstractSymbolLightClassesStructureByFqNameTest(
             psiClass?.let { handleClass(it) } ?: append(LightClassTestCommon.NOT_GENERATED_DIRECTIVE)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(result, testPrefix = testPrefix)
+        testServices.assertions.assertEqualsToTestDataFileSibling(result, testPrefixes = listOf(testPrefix))
 
         doTestInheritors(ktFiles, testServices)
     }
