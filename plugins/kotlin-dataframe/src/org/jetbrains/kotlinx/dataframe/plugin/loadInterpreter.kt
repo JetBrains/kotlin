@@ -106,6 +106,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf3
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameXs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataRowReadJsonStr
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Drop0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Drop1
@@ -131,6 +132,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMinOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceExpression
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReducePredicate
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByXs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Last0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Last1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Last2
@@ -435,6 +437,8 @@ internal inline fun <reified T> String.load(): T {
         "GroupByReduceInto" -> GroupByReduceInto()
         "GroupByMaxOf" -> GroupByMaxOf()
         "GroupByMinOf" -> GroupByMinOf()
+        "DataFrameXs" -> DataFrameXs()
+        "GroupByXs" -> GroupByXs()
         else -> error("$this")
     } as T
 }
