@@ -44,6 +44,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         return state.scriptByFilePathMap[path]
     }
 
+    override fun getFirReplSnippetContainerFile(symbol: FirReplSnippetSymbol): FirFile? {
+        return state.snippetContainerMap[symbol]
+    }
+
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return state.classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
     }
@@ -206,6 +210,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             replSnippet: FirReplSnippet,
             data: FirRecorderData,
         ) {
+            data.state.snippetContainerMap[replSnippet.symbol] = data.file
             replSnippet.body.acceptChildren(this, data)
             super.visitReplSnippet(replSnippet, data)
         }
@@ -226,6 +231,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         val callableContainerMap = mutableMapOf<FirCallableSymbol<*>, FirFile>()
         val scriptContainerMap = mutableMapOf<FirScriptSymbol, FirFile>()
         val scriptByFilePathMap = mutableMapOf<String, FirScriptSymbol>()
+        val snippetContainerMap = mutableMapOf<FirReplSnippetSymbol, FirFile>()
 
         fun setFrom(other: State) {
             fileMap.clear()
@@ -238,6 +244,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             callableContainerMap.clear()
             scriptContainerMap.clear()
             scriptByFilePathMap.clear()
+            snippetContainerMap.clear()
 
             fileMap.putAll(other.fileMap)
             allSubPackages.addAll(other.allSubPackages)
@@ -249,6 +256,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             callableContainerMap.putAll(other.callableContainerMap)
             scriptContainerMap.putAll(other.scriptContainerMap)
             scriptByFilePathMap.putAll(other.scriptByFilePathMap)
+            snippetContainerMap.putAll(other.snippetContainerMap)
             classesInPackage.putAll(other.classesInPackage)
             classifierInPackage.putAll(other.classifierInPackage)
         }

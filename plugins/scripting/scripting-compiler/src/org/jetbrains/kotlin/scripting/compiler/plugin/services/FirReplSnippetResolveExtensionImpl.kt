@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.extensions.FirReplHistoryProvider
 import org.jetbrains.kotlin.fir.extensions.FirReplSnippetResolveExtension
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -56,10 +57,17 @@ class FirReplSnippetResolveExtensionImpl(
     private val replHistoryProvider: FirReplHistoryProvider =
         hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: FirReplHistoryProviderImpl()
 
+    private fun getImportsFromHistory(currentSnippet: FirReplSnippet): List<FirImport> =
+        replHistoryProvider.getSnippets().flatMap { snippet ->
+            if (currentSnippet == snippet) emptyList()
+            else snippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(snippet)?.imports.orEmpty()
+        }
+
     override fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>? =
         getOrLoadConfiguration(snippet.moduleData.session, sourceFile)?.let {
             it[ScriptCompilationConfiguration.defaultImports]
-                ?.firImportsFromDefaultImports(snippet.source.fakeElement(KtFakeSourceElementKind.ImplicitImport))
+                ?.firImportsFromDefaultImports(snippet.source.fakeElement(KtFakeSourceElementKind.ImplicitImport)).orEmpty() +
+                    getImportsFromHistory(snippet)
         }
 
     @OptIn(SymbolInternals::class)

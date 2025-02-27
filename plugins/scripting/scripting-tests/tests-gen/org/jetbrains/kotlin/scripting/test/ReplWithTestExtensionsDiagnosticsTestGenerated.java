@@ -36,6 +36,12 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
+  @TestMetadata("import_visible_in_next_snippet.repl.kts")
+  public void testImport_visible_in_next_snippet_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/import_visible_in_next_snippet.repl.kts");
+  }
+
+  @Test
   @TestMetadata("mixed1.repl.kts")
   public void testMixed1_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/mixed1.repl.kts");
