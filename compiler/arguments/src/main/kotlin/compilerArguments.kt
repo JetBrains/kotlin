@@ -3,6 +3,7 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.arguments.CompilerArguments
 import org.jetbrains.kotlin.arguments.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.KotlinReleaseVersions
+import org.jetbrains.kotlin.arguments.asReleaseDependent
 import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
 import java.io.File
 
@@ -42,8 +43,8 @@ val kotlinCompilerArguments = compilerArguments {
             description = "Print a synopsis of standard options."
 
             valueType = KotlinArgumentValueType.BooleanType(
-                isNullable = false,
-                defaultValue = false
+                isNullable = false.asReleaseDependent(),
+                defaultValue = false.asReleaseDependent()
             )
 
             addedInVersion = KotlinReleaseVersions.v1_4_0
@@ -55,8 +56,8 @@ val kotlinCompilerArguments = compilerArguments {
             description = "Print a synopsis of advanced options."
 
             valueType = KotlinArgumentValueType.BooleanType(
-                isNullable = false,
-                defaultValue = false
+                isNullable = false.asReleaseDependent(),
+                defaultValue = false.asReleaseDependent()
             )
 
             addedInVersion = KotlinReleaseVersions.v1_9_20
@@ -67,8 +68,8 @@ val kotlinCompilerArguments = compilerArguments {
             description = "Display the compiler version."
 
             valueType = KotlinArgumentValueType.BooleanType(
-                isNullable = false,
-                defaultValue = false
+                isNullable = false.asReleaseDependent(),
+                defaultValue = false.asReleaseDependent()
             )
 
             addedInVersion = KotlinReleaseVersions.v1_9_20
@@ -79,8 +80,8 @@ val kotlinCompilerArguments = compilerArguments {
             description = "Enable verbose logging output."
 
             valueType = KotlinArgumentValueType.BooleanType(
-                isNullable = false,
-                defaultValue = false
+                isNullable = false.asReleaseDependent(),
+                defaultValue = false.asReleaseDependent()
             )
 
             addedInVersion = KotlinReleaseVersions.v1_9_20
@@ -91,8 +92,8 @@ val kotlinCompilerArguments = compilerArguments {
             description = "Don't generate any warnings."
 
             valueType = KotlinArgumentValueType.BooleanType(
-                isNullable = false,
-                defaultValue = false
+                isNullable = false.asReleaseDependent(),
+                defaultValue = false.asReleaseDependent()
             )
 
             addedInVersion = KotlinReleaseVersions.v1_9_20
@@ -103,8 +104,8 @@ val kotlinCompilerArguments = compilerArguments {
             description = "Report an error if there are any warnings."
 
             valueType = KotlinArgumentValueType.BooleanType(
-                isNullable = false,
-                defaultValue = false
+                isNullable = false.asReleaseDependent(),
+                defaultValue = false.asReleaseDependent()
             )
 
             addedInVersion = KotlinReleaseVersions.v1_9_20

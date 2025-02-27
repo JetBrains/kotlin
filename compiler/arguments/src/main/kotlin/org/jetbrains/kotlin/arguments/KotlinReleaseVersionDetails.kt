@@ -19,7 +19,17 @@ data class KotlinReleaseVersion(
     val major: Int,
     val minor: Int,
     val patch: Int,
-)
+) : Comparable<KotlinReleaseVersion> {
+    override fun compareTo(other: KotlinReleaseVersion): Int = when {
+        major < other.major -> -1
+        major > other.major -> 1
+        minor < other.minor -> -1
+        minor > other.minor -> 1
+        patch < other.patch -> -1
+        patch > other.patch -> 1
+        else -> 0
+    }
+}
 
 object KotlinReleaseVersions {
     val v1_4_0 = KotlinReleaseVersion("1.4.0", 1, 4, 0)

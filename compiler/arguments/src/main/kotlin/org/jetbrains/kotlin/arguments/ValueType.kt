@@ -15,27 +15,33 @@ class KotlinArgumentTypes {
 @Serializable
 sealed interface KotlinArgumentValueType<T : Any> {
     val name: String
-    val isNullable: Boolean
-    val defaultValue: T?
+    val isNullable: ReleaseDependent<Boolean>
+    val defaultValue: ReleaseDependent<T?>
 
     @Serializable
     class BooleanType(
         override val name: String = Boolean::class.simpleName!!,
-        override val isNullable: Boolean = true,
-        override val defaultValue: Boolean? = null,
+        override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+        override val defaultValue: ReleaseDependent<Boolean?> = ReleaseDependent(null),
     ) : KotlinArgumentValueType<Boolean>
 
     @Serializable
     class KotlinVersionType(
         override val name: String = KotlinVersion::class.simpleName!!,
-        override val isNullable: Boolean = true,
-        override val defaultValue: KotlinVersion? = KotlinVersions.v2_0
+        override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+        override val defaultValue: ReleaseDependent<KotlinVersion?> = ReleaseDependent(
+            KotlinVersions.v2_0,
+            KotlinReleaseVersions.v1_4_0..KotlinReleaseVersions.v1_9_20 to KotlinVersions.v1_9
+        )
     ) : KotlinArgumentValueType<KotlinVersion>
 
     @Serializable
     class KotlinJvmTargetType(
         override val name: String = JvmTarget::class.simpleName!!,
-        override val isNullable: Boolean = true,
-        override val defaultValue: JvmTarget? = JvmTargets.jvm1_8
+        override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+        override val defaultValue: ReleaseDependent<JvmTarget?> = ReleaseDependent(
+            JvmTargets.jvm1_8,
+            KotlinReleaseVersions.v1_4_0..KotlinReleaseVersions.v1_9_20 to JvmTargets.jvm1_6
+        )
     ) : KotlinArgumentValueType<JvmTarget>
 }

@@ -82,8 +82,14 @@
                 "valueType": {
                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
                     "name": "Boolean",
-                    "isNullable": false,
-                    "defaultValue": false
+                    "isNullable": {
+                        "current": false,
+                        "valueInVersions": {}
+                    },
+                    "defaultValue": {
+                        "current": false,
+                        "valueInVersions": {}
+                    }
                 },
                 "valueDescription": null,
                 "addedInVersion": "1.4.0",
@@ -99,8 +105,14 @@
                 "valueType": {
                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
                     "name": "Boolean",
-                    "isNullable": false,
-                    "defaultValue": false
+                    "isNullable": {
+                        "current": false,
+                        "valueInVersions": {}
+                    },
+                    "defaultValue": {
+                        "current": false,
+                        "valueInVersions": {}
+                    }
                 },
                 "valueDescription": null,
                 "addedInVersion": "1.9.20",
@@ -116,8 +128,14 @@
                 "valueType": {
                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
                     "name": "Boolean",
-                    "isNullable": false,
-                    "defaultValue": false
+                    "isNullable": {
+                        "current": false,
+                        "valueInVersions": {}
+                    },
+                    "defaultValue": {
+                        "current": false,
+                        "valueInVersions": {}
+                    }
                 },
                 "valueDescription": null,
                 "addedInVersion": "1.9.20",
@@ -133,8 +151,14 @@
                 "valueType": {
                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
                     "name": "Boolean",
-                    "isNullable": false,
-                    "defaultValue": false
+                    "isNullable": {
+                        "current": false,
+                        "valueInVersions": {}
+                    },
+                    "defaultValue": {
+                        "current": false,
+                        "valueInVersions": {}
+                    }
                 },
                 "valueDescription": null,
                 "addedInVersion": "1.9.20",
@@ -150,8 +174,14 @@
                 "valueType": {
                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
                     "name": "Boolean",
-                    "isNullable": false,
-                    "defaultValue": false
+                    "isNullable": {
+                        "current": false,
+                        "valueInVersions": {}
+                    },
+                    "defaultValue": {
+                        "current": false,
+                        "valueInVersions": {}
+                    }
                 },
                 "valueDescription": null,
                 "addedInVersion": "1.9.20",
@@ -167,8 +197,14 @@
                 "valueType": {
                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
                     "name": "Boolean",
-                    "isNullable": false,
-                    "defaultValue": false
+                    "isNullable": {
+                        "current": false,
+                        "valueInVersions": {}
+                    },
+                    "defaultValue": {
+                        "current": false,
+                        "valueInVersions": {}
+                    }
                 },
                 "valueDescription": null,
                 "addedInVersion": "1.9.20",
@@ -189,8 +225,16 @@
                         "valueType": {
                             "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinVersionType",
                             "name": "KotlinVersion",
-                            "isNullable": true,
-                            "defaultValue": "2.0"
+                            "isNullable": {
+                                "current": true,
+                                "valueInVersions": {}
+                            },
+                            "defaultValue": {
+                                "current": "2.0",
+                                "valueInVersions": {
+                                    "1.4.0..1.9.20": "1.9"
+                                }
+                            }
                         },
                         "valueDescription": "<version>",
                         "addedInVersion": "1.9.20",
@@ -206,8 +250,16 @@
                         "valueType": {
                             "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinVersionType",
                             "name": "KotlinVersion",
-                            "isNullable": true,
-                            "defaultValue": "2.0"
+                            "isNullable": {
+                                "current": true,
+                                "valueInVersions": {}
+                            },
+                            "defaultValue": {
+                                "current": "2.0",
+                                "valueInVersions": {
+                                    "1.4.0..1.9.20": "1.9"
+                                }
+                            }
                         },
                         "valueDescription": "<version>",
                         "addedInVersion": "1.4.0",
@@ -223,8 +275,14 @@
                         "valueType": {
                             "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
                             "name": "Boolean",
-                            "isNullable": true,
-                            "defaultValue": null
+                            "isNullable": {
+                                "current": true,
+                                "valueInVersions": {}
+                            },
+                            "defaultValue": {
+                                "current": null,
+                                "valueInVersions": {}
+                            }
                         },
                         "valueDescription": "true|false",
                         "addedInVersion": "1.4.0",
@@ -245,8 +303,16 @@
                                 "valueType": {
                                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.KotlinJvmTargetType",
                                     "name": "JvmTarget",
-                                    "isNullable": true,
-                                    "defaultValue": "1.8"
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": {}
+                                    },
+                                    "defaultValue": {
+                                        "current": "1.8",
+                                        "valueInVersions": {
+                                            "1.4.0..1.9.20": "1.6"
+                                        }
+                                    }
                                 },
                                 "valueDescription": "<version>",
                                 "addedInVersion": "1.4.0",
@@ -262,8 +328,14 @@
                                 "valueType": {
                                     "#class": "org.jetbrains.kotlin.arguments.KotlinArgumentValueType.BooleanType",
                                     "name": "Boolean",
-                                    "isNullable": true,
-                                    "defaultValue": null
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": {}
+                                    },
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": {}
+                                    }
                                 },
                                 "valueDescription": "true|false",
                                 "addedInVersion": "1.4.0",
