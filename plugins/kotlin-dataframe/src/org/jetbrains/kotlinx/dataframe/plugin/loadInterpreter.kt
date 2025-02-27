@@ -91,6 +91,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllFrom2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups2
@@ -176,6 +177,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWith0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCounts
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameToCamelCase
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameToCamelCaseClause
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Reorder
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReorderColumnsByName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single1
@@ -425,6 +427,8 @@ internal inline fun <reified T> String.load(): T {
         "MergeBy0" -> MergeBy0()
         "MergeBy1" -> MergeBy1()
         "ReorderColumnsByName" -> ReorderColumnsByName()
+        "Reorder" -> Reorder()
+        "ByName" -> ByName()
         "GroupByCount0" -> GroupByCount0()
         "GroupByReducePredicate" -> GroupByReducePredicate()
         "GroupByReduceExpression" -> GroupByReduceExpression()
