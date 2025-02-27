@@ -7913,6 +7913,12 @@ public class FirNativeCodegenBoxBackward21CompatibilityTestGenerated extends Abs
       }
 
       @Test
+      @TestMetadata("functionalType.kt")
+      public void testFunctionalType() {
+        runTest("compiler/testData/codegen/box/contextParameters/functionalType.kt");
+      }
+
+      @Test
       @TestMetadata("propertyWithContextAndWithout.kt")
       public void testPropertyWithContextAndWithout() {
         runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
@@ -18142,6 +18148,26 @@ public class FirNativeCodegenBoxBackward21CompatibilityTestGenerated extends Abs
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/fir/contextSensitiveResolution")
+      @TestDataPath("$PROJECT_ROOT")
+      @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD_2_1")
+      @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+      @FirPipeline()
+      @UseExtTestCaseGroupProvider()
+      public class ContextSensitiveResolution {
+        @Test
+        public void testAllFilesPresentInContextSensitiveResolution() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/contextSensitiveResolution"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("eitherInTypePosition.kt")
+        public void testEitherInTypePosition() {
+          runTest("compiler/testData/codegen/box/fir/contextSensitiveResolution/eitherInTypePosition.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/fir/primitivesInJava")
       @TestDataPath("$PROJECT_ROOT")
       @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD_2_1")
@@ -20060,12 +20086,6 @@ public class FirNativeCodegenBoxBackward21CompatibilityTestGenerated extends Abs
         @TestMetadata("capturedTypes.kt")
         public void testCapturedTypes() {
           runTest("compiler/testData/codegen/box/inference/pcla/capturedTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("changingResolveIfDontUseBuilderInferenceDisabledFeature.kt")
-        public void testChangingResolveIfDontUseBuilderInferenceDisabledFeature() {
-          runTest("compiler/testData/codegen/box/inference/pcla/changingResolveIfDontUseBuilderInferenceDisabledFeature.kt");
         }
 
         @Test
@@ -33578,12 +33598,6 @@ public class FirNativeCodegenBoxBackward21CompatibilityTestGenerated extends Abs
       }
 
       @Test
-      @TestMetadata("objectLiteralInClosure.kt")
-      public void testObjectLiteralInClosure() {
-        runTest("compiler/testData/codegen/box/objects/objectLiteralInClosure.kt");
-      }
-
-      @Test
       @TestMetadata("objectVsClassInitialization_kt5291.kt")
       public void testObjectVsClassInitialization_kt5291() {
         runTest("compiler/testData/codegen/box/objects/objectVsClassInitialization_kt5291.kt");
@@ -43609,12 +43623,6 @@ public class FirNativeCodegenBoxBackward21CompatibilityTestGenerated extends Abs
       @TestMetadata("kt35914.kt")
       public void testKt35914() {
         runTest("compiler/testData/codegen/box/regressions/kt35914.kt");
-      }
-
-      @Test
-      @TestMetadata("kt3850.kt")
-      public void testKt3850() {
-        runTest("compiler/testData/codegen/box/regressions/kt3850.kt");
       }
 
       @Test
@@ -53691,24 +53699,6 @@ public class FirNativeCodegenBoxBackward21CompatibilityTestGenerated extends Abs
       @TestMetadata("propertyModifiers.kt")
       public void testPropertyModifiers() {
         runTest("compiler/testData/codegen/boxInline/syntheticAccessors/propertyModifiers.kt");
-      }
-
-      @Test
-      @TestMetadata("superCall.kt")
-      public void testSuperCall() {
-        runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCall.kt");
-      }
-
-      @Test
-      @TestMetadata("superCallFromMultipleSubclasses.kt")
-      public void testSuperCallFromMultipleSubclasses() {
-        runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCallFromMultipleSubclasses.kt");
-      }
-
-      @Test
-      @TestMetadata("superProperty.kt")
-      public void testSuperProperty() {
-        runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superProperty.kt");
       }
 
       @Nested
