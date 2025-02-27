@@ -9,19 +9,14 @@ import KotlinArgumentsDslMarker
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.types.KotlinArgumentValueType
 
-interface CompilerArgumentBase {
+interface CompilerArgumentBase : WithKotlinReleaseVersionsMetadata {
     val name: String
     val shortName: String?
     val deprecatedName: String?
-    val description: String
+    val description: ReleaseDependent<String>
 
     val valueType: KotlinArgumentValueType<*>
-    val valueDescription: String?
-
-    val addedInVersion: KotlinReleaseVersion
-    val stableSinceVersion: KotlinReleaseVersion?
-    val deprecatedInVersion: KotlinReleaseVersion?
-    val removedInVersion: KotlinReleaseVersion?
+    val valueDescription: ReleaseDependent<String?>
 }
 
 @Serializable
@@ -29,15 +24,12 @@ data class CompilerArgument(
     override val name: String,
     override val shortName: String? = null,
     override val deprecatedName: String? = null,
-    override val description: String,
+    override val description: ReleaseDependent<String>,
 
     override val valueType: KotlinArgumentValueType<*>,
-    override val valueDescription: String? = null,
+    override val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
 
-    override val addedInVersion: KotlinReleaseVersion,
-    override val stableSinceVersion: KotlinReleaseVersion? = null,
-    override val deprecatedInVersion: KotlinReleaseVersion? = null,
-    override val removedInVersion: KotlinReleaseVersion? = null,
+    override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : CompilerArgumentBase
 
 @KotlinArgumentsDslMarker
@@ -45,15 +37,26 @@ class CompilerArgumentBuilder : CompilerArgumentBase {
     override lateinit var name: String
     override var shortName: String? = null
     override var deprecatedName: String? = null
-    override lateinit var description: String
+    override lateinit var description: ReleaseDependent<String>
 
     override lateinit var valueType: KotlinArgumentValueType<*>
-    override var valueDescription: String? = null
+    override var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
 
-    override lateinit var addedInVersion: KotlinReleaseVersion
-    override var stableSinceVersion: KotlinReleaseVersion? = null
-    override var deprecatedInVersion: KotlinReleaseVersion? = null
-    override var removedInVersion: KotlinReleaseVersion? = null
+    override lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
+
+    fun lifecycle(
+        introducedVersion: KotlinReleaseVersion,
+        stabilizedVersion: KotlinReleaseVersion? = null,
+        deprecatedVersion: KotlinReleaseVersion? = null,
+        removedVersion: KotlinReleaseVersion? = null,
+    ) {
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion,
+            stabilizedVersion,
+            deprecatedVersion,
+            removedVersion
+        )
+    }
 
     fun build(): CompilerArgument = CompilerArgument(
         name = name,
@@ -62,9 +65,6 @@ class CompilerArgumentBuilder : CompilerArgumentBase {
         description = description,
         valueType = valueType,
         valueDescription = valueDescription,
-        addedInVersion = addedInVersion,
-        stableSinceVersion = stableSinceVersion,
-        deprecatedInVersion = deprecatedInVersion,
-        removedInVersion = removedInVersion,
+        releaseVersionsMetadata = releaseVersionsMetadata,
     )
 }

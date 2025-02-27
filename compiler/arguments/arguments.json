@@ -78,7 +78,10 @@
                 "name": "help",
                 "shortName": "h",
                 "deprecatedName": null,
-                "description": "Print a synopsis of standard options.",
+                "description": {
+                    "current": "Print a synopsis of standard options.",
+                    "valueInVersions": {}
+                },
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
@@ -90,17 +93,25 @@
                         "valueInVersions": {}
                     }
                 },
-                "valueDescription": null,
-                "addedInVersion": "1.4.0",
-                "stableSinceVersion": "1.4.0",
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "valueDescription": {
+                    "current": null,
+                    "valueInVersions": {}
+                },
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.4.0",
+                    "stabilizedVersion": "1.4.0",
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             },
             {
                 "name": "X",
                 "shortName": null,
                 "deprecatedName": null,
-                "description": "Print a synopsis of advanced options.",
+                "description": {
+                    "current": "Print a synopsis of advanced options.",
+                    "valueInVersions": {}
+                },
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
@@ -112,17 +123,25 @@
                         "valueInVersions": {}
                     }
                 },
-                "valueDescription": null,
-                "addedInVersion": "1.9.20",
-                "stableSinceVersion": null,
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "valueDescription": {
+                    "current": null,
+                    "valueInVersions": {}
+                },
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.9.20",
+                    "stabilizedVersion": null,
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             },
             {
                 "name": "version",
                 "shortName": null,
                 "deprecatedName": null,
-                "description": "Display the compiler version.",
+                "description": {
+                    "current": "Display the compiler version.",
+                    "valueInVersions": {}
+                },
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
@@ -134,17 +153,25 @@
                         "valueInVersions": {}
                     }
                 },
-                "valueDescription": null,
-                "addedInVersion": "1.9.20",
-                "stableSinceVersion": null,
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "valueDescription": {
+                    "current": null,
+                    "valueInVersions": {}
+                },
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.9.20",
+                    "stabilizedVersion": null,
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             },
             {
                 "name": "verbose",
                 "shortName": null,
                 "deprecatedName": null,
-                "description": "Enable verbose logging output.",
+                "description": {
+                    "current": "Enable verbose logging output.",
+                    "valueInVersions": {}
+                },
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
@@ -156,17 +183,25 @@
                         "valueInVersions": {}
                     }
                 },
-                "valueDescription": null,
-                "addedInVersion": "1.9.20",
-                "stableSinceVersion": null,
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "valueDescription": {
+                    "current": null,
+                    "valueInVersions": {}
+                },
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.9.20",
+                    "stabilizedVersion": null,
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             },
             {
                 "name": "nowarn",
                 "shortName": null,
                 "deprecatedName": null,
-                "description": "Don't generate any warnings.",
+                "description": {
+                    "current": "Don't generate any warnings.",
+                    "valueInVersions": {}
+                },
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
@@ -178,17 +213,25 @@
                         "valueInVersions": {}
                     }
                 },
-                "valueDescription": null,
-                "addedInVersion": "1.9.20",
-                "stableSinceVersion": null,
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "valueDescription": {
+                    "current": null,
+                    "valueInVersions": {}
+                },
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.9.20",
+                    "stabilizedVersion": null,
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             },
             {
                 "name": "Werror",
                 "shortName": null,
                 "deprecatedName": null,
-                "description": "Report an error if there are any warnings.",
+                "description": {
+                    "current": "Report an error if there are any warnings.",
+                    "valueInVersions": {}
+                },
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                     "isNullable": {
@@ -200,11 +243,16 @@
                         "valueInVersions": {}
                     }
                 },
-                "valueDescription": null,
-                "addedInVersion": "1.9.20",
-                "stableSinceVersion": null,
-                "deprecatedInVersion": null,
-                "removedInVersion": null
+                "valueDescription": {
+                    "current": null,
+                    "valueInVersions": {}
+                },
+                "releaseVersionsMetadata": {
+                    "introducedVersion": "1.9.20",
+                    "stabilizedVersion": null,
+                    "deprecatedVersion": null,
+                    "removedVersion": null
+                }
             }
         ],
         "nestedLevels": [
@@ -215,7 +263,10 @@
                         "name": "language-version",
                         "shortName": null,
                         "deprecatedName": null,
-                        "description": "Provide source compatibility with the specified version of Kotlin.",
+                        "description": {
+                            "current": "Provide source compatibility with the specified version of Kotlin.",
+                            "valueInVersions": {}
+                        },
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.types.KotlinVersionType",
                             "isNullable": {
@@ -229,17 +280,25 @@
                                 }
                             }
                         },
-                        "valueDescription": "<version>",
-                        "addedInVersion": "1.9.20",
-                        "stableSinceVersion": null,
-                        "deprecatedInVersion": null,
-                        "removedInVersion": null
+                        "valueDescription": {
+                            "current": "<version>",
+                            "valueInVersions": {}
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "1.9.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
                     },
                     {
                         "name": "api-version",
                         "shortName": null,
                         "deprecatedName": null,
-                        "description": "Allow using declarations from only the specified version of bundled libraries.",
+                        "description": {
+                            "current": "Allow using declarations from only the specified version of bundled libraries.",
+                            "valueInVersions": {}
+                        },
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.types.KotlinVersionType",
                             "isNullable": {
@@ -253,17 +312,25 @@
                                 }
                             }
                         },
-                        "valueDescription": "<version>",
-                        "addedInVersion": "1.4.0",
-                        "stableSinceVersion": null,
-                        "deprecatedInVersion": null,
-                        "removedInVersion": null
+                        "valueDescription": {
+                            "current": "<version>",
+                            "valueInVersions": {}
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "1.4.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
                     },
                     {
                         "name": "another-test",
                         "shortName": null,
                         "deprecatedName": null,
-                        "description": "TBA",
+                        "description": {
+                            "current": "TBA",
+                            "valueInVersions": {}
+                        },
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                             "isNullable": {
@@ -275,11 +342,16 @@
                                 "valueInVersions": {}
                             }
                         },
-                        "valueDescription": "true|false",
-                        "addedInVersion": "1.4.0",
-                        "stableSinceVersion": null,
-                        "deprecatedInVersion": "1.9.20",
-                        "removedInVersion": "2.0.0"
+                        "valueDescription": {
+                            "current": "true|false",
+                            "valueInVersions": {}
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "1.4.0",
+                            "stabilizedVersion": "1.4.0",
+                            "deprecatedVersion": "1.9.20",
+                            "removedVersion": "2.0.0"
+                        }
                     }
                 ],
                 "nestedLevels": [
@@ -290,7 +362,10 @@
                                 "name": "jvm-target",
                                 "shortName": null,
                                 "deprecatedName": null,
-                                "description": "Target version of the generated JVM bytecode (1.6 or 1.8).",
+                                "description": {
+                                    "current": "Target version of the generated JVM bytecode (1.6 or 1.8).",
+                                    "valueInVersions": {}
+                                },
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType",
                                     "isNullable": {
@@ -304,17 +379,25 @@
                                         }
                                     }
                                 },
-                                "valueDescription": "<version>",
-                                "addedInVersion": "1.4.0",
-                                "stableSinceVersion": null,
-                                "deprecatedInVersion": null,
-                                "removedInVersion": null
+                                "valueDescription": {
+                                    "current": "<version>",
+                                    "valueInVersions": {}
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "1.4.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
                             },
                             {
                                 "name": "old-option",
                                 "shortName": null,
                                 "deprecatedName": null,
-                                "description": "TBA",
+                                "description": {
+                                    "current": "TBA",
+                                    "valueInVersions": {}
+                                },
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.types.BooleanType",
                                     "isNullable": {
@@ -326,11 +409,16 @@
                                         "valueInVersions": {}
                                     }
                                 },
-                                "valueDescription": "true|false",
-                                "addedInVersion": "1.4.0",
-                                "stableSinceVersion": null,
-                                "deprecatedInVersion": "1.9.20",
-                                "removedInVersion": "2.0.0"
+                                "valueDescription": {
+                                    "current": "true|false",
+                                    "valueInVersions": {}
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "1.4.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": "1.9.20",
+                                    "removedVersion": "2.0.0"
+                                }
                             }
                         ],
                         "nestedLevels": []
