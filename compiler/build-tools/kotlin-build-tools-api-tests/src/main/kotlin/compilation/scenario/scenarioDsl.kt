@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
@@ -124,9 +125,13 @@ internal class ExternallyTrackedScenarioModuleImpl(
     override fun getSourcesChanges() = sourcesChanges
 
     override fun compile(forceOutput: LogLevel?, assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit) {
-        super.compile(forceOutput, assertions)
+        super.compile(forceOutput) { module, scenarioModule ->
+            assertions(module, scenarioModule)
 
-        sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
+            if (actualResult == CompilationResult.COMPILATION_SUCCESS) {
+                sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
+            }
+        }
     }
 
     private fun addToModifiedFiles(file: Path) {
