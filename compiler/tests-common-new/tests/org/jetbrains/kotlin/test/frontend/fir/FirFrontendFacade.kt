@@ -435,32 +435,32 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             return DependencyListForCliModule.build(binaryModuleData) {
                 when {
                     targetPlatform.isCommon() || targetPlatform.isJvm() -> {
-                        dependencies(configuration.jvmModularRoots.map { it.toPath() })
-                        dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
+                        dependencies(configuration.jvmModularRoots.map { it.absolutePath })
+                        dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
                         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
                     }
                     targetPlatform.isJs() -> {
                         val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
-                        dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
-                        dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
-                        friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
+                        dependencies(runtimeKlibsPaths)
+                        dependencies(transitiveLibraries.map { it.absolutePath })
+                        friendDependencies(friendLibraries.map { it.absolutePath })
                     }
                     targetPlatform.isNative() -> {
                         val runtimeKlibsPaths = NativeEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
-                        dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
-                        dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
-                        friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
+                        dependencies(runtimeKlibsPaths)
+                        dependencies(transitiveLibraries.map { it.absolutePath })
+                        friendDependencies(friendLibraries.map { it.absolutePath })
                     }
                     targetPlatform.isWasm() -> {
                         val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(
                             configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
                         )
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
-                        dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
-                        dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })
-                        friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
+                        dependencies(runtimeKlibsPaths)
+                        dependencies(transitiveLibraries.map { it.absolutePath })
+                        friendDependencies(friendLibraries.map { it.absolutePath })
                     }
                     else -> error("Unsupported")
                 }
