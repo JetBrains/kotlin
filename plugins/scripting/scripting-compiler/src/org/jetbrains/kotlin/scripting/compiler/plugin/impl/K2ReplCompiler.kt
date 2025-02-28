@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
@@ -56,6 +57,8 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.jvmTarget
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
@@ -323,7 +326,7 @@ private fun compileImpl(
         extensionRegistrars,
         compilerConfiguration.languageVersionSettings,
         compilerConfiguration.useFirExtraCheckers,
-        jvmTarget = JvmTarget.DEFAULT, // TODO: from script config
+        jvmTarget = selectJvmTarget(scriptCompilationConfiguration, messageCollector),
         lookupTracker = null,
         enumWhenTracker = null,
         importTracker = null,
@@ -368,4 +371,27 @@ private fun compileImpl(
     ).onSuccess { compiledScript ->
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
     }
+}
+
+// Find the appropriate jvm target for the compiler from the ScriptCompilationConfiguration.
+// Since this can be configured in two places, we check if both places agree on the same value (if configured twice).
+// If not, CompilerOptions takes precedence and a warning is reported. We treat CompilerOptions with a higher priority
+// as we assume they are more likely to be under the user's control.
+private fun selectJvmTarget(configuration: ScriptCompilationConfiguration, messageCollector: ScriptDiagnosticsMessageCollector): JvmTarget {
+    val jvmTargetFromBlock = configuration[ScriptCompilationConfiguration.jvm.jvmTarget]?.let { JvmTarget.fromString(it) }
+    val jvmTargetFromOptions = configuration[ScriptCompilationConfiguration.compilerOptions]
+        ?.zipWithNext()
+        ?.firstOrNull { it.first == "-jvm-target" }
+        ?.second
+        ?.let { JvmTarget.fromString(it) }
+
+    if (jvmTargetFromBlock != null && jvmTargetFromOptions != null && jvmTargetFromBlock != jvmTargetFromOptions) {
+        val message =
+            "JVM target in ScriptCompilationConfiguration is defined differently in `jvm.jvmTarget` (${jvmTargetFromBlock}) vs. in `compilerOptions` (${jvmTargetFromOptions}). Using $jvmTargetFromOptions."
+        messageCollector.report(
+            severity = CompilerMessageSeverity.STRONG_WARNING,
+            message = message
+        )
+    }
+    return jvmTargetFromOptions ?: jvmTargetFromBlock ?: JvmTarget.DEFAULT
 }
