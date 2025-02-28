@@ -1123,6 +1123,26 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("browser distribution is generated with KMP plugin")
+    @GradleTest
+    @TestMetadata("kotlin-multiplatform-browser-project")
+    fun testMultiplatformBrowserDistribution(gradleVersion: GradleVersion) {
+        project("kotlin-multiplatform-browser-project", gradleVersion) {
+
+            build("compileProductionExecutableKotlinJs") {
+                assertTasksExecuted(":app:compileProductionExecutableKotlinJs")
+                assert(task(":kotlinNpmInstall") == null) {
+                    printBuildOutput()
+                    "NPM install should not be run"
+                }
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":app:jsBrowserProductionWebpack")
+            }
+        }
+    }
+
     @DisplayName("package.json custom fields")
     @GradleTest
     fun testPackageJsonCustomField(gradleVersion: GradleVersion) {
