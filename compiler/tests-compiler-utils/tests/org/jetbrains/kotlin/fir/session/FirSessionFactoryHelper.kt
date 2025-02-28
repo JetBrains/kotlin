@@ -39,7 +39,8 @@ object FirSessionFactoryHelper {
         val dependencyList = DependencyListForCliModule.build(binaryModuleData, init = dependenciesConfigurator)
         val sessionProvider = externalSessionProvider ?: FirProjectSessionProvider()
         val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
-        val librarySession = FirJvmSessionFactory.createLibrarySession(
+        val languageVersionSettings = configuration.languageVersionSettings
+        val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             moduleName,
             sessionProvider,
             dependencyList.moduleDataProvider,
@@ -47,7 +48,19 @@ object FirSessionFactoryHelper {
             extensionRegistrars,
             librariesScope,
             packagePartProvider,
-            configuration.languageVersionSettings,
+            languageVersionSettings,
+            predefinedJavaComponents = null,
+        )
+
+        val librarySession = FirJvmSessionFactory.createLibrarySession(
+            sessionProvider,
+            sharedLibrarySession,
+            dependencyList.moduleDataProvider,
+            projectEnvironment,
+            extensionRegistrars,
+            librariesScope,
+            packagePartProvider,
+            languageVersionSettings,
             predefinedJavaComponents = null,
         )
 

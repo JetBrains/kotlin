@@ -25,33 +25,61 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(SessionConfiguration::class)
 abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT>() {
 
+    // ==================================== Shared library session ====================================
+
+    /**
+     * See documentation to [FirAbstractSessionFactory.createSharedLibrarySession]
+     */
+    fun createSharedLibrarySession(
+        mainModuleName: Name,
+        sessionProvider: FirProjectSessionProvider,
+        moduleDataProvider: ModuleDataProvider,
+        configuration: CompilerConfiguration,
+        extensionRegistrars: List<FirExtensionRegistrar>,
+    ): FirSession {
+        return createSharedLibrarySession(
+            mainModuleName,
+            createLibraryContext(configuration),
+            sessionProvider,
+            moduleDataProvider,
+            configuration.languageVersionSettings,
+            extensionRegistrars,
+        ) { session, moduleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
+            listOfNotNull(
+                FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider),
+                syntheticFunctionInterfaceProvider
+            )
+        }
+    }
+
     // ==================================== Library session ====================================
 
+    /**
+     * See documentation to [FirAbstractSessionFactory.createLibrarySession]
+     */
     fun createLibrarySession(
-        mainModuleName: Name,
         resolvedLibraries: List<KotlinLibrary>,
         sessionProvider: FirProjectSessionProvider,
+        sharedLibrarySession: FirSession,
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         compilerConfiguration: CompilerConfiguration,
     ): FirSession {
         val context = createLibraryContext(compilerConfiguration)
         return createLibrarySession(
-            mainModuleName,
             context,
+            sharedLibrarySession,
             sessionProvider,
             moduleDataProvider,
             compilerConfiguration.languageVersionSettings,
             extensionRegistrars,
-            createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
+            createProviders = { session, kotlinScopeProvider ->
                 listOfNotNull(
                     KlibBasedSymbolProvider(
                         session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries,
                         flexibleTypeFactory = createFlexibleTypeFactory(session),
                     ),
                     *createAdditionalDependencyProviders(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries).toTypedArray(),
-                    FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    syntheticFunctionInterfaceProvider
                 )
             }
         )
@@ -78,6 +106,9 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
 
     // ==================================== Platform session ====================================
 
+    /**
+     * See documentation to [FirAbstractSessionFactory.createModuleBasedSession]
+     */
     fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,

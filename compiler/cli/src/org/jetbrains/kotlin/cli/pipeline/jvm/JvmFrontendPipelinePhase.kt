@@ -327,18 +327,32 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
+        val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
         return SessionConstructionUtils.prepareSessions(
             files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
             metadataCompilationMode = false, libraryList, isCommonSource, isScript, fileBelongsToModule,
-            createLibrarySession = { sessionProvider ->
-                FirJvmSessionFactory.createLibrarySession(
+            createSharedLibrarySession = { sessionProvider ->
+                FirJvmSessionFactory.createSharedLibrarySession(
                     rootModuleName,
                     sessionProvider,
                     libraryList.moduleDataProvider,
                     projectEnvironment,
                     extensionRegistrars,
                     librariesScope,
-                    projectEnvironment.getPackagePartProvider(librariesScope),
+                    packagePartProviderForLibraries,
+                    configuration.languageVersionSettings,
+                    predefinedJavaComponents = predefinedJavaComponents,
+                )
+            },
+            createLibrarySession = { sessionProvider, sharedLibrarySession ->
+                FirJvmSessionFactory.createLibrarySession(
+                    sessionProvider,
+                    sharedLibrarySession,
+                    libraryList.moduleDataProvider,
+                    projectEnvironment,
+                    extensionRegistrars,
+                    librariesScope,
+                    packagePartProviderForLibraries,
                     configuration.languageVersionSettings,
                     predefinedJavaComponents = predefinedJavaComponents,
                 )

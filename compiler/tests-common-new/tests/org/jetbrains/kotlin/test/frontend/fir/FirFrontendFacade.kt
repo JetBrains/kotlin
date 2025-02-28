@@ -190,9 +190,17 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         KotlinResolvedLibraryImpl(resolveSingleFileKlib(KFile(it), configuration.getLogger()))
                     }
 
-                    FirMetadataSessionFactory.createLibrarySession(
+                    val sharedLibrarySession = FirMetadataSessionFactory.createSharedLibrarySession(
                         mainModuleName = moduleName,
                         sessionProvider = sessionProvider,
+                        moduleDataProvider = moduleDataProvider,
+                        languageVersionSettings = languageVersionSettings,
+                        extensionRegistrars = extensionRegistrars,
+                    )
+
+                    FirMetadataSessionFactory.createLibrarySession(
+                        sessionProvider = sessionProvider,
+                        sharedLibrarySession,
                         moduleDataProvider = moduleDataProvider,
                         projectEnvironment = projectEnvironment,
                         extensionRegistrars = extensionRegistrars,
@@ -202,9 +210,21 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         languageVersionSettings = languageVersionSettings,
                     ).also(::registerExtraComponents)
                 } else {
-                    FirJvmSessionFactory.createLibrarySession(
+                    val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                         moduleName,
                         sessionProvider,
+                        moduleDataProvider,
+                        projectEnvironment,
+                        extensionRegistrars,
+                        projectFileSearchScope,
+                        packagePartProvider,
+                        languageVersionSettings,
+                        predefinedJavaComponents,
+                    )
+
+                    FirJvmSessionFactory.createLibrarySession(
+                        sessionProvider,
+                        sharedLibrarySession,
                         moduleDataProvider,
                         projectEnvironment,
                         extensionRegistrars,

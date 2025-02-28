@@ -191,11 +191,20 @@ private fun <F> prepareKlibSessions(
         files, configuration, rootModuleName, platform,
         metadataCompilationMode, libraryList, isCommonSource, isScript = { false },
         fileBelongsToModule,
-        createLibrarySession = { sessionProvider ->
-            sessionFactory.createLibrarySession(
+        createSharedLibrarySession = { sessionProvider ->
+            sessionFactory.createSharedLibrarySession(
                 rootModuleName,
+                sessionProvider,
+                libraryList.moduleDataProvider,
+                configuration,
+                extensionRegistrars,
+            )
+        },
+        createLibrarySession = { sessionProvider, sharedLibrarySession ->
+            sessionFactory.createLibrarySession(
                 resolvedLibraries,
                 sessionProvider,
+                sharedLibrarySession,
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
                 configuration,
@@ -231,20 +240,31 @@ fun <F> prepareMetadataSessions(
     fileBelongsToModule: (F, String) -> Boolean,
     createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
+    val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider
+    val languageVersionSettings = configuration.languageVersionSettings
     return SessionConstructionUtils.prepareSessions(
         files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform,
         metadataCompilationMode = true, libraryList, isCommonSource, isScript = { false }, fileBelongsToModule,
-        createLibrarySession = { sessionProvider ->
-            FirMetadataSessionFactory.createLibrarySession(
+        createSharedLibrarySession = { sessionProvider ->
+            FirMetadataSessionFactory.createSharedLibrarySession(
                 rootModuleName,
                 sessionProvider,
+                libraryList.moduleDataProvider,
+                languageVersionSettings,
+                extensionRegistrars,
+            )
+        },
+        createLibrarySession = { sessionProvider, sharedLibrarySession ->
+            FirMetadataSessionFactory.createLibrarySession(
+                sessionProvider,
+                sharedLibrarySession,
                 libraryList.moduleDataProvider,
                 projectEnvironment,
                 extensionRegistrars,
                 librariesScope,
                 resolvedLibraries,
-                projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider,
-                configuration.languageVersionSettings,
+                packagePartProvider,
+                languageVersionSettings,
             )
         }
     ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
@@ -278,7 +298,8 @@ object SessionConstructionUtils {
         isCommonSource: (F) -> Boolean,
         isScript: (F) -> Boolean,
         fileBelongsToModule: (F, String) -> Boolean,
-        createLibrarySession: (FirProjectSessionProvider) -> FirSession,
+        createSharedLibrarySession: (FirProjectSessionProvider) -> FirSession,
+        createLibrarySession: (FirProjectSessionProvider, sharedLibrarySession: FirSession) -> FirSession,
         createSourceSession: FirSessionProducer<F>,
     ): List<SessionWithSources<F>> {
         val languageVersionSettings = configuration.languageVersionSettings
@@ -292,7 +313,8 @@ object SessionConstructionUtils {
         val hmppModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         val sessionProvider = FirProjectSessionProvider()
 
-        val librarySession = createLibrarySession(sessionProvider)
+        val sharedLibrarySession = createSharedLibrarySession(sessionProvider)
+        val librarySession = createLibrarySession(sessionProvider, sharedLibrarySession)
         val extraAnalysisMode = configuration.useFirExtraCheckers
         val experimentalAnalysisMode = configuration.useFirExperimentalCheckers
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {

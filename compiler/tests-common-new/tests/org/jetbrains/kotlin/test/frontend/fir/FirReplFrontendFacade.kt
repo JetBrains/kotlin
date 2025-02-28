@@ -77,9 +77,21 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
                 packagePartProviderFactory.invoke(it)
             }
 
-        FirJvmSessionFactory.createLibrarySession(
+        val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.special("<${testModule.name}>"),
             testServices.firModuleInfoProvider.firSessionProvider,
+            libraryList.moduleDataProvider,
+            projectEnvironment,
+            extensionRegistrars,
+            librariesSearchScope,
+            projectEnvironment.getPackagePartProvider(librariesSearchScope),
+            testModule.languageVersionSettings,
+            predefinedJavaComponents,
+        )
+
+        FirJvmSessionFactory.createLibrarySession(
+            testServices.firModuleInfoProvider.firSessionProvider,
+            sharedLibrarySession,
             libraryList.moduleDataProvider,
             projectEnvironment,
             extensionRegistrars,
