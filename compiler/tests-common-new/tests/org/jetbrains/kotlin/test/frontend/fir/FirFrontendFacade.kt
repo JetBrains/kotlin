@@ -139,7 +139,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             val friendModules = libraryList.friendsDependencies + moduleInfoProvider.getDependentFriendSourceModules(module)
             val dependsOnModules = libraryList.dependsOnDependencies + moduleInfoProvider.getDependentDependsOnSourceModules(module)
 
-            val moduleData = FirModuleDataImpl(
+            val moduleData = FirSourceModuleData(
                 Name.special("<${module.name}>"),
                 regularModules,
                 dependsOnModules,

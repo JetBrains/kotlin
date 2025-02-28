@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.Cleanabl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableWeakValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.session.registerModuleData
@@ -270,7 +270,7 @@ internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession)
 @OptIn(PrivateSessionConstructor::class)
 fun createEmptySession(): FirSession {
     return object : FirSession(null, Kind.Source) {}.apply {
-        val moduleData = FirModuleDataImpl(
+        val moduleData = FirSourceModuleData(
             Name.identifier("<stub module>"),
             dependencies = emptyList(),
             dependsOnDependencies = emptyList(),
