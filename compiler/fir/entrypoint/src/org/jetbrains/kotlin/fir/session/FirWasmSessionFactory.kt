@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -69,10 +69,8 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings,
-        useExtraCheckers: Boolean,
+        configuration: CompilerConfiguration,
         wasmTarget: WasmTarget,
-        lookupTracker: LookupTracker?,
         icData: KlibIcData? = null,
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
@@ -81,11 +79,7 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
             Context(wasmTarget),
             sessionProvider,
             extensionRegistrars,
-            languageVersionSettings,
-            useExtraCheckers,
-            lookupTracker,
-            enumWhenTracker = null,
-            importTracker = null,
+            configuration,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(

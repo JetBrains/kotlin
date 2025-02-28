@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ImportTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -87,11 +84,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         context: SOURCE_CONTEXT,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings,
-        extraCheckers: Boolean,
-        lookupTracker: LookupTracker?,
-        enumWhenTracker: EnumWhenTracker?,
-        importTracker: ImportTracker?,
+        configuration: CompilerConfiguration,
         init: FirSessionConfigurator.() -> Unit,
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
@@ -99,13 +92,18 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             dependencies: List<FirSymbolProvider>,
         ) -> List<FirSymbolProvider>
     ): FirSession {
+        val languageVersionSettings = configuration.languageVersionSettings
         return FirCliSession(sessionProvider, FirSession.Kind.Source).apply session@{
             moduleData.bindSession(this@session)
             sessionProvider.registerSession(moduleData, this@session)
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents(languageVersionSettings)
             registerCommonComponents(languageVersionSettings)
-            registerResolveComponents(lookupTracker, enumWhenTracker, importTracker)
+            registerResolveComponents(
+                configuration.lookupTracker,
+                configuration.enumWhenTracker,
+                configuration.importTracker
+            )
             registerSourceSessionComponents(context)
 
             val kotlinScopeProvider = createKotlinScopeProviderForSourceSession(moduleData, languageVersionSettings)
@@ -117,7 +115,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
                 registerPlatformCheckers(context)
-                if (extraCheckers) {
+                if (configuration.useFirExtraCheckers) {
                     registerExtraPlatformCheckers(context)
                 }
 

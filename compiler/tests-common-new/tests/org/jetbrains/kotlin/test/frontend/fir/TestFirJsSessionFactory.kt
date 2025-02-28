@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -47,7 +45,6 @@ object TestFirJsSessionFactory {
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
-        lookupTracker: LookupTracker?,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
         FirJsSessionFactory.createModuleBasedSession(
@@ -55,7 +52,6 @@ object TestFirJsSessionFactory {
             sessionProvider,
             extensionRegistrars,
             configuration,
-            lookupTracker,
             icData = null,
             sessionConfigurator
         )

@@ -12,8 +12,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -30,25 +32,26 @@ object FirTestSessionFactoryHelper {
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
-    ): FirSession = FirSessionFactoryHelper.createSessionWithDependencies(
-        Name.identifier(moduleName),
-        JvmPlatforms.unspecifiedJvmPlatform,
-        externalSessionProvider = null,
-        projectEnvironment,
-        languageVersionSettings,
-        useExtraCheckers = false,
-        javaSourceScope,
-        librariesScope,
-        lookupTracker = null,
-        enumWhenTracker = null,
-        importTracker = null,
-        incrementalCompilationContext = null,
-        extensionRegistrars = emptyList(),
-        needRegisterJavaElementFinder = true,
-        dependenciesConfigurator = {
-            friendDependencies(friendsPaths)
+    ): FirSession {
+        val configuration = CompilerConfiguration().apply {
+            this.languageVersionSettings = languageVersionSettings
         }
-    )
+        return FirSessionFactoryHelper.createSessionWithDependencies(
+            Name.identifier(moduleName),
+            JvmPlatforms.unspecifiedJvmPlatform,
+            externalSessionProvider = null,
+            projectEnvironment,
+            configuration,
+            javaSourceScope,
+            librariesScope,
+            incrementalCompilationContext = null,
+            extensionRegistrars = emptyList(),
+            needRegisterJavaElementFinder = true,
+            dependenciesConfigurator = {
+                friendDependencies(friendsPaths)
+            }
+        )
+    }
 
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
@@ -68,13 +71,9 @@ object FirTestSessionFactoryHelper {
                 VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
                 getPackagePartProvider
             ),
-            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-            useExtraCheckers = false,
+            configuration = CompilerConfiguration(),
             PsiBasedProjectFileSearchScope(sourceScope),
             PsiBasedProjectFileSearchScope(librariesScope),
-            lookupTracker = null,
-            enumWhenTracker = null,
-            importTracker = null,
             incrementalCompilationContext = null,
             extensionRegistrars = emptyList(),
             needRegisterJavaElementFinder = true,

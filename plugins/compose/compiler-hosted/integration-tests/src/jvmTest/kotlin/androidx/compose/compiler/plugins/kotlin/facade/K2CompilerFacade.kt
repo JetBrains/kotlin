@@ -35,9 +35,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.useFirExtraCheckers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
@@ -101,12 +99,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             projectEnvironment,
             { null },
             FirExtensionRegistrar.getInstances(project),
-            configuration.languageVersionSettings,
-            configuration.useFirExtraCheckers,
-            configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: error("JVM_TARGET is not specified in compiler configuration"),
-            configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-            configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
-            configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
+            configuration,
             predefinedJavaComponents = null,
             needRegisterJavaElementFinder = true,
             init = {

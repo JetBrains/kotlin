@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.session
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.useFirExtraCheckers
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFuncti
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
@@ -85,7 +83,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Conte
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         compilerConfiguration: CompilerConfiguration,
-        lookupTracker: LookupTracker?,
         icData: KlibIcData? = null,
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
@@ -95,11 +92,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Conte
             context,
             sessionProvider,
             extensionRegistrars,
-            compilerConfiguration.languageVersionSettings,
-            compilerConfiguration.useFirExtraCheckers,
-            lookupTracker,
-            enumWhenTracker = null,
-            importTracker = null,
+            compilerConfiguration,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
@@ -350,7 +349,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         project: Project,
         ktFiles: Collection<KtFile>,
     ): FirSession {
-        val languageVersionSettings = module.languageVersionSettings
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         return when {
             targetPlatform.isCommon() -> {
                 FirCommonSessionFactory.createModuleBasedSession(
@@ -359,8 +358,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     projectEnvironment = projectEnvironment!!,
                     incrementalCompilationContext = null,
                     extensionRegistrars = extensionRegistrars,
-                    languageVersionSettings = languageVersionSettings,
-                    useExtraCheckers = FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
+                    configuration = configuration,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -372,13 +370,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     projectEnvironment!!,
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
-                    languageVersionSettings,
-                    FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
-                    jvmTarget = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-                        .get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
-                    lookupTracker = null,
-                    enumWhenTracker = null,
-                    importTracker = null,
+                    configuration,
                     predefinedJavaComponents,
                     needRegisterJavaElementFinder = true,
                     init = sessionConfigurator,
@@ -389,8 +381,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     moduleData,
                     sessionProvider,
                     extensionRegistrars,
-                    testServices.compilerConfigurationProvider.getCompilerConfiguration(module),
-                    lookupTracker = null,
+                    configuration,
                     sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -399,8 +390,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     moduleData,
                     sessionProvider,
                     extensionRegistrars,
-                    languageVersionSettings,
-                    FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
+                    configuration,
                     init = sessionConfigurator
                 ).also(::registerExtraComponents)
             }
@@ -409,10 +399,8 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     moduleData,
                     sessionProvider,
                     extensionRegistrars,
-                    languageVersionSettings,
-                    FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
-                    testServices.compilerConfigurationProvider.getCompilerConfiguration(module).wasmTarget,
-                    lookupTracker = null,
+                    configuration,
+                    configuration.wasmTarget,
                     sessionConfigurator,
                 ).also(::registerExtraComponents)
             }

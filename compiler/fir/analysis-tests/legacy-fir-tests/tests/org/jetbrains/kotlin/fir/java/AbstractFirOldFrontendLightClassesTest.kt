@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
@@ -86,22 +88,21 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
                 VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
             ) { environment.createPackagePartProvider(it) }
 
+            val configuration = CompilerConfiguration().apply {
+                this.languageVersionSettings = config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
+            }
             FirSessionFactoryHelper.createSessionWithDependencies(
                 Name.identifier(info.name.asString().removeSurrounding("<", ">")),
                 info.platform,
                 externalSessionProvider = sessionProvider,
                 projectEnvironment,
-                config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT,
-                useExtraCheckers = false,
+                configuration,
                 javaSourcesScope = PsiBasedProjectFileSearchScope(scope),
                 librariesScope = PsiBasedProjectFileSearchScope(allProjectScope),
-                lookupTracker = null,
-                enumWhenTracker = null,
-                importTracker = null,
                 incrementalCompilationContext = null,
                 extensionRegistrars = emptyList(),
                 needRegisterJavaElementFinder = true
-            ) {}
+            )
         }
 
         val firFilesPerSession = mutableMapOf<FirSession, List<FirFile>>()

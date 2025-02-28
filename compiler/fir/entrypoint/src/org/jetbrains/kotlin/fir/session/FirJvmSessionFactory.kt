@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -27,9 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ImportTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -106,27 +105,19 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         projectEnvironment: AbstractProjectEnvironment,
         createIncrementalCompilationSymbolProviders: (FirSession) -> FirJvmIncrementalCompilationSymbolProviders?,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings,
-        useExtraCheckers: Boolean,
-        jvmTarget: JvmTarget,
-        lookupTracker: LookupTracker?,
-        enumWhenTracker: EnumWhenTracker?,
-        importTracker: ImportTracker?,
+        configuration: CompilerConfiguration,
         predefinedJavaComponents: FirSharableJavaComponents?,
         needRegisterJavaElementFinder: Boolean,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
+        val jvmTarget = configuration.jvmTarget ?: JvmTarget.DEFAULT
         val context = SourceContext(jvmTarget, predefinedJavaComponents, projectEnvironment)
         return createModuleBasedSession(
             moduleData,
             context = context,
             sessionProvider,
             extensionRegistrars,
-            languageVersionSettings,
-            useExtraCheckers,
-            lookupTracker,
-            enumWhenTracker,
-            importTracker,
+            configuration,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 val javaSymbolProvider =

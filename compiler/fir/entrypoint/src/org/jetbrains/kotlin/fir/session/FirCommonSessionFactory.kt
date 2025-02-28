@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -16,13 +16,12 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.*
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ImportTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
@@ -97,11 +96,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
         projectEnvironment: AbstractProjectEnvironment,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-        useExtraCheckers: Boolean,
-        lookupTracker: LookupTracker? = null,
-        enumWhenTracker: EnumWhenTracker? = null,
-        importTracker: ImportTracker? = null,
+        configuration: CompilerConfiguration,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
         return createModuleBasedSession(
@@ -109,11 +104,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
             context = null,
             sessionProvider,
             extensionRegistrars,
-            languageVersionSettings,
-            useExtraCheckers,
-            lookupTracker,
-            enumWhenTracker,
-            importTracker,
+            configuration,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
