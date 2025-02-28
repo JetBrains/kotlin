@@ -188,9 +188,11 @@ open class UpgradeCallableReferences(
                 val argument = expression.argument
                 if (argument !is IrRichFunctionReference) return expression
                 return argument.apply {
+                    startOffset = expression.startOffset
+                    endOffset = expression.endOffset
                     type = expression.typeOperand
                     overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.typeOperand)
-                }.copyWithOffsets(expression.startOffset, expression.endOffset)
+                }
             }
             return super.visitTypeOperator(expression, data)
         }

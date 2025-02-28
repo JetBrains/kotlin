@@ -1488,32 +1488,6 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
     }
 }
 
-// TODO: KT-75196: please make `startOffset` and `endOffset` mutable, and remove this method
-fun IrConst.copyWithOffsets(startOffset: Int, endOffset: Int) =
-    IrConstImpl(startOffset, endOffset, type, kind, value)
-
-// TODO: KT-75196: please make `startOffset` and `endOffset` mutable, and remove this method
-fun IrGetValue.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
-    IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)
-
-// TODO: KT-75196: please make `startOffset` and `endOffset` mutable, and remove this method
-fun IrRichFunctionReference.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrRichFunctionReference =
-    IrRichFunctionReferenceImpl(
-        newStartOffset, newEndOffset,
-        type,
-        reflectionTargetSymbol,
-        overriddenFunctionSymbol,
-        invokeFunction,
-        origin,
-        hasUnitConversion,
-        hasSuspendConversion,
-        hasVarargConversion,
-        isRestrictedSuspension
-    ).apply {
-        copyAttributes(this@copyWithOffsets)
-        boundValues.addAll(this@copyWithOffsets.boundValues)
-    }
-
 fun IrModuleFragment.addFile(file: IrFile) {
     files.add(file)
     file.module = this

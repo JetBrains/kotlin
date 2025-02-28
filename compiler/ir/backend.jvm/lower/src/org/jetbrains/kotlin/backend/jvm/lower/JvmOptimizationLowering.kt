@@ -413,9 +413,15 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             val variable = expression.symbol.owner
             return when (val replacement = getInlineableValueForTemporaryVal(variable)) {
                 is IrConst ->
-                    replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
+                    replacement.deepCopyWithSymbols().apply {
+                        startOffset = expression.startOffset
+                        endOffset = expression.endOffset
+                    }
                 is IrGetValue ->
-                    replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
+                    replacement.deepCopyWithSymbols().apply {
+                        startOffset = expression.startOffset
+                        endOffset = expression.endOffset
+                    }
                 else ->
                     expression
             }
