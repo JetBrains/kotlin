@@ -89,7 +89,7 @@ val packForXCode = if (sdkName == null || targetBuildDir == null || executablePa
 } else {
     // Otherwise copy the executable into the Xcode output directory.
     tasks.create("packForXCode", Copy::class.java) {
-        dependsOn(kotlinBinary.linkTask)
+        dependsOn(kotlinBinary.linkTaskProvider)
         destinationDir = file(targetBuildDir)
         val dsymSource = kotlinBinary.outputFile.absolutePath + ".dSYM"
         val dsymDestination = file(executablePath).parentFile.name + ".dSYM"
