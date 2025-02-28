@@ -34,10 +34,18 @@ object TestFirNativeSessionFactory {
             knownIrProviders = listOf("kotlin.native.cinterop"), // FIXME use KonanLibraryProperResolver instead, as in production.
         ).getFullResolvedList().map { it.library }
 
-        return FirNativeSessionFactory.createLibrarySession(
+        val sharedLibrarySession = FirNativeSessionFactory.createSharedLibrarySession(
             mainModuleName,
+            sessionProvider,
+            moduleDataProvider,
+            configuration,
+            extensionRegistrars,
+        )
+
+        return FirNativeSessionFactory.createLibrarySession(
             resolvedLibraries,
             sessionProvider,
+            sharedLibrarySession,
             moduleDataProvider,
             extensionRegistrars,
             configuration,

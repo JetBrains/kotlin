@@ -40,10 +40,18 @@ object TestFirWasmSessionFactory {
             paths = getAllWasmDependenciesPaths(module, testServices, target)
         )
 
-        return FirWasmSessionFactory.createLibrarySession(
+        val sharedLibrarySession = FirWasmSessionFactory.createSharedLibrarySession(
             mainModuleName,
+            sessionProvider,
+            moduleDataProvider,
+            configuration,
+            extensionRegistrars
+        )
+
+        return FirWasmSessionFactory.createLibrarySession(
             resolvedLibraries.map { it.library },
             sessionProvider,
+            sharedLibrarySession,
             moduleDataProvider,
             extensionRegistrars,
             configuration,

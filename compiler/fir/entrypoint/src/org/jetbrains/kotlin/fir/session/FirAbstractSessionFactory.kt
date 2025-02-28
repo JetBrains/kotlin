@@ -16,27 +16,134 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * This is the base class for factories, which create various sessions for compilation.
+ * Some details are different between platforms, but the main session structure is the same
+ * for all platforms and looks like the following:
+ *
+ * There are three different kinds of sessions:
+ * - Source session contains sources which are going to be analyzed with all corresponding components.
+ * - Library session contains regular dependencies of the compilation (classpath)
+ * - Shared library session contains some special dependencies, like builtins, synthetic kotlin.FunctionN interfaces, etc
+ *
+ * These three kinds of sessions are used in different schemes, depending on the compilation scheme.
+ * There are also three different compilation schemes:
+ *
+ * ### Regular non-mpp compilation
+ *
+ * In this scheme all sources are compiled together against fixed dependencies.
+ * Sessions layout is the following:
+ *
+ *
+ *  Source session ───────────► Libraries session ───────────► Shared libraries session
+ *
+ *
+ * ### Old mpp compilation
+ *
+ * This is the MPP compilation scheme, which was used from 2.0 to 2.2.
+ * In this scheme all sources are split by source sets, but all sources depend on the same dependencies
+ *
+ *
+ *  Source session (common)   ─────┐
+ *            ▲                    │
+ *            │                    ├─────► Libraries session ───────────► Shared libraries session
+ *            │                    │
+ *  Source session (platform) ─────┘
+ *
+ *
+ * ### Hierarchical mpp compilation
+ *
+ * This is the new MPP compilation scheme, in which each source set depend on it's own set of dependencies
+ *
+ *
+ *  Source session (common)   ───────────►  Libraries session (common)  ─────┐
+ *            ▲                                                              │
+ *            │                                                              ├─────► Shared libraries session
+ *            │                                                              │
+ *  Source session (platform) ───────────► Libraries session (platform) ─────┘
+ */
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
 
-    // ==================================== Library session ====================================
+    // ==================================== Shared library session ====================================
 
-    protected fun createLibrarySession(
+    /**
+     * Creates session which contains synthetic symbol providers, like builtins provider, synthetic function interface provider, etc.
+     *
+     * For more information see KDoc to [FirAbstractSessionFactory]
+     */
+    protected fun createSharedLibrarySession(
         mainModuleName: Name,
         context: LIBRARY_CONTEXT,
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider, FirExtensionSyntheticFunctionInterfaceProvider?) -> List<FirSymbolProvider>
+        createSharedProviders: (FirSession, FirModuleData, FirKotlinScopeProvider, FirExtensionSyntheticFunctionInterfaceProvider?) -> List<FirSymbolProvider>
+    ): FirSession {
+        return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
+            registerCliCompilerOnlyComponents(languageVersionSettings)
+            registerCommonComponents(languageVersionSettings)
+            registerLibrarySessionComponents(context)
+
+            val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
+            register(FirKotlinScopeProvider::class, kotlinScopeProvider)
+
+            val moduleData = BinaryModuleData.createDependencyModuleData(
+                Name.special("<shared dependencies of ${mainModuleName.asString()}"),
+                moduleDataProvider.platform,
+            )
+            moduleData.bindSession(this)
+
+            FirSessionConfigurator(this).apply {
+                for (extensionRegistrar in extensionRegistrars) {
+                    registerExtensions(extensionRegistrar.configure())
+                }
+            }.configure()
+            registerCommonComponentsAfterExtensionsAreConfigured()
+
+            val syntheticFunctionInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(
+                this,
+                moduleData,
+                kotlinScopeProvider
+            )
+            val providers = createSharedProviders(
+                this,
+                moduleData,
+                kotlinScopeProvider,
+                syntheticFunctionInterfaceProvider
+            )
+            val symbolProvider = FirCachingCompositeSymbolProvider(this, providers)
+            register(FirSymbolProvider::class, symbolProvider)
+            register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
+        }
+    }
+
+    // ==================================== Library session ====================================
+
+    /**
+     * Creates session which contains symbol providers for regular dependencies (classpath)
+     *
+     * For more information see KDoc to [FirAbstractSessionFactory]
+     */
+    protected fun createLibrarySession(
+        context: LIBRARY_CONTEXT,
+        sharedLibrarySession: FirSession,
+        sessionProvider: FirProjectSessionProvider,
+        moduleDataProvider: ModuleDataProvider,
+        languageVersionSettings: LanguageVersionSettings,
+        extensionRegistrars: List<FirExtensionRegistrar>,
+        createProviders: (FirSession, FirKotlinScopeProvider) -> List<FirSymbolProvider>
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
             moduleDataProvider.allModuleData.forEach {
@@ -47,15 +154,10 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             registerCliCompilerOnlyComponents(languageVersionSettings)
             registerCommonComponents(languageVersionSettings)
             registerLibrarySessionComponents(context)
+            register(FirBuiltinSyntheticFunctionInterfaceProvider::class, sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
 
             val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
-
-            val builtinsModuleData = BinaryModuleData.createDependencyModuleData(
-                Name.special("<builtins of ${mainModuleName.asString()}"),
-                moduleDataProvider.platform,
-            )
-            builtinsModuleData.bindSession(this)
 
             FirSessionConfigurator(this).apply {
                 for (extensionRegistrar in extensionRegistrars) {
@@ -64,11 +166,10 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val syntheticFunctionInterfaceProvider =
-                FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(this, builtinsModuleData, kotlinScopeProvider)
-            val providers = createProviders(this, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider)
+            val providers = createProviders(this, kotlinScopeProvider)
+            val providersWithShared = providers + sharedLibrarySession.symbolProvider
 
-            val symbolProvider = FirCachingCompositeSymbolProvider(this, providers)
+            val symbolProvider = FirCachingCompositeSymbolProvider(this, providersWithShared)
             register(FirSymbolProvider::class, symbolProvider)
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
@@ -79,6 +180,11 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
 
     // ==================================== Platform session ====================================
 
+    /**
+     * Creates session for source files
+     *
+     * For more information see KDoc to [FirAbstractSessionFactory]
+     */
     protected fun createModuleBasedSession(
         moduleData: FirModuleData,
         context: SOURCE_CONTEXT,

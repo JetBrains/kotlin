@@ -130,9 +130,21 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         )
         val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
 
-        val librarySession = FirJvmSessionFactory.createLibrarySession(
+        val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.identifier(rootModuleName),
             projectSessionProvider,
+            dependencyList.moduleDataProvider,
+            projectEnvironment,
+            FirExtensionRegistrar.getInstances(project),
+            librariesScope,
+            projectEnvironment.getPackagePartProvider(librariesScope),
+            configuration.languageVersionSettings,
+            predefinedJavaComponents = null,
+        )
+
+        val librarySession = FirJvmSessionFactory.createLibrarySession(
+            projectSessionProvider,
+            sharedLibrarySession,
             dependencyList.moduleDataProvider,
             projectEnvironment,
             FirExtensionRegistrar.getInstances(project),
