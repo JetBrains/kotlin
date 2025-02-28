@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-object FirJvmSynchronizedByValueTypeObjectChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
     private val lockParameterName = Name.identifier("lock")
 
