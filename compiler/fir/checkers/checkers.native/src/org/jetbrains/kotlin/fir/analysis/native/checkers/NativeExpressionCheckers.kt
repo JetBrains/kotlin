@@ -23,5 +23,6 @@ object NativeExpressionCheckers : ExpressionCheckers() {
             FirSuperCallWithDefaultsChecker,
             FirNativeAtomicReferenceToPrimitiveCallChecker,
             FirNativeAtomicArrayToPrimitiveCallChecker,
+            FirNativeIdentityHashCodeCallOnValueTypeObjectChecker,
         )
 }

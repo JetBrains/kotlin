@@ -75,6 +75,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("identityHashCodeOnValueClass.kt")
+  public void testIdentityHashCodeOnValueClass() {
+    runTest("compiler/testData/diagnostics/nativeTests/identityHashCodeOnValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("isInitialized.kt")
   public void testIsInitialized() {
     runTest("compiler/testData/diagnostics/nativeTests/isInitialized.kt");

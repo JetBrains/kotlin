@@ -112,5 +112,8 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val NATIVE_SPECIFIC_ATOMIC by warning<KtTypeReference> {
             parameter<Name>("name")
         }
+        val IDENTITY_HASH_CODE_ON_VALUE_TYPE by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
     }
 }
