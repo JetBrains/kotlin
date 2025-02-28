@@ -237,7 +237,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     moduleDataProvider,
                     configuration,
                     extensionRegistrars,
-                    languageVersionSettings,
                 ).also(::registerExtraComponents)
             }
             targetPlatform.isWasm() -> {
