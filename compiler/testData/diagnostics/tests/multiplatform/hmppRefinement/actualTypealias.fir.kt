@@ -5,10 +5,12 @@
 expect class Foo
 
 // MODULE: intermediate1()()(common)
+@OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement
 expect class Foo
 
 // MODULE: intermediate2()()(intermediate1)
+@OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement
 expect class Foo
 

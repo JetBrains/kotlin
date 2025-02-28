@@ -55,4 +55,5 @@ package kotlin.experimental
 @Retention(AnnotationRetention.SOURCE)
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
+@ExperimentalMultiplatform
 public annotation class ExpectRefinement

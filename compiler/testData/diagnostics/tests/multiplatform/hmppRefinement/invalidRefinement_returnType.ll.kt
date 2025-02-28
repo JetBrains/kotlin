@@ -8,6 +8,7 @@ expect class Foo {
 }
 
 // MODULE: intermediate()()(common)
+@OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement
 expect class Foo {
     fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>()
