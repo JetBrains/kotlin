@@ -3,3 +3,4 @@ fun foo(
         p1: Array<(out) Foo!>!,
         p1: Array<(out) Array<(out) Foo>!>!
 ) {}
+// COMPILATION_ERRORS

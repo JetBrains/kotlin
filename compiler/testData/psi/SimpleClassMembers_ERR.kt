@@ -14,3 +14,4 @@ class foo {
 
     typealias foo = ;
 }
+// COMPILATION_ERRORS

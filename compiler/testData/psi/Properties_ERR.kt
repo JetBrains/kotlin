@@ -16,3 +16,4 @@ val f.d.- = f
 
 val foo
     get() -
+// COMPILATION_ERRORS

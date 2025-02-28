@@ -11,3 +11,5 @@ fun test() {
     when (object Obj {}) {}
     when (typealias TA = T) {}
 }
+
+// COMPILATION_ERRORS

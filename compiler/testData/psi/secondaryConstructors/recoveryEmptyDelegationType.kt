@@ -16,3 +16,5 @@ class B {
 }
 
 fun foo() = 4
+
+// COMPILATION_ERRORS

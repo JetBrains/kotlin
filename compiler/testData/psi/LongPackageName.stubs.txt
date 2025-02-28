@@ -1,0 +1,10 @@
+PsiJetFileStubImpl[package=foo.bar.baz.buzz]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=foo]
+          REFERENCE_EXPRESSION[referencedName=bar]
+        REFERENCE_EXPRESSION[referencedName=baz]
+      REFERENCE_EXPRESSION[referencedName=buzz]
+  IMPORT_LIST

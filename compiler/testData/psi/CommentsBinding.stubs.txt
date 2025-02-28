@@ -1,0 +1,89 @@
+PsiJetFileStubImpl[package=foo.bar]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=foo]
+      REFERENCE_EXPRESSION[referencedName=bar]
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=java.util, isAllUnder=true, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=java]
+        REFERENCE_EXPRESSION[referencedName=util]
+    IMPORT_DIRECTIVE[importedFqName=javax, isAllUnder=true, isValid=true]
+      REFERENCE_EXPRESSION[referencedName=javax]
+    IMPORT_DIRECTIVE[importedFqName=a.b, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=a]
+        REFERENCE_EXPRESSION[referencedName=b]
+    IMPORT_DIRECTIVE[importedFqName=c.d, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=c]
+        REFERENCE_EXPRESSION[referencedName=d]
+  CLASS[classId=foo/bar/A, fqName=foo.bar.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+  CLASS[classId=foo/bar/B, fqName=foo.bar.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+    CLASS_BODY
+  CLASS[classId=foo/bar/C, fqName=foo.bar.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=foo/bar/D, fqName=foo.bar.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+    CLASS_BODY
+      PROPERTY[fqName=foo.bar.D.v1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v1]
+      PROPERTY[fqName=foo.bar.D.v2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v2]
+      FUN[fqName=foo.bar.D.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=p3]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+        FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun]
+          VALUE_PARAMETER_LIST
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Local, superNames=[]]
+          CLASS_BODY
+      OBJECT_DECLARATION[classId=foo/bar/D.Companion, fqName=foo.bar.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+  PROPERTY[fqName=foo.bar.v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=v]
+  FUN[fqName=foo.bar.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+  CLASS[classId=foo/bar/E, fqName=foo.bar.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=foo.bar.E.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=foo.bar.E.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=foo.bar.E.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=foo.bar.E.X, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=X, superNames=[]]
+        CLASS_BODY
+          FUN[fqName=foo.bar.E.X.toString, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+            MODIFIER_LIST[override]
+            VALUE_PARAMETER_LIST
+  PROPERTY[fqName=foo.bar.prop, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=prop]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+  PROPERTY[fqName=foo.bar.prop2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=prop2]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=foo.bar.prop3, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=prop3]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]

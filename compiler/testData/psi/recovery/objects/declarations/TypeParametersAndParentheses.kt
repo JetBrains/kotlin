@@ -5,3 +5,4 @@ object Foo<T, R>(x: Int) {}
 object Foo<T, R>() : Bar {
 
 }
+// COMPILATION_ERRORS

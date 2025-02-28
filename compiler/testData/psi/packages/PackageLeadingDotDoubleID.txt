@@ -11,3 +11,5 @@ KtFile: PackageLeadingDotDoubleID.kt
   PsiWhiteSpace(' ')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('b')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -1,0 +1,50 @@
+PsiJetFileStubImpl[package=]
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann1]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=ann1]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/A1, fqName=A1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A1, superNames=[]]
+  CLASS[classId=/A2, fqName=A2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A2, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann2]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=ann2]
+  CLASS[classId=/A3, fqName=A3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A3, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann3]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=ann3]
+  CLASS[classId=/A4, fqName=A4, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A4, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann4]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=ann4]
+  CLASS[classId=/A5, fqName=A5, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A5, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann5]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=ann5]
+  MODIFIER_LIST[]
+  CLASS[classId=/A8, fqName=A8, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A8, superNames=[]]
+  CLASS[classId=/A9, fqName=A9, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A9, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann9]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=ann9]
+  CLASS[classId=/A10, fqName=A10, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A10, superNames=[]]
+    MODIFIER_LIST[]

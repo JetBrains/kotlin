@@ -42,3 +42,5 @@ out
     val internal
     val lazy
 }
+
+// COMPILATION_ERRORS

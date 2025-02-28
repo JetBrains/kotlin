@@ -11,3 +11,5 @@ fun baz(num: Int?, element: MyElement, block: () -> Unit): Int contract [
     }
     return 0
 }
+
+// COMPILATION_ERRORS

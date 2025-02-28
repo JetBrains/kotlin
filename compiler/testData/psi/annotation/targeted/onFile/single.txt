@@ -18,3 +18,5 @@ KtFile: single.kt
       PsiElement(IDENTIFIER)('bar')
   IMPORT_LIST
     <empty list>
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

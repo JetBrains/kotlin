@@ -5,3 +5,4 @@ fun test(): Int {
 
     return 1
 }
+// COMPILATION_ERRORS

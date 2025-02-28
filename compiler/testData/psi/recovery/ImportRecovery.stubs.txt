@@ -1,0 +1,9 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=some.test, isAllUnder=false, isValid=false]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=some]
+        REFERENCE_EXPRESSION[referencedName=test]
+  OBJECT_DECLARATION[classId=/StyleSheetOrigin, fqName=StyleSheetOrigin, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=StyleSheetOrigin, superNames=[]]
+    CLASS_BODY

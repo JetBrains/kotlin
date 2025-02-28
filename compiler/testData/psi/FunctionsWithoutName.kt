@@ -16,3 +16,4 @@ fun @[a()] T.<T : @[a]  (a) -> b>(a : foo) : bar {}
 
 fun A?.() : bar?
 fun A? .() : bar?
+// COMPILATION_ERRORS

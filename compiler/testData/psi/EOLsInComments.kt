@@ -17,3 +17,4 @@ fun foo() {
   a //
 + b
 }
+// COMPILATION_ERRORS

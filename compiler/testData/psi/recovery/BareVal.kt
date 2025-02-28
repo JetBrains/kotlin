@@ -9,3 +9,5 @@ fun f() {
 class Clazz {
     val
 }
+
+// COMPILATION_ERRORS

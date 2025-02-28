@@ -33,3 +33,4 @@ fun outer() {
 
     bar(fun () where T: V)
 }
+// COMPILATION_ERRORS

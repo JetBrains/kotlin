@@ -22,3 +22,5 @@ class A9
 
 @ :
 class A10
+
+// COMPILATION_ERRORS

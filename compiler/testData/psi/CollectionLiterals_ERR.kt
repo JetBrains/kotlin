@@ -6,3 +6,4 @@ fun test() {
     [1, 2 3, ]
     [
 }
+// COMPILATION_ERRORS

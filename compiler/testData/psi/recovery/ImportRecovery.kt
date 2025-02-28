@@ -4,3 +4,4 @@ import some.test.
 // SomeOther
 
 object StyleSheetOrigin {}
+// COMPILATION_ERRORS

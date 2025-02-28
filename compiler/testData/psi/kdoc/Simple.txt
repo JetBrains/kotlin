@@ -22,5 +22,8 @@ KtFile: Simple.kt
       PsiElement(KDOC_TEXT)(' line */ 5')
       PsiWhiteSpace('\n    ')
       PsiElement(KDOC_LEADING_ASTERISK)('**')
-      PsiElement(KDOC_TEXT)(' line 6 ')
-    PsiElement(KDOC_END)('*/')
+      PsiElement(KDOC_TEXT)(' line 6 */')
+      PsiWhiteSpace('\n')
+      PsiElement(KDOC_TEXT)('// COMPILATION_ERRORS')
+  PsiErrorElement:Unclosed comment
+    <empty list>

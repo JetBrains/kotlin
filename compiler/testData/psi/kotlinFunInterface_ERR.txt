@@ -77,3 +77,5 @@ KtFile: kotlinFunInterface_ERR.kt
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

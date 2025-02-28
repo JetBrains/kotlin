@@ -5,3 +5,4 @@ fun foo() {
     1._1some
     1._1_some
 }
+// COMPILATION_ERRORS

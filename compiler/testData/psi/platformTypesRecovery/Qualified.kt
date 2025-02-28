@@ -3,3 +3,4 @@ fun foo(
         p1: qualified.Foo<qualified.Type!, qualified.Type!>,
         p2: qualified.Foo<qualified.Type>!
 ) {}
+// COMPILATION_ERRORS

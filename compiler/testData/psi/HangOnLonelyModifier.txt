@@ -18,3 +18,5 @@ KtFile: HangOnLonelyModifier.kt
         PsiElement(in)('in')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

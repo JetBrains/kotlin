@@ -4,3 +4,4 @@ class Foo {
         val
     }
 }
+// COMPILATION_ERRORS

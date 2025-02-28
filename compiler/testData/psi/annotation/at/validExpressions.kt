@@ -29,3 +29,5 @@ fun foo() {
         a, b, c -> a
     }
 }
+
+// COMPILATION_ERRORS

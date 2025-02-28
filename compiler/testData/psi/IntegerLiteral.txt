@@ -176,3 +176,5 @@ KtFile: IntegerLiteral.kt
       PsiElement(INTEGER_LITERAL)('0')
     PsiErrorElement:Property getter or setter expected
       PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

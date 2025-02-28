@@ -20,3 +20,4 @@ val lambdaReturnValue: () -> (@A C)
 val lambdaReceiver: (@A C).() -> C
 
 val lambdaParameterNP: (@A C) -> C
+// COMPILATION_ERRORS

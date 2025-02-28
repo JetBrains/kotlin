@@ -1,0 +1,5 @@
+PsiJetFileStubImpl[package=some]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=some]
+  IMPORT_LIST
+  PROPERTY[fqName=some.a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]

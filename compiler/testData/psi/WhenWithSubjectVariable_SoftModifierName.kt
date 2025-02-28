@@ -27,3 +27,4 @@ fun test() {
     when (infix) {}
     when (suspend) {}
 }
+// COMPILATION_ERRORS

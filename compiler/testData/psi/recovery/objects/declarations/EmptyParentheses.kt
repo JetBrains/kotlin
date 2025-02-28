@@ -5,3 +5,4 @@ object Foo() {}
 object Foo() : Bar {
 
 }
+// COMPILATION_ERRORS

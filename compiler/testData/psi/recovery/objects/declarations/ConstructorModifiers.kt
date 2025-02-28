@@ -7,3 +7,4 @@ object Foo private () : Bar {
 }
 
 object Foo @[foo] private @[bar()] ()
+// COMPILATION_ERRORS

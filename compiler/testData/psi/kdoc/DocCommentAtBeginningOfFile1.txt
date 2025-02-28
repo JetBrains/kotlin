@@ -5,7 +5,8 @@ KtFile: DocCommentAtBeginningOfFile1.kt
     <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n')
     KDOC_SECTION
-      <empty list>
+      PsiElement(KDOC_TEXT)('// COMPILATION_ERRORS')
   PsiErrorElement:Unclosed comment
     <empty list>

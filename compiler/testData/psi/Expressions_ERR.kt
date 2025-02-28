@@ -7,3 +7,5 @@ val f = if (true) return else {
 
   ]
 }
+
+// COMPILATION_ERRORS

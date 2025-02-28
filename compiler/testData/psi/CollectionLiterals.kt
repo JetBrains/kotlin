@@ -12,3 +12,4 @@ fun test() {
     [1,
      [2]]
 }
+// COMPILATION_ERRORS

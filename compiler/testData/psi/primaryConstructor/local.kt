@@ -13,3 +13,5 @@ fun foo() {
     Ann("")
     constructor()
 }
+
+// COMPILATION_ERRORS

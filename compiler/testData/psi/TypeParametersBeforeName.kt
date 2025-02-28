@@ -4,3 +4,4 @@ fun <A, B> @[a] T.foo()
 
 val <A> List<A>.foo
 var <A> List<A>.foo
+// COMPILATION_ERRORS

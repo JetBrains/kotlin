@@ -1,0 +1,13 @@
+PsiJetFileStubImpl[package=]
+  FILE_ANNOTATION_LIST
+    ANNOTATION
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Volatile]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Volatile]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+    CLASS_BODY

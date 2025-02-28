@@ -4,3 +4,4 @@ dynamic class dynamic<dynamic>(dynamic: dynamic) : dynamic {
         dynamic::foo
     }
 }
+// COMPILATION_ERRORS

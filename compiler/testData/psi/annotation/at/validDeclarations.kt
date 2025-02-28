@@ -45,3 +45,5 @@ fun bar() {
     try {}
     catch (@Volatile e: Exception) {}
 }
+
+// COMPILATION_ERRORS

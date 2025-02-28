@@ -88,3 +88,5 @@ KtFile: importsWithConflict.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

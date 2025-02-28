@@ -24,3 +24,4 @@ fun f() {
 }
 
 val String.t get() = fun1@ context(a: String) fun String.() { this@fun1 + a + this@t }
+// COMPILATION_ERRORS

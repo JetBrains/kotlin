@@ -5,3 +5,5 @@ class A {
 
 
 val x: Int = 1
+
+// COMPILATION_ERRORS

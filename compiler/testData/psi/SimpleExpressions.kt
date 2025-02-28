@@ -44,3 +44,5 @@ fun a(
     la@
     continue@la
 }
+
+// COMPILATION_ERRORS

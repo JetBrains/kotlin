@@ -172,3 +172,5 @@ KtFile: UnsignedLiteral.kt
             PsiElement(INTEGER_LITERAL)('3Ul')
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -1,0 +1,14 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=aaa.bbb.Ccc, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=aaa]
+          REFERENCE_EXPRESSION[referencedName=bbb]
+        REFERENCE_EXPRESSION[referencedName=Ccc]
+    IMPORT_DIRECTIVE[importedFqName=ddd, isAllUnder=true, isValid=true]
+      REFERENCE_EXPRESSION[referencedName=ddd]
+  SCRIPT[fqName=Import, fqName=Import, name=Import]
+    FUN[fqName=Import.foo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      VALUE_PARAMETER_LIST

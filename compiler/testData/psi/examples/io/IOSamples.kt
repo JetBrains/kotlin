@@ -60,3 +60,4 @@ fun example() { // this does not rethrow, no appropriate parameters given
   streamCopy(FileInput(f1), f2) // throws IOException, you must catch or rethrow explicitly
 
 }
+// COMPILATION_ERRORS

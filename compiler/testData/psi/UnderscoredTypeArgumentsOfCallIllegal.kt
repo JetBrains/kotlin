@@ -4,3 +4,5 @@ fun main() {
     val y: Foo<Int, __> = 1
     val y: Foo<_____, Float> = 1
 }
+
+// COMPILATION_ERRORS

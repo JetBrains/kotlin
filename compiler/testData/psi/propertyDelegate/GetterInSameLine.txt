@@ -30,3 +30,5 @@ KtFile: GetterInSameLine.kt
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('1')
       PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -1,0 +1,129 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/foo, fqName=foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=foo, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/foo.foo, fqName=foo.foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=foo, superNames=[]]
+        CLASS_BODY
+          OBJECT_DECLARATION[classId=/foo.foo.foo, fqName=foo.foo.foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=foo, superNames=[]]
+            CLASS_BODY
+          CLASS[classId=/foo.foo.Bar, fqName=foo.foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
+            CLASS_BODY
+          FUN[fqName=foo.foo.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+            VALUE_PARAMETER_LIST
+          PROPERTY[fqName=foo.foo.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+          PROPERTY[fqName=foo.foo.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
+          TYPEALIAS[classId=/foo.foo.foo, fqName=foo.foo.foo, isTopLevel=false, name=foo]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=bar]
+      CLASS[classId=/foo.Bar, fqName=foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
+        CLASS_BODY
+          OBJECT_DECLARATION[classId=/foo.Bar.foo, fqName=foo.Bar.foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=foo, superNames=[]]
+            CLASS_BODY
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                MODIFIER_LIST[companion]
+                CLASS_BODY
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                MODIFIER_LIST[private companion]
+                CLASS_BODY
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo]]
+                MODIFIER_LIST[private companion]
+                SUPER_TYPE_LIST
+                  SUPER_TYPE_ENTRY
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Fooo]
+                CLASS_BODY
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar]]
+                MODIFIER_LIST[private companion]
+                SUPER_TYPE_LIST
+                  SUPER_TYPE_ENTRY
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Fooo]
+                  DELEGATED_SUPER_TYPE_ENTRY
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Bar]
+                    REFERENCE_EXPRESSION[referencedName=foo]
+                CLASS_BODY
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar, Goo]]
+                MODIFIER_LIST[private companion]
+                SUPER_TYPE_LIST
+                  SUPER_TYPE_ENTRY
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Fooo]
+                  DELEGATED_SUPER_TYPE_ENTRY
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Bar]
+                    REFERENCE_EXPRESSION[referencedName=foo]
+                  SUPER_TYPE_CALL_ENTRY
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Goo]
+          CLASS[classId=/foo.Bar.Bar, fqName=foo.Bar.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
+            CLASS_BODY
+          FUN[fqName=foo.Bar.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+            VALUE_PARAMETER_LIST
+          PROPERTY[fqName=foo.Bar.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+          PROPERTY[fqName=foo.Bar.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
+          TYPEALIAS[classId=/foo.Bar.foo, fqName=foo.Bar.foo, isTopLevel=false, name=foo]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=bar]
+      FUN[fqName=foo.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        VALUE_PARAMETER_LIST
+      PROPERTY[fqName=foo.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+      PROPERTY[fqName=foo.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
+      TYPEALIAS[classId=/foo.foo, fqName=foo.foo, isTopLevel=false, name=foo]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=bar]
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[private companion]
+        CLASS_BODY
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo]]
+        MODIFIER_LIST[private companion]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Fooo]
+        CLASS_BODY
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar]]
+        MODIFIER_LIST[private companion]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Fooo]
+          DELEGATED_SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Bar]
+            REFERENCE_EXPRESSION[referencedName=foo]
+        CLASS_BODY
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar, Goo]]
+        MODIFIER_LIST[private companion]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Fooo]
+          DELEGATED_SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Bar]
+            REFERENCE_EXPRESSION[referencedName=foo]
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Goo]

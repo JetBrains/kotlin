@@ -28,3 +28,4 @@ fun foo() {
 
     val x = 9
 }
+// COMPILATION_ERRORS

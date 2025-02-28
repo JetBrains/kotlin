@@ -4,3 +4,5 @@ fun main() {
     val x = foo<_, _, Int>()
     val x = foo<_>()
 }
+
+// COMPILATION_ERRORS

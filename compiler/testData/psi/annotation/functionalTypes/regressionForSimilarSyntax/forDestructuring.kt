@@ -9,3 +9,5 @@ fun foo() {
     for (@Foo i: Int in y) {}
     for (@Foo i in y) {}
 }
+
+// COMPILATION_ERRORS

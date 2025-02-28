@@ -41,3 +41,5 @@ class D {
         fun foo() {}
     }
 }
+
+// COMPILATION_ERRORS

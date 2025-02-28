@@ -19,3 +19,5 @@ fun main() {
 fun main() {
     if (0..<n..<n) {} else if (0..n..<n..n) {} else if (0 ..< n .. n ..< n ..< n) {} else { ((0+1..<n-1..1+n)-1..<3*n) ..< n }
 }
+
+// COMPILATION_ERRORS

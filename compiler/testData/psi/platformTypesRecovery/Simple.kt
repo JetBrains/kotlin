@@ -3,3 +3,4 @@ fun foo(
         p1: Foo<Type!, Type!>,
         p2: Foo<Type>!
 ) {}
+// COMPILATION_ERRORS

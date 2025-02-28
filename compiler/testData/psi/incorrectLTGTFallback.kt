@@ -23,3 +23,5 @@ fun main() {
     foo<Int> @Ann("") @Ann("") @Ann("") label@/* */
     { x -> x }
 }
+
+// COMPILATION_ERRORS

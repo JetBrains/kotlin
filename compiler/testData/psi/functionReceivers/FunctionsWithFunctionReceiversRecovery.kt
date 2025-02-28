@@ -26,3 +26,4 @@ class A<X> {
 fun bar(a: A<String>) {
     a.foo<Int>()
 }
+// COMPILATION_ERRORS

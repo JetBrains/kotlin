@@ -23,3 +23,4 @@ val a: (a:) -> Unit
 
 class A(a)
 class A(a:)
+// COMPILATION_ERRORS

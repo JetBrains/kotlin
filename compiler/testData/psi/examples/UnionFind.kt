@@ -31,3 +31,5 @@ class UnionFind {
 
 val Int.isOdd : Boolean
   get() = this % 2 != 0
+
+// COMPILATION_ERRORS

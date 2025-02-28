@@ -60,3 +60,5 @@ fun f13() {
 fun f13() {
     val l: Int by Some
 }
+
+// COMPILATION_ERRORS

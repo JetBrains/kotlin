@@ -4,3 +4,4 @@ enum class My {
 
     companion object {}   
 }
+// COMPILATION_ERRORS

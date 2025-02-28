@@ -85,3 +85,5 @@ KtFile: recoveryJustConstructorKeyword.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('B')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

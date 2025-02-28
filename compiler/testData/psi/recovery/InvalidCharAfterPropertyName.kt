@@ -5,3 +5,5 @@ class C {
 
     interface I
 }
+
+// COMPILATION_ERRORS

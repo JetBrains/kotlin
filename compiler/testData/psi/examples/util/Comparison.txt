@@ -339,3 +339,5 @@ KtFile: Comparison.kt
                 PsiElement(IDENTIFIER)('GR')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

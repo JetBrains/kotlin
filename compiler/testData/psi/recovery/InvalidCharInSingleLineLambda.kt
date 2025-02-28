@@ -5,3 +5,4 @@ fun foo() {
 }
 
 fun bar() { }
+// COMPILATION_ERRORS

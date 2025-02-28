@@ -20,3 +20,5 @@ KtFile: PackageModifiers.kt
       PsiElement(IDENTIFIER)('name')
   IMPORT_LIST
     <empty list>
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

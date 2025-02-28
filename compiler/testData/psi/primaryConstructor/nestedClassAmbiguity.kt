@@ -26,3 +26,5 @@ class Outer4 {
 object TopLevel constructor(val x: Int) {
     fun foo() {}
 }
+
+// COMPILATION_ERRORS

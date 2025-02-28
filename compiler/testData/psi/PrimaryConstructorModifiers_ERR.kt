@@ -11,3 +11,5 @@ class A1 {
 open class B<T : A> private () {
 
 }
+
+// COMPILATION_ERRORS

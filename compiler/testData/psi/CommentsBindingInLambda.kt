@@ -36,3 +36,5 @@ val la6 = /*1*/ {/*2*/ a /*3*/ -> /*4*/
 val la7 = {/**/}
 
 fun foo() {}
+
+// COMPILATION_ERRORS

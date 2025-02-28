@@ -35,3 +35,5 @@ class X {
     val Int.(a, b) = 1
     val (a, b): Int = 1
 }
+
+// COMPILATION_ERRORS

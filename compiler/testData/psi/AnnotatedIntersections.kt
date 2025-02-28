@@ -8,3 +8,5 @@ fun <T> foo7(x: @ann T & (Any & Any)) {}
 fun <T> @ann (T & Any).foo8() {}
 fun <T> foo10(x: @ann T & Any.() -> Unit) {}
 fun <T> foo11(x: @ann (T & Any).() -> Unit) {}
+
+// COMPILATION_ERRORS

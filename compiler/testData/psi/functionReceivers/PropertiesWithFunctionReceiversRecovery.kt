@@ -12,3 +12,4 @@ val @[a] (T<T>.(A<B>)).foo()
 val @[a] ((A<B>)-).foo()
 
 val c<T> by A.B
+// COMPILATION_ERRORS

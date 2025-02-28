@@ -41,3 +41,4 @@ fun foo() {
 
 // No '}'
 val test = {
+// COMPILATION_ERRORS

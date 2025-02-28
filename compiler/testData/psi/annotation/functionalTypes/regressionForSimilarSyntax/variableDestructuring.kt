@@ -7,3 +7,5 @@ fun foo() {
     val @Foo (i, j) = Pair(1, 2)
     val @Foo (i, j: Int) = Pair(1, 2)
 }
+
+// COMPILATION_ERRORS

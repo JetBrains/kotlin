@@ -3,3 +3,4 @@ open class IPushPop<T> {
   fun push(item : T)
   fun pop() : T
 }
+// COMPILATION_ERRORS

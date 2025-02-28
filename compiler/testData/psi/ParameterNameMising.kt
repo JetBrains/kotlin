@@ -7,3 +7,4 @@ fun bar(Array<String> = array("")) : Unit {
     var x : Int = 42
     x += 1
 }
+// COMPILATION_ERRORS

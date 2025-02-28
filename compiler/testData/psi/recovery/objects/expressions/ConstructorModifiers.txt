@@ -125,6 +125,8 @@ KtFile: ConstructorModifiers.kt
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n')
+        PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
         CLASS_BODY
           PsiErrorElement:Expecting a class body
             <empty list>

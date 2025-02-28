@@ -49,3 +49,5 @@ KtFile: AnnotatedExpressions.kt
             PsiElement(this)('this')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

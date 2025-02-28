@@ -1,0 +1,346 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=name]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=name]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=bar]
+  PROPERTY[fqName=a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=name]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=bar]
+  PROPERTY[fqName=a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=a]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=b]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=bar]
+  FUN[fqName=c, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=c]
+    VALUE_PARAMETER_LIST
+    FUN[fqName=c.<no name provided>, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      VALUE_PARAMETER_LIST
+  FUN[fqName=c, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=c]
+    VALUE_PARAMETER_LIST
+    FUN[fqName=c.name, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=name]
+      VALUE_PARAMETER_LIST
+  FUN[fqName=c, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=c]
+    VALUE_PARAMETER_LIST
+    FUN[fqName=c.<no name provided>, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+  FUN[fqName=c, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=c]
+    VALUE_PARAMETER_LIST
+    FUN[fqName=c.<no name provided>, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=bar]
+  FUN[fqName=c, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=c]
+    VALUE_PARAMETER_LIST
+    FUN[fqName=c.<no name provided>, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=a]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=b]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=bar]
+  PROPERTY[fqName=d, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=d]
+    FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      VALUE_PARAMETER_LIST
+      REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=d, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=d]
+    FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=name]
+      VALUE_PARAMETER_LIST
+      REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      MODIFIER_LIST[]
+        ANNOTATION
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=a]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=b, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=b]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      VALUE_PARAMETER_LIST
+      TYPE_CONSTRAINT_LIST
+        TYPE_CONSTRAINT
+          REFERENCE_EXPRESSION[referencedName=T]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=A]
+  FUN[fqName=outer, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=outer]
+    VALUE_PARAMETER_LIST
+    FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      VALUE_PARAMETER_LIST
+    FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=name]
+      VALUE_PARAMETER_LIST
+    FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+    FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=name]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+    FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=bar]
+    FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=a]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=b]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=bar]
+    FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_REFERENCE
+            MODIFIER_LIST[]
+              ANNOTATION
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=a]
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=a]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=b]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=bar]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=A]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=bar]
+    FUN[fqName=null, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=A]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=bar]
+    FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      VALUE_PARAMETER_LIST
+      REFERENCE_EXPRESSION[referencedName=a]
+    FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=name]
+      VALUE_PARAMETER_LIST
+      REFERENCE_EXPRESSION[referencedName=a]
+    FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=name]
+      MODIFIER_LIST[]
+        ANNOTATION
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=a]
+      VALUE_PARAMETER_LIST
+      REFERENCE_EXPRESSION[referencedName=a]

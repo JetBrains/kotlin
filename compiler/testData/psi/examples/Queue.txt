@@ -387,3 +387,5 @@ KtFile: Queue.kt
               PsiElement(null)('null')
       PsiWhiteSpace('\n\n\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

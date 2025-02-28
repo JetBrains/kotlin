@@ -76,3 +76,5 @@ class foo {
 
 
 }
+
+// COMPILATION_ERRORS

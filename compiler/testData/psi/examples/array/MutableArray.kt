@@ -11,3 +11,4 @@ open class WriteOnlyArray<in T> : ISized { // This is needed to keep IIterator's
 }
 
 class MutableArray<T> : ReadOnlyArray<T>, WriteOnlyArray<T> {/*...*/}
+// COMPILATION_ERRORS

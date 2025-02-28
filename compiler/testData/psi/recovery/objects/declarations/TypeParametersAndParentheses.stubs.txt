@@ -1,0 +1,32 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Foo]
+      VALUE_PARAMETER_LIST
+  OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Foo]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+    CLASS_BODY
+  OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[Bar]]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Foo]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Bar]
+    CLASS_BODY

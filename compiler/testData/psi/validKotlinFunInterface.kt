@@ -15,3 +15,4 @@ class TopLevel {
 
 fun
 interface Foo
+// COMPILATION_ERRORS

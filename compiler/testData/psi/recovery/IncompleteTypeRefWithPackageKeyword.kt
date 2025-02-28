@@ -6,3 +6,5 @@ fun bar() {
 }
 
 
+
+// COMPILATION_ERRORS

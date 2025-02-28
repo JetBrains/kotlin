@@ -1,0 +1,25 @@
+PsiJetFileStubImpl[package=bar]
+  FILE_ANNOTATION_LIST
+    ANNOTATION
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=foo]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+    ANNOTATION
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=bar]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=bar]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=baz]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=baz]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=bar]
+  IMPORT_LIST
+  SCRIPT[fqName=bar.ManyAnnotationsOnFile, fqName=bar.ManyAnnotationsOnFile, name=ManyAnnotationsOnFile]

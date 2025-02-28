@@ -644,3 +644,5 @@ KtFile: SameLineStatementRecovery.kt
             PsiElement(IDENTIFIER)('Some')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

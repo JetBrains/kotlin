@@ -31,3 +31,4 @@ inline
 context(_: String)
 public
 val foo3: String get() = ""
+// COMPILATION_ERRORS

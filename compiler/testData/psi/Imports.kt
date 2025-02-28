@@ -6,3 +6,4 @@ import foo as bar
 import foo.bar as bar
 import foo.*
 import foo. *
+// COMPILATION_ERRORS

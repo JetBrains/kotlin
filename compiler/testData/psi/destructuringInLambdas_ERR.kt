@@ -3,3 +3,5 @@ fun foo() {
     a9.filter { (x -> foo9() }
     a10.filter { (x, y :) : -> foo10() }
 }
+
+// COMPILATION_ERRORS

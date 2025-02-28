@@ -9,3 +9,5 @@ class A {
         @[suppress("a")] (1 + @[abc] 3)
     }
 }
+
+// COMPILATION_ERRORS

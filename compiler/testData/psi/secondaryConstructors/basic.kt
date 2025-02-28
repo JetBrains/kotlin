@@ -15,3 +15,5 @@ class A {
 }
 
 @constructor class B
+
+// COMPILATION_ERRORS

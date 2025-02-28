@@ -104,3 +104,5 @@ KtFile: fileAnnotationInWrongPlace.kt
     PsiElement(interface)('interface')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('T')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

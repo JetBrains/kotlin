@@ -42,3 +42,5 @@ fun foo() {
     { A.B<String>.(x: Int) -> }
     {((a: Boolean = true) -> Int).(x: Any) : Unit -> }
 }
+
+// COMPILATION_ERRORS

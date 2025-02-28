@@ -26,3 +26,5 @@ private @ @[Ann1(1)] @Ann3("2") class A(
     val x: Int
         @ private @ open get() = 1
 }
+
+// COMPILATION_ERRORS

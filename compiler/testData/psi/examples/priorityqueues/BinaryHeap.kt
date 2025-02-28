@@ -99,3 +99,5 @@ fun IMutableList<T>.swap(a : Int, b : Int) {
 val IList<T>.lastIndex : Int
   get() = this.size - 1
 
+
+// COMPILATION_ERRORS

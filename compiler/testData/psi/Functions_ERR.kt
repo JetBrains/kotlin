@@ -11,3 +11,5 @@ fun foo() = ;
 fun <T> foo<D>()
 fun <T> foo<D()
 fun <T> A.<foo()
+
+// COMPILATION_ERRORS

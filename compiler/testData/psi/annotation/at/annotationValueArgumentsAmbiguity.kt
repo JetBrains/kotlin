@@ -5,3 +5,5 @@ fun foo() {
     @ann() ({ it -> it + 1}) // lambda in parenthesises annotated, "print(1)" is separated expression
     print(1)
 }
+
+// COMPILATION_ERRORS

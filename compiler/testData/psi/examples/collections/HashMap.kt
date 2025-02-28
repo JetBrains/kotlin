@@ -56,3 +56,4 @@ class StrategyHashMap<K, V>(hashingStrategy : IHashingStrategy<K>) : IMap<K, V> 
   //...
 
 }
+// COMPILATION_ERRORS

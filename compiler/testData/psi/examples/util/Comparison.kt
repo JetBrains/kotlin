@@ -13,3 +13,5 @@ fun <T> asMatchableComparison(cmp : Comparison<T>) : MatchableComparison<T> = {a
   return ComparisonResult.GR
 }
 
+
+// COMPILATION_ERRORS

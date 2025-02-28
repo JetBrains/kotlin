@@ -25,3 +25,5 @@ class B {
     init;
     constructor;
 }
+
+// COMPILATION_ERRORS

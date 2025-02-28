@@ -5,3 +5,5 @@
 @fil:ann
 @ :
 package boo
+
+// COMPILATION_ERRORS

@@ -1294,3 +1294,5 @@ KtFile: functionTypes.kt
                   PsiElement(IDENTIFIER)('Int')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

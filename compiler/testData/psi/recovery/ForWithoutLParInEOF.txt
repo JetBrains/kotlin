@@ -17,6 +17,8 @@ KtFile: ForWithoutLParInEOF.kt
       PsiElement(for)('for')
       PsiErrorElement:Expecting '(' to open a loop range
         <empty list>
+      PsiWhiteSpace('\n')
+      PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
       BODY
         PsiErrorElement:Expecting an expression
           <empty list>

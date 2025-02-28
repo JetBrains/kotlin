@@ -30,3 +30,4 @@ fun test() {
 
         && true
 }
+// COMPILATION_ERRORS

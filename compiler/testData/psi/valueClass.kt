@@ -33,3 +33,4 @@ class TopLevel {
 
 value
 class Foo
+// COMPILATION_ERRORS

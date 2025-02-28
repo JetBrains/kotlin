@@ -13,3 +13,4 @@ fun example() {
   }()
 
 }
+// COMPILATION_ERRORS

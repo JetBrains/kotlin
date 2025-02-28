@@ -192,3 +192,5 @@ KtFile: TypeAlias_ERR.kt
       USER_TYPE
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

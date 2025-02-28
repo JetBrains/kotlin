@@ -5,3 +5,5 @@ val foo = object<T, R>() : Bar {
 }
 
 val foo = object<T, R>()
+
+// COMPILATION_ERRORS

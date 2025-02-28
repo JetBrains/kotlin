@@ -4,3 +4,4 @@ fun foo(
         p2: Foo<(Mutable)List<Foo!>!>,
         p3: (Mutable)Set<(Mutable)List<Foo!>!>
 ) {}
+// COMPILATION_ERRORS

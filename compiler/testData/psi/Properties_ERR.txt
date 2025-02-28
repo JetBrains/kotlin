@@ -223,3 +223,5 @@ KtFile: Properties_ERR.kt
     PsiWhiteSpace(' ')
     PsiErrorElement:Property getter or setter expected
       PsiElement(MINUS)('-')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

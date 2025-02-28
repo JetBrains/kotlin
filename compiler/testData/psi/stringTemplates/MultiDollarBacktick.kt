@@ -34,3 +34,4 @@ fun parserBug() {
     "${$$$"$$`identifier"}
     "${$$$"$$$`identifier`"}
 }
+// COMPILATION_ERRORS

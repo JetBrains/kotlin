@@ -49,3 +49,5 @@ abstract val a151 : Int?.(a : Int) -> Int
     abstract val a18 : (a : Int) -> ((a : Int) -> Int)
     abstract val a19 : (b : (a : Int) -> Int) -> Int
 }
+
+// COMPILATION_ERRORS

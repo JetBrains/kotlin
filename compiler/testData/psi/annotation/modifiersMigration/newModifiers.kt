@@ -58,3 +58,5 @@ public data inline class A {
     val z0: Double = 3.0
     inline get noinline set
 }
+
+// COMPILATION_ERRORS

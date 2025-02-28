@@ -29,3 +29,5 @@ fun typeArgumentsError() {
 
     ::a<b>()
 }
+
+// COMPILATION_ERRORS

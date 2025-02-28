@@ -7,3 +7,5 @@ fun foo() {
     val x = { @Foo ((foo, bar: Any)) -> }
     val x = { @Foo () -> Unit }
 }
+
+// COMPILATION_ERRORS

@@ -7,3 +7,5 @@
         @kotlin.data() class Local
     }
 }
+
+// COMPILATION_ERRORS

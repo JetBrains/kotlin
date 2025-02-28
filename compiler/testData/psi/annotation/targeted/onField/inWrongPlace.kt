@@ -11,3 +11,4 @@ interface I
 
 @field:Deprecated
 fun a()
+// COMPILATION_ERRORS

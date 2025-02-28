@@ -4,3 +4,4 @@ open class IMutableList<T> : IList<T>, IMutableIterable<T> {
   fun remove(index : Int) : T
   fun mutableIterator() : IMutableIterator<T>
 }
+// COMPILATION_ERRORS

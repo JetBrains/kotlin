@@ -12,3 +12,5 @@ class C {
 }
 
 @Ann
+
+// COMPILATION_ERRORS

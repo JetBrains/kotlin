@@ -3,3 +3,4 @@ fun foo(
    p: Foo<Bar>!.Baz,
    p1: Foo!.() -> Unit
 ) {}
+// COMPILATION_ERRORS

@@ -8,3 +8,5 @@ class A {
     constructor(): super(3)
     val x = 4
 }
+
+// COMPILATION_ERRORS

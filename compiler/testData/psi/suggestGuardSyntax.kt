@@ -15,3 +15,4 @@ fun elseAndAnd(x: Boolean, boolExpr: Boolean) {
         else && boolExpr -> "hello"
     }
 }
+// COMPILATION_ERRORS

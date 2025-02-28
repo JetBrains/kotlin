@@ -8,3 +8,5 @@ val foo = object Name private () : Bar {
 val foo = object Name @[foo] private @[bar()] () {}
 
 val foo = object Name private ()
+
+// COMPILATION_ERRORS

@@ -1,0 +1,60 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Color, fqName=Color, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Color, superNames=[]]
+    MODIFIER_LIST[enum]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Color]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=Color.rgb, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=rgb]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=Color.RED, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=RED, superNames=[Color]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+        CLASS_BODY
+          FUN[fqName=Color.RED.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+            MODIFIER_LIST[override]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+      ENUM_ENTRY[classId=null, fqName=Color.GREEN, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=GREEN, superNames=[Color]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+        CLASS_BODY
+          FUN[fqName=Color.GREEN.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+            MODIFIER_LIST[override]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+      ENUM_ENTRY[classId=null, fqName=Color.BLUE, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=BLUE, superNames=[Color]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+        CLASS_BODY
+          FUN[fqName=Color.BLUE.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+            MODIFIER_LIST[override]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+      FUN[fqName=Color.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        MODIFIER_LIST[abstract]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]

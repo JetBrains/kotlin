@@ -7,3 +7,5 @@ fun foo6(x: List<A<) {}
 fun foo7(x: List<A<,) = 1
 
 fun main() {}
+
+// COMPILATION_ERRORS

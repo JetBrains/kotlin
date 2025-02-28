@@ -26,3 +26,4 @@ fun a()
 @set:Deprecated
 @setparam:Deprecated
 fun b()
+// COMPILATION_ERRORS

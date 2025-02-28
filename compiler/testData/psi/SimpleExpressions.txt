@@ -729,3 +729,5 @@ KtFile: SimpleExpressions.kt
               PsiElement(IDENTIFIER)('la')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -1,0 +1,80 @@
+PsiJetFileStubImpl[package=foo.bar.goo]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        REFERENCE_EXPRESSION[referencedName=bar]
+      REFERENCE_EXPRESSION[referencedName=goo]
+  IMPORT_LIST
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=foo]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=A]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=foo]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]
+  TYPEALIAS[classId=foo/bar/goo/foo, fqName=foo.bar.goo.foo, isTopLevel=true, name=foo]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=A]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=bar]

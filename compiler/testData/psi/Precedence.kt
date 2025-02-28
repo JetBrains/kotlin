@@ -46,3 +46,5 @@ fun foo() {
   t as? Any.Any<T>.Any<T> * 1
   t as?  () -> T * 1
 }
+
+// COMPILATION_ERRORS

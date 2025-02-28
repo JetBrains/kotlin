@@ -63,3 +63,5 @@ fun emptyLHS() {
     ::x.name
     foo(::x.name)
 }
+
+// COMPILATION_ERRORS

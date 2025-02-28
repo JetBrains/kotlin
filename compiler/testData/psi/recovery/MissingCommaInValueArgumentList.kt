@@ -3,3 +3,4 @@ val x = foo(
     b
     c
 )
+// COMPILATION_ERRORS

@@ -28,3 +28,5 @@ class Outer6 {
     class Nested1
     private Ann ()
 }
+
+// COMPILATION_ERRORS

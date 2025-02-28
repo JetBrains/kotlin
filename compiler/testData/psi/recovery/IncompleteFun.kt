@@ -3,3 +3,4 @@ fun {
 }
 
 fun bar(){}
+// COMPILATION_ERRORS

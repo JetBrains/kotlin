@@ -55,3 +55,5 @@ KtFile: kt5102.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -5,3 +5,4 @@ class Test(val a: Int var b: Int val c: Int) {
 fun test(val a: Int var b: Int val c: Int) {
 
 }
+// COMPILATION_ERRORS

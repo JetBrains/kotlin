@@ -59,3 +59,5 @@ KtFile: Expressions_ERR.kt
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace('\n')
           PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

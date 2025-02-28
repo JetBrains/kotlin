@@ -9,3 +9,5 @@ fun <T> T & Any.foo8() {}
 fun <T> (T & Any).foo9() {}
 fun <T> foo10(x: T & Any.() -> Unit) {}
 fun <T> foo11(x: (T & Any).() -> Unit) {}
+
+// COMPILATION_ERRORS

@@ -27,3 +27,5 @@ KtFile: ImportRecovery.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -3,3 +3,5 @@ fun foo() {
     1
     @[a] this
 }
+
+// COMPILATION_ERRORS

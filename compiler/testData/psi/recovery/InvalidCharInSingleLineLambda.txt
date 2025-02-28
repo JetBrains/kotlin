@@ -62,3 +62,5 @@ KtFile: InvalidCharInSingleLineLambda.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace(' ')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -16,3 +16,5 @@ class A5 constructor : Base {}
 class A7 @Ann(1) (x: Int)
 class A8 @Ann() {}
 class A9 @Ann() : Base()
+
+// COMPILATION_ERRORS

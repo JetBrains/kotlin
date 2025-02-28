@@ -12,3 +12,5 @@ class A {
 
 }
 
+
+// COMPILATION_ERRORS

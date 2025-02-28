@@ -15,3 +15,4 @@ typealias foo<A : , B> = bar
 
 class
 typealias foo = bar
+// COMPILATION_ERRORS

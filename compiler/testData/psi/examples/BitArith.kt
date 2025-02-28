@@ -31,3 +31,4 @@ open class INumber : IComparable<This> {
   fun shl(bits : Int) : This
   // ...
 }
+// COMPILATION_ERRORS

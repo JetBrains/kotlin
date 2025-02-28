@@ -12,3 +12,5 @@ enum class A {
 
     @Ann fun foo() {}
 }
+
+// COMPILATION_ERRORS

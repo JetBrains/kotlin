@@ -22,3 +22,4 @@ class SomeClass(multiplier: Int?) {
             field = value
         }
 }
+// COMPILATION_ERRORS

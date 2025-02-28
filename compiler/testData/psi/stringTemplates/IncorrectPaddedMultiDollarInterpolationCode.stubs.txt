@@ -1,0 +1,446 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=emptyInterpolation, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=emptyInterpolation]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=blankInterpolation, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=blankInterpolation]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=linebreakInterpolation, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=linebreakInterpolation]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=interpolationOfUnresolvedReference, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=interpolationOfUnresolvedReference]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=interpolationOfMisplacedDollar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=interpolationOfMisplacedDollar]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=interpolationOfMisplacedInterpolation, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=interpolationOfMisplacedInterpolation]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=interpolationOfIncorrectExpression, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=interpolationOfIncorrectExpression]
+    VALUE_PARAMETER_LIST
+  PROPERTY[fqName=runTimeConstant, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=runTimeConstant]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+  CLASS[classId=/Annotation, fqName=Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Repeatable]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Repeatable]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Annotation]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=Annotation.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  FUN[fqName=stringsWithInterpolationAsInvalidAnnotationArguments, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=stringsWithInterpolationAsInvalidAnnotationArguments]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$$$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$$$$$$$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$$$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$$$$$$$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=$${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=$$$${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=$$$$$$$${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$$$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$$$$$$$runTimeConstant]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$$$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              SHORT_STRING_TEMPLATE_ENTRY[text=$$$$$$$$`runTimeConstant`]
+                REFERENCE_EXPRESSION[referencedName=runTimeConstant]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=$${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=$$$${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=padding ]
+              LONG_STRING_TEMPLATE_ENTRY[text=$$$$$$$${0 + runTimeConstant}]
+              LITERAL_STRING_TEMPLATE_ENTRY[text= padding]
+    VALUE_PARAMETER_LIST
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer01, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer01]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer02, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer02]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer03, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer03]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer04, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer04]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer05, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer05]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer06, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer06]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer07, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer07]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer08, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer08]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer09, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer09]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer10, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer10]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer11, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer11]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer12, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer12]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer13, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer13]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer14, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer14]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer15, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer15]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer16, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer16]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer17, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer17]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer18, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer18]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer19, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer19]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer20, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer20]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer21, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer21]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer22, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer22]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer23, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer23]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer24, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer24]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer25, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer25]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer26, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer26]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer27, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer27]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer28, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer28]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer29, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer29]
+    MODIFIER_LIST[const]
+  PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer30, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer30]
+    MODIFIER_LIST[const]

@@ -26,3 +26,4 @@ fun main() {
     for ((a: in b) {}
     for (( ) {}
 }
+// COMPILATION_ERRORS

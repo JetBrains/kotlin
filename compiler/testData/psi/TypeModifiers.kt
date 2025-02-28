@@ -18,3 +18,5 @@ val p15: suspend (suspend (() -> Unit)) -> Unit
 
 @a fun @a a.f1() {}
 fun (@a a.(a) -> a).f2() {}
+
+// COMPILATION_ERRORS

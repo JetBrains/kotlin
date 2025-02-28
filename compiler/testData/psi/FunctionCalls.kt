@@ -38,3 +38,5 @@ fun foo() {
   1._1foo()
   1._1_foo()
 }
+
+// COMPILATION_ERRORS

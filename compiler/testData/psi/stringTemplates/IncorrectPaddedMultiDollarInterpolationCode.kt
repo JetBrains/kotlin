@@ -265,3 +265,5 @@ const val stringWithInterpolationAsInvalidConstantInitializer27 = $"""padding ${
 const val stringWithInterpolationAsInvalidConstantInitializer28 = $$"""padding $${0 + runTimeConstant} padding"""
 const val stringWithInterpolationAsInvalidConstantInitializer29 = $$$$"""padding $$$${0 + runTimeConstant} padding"""
 const val stringWithInterpolationAsInvalidConstantInitializer30 = $$$$$$$$"""padding $$$$$$$${0 + runTimeConstant} padding"""
+
+// COMPILATION_ERRORS

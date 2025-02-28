@@ -287,3 +287,5 @@ fun separatedInterpolationPrefix() {
     $$$$ """padding"""
     $$$$$$$$ """padding"""
 }
+
+// COMPILATION_ERRORS

@@ -11,3 +11,5 @@ class B {
     init
     init {}
 }
+
+// COMPILATION_ERRORS

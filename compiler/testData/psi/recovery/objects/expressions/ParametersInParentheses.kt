@@ -5,3 +5,5 @@ val foo = object(a: Int, b: String) : Bar {
 }
 
 val foo = object(a: Int, b: String)
+
+// COMPILATION_ERRORS

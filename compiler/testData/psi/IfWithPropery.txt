@@ -87,3 +87,5 @@ KtFile: IfWithPropery.kt
           NULL
             PsiElement(null)('null')
           PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

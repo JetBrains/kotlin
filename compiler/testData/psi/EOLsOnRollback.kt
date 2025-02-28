@@ -11,3 +11,4 @@ fun foo() {
     1
     @a val f
 }
+// COMPILATION_ERRORS

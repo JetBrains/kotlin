@@ -8,3 +8,4 @@ fun foo(
         p7: dynamic?,
         p8: (dynamic) -> dynamic
 ): dynamic
+// COMPILATION_ERRORS

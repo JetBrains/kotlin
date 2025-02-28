@@ -35,3 +35,5 @@ fun outer() {
     bar(fun name() = a)
     bar(@[a] fun name() = a)
 }
+
+// COMPILATION_ERRORS

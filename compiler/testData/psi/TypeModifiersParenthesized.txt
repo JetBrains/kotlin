@@ -1024,3 +1024,5 @@ KtFile: TypeModifiersParenthesized.kt
                 PsiElement(IDENTIFIER)('Unit')
         PsiElement(RPAR)(')')
         PsiElement(QUEST)('?')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

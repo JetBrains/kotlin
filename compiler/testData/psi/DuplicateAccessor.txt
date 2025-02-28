@@ -38,3 +38,5 @@ KtFile: DuplicateAccessor.kt
   PsiWhiteSpace(' ')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(INTEGER_LITERAL)('0')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

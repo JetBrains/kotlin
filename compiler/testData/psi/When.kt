@@ -74,3 +74,4 @@ fun ifDoesntCaptureElse(x : Int) {
     else -> 6
   }
 }
+// COMPILATION_ERRORS

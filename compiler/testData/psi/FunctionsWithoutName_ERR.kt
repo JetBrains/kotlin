@@ -6,3 +6,4 @@ fun @[a()] T.<, T, , T>(a : foo) : bar
 fun @[a()] T.<T, T>(, a : foo, , a: b) : bar
 
 fun () : = a;
+// COMPILATION_ERRORS

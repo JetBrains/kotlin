@@ -1,0 +1,30 @@
+PsiJetFileStubImpl[package=]
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=foo]
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=foo]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=foo]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=bar]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=bar]
+      ANNOTATION
+        ANNOTATION_TARGET[useSiteTarget=FILE]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=baz]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=baz]
+    VALUE_PARAMETER_LIST

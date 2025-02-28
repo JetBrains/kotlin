@@ -4,3 +4,4 @@ fun test() {
     if (other) {
     }
 }
+// COMPILATION_ERRORS

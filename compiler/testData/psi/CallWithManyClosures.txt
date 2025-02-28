@@ -244,3 +244,5 @@ KtFile: CallWithManyClosures.kt
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

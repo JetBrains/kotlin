@@ -1,0 +1,19 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      PROPERTY[fqName=A.<no name provided>, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=null]
+        MODIFIER_LIST[private]
+      FUN[fqName=A.foo1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo1]
+        MODIFIER_LIST[private]
+        VALUE_PARAMETER_LIST
+      PROPERTY[fqName=A.<no name provided>, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=null]
+        MODIFIER_LIST[private]
+      FUN[fqName=A.foo2, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo2]
+        MODIFIER_LIST[abstract private inline]
+        VALUE_PARAMETER_LIST
+      PROPERTY[fqName=A.<no name provided>, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=null]
+        MODIFIER_LIST[private]
+      FUN[fqName=A.foo3, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo3]
+        VALUE_PARAMETER_LIST

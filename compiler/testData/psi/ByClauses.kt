@@ -21,3 +21,4 @@ class A : b by object {
 } {
   companion object {}
 }
+// COMPILATION_ERRORS

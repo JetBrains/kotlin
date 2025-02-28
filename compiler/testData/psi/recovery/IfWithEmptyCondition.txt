@@ -31,3 +31,5 @@ KtFile: IfWithEmptyCondition.kt
               PsiElement(true)('true')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

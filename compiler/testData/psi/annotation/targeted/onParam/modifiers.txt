@@ -54,3 +54,5 @@ KtFile: modifiers.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
         PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

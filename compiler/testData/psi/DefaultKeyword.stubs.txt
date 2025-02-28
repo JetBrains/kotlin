@@ -1,0 +1,86 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+      PROPERTY[fqName=A.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/B.A, fqName=B.A, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[]]
+        MODIFIER_LIST[public companion]
+        CLASS_BODY
+  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/B.A, fqName=B.A, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+          OBJECT_DECLARATION[classId=/B.A.Companion, fqName=B.A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+            MODIFIER_LIST[companion]
+            CLASS_BODY
+  OBJECT_DECLARATION[classId=/B, fqName=B, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=B, superNames=[]]
+    MODIFIER_LIST[companion]
+  OBJECT_DECLARATION[classId=/<no name provided>, fqName=<no name provided>, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
+    MODIFIER_LIST[companion]
+    CLASS_BODY
+  OBJECT_DECLARATION[classId=/A, fqName=A, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+      CLASS[classId=/A.C, fqName=A.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+        CLASS_BODY
+          OBJECT_DECLARATION[classId=/A.C.C, fqName=A.C.C, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=C, superNames=[]]
+            MODIFIER_LIST[companion]
+            CLASS_BODY
+              OBJECT_DECLARATION[classId=/A.C.C.Companion, fqName=A.C.C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                MODIFIER_LIST[companion]
+  CLASS[classId=/D, fqName=D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=D.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=D.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      OBJECT_DECLARATION[classId=/D.Companion, fqName=D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/A.companion, fqName=A.companion, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/A.<no name provided>, fqName=A.<no name provided>, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[public final companion]
+  CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]
+    MODIFIER_LIST[companion]
+    CLASS_BODY
+  PROPERTY[fqName=t, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
+    REFERENCE_EXPRESSION[referencedName=companion]
+  OBJECT_DECLARATION[classId=/<no name provided>, fqName=<no name provided>, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
+    CLASS_BODY
+  CLASS[classId=/I, fqName=I, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=I, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=I.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=I.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      OBJECT_DECLARATION[classId=/I.Companion, fqName=I.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+  CLASS[classId=/I, fqName=I, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=I, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=I.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=I.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      OBJECT_DECLARATION[classId=/I.Companion, fqName=I.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY

@@ -16,3 +16,5 @@ fun foo() {
             X, Y
     }
 }
+
+// COMPILATION_ERRORS

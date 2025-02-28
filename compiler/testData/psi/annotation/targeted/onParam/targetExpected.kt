@@ -11,3 +11,4 @@ public class E(@:[] a: Int)
 public class F(@field: @field:Ann a: Int)
 
 public class G(@field: Ann a: Int)
+// COMPILATION_ERRORS

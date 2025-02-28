@@ -3,3 +3,4 @@ fun test() {
 
     foo()
 }
+// COMPILATION_ERRORS

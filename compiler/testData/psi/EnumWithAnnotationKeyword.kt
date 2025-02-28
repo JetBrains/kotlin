@@ -5,3 +5,4 @@ data annotation enum class E {
 enum annotation E1 {
     D
 }
+// COMPILATION_ERRORS

@@ -8,3 +8,5 @@ class A {
         x = 1
     }
 }
+
+// COMPILATION_ERRORS

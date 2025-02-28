@@ -8,3 +8,5 @@ fun foo() {
     @a var foo = 4
     typealias f =  T.() -> Unit
 }
+
+// COMPILATION_ERRORS

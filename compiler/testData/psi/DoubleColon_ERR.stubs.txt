@@ -1,0 +1,17 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=err0, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=err0]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=err1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=err1]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=err2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=err2]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=err3, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=err3]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=err4, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=err4]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=err5, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=err5]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=typeArgumentsError, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=typeArgumentsError]
+    VALUE_PARAMETER_LIST

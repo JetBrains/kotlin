@@ -26,3 +26,5 @@ fun foo() {
     ann
     1
 }
+
+// COMPILATION_ERRORS

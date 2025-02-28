@@ -7,3 +7,4 @@ fun foo() {
 
     val foo = object private ()
 }
+// COMPILATION_ERRORS

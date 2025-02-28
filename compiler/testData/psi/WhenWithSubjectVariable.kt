@@ -12,3 +12,5 @@ fun test() {
     when (val x7a: @Ann T = foo) {}
     when (val x8a = @Ann foo) {}
 }
+
+// COMPILATION_ERRORS

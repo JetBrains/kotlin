@@ -30,3 +30,4 @@ val array = array<Any>(
 )
 
 val a = 01
+// COMPILATION_ERRORS

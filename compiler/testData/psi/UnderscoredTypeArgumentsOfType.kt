@@ -12,3 +12,5 @@ fun main() {
 interface A : Foo<_>
 
 typealias Foo<K> = Foo<_, K>
+
+// COMPILATION_ERRORS

@@ -7,3 +7,5 @@ fun <T> foo2(x: T!!?, y: List<T!!?>, z: T!!?.(T!!?) -> T!!?, w: String!!): T!! {
 fun foo3() {
     if (@RetentionSourceAndTargetExpression !!(x == y)) {}
 }
+
+// COMPILATION_ERRORS

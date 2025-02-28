@@ -3,3 +3,4 @@ enum class My {
 
     fun foo() {}
 }
+// COMPILATION_ERRORS

@@ -66,3 +66,5 @@ KtFile: recoveryWrongDelegationName.kt
     PsiWhiteSpace(' ')
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -21,3 +21,5 @@ KtFile: PackageRecovery.kt
     PsiWhiteSpace(' ')
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('12')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

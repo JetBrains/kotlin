@@ -17,3 +17,5 @@ fun foo() {
     for (private @Volatile var x in 1..100) {}
     for (private @Volatile val (x, @Volatile y) in 1..100) {}
 }
+
+// COMPILATION_ERRORS

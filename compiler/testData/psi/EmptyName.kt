@@ -12,3 +12,4 @@ fun g() {
         val (``, y) = Data(1, 2)
     }
 }
+// COMPILATION_ERRORS

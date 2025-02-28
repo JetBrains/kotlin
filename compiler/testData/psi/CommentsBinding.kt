@@ -77,3 +77,5 @@ var prop3: Int // Int
     get() = 1
     // this comment is for setter
     set(value) {}
+
+// COMPILATION_ERRORS

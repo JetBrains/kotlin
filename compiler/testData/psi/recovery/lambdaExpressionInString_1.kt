@@ -4,3 +4,4 @@ fun some1() {
 
            """}
 }
+// COMPILATION_ERRORS

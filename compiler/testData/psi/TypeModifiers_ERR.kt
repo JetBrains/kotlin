@@ -10,3 +10,5 @@ val p9: a<in suspend a
 val p10: a<in suspend, a>
 val p11: a<suspend in a
 val p12: a<suspend in
+
+// COMPILATION_ERRORS

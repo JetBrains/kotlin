@@ -5,3 +5,4 @@ class PriorityQueueAsPushPop<T>(wrapped : IPriorityQueue<T>) : IPushPop<T> {
     get() = wrapped.isEmpty
 
 }
+// COMPILATION_ERRORS

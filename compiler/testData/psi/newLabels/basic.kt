@@ -23,3 +23,4 @@ fun foo() {
 
     return (a@ 1)
 }
+// COMPILATION_ERRORS

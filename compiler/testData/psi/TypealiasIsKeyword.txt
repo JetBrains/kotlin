@@ -20,3 +20,5 @@ KtFile: TypealiasIsKeyword.kt
     TYPE_REFERENCE
       PsiErrorElement:Type expected
         PsiElement(INTEGER_LITERAL)('0')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

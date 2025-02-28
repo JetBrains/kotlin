@@ -4,3 +4,4 @@ class A {
     val a = "String"
 
 }
+// COMPILATION_ERRORS

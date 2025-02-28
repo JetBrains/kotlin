@@ -11,3 +11,4 @@ class Stack<T> : IPushPop<T> {
     get() = data.isEmpty
 
 }
+// COMPILATION_ERRORS

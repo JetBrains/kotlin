@@ -15,3 +15,5 @@ fun foo() {
     //{a: ((Int) -> Unit) ->} todo
     //{[a] a: A -> }
 }
+
+// COMPILATION_ERRORS

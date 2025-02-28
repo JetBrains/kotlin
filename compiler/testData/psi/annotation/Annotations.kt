@@ -37,3 +37,5 @@ in
 out
 T> {
 }
+
+// COMPILATION_ERRORS

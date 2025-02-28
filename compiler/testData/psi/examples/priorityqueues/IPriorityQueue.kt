@@ -3,3 +3,5 @@ open class IPriorityQueue<T> {
   fun add(item : T)
   val isEmpty : Boolean
 }
+
+// COMPILATION_ERRORS

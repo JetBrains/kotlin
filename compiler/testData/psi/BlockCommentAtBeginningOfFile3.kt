@@ -1,3 +1,4 @@
 /*
 
 fooo
+// COMPILATION_ERRORS

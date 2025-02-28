@@ -27,3 +27,5 @@ val numberWithBlockInitializer: Number
 
 val minimalNumber
     field
+
+// COMPILATION_ERRORS

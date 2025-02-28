@@ -64,3 +64,5 @@ KtFile: IPriorityQueue.kt
               PsiElement(IDENTIFIER)('Boolean')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

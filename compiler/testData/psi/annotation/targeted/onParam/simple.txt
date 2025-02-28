@@ -78,3 +78,5 @@ KtFile: simple.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

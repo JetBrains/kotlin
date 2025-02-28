@@ -4,3 +4,4 @@ fun test() {
   !isBoolean(a)
   !inRange(a)
 }
+// COMPILATION_ERRORS

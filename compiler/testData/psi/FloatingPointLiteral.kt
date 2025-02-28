@@ -27,3 +27,4 @@ val array = array<Any>(
         3.14_16f,
         6.022___137e+2_3f
 )
+// COMPILATION_ERRORS

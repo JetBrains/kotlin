@@ -26,3 +26,5 @@ class PublicVar() { public var foo get set }
 class PublicVar() { public var foo get set }
 
 val now: Long get() = System.currentTimeMillis(); fun foo() = now
+
+// COMPILATION_ERRORS

@@ -3,3 +3,4 @@ fun test() {
         is JetProperty when { }
     }
 }
+// COMPILATION_ERRORS

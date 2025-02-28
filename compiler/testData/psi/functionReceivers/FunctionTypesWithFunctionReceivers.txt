@@ -548,3 +548,5 @@ KtFile: FunctionTypesWithFunctionReceivers.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('S')
       PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

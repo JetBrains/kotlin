@@ -229,3 +229,5 @@ KtFile: DeclarationAfterDotSelectorExpected.kt
           PsiElement(FLOAT_CONSTANT)('42.0')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

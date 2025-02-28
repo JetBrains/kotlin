@@ -3,3 +3,4 @@ enum class My(x: Int) {
 
     val y = x + 1
 }
+// COMPILATION_ERRORS

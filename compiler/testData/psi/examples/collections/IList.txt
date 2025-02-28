@@ -95,3 +95,5 @@ KtFile: IList.kt
               PsiElement(IDENTIFIER)('Boolean')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

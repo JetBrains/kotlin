@@ -1,0 +1,119 @@
+PsiJetFileStubImpl[package=foo.bar.goo]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        REFERENCE_EXPRESSION[referencedName=bar]
+      REFERENCE_EXPRESSION[referencedName=goo]
+  IMPORT_LIST
+  CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
+    MODIFIER_LIST[abstract enum open override private public internal protected out in annotation]
+      ANNOTATION
+      ANNOTATION
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=foo]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=foo]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=B]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              REFERENCE_EXPRESSION[referencedName=a]
+            VALUE_ARGUMENT[isSpread=false]
+              REFERENCE_EXPRESSION[referencedName=b]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=ina]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ina]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=foo]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=foo]
+                        REFERENCE_EXPRESSION[referencedName=bar]
+                      REFERENCE_EXPRESSION[referencedName=goo]
+                    REFERENCE_EXPRESSION[referencedName=doo]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=f]
+                  REFERENCE_EXPRESSION[referencedName=foo]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=bar]
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=goo]
+                REFERENCE_EXPRESSION[referencedName=foo]
+      ANNOTATION
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=df]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=df]
+      ANNOTATION
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=sdfsdf]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=sdfsdf]
+      ANNOTATION
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=s]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=s]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=fd]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=fd]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=d]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=d]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+        MODIFIER_LIST[abstract enum open override private public internal protected out in annotation]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=sdfsd]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=sdfsd]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=sdfsd]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=sdfsd]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=c]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                        REFERENCE_EXPRESSION[referencedName=b]
+                      REFERENCE_EXPRESSION[referencedName=f]
+                    REFERENCE_EXPRESSION[referencedName=c]
+    CLASS_BODY

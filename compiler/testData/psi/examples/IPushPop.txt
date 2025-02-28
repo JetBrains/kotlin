@@ -64,3 +64,5 @@ KtFile: IPushPop.kt
               PsiElement(IDENTIFIER)('T')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

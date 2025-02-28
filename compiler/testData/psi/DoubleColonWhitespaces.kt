@@ -15,3 +15,5 @@ fun breakLine() {
     a?
     ::b
 }
+
+// COMPILATION_ERRORS

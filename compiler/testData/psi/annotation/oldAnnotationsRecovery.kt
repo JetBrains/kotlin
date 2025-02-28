@@ -7,3 +7,5 @@
         [suppress("1")] 1+1
     }
 }
+
+// COMPILATION_ERRORS

@@ -14,3 +14,4 @@ interface T
 
 @file:[]
 interface T
+// COMPILATION_ERRORS

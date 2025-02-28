@@ -11,3 +11,4 @@ open class IMutableIterator<out T> : IIterator<T> {
   fun addAfter(item : T) : Boolean
 */
 }
+// COMPILATION_ERRORS

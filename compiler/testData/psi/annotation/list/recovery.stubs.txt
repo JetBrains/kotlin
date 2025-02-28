@@ -1,0 +1,40 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION
+    CLASS_BODY
+      PROPERTY[fqName=A.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+        MODIFIER_LIST[]
+          ANNOTATION
+      FUN[fqName=A.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=q]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=q]
+        VALUE_PARAMETER_LIST
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=A, superNames=[]]
+          MODIFIER_LIST[]
+            ANNOTATION
+      FUN[fqName=A.foo2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo2]
+        MODIFIER_LIST[]
+          ANNOTATION
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=q1]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=q1]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=q2]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=q2]
+        VALUE_PARAMETER_LIST
+      FUN[fqName=A.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+        MODIFIER_LIST[]
+          ANNOTATION
+        VALUE_PARAMETER_LIST

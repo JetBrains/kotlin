@@ -51,3 +51,4 @@ val IList<T>.lastIndex : Int
 
 val Int?.opt : Int
 val Int? .opt : Int
+// COMPILATION_ERRORS

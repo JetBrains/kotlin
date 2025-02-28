@@ -80,3 +80,4 @@ enum class I {
 
     companion object {}
 }
+// COMPILATION_ERRORS

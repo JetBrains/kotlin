@@ -14,3 +14,4 @@ fun test() {
     val x: X ? .() -> Unit
     val x: X ?.() -> Unit
 }
+// COMPILATION_ERRORS

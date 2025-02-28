@@ -5,3 +5,5 @@ fun foo() {
     @Volatile val (@ann x, y) = 1
     @Volatile val (@ann x, y = 1
 }
+
+// COMPILATION_ERRORS

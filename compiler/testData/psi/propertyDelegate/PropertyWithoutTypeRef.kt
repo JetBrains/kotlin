@@ -1,1 +1,2 @@
 val p by A()
+// COMPILATION_ERRORS

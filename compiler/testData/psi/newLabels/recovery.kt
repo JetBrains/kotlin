@@ -30,3 +30,5 @@ fun foo() {
 
     return @ 1
 }
+
+// COMPILATION_ERRORS

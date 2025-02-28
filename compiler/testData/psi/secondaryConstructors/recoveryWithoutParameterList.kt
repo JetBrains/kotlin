@@ -11,3 +11,5 @@ class B {
     constructor : this() {}
 }
 fun foo(): Int
+
+// COMPILATION_ERRORS

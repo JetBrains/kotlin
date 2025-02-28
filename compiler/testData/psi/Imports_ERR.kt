@@ -40,3 +40,5 @@ import foo
 fun foo() {
 
 }
+
+// COMPILATION_ERRORS

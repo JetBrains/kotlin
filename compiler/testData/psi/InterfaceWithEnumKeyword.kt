@@ -9,3 +9,4 @@ interface enum class E2 {
 enum interface E3 {
     D
 }
+// COMPILATION_ERRORS

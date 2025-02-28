@@ -133,3 +133,5 @@ KtFile: TypeParametersBeforeName.kt
           PsiElement(GT)('>')
     PsiElement(DOT)('.')
     PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

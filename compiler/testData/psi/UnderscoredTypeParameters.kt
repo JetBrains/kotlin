@@ -5,3 +5,5 @@ typealias Foo<K, _> = Foo<K>
 fun <K : T, _, T> foo() {}
 
 fun <K, _: K> foo() {}
+
+// COMPILATION_ERRORS

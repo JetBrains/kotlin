@@ -27,3 +27,5 @@ fun test() {
     1 -> 1
   }
 }
+
+// COMPILATION_ERRORS

@@ -23,3 +23,5 @@ open class IIterator<out T> {
     return count
   }
 }
+
+// COMPILATION_ERRORS

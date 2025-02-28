@@ -13,3 +13,5 @@ class A {
     @[
     fun bar() {}
 }
+
+// COMPILATION_ERRORS

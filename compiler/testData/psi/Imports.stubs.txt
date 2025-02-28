@@ -1,0 +1,26 @@
+PsiJetFileStubImpl[package=foo.bar.goo]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        REFERENCE_EXPRESSION[referencedName=bar]
+      REFERENCE_EXPRESSION[referencedName=goo]
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=true]
+      REFERENCE_EXPRESSION[referencedName=foo]
+    IMPORT_DIRECTIVE[importedFqName=foo.bar, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        REFERENCE_EXPRESSION[referencedName=bar]
+    IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=true]
+      REFERENCE_EXPRESSION[referencedName=foo]
+      IMPORT_ALIAS[name=bar]
+    IMPORT_DIRECTIVE[importedFqName=foo.bar, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        REFERENCE_EXPRESSION[referencedName=bar]
+      IMPORT_ALIAS[name=bar]
+    IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=true, isValid=true]
+      REFERENCE_EXPRESSION[referencedName=foo]
+    IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=true, isValid=true]
+      REFERENCE_EXPRESSION[referencedName=foo]

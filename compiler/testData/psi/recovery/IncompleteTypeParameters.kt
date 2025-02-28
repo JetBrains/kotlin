@@ -3,3 +3,4 @@ class Outer {
 }
 
 class Next
+// COMPILATION_ERRORS

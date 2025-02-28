@@ -9,3 +9,5 @@ class A {
 
     object C
 }
+
+// COMPILATION_ERRORS

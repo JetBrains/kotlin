@@ -297,3 +297,5 @@ KtFile: TypeModifiers_ERR.kt
                 PsiElement(in)('in')
           PsiErrorElement:Expecting a '>'
             <empty list>
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

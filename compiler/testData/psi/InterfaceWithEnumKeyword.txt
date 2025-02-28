@@ -57,3 +57,5 @@ KtFile: InterfaceWithEnumKeyword.kt
         PsiElement(IDENTIFIER)('D')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

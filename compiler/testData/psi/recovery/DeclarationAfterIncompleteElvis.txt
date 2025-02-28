@@ -186,3 +186,5 @@ KtFile: DeclarationAfterIncompleteElvis.kt
               PsiElement(INTEGER_LITERAL)('6')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

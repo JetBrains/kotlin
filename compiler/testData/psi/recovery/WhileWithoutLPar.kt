@@ -3,3 +3,4 @@ fun test(): Boolean {
 
     return true
 }
+// COMPILATION_ERRORS

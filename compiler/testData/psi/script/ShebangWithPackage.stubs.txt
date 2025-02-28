@@ -1,0 +1,5 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  SCRIPT[fqName=test.ShebangWithPackage, fqName=test.ShebangWithPackage, name=ShebangWithPackage]

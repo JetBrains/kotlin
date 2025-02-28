@@ -25,3 +25,4 @@ fun foo() {}
 
 context(c: String : Int)
 fun foo() {}
+// COMPILATION_ERRORS

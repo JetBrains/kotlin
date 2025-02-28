@@ -31,3 +31,5 @@ typealias f = @[a] context(T.T, T.T) T.T.() -> Unit
 typealias f = @[a] context(T<A, B>, T<A, B>.T<x>) T<A, B>.T<x>.() -> Unit
 
 typealias f =  (a, ) -> b
+
+// COMPILATION_ERRORS

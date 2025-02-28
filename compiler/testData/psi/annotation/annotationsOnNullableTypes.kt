@@ -23,3 +23,4 @@ fun foo2(l: List<@[a b(1)] Int?>) {}
 fun @[a b(1)] Int?.bar2() {}
 
 val baz2: @[a b(1)] Int?
+// COMPILATION_ERRORS

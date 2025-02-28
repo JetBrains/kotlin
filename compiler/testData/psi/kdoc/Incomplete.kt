@@ -1,2 +1,3 @@
 /**
       contents
+// COMPILATION_ERRORS

@@ -8,3 +8,5 @@ fun foo() {
 
     a7.filter { (x, y): Type, (z: Type), (w, u: T) : V -> foo7() }
 }
+
+// COMPILATION_ERRORS

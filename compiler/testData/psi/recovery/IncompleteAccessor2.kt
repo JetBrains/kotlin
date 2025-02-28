@@ -3,3 +3,4 @@ class C {
 }
 
 class D
+// COMPILATION_ERRORS

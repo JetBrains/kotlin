@@ -10,5 +10,7 @@ KtFile: DocCommentAtBeginningOfFile4.kt
       PsiElement(KDOC_TEXT)('/**foo*/')
       PsiWhiteSpace('\n\n')
       PsiElement(KDOC_TEXT)('asdfas')
+      PsiWhiteSpace('\n')
+      PsiElement(KDOC_TEXT)('// COMPILATION_ERRORS')
   PsiErrorElement:Unclosed comment
     <empty list>

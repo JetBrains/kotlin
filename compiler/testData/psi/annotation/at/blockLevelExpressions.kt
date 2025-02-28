@@ -67,3 +67,5 @@ fun foo() {
     @ann8
     x as Type
 }
+
+// COMPILATION_ERRORS

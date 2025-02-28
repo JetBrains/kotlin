@@ -75,3 +75,4 @@ class ArrayList<T> : IMutableList<T> {
      data[i] = data[i + 1]
   }
 }
+// COMPILATION_ERRORS

@@ -3,3 +3,4 @@ fun foo(): Int {
     @Ann val x = 1
     return x
 }
+// COMPILATION_ERRORS

@@ -4,3 +4,5 @@ fun foo() {
       is @[a] T -> d
     }
 }
+
+// COMPILATION_ERRORS

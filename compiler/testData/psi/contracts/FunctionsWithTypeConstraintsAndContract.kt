@@ -26,3 +26,4 @@ fun anotherFunctionWithTypeConstraints<D, T>(data: D?, arg: T?, block: () -> Uni
     require(arg != null)
     block()
 }
+// COMPILATION_ERRORS

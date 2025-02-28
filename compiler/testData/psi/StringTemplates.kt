@@ -21,3 +21,4 @@ fun demo() {
     "foo${bar + map {
       "foo$sdf${ buzz{}}" }}sdfsdf"
 }
+// COMPILATION_ERRORS

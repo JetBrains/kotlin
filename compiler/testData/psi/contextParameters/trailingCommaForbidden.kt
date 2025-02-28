@@ -17,3 +17,5 @@ fun foo() {}
 
 context(, s: String)
 fun foo() {}
+
+// COMPILATION_ERRORS

@@ -11,3 +11,5 @@ class A {
     fun foo3() {
     }
 }
+
+// COMPILATION_ERRORS

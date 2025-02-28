@@ -21,3 +21,4 @@ val GOD = object {
 };
 
 }
+// COMPILATION_ERRORS

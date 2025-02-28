@@ -10,3 +10,4 @@ fun annotated() {
 
 context(@Ann c: String)
 fun annotatedParameter() {}
+// COMPILATION_ERRORS

@@ -8,3 +8,4 @@ typealias f =  @[a] (@[a] ((S).() -> S).() -> S)
 typealias f = @[a] (@[a] (T.() -> S).() -> S)
 typealias f = @[a] (@[a] (T<A, B>.() -> S).() -> S)
 typealias f = @[a] (@[a] ((S).() -> S).() -> S)
+// COMPILATION_ERRORS

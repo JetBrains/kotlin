@@ -59,3 +59,4 @@ fun testFinally() {
     finally {
     }
 }
+// COMPILATION_ERRORS

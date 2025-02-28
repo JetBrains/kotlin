@@ -324,3 +324,5 @@ KtFile: UnderscoredTypeArgumentsOfType.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('K')
           PsiElement(GT)('>')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

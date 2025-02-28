@@ -33,3 +33,5 @@ val (foo.bar.() -> Unit).foo = foo
    set() {}
    set() {}
 
+
+// COMPILATION_ERRORS

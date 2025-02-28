@@ -12,3 +12,5 @@ import a2
 import a4.df
 
 fun foo() {}
+
+// COMPILATION_ERRORS

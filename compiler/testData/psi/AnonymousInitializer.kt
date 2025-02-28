@@ -7,3 +7,5 @@ class Foo {
 
 }
 
+
+// COMPILATION_ERRORS

@@ -6,3 +6,4 @@ class A {
     var a: String = "A"
 
 }
+// COMPILATION_ERRORS

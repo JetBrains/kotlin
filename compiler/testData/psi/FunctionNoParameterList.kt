@@ -4,3 +4,4 @@ class A {
     fun bar
 }
 class C {}
+// COMPILATION_ERRORS

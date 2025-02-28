@@ -42,3 +42,4 @@ fun foo() {
   super<A>@
   super<A>@a
 }
+// COMPILATION_ERRORS

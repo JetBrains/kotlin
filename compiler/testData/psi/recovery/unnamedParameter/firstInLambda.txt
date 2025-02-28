@@ -32,3 +32,5 @@ KtFile: firstInLambda.kt
             PsiElement(INTEGER_LITERAL)('0')
         PsiWhiteSpace(' ')
         PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

@@ -230,3 +230,5 @@ KtFile: valid.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

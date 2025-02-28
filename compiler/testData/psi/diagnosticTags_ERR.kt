@@ -38,3 +38,5 @@ interface Supertype2 : <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>suspend String.()
 annotation class A(val value: String = "")
 
 interface RS
+
+// COMPILATION_ERRORS

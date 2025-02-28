@@ -19,3 +19,5 @@ class A {
     val q = null ?:
     fun String.() = 6
 }
+
+// COMPILATION_ERRORS

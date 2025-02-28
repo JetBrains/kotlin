@@ -154,3 +154,5 @@ KtFile: QualifiedCollections.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

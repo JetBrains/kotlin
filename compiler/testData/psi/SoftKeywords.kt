@@ -194,3 +194,5 @@ class F(val foo : bar,
 ) {
 
 }
+
+// COMPILATION_ERRORS

@@ -3,3 +3,4 @@ fun main() {
     val x = ..<Int>::class
     val x = `..`<Int>::class
 }
+// COMPILATION_ERRORS

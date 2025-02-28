@@ -136,3 +136,4 @@ fun foo() {
     do foo while (r)
     do {;;;foo;bar;;;; } while (r)
 }
+// COMPILATION_ERRORS

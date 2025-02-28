@@ -5,3 +5,5 @@ fun main() {
 fun foo2() {
     null + $foo. $bar . $baz .
 }
+
+// COMPILATION_ERRORS

@@ -5,3 +5,4 @@ class C {
     @delegate:Transient
     val lazy by lazy { 1 }
 }
+// COMPILATION_ERRORS

@@ -9,3 +9,4 @@ fun class Foo
 fun abstract class Foo
 
 fun object Foo
+// COMPILATION_ERRORS

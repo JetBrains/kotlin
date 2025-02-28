@@ -22,3 +22,4 @@ val a: (A) -> Unit
 val a: (a: A) -> Unit
 
 class A(a: Int)
+// COMPILATION_ERRORS

@@ -36,3 +36,4 @@ fun foo() {
   val f = a is T
   <X>
 }
+// COMPILATION_ERRORS

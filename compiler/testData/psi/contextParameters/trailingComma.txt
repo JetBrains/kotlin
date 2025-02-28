@@ -156,3 +156,5 @@ KtFile: trailingComma.kt
       STRING_TEMPLATE
         PsiElement(OPEN_QUOTE)('"')
         PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +ContextParameters')

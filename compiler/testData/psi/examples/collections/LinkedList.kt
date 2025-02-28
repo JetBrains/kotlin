@@ -71,3 +71,4 @@ class LinkedList<T> : IMutableList<T> {
 
   override fun mutableIterator() : IMutableIterator<T>
 }
+// COMPILATION_ERRORS

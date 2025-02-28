@@ -4,3 +4,4 @@ fun foo(
         p2: Foo<kotlin.(Mutable)List<Foo!>!>,
         p2: kotlin.(Mutable)Set<kotlin.(Mutable)List<Foo!>!>
 ) {}
+// COMPILATION_ERRORS

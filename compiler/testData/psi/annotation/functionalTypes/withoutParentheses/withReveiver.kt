@@ -49,3 +49,5 @@ fun foo(x: Any) {
 fun foo(y: Any) {
     var x = y as (@Foo suspend (suspend (()->Unit)->Int).(()->Unit) -> (Float.()->Unit) -> Unit) -> Unit
 }
+
+// COMPILATION_ERRORS

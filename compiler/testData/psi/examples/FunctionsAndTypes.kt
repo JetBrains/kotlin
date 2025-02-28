@@ -6,3 +6,5 @@ val f1 = {something(it)}
 
 val f1 :  (T) -> X = {X()}
 
+
+// COMPILATION_ERRORS

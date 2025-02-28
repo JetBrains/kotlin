@@ -41,3 +41,4 @@ class AntBuilder {
 
   fun module(/*...*/)
 }
+// COMPILATION_ERRORS

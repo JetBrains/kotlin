@@ -5,3 +5,5 @@ public enum class A {
 
     inner object
 }
+
+// COMPILATION_ERRORS

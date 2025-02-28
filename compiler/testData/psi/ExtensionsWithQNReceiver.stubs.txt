@@ -1,0 +1,32 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=size, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=size]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=java]
+          REFERENCE_EXPRESSION[referencedName=util]
+        REFERENCE_EXPRESSION[referencedName=Map]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=STAR]
+          TYPE_PROJECTION[projectionKind=STAR]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  FUN[fqName=size, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=size]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=java]
+          REFERENCE_EXPRESSION[referencedName=util]
+        REFERENCE_EXPRESSION[referencedName=Map]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=STAR]
+          TYPE_PROJECTION[projectionKind=STAR]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]

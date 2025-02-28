@@ -13,3 +13,4 @@ fun html() {
 fun html1() {
     <html></html>html
 }
+// COMPILATION_ERRORS

@@ -20,3 +20,4 @@ val array = array<Any>(
     1UL,
     3Ul
 )
+// COMPILATION_ERRORS

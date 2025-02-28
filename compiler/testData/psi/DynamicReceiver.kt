@@ -14,3 +14,5 @@ fun dynamic// line-comment
         .foo()
 fun dynamic/*
 */.foo()
+
+// COMPILATION_ERRORS

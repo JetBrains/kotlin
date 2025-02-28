@@ -24,3 +24,5 @@ KtFile: ImportSoftKW.kt
         PsiElement(as)('as')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('import')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

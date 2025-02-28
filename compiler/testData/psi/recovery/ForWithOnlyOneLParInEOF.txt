@@ -17,6 +17,8 @@ KtFile: ForWithOnlyOneLParInEOF.kt
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
+      PsiWhiteSpace('\n')
+      PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
       VALUE_PARAMETER
         PsiErrorElement:Expecting a variable name
           <empty list>

@@ -168,3 +168,5 @@ KtFile: spaceBeforeLabelReference.kt
           PsiElement(INTEGER_LITERAL)('9')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

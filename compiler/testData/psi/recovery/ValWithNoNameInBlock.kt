@@ -39,3 +39,5 @@ fun foo() {
     val
     (a, b) = 1
 }
+
+// COMPILATION_ERRORS

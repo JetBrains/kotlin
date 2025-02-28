@@ -48,3 +48,5 @@ val suspendFunNReturnValueN: (suspend () -> Unit?)?
 
 val suspendExtFunReceiverN: suspend Any?.() -> Unit
 val suspendExtFunNReceiverN: (suspend Any?.() -> Unit)?
+
+// COMPILATION_ERRORS

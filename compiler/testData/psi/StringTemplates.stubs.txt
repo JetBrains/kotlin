@@ -1,0 +1,31 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=demo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=demo]
+    VALUE_PARAMETER_LIST
+    FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=map]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Any]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=buzz]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Any]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]

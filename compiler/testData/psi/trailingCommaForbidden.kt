@@ -107,3 +107,5 @@ fun foo() = when (x) {
 }
 
 fun <T1,T2,,>foo() {}
+
+// COMPILATION_ERRORS

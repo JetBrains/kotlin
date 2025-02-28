@@ -222,3 +222,5 @@ KtFile: explicitBackingField.kt
     PsiWhiteSpace('\n    ')
     BACKING_FIELD
       PsiElement(field)('field')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')

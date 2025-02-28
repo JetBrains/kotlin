@@ -9,3 +9,4 @@ fun ((T) -> G)??.foo()
 //--------------
 fun <T> f()
 a.b class C
+// COMPILATION_ERRORS

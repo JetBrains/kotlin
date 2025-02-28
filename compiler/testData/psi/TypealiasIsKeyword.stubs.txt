@@ -1,0 +1,6 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=<no name provided>, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=null]
+  TYPEALIAS[classId=/<no name provided>, fqName=<no name provided>, isTopLevel=true, name=null]
+    TYPE_REFERENCE

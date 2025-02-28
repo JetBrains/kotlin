@@ -25,3 +25,5 @@ class A {
     var a = 24.
     var b = 42.0
 }
+
+// COMPILATION_ERRORS

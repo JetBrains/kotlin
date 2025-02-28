@@ -8,3 +8,4 @@ class A {
         @f @g set(@h v) {}
 
 }
+// COMPILATION_ERRORS

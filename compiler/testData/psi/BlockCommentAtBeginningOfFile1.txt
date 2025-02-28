@@ -3,6 +3,6 @@ KtFile: BlockCommentAtBeginningOfFile1.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiComment(BLOCK_COMMENT)('/*')
+  PsiComment(BLOCK_COMMENT)('/*\n// COMPILATION_ERRORS')
   PsiErrorElement:Unclosed comment
     <empty list>

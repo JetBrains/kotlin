@@ -10,3 +10,5 @@ fun foo() {
     d as Foo < bar
     x is Foo < bar
 }
+
+// COMPILATION_ERRORS

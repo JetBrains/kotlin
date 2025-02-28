@@ -4,3 +4,5 @@ var x1: Int = 1
 
 @set: ann2
 var x2: Int = 2
+
+// COMPILATION_ERRORS
