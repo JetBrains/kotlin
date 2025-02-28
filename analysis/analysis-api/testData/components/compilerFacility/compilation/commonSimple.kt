@@ -6,7 +6,7 @@
 // FILE: main.kt
 package app
 
-@kotlin.experimental.ExperimentalExpectRefinement // Circumvent misconfiguration in the test infra KT-75281
+@kotlin.experimental.ExpectRefinement // Circumvent misconfiguration in the test infra KT-75281
 expect class Foo() {
     val text: String
 }

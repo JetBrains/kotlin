@@ -7,14 +7,14 @@ expect class Foo {
 }
 
 // MODULE: intermediate1()()(common)
-@kotlin.experimental.ExperimentalExpectRefinement
+@kotlin.experimental.ExpectRefinement
 expect class Foo {
     fun foo()
     fun bar()
 }
 
 // MODULE: intermediate2()()(intermediate1)
-@kotlin.experimental.ExperimentalExpectRefinement
+@kotlin.experimental.ExpectRefinement
 expect class Foo {
     fun foo()
     fun bar()

@@ -2474,7 +2474,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET,
-            "Only top-level 'expect' declarations can be annotated with the '@ExperimentalExpectRefinement' annotation."
+            "Only top-level 'expect' declarations can be annotated with the '@ExpectRefinement' annotation."
         )
         map.put(AMBIGUOUS_EXPECTS, "''{0}'' has several compatible expect declarations in modules {1}.", SYMBOL, COLLECTION(MODULE_DATA))
         map.put(
@@ -2486,7 +2486,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'.")
         map.put(
             EXPECT_REFINEMENT_ANNOTATION_MISSING,
-            "'expect' declaration refinement is an experimental feature. Mark the declaration with the '@ExperimentalExpectRefinement' annotation."
+            "'expect' declaration refinement is an experimental feature. Mark the declaration with the '@ExpectRefinement' annotation."
         )
         map.put(
             EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING,

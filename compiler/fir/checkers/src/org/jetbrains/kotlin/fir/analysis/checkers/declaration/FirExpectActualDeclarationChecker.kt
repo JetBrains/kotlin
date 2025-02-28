@@ -158,7 +158,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
 
         val source = declaration.source
         if (!declaration.hasActualModifier() &&
-            // The presence of @ExperimentalExpectRefinement annotation is checked by a separate FirExpectRefinementAnnotationChecker
+            // The presence of @ExpectRefinement annotation is checked by a separate FirExpectRefinementAnnotationChecker
             !declaration.isExpect &&
             ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap &&
             (actualContainingClass == null || requireActualModifier(symbol, actualContainingClass, context.session)) &&

@@ -41,8 +41,8 @@ open annotation class kotlin.coroutines/RestrictsSuspension : kotlin/Annotation 
     constructor <init>() // kotlin.coroutines/RestrictsSuspension.<init>|<init>(){}[0]
 }
 
-open annotation class kotlin.experimental/ExperimentalExpectRefinement : kotlin/Annotation { // kotlin.experimental/ExperimentalExpectRefinement|null[0]
-    constructor <init>() // kotlin.experimental/ExperimentalExpectRefinement.<init>|<init>(){}[0]
+open annotation class kotlin.experimental/ExpectRefinement : kotlin/Annotation { // kotlin.experimental/ExpectRefinement|null[0]
+    constructor <init>() // kotlin.experimental/ExpectRefinement.<init>|<init>(){}[0]
 }
 
 open annotation class kotlin.experimental/ExperimentalNativeApi : kotlin/Annotation { // kotlin.experimental/ExperimentalNativeApi|null[0]

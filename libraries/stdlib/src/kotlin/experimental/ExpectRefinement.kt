@@ -23,7 +23,7 @@ package kotlin.experimental
  * }
  *
  * // SOURCE SET: native (dependsOn: common)
- * @ExperimentalExpectRefinement
+ * @ExpectRefinement
  * expect class PlatformSpecific { // `PlatformSpecific` in native source set refines `PlatformSpecific` in common source set
  *     fun availableOnAllPlatforms() // The declarations from the original expect declaration must be repeated
  *     fun availableOnlyOnNativePlatforms() // Add a new member
@@ -55,4 +55,4 @@ package kotlin.experimental
 @Retention(AnnotationRetention.SOURCE)
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("2.2")
-public annotation class ExperimentalExpectRefinement
+public annotation class ExpectRefinement
