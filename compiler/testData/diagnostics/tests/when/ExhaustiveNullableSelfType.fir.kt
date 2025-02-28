@@ -7,7 +7,7 @@ fun testNullableBoolean(arg: Boolean?) = when (arg) {
 }
 
 fun testNullableBoolean2(arg: Boolean?) = when (arg) {
-    <!USELESS_IS_CHECK!>is Boolean?<!> -> 2
+    is Boolean? -> 2
 }
 
 fun testNullableBooleanAgainstAny(arg: Boolean?) = when (arg) {
@@ -26,7 +26,7 @@ fun testNullableSealed(arg: Sealed?) = when (arg) {
 }
 
 fun testNullableSealed2(arg: Sealed?) = when (arg) {
-    <!USELESS_IS_CHECK!>is Sealed?<!> -> 2
+    is Sealed? -> 2
 }
 
 enum class MyEnum {
@@ -39,7 +39,7 @@ fun testNullableEnum(arg: MyEnum?) = when (arg) {
 }
 
 fun testNullableEnum2(arg: MyEnum?) = when (arg) {
-    <!USELESS_IS_CHECK!>is MyEnum?<!> -> 1
+    is MyEnum? -> 1
 }
 
 fun testNullableAny(arg: Any?) = when (arg) {
@@ -48,7 +48,7 @@ fun testNullableAny(arg: Any?) = when (arg) {
 }
 
 fun testNullableAny2(arg: Any?) = when (arg) {
-    <!USELESS_IS_CHECK!>is Any?<!> -> 2
+    is Any? -> 2
 }
 
 fun <T> testNullableTypeParameter(arg: T?) = when (arg) {

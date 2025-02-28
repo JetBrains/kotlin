@@ -151,8 +151,6 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 && whenExpression.isExhaustive && whenBranch == whenExpression.branches.lastOrNull()
                 // Ensures it's not redundantly exhaustive
                 && !l.argument.resolvedType.isNothing
-                // Having an exhaustive `when` with only one branch is useless in general
-                && whenExpression.branches.size > 1
     }
 
     private fun getImpossibilityDiagnostic(l: TypeInfo, rType: ConeKotlinType, context: CheckerContext) = when {

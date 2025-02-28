@@ -20,5 +20,5 @@ fun test2(x: Stmt): String =
 
 fun test3(x: Expr): String =
         when (x) {
-            <!USELESS_IS_CHECK!>is Stmt<!> -> "stmt"
+            is Stmt -> "stmt"
         }

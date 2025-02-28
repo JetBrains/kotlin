@@ -20,7 +20,7 @@ fun case_1(value_1: SealedClass): Int = when (value_1) {
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: SealedClass): String = when (value_1) {
-    <!USELESS_IS_CHECK!>is SealedClass<!> -> ""
+    is SealedClass -> ""
 }
 
 // TESTCASE NUMBER: 3
