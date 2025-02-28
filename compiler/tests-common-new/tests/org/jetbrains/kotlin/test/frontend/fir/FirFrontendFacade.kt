@@ -190,7 +190,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         KotlinResolvedLibraryImpl(resolveSingleFileKlib(KFile(it), configuration.getLogger()))
                     }
 
-                    FirCommonSessionFactory.createLibrarySession(
+                    FirMetadataSessionFactory.createLibrarySession(
                         mainModuleName = moduleName,
                         sessionProvider = sessionProvider,
                         moduleDataProvider = moduleDataProvider,
@@ -349,7 +349,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         return when {
             targetPlatform.isCommon() -> {
-                FirCommonSessionFactory.createModuleBasedSession(
+                FirMetadataSessionFactory.createModuleBasedSession(
                     moduleData = moduleData,
                     sessionProvider = sessionProvider,
                     projectEnvironment = projectEnvironment!!,

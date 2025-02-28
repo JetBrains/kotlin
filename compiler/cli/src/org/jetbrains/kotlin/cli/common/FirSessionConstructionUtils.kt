@@ -240,7 +240,7 @@ fun <F> prepareWasmSessions(
  * Number of created sessions is always one, in this mode modules are compiled against compiled
  *   metadata of dependent modules
  */
-fun <F> prepareCommonSessions(
+fun <F> prepareMetadataSessions(
     files: List<F>,
     configuration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
@@ -257,7 +257,7 @@ fun <F> prepareCommonSessions(
         files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform,
         metadataCompilationMode = true, libraryList, isCommonSource, isScript = { false }, fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
-            FirCommonSessionFactory.createLibrarySession(
+            FirMetadataSessionFactory.createLibrarySession(
                 rootModuleName,
                 sessionProvider,
                 libraryList.moduleDataProvider,
@@ -270,7 +270,7 @@ fun <F> prepareCommonSessions(
             )
         }
     ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
-        FirCommonSessionFactory.createModuleBasedSession(
+        FirMetadataSessionFactory.createModuleBasedSession(
             moduleData,
             sessionProvider,
             projectEnvironment,
