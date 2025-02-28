@@ -6,104 +6,33 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerWasmCheckers
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
 @OptIn(SessionConfiguration::class)
-object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.Context, FirWasmSessionFactory.Context>() {
+object FirWasmSessionFactory : AbstractFirWebSessionFactory<FirWasmSessionFactory.Context, FirWasmSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
 
-    fun createLibrarySession(
-        mainModuleName: Name,
-        resolvedLibraries: List<KotlinLibrary>,
-        sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-        wasmTarget: WasmTarget,
-    ): FirSession = createLibrarySession(
-        mainModuleName,
-        Context(wasmTarget),
-        sessionProvider,
-        moduleDataProvider,
-        languageVersionSettings,
-        extensionRegistrars,
-        createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
-            listOfNotNull(
-                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
-                syntheticFunctionInterfaceProvider,
-            )
-        }
-    )
-
-    override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
-        return FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope }
+    override fun createLibraryContext(configuration: CompilerConfiguration): Context {
+        return Context(configuration.wasmTarget)
     }
 
-    override fun FirSession.registerLibrarySessionComponents(c: FirWasmSessionFactory.Context) {
+    override fun FirSession.registerLibrarySessionComponents(c: Context) {
         registerDefaultComponents()
         registerWasmComponents(c.wasmTarget)
     }
 
     // ==================================== Platform session ====================================
 
-    fun createModuleBasedSession(
-        moduleData: FirModuleData,
-        sessionProvider: FirProjectSessionProvider,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        configuration: CompilerConfiguration,
-        wasmTarget: WasmTarget,
-        icData: KlibIcData? = null,
-        init: FirSessionConfigurator.() -> Unit
-    ): FirSession {
-        return createModuleBasedSession(
-            moduleData,
-            Context(wasmTarget),
-            sessionProvider,
-            extensionRegistrars,
-            configuration,
-            init,
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
-                listOfNotNull(
-                    symbolProvider,
-                    generatedSymbolsProvider,
-                    icData?.let {
-                        KlibIcCacheBasedSymbolProvider(
-                            session,
-                            SingleModuleDataProvider(moduleData),
-                            kotlinScopeProvider,
-                            it,
-                        )
-                    },
-                    *dependencies.toTypedArray(),
-                )
-            }
-        )
-    }
-
-    override fun createKotlinScopeProviderForSourceSession(
-        moduleData: FirModuleData,
-        languageVersionSettings: LanguageVersionSettings,
-    ): FirKotlinScopeProvider {
-        return FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope }
+    override fun createSourceContext(configuration: CompilerConfiguration): Context {
+        return Context(configuration.wasmTarget)
     }
 
     override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
@@ -125,8 +54,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
         }
         register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(analyzerServices))
     }
-
-    // ==================================== Common parts ====================================
 
     // ==================================== Utilities ====================================
 

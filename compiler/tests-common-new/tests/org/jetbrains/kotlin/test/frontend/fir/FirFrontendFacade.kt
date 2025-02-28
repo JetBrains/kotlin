@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.nio.file.Paths
 import org.jetbrains.kotlin.konan.file.File as KFile
 
@@ -251,7 +250,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     testServices,
                     configuration,
                     extensionRegistrars,
-                    languageVersionSettings,
                 ).also(::registerExtraComponents)
             }
             else -> error("Unsupported")
@@ -400,7 +398,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     sessionProvider,
                     extensionRegistrars,
                     configuration,
-                    configuration.wasmTarget,
                     sessionConfigurator,
                 ).also(::registerExtraComponents)
             }

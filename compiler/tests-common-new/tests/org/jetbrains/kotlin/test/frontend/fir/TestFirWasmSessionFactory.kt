@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getKlibDependencies
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 
 object TestFirWasmSessionFactory {
@@ -35,7 +33,6 @@ object TestFirWasmSessionFactory {
         testServices: TestServices,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings,
     ): FirSession {
         val target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
         val resolvedLibraries = resolveLibraries(
@@ -49,8 +46,7 @@ object TestFirWasmSessionFactory {
             sessionProvider,
             moduleDataProvider,
             extensionRegistrars,
-            languageVersionSettings,
-            configuration.wasmTarget,
+            configuration,
         )
     }
 
@@ -59,7 +55,6 @@ object TestFirWasmSessionFactory {
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
-        wasmTarget: WasmTarget,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
         FirWasmSessionFactory.createModuleBasedSession(
@@ -67,7 +62,7 @@ object TestFirWasmSessionFactory {
             sessionProvider,
             extensionRegistrars,
             configuration,
-            wasmTarget,
+            icData = null,
             init = sessionConfigurator
         )
 }

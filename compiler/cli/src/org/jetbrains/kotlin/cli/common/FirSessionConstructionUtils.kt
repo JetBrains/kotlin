@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 val isCommonSourceForPsi: (KtFile) -> Boolean = { it.isCommonSource == true }
 val fileBelongsToModuleForPsi: (KtFile, String) -> Boolean = { file, moduleName -> file.hmppModuleName == moduleName }
@@ -220,8 +219,7 @@ fun <F> prepareWasmSessions(
                 sessionProvider,
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
-                configuration.languageVersionSettings,
-                configuration.wasmTarget,
+                configuration,
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
@@ -230,7 +228,6 @@ fun <F> prepareWasmSessions(
             sessionProvider,
             extensionRegistrars,
             configuration,
-            configuration.wasmTarget,
             icData = icData,
             init = sessionConfigurator,
         )
