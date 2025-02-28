@@ -4387,6 +4387,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val message: String
     }
 
+    interface IdentitySensitiveOperationsWithValueTypeObjects : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = IdentitySensitiveOperationsWithValueTypeObjects::class
+        val type: KaType
+    }
+
     interface SynchronizedBlockOnJavaValueBasedClass : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = SynchronizedBlockOnJavaValueBasedClass::class
         val type: KaType

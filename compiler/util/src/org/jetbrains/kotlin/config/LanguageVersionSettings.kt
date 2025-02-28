@@ -473,6 +473,7 @@ enum class LanguageFeature(
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, kind = BUG_FIX), // KT-66691, KT-66742
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, kind = OTHER), // KT-16768
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, kind = OTHER), // KT-70722
+    DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, kind = OTHER), // KT-70722
     ;
 
     init {
