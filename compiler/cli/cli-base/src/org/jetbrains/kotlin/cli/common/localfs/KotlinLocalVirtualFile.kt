@@ -107,6 +107,7 @@ class KotlinLocalVirtualFile(
      * Two directories with the same path are always equal.
      */
     override fun equals(other: Any?): Boolean {
+        if (this === other) return true
         return other is KotlinLocalVirtualFile && file == other.file && (_isDirectory || _timeStamp == other._timeStamp)
     }
 
