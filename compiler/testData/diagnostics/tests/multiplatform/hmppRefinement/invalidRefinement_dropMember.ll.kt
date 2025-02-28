@@ -8,7 +8,7 @@ expect class Foo {
 }
 
 // MODULE: intermediate()()(common)
-@kotlin.experimental.ExperimentalExpectRefinement
+@kotlin.experimental.ExpectRefinement
 expect class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!>
 
 // MODULE: main()()(intermediate)

@@ -9,9 +9,9 @@ expect class Foo {
 }
 
 // MODULE: intermediate()()(common)
-<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
+<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
 expect public fun foo()
-@kotlin.experimental.ExperimentalExpectRefinement
+@kotlin.experimental.ExpectRefinement
 expect class Foo {
     public fun foo()
 }

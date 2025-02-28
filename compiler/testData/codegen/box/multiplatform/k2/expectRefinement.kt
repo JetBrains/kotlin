@@ -15,7 +15,7 @@ fun common(foo: Foo): String {
 // MODULE: intermediate()()(common)
 // FILE: intermediate.kt
 
-@kotlin.experimental.ExperimentalExpectRefinement
+@kotlin.experimental.ExpectRefinement
 expect class Foo {
     fun foo(): String
     fun bar(): String

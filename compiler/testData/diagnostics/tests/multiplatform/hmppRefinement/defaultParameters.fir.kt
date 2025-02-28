@@ -7,7 +7,7 @@
 expect fun foo(a: Int = 1)
 
 // MODULE: common2()()(common1)
-<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
+<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
 expect fun foo(a: Int)
 
 fun bar() {

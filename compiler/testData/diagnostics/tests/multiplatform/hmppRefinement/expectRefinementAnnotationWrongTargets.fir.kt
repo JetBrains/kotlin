@@ -4,11 +4,11 @@
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: common
-<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
+<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
 fun <!EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET!>nonExpect<!>() {}
 
 expect class Foo {
-    <!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExperimentalExpectRefinement<!>
+    <!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
     fun <!EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET!>foo<!>()
 }
 

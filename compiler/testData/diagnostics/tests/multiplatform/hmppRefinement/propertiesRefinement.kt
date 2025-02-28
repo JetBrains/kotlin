@@ -6,11 +6,11 @@
 expect internal val <!REDECLARATION{JVM}, REDECLARATION{JVM}, REDECLARATION{JVM}!>foo<!>: Int
 
 // MODULE: intermediate1()()(common)
-<!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE{JVM}!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, DEBUG_INFO_MISSING_UNRESOLVED{JVM}!>ExperimentalExpectRefinement<!><!>
+<!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE{JVM}!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, DEBUG_INFO_MISSING_UNRESOLVED{JVM}!>ExpectRefinement<!><!>
 expect internal val <!REDECLARATION, REDECLARATION{JVM}, REDECLARATION{JVM}!>foo<!>: Int
 
 // MODULE: intermediate2()()(intermediate1)
-<!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExperimentalExpectRefinement<!><!>
+<!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExpectRefinement<!><!>
 expect public val <!REDECLARATION, REDECLARATION{JVM}!>foo<!>: Int
 
 // MODULE: main()()(intermediate2)
