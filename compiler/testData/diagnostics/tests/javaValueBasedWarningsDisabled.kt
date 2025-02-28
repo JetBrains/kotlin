@@ -7,6 +7,10 @@
 // JDK version is important, because we rely on @ValueBased annotation being present on LocalDate class
 // JDK_KIND: FULL_JDK_21
 
-fun test(p1: java.time.LocalDate) {
+fun testSynchronized(p1: java.time.LocalDate) {
     synchronized(p1) { }
+}
+
+fun testIdentity(p1: java.time.LocalDate, p2: Any) {
+    p1 === p2
 }

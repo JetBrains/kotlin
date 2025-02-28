@@ -104,4 +104,9 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirReturnJavaNullabilityWarningChecker,
         )
+
+    override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
+        get() = setOf(
+            FirJvmIdentityEqualsOnJavaValueBasedClass,
+        )
 }
