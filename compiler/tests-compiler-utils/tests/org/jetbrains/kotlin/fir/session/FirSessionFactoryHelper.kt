@@ -32,7 +32,7 @@ object FirSessionFactoryHelper {
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         needRegisterJavaElementFinder: Boolean,
-        dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
+        dependenciesConfigurator: DependencyListForCliModule.Builder.BuilderForDefaultDependenciesModule.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
         val binaryModuleData = BinaryModuleData.initialize(moduleName)
