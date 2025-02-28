@@ -29,8 +29,10 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.*
 import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
+import org.jetbrains.sir.lightclasses.utils.superClassDeclaration
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
 internal fun createSirClassFromKtSymbol(
@@ -175,6 +177,11 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
+        (translatedProtocols + listOf(KotlinRuntimeSupportModule.kotlinBridged))
+            .filter { superClassDeclaration?.declaresConformance(it) != true }
+    }
+
+    private val translatedProtocols: List<SirProtocol> by lazyWithSessions {
         ktSymbol.superTypes
             .filterIsInstance<KaClassType>().mapNotNull { it.expandedSymbol }.filter {
                 it.classKind == KaClassKind.INTERFACE
@@ -184,12 +191,8 @@ internal abstract class SirAbstractClassFromKtSymbol(
                         ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
                     }
                 }
-            } + listOfNotNull(kotlinBridgedProtocol)
+            }
     }
-
-    private val kotlinBridgedProtocol: SirProtocol? get() = KotlinRuntimeSupportModule.kotlinBridged.takeIf {
-            superClass == SirNominalType(KotlinRuntimeModule.kotlinBase)
-        }
 }
 
 internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() {

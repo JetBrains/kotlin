@@ -22,8 +22,8 @@ class SirExtensionBuilder {
     val attributes: MutableList<SirAttribute> = mutableListOf()
     val declarations: MutableList<SirDeclaration> = mutableListOf()
     val constraints: MutableList<SirTypeConstraint> = mutableListOf()
-    lateinit var extendedType: SirType
     val protocols: MutableList<SirProtocol> = mutableListOf()
+    lateinit var extendedType: SirType
 
     fun build(): SirExtension {
         return SirExtensionImpl(
@@ -33,8 +33,8 @@ class SirExtensionBuilder {
             attributes,
             declarations,
             constraints,
-            extendedType,
             protocols,
+            extendedType,
         )
     }
 
@@ -60,7 +60,7 @@ inline fun buildExtensionCopy(original: SirExtension, init: SirExtensionBuilder.
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.declarations.addAll(original.declarations)
     copyBuilder.constraints.addAll(original.constraints)
-    copyBuilder.extendedType = original.extendedType
     copyBuilder.protocols.addAll(original.protocols)
+    copyBuilder.extendedType = original.extendedType
     return copyBuilder.apply(init).build()
 }

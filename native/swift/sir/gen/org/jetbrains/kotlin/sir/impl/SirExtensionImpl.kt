@@ -19,8 +19,8 @@ internal class SirExtensionImpl(
     override val attributes: MutableList<SirAttribute>,
     override val declarations: MutableList<SirDeclaration>,
     override val constraints: MutableList<SirTypeConstraint>,
-    override val extendedType: SirType,
     override val protocols: MutableList<SirProtocol>,
+    override val extendedType: SirType,
 ) : SirExtension() {
     override lateinit var parent: SirDeclarationParent
 }

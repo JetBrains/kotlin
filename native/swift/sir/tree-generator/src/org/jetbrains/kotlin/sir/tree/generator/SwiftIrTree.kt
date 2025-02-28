@@ -66,14 +66,22 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("constraints", typeConstraintType)
     }
 
+    val protocolConformingDeclaration by sealedElement {
+        +listField("protocols", protocol)
+    }
+
+    val classInhertingDeclaration by sealedElement {
+        +field("superClass", typeType, nullable = true)
+    }
+
     val extension: Element by element {
         customParentInVisitor = declaration
         parent(declaration)
         parent(mutableDeclarationContainer)
         parent(constrainedDeclaration)
+        parent(protocolConformingDeclaration)
 
         +field("extendedType", typeType)
-        +listField("protocols", protocol)
     }
 
     val named by sealedElement {
@@ -106,18 +114,17 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
         parent(declarationContainer)
-
-        +field("superClass", typeType, nullable = true)
-        +listField("protocols", protocol)
+        parent(classInhertingDeclaration)
+        parent(protocolConformingDeclaration)
     }
 
     val `class`: Element by element {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
         parent(declarationContainer)
+        parent(classInhertingDeclaration)
+        parent(protocolConformingDeclaration)
 
-        +field("superClass", typeType, nullable = true)
-        +listField("protocols", protocol)
         +field("modality", modalityKind)
     }
 
