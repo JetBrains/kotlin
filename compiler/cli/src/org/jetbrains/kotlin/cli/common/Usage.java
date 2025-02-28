@@ -17,11 +17,6 @@
 package org.jetbrains.kotlin.cli.common;
 
 import com.intellij.openapi.util.SystemInfo;
-import kotlin.jvm.JvmClassMappingKt;
-import kotlin.reflect.KCallable;
-import kotlin.reflect.KClass;
-import kotlin.reflect.KProperty1;
-import kotlin.reflect.jvm.ReflectJvmMapping;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.*;
@@ -41,10 +36,12 @@ public class Usage {
         StringBuilder sb = new StringBuilder();
         appendln(sb, "Usage: " + compiler.executableScriptFileName() + " <options> <source files>");
         appendln(sb, "where " + (extraHelp ? "advanced" : "possible") + " options include:");
-        KClass<? extends CommonCompilerArguments> kClass = JvmClassMappingKt.getKotlinClass(arguments.getClass());
-        for (KCallable<?> callable : kClass.getMembers()) {
-            if (!(callable instanceof KProperty1)) continue;
-            propertyUsage(sb, (KProperty1<?, ?>) callable, extraHelp);
+        Class<?> klass = arguments.getClass();
+        while (klass != Object.class) {
+            for (Field field : klass.getDeclaredFields()) {
+                fieldUsage(sb, field, extraHelp);
+            }
+            klass = klass.getSuperclass();
         }
 
         if (extraHelp) {
@@ -69,8 +66,7 @@ public class Usage {
         return sb.toString();
     }
 
-    private static void propertyUsage(@NotNull StringBuilder sb, @NotNull KProperty1<?, ?> property, boolean extraHelp) {
-        Field field = ReflectJvmMapping.getJavaField(property);
+    private static void fieldUsage(@NotNull StringBuilder sb, @NotNull Field field, boolean extraHelp) {
         Argument argument = field.getAnnotation(Argument.class);
         if (argument == null) return;
 

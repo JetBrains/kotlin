@@ -1,43 +1,43 @@
 Usage: kotlinc-jvm <options> <source files>
 where possible options include:
-  -classpath (-cp) <path>    List of directories and JAR/ZIP archives to search for user class files.
   -d <directory|jar>         Destination for generated class files.
-  -expression (-e)           Evaluate the given string as a Kotlin script.
+  -classpath (-cp) <path>    List of directories and JAR/ZIP archives to search for user class files.
   -include-runtime           Include the Kotlin runtime in the resulting JAR.
-  -java-parameters           Generate metadata for Java 1.8 reflection on method parameters.
   -jdk-home <path>           Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.
+  -no-jdk                    Don't automatically include the Java runtime in the classpath.
+  -no-stdlib                 Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection dependencies in the classpath.
+  -no-reflect                Don't automatically include the Kotlin reflection dependency in the classpath.
+  -expression (-e)           Evaluate the given string as a Kotlin script.
+  -script-templates <fully qualified class name[,]>
+                             Script definition template classes.
+  -module-name <name>        Name of the generated '.kotlin_module' file.
+  -jvm-target <version>      The target version of the generated JVM bytecode (1.8 and 9–23), with 1.8 as the default.
+  -java-parameters           Generate metadata for Java 1.8 reflection on method parameters.
   -jvm-default {enable|no-compatibility|disable}
                              Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
                              -jvm-default=disable             Default behavior. Do not generate JVM default methods.
                              -jvm-default=enable              Generate default methods for non-abstract interface declarations, as well as 'DefaultImpls' classes
                                                               with static methods for compatibility with code compiled in the 'disable' mode.
                              -jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes.
-  -jvm-target <version>      The target version of the generated JVM bytecode (1.8 and 9–23), with 1.8 as the default.
-  -module-name <name>        Name of the generated '.kotlin_module' file.
-  -no-jdk                    Don't automatically include the Java runtime in the classpath.
-  -no-reflect                Don't automatically include the Kotlin reflection dependency in the classpath.
-  -no-stdlib                 Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection dependencies in the classpath.
-  -script-templates <fully qualified class name[,]>
-                             Script definition template classes.
-  -Werror                    Report an error if there are any warnings.
-  -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
-  -X                         Print a synopsis of advanced options.
-  -Wextra                    Enable extra checkers for K2.
-  -help (-h)                 Print a synopsis of standard options.
-  -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
   -language-version <version> Provide source compatibility with the specified version of Kotlin.
-  -opt-in <fq.name>          Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
-  -P plugin:<pluginId>:<optionName>=<value>
-                             Pass an option to a plugin.
+  -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
+  -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
   -progressive               Enable progressive compiler mode.
                              In this mode, deprecations and bug fixes for unstable code take effect immediately
                              instead of going through a graceful migration cycle.
                              Code written in progressive mode is backward compatible; however, code written without
                              progressive mode enabled may cause compilation errors in progressive mode.
   -script                    Evaluate the given Kotlin script (*.kts) file.
-  -nowarn                    Don't generate any warnings.
-  -verbose                   Enable verbose logging output.
+  -opt-in <fq.name>          Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
+  -P plugin:<pluginId>:<optionName>=<value>
+                             Pass an option to a plugin.
+  -help (-h)                 Print a synopsis of standard options.
+  -X                         Print a synopsis of advanced options.
   -version                   Display the compiler version.
+  -verbose                   Enable verbose logging output.
+  -nowarn                    Don't generate any warnings.
+  -Werror                    Report an error if there are any warnings.
+  -Wextra                    Enable extra checkers for K2.
   -J<option>                 Pass an option directly to JVM.
   @<argfile>                 Read compiler arguments and file paths from the given file.
 
