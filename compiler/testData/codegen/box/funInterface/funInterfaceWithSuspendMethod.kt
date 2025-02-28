@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // ISSUE: KT-68849
+// DISABLE_NATIVE: compatibilityTestMode=BACKWARD_2_0
 
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext

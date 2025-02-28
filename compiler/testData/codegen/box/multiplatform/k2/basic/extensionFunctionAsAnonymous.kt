@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
+// DISABLE_NATIVE: compatibilityTestMode=BACKWARD_2_0
 // ^^^ Compiler v2.0.0: Property accessor 'a.<get-a>' can not be called: No property accessor found for symbol 'test/a.<get-a>|<get-a>(){}[1]'
 
 // MODULE: common
