@@ -5,13 +5,9 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.readJson
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -25,7 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -53,75 +48,17 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.DataColumn
-import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.IoSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.data.serialize
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
-import java.io.File
 
-class IrBodyFiller(
-    private val resolutionPath: String?,
-    private val schemasDirectory: String?
-) : IrGenerationExtension {
-
+class IrBodyFiller : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         DataFrameFileLowering(pluginContext).lower(moduleFragment)
-        if (schemasDirectory != null) {
-            val schemas = mutableListOf<IoSchema>()
-            moduleFragment.files.forEach {
-                it.acceptChildrenVoid(object : IrElementVisitorVoid {
-                    override fun visitElement(element: IrElement) {
-                        if (element is IrCall) {
-                            process(element, schemas)
-                        }
-                        element.acceptChildrenVoid(this)
-                    }
-                })
-            }
-
-            val dir = File(schemasDirectory)
-            dir.mkdirs()
-            val file = File(dir, "schemas.json")
-            val res = if (file.exists()) {
-                val json = file.readText()
-                val res = try {
-                    Json.decodeFromString<List<IoSchema>>(json)
-                } catch (e: Exception) {
-                    emptyList()
-                }
-                res + schemas
-            } else {
-                schemas
-            }
-
-            val text = Json.encodeToString(res)
-            file.writeText(text)
-        }
-    }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun process(
-        element: IrCall,
-        schemas: MutableList<IoSchema>
-    ) {
-        if (element.symbol.owner.name == Name.identifier("readJson")) {
-            val path = (element.valueArguments.firstOrNull() as? IrConst<*>)?.value as? String ?: return
-            try {
-                val df = readJson(resolutionPath, path)
-                val json = df.schema().serialize()
-                schemas.add(IoSchema(path, json))
-            } catch (_: Exception) {
-
-            }
-        }
     }
 }
 
