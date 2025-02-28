@@ -354,10 +354,18 @@ fun coneFlexibleOrSimpleType(
         is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound)
         is ConeRigidType -> when (upperBound) {
             is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
-            is ConeRigidType -> when {
-                isTrivial && lowerBound.withNullability(true, typeContext, preserveAttributes = true) == lowerBound -> lowerBound
-                !isTrivial && AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> lowerBound
-                else -> ConeFlexibleType(lowerBound, upperBound, isTrivial = isTrivial)
+            is ConeRigidType -> {
+                val areBoundsEqual = if (isTrivial) {
+                    lowerBound == upperBound
+                } else {
+                    AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound)
+                }
+
+                if (areBoundsEqual) {
+                    lowerBound
+                } else {
+                    ConeFlexibleType(lowerBound, upperBound, isTrivial = isTrivial)
+                }
             }
         }
     }
