@@ -21,7 +21,6 @@ package org.jetbrains.kotlin.cli.pipeline
 package org.jetbrains.kotlin.cli.pipeline.jvm
 package org.jetbrains.kotlin.cli.pipeline.metadata
 package org.jetbrains.kotlin.cli.plugins
-package org.jetbrains.kotlin.compiler.plugin
 package org.jetbrains.kotlin.compilerRunner
 package org.jetbrains.kotlin.compilerRunner.btapi
 package org.jetbrains.kotlin.config
