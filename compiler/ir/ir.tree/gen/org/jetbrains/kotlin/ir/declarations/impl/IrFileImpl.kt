@@ -26,11 +26,17 @@ class IrFileImpl(
     override val symbol: IrFileSymbol,
     override var packageFqName: FqName,
 ) : IrFile() {
-    override val startOffset: Int
+    override var startOffset: Int
         get() = 0
+        set(value) {
+            error("Mutation of startOffset is not supported for this class.")
+        }
 
-    override val endOffset: Int
+    override var endOffset: Int
         get() = fileEntry.maxOffset
+        set(value) {
+            error("Mutation of endOffset is not supported for this class.")
+        }
 
     override var attributeOwnerId: IrElement = this
 

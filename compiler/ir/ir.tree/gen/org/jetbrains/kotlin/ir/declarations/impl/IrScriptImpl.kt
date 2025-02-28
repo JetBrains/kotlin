@@ -26,8 +26,8 @@ class IrScriptImpl(
     override val symbol: IrScriptSymbol,
     override var name: Name,
     override val factory: IrFactory,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
 ) : IrScript() {
     override var attributeOwnerId: IrElement = this
 

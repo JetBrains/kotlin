@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.types.Variance
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyTypeParameter(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
     override val descriptor: TypeParameterDescriptor,

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrReplSnippetImpl(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override val factory: IrFactory,
     override var name: Name,
     override val symbol: IrReplSnippetSymbol,

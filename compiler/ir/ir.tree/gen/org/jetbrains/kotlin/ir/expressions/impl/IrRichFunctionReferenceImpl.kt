@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrRichFunctionReferenceImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var type: IrType,
     override var reflectionTargetSymbol: IrFunctionSymbol?,
     override var overriddenFunctionSymbol: IrSimpleFunctionSymbol,

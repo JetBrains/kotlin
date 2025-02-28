@@ -23,12 +23,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyFunction(
-    startOffset: Int,
-    endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     override val descriptor: FunctionDescriptor,
@@ -49,11 +48,6 @@ class IrLazyFunction(
     init {
         this.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
     }
-
-    override var startOffset: Int = startOffset
-        set(_) = shouldNotBeCalled()
-    override var endOffset: Int = endOffset
-        set(_) = shouldNotBeCalled()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
