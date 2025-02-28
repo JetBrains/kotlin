@@ -26,9 +26,6 @@ fun main() {
     System.setProperty("java.awt.headless", "true")
     val k1BoxTestDir = listOf("multiplatform/k1")
     val k2BoxTestDir = listOf("multiplatform/k2")
-    val excludeBackward19CompatibilityTestDir = listOf("controlStructures/breakContinueInExpressions/inlinedBreakContinue")
-    val excludeBackward20CompatibilityTestDir = listOf("contextParameters")
-    val excludeBackward21CompatibilityTestDir = listOf("contextParameters")
 
     generateSources()
 
@@ -171,7 +168,7 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir + k2BoxTestDir + excludeBackward19CompatibilityTestDir)
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir + k2BoxTestDir)
                 model("boxInline", targetBackend = TargetBackend.NATIVE)
             }
         }
@@ -184,7 +181,7 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir + excludeBackward20CompatibilityTestDir)
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
                 model("boxInline", targetBackend = TargetBackend.NATIVE)
             }
         }
@@ -197,7 +194,7 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir + excludeBackward21CompatibilityTestDir)
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
                 model("boxInline", targetBackend = TargetBackend.NATIVE)
             }
         }

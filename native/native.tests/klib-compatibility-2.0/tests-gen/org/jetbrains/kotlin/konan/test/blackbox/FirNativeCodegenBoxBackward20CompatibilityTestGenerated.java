@@ -37,7 +37,7 @@ public class FirNativeCodegenBoxBackward20CompatibilityTestGenerated extends Abs
   public class Box {
     @Test
     public void testAllFilesPresentInBox() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "multiplatform/k1", "contextParameters");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "multiplatform/k1");
     }
 
     @Nested
@@ -7812,6 +7812,188 @@ public class FirNativeCodegenBoxBackward20CompatibilityTestGenerated extends Abs
       @Test
       public void testAllFilesPresentInConstructorCall() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructorCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD_2_0")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+    @FirPipeline()
+    @UseExtTestCaseGroupProvider()
+    public class ContextParameters {
+      @Test
+      public void testAllFilesPresentInContextParameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("assignmentOfContextVar.kt")
+      public void testAssignmentOfContextVar() {
+        runTest("compiler/testData/codegen/box/contextParameters/assignmentOfContextVar.kt");
+      }
+
+      @Test
+      @TestMetadata("classMemberAndTopLevelExtensionWithContext.kt")
+      public void testClassMemberAndTopLevelExtensionWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelExtensionWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("classMemberAndTopLevelWithContext.kt")
+      public void testClassMemberAndTopLevelWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("companionObjectInContext.kt")
+      public void testCompanionObjectInContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/companionObjectInContext.kt");
+      }
+
+      @Test
+      @TestMetadata("contextFunInSam.kt")
+      public void testContextFunInSam() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextFunInSam.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParameterToDefaultArgument.kt")
+      public void testContextParameterToDefaultArgument() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("contextPropertyInInterface.kt")
+      public void testContextPropertyInInterface() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextPropertyInInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualAnonymousFunAsAnExpression.kt")
+      public void testContextualAnonymousFunAsAnExpression() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunAsAnExpression.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualAnonymousFunction.kt")
+      public void testContextualAnonymousFunction() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualAnonymousFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunAndTopLevelFun.kt")
+      public void testContextualLocalFunAndTopLevelFun() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunAndTopLevelFun.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunWithExtensiionReceiver.kt")
+      public void testContextualLocalFunWithExtensiionReceiver() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunWithExtensiionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunWithTypeParam.kt")
+      public void testContextualLocalFunWithTypeParam() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunWithTypeParam.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalFunction.kt")
+      public void testContextualLocalFunction() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("contextualLocalWithLocalExtensionAndValue.kt")
+      public void testContextualLocalWithLocalExtensionAndValue() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextualLocalWithLocalExtensionAndValue.kt");
+      }
+
+      @Test
+      @TestMetadata("functionalType.kt")
+      public void testFunctionalType() {
+        runTest("compiler/testData/codegen/box/contextParameters/functionalType.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyWithContextAndWithout.kt")
+      public void testPropertyWithContextAndWithout() {
+        runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
+      }
+
+      @Test
+      @TestMetadata("sameExtensionContextAndDispatchReceiver.kt")
+      public void testSameExtensionContextAndDispatchReceiver() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameExtensionContextAndDispatchReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithGlobalProperty.kt")
+      public void testSameNameWithGlobalProperty() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithLocalArguments.kt")
+      public void testSameNameWithLocalArguments() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithLocalProperty.kt")
+      public void testSameNameWithLocalProperty() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithLocalValueParameter.kt")
+      public void testSameNameWithLocalValueParameter() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalValueParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithMemberProperty.kt")
+      public void testSameNameWithMemberProperty() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithMemberProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithOuterContext.kt")
+      public void testSameNameWithOuterContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithOuterContext.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNameWithPropertyName.kt")
+      public void testSameNameWithPropertyName() {
+        runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
+      }
+
+      @Test
+      @TestMetadata("typealiasOnTypeWithContext.kt")
+      public void testTypealiasOnTypeWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/typealiasOnTypeWithContext.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverAndThis.kt")
+      public void testWithExtensionReceiverAndThis() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverAndThis.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverInSupertype.kt")
+      public void testWithExtensionReceiverInSupertype() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverInSupertype.kt");
+      }
+
+      @Test
+      @TestMetadata("withExtensionReceiverInType.kt")
+      public void testWithExtensionReceiverInType() {
+        runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverInType.kt");
       }
     }
 

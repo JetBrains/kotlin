@@ -37,7 +37,7 @@ public class NativeCodegenBoxBackward19CompatibilityTestGenerated extends Abstra
   public class Box {
     @Test
     public void testAllFilesPresentInBox() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "multiplatform/k1", "multiplatform/k2", "controlStructures/breakContinueInExpressions/inlinedBreakContinue");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "multiplatform/k1", "multiplatform/k2");
     }
 
     @Nested
@@ -8153,7 +8153,7 @@ public class NativeCodegenBoxBackward19CompatibilityTestGenerated extends Abstra
     public class ControlStructures {
       @Test
       public void testAllFilesPresentInControlStructures() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "breakContinueInExpressions/inlinedBreakContinue");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
       @Test
@@ -8658,7 +8658,7 @@ public class NativeCodegenBoxBackward19CompatibilityTestGenerated extends Abstra
       public class BreakContinueInExpressions {
         @Test
         public void testAllFilesPresentInBreakContinueInExpressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "inlinedBreakContinue");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
 
         @Test
@@ -8779,6 +8779,92 @@ public class NativeCodegenBoxBackward19CompatibilityTestGenerated extends Abstra
         @TestMetadata("whileTrueBreak.kt")
         public void testWhileTrueBreak() {
           runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/whileTrueBreak.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
+        @TestDataPath("$PROJECT_ROOT")
+        @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD_1_9")
+        @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+        @ClassicPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class InlinedBreakContinue {
+          @Test
+          public void testAllFilesPresentInInlinedBreakContinue() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+
+          @Test
+          @TestMetadata("continueInTryBlock.kt")
+          public void testContinueInTryBlock() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/continueInTryBlock.kt");
+          }
+
+          @Test
+          @TestMetadata("initializerBlock.kt")
+          public void testInitializerBlock() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/initializerBlock.kt");
+          }
+
+          @Test
+          @TestMetadata("inlineConstructor.kt")
+          public void testInlineConstructor() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/inlineConstructor.kt");
+          }
+
+          @Test
+          @TestMetadata("inlineFunctionWithMultipleParameters.kt")
+          public void testInlineFunctionWithMultipleParameters() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/inlineFunctionWithMultipleParameters.kt");
+          }
+
+          @Test
+          @TestMetadata("lambdaPassedToInlineFunction.kt")
+          public void testLambdaPassedToInlineFunction() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/lambdaPassedToInlineFunction.kt");
+          }
+
+          @Test
+          @TestMetadata("loopWithinInlineFunction.kt")
+          public void testLoopWithinInlineFunction() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/loopWithinInlineFunction.kt");
+          }
+
+          @Test
+          @TestMetadata("simple.kt")
+          public void testSimple() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/simple.kt");
+          }
+
+          @Test
+          @TestMetadata("simpleDoWhile.kt")
+          public void testSimpleDoWhile() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/simpleDoWhile.kt");
+          }
+
+          @Test
+          @TestMetadata("stdlibFunctions.kt")
+          public void testStdlibFunctions() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/stdlibFunctions.kt");
+          }
+
+          @Test
+          @TestMetadata("withReturnValue.kt")
+          public void testWithReturnValue() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValue.kt");
+          }
+
+          @Test
+          @TestMetadata("withReturnValueDoWhileContinue.kt")
+          public void testWithReturnValueDoWhileContinue() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueDoWhileContinue.kt");
+          }
+
+          @Test
+          @TestMetadata("withReturnValueNested.kt")
+          public void testWithReturnValueNested() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueNested.kt");
+          }
         }
       }
 

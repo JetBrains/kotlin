@@ -1,7 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects, +ContextParameters
-// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_0
-// IGNORE_NATIVE: compatibilityTestMode=BACKWARD_2_1
-// ^^^ Compiler v2.1.0 does not know this language feature
 
 // MODULE: common
 // FILE: common.kt

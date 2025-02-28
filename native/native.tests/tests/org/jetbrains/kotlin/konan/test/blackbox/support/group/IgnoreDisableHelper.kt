@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.*
+import org.jetbrains.kotlin.config.LanguageVersion.*
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
@@ -46,7 +49,7 @@ internal fun Settings.isDisabledNative(directives: Directives) =
             { directives.contains(it.name) },
             { directives.listValues(it.name) },
         )
-    )
+    ) || isDisabledCompatibilityTestByUnsupportedLanguageFeature(directives)
 
 // Note: this method would ignore DISABLED_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
 internal fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
@@ -172,4 +175,37 @@ internal fun Settings.getDirectiveValues(
         PipelineType.K2 -> extract(directiveK2)
         else -> {}
     }
+}
+
+// KT-76520: TODO: Probably move this info to new field of LanguageFeature
+private val compilerVersionWhenFeatureWasIntroduced = mapOf(
+    AllowAccessToProtectedFieldFromSuperCompanion to KOTLIN_2_1,
+    WhenGuards to KOTLIN_2_1,
+    MultiDollarInterpolation to KOTLIN_2_1,
+    NullableNothingInReifiedPosition to KOTLIN_2_1,
+    ForbidEnumEntryNamedEntries to KOTLIN_2_2,
+    AvoidWrongOptimizationOfTypeOperatorsOnValueClasses to KOTLIN_2_2,
+    BreakContinueInInlineLambdas to KOTLIN_2_2,
+    ContextParameters to KOTLIN_2_2,
+    ContextSensitiveResolutionUsingExpectedType to KOTLIN_2_2,
+    ForbidParenthesizedLhsInAssignments to KOTLIN_2_2,
+    ResolveTopLevelLambdasAsSyntheticCallArgument to KOTLIN_2_2,
+    NestedTypeAliases to KOTLIN_2_2,
+)
+
+private fun Settings.isDisabledCompatibilityTestByUnsupportedLanguageFeature(directives: Directives): Boolean {
+    val compatibilityTestModeLV = get<CompatibilityTestMode>().languageVersion ?: return false
+    val langFeatureList = directives.listValues("LANGUAGE") ?: return false
+    val usedFeatures = langFeatureList.flatMap { it.split(' ') }.map {
+        val id = it.removePrefix("+").removePrefix("-")
+        LanguageFeature.fromString(id) ?: error("Unknown language feature: $id")
+    }
+    usedFeatures.forEach { feature ->
+        compilerVersionWhenFeatureWasIntroduced.get(feature) ?.let { featureLV ->
+            if (compatibilityTestModeLV.major < featureLV.major) return true
+            if (compatibilityTestModeLV.major == featureLV.major &&
+                compatibilityTestModeLV.minor < featureLV.minor) return true
+        }
+    }
+    return false
 }

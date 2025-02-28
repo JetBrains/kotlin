@@ -81,22 +81,26 @@ enum class TestMode(private val description: String) {
 }
 
 enum class CompatibilityTestMode(
+    val languageVersion: LanguageVersion? = null,
     private val description: String,
     val supportsXVerifyIrVisibility: Boolean = true,
     val isBackward: Boolean = false
 ) {
     NONE(description = "Produce KLIBs and executable file using current compiler"),
     BACKWARD_1_9(
+        languageVersion = LanguageVersion.KOTLIN_1_9,
         isBackward = true,
         supportsXVerifyIrVisibility = false,
         description = "Produce KLIBs using released compiler v1.9.24. Produce an executable file using current compiler"
     ),
     BACKWARD_2_0(
+        languageVersion = LanguageVersion.KOTLIN_2_0,
         isBackward = true,
         supportsXVerifyIrVisibility = false,
         description = "Produce KLIBs using released compiler v2.0.0. Produce an executable file using current compiler"
     ),
     BACKWARD_2_1(
+        languageVersion = LanguageVersion.KOTLIN_2_1,
         isBackward = true,
         description = "Produce KLIBs using released compiler v2.1.0. Produce an executable file using current compiler"
     );
