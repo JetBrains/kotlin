@@ -5,9 +5,10 @@ plugins {
 kotlin {
     macosX64("objc") {
         binaries {
-            executable {
-                entryPoint = "sample.objc.main"
-            }
+            // Muted, see https://youtrack.jetbrains.com/issue/KT-75598.
+            // executable {
+            //     entryPoint = "sample.objc.main"
+            // }
         }
     }
 }
