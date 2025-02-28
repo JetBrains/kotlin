@@ -413,6 +413,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         val goldenFile = testDir.resolve("golden.txt")
         val freeCompilerArgs = TestCompilerArgs(
             listOf(
+                "-module-name", testName,
                 "-Xbinary=bundleId=$testName",
                 "-Xbinary=bundleVersion=FooBundleVersion",
                 "-Xbinary=bundleShortVersionString=FooBundleShortVersionString",
