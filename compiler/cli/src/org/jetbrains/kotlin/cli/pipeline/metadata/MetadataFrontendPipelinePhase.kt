@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.useLightTree
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -115,7 +114,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
                 projectEnvironment,
                 incrementalExcludesScope = null
             )?.also { librariesScope -= it }
-            val sessionsWithSources = prepareCommonSessions(
+            val sessionsWithSources = prepareMetadataSessions(
                 ltFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars, librariesScope,
                 libraryList, resolvedLibraries, groupedSources.isCommonSourceForLt, groupedSources.fileBelongsToModuleForLt,
                 createProviderAndScopeForIncrementalCompilation = { files ->
@@ -160,7 +159,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
                 librariesScope -= it
             }
-            val sessionsWithSources = prepareCommonSessions(
+            val sessionsWithSources = prepareMetadataSessions(
                 ktFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
                 librariesScope, libraryList, resolvedLibraries, isCommonSourceForPsi, fileBelongsToModuleForPsi,
                 createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }

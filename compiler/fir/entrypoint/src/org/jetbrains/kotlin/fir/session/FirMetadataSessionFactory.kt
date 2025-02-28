@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 @OptIn(SessionConfiguration::class)
-object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>() {
+object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>() {
 
     // ==================================== Library session ====================================
 
