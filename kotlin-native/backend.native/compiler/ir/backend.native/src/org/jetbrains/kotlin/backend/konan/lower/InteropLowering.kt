@@ -267,14 +267,18 @@ private abstract class BaseInteropIrTransformer(
             parameter.copyTo(trampoline, origin = IrDeclarationOrigin.DEFINED, kind = IrParameterKind.Regular, type = parameterTypes[index])
         }
 
+        // Unfortunately, some plugins sometimes generate the wrong number of arguments in references
+        // we already have such klib, so need to handle it. We just ignore extra type parameters
+        val typeParameters = (callee as? IrConstructor)?.parentAsClass?.typeParameters ?: (callee as IrSimpleFunction).typeParameters
+        val cleanedTypeArgumentCount = minOf(expression.typeArguments.size, typeParameters.size)
         val localBuilder = context.createIrBuilder(trampoline.symbol, trampoline.startOffset, trampoline.endOffset)
         val body = context.irFactory.createExpressionBody(
                 when (callee) {
                     is IrConstructor -> localBuilder.irCallConstructor(
-                            callee.symbol, typeArguments = expression.typeArguments.filterNotNull()
+                            callee.symbol, typeArguments = expression.typeArguments.filterNotNull().take(cleanedTypeArgumentCount)
                     )
                     is IrSimpleFunction -> localBuilder.irCall(callee).apply {
-                        expression.typeArguments.forEachIndexed { index, argument -> typeArguments[index] = argument }
+                        (0..<cleanedTypeArgumentCount).forEach { typeArguments[it] = expression.typeArguments[it] }
                     }
                 }.apply {
                     trampoline.parameters.forEachIndexed { index, parameter ->
