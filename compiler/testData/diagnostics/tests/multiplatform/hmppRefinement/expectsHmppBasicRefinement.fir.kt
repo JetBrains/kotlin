@@ -7,14 +7,18 @@ expect fun foo()
 expect class Foo
 
 // MODULE: intermediate1()()(common)
+@OptIn(ExperimentalMultiplatform::class)
 <!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
 expect fun foo()
+@OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement
 expect class Foo
 
 // MODULE: intermediate2()()(intermediate1)
+@OptIn(ExperimentalMultiplatform::class)
 <!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
 expect fun foo()
+@OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement
 expect class Foo
 

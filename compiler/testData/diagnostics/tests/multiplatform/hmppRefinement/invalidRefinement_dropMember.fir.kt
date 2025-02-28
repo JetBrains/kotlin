@@ -8,6 +8,7 @@
 }
 
 // MODULE: intermediate()()(common)
+@OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement
 expect class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS{METADATA}!>Foo<!>
 

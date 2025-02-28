@@ -6,6 +6,7 @@
 // FILE: main.kt
 package app
 
+@OptIn(ExperimentalMultiplatform::class)
 @kotlin.experimental.ExpectRefinement // Circumvent misconfiguration in the test infra KT-75281
 expect class Foo() {
     val text: String

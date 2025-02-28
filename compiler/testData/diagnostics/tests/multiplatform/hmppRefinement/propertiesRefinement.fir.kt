@@ -6,10 +6,12 @@
 expect internal val foo: Int
 
 // MODULE: intermediate1()()(common)
+@OptIn(ExperimentalMultiplatform::class)
 <!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
 expect internal val foo: Int
 
 // MODULE: intermediate2()()(intermediate1)
+@OptIn(ExperimentalMultiplatform::class)
 <!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
 expect public val foo: Int
 
