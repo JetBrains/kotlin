@@ -154,6 +154,16 @@ CODE_FENCE_END=("```" | "~~~")
         return KDocTokens.MARKDOWN_ESCAPED_CHAR;
     }
 
+    "(" {
+        yybegin(CONTENTS);
+        return KDocTokens.KDOC_LPAR;
+    }
+
+    ")" {
+        yybegin(CONTENTS);
+        return KDocTokens.KDOC_RPAR;
+    }
+
     {CODE_FENCE_START} {
         yybegin(CODE_BLOCK_LINE_BEGINNING);
         return KDocTokens.TEXT;
