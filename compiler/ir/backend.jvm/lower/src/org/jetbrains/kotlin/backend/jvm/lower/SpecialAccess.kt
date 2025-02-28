@@ -12,22 +12,30 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 /**
  * This lowering replaces member accesses that are illegal according to JVM accessibility rules with corresponding calls to the
@@ -279,12 +287,24 @@ internal class SpecialAccessLowering(
         receiver: IrExpression?, // null => static method on `declaringClass`
         arguments: List<IrExpression>,
         returnType: IrType,
-        symbol: IrSymbol
-    ): IrExpression =
-        context.createJvmIrBuilder(symbol).irBlock(resultType = returnType) {
+        symbol: IrSimpleFunctionSymbol,
+    ): IrExpression {
+        val classPartStubOrThis = declaringClass.classPartForMultifileFacadeOrThis
+        val signatureToLookup = if (classPartStubOrThis != declaringClass && DescriptorVisibilities.isPrivate(symbol.owner.visibility)) {
+            JvmMethodSignature(
+                Method(
+                    "${signature.asmMethod.name}$${classPartStubOrThis.classOrFail.owner.name}",
+                    signature.asmMethod.descriptor
+                ),
+                signature.valueParameters
+            )
+        } else {
+            signature
+        }
+        return context.createJvmIrBuilder(symbol).irBlock(resultType = returnType) {
             val methodVar =
                 createTmpVariable(
-                    getDeclaredMethod(javaClassObject(declaringClass), signature),
+                    getDeclaredMethod(javaClassObject(classPartStubOrThis), signatureToLookup),
                     nameHint = "method",
                     irType = reflectSymbols.javaLangReflectMethod.defaultType
                 )
@@ -294,6 +314,7 @@ internal class SpecialAccessLowering(
                 returnType
             )
         }
+    }
 
     private fun IrBuilderWithScope.coerceToUnboxed(expression: IrExpression): IrCall =
         irCall(symbols.unsafeCoerceIntrinsic).apply {
@@ -360,7 +381,7 @@ internal class SpecialAccessLowering(
         context.createJvmIrBuilder(symbol)
             .irBlock(resultType = fieldType) {
                 val classVar = createTmpVariable(
-                    javaClassObject(declaringClass),
+                    javaClassObject(declaringClass.classPartForMultifileFacadeOrThis),
                     nameHint = "klass",
                     irType = symbols.kClassJavaPropertyGetter.returnType
                 )
@@ -372,6 +393,25 @@ internal class SpecialAccessLowering(
                 +fieldSetAccessible(irGet(fieldVar))
                 +coerceResult(fieldGet(irGet(fieldVar), instance ?: irGet(classVar)), fieldType)
             }
+
+    private val IrType.classPartForMultifileFacadeOrThis: IrType
+        get() {
+            if (classOrNull?.owner?.origin != IrDeclarationOrigin.JVM_MULTIFILE_CLASS) return this
+            val facadeSource = classOrNull?.owner?.source as? FacadeClassSource ?: return this
+            return IrFactoryImpl.createClass(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = IrDeclarationOrigin.SYNTHETIC_FILE_CLASS,
+                symbol = IrClassSymbolImpl(),
+                name = facadeSource.className.fqNameForTopLevelClassMaybeWithDollars.shortName(),
+                kind = ClassKind.CLASS,
+                visibility = DescriptorVisibilities.PUBLIC,
+                modality = Modality.FINAL
+            ).also {
+                it.parent = classOrFail.owner.parent
+                it.createThisReceiverParameter()
+            }.defaultType
+        }
 
     private fun IrBuilderWithScope.coerceResult(value: IrExpression, type: IrType) =
         irCall(symbols.handleResultOfReflectiveAccess).apply {
@@ -402,7 +442,7 @@ internal class SpecialAccessLowering(
                 val fieldVar =
                     createTmpVariable(
                         getDeclaredField(
-                            javaClassObject(declaringClass),
+                            javaClassObject(declaringClass.classPartForMultifileFacadeOrThis),
                             fieldName
                         ),
                         nameHint = "field",
