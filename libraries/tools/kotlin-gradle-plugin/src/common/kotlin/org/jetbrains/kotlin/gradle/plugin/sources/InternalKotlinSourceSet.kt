@@ -29,3 +29,5 @@ internal suspend fun InternalKotlinSourceSet.awaitPlatformCompilations(): Set<Ko
     KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
     return compilations.filter { it !is KotlinMetadataCompilation }.toSet()
 }
+
+internal suspend fun InternalKotlinSourceSet.isSharedSourceSet() = awaitPlatformCompilations().size > 1
