@@ -766,15 +766,27 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
-    @TestMetadata("identityCheckOnJavaValueBasedWarning.kt")
-    public void testIdentityCheckOnJavaValueBasedWarning() {
-      runTest("compiler/testData/diagnostics/tests/identityCheckOnJavaValueBasedWarning.kt");
+    @TestMetadata("identityComparisonOnJavaValueBasedClassesWarning.kt")
+    public void testIdentityComparisonOnJavaValueBasedClassesWarning() {
+      runTest("compiler/testData/diagnostics/tests/identityComparisonOnJavaValueBasedClassesWarning.kt");
     }
 
     @Test
     @TestMetadata("IdentityComparisonWithPrimitives.kt")
     public void testIdentityComparisonWithPrimitives() {
       runTest("compiler/testData/diagnostics/tests/IdentityComparisonWithPrimitives.kt");
+    }
+
+    @Test
+    @TestMetadata("identitySensitiveOperationsOnValueClassesAndPrimitivesWarningsDisabled.kt")
+    public void testIdentitySensitiveOperationsOnValueClassesAndPrimitivesWarningsDisabled() {
+      runTest("compiler/testData/diagnostics/tests/identitySensitiveOperationsOnValueClassesAndPrimitivesWarningsDisabled.kt");
+    }
+
+    @Test
+    @TestMetadata("identitySensitiveOperationsOnValueObjectsWarning.kt")
+    public void testIdentitySensitiveOperationsOnValueObjectsWarning() {
+      runTest("compiler/testData/diagnostics/tests/identitySensitiveOperationsOnValueObjectsWarning.kt");
     }
 
     @Test
