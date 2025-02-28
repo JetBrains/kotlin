@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!--do_not_remove: published-with-gradle-metadata-->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>foo</groupId>
+  <artifactId>direct</artifactId>
+  <version>1.0</version>
+  <packaging>uklib</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>foo</groupId>
+      <artifactId>bar</artifactId>
+      <version>1.0</version>
+      <scope>scope</scope>
+    </dependency>
+  </dependencies>
+</project>

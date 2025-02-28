@@ -494,6 +494,40 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
     }
 
+    sourceSets.create("testingUtilities") {
+        val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
+        compileClasspath += gradlePluginVariantSourceSet.output
+        runtimeClasspath += gradlePluginVariantSourceSet.output
+
+        configurations.getByName(implementationConfigurationName) {
+            extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.implementationConfigurationName))
+            extendsFrom(configurations.getByName(testSourceSet.implementationConfigurationName))
+        }
+
+        configurations.getByName(runtimeOnlyConfigurationName) {
+            extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.runtimeOnlyConfigurationName))
+            extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
+        }
+    }
+
+    // Pull out some KGP testing utilities into a separate compilation to compile against JDK 8, have access to internal KGP APIs and reuse them in KGP-IT
+    val kgpTestingUtilities = configurations.create("kgpTestingUtilities") {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+    }
+    val testingUtilitiesCompilation = kotlin.target.compilations.getByName("testingUtilities")
+    testingUtilitiesCompilation.associateWith(kotlin.target.compilations.getByName("common"))
+    testingUtilitiesCompilation.compileJavaTaskProvider.configure {
+        sourceCompatibility = JavaLanguageVersion.of(8).toString()
+        targetCompatibility = JavaLanguageVersion.of(8).toString()
+    }
+
+    testingUtilitiesCompilation.output.classesDirs.forEach {
+        kgpTestingUtilities.outgoing.artifact(it) {
+            builtBy(testingUtilitiesCompilation.compileTaskProvider)
+        }
+    }
+
     val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
     functionalTestCompilation.compileJavaTaskProvider.configure {
         sourceCompatibility = JavaLanguageVersion.of(17).toString()
@@ -504,8 +538,13 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
         }
     }
+
+    functionalTestCompilation.configurations.pluginConfiguration.dependencies.add(
+        dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
+    )
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
+    functionalTestCompilation.associateWith(testingUtilitiesCompilation)
 
     tasks.register<Test>("functionalTest") {
         systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
@@ -550,6 +589,8 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testLogging {
             events("passed", "skipped", "failed")
         }
+
+        systemProperty("resourcesPath", layout.projectDirectory.dir("src/functionalTest/resources").asFile)
     }
 
     dependencies {
@@ -568,6 +609,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
         implementation("org.reflections:reflections:0.10.2")
         implementation(project(":compose-compiler-gradle-plugin"))
+        implementation(libs.kotlinx.serialization.json)
     }
 
     tasks.named("check") {
