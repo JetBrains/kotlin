@@ -41,8 +41,12 @@ abstract class KotlinNpmInstallTask :
     @get:Internal
     abstract val nodeModules: DirectoryProperty
 
+    private val isOffline = project.gradle.startParameter.isOffline()
+
     @TaskAction
     fun resolve() {
+        if (isOffline) return
+
         npmResolutionManager.get()
             .installIfNeeded(
                 args = args,
