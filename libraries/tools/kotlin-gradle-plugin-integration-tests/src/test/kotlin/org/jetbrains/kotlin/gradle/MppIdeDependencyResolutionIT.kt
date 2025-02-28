@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.AssumptionViolatedException
@@ -502,6 +503,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
             resolveIdeDependencies { dependencies ->
                 assertNoCompileTasksGotExecuted()
+                dependencies.assertResolvedDependenciesOnly()
+
                 dependencies["jvmMain"].getOrFail(
                     projectArtifactDependency(
                         Regular,
@@ -536,6 +539,8 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
             resolveIdeDependencies { dependencies ->
                 assertNoCompileTasksGotExecuted()
+                dependencies.assertResolvedDependenciesOnly()
+
                 assertOutputDoesNotContain("e: org.jetbrains.kotlin.gradle.plugin.ide") // FIXME: KT-74976 Add strict mode for IDE dependency resolvers
                 val expectedJvmDependencies = listOf(
                     jetbrainsAnnotationDependencies,
@@ -563,6 +568,54 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     .assertMatches(expectedJvmDependencies + friendDependencies)
                 dependencies["jvmTest"]
                     .assertMatches(expectedJvmDependencies + friendDependencies + dependsOnDependency(":/commonTest") )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `KT-75605 dependency to kmp project from test source set`(gradleVersion: GradleVersion) {
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "test-utils") {
+                buildScriptInjection {
+                    kotlinMultiplatform.apply {
+                        jvm()
+                        linuxX64()
+                        linuxArm64()
+                        iosX64()
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    jvm()
+                    linuxX64()
+                    linuxArm64()
+                    iosX64()
+
+                    sourceSets.commonTest.dependencies {
+                        api(project(":test-utils"))
+                    }
+                }
+            }
+
+            resolveIdeDependencies { dependencies ->
+                assertNoCompileTasksGotExecuted()
+                dependencies.assertResolvedDependenciesOnly()
+
+                dependencies["commonTest"].assertMatches(
+                    friendSourceDependency(":/commonMain"),
+                    regularSourceDependency(":test-utils/commonMain"),
+                    kotlinStdlibDependencies
+                )
+                dependencies["nativeTest"].assertMatches(
+                    friendSourceDependency(":/commonMain"),
+                    friendSourceDependency(":/nativeMain"),
+                    dependsOnDependency(":/commonTest"),
+                    regularSourceDependency(":test-utils/commonMain"),
+                    regularSourceDependency(":test-utils/nativeMain"),
+                    kotlinNativeDistributionDependencies, // kotlin-stdlib is part of native distribution
+                )
             }
         }
     }

@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinMetadataCompilations
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -57,10 +57,11 @@ internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfigurati
     }
 }
 
-internal suspend fun Project.psmArtifactsForAllDependencies(): List<FileCollection> {
+internal suspend fun Project.psmArtifactsForAllDependenciesFromSharedSourceSets(): List<FileCollection> {
     if (!kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) return emptyList()
-    return multiplatformExtension.kotlinMetadataCompilations().map { compilation ->
-        compilation.defaultSourceSet.internal.projectStructureMetadataResolvedConfiguration().files
+    return multiplatformExtension.sourceSets.mapNotNull { sourceSet ->
+        if (!sourceSet.internal.isSharedSourceSet()) return@mapNotNull null
+        sourceSet.internal.projectStructureMetadataResolvedConfiguration().files
     }
 }
 
