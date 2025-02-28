@@ -36,21 +36,6 @@ class DependencyListForCliModule(
                 binaryModuleData.regular
             ).associateWithTo(mutableMapOf<FirModuleData, MutableSet<Path>>()) { mutableSetOf() }
 
-        fun dependency(vararg path: Path) {
-            filtersMap.getValue(binaryModuleData.regular) += path
-        }
-
-        fun dependency(moduleData: FirModuleData, vararg path: Path) {
-            filtersMap.getOrPut(moduleData) {
-                allRegularDependencies.add(moduleData)
-                mutableSetOf()
-            } += path
-        }
-
-        fun dependency(vararg path: String) {
-            path.mapTo(filtersMap.getValue(binaryModuleData.regular)) { Paths.get(it) }
-        }
-
         @JvmName("dependenciesString")
         fun dependencies(paths: Collection<String>) {
             paths.mapTo(filtersMap.getValue(binaryModuleData.regular)) { Paths.get(it) }
@@ -88,19 +73,6 @@ class DependencyListForCliModule(
 
         fun dependsOnDependencies(paths: Collection<Path>) {
             filtersMap.getValue(binaryModuleData.dependsOn) += paths
-        }
-
-
-        // Potentially, a part of a public API, so we leave it even while it's unused
-        @Suppress("unused")
-        fun sourceFriendsDependencies(modules: Collection<FirModuleData>) {
-            allFriendsDependencies += modules
-        }
-
-        // Potentially, a part of a public API, so we leave it even while it's unused
-        @Suppress("unused")
-        fun sourceDependsOnDependencies(modules: Collection<FirModuleData>) {
-            allDependsOnDependencies += modules
         }
 
         fun build(): DependencyListForCliModule {
