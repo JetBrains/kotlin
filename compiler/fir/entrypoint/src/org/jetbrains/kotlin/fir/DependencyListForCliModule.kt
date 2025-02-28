@@ -36,12 +36,6 @@ class DependencyListForCliModule(
                 binaryModuleData.regular
             ).associateWithTo(mutableMapOf<FirModuleData, MutableSet<Path>>()) { mutableSetOf() }
 
-        @JvmName("dependenciesString")
-        fun dependencies(paths: Collection<String>) {
-            paths.mapTo(filtersMap.getValue(binaryModuleData.regular)) { Paths.get(it) }
-        }
-
-        @JvmName("dependenciesString")
         fun dependencies(moduleData: FirModuleData, paths: Collection<String>) {
             paths.mapTo(
                 filtersMap.getOrPut(moduleData) {
@@ -53,26 +47,16 @@ class DependencyListForCliModule(
             }
         }
 
-        @JvmName("friendDependenciesString")
+        fun dependencies(paths: Collection<String>) {
+            paths.mapTo(filtersMap.getValue(binaryModuleData.regular)) { Paths.get(it) }
+        }
+
         fun friendDependencies(paths: Collection<String>) {
             paths.mapTo(filtersMap.getValue(binaryModuleData.friends)) { Paths.get(it) }
         }
 
-        @JvmName("dependsOnDependenciesString")
         fun dependsOnDependencies(paths: Collection<String>) {
             paths.mapTo(filtersMap.getValue(binaryModuleData.dependsOn)) { Paths.get(it) }
-        }
-
-        fun dependencies(paths: Collection<Path>) {
-            filtersMap.getValue(binaryModuleData.regular) += paths
-        }
-
-        fun friendDependencies(paths: Collection<Path>) {
-            filtersMap.getValue(binaryModuleData.friends) += paths
-        }
-
-        fun dependsOnDependencies(paths: Collection<Path>) {
-            filtersMap.getValue(binaryModuleData.dependsOn) += paths
         }
 
         fun build(): DependencyListForCliModule {

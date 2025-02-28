@@ -207,8 +207,8 @@ fun createLibraryListForJvm(
 ): DependencyListForCliModule {
     val binaryModuleData = BinaryModuleData.initialize(Name.identifier(moduleName))
     val libraryList = DependencyListForCliModule.build(binaryModuleData) {
-        dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
-        dependencies(configuration.jvmModularRoots.map { it.toPath() })
+        dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
+        dependencies(configuration.jvmModularRoots.map { it.absolutePath })
         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
         friendDependencies(friendPaths)
     }
