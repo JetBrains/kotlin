@@ -21,6 +21,7 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-psi"))
+    testImplementation(projectTests(":analysis:stubs"))
     testImplementation(projectTests(":analysis:symbol-light-classes"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-native"))
     testImplementation(intellijCore())

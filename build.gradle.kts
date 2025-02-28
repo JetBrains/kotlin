@@ -1,8 +1,6 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import plugins.KotlinBuildPublishingPlugin
 
 buildscript {
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -308,6 +306,7 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:kt-references",
                 ":analysis:light-classes-base",
                 ":analysis:low-level-api-fir",
+                ":analysis:stubs",
                 ":analysis:symbol-light-classes",
             ) +
             arrayOf(
