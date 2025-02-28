@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFuncti
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -114,33 +113,12 @@ fun <F> prepareJsSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
-    lookupTracker: LookupTracker?,
     icData: KlibIcData?,
 ): List<SessionWithSources<F>> {
-    return SessionConstructionUtils.prepareSessions(
-        files, configuration, rootModuleName, JsPlatforms.defaultJsPlatform,
-        metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
-        fileBelongsToModule,
-        createLibrarySession = { sessionProvider ->
-            FirJsSessionFactory.createLibrarySession(
-                rootModuleName,
-                resolvedLibraries,
-                sessionProvider,
-                libraryList.moduleDataProvider,
-                extensionRegistrars,
-                configuration,
-            )
-        }
-    ) { _, moduleData, sessionProvider, sessionConfigurator ->
-        FirJsSessionFactory.createModuleBasedSession(
-            moduleData,
-            sessionProvider,
-            extensionRegistrars,
-            configuration,
-            icData = icData,
-            init = sessionConfigurator,
-        )
-    }
+    return prepareKlibSessions(
+        FirJsSessionFactory, JsPlatforms.defaultJsPlatform, files, configuration, rootModuleName, resolvedLibraries,
+        libraryList, extensionRegistrars, isCommonSource, fileBelongsToModule, metadataCompilationMode = false, icData
+    )
 }
 
 /**
@@ -161,29 +139,10 @@ fun <F> prepareNativeSessions(
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
 ): List<SessionWithSources<F>> {
-    return SessionConstructionUtils.prepareSessions(
-        files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform,
-        metadataCompilationMode, libraryList, isCommonSource, isScript = { false },
-        fileBelongsToModule, createLibrarySession = { sessionProvider ->
-            FirNativeSessionFactory.createLibrarySession(
-                rootModuleName,
-                resolvedLibraries,
-                sessionProvider,
-                libraryList.moduleDataProvider,
-                extensionRegistrars,
-                configuration,
-            )
-        }
-    ) { _, moduleData, sessionProvider, sessionConfigurator ->
-        FirNativeSessionFactory.createModuleBasedSession(
-            moduleData,
-            sessionProvider,
-            extensionRegistrars,
-            configuration,
-            icData = null,
-            sessionConfigurator,
-        )
-    }
+    return prepareKlibSessions(
+        FirNativeSessionFactory, NativePlatforms.unspecifiedNativePlatform, files, configuration, rootModuleName, resolvedLibraries,
+        libraryList, extensionRegistrars, isCommonSource, fileBelongsToModule, metadataCompilationMode, icData = null
+    )
 }
 
 /**
@@ -202,19 +161,38 @@ fun <F> prepareWasmSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
-    lookupTracker: LookupTracker?,
     icData: KlibIcData?,
 ): List<SessionWithSources<F>> {
     val platform = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
         WasmTarget.JS -> WasmPlatforms.wasmJs
         WasmTarget.WASI -> WasmPlatforms.wasmWasi
     }
+    return prepareKlibSessions(
+        FirWasmSessionFactory, platform, files, configuration, rootModuleName, resolvedLibraries, libraryList, extensionRegistrars,
+        isCommonSource, fileBelongsToModule, metadataCompilationMode = false, icData,
+    )
+}
+
+private fun <F> prepareKlibSessions(
+    sessionFactory: AbstractFirKlibSessionFactory<*, *>,
+    platform: TargetPlatform,
+    files: List<F>,
+    configuration: CompilerConfiguration,
+    rootModuleName: Name,
+    resolvedLibraries: List<KotlinLibrary>,
+    libraryList: DependencyListForCliModule,
+    extensionRegistrars: List<FirExtensionRegistrar>,
+    isCommonSource: (F) -> Boolean,
+    fileBelongsToModule: (F, String) -> Boolean,
+    metadataCompilationMode: Boolean,
+    icData: KlibIcData?,
+): List<SessionWithSources<F>> {
     return SessionConstructionUtils.prepareSessions(
         files, configuration, rootModuleName, platform,
-        metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
+        metadataCompilationMode, libraryList, isCommonSource, isScript = { false },
         fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
-            FirWasmSessionFactory.createLibrarySession(
+            sessionFactory.createLibrarySession(
                 rootModuleName,
                 resolvedLibraries,
                 sessionProvider,
@@ -224,7 +202,7 @@ fun <F> prepareWasmSessions(
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
-        FirWasmSessionFactory.createModuleBasedSession(
+        sessionFactory.createModuleBasedSession(
             moduleData,
             sessionProvider,
             extensionRegistrars,
