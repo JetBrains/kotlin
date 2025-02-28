@@ -86,8 +86,8 @@ dependencies {
 afterEvaluate {
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
-            languageVersion = KotlinVersion.KOTLIN_1_6
-            apiVersion = KotlinVersion.KOTLIN_1_6
+            languageVersion = KotlinVersion.KOTLIN_1_9
+            apiVersion = KotlinVersion.KOTLIN_1_9
         }
     }
 }
