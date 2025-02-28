@@ -82,8 +82,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings,
-        useExtraCheckers: Boolean,
+        configuration: CompilerConfiguration,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
         return createModuleBasedSession(
@@ -91,11 +90,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>()
             context = null,
             sessionProvider,
             extensionRegistrars,
-            languageVersionSettings,
-            useExtraCheckers,
-            lookupTracker = null,
-            enumWhenTracker = null,
-            importTracker = null,
+            configuration,
             init,
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(

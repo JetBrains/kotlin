@@ -28,12 +28,9 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.config.useFirExtraCheckers
 import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -369,12 +366,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     }
                 },
                 extensionRegistrars,
-                configuration.languageVersionSettings,
-                configuration.useFirExtraCheckers,
-                configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
-                configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-                configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
-                configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
+                configuration,
                 predefinedJavaComponents = predefinedJavaComponents,
                 needRegisterJavaElementFinder = true,
                 sessionConfigurator,

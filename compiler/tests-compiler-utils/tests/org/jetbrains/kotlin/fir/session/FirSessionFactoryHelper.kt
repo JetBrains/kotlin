@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ImportTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -29,13 +26,9 @@ object FirSessionFactoryHelper {
         platform: TargetPlatform,
         externalSessionProvider: FirProjectSessionProvider?,
         projectEnvironment: VfsBasedProjectEnvironment,
-        languageVersionSettings: LanguageVersionSettings,
-        useExtraCheckers: Boolean,
+        configuration: CompilerConfiguration,
         javaSourcesScope: AbstractProjectFileSearchScope,
         librariesScope: AbstractProjectFileSearchScope,
-        lookupTracker: LookupTracker?,
-        enumWhenTracker: EnumWhenTracker?,
-        importTracker: ImportTracker?,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         needRegisterJavaElementFinder: Boolean,
@@ -54,7 +47,7 @@ object FirSessionFactoryHelper {
             extensionRegistrars,
             librariesScope,
             packagePartProvider,
-            languageVersionSettings,
+            configuration.languageVersionSettings,
             predefinedJavaComponents = null,
         )
 
@@ -72,19 +65,13 @@ object FirSessionFactoryHelper {
             projectEnvironment,
             { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
             extensionRegistrars,
-            languageVersionSettings,
-            useExtraCheckers,
-            JvmTarget.DEFAULT,
-            lookupTracker,
-            enumWhenTracker,
-            importTracker,
+            configuration,
             predefinedJavaComponents = null,
             needRegisterJavaElementFinder,
-            init = {
-                registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)
-                sessionConfigurator()
-            },
-        )
+        ) {
+            registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)
+            sessionConfigurator()
+        }
     }
 
     @OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)

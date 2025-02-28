@@ -48,6 +48,9 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
                 JvmClasspathRoot(ForTestCompileRuntime.stdlibCommonForTests())
             )
         }
+        if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
+            configuration.useFirExtraCheckers = true
+        }
 
         setupK2CliConfiguration(module, configuration)
     }
@@ -79,9 +82,6 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             configuration.hmppModuleStructure = HmppCliModuleStructure(hmppModules.values.toList(), dependencyMap)
         }
 
-        if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
-            configuration.useFirExtraCheckers = true
-        }
         if (FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS in module.directives) {
             configuration.useFirExperimentalCheckers = true
         }

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.useFirExtraCheckers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirModuleCapabilities
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -329,12 +328,8 @@ private fun compileImpl(
         state.projectEnvironment,
         createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,
-        compilerConfiguration.languageVersionSettings,
-        compilerConfiguration.useFirExtraCheckers,
-        jvmTarget = compilerConfiguration.jvmTarget!!,
-        lookupTracker = null,
-        enumWhenTracker = null,
-        importTracker = null,
+        compilerConfiguration,
+        // TODO: from script config
         state.predefinedJavaComponents,
         needRegisterJavaElementFinder = true,
         init = {},

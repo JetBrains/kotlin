@@ -138,7 +138,6 @@ fun <F> prepareJsSessions(
             sessionProvider,
             extensionRegistrars,
             configuration,
-            lookupTracker,
             icData = icData,
             init = sessionConfigurator,
         )
@@ -181,8 +180,7 @@ fun <F> prepareNativeSessions(
             moduleData,
             sessionProvider,
             extensionRegistrars,
-            configuration.languageVersionSettings,
-            configuration.useFirExtraCheckers,
+            configuration,
             sessionConfigurator,
         )
     }
@@ -231,10 +229,8 @@ fun <F> prepareWasmSessions(
             moduleData,
             sessionProvider,
             extensionRegistrars,
-            configuration.languageVersionSettings,
-            configuration.useFirExtraCheckers,
+            configuration,
             configuration.wasmTarget,
-            lookupTracker,
             icData = icData,
             init = sessionConfigurator,
         )
@@ -282,11 +278,7 @@ fun <F> prepareCommonSessions(
             projectEnvironment,
             incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
             extensionRegistrars,
-            configuration.languageVersionSettings,
-            configuration.useFirExtraCheckers,
-            lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-            enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
-            importTracker = configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
+            configuration,
             init = sessionConfigurator
         )
     }

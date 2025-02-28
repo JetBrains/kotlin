@@ -11,8 +11,6 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope.getLibrariesScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
@@ -149,12 +147,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
             projectEnvironment = replCompilationEnvironment.projectEnvironment,
             createIncrementalCompilationSymbolProviders = { null },
             extensionRegistrars = replCompilationEnvironment.extensionRegistrars,
-            languageVersionSettings = module.languageVersionSettings,
-            useExtraCheckers = FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives,
-            jvmTarget = compilerConfiguration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT),
-            lookupTracker = null,
-            enumWhenTracker = null,
-            importTracker = null,
+            configuration = compilerConfiguration,
             predefinedJavaComponents = replCompilationEnvironment.predefinedJavaComponents,
             needRegisterJavaElementFinder = true,
         ) {
