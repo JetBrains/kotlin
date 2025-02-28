@@ -227,8 +227,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         } else JsPlatforms.defaultJsPlatform
         val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName)
         val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
-            dependencies(libraries.map { Paths.get(it).toAbsolutePath() })
-            friendDependencies(friendLibraries.map { Paths.get(it).toAbsolutePath() })
+            dependencies(libraries)
+            friendDependencies(friendLibraries)
             // TODO: !!! dependencies module data?
         }
 

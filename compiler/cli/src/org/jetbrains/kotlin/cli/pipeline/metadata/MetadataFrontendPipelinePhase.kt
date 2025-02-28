@@ -59,10 +59,10 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val binaryModuleData = BinaryModuleData.initialize(rootModuleName)
         val libraryList = DependencyListForCliModule.build(binaryModuleData) {
             val refinedPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS)?.map { File(it) }.orEmpty()
-            dependencies(configuration.jvmClasspathRoots.filter { it !in refinedPaths }.map { it.toPath() })
-            dependencies(configuration.jvmModularRoots.map { it.toPath() })
+            dependencies(configuration.jvmClasspathRoots.filter { it !in refinedPaths }.map { it.absolutePath })
+            dependencies(configuration.jvmModularRoots.map { it.absolutePath })
             friendDependencies(configuration[K2MetadataConfigurationKeys.FRIEND_PATHS] ?: emptyList())
-            dependsOnDependencies(refinedPaths.map { it.toPath() })
+            dependsOnDependencies(refinedPaths.map { it.absolutePath })
         }
 
         val klibFiles = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS).orEmpty()
