@@ -37,10 +37,10 @@ internal fun translateModulePublicApi(module: InputModule, dependencies: Set<Inp
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(kaModules.useSiteModule) {
-        val stdlib = dependencies.singleOrNull { it.name == "stdlib" }
+        val stdlib = kaModules.dependenciesModules.singleOrNull { it.libraryName == "stdlib" }
         val stdlibReferenceHandler = SirKaClassReferenceHandler { symbol ->
             if (symbol.containingModule == stdlib) {
-                referencedStdlibTypes.addIfNotNull(symbol.classId?.asSingleFqName())
+                referencedStdlibTypes.addIfNotNull(symbol.classId?.outermostClassId?.asSingleFqName())
             }
         }
         val sirSession = buildSirSession(kaModules, config, module.config, stdlibReferenceHandler)

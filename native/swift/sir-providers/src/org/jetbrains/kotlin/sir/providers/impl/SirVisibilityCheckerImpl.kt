@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -45,7 +46,7 @@ public class SirVisibilityCheckerImpl(
                 true
             }
             is KaNamedFunctionSymbol -> {
-                ktSymbol.isConsumableBySirBuilder(ktSymbol.containingSymbol as? KaClassSymbol)
+                ktSymbol.isConsumableBySirBuilder(ktAnalysisSession, ktSymbol.containingSymbol as? KaClassSymbol)
             }
             is KaVariableSymbol -> {
                 !ktSymbol.hasHiddenAccessors
@@ -60,7 +61,7 @@ public class SirVisibilityCheckerImpl(
         return if (isConsumable && !isHidden && !containsContextParameters) SirVisibility.PUBLIC else SirVisibility.PRIVATE
     }
 
-    private fun KaNamedFunctionSymbol.isConsumableBySirBuilder(parent: KaClassSymbol?): Boolean {
+    private fun KaNamedFunctionSymbol.isConsumableBySirBuilder(kaSession: KaSession, parent: KaClassSymbol?): Boolean {
         if (isStatic && parent?.let { isValueOfOnEnum(it) } != true) {
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "static functions are not supported yet.")
             return false
@@ -81,6 +82,13 @@ public class SirVisibilityCheckerImpl(
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inline functions are not supported yet.")
             return false
         }
+
+        with(kaSession) {
+            if (isClone(this@isConsumableBySirBuilder)) {
+                return false
+            }
+        }
+
         return true
     }
 

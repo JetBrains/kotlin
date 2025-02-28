@@ -17,6 +17,7 @@ dependencies {
 
     api(project(":compiler:psi"))
     api(project(":analysis:analysis-api"))
+    implementation(project(":native:analysis-api-based-export-common"))
 
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)

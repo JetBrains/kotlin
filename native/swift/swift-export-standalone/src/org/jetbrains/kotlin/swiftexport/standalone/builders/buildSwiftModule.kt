@@ -65,7 +65,7 @@ private fun extractAllTransitively(
     kaSession: KaSession,
 ): Sequence<SirDeclaration> = with(sirSession) {
     generateSequence(declarations.extractDeclarations(kaSession)) {
-        it.filterIsInstance<SirDeclarationContainer>().flatMap { it.declarations }
+        it.filterIsInstance<SirDeclarationContainer>().flatMap { it.declarations }.takeIf { it.count() > 0 }
     }.flatten()
 }
 
@@ -79,6 +79,7 @@ private fun extractAllTransitively(
 internal class KaModules(
     val useSiteModule: KaModule,
     val mainModule: KaLibraryModule,
+    val dependenciesModules: List<KaLibraryModule>,
 )
 
 internal fun createKaModulesForStandaloneAnalysis(
@@ -87,11 +88,12 @@ internal fun createKaModulesForStandaloneAnalysis(
 ): KaModules {
     lateinit var binaryModule: KaLibraryModule
     lateinit var fakeSourceModule: KaSourceModule
+    lateinit var dependenciesModules: List<KaLibraryModule>
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform
             binaryModule = addModule(buildKaLibraryModule(input))
-            val kaDeps = dependencies.map {
+            dependenciesModules = dependencies.map {
                 addModule(buildKaLibraryModule(it))
             }
             // It's a pure hack: Analysis API does not properly work without root source modules.
@@ -100,12 +102,12 @@ internal fun createKaModulesForStandaloneAnalysis(
                     platform = NativePlatforms.unspecifiedNativePlatform
                     moduleName = "fakeSourceModule"
                     addRegularDependency(binaryModule)
-                    kaDeps.forEach { addRegularDependency(it) }
+                    dependenciesModules.forEach { addRegularDependency(it) }
                 }
             )
         }
     }
-    return KaModules(fakeSourceModule, binaryModule)
+    return KaModules(fakeSourceModule, binaryModule, dependenciesModules)
 }
 
 private fun KtModuleProviderBuilder.buildKaLibraryModule(

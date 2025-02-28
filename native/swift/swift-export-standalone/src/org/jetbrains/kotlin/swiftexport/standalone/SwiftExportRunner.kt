@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateModulePublicApi
+import org.jetbrains.kotlin.swiftexport.standalone.translation.translateTransitiveClosure
 import org.jetbrains.kotlin.swiftexport.standalone.utils.logConfigIssues
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtFile
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
@@ -127,7 +128,7 @@ public fun runSwiftExport(
 ): Result<Set<SwiftExportModule>> = runCatching {
     logConfigIssues(input, config.logger)
     val stdlibInputModule = createInputModuleForStdlib(config.distribution)
-    val translatedModules = input.map { rootModule ->
+    val translationResults = input.map { rootModule ->
         /**
          * This value represents dependencies of current module.
          * The actual dependency graph is unknown at this point - there is only an array of modules to translate. This particular value
@@ -137,16 +138,20 @@ public fun runSwiftExport(
         val dependencies = input - rootModule
         translateModulePublicApi(rootModule, dependencies + stdlibInputModule, config)
     }
-
+    val stdlibFqNames = translationResults.flatMap { it.referencedStdlibTypes }.toSet()
+    val stdlibTranslationResult = if (stdlibFqNames.isNotEmpty()) {
+        translateTransitiveClosure(stdlibInputModule, config, stdlibFqNames)
+    } else null
+    val allModules = translationResults + listOfNotNull(stdlibTranslationResult)
     val packagesModule = writeKotlinPackagesModule(
-        sirModule = translatedModules.createModuleForPackages(config),
+        sirModule = allModules.createModuleForPackages(config),
         outputPath = config.outputPath.parent / config.moduleForPackagesName / "${config.moduleForPackagesName}.swift"
     )
     val runtimeSupportModule = writeRuntimeSupportModule(
         config = config,
         outputPath = config.outputPath.parent / config.runtimeSupportModuleName / "${config.runtimeSupportModuleName}.swift",
     )
-    return@runCatching setOf(packagesModule, runtimeSupportModule) + translatedModules.map { it.writeModule(config) }
+    return@runCatching setOf(packagesModule, runtimeSupportModule) + allModules.map { it.writeModule(config) }
 }
 
 private fun createInputModuleForStdlib(distribution: Distribution) =
