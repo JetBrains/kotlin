@@ -241,13 +241,12 @@ private class CallInlining(
 
             argument.transformChildrenVoid(this) // Default argument can contain subjects for substitution.
 
-            val ret =
-                if (argument is IrGetValue && argument in elementsWithLocationToPatch)
-                    argument.copyWithOffsets(newExpression.startOffset, newExpression.endOffset)
-                else
-                    argument.deepCopyWithSymbols()
-
-            return ret.doImplicitCastIfNeededTo(newExpression.type)
+            return argument.deepCopyWithSymbols().apply {
+                if (argument is IrGetValue && argument in elementsWithLocationToPatch) {
+                    startOffset = newExpression.startOffset
+                    endOffset = newExpression.endOffset
+                }
+            }.doImplicitCastIfNeededTo(newExpression.type)
         }
 
         override fun visitCall(expression: IrCall): IrExpression {
@@ -371,10 +370,11 @@ private class CallInlining(
                     val argument = when {
                         parameter !in unboundArgsSet -> {
                             val arg = boundFunctionParametersMap[parameter]!!
-                            if (arg is IrGetValue && arg in elementsWithLocationToPatch) {
-                                arg.copyWithOffsets(irCall.startOffset, irCall.endOffset)
-                            } else {
-                                arg.deepCopyWithSymbols()
+                            arg.deepCopyWithSymbols().apply {
+                                if (arg is IrGetValue && arg in elementsWithLocationToPatch) {
+                                    startOffset = irCall.startOffset
+                                    endOffset = irCall.endOffset
+                                }
                             }
                         }
                         unboundIndex == valueParameters.size && parameter.defaultValue != null -> {

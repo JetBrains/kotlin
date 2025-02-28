@@ -370,25 +370,30 @@ open class LiveLiteralTransformer(
         // If live literals are enabled, don't do anything
         if (!liveLiteralsEnabled) return expression
 
+        val originalStartOffset = expression.startOffset
+        val originalEndOffset = expression.endOffset
         // create the getter function on the live literals class
         val getter = irLiveLiteralGetter(
             key = key,
             // Move the start/endOffsets to the call of the getter since we don't
             // want to step into <clinit> in the debugger.
-            literalValue = expression.copyWithOffsets(UNDEFINED_OFFSET, UNDEFINED_OFFSET),
+            literalValue = expression.apply {
+                startOffset = UNDEFINED_OFFSET
+                endOffset = UNDEFINED_OFFSET
+            },
             literalType = expression.type,
-            startOffset = expression.startOffset
+            startOffset = originalStartOffset
         )
 
         // return a call to the getter in place of the constant
         return IrCallImpl(
-            expression.startOffset,
-            expression.endOffset,
+            originalStartOffset,
+            originalEndOffset,
             expression.type,
             getter.symbol,
             getter.symbol.owner.typeParameters.size
         ).apply {
-            dispatchReceiver = irGetLiveLiteralsClass(expression.startOffset, expression.endOffset)
+            dispatchReceiver = irGetLiveLiteralsClass(originalStartOffset, originalEndOffset)
         }
     }
 
