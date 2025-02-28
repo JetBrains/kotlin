@@ -1,11 +1,12 @@
 {
   "version": "1.0",
+  "timeout": "24h",
   "builds": [
     {
       "teamcity": {
-        "configuration": "Kotlin_KotlinDev_SafeMerge",
+        "configuration": "ijplatform_IjPlatform251_KotlinPluginAnalyzerUpdate",
         "url": "https://buildserver.labs.intellij.net",
-        "token": "${space-safe-merge-kt}",
+        "token": "${safe.merge.robot.teamcity.token}",
         "ssl-keystore": "BuildServer client"
       }
     }
