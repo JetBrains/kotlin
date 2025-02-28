@@ -8,20 +8,20 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.name.Name
 
 class BinaryModuleData(
-    val regular: FirModuleData,
-    val dependsOn: FirModuleData,
-    val friends: FirModuleData
+    val regular: FirBinaryDependenciesModuleData,
+    val dependsOn: FirBinaryDependenciesModuleData,
+    val friend: FirBinaryDependenciesModuleData
 ) {
     companion object {
         fun createDependencyModuleData(
             name: Name,
             capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
-        ): FirModuleData {
+        ): FirBinaryDependenciesModuleData {
             return FirBinaryDependenciesModuleData(name, capabilities)
         }
 
         fun initialize(mainModuleName: Name): BinaryModuleData {
-            fun createData(name: String): FirModuleData =
+            fun createData(name: String): FirBinaryDependenciesModuleData =
                 createDependencyModuleData(Name.special(name))
 
             return BinaryModuleData(

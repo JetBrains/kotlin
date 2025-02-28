@@ -36,9 +36,13 @@ internal inline fun <F> PhaseContext.firFrontend(
     val mainModuleName = Name.special("<${config.moduleId}>")
     val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
     val binaryModuleData = BinaryModuleData.initialize(mainModuleName)
-    val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
+    val dependencyList = DependencyListForCliModule.build {
         val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isCInteropLibrary() }
-        dependencies(regularLibs.map { it.libraryFile.absolutePath })
+        defaultDependenciesSet(binaryModuleData) {
+            dependencies(regularLibs.map { it.libraryFile.absolutePath })
+            friendDependencies(config.friendModuleFiles.map { it.absolutePath })
+            dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
+        }
         if (interopLibs.isNotEmpty()) {
             val interopModuleData =
                     BinaryModuleData.createDependencyModuleData(
@@ -47,8 +51,6 @@ internal inline fun <F> PhaseContext.firFrontend(
                     )
             dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
         }
-        friendDependencies(config.friendModuleFiles.map { it.absolutePath })
-        dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
         // TODO: !!! dependencies module data?
     }
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList().map { it.library }
