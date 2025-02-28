@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 // LANGUAGE: -SuspendFunctionAsSupertype
 typealias Action = () -> Unit
 

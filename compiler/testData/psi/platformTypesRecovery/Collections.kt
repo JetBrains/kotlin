@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo(
         p: (Mutable)List<Foo>!,
         p1: (Mutable)Iterable<Foo>!,

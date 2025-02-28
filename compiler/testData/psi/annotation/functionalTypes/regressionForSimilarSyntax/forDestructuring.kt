@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 // Issue: KT-31734
 
 fun foo() {

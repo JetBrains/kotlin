@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 // These two cases were working before, added them just in case
 @set: ann1
 var x1: Int = 1

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 // KT-156 Fix the this<Super> syntax
 fun foo() {
     super.foo();

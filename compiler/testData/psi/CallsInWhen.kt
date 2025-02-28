@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
   when (a) {
     a.foo -> a

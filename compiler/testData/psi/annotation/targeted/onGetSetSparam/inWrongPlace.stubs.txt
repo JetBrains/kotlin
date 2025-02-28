@@ -1,0 +1,123 @@
+PsiJetFileStubImpl[package=boo]
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+      ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Deprecated]
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+      ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Deprecated]
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+      ANNOTATION_TARGET[useSiteTarget=SETTER_PARAMETER]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Deprecated]
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+      ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Deprecated]
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+      ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Deprecated]
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+      ANNOTATION_TARGET[useSiteTarget=SETTER_PARAMETER]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Deprecated]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=boo]
+  IMPORT_LIST
+  CLASS[classId=boo/A, fqName=boo.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=SETTER_PARAMETER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+  CLASS[classId=boo/I, fqName=boo.I, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=I, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=SETTER_PARAMETER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+  FUN[fqName=boo.a, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=SETTER_PARAMETER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=boo.b, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=b]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_TARGET[useSiteTarget=SETTER_PARAMETER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Deprecated]
+    VALUE_PARAMETER_LIST

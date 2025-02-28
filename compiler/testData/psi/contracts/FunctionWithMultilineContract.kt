@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun baz(num: Int?, element: MyElement, block: () -> Unit): Int contract [
     callsInPlace(block, InvocationKind.EXACTLY_ONCE),
     returns() implies (num != null),

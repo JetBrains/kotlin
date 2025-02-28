@@ -1,0 +1,14 @@
+PsiJetFileStubImpl[package=p1.p2]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=p1]
+      REFERENCE_EXPRESSION[referencedName=p2]
+  IMPORT_LIST
+  FUN[fqName=p1.p2.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]

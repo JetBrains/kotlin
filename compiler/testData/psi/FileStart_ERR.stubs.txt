@@ -1,0 +1,6 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=true]
+      REFERENCE_EXPRESSION[referencedName=foo]

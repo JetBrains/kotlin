@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 annotation class Ann
 
 context(_: String)

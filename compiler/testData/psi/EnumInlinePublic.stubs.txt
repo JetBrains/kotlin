@@ -1,0 +1,13 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/My, fqName=My, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=My, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=My.public, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=public, superNames=[]]
+        MODIFIER_LIST[inline]
+      ENUM_ENTRY[classId=null, fqName=My.private, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=private, superNames=[]]
+        MODIFIER_LIST[inner]
+      OBJECT_DECLARATION[classId=/My.Companion, fqName=My.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY

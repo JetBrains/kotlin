@@ -1,0 +1,33 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]
+    MODIFIER_LIST[enum]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=null]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=rgb]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=RED, superNames=[<no name provided>]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=<no name provided>]
+      ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=GREEN, superNames=[<no name provided>]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=<no name provided>]
+      ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=BLUE, superNames=[<no name provided>]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=<no name provided>]

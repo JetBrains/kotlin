@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val foo = object<T, R> {}
 
 val foo = object<T, R> : Bar {

@@ -1,0 +1,62 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      PROPERTY[fqName=A.a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=a]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+            ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=a]
+          ANNOTATION
+            ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=b]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=c]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=c]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=d]
+            ANNOTATION_TARGET[useSiteTarget=SETTER_PARAMETER]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=d]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=e]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=e]
+          VALUE_PARAMETER_LIST
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=f]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=f]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=g]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=g]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=h]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=h]

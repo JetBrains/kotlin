@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class C {
     @delegate:Transient
     val plainField: Int = 1

@@ -1,0 +1,115 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=TopLevelPropertiesWithGetSet, fqName=TopLevelPropertiesWithGetSet, name=TopLevelPropertiesWithGetSet]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testVal]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValSemiSameLine, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValSemiSameLine]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValNoType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValNoType]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=testExtVal]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtValNoType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=false, isVar=false, name=testExtValNoType]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVar]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVar]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreak, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreak]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakNoType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakNoType]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemi, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemi]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment1]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment2]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment3, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment3]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiNoType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiNoType]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVarLineBreak, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVarLineBreak]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVarLineBreak, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVarLineBreak]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVarLineBreakSemi, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVarLineBreakSemi]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVarLineBreakSemi, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVarLineBreakSemi]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]

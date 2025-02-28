@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val ((T) -> G).foo<P> { }
 val ((T) -> G).foo get{ }
 val ((T) -> G).foo<P>

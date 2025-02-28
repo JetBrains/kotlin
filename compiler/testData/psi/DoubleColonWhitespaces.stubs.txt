@@ -1,0 +1,7 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=tests, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=tests]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=breakLine, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=breakLine]
+    VALUE_PARAMETER_LIST

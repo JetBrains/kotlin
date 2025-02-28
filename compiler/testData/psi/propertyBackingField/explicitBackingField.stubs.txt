@@ -1,0 +1,58 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=simpleNumber, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=simpleNumber]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Number]
+    BACKING_FIELD[hasInitializer=true]
+  PROPERTY[fqName=numberWithPrivateField, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithPrivateField]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Number]
+    BACKING_FIELD[hasInitializer=true]
+      MODIFIER_LIST[private]
+  PROPERTY[fqName=numberWithLateinitField, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithLateinitField]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Number]
+    BACKING_FIELD[hasInitializer=false]
+      MODIFIER_LIST[lateinit]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=numberWithInternalLateinitField, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithInternalLateinitField]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Number]
+    BACKING_FIELD[hasInitializer=false]
+      MODIFIER_LIST[internal lateinit]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=numberWithFieldAndAccessors, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=numberWithFieldAndAccessors]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Number]
+    BACKING_FIELD[hasInitializer=true]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+  PROPERTY[fqName=numberWithExplicitType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithExplicitType]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Number]
+    BACKING_FIELD[hasInitializer=true]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=numberWithBlockInitializer, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithBlockInitializer]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Number]
+    BACKING_FIELD[hasInitializer=false]
+  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  PROPERTY[fqName=minimalNumber, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=minimalNumber]
+    BACKING_FIELD[hasInitializer=false]

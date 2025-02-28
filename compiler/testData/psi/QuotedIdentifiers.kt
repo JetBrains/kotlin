@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 @`return` fun `package`() {
   `class`()
 }

@@ -1,0 +1,27 @@
+PsiJetFileStubImpl[package=foo.bar.goo]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        REFERENCE_EXPRESSION[referencedName=bar]
+      REFERENCE_EXPRESSION[referencedName=goo]
+  IMPORT_LIST
+  CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
+    MODIFIER_LIST[abstract open override private public internal protected out in annotation]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+        MODIFIER_LIST[abstract enum open override private public internal protected out in annotation]
+    CLASS_BODY
+      PROPERTY[fqName=foo.bar.goo.Bar.abstract, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=abstract]
+      PROPERTY[fqName=foo.bar.goo.Bar.open, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=open]
+      PROPERTY[fqName=foo.bar.goo.Bar.enum, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=enum]
+      PROPERTY[fqName=foo.bar.goo.Bar.open, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=open]
+      PROPERTY[fqName=foo.bar.goo.Bar.annotation, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=annotation]
+      PROPERTY[fqName=foo.bar.goo.Bar.override, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=override]
+      PROPERTY[fqName=foo.bar.goo.Bar.open, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=open]
+      PROPERTY[fqName=foo.bar.goo.Bar.abstract, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=abstract]
+      PROPERTY[fqName=foo.bar.goo.Bar.private, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=private]
+      PROPERTY[fqName=foo.bar.goo.Bar.protected, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=protected]
+      PROPERTY[fqName=foo.bar.goo.Bar.public, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=public]
+      PROPERTY[fqName=foo.bar.goo.Bar.internal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=internal]
+      PROPERTY[fqName=foo.bar.goo.Bar.lazy, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=lazy]

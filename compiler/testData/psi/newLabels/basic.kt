@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     x1.filter b@ {
         return 1

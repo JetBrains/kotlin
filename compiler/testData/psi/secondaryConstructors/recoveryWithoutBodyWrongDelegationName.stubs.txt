@@ -1,0 +1,26 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, name=A]
+        VALUE_PARAMETER_LIST
+      PROPERTY[fqName=A.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, name=A]
+        VALUE_PARAMETER_LIST
+      FUN[fqName=A.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=ann]
+        VALUE_PARAMETER_LIST
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, name=A]
+        VALUE_PARAMETER_LIST
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, name=A]
+        VALUE_PARAMETER_LIST
+  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]

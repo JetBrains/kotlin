@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo(
         p: Array<(out) Foo>!,
         p1: Array<(out) Foo!>!,

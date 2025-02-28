@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     @loop1 for (i in 1..100) { }
 

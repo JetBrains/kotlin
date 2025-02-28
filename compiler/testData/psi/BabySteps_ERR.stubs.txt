@@ -1,0 +1,30 @@
+PsiJetFileStubImpl[package=foo]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=foo]
+  IMPORT_LIST
+  CLASS[classId=foo/Runnable, fqName=foo.Runnable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Runnable, superNames=[foo, bar, bar]]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=a]
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=a]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Runnable]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=doo]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_CALL_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+      DELEGATED_SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=bar]
+        REFERENCE_EXPRESSION[referencedName=x]
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=bar]
+    CLASS_BODY

@@ -1,0 +1,11 @@
+PsiJetFileStubImpl[package=bar]
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY[hasValueArguments=false, shortName=foo]
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=foo]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=bar]
+  IMPORT_LIST

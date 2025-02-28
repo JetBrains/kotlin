@@ -1,0 +1,279 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=p1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p2, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p3, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p3]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p4, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p4]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=a]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p4a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p4a]
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=a]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p5, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p5]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            MODIFIER_LIST[suspend]
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=a]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p5a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p5a]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=a]
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=a]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p6, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p6]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=IN]
+            MODIFIER_LIST[in]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p7, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p7]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=OUT]
+            MODIFIER_LIST[out]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=a]
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p8, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p8]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=OUT]
+            MODIFIER_LIST[out]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=a]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=a]
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p9, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p9]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=OUT]
+            MODIFIER_LIST[out]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+                ANNOTATION
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                ANNOTATION
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p10, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p10]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p11, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p11]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p12, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p12]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p13, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p13]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p14, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p14]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=a]
+        ANNOTATION
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=a]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+  PROPERTY[fqName=p15, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p15]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  FUN[fqName=f1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=f1]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=a]
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=a]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=f2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=f2]
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=a]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=a]
+    VALUE_PARAMETER_LIST

@@ -1,6 +1,8 @@
 KtFile: java.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
   IMPORT_LIST
     IMPORT_DIRECTIVE
       PsiElement(import)('import')

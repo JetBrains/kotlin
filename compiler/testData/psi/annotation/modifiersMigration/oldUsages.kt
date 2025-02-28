@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 @inline @tailrec class A {
     @inline(1) fun foo() {
 

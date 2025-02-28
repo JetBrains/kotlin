@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun tests() {
     a:: b
     a ::b

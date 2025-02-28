@@ -1,0 +1,42 @@
+PsiJetFileStubImpl[package=bar]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=bar]
+  IMPORT_LIST
+  PROPERTY[fqName=bar.prop, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=prop]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=foo]
+        ANNOTATION_TARGET[useSiteTarget=FILE]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+  FUN[fqName=bar.func, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=func]
+    MODIFIER_LIST[]
+      ANNOTATION
+        ANNOTATION_TARGET[useSiteTarget=FILE]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=bar]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=bar]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=baz]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=baz]
+    VALUE_PARAMETER_LIST
+  CLASS[classId=bar/C, fqName=bar.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION
+        ANNOTATION_TARGET[useSiteTarget=FILE]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=baz]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=baz]
+  CLASS[classId=bar/T, fqName=bar.T, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
+    MODIFIER_LIST[]
+  CLASS[classId=bar/T, fqName=bar.T, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION
+        ANNOTATION_TARGET[useSiteTarget=FILE]

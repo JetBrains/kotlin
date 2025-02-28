@@ -1,0 +1,35 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  OBJECT_DECLARATION[classId=/B, fqName=B, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=B, superNames=[]]
+  FUN[fqName=a, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
+    VALUE_PARAMETER_LIST
+  PROPERTY[fqName=c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=c]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=v]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+      CLASS[classId=/Foo.A, fqName=Foo.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      OBJECT_DECLARATION[classId=/Foo.B, fqName=Foo.B, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
+      FUN[fqName=Foo.a, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
+        VALUE_PARAMETER_LIST
+      PROPERTY[fqName=Foo.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=Foo.v, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=v]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      CLASS_INITIALIZER
+  FUN[fqName=test, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
+    VALUE_PARAMETER_LIST

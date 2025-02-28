@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     out
     1

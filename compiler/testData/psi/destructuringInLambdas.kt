@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     a1.filter { (x, y) -> }
     a2.filter { (x) -> }

@@ -1,0 +1,9 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=p, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST

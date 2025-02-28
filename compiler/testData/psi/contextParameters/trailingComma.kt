@@ -15,3 +15,4 @@ context(
     t: Int,
 )
 val foo: String get() = ""
+// LANGUAGE: +ContextParameters

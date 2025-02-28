@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class A: A1, A2, { }
 
 class A<T1, T2> where

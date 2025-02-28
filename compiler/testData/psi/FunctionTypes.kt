@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 typealias f =  (@[a] a) -> b
 typealias f =  (a) -> b
 typealias f =  () -> @[x] b

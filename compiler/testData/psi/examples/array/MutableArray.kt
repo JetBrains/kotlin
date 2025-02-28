@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 /**
   These declarations are "shallow" in the sense that they are not really compiled, only the type-checker uses them
 */

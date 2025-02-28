@@ -1,0 +1,53 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=java.lang.annotation, isAllUnder=true, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=java]
+          REFERENCE_EXPRESSION[referencedName=lang]
+        REFERENCE_EXPRESSION[referencedName=annotation]
+  CLASS[classId=/my, fqName=my, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=my, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=java]
+                  REFERENCE_EXPRESSION[referencedName=lang]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=RetentionPolicy]
+              REFERENCE_EXPRESSION[referencedName=CLASS]
+  CLASS[classId=/my1, fqName=my1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=my1, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=RetentionPolicy]
+              REFERENCE_EXPRESSION[referencedName=RUNTIME]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ElementType]
+              REFERENCE_EXPRESSION[referencedName=ANNOTATION_TYPE]
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ElementType]
+              REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]

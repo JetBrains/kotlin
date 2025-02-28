@@ -1,0 +1,60 @@
+FunctionTypesAsArgumentsKt.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    PROPERTY[fqName=commands, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=commands]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=java]
+            REFERENCE_EXPRESSION[referencedName=util]
+          REFERENCE_EXPRESSION[referencedName=HashMap]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=String]
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                FUNCTION_TYPE
+                  VALUE_PARAMETER_LIST
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=Unit]
+
+
+Lifetime.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Lifetime, fqName=Lifetime, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Lifetime, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Lifetime]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+        PROPERTY[fqName=Lifetime.attached, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=attached]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=java]
+                REFERENCE_EXPRESSION[referencedName=util]
+              REFERENCE_EXPRESSION[referencedName=ArrayList]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    FUNCTION_TYPE
+                      VALUE_PARAMETER_LIST
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=kotlin]
+                          REFERENCE_EXPRESSION[referencedName=Unit]

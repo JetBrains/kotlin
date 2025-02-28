@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 package foo.bar.goo
 
 abstract

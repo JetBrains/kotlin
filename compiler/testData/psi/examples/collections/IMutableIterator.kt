@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 open class IMutableIterator<out T> : IIterator<T> {
   fun remove() : T
 

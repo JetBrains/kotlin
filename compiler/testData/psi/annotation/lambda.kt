@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     bar @ann {
         print(1)

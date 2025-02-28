@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 
 val foo = object Name private () {}
 

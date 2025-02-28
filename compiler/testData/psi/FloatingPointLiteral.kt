@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val array = array<Any>(
         1,
         1.0,

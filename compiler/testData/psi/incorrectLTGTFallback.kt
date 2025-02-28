@@ -1,3 +1,4 @@
+// COMPILATION_ERRORS
 // ISSUE: KT-53719
 
 fun main() {

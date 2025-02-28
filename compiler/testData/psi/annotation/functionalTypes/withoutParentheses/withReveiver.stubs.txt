@@ -1,0 +1,552 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Foo]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Foo]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Foo]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Foo]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Foo]
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                    TYPE_REFERENCE
+                      MODIFIER_LIST[]
+                        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                          CONSTRUCTOR_CALLEE
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION[referencedName=Foo]
+                      FUNCTION_TYPE
+                        VALUE_PARAMETER_LIST
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Int]
+                TYPE_REFERENCE
+                  FUNCTION_TYPE
+                    FUNCTION_TYPE_RECEIVER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Int]
+                    VALUE_PARAMETER_LIST
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                        TYPE_REFERENCE
+                          MODIFIER_LIST[]
+                            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                              CONSTRUCTOR_CALLEE
+                                TYPE_REFERENCE
+                                  USER_TYPE
+                                    REFERENCE_EXPRESSION[referencedName=Foo]
+                          FUNCTION_TYPE
+                            VALUE_PARAMETER_LIST
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION[referencedName=Int]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Int]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Foo]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Foo]
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                    TYPE_REFERENCE
+                      MODIFIER_LIST[]
+                        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                          CONSTRUCTOR_CALLEE
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION[referencedName=Foo]
+                      FUNCTION_TYPE
+                        FUNCTION_TYPE_RECEIVER
+                          TYPE_REFERENCE
+                            FUNCTION_TYPE
+                              VALUE_PARAMETER_LIST
+                                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+                                  TYPE_REFERENCE
+                                    USER_TYPE
+                                      USER_TYPE
+                                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                                      REFERENCE_EXPRESSION[referencedName=Any]
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=Int]
+                        VALUE_PARAMETER_LIST
+                          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                                REFERENCE_EXPRESSION[referencedName=Any]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Int]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Int]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Comparable]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Foo]
+                ANNOTATION_ENTRY[hasValueArguments=true, shortName=Bar]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Bar]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Foo]
+              FUNCTION_TYPE
+                FUNCTION_TYPE_RECEIVER
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Unit]
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Any]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Any]
+  FUN[fqName=foo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                FUNCTION_TYPE
+                  VALUE_PARAMETER_LIST
+                    VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                      TYPE_REFERENCE
+                        MODIFIER_LIST[]
+                          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                            CONSTRUCTOR_CALLEE
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=Foo]
+                        USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=kotlin]
+                          REFERENCE_EXPRESSION[referencedName=Any]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Int]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[]
+                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Foo]
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=Any]
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+    REFERENCE_EXPRESSION[referencedName=x]
+  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Foo]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Bar]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Bar]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Comparable]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=Any]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unit]
+  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    MODIFIER_LIST[abstract]
+    CLASS_BODY
+      PROPERTY[fqName=A.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=x]
+        MODIFIER_LIST[abstract]
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Foo]
+                FUNCTION_TYPE
+                  VALUE_PARAMETER_LIST
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Unit]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                  FUNCTION_TYPE
+                    VALUE_PARAMETER_LIST
+                      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Int]
+                    TYPE_REFERENCE
+                      FUNCTION_TYPE
+                        VALUE_PARAMETER_LIST
+                          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION[referencedName=Int]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Unit]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+  FUN[fqName=foo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        MODIFIER_LIST[vararg]
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Bar]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Bar]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Any]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Any]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unit]
+  FUN[fqName=foo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Bar]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Foo]
+                REFERENCE_EXPRESSION[referencedName=Bar]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Nothing]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Nothing]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  FUN[fqName=foo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Bar]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Foo]
+                    REFERENCE_EXPRESSION[referencedName=Bar]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Iterable]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        MODIFIER_LIST[]
+                          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Bar]
+                            CONSTRUCTOR_CALLEE
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  USER_TYPE
+                                    REFERENCE_EXPRESSION[referencedName=Foo]
+                                  REFERENCE_EXPRESSION[referencedName=Bar]
+                        FUNCTION_TYPE
+                          FUNCTION_TYPE_RECEIVER
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION[referencedName=Int]
+                          VALUE_PARAMETER_LIST
+                            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=Bar]
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=Unit]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Bar]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Any]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      VALUE_PARAMETER_LIST
+      FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+          FUNCTION_TYPE
+            FUNCTION_TYPE_RECEIVER
+              TYPE_REFERENCE
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Foo]
+                FUNCTION_TYPE
+                  VALUE_PARAMETER_LIST
+                    VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Coomparable]
+                          TYPE_ARGUMENT_LIST
+                            TYPE_PROJECTION[projectionKind=NONE]
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=Nothing]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Unit]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Coomparable]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Nothing]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unit]
+  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Any]
+  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Any]

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 open class IAdder<in T> {
   fun add(item : T) : Boolean
 }

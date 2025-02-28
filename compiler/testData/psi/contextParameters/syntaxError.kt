@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 context(
 fun foo() {
 }

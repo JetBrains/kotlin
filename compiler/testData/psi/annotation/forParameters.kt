@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo() {
     for (@Volatile x in z) {}
 

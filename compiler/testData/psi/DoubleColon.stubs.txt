@@ -1,0 +1,17 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=simple, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=genericType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=genericType]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=nullableType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=nullableType]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=classLiteral, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=classLiteral]
+    VALUE_PARAMETER_LIST
+    OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+      CLASS_BODY
+  FUN[fqName=expressions, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressions]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=emptyLHS, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=emptyLHS]
+    VALUE_PARAMETER_LIST

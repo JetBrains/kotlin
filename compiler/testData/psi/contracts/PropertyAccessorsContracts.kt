@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class MyClass {
     var myInt: Int = 0
         get() contract [returnsNotNull()] = 1

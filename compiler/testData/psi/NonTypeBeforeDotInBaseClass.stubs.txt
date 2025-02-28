@@ -1,0 +1,12 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/ClassB, fqName=ClassB, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassB, superNames=[]]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassB]
+      VALUE_PARAMETER_LIST
+    CLASS_BODY
+      CLASS[classId=/ClassB.ClassC, fqName=ClassB.ClassC, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassC, superNames=[]]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+      FUN[fqName=ClassB.<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]

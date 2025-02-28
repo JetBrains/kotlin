@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo1(x: List<A<, s: String): A {}
 fun foo2(x: List<A< s: String): A {}
 fun foo3(x: List<A<,): A {}

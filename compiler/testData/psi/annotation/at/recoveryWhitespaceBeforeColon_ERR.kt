@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 @ :ann1
 class A1
 

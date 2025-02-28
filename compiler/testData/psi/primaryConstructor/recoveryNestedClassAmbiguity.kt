@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class Outer1 {
     class Nested1
 

@@ -1,4 +1,5 @@
 // Issue: KT-31734
+// COMPILATION_ERRORS
 
 val x: (@[Foo] suspend (Int) -> Unit) get() = {}
 

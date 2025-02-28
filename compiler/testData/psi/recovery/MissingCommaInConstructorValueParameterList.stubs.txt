@@ -1,0 +1,24 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Test, fqName=Test, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Test, superNames=[]]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Test]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=Test.a, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=a]
+          MODIFIER_LIST[private]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=Test.c, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c]
+          MODIFIER_LIST[private]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+    CLASS_BODY
+      FUN[fqName=Test.toString, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+        MODIFIER_LIST[override]
+        VALUE_PARAMETER_LIST

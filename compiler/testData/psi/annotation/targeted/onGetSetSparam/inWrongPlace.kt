@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 @get:Deprecated
 @set:Deprecated
 @setparam:Deprecated

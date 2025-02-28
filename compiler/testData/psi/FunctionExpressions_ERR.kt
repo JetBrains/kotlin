@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val a = fun )
 val a = fun foo)
 

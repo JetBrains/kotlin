@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class Foo() {
   val a : Int get = 1
   var b : Int get() = 1; set

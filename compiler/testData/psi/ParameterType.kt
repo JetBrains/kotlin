@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun test1(a) {}
 fun test2(a = 4) {}
 fun test3(c: Int) {}

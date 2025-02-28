@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 enum interface class E1 {
     D
 }

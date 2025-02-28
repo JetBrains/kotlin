@@ -1,0 +1,5 @@
+PsiJetFileStubImpl[package=foobar]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=foobar]
+  IMPORT_LIST
+  FUN[fqName=foobar.<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]

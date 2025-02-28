@@ -1,0 +1,12 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=import.import.import.import, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=import]
+            REFERENCE_EXPRESSION[referencedName=import]
+          REFERENCE_EXPRESSION[referencedName=import]
+        REFERENCE_EXPRESSION[referencedName=import]
+      IMPORT_ALIAS[name=import]

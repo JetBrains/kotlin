@@ -1,0 +1,441 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=receiverArgument, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=receiverArgument]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=B]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=C]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=receiverArgumentN, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=receiverArgumentN]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=B]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=A]
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=C]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=parameter, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameter]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=A]
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=C]
+  FUN[fqName=parameterN, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterN]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=C]
+  FUN[fqName=parameterArgument, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterArgument]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=B]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[]
+                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=A]
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=C]
+  FUN[fqName=parameterArgumentN, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parameterArgumentN]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=B]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  NULLABLE_TYPE
+                    MODIFIER_LIST[]
+                      ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                        CONSTRUCTOR_CALLEE
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=A]
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=C]
+  FUN[fqName=returnValue, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnValue]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=A]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=C]
+  FUN[fqName=returnValueN, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnValueN]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=C]
+  FUN[fqName=returnTypeParameterValue, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnTypeParameterValue]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=A]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=T]
+  FUN[fqName=returnTypeParameterValueN, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnTypeParameterValueN]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+  FUN[fqName=returnArgument, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnArgument]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=B]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=C]
+  FUN[fqName=returnArgumentN, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnArgumentN]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=B]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=A]
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=lambdaType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=lambdaType]
+    TYPE_REFERENCE
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=A]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=lambdaTypeN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=lambdaTypeN]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=lambdaParameter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=lambdaParameter]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=C]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=lambdaParameterN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=lambdaParameterN]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=lambdaReturnValue, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=lambdaReturnValue]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=A]
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=lambdaReturnValueN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=lambdaReturnValueN]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=lambdaReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=lambdaReceiver]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=C]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=lambdaReceiverN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=lambdaReceiverN]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=C]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=C]
+  PROPERTY[fqName=suspendT, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendT]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=T]
+  PROPERTY[fqName=suspendTN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendTN]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=T]
+  PROPERTY[fqName=suspendFun, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendFun]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendFunN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendFunN]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendExtFun, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendExtFun]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Any]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendExtFunN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendExtFunN]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+        FUNCTION_TYPE
+          FUNCTION_TYPE_RECEIVER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Any]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendFunReturnValueN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendFunReturnValueN]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendFunNReturnValueN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendFunNReturnValueN]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendExtFunReceiverN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendExtFunReceiverN]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Any]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendExtFunNReceiverN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendExtFunNReceiverN]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+        FUNCTION_TYPE
+          FUNCTION_TYPE_RECEIVER
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Any]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendFunReturnValueN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendFunReturnValueN]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendFunNReturnValueN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendFunNReturnValueN]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendExtFunReceiverN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendExtFunReceiverN]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Any]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  PROPERTY[fqName=suspendExtFunNReceiverN, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=suspendExtFunNReceiverN]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+        FUNCTION_TYPE
+          FUNCTION_TYPE_RECEIVER
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Any]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]

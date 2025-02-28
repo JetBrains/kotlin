@@ -1,0 +1,28 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    CLASS_BODY
+      PROPERTY[fqName=A.a, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=a]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=An]
+            ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=An]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=An]
+            ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=An]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=An]
+            ANNOTATION_TARGET[useSiteTarget=SETTER_PARAMETER]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=An]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=String]

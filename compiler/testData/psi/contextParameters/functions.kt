@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 context(param1: String, another: List<Int>)
 fun simple() {
 

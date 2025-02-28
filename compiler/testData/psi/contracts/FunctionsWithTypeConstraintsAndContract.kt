@@ -1,3 +1,4 @@
+// COMPILATION_ERRORS
 // the following functions have type constraints and contracts written in different order
 // any order is correct
 

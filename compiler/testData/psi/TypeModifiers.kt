@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val p1: suspend a
 val p2: suspend (a) -> a
 val p3: suspend (a) -> suspend a

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun foo(
    p: Foo!.Bar,
    p: Foo<Bar>!.Baz,

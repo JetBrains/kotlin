@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class Test(val a: Int var b: Int val c: Int) {
     override fun toString() = "$a $b $c"
 }

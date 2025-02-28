@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun dynamic.foo()
 fun dynamic?.foo()
 val dynamic.foo: Int

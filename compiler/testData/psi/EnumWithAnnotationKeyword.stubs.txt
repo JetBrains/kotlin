@@ -1,0 +1,11 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/E, fqName=E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
+    MODIFIER_LIST[enum data annotation]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
+  CLASS[classId=/E1, fqName=E1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E1, superNames=[]]
+    MODIFIER_LIST[enum annotation]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E1.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]

@@ -1,0 +1,279 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  TYPEALIAS[classId=/Action, fqName=Action, isTopLevel=true, name=Action]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  CLASS[classId=/SAM, fqName=SAM, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=SAM, superNames=[]]
+    CLASS_BODY
+      FUN[fqName=SAM.run, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=run]
+        VALUE_PARAMETER_LIST
+  TYPEALIAS[classId=/Test1, fqName=Test1, isTopLevel=true, name=Test1]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test2, fqName=Test2, isTopLevel=true, name=Test2]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test3, fqName=Test3, isTopLevel=true, name=Test3]
+    TYPE_REFERENCE
+  MODIFIER_LIST[suspend]
+  TYPEALIAS[classId=/Test4, fqName=Test4, isTopLevel=true, name=Test4]
+    TYPE_REFERENCE
+  MODIFIER_LIST[suspend]
+  TYPEALIAS[classId=/Test5, fqName=Test5, isTopLevel=true, name=Test5]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=List]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test6, fqName=Test6, isTopLevel=true, name=Test6]
+    TYPE_REFERENCE
+  MODIFIER_LIST[suspend]
+  TYPEALIAS[classId=/Test7, fqName=Test7, isTopLevel=true, name=Test7]
+    TYPE_REFERENCE
+  MODIFIER_LIST[suspend]
+  TYPEALIAS[classId=/Test8, fqName=Test8, isTopLevel=true, name=Test8]
+    TYPE_REFERENCE
+  MODIFIER_LIST[suspend]
+  TYPEALIAS[classId=/Test9, fqName=Test9, isTopLevel=true, name=Test9]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test10, fqName=Test10, isTopLevel=true, name=Test10]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test11, fqName=Test11, isTopLevel=true, name=Test11]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test12, fqName=Test12, isTopLevel=true, name=Test12]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              MODIFIER_LIST[suspend]
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test13, fqName=Test13, isTopLevel=true, name=Test13]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=A]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test14, fqName=Test14, isTopLevel=true, name=Test14]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=A]
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test15, fqName=Test15, isTopLevel=true, name=Test15]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test16, fqName=Test16, isTopLevel=true, name=Test16]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test17, fqName=Test17, isTopLevel=true, name=Test17]
+    TYPE_REFERENCE
+      MODIFIER_LIST[suspend]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=A]
+      FUNCTION_TYPE
+        FUNCTION_TYPE_RECEIVER
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=RS]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test18, fqName=Test18, isTopLevel=true, name=Test18]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        MODIFIER_LIST[suspend]
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  TYPEALIAS[classId=/Test19, fqName=Test19, isTopLevel=true, name=Test19]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=true, shortName=A]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ANNOTATION_ARGUMENT_MUST_BE_CONST]
+        TYPE_REFERENCE
+  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  MODIFIER_LIST[suspend]
+  TYPEALIAS[classId=/Test20, fqName=Test20, isTopLevel=true, name=Test20]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=true, shortName=A]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ANNOTATION_ARGUMENT_MUST_BE_CONST]
+        TYPE_REFERENCE
+  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  MODIFIER_LIST[suspend]
+  CLASS[classId=/Supertype1, fqName=Supertype1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Supertype1, superNames=[]]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          MODIFIER_LIST[suspend]
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unit]
+    CLASS_BODY
+  CLASS[classId=/Supertype2, fqName=Supertype2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Supertype2, superNames=[]]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+  MODIFIER_LIST[suspend]
+  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=TYPE]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=A.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=/RS, fqName=RS, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=RS, superNames=[]]

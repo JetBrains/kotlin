@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 open class IEquality {
   fun equals(other : Any) : Boolean
     = (this as java.lang.Object).equals(other as java.lang.Object)

@@ -93,3 +93,5 @@ KtFile: unnamed.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('0')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +ContextParameters')

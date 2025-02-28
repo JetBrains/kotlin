@@ -1,0 +1,71 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Outer1, fqName=Outer1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer1, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/Outer1.Nested1, fqName=Outer1.Nested1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested1, superNames=[]]
+      MODIFIER_LIST[private]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]
+  CLASS[classId=/Outer2, fqName=Outer2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer2, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/Outer2.Nested2, fqName=Outer2.Nested2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested2, superNames=[]]
+      FUN[fqName=Outer2.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        MODIFIER_LIST[private]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Ann]
+        VALUE_PARAMETER_LIST
+  CLASS[classId=/Outer3, fqName=Outer3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer3, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/Outer3.Nested3, fqName=Outer3.Nested3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested3, superNames=[]]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested3]
+          MODIFIER_LIST[private]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
+        CLASS_BODY
+      FUN[fqName=Outer3.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        VALUE_PARAMETER_LIST
+  CLASS[classId=/Outer4, fqName=Outer4, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer4, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/Outer4.Nested3, fqName=Outer4.Nested3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested3, superNames=[]]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested3]
+          MODIFIER_LIST[private]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
+        CLASS_BODY
+      FUN[fqName=Outer4.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        VALUE_PARAMETER_LIST
+  CLASS[classId=/Outer5, fqName=Outer5, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer5, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/Outer5.Nested3, fqName=Outer5.Nested3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested3, superNames=[Base]]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested3]
+          MODIFIER_LIST[private]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Base]
+      FUN[fqName=Outer5.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        VALUE_PARAMETER_LIST
+  CLASS[classId=/Outer6, fqName=Outer6, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer6, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/Outer6.Nested1, fqName=Outer6.Nested1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested1, superNames=[]]
+      MODIFIER_LIST[private]

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 // Issue: KT-31734
 
 val x: (@Foo() () -> Unit) get() = {}

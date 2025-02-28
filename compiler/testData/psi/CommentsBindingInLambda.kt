@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val la1 = {
     // start
     // start 1

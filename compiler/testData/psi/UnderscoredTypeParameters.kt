@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 class A<_> {}
 
 typealias Foo<K, _> = Foo<K>

@@ -4,6 +4,8 @@ KtFile: IncorrectMultiDollarInterpolationCode.kt
   IMPORT_LIST
     <empty list>
   FUN
+    PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+    PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')

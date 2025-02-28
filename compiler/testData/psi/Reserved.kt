@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun yield() {}
 fun typeof() {}
 

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 object Foo private ()
 
 object Foo private () {}

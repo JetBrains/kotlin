@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 val foo = bar.foo.bar
 
 val foo

@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 @field:Deprecated
 
 @field:Deprecated

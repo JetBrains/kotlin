@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 enum class A {
     @[Ann] @Ann(1) X(),
 

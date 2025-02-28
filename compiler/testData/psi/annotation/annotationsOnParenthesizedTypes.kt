@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun B<(@A C)>.receiverArgument() {}
 
 fun parameter(a: (@A C)) {}

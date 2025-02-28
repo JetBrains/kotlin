@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun test() {
     when (val) {}
     when (val x1) {}

@@ -3,6 +3,8 @@ KtFile: FunctionsWithTypeConstraintsAndContract.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// the following functions have type constraints and contracts written in different order')
   PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// any order is correct')

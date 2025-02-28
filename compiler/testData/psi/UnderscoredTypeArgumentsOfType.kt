@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 fun main() {
     val x = foo<Foo<_>>()
     val x = foo<Foo<_>, _>()
