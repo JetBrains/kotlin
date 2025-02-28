@@ -60,7 +60,7 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
         dir.resolve("yarn.lock")
             .outputStream()
             .use { out ->
-                Npm::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/yarn/yarn.lock")
+                YarnBasics::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/yarn/yarn.lock")
                     ?.copyTo(out)
             }
     }

@@ -19,6 +19,7 @@ node {
 }
 
 val npmProjectDefault = project.layout.buildDirectory.map { it.dir("npm-project") }
+val kotlinGradlePluginProjectDir = project(":kotlin-gradle-plugin").projectDir
 val generateNpmVersions by generator(
     "org.jetbrains.kotlin.generators.gradle.targets.js.MainKt",
     sourceSets["main"]
@@ -28,7 +29,7 @@ val generateNpmVersions by generator(
     outputs.dir(npmProjectDefault)
     systemProperty(
         "org.jetbrains.kotlin.generators.gradle.targets.js.outputSourceRoot",
-        project(":kotlin-gradle-plugin").projectDir.resolve("src/common/kotlin").absolutePath
+        kotlinGradlePluginProjectDir.resolve("src/common/kotlin").absolutePath
     )
     systemProperty(
         "org.jetbrains.kotlin.generators.gradle.targets.js.npmPackageRoot",
@@ -49,6 +50,12 @@ val npmInstallDeps by tasks.registering(NpmTask::class) {
     args.set(listOf("install"))
 }
 
+val setupPackageLock by tasks.registering(Copy::class) {
+    dependsOn(npmInstallDeps)
+    from(npmProjectSetup.map { it.file("package-lock.json") })
+    into(kotlinGradlePluginProjectDir.resolve("src/common/resources/org/jetbrains/kotlin/gradle/targets/js/npm").absolutePath)
+}
+
 val yarnProjectSetup = project.layout.buildDirectory.map { it.dir("yarn-project-installed") }
 val setupYarnProject by tasks.registering(Copy::class) {
     dependsOn(generateNpmVersions)
@@ -60,4 +67,18 @@ val yarnInstallDeps by tasks.registering(YarnTask::class) {
     workingDir.set(yarnProjectSetup)
     dependsOn(setupYarnProject)
     args.set(listOf("install"))
+}
+
+val setupYarnLock by tasks.registering(Copy::class) {
+    dependsOn(yarnInstallDeps)
+    from(yarnProjectSetup.map { it.file("yarn.lock") })
+    into(kotlinGradlePluginProjectDir.resolve("src/common/resources/org/jetbrains/kotlin/gradle/targets/js/yarn").absolutePath)
+}
+
+val generateAll by tasks.registering {
+    dependsOn(
+        generateNpmVersions,
+        setupPackageLock,
+        setupYarnLock
+    )
 }
