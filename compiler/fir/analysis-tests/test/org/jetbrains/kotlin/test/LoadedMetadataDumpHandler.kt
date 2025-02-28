@@ -136,7 +136,6 @@ class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoaded
             extensionRegistrars = emptyList(),
             isCommonSource = { false },
             fileBelongsToModule = { _, _ -> false },
-            lookupTracker = null,
             icData = null
         )
     }

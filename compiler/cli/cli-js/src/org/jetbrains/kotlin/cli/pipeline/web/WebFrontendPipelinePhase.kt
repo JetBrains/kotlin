@@ -240,7 +240,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 resolvedLibraries, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
-                lookupTracker,
                 icData = incrementalDataProvider?.let(::KlibIcData),
             )
         } else {
@@ -249,7 +248,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 resolvedLibraries, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
-                lookupTracker,
                 icData = incrementalDataProvider?.let(::KlibIcData),
             )
         }
