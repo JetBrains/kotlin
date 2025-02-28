@@ -42,3 +42,10 @@ assert("bbb" <= "aaa")
              |
              false
 ---
+test9: ---
+assert(("aa" < "a") > ("aa" > "bb"))
+             |      |       |
+             |      |       false
+             |      false
+             false
+---

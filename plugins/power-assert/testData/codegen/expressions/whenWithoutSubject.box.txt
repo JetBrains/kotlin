@@ -1,0 +1,102 @@
+---
+assert(
+    when {
+        x == b -> true
+        | |  |
+        | |  3
+        | false
+        2
+
+        x == a -> false
+        | |  |
+        | |  2
+        | true
+        2
+
+        else -> true
+    }
+)
+---
+---
+assert(
+    when {
+        a == A.ONE -> false
+        | |    |
+        | |    ONE
+        | true
+        ONE
+
+        a == A.TWO -> true
+        else -> true
+    }
+)
+---
+---
+assert(
+    when {
+        a == A.ONE || a == A.TWO -> false
+        | |    |
+        | |    ONE
+        | true
+        ONE
+
+        else -> true
+    }
+)
+---
+---
+assert(
+    when {
+        x == a.toInt() -> false
+        | |  | |
+        | |  | 2
+        | |  2
+        | true
+        2
+
+        else -> true
+    }
+)
+---
+---
+assert(
+    when {
+        x in 1..10 -> x == 3
+        | |   |       | |
+        | |   |       | false
+        | |   |       2
+        | |   1..10
+        | true
+        2
+
+        else -> true
+    }
+)
+---
+---
+assert(
+    when {
+        x is Int -> x == 3
+        | |         | |
+        | |         | false
+        | |         2
+        | true
+        2
+
+        else -> true
+    }
+)
+---
+---
+assert(
+    when {
+        t == Pair(10, 10) -> true
+        | |  |
+        | |  (10, 10)
+        | false
+        (1, 2)
+
+        else -> false
+    }
+)
+---

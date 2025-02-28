@@ -1,0 +1,19 @@
+---
+assert(IntPredicate { it < 0 }.accept(a))
+                               |      |
+                               |      1
+                               false
+---
+---
+assert(IntPredicate { it < 0 }.accept(a) == true)
+                               |      |  |
+                               |      |  false
+                               |      1
+                               false
+---
+---
+assert(IntPredicate { it > 0 } plus a)
+                               |    |
+                               |    -1
+                               false
+---

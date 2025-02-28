@@ -1,0 +1,19 @@
+---
+assert(::foo.name == "bar")
+       |     |    |
+       |     |    false
+       |     foo
+       fun foo(kotlin.Int): kotlin.Boolean
+---
+---
+assert(::foo.isOpen)
+       |     |
+       |     false
+       fun foo(kotlin.Int): kotlin.Boolean
+---
+---
+assert((::foo)(1))
+       ||
+       |fun foo(kotlin.Int): kotlin.Boolean
+       false
+---

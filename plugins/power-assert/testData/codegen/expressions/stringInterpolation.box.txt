@@ -1,0 +1,42 @@
+---
+assert("Hello, $a" == "string")
+       |        |  |
+       |        |  false
+       |        Joe
+       Hello, Joe
+---
+---
+assert("${a.length}" == "5")
+       |  | |        |
+       |  | |        false
+       |  | 3
+       |  Joe
+       3
+---
+---
+assert("List: $a" == "")
+       |       |  |
+       |       |  false
+       |       [a, b]
+       List: [a, b]
+---
+---
+assert("Escaping: \$ $a" == "")
+       |              |  |
+       |              |  false
+       |              Joe
+       Escaping: $ Joe
+---
+---
+assert("""Multiline escaping: ${'$'}_9.99 """ == "price")
+       |                                      |
+       |                                      false
+       Multiline escaping: $_9.99
+---
+---
+assert($$"""Multidollar interpolation $a : $$a""" == "")
+       |                                     |    |
+       |                                     |    false
+       |                                     Joe
+       Multidollar interpolation $a : Joe
+---

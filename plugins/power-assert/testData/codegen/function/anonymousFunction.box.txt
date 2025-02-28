@@ -1,0 +1,20 @@
+---
+assert(fun(): Boolean { return false }())
+       |
+       false
+---
+---
+assert(fun Int.(): Boolean { return this > 10 }(9))
+       |
+       false
+---
+---
+assert(context(a: Int) fun(): Boolean { return a > 10 }(9))
+       |
+       false
+---
+---
+assert(fun1@ context(a: Int) fun(): Boolean { return a > 10 }(9))
+             |
+             false
+---

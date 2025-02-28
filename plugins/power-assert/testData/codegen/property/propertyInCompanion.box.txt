@@ -1,0 +1,5 @@
+---
+assert(B.b)
+         |
+         false
+---

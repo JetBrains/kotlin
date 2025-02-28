@@ -5,3 +5,22 @@ assert(object { override fun toString() = "ANONYMOUS" }.toString() == "toString(
        |                                                ANONYMOUS
        ANONYMOUS
 ---
+---
+assert(object : A() {
+       |
+       ANONYMOUS
+
+    fun foo(): Boolean {
+        return a > b
+    }
+    override fun toString() = "ANONYMOUS"
+}.foo())
+  |
+  false
+---
+---
+assert(valueObject.booleanFunction())
+       |           |
+       |           false
+       ANONYMOUS
+---

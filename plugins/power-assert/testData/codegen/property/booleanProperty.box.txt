@@ -1,0 +1,46 @@
+---
+assert(booleanValue)
+       |
+       false
+---
+---
+assert(memberProperty)
+       |
+       false
+---
+---
+assert(delegatedProperty)
+       |
+       false
+---
+---
+assert(1.extensionTopLevelProperty)
+         |
+         false
+---
+---
+assert(true.extensionTopLevelPropertyWithTypeParam)
+            |
+            false
+---
+---
+assert(with(false) { contextProperty })
+       |
+       false
+---
+---
+assert(true.contextPropertyWithTypeParam)
+            |
+            false
+---
+---
+assert(lateInitProperty == "b")
+       |                |
+       |                false
+       a
+---
+---
+assert(destructuring)
+       |
+       false
+---

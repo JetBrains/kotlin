@@ -1,0 +1,36 @@
+---
+assert(funWithVararg("a"))
+       |
+       false
+---
+---
+assert({ false }.funWithExtension())
+                 |
+                 false
+---
+---
+assert(with(false) { funWithContext() })
+       |
+       false
+---
+---
+assert(funWithTypeParameter())
+       |
+       false
+---
+---
+assert(funWithInline { false })
+       |
+       false
+---
+---
+assert(local())
+       |
+       false
+---
+---
+assert(funWithNotPrimitiveParameter(1, A()))
+       |                               |
+       |                               A
+       false
+---

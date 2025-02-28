@@ -1,0 +1,13 @@
+---
+assert(!b)
+       ||
+       |true
+       false
+---
+---
+assert(!b == true)
+       || |
+       || false
+       |true
+       false
+---

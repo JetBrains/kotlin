@@ -1,0 +1,45 @@
+---
+assert(stringValue())
+       |
+       false
+       true
+---
+---
+assert(Callable()() == "World")
+       |            |
+       |            false
+       Hello
+       Callable
+---
+---
+assert(Callable()(listOf(1,2,3)) == "World")
+       |          |              |
+       |          |              false
+       |          Hello
+       |          [1, 2, 3]
+       Callable
+---
+---
+assert(Callable()(1, listOf(1,2,3)) == "World")
+       |             |              |
+       |             |              false
+       |             Hello
+       |             [1, 2, 3]
+       Callable
+---
+---
+assert(listOf(NamedLambda("Hello") { "Hello" }, NamedLambda("World") { "World" })[1]() == "Hello")
+       |      |                                 |                                |     |
+       |      |                                 |                                |     false
+       |      |                                 |                                Lambda: World
+       |      |                                 Lambda: World
+       |      Lambda: Hello
+       World
+       [Lambda: Hello, Lambda: World]
+---
+---
+assert((::foo)(4))
+       ||
+       |fun foo(kotlin.Int): kotlin.Boolean
+       false
+---

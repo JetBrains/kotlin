@@ -1,0 +1,44 @@
+---
+assert(foo@(test?.a ?: true))
+            |     |
+            |     false
+            A
+---
+---
+assert(foo@(if (a < b) a == b else if (b < a) b == a else false))
+                | | |  | |  |
+                | | |  | |  2
+                | | |  | false
+                | | |  1
+                | | 2
+                | true
+                1
+---
+---
+assert(foo@(try { false } catch (e: Exception) { true }))
+            |   |                              |
+            |   |                              true
+            |   false
+            false
+---
+---
+assert(
+    foo@(
+        when {
+            x == b -> true
+            | |  |
+            | |  2
+            | false
+            1
+
+            x == a -> false
+            | |  |
+            | |  1
+            | true
+            1
+
+            else -> true
+        }
+   )
+)
+---

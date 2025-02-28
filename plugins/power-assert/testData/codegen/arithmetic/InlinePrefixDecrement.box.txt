@@ -4,3 +4,8 @@ assert(--i == 4)
        |   false
        2
 ---
+---
+assert(--a)
+       |
+       false
+---

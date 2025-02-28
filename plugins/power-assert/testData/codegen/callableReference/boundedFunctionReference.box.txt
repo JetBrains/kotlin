@@ -1,0 +1,40 @@
+---
+assert(A::foo == { x: Int -> x % 2 != 0 })
+       |      |
+       |      false
+       fun A.foo(kotlin.Int): kotlin.Boolean
+---
+---
+assert(A::foo.isInfix)
+       |      |
+       |      false
+       fun A.foo(kotlin.Int): kotlin.Boolean
+---
+---
+assert((A::foo)(A(), 4))
+        |       |
+        |       false
+        |       A
+        fun A.foo(kotlin.Int): kotlin.Boolean
+---
+---
+assert(List<Int>::bar.name == "foo")
+       |              |    |
+       |              |    false
+       |              bar
+       fun kotlin.collections.List<kotlin.Int>.bar(kotlin.Int): kotlin.Boolean
+---
+---
+assert(List<Int>::bar.isInfix)
+       |              |
+       |              false
+       fun kotlin.collections.List<kotlin.Int>.bar(kotlin.Int): kotlin.Boolean
+---
+---
+assert((List<Int>::bar)(listOf(1,2,3), 1))
+        |               |
+        |               false
+        |               [1, 2, 3]
+        fun kotlin.collections.List<kotlin.Int>.bar(kotlin.Int): kotlin.Boolean
+---
+

@@ -10,6 +10,7 @@ fun box(): String {
         "test6: " to { test6() },
         "test7: " to { test7() },
         "test8: " to { test8() },
+        "test9: " to { test9() },
     ).joinToString("") { (name, test) -> name + test() }
 }
 
@@ -43,4 +44,8 @@ fun test7() = expectThrowableMessage {
 
 fun test8() = expectThrowableMessage {
     assert("bbb" <= "aaa")
+}
+
+fun test9() = expectThrowableMessage {
+    assert(("aa" < "a") > ("aa" > "bb"))
 }

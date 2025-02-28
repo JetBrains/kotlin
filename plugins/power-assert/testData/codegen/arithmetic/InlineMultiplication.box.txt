@@ -4,3 +4,10 @@ assert(1 * 2 == 4)
          |   false
          2
 ---
+---
+assert(a * b)
+       | | |
+       | | 2
+       | false
+       false
+---

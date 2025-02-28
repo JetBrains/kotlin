@@ -1,0 +1,21 @@
+---
+assert({ false }())
+       |
+       false
+---
+---
+assert({ a: Int -> a > 10 }(9))
+       |
+       false
+---
+---
+assert(fun1@ { a: Int -> a > 10 }(9))
+             |
+             false
+---
+---
+assert(fun1@ { a: Int -> a > 10 }(9) == true)
+             |                       |
+             |                       false
+             false
+---
