@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import kotlin.text.Regex;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,13 +76,15 @@ public final class InTextDirectivesUtils {
         return result;
     }
 
+    private static final Regex SPACES_PATTERN = new Regex("[,]?[ \t]+"); // must match to RegisteredDirectivesParser.SPACES_PATTERN
+
     public static List<String> splitValues(@NotNull List<String> result, @NotNull String line) {
         String unquoted = StringUtil.unquoteString(line);
         if (!unquoted.equals(line)) {
             result.add(unquoted);
         }
         else{
-            String[] variants = line.split(",");
+            List<String> variants = SPACES_PATTERN.split(line, 0);
             for (String variant : variants) {
                 result.add(variant.trim());
             }

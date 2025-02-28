@@ -42,7 +42,7 @@ internal fun Settings.isDisabledNative(directives: Directives) =
         getDirectiveValues(
             TestDirectives.DISABLE_NATIVE, TestDirectives.DISABLE_NATIVE_K1, TestDirectives.DISABLE_NATIVE_K2,
             { directives.contains(it.name) },
-            { directives.listValues(it.name) },
+            { directives.listValues(it.name) { it.split(",") } },
         )
     )
 
@@ -62,7 +62,7 @@ internal fun Settings.isIgnoredWithIGNORE_NATIVE(directives: Directives) =
         getDirectiveValues(
             TestDirectives.IGNORE_NATIVE, TestDirectives.IGNORE_NATIVE_K1, TestDirectives.IGNORE_NATIVE_K2,
             { directives.contains(it.name) },
-            { directives.listValues(it.name) },
+            { directives.listValues(it.name) { it.split(",") } },
         )
     )
 

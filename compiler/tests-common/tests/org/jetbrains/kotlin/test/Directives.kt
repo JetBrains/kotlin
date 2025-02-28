@@ -32,9 +32,9 @@ class Directives {
     // MY_DIRECTIVE: YYY
     // or
     // MY_DIRECTIVE: XXX, YYY
-    fun listValues(name: String): List<String>? {
+    fun listValues(name: String, splitter: ((String) -> List<String>)? = null): List<String>? {
         return directives[name]?.let { values ->
-            values.flatMap { InTextDirectivesUtils.splitValues(arrayListOf(), it) }
+            values.flatMap { splitter?.invoke(it) ?: InTextDirectivesUtils.splitValues(arrayListOf(), it) }
         }
     }
 }
