@@ -190,5 +190,5 @@ fun <T> testDNN(arg: T& Any) = when (arg) {
 }
 
 fun isNullable(a: Int?) = when (a) {
-    is Number? -> false
+    <!USELESS_IS_CHECK!>is Number?<!> -> false
 }
