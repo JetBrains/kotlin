@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
 @OptIn(SessionConfiguration::class)
-object FirWasmSessionFactory : AbstractFirWebSessionFactory<FirWasmSessionFactory.Context, FirWasmSessionFactory.Context>() {
+object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFactory.Context, FirWasmSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
 

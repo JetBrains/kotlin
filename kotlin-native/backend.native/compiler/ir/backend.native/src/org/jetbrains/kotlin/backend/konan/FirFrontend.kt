@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 
@@ -54,7 +53,7 @@ internal inline fun <F> PhaseContext.firFrontend(
         dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
         // TODO: !!! dependencies module data?
     }
-    val resolvedLibraries: List<KotlinResolvedLibrary> = config.resolvedLibraries.getFullResolvedList()
+    val resolvedLibraries = config.resolvedLibraries.getFullResolvedList().map { it.library }
 
     val sessionsWithSources = prepareNativeSessions(
             files,

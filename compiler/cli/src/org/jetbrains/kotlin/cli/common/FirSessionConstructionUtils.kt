@@ -154,7 +154,7 @@ fun <F> prepareNativeSessions(
     files: List<F>,
     configuration: CompilerConfiguration,
     rootModuleName: Name,
-    resolvedLibraries: List<KotlinResolvedLibrary>,
+    resolvedLibraries: List<KotlinLibrary>,
     libraryList: DependencyListForCliModule,
     extensionRegistrars: List<FirExtensionRegistrar>,
     metadataCompilationMode: Boolean,
@@ -171,7 +171,7 @@ fun <F> prepareNativeSessions(
                 sessionProvider,
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
-                configuration.languageVersionSettings,
+                configuration,
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
@@ -180,6 +180,7 @@ fun <F> prepareNativeSessions(
             sessionProvider,
             extensionRegistrars,
             configuration,
+            icData = null,
             sessionConfigurator,
         )
     }

@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(SessionConfiguration::class)
-abstract class AbstractFirWebSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT>() {
+abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT>() {
 
     // ==================================== Library session ====================================
 
@@ -48,6 +49,7 @@ abstract class AbstractFirWebSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : F
                         session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries,
                         flexibleTypeFactory = createFlexibleTypeFactory(session),
                     ),
+                    *createAdditionalDependencyProviders(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries).toTypedArray(),
                     FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
                     syntheticFunctionInterfaceProvider
                 )
@@ -59,6 +61,15 @@ abstract class AbstractFirWebSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : F
 
     protected open fun createFlexibleTypeFactory(session: FirSession): FirTypeDeserializer.FlexibleTypeFactory {
         return FirTypeDeserializer.FlexibleTypeFactory.Default
+    }
+
+    protected open fun createAdditionalDependencyProviders(
+        session: FirSession,
+        moduleDataProvider: ModuleDataProvider,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        resolvedLibraries: List<KotlinLibrary>,
+    ): List<FirSymbolProvider> {
+        return emptyList()
     }
 
     final override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
