@@ -1,0 +1,62 @@
+test1: ---
+assert(a in 1..9)
+       | |   |
+       | |   1..9
+       | false
+       10
+---
+test2: ---
+assert(a in 1..<4)
+       | |   |
+       | |   1..3
+       | false
+       4
+---
+test3: ---
+assert(a in 4 downTo 1)
+       | |    |
+       | |    4 downTo 1 step 1
+       | false
+       5
+---
+test4: ---
+assert(a in 0..8 step 2)
+       | |   |   |
+       | |   |   0..8 step 2
+       | |   0..8
+       | false
+       1
+---
+test5: ---
+assert(a in 0..<8 step 2)
+       | |   |    |
+       | |   |    0..6 step 2
+       | |   0..7
+       | false
+       7
+---
+test6: ---
+assert(a in 8 downTo 0 step 2)
+       | |    |        |
+       | |    |        8 downTo 0 step 2
+       | |    8 downTo 0 step 1
+       | false
+       7
+---
+test7: ---
+assert(a in (1..10).filter { it % 2 == 0 })
+       | |    |     |
+       | |    |     [2, 4, 6, 8, 10]
+       | |    1..10
+       | false
+       3
+---
+test8: ---
+assert(a in {a: Int -> a}(1)..{a: Int -> a}(5))
+       | |  |               | |
+       | |  |               | 5
+       | |  |               1..5
+       | |  1
+       | false
+       10
+---

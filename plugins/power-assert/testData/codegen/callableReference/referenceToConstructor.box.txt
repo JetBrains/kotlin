@@ -1,0 +1,21 @@
+test1: ---
+assert((::Person)("Alice", true).name == "Kate")
+       ||                        |    |
+       ||                        |    false
+       ||                        Alice
+       |fun `<init>`(kotlin.String, kotlin.Boolean): Person
+       Person(name=Alice, isAlive=true)
+---
+test2: ---
+assert((::Person)("Alice", false).isAlive)
+       ||                         |
+       ||                         false
+       |fun `<init>`(kotlin.String, kotlin.Boolean): Person
+       Person(name=Alice, isAlive=false)
+---
+test3: ---
+assert(::Person.isSuspend)
+       |        |
+       |        false
+       fun `<init>`(kotlin.String, kotlin.Boolean): Person
+---

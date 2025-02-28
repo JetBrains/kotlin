@@ -1,6 +1,13 @@
----
+test1: ---
 assert(2 / 1 == 4)
          |   |
          |   false
          2
+---
+test2: ---
+assert(a / b)
+       | | |
+       | | 1
+       | false
+       false
 ---

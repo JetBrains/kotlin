@@ -1,0 +1,44 @@
+test1: ---
+assert(true and false)
+            |
+            false
+---
+test2: ---
+assert(a and b == 0b10110)
+       | |   | |
+       | |   | false
+       | |   30
+       | 18
+       19
+---
+test3: ---
+assert(a or b == 0b10110)
+       | |  | |
+       | |  | false
+       | |  30
+       | 31
+       19
+---
+test4: ---
+assert(a xor b == 0b10110)
+       | |   | |
+       | |   | false
+       | |   30
+       | 13
+       19
+---
+test5: ---
+assert(5 and 3 + 4 or 1 == 9)
+         |     |   |    |
+         |     |   |    false
+         |     |   5
+         |     7
+         5
+---
+test6: ---
+assert(x ?: 2 and 1 == 1)
+       |      |     |
+       |      |     false
+       |      0
+       null
+---

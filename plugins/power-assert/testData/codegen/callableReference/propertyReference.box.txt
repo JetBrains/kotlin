@@ -1,0 +1,19 @@
+test1: ---
+assert(::property.isOpen)
+       |          |
+       |          false
+       val property: kotlin.Boolean
+---
+test2: ---
+assert(::property.name == "a")
+       |          |    |
+       |          |    false
+       |          property
+       val property: kotlin.Boolean
+---
+test3: ---
+assert((::property)())
+       ||
+       |val property: kotlin.Boolean
+       false
+---

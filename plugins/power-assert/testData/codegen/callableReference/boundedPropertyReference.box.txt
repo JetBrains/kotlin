@@ -1,0 +1,71 @@
+test1: ---
+assert(A::foo == { true })
+       |      |
+       |      false
+       val A.foo: kotlin.Boolean
+---
+test2: ---
+assert(A::foo.isOpen)
+       |      |
+       |      false
+       val A.foo: kotlin.Boolean
+---
+test3: ---
+assert((A::foo)(A()))
+        |       |
+        |       false
+        |       A
+        val A.foo: kotlin.Boolean
+---
+test4: ---
+assert(List<Int>::bar.name == "foo")
+       |              |    |
+       |              |    false
+       |              bar
+       val kotlin.collections.List<kotlin.Int>.bar: kotlin.Boolean
+---
+test5: ---
+assert(List<Int>::bar.isConst)
+       |              |
+       |              false
+       val kotlin.collections.List<kotlin.Int>.bar: kotlin.Boolean
+---
+test6: ---
+assert((List<Int>::bar)(listOf(1,2,3)))
+        |               |
+        |               false
+        |               [1, 2, 3]
+        val kotlin.collections.List<kotlin.Int>.bar: kotlin.Boolean
+---
+test7: ---
+assert((a::foo)())
+       ||
+       |val kotlin.String.foo: kotlin.Boolean
+       |Some text
+       false
+---
+test8: ---
+assert(((a+b)::foo)())
+       |||||
+       ||||b
+       |||ab
+       ||a
+       |val kotlin.String.foo: kotlin.Boolean
+       false
+---
+test9: ---
+assert(a::foo == b::foo)
+       |      |  |
+       |      |  val kotlin.String.foo: kotlin.Boolean
+       |      |  Another text
+       |      false
+       val kotlin.String.foo: kotlin.Boolean
+       Some text
+---
+test10: ---
+assert(a::foo.isOpen)
+       |      |
+       |      false
+       val kotlin.String.foo: kotlin.Boolean
+       Some text
+---

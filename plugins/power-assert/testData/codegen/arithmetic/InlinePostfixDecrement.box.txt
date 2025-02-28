@@ -1,6 +1,11 @@
----
+test1: ---
 assert(i-- == 4)
        |   |
        |   false
        3
+---
+test2: ---
+assert(a--)
+       |
+       false
 ---

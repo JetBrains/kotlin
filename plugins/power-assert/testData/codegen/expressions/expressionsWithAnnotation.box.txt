@@ -1,0 +1,43 @@
+test1: ---
+assert(@Ann @AnnWithConstructor(false) test?.a ?: true)
+                                       |     |
+                                       |     false
+                                       A
+---
+test2: ---
+assert(@Ann @AnnWithConstructor(true) if (a < b) a == b else if (b < a) b == a else false)
+                                          | | |  | |  |
+                                          | | |  | |  2
+                                          | | |  | false
+                                          | | |  1
+                                          | | 2
+                                          | true
+                                          1
+---
+test3: ---
+assert(@Ann @AnnWithConstructor(a = true) try { false } catch (e: Exception) { true })
+                                          |   |                              |
+                                          |   |                              true
+                                          |   false
+                                          false
+---
+test4: ---
+assert(
+    @Ann @AnnWithConstructor(a = true)
+    when {
+        x == b -> true
+        | |  |
+        | |  2
+        | false
+        1
+
+        x == a -> false
+        | |  |
+        | |  1
+        | true
+        1
+
+        else -> true
+    }
+)
+---

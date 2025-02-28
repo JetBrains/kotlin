@@ -1,0 +1,88 @@
+test1: ---
+assert(
+    when (x) {
+    |
+    false
+
+        b -> true
+        a -> false
+        else -> true
+    }
+)
+---
+test2: ---
+assert(
+    when (a) {
+    |
+    false
+
+        A.ONE -> false
+        A.TWO -> true
+    }
+)
+---
+test3: ---
+assert(
+    when (a) {
+    |
+    false
+
+        A.ONE, A.TWO -> false
+    }
+)
+---
+test4: ---
+assert(
+    when (x) {
+    |
+    false
+
+        a.toInt() -> false
+        else -> true
+    }
+)
+---
+test5: ---
+assert(
+    when (x) {
+    |
+    false
+
+        in 1..10 -> x == 3
+        else -> true
+    }
+)
+---
+test6: ---
+assert(
+    when (x) {
+    |
+    false
+
+        is Int -> x == 3
+        else -> true
+    }
+)
+---
+test7: ---
+assert(
+    when (val x = 2) {
+    |
+    false
+
+        in 1..10 -> x == 3
+        else -> true
+    }
+)
+---
+test8: ---
+assert(
+    when (x) {
+    |
+    false
+
+        is Int if x == 2 -> false
+        else -> true
+    }
+)
+---

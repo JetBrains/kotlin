@@ -1,0 +1,71 @@
+test1: ---
+assert(A::foo == { x: Int -> x % 2 != 0 })
+       |      |
+       |      false
+       fun A.foo(kotlin.Int): kotlin.Boolean
+---
+test2: ---
+assert(A::foo.isInfix)
+       |      |
+       |      false
+       fun A.foo(kotlin.Int): kotlin.Boolean
+---
+test3: ---
+assert((A::foo)(A(), 4))
+        |       |
+        |       false
+        |       A
+        fun A.foo(kotlin.Int): kotlin.Boolean
+---
+test4: ---
+assert(List<Int>::bar.name == "foo")
+       |              |    |
+       |              |    false
+       |              bar
+       fun kotlin.collections.List<kotlin.Int>.bar(kotlin.Int): kotlin.Boolean
+---
+test5: ---
+assert(List<Int>::bar.isInfix)
+       |              |
+       |              false
+       fun kotlin.collections.List<kotlin.Int>.bar(kotlin.Int): kotlin.Boolean
+---
+test6: ---
+assert((List<Int>::bar)(listOf(1,2,3), 1))
+        |               |
+        |               false
+        |               [1, 2, 3]
+        fun kotlin.collections.List<kotlin.Int>.bar(kotlin.Int): kotlin.Boolean
+---
+test7: ---
+assert((a::foo)())
+       ||
+       |fun kotlin.String.foo(): kotlin.Boolean
+       |Some text
+       false
+---
+test8: ---
+assert(((a+b)::foo)())
+       |||||
+       ||||b
+       |||ab
+       ||a
+       |fun kotlin.String.foo(): kotlin.Boolean
+       false
+---
+test9: ---
+assert(a::foo == b::foo)
+       |      |  |
+       |      |  fun kotlin.String.foo(): kotlin.Boolean
+       |      |  Another text
+       |      false
+       fun kotlin.String.foo(): kotlin.Boolean
+       Some text
+---
+test10: ---
+assert(a::foo.isOpen)
+       |      |
+       |      false
+       fun kotlin.String.foo(): kotlin.Boolean
+       Some text
+---
