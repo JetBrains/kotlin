@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.platform.isCommon
 /**
  * [FirModuleData] is an abstraction over modules module inside FIR compiler.
  *
- * Each FIR declaration holds module data in [FirDeclaration.moduleData], and this module data represents
+ * Each FIR declaration holds module data in [org.jetbrains.kotlin.fir.declarations.FirDeclaration.moduleData], and this module data represents
  *   module which this declaration belongs to
  *
  * Module data contains minimal information about module ([name] and [platform]) and
@@ -82,23 +82,64 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val stableModuleName: String?
 }
 
-class FirModuleDataImpl(
+/**
+ * Module data for source module.
+ * Might contain dependencies on other modules (either source or binary).
+ */
+class FirSourceModuleData(
     override val name: Name,
     override val dependencies: List<FirModuleData>,
     override val dependsOnDependencies: List<FirModuleData>,
     override val friendDependencies: List<FirModuleData>,
     override val platform: TargetPlatform,
-    override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
     override val isCommon: Boolean = platform.isCommon(),
 ) : FirModuleData() {
     override val session: FirSession
-        get() = boundSession
-            ?: error("module data ${this::class.simpleName}:${name} not bound to session")
+        get() = boundSession ?: sessionNotBound()
+
+    override val capabilities: FirModuleCapabilities
+        get() = FirModuleCapabilities.Empty
 
     override val stableModuleName: String?
         get() = null
 
     override val allDependsOnDependencies: List<FirModuleData> = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
+}
+
+/**
+ * Module data for fake module for binary dependencies.
+ * Cannot depend on anything.
+ */
+class FirBinaryDependencyModuleData(
+    override val name: Name,
+    override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
+) : FirModuleData() {
+    companion object {
+        private val emptyTargetPlatform = TargetPlatform(setOf())
+    }
+
+    override val dependencies: List<FirModuleData>
+        get() = emptyList()
+    override val dependsOnDependencies: List<FirModuleData>
+        get() = emptyList()
+    override val allDependsOnDependencies: List<FirModuleData>
+        get() = emptyList()
+    override val friendDependencies: List<FirModuleData>
+        get() = emptyList()
+
+    // target platform is meaningless for dependencies
+    override val platform: TargetPlatform
+        get() = emptyTargetPlatform
+    override val isCommon: Boolean
+        get() = false
+    override val session: FirSession
+        get() = boundSession ?: sessionNotBound()
+    override val stableModuleName: String?
+        get() = null
+}
+
+private fun FirModuleData.sessionNotBound(): Nothing {
+    error("module data ${this::class.simpleName}:${name} not bound to session")
 }
 
 val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()

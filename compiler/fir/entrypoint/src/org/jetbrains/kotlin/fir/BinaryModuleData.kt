@@ -19,14 +19,7 @@ class BinaryModuleData(
             platform: TargetPlatform,
             capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
         ): FirModuleData {
-            return FirModuleDataImpl(
-                name,
-                dependencies = emptyList(),
-                dependsOnDependencies = emptyList(),
-                friendDependencies = emptyList(),
-                platform,
-                capabilities
-            )
+            return FirBinaryDependencyModuleData(name, capabilities)
         }
 
         fun initialize(

@@ -64,7 +64,7 @@ object FirSessionFactoryHelper {
             predefinedJavaComponents = null,
         )
 
-        val mainModuleData = FirModuleDataImpl(
+        val mainModuleData = FirSourceModuleData(
             moduleName,
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies,
@@ -90,7 +90,7 @@ object FirSessionFactoryHelper {
     @OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)
     fun createEmptySession(): FirSession {
         return object : FirSession(null, Kind.Source) {}.apply {
-            val moduleData = FirModuleDataImpl(
+            val moduleData = FirSourceModuleData(
                 Name.identifier("<stub module>"),
                 dependencies = emptyList(),
                 dependsOnDependencies = emptyList(),

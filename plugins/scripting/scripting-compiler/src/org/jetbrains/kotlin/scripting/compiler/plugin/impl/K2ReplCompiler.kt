@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirModuleCapabilities
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -193,7 +193,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
 
     val baseDependenciesModuleData = makeLibraryModuleData(Name.special("<REPL-base>"))
 
-    private fun makeLibraryModuleData(name: Name): FirModuleDataImpl = FirModuleDataImpl(
+    private fun makeLibraryModuleData(name: Name): FirModuleDataImpl = FirSourceModuleData(
         name,
         dependencies = emptyList(),
         dependsOnDependencies = emptyList(),

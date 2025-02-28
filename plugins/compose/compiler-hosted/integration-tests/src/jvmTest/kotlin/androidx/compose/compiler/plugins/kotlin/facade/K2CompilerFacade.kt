@@ -154,7 +154,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             predefinedJavaComponents = null,
         )
 
-        val commonModuleData = FirModuleDataImpl(
+        val commonModuleData = FirSourceModuleData(
             Name.identifier("$rootModuleName-common"),
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies,
@@ -162,7 +162,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             CommonPlatforms.defaultCommonPlatform,
         )
 
-        val platformModuleData = FirModuleDataImpl(
+        val platformModuleData = FirSourceModuleData(
             Name.identifier(rootModuleName),
             dependencyList.regularDependencies,
             dependencyList.dependsOnDependencies + commonModuleData,

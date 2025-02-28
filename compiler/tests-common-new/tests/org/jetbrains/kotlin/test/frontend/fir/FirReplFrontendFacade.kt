@@ -127,7 +127,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val friendModules = libraryList.friendsDependencies + moduleInfoProvider.getDependentFriendSourceModulesRecursively(module)
         val dependsOnModules = libraryList.dependsOnDependencies + moduleInfoProvider.getDependentDependsOnSourceModules(module)
 
-        return FirModuleDataImpl(
+        return FirSourceModuleData(
             Name.special("<${module.name}>"),
             regularModules,
             dependsOnModules,

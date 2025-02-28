@@ -388,7 +388,7 @@ object SessionConstructionUtils {
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
         createFirSession: FirSessionProducer<F>,
     ): SessionWithSources<F> {
-        val platformModuleData = FirModuleDataImpl(
+        val platformModuleData = FirSourceModuleData(
             rootModuleName,
             libraryList.regularDependencies,
             libraryList.dependsOnDependencies,
@@ -413,7 +413,7 @@ object SessionConstructionUtils {
         isCommonSource: (F) -> Boolean,
         createFirSession: FirSessionProducer<F>,
     ): List<SessionWithSources<F>> {
-        val commonModuleData = FirModuleDataImpl(
+        val commonModuleData = FirSourceModuleData(
             Name.identifier("${rootModuleName.asString()}-common"),
             libraryList.regularDependencies,
             listOf(),
@@ -422,7 +422,7 @@ object SessionConstructionUtils {
             isCommon = true
         )
 
-        val platformModuleData = FirModuleDataImpl(
+        val platformModuleData = FirSourceModuleData(
             rootModuleName,
             libraryList.regularDependencies,
             listOf(commonModuleData),
@@ -473,7 +473,7 @@ object SessionConstructionUtils {
             } else {
                 Name.special("<${module.name}>")
             }
-            val moduleData = FirModuleDataImpl(
+            val moduleData = FirSourceModuleData(
                 moduleName,
                 libraryList.regularDependencies,
                 dependsOnDependencies = dependencies,
