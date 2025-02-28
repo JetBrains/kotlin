@@ -99,7 +99,7 @@ object IrTree : AbstractTreeBuilder() {
         needTransformMethod()
         transformByChildren = true
 
-        fun offsetField(prefix: String) = field(prefix + "Offset", int, mutable = false) {
+        fun offsetField(prefix: String) = field(prefix + "Offset", int, mutable = true) {
             kDoc = """
             The $prefix offset of the syntax node from which this IR node was generated,
             in number of characters from the start of the source file. If there is no source information for this IR node,
@@ -108,6 +108,7 @@ object IrTree : AbstractTreeBuilder() {
             
             @see IrFileEntry.getSourceRangeInfo
             """.trimIndent()
+            deepCopyExcludeFromApply = true
         }
 
         +offsetField("start")
@@ -207,11 +208,6 @@ object IrTree : AbstractTreeBuilder() {
         val s = +param("S", IrSymbolTree.rootElement)
 
         parent(overridableMember)
-
-        // These fields are made mutable here to allow converting fake overrides to non-fake overrides
-        // (for example, to delegated members) and replacing their debug info without performing a full copy.
-        +field("startOffset", int, mutable = true)
-        +field("endOffset", int, mutable = true)
 
         +declaredSymbol(s)
         +field("isFakeOverride", boolean)

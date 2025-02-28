@@ -25,7 +25,7 @@ interface IrElement {
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    val startOffset: Int
+    var startOffset: Int
 
     /**
      * The end offset of the syntax node from which this IR node was generated,
@@ -35,7 +35,7 @@ interface IrElement {
      *
      * @see IrFileEntry.getSourceRangeInfo
      */
-    val endOffset: Int
+    var endOffset: Int
 
     /**
      * Original element before copying. Always satisfies the following
