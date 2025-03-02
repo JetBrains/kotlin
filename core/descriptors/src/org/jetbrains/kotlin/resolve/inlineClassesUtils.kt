@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isNulla
 val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
 val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_NAME)
 
+val JVM_NAME_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmName")
+
 // FIXME: DeserializedClassDescriptor in reflection do not have @JvmInline annotation, that we
 // FIXME: would like to check as well.
 fun DeclarationDescriptor.isInlineClass(): Boolean = this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation

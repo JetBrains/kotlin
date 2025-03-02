@@ -198,6 +198,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         }
 
     fun isOrShouldBeHiddenSinceHasMangledParams(constructor: IrConstructor): Boolean {
+        if (constructor.origin == JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS) return false
         if (constructor.hiddenConstructorMangledParams != null) return true
         return constructor.isOrShouldBeHiddenDueToOrigin &&
                 !DescriptorVisibilities.isPrivate(constructor.visibility) &&

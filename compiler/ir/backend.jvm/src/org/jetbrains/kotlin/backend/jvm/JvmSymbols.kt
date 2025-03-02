@@ -472,6 +472,8 @@ class JvmSymbols(
         }
     }
 
+    val boxingConstructorMarkerClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.BoxingConstructorMarker"))
+
     private data class PropertyReferenceKey(
         val mutable: Boolean,
         val parameterCount: Int,

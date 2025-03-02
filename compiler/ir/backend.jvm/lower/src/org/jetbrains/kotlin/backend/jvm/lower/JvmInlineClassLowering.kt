@@ -10,14 +10,18 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
+import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -30,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 
 /**
  * Adds new constructors, box, and unbox functions to inline classes as well as replacement
@@ -65,10 +70,25 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         context.irFactory.buildFun {
             updateFrom(source)
             name = mangledName
+            if (source.shouldBeExposedByAnnotation()) {
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS
+                if (modality == Modality.ABSTRACT) {
+                    modality = Modality.OPEN
+                }
+            }
             returnType = source.returnType
         }.apply {
             copyValueAndTypeParametersFrom(source)
-            annotations = source.annotations
+            // Exposed functions should have no @JvmName annotation, since it does not affect them,
+            // but always @JvmExposeBoxed, so users can use reflection to get all exposed functions, if they so desire.
+            if (source.shouldBeExposedByAnnotation() && source.origin != IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) {
+                annotations = source.annotations.withJvmExposeBoxedAnnotation(source).withoutJvmNameAnnotation()
+            } else {
+                annotations = source.annotations
+            }
+            // Non-exposed counterparts should lack @JvmExposeBoxed.
+            source.annotations = source.annotations.withoutJvmExposeBoxedAnnotation()
+
             parent = source.parent
             // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
             // is used in [CoroutineCodegen.isStaticInlineClassReplacementDelegatingCall] to identify the bridge and avoid generating
@@ -104,13 +124,19 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             handleSpecificNewClass(declaration)
         }
 
+        // Per KEEP, @JvmBoxedAnnotation is generated only on callables.
+        //   As a result, both annotation processors and runtime reflection do not see @JvmExposeBoxed on the containers (file, class)
+        //   but rather on each individual operation.
+        // So, drop the annotation from classes and files.
+        declaration.annotations = declaration.annotations.withoutJvmExposeBoxedAnnotation()
+
         return declaration
     }
 
     override fun handleSpecificNewClass(declaration: IrClass) {
         val irConstructor = declaration.primaryConstructor!!
         // The field getter is used by reflection and cannot be removed here unless it is internal.
-        declaration.declarations.removeIf {
+        declaration.declarations.removeAll {
             it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
         }
         buildPrimaryInlineClassConstructor(declaration, irConstructor)
@@ -273,6 +299,44 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }
     }
 
+    override fun addMarkerParameterToNonExposedConstructor(constructor: IrConstructor): IrConstructor {
+        constructor.addValueParameter {
+            name = Name.identifier("\$boxingMarker")
+            origin = JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
+            type = context.symbols.boxingConstructorMarkerClass.defaultType.makeNullable()
+        }
+        return constructor
+    }
+
+    override fun createExposedConstructor(constructor: IrConstructor): IrConstructor =
+        constructor.parentAsClass.factory.buildConstructor {
+            updateFrom(constructor)
+            isPrimary = false
+            origin = JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS
+            returnType = constructor.returnType
+        }.apply {
+            copyValueAndTypeParametersFrom(constructor)
+            parameters.forEach { it.defaultValue = null }
+            val addedSyntheticParameter =
+                parameters.last().origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
+            if (addedSyntheticParameter) {
+                parameters = parameters.dropLast(1)
+            }
+            // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
+            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor)
+            constructor.annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
+            body = context.createIrBuilder(this.symbol).irBlockBody(this) {
+                +irDelegatingConstructorCall(constructor).apply {
+                    for ((index, param) in parameters.withIndex()) {
+                        arguments[index] = irGet(param)
+                    }
+                    if (addedSyntheticParameter) {
+                        arguments[parameters.size] = irNull()
+                    }
+                }
+            }
+        }
+
     private fun IrExpression.coerceToUnboxed() =
         coerceInlineClasses(this, this.type, this.type.unboxInlineClass())
 
@@ -372,7 +436,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         get() {
             if (!symbol.owner.isEquals()) return false
             val receiverClass = dispatchReceiver?.type?.classOrNull?.owner
-            return receiverClass?.canUseSpecializedEqMethod ?: false
+            return receiverClass?.canUseSpecializedEqMethod == true
         }
 
     private val IrCall.isEqEqCallOnInlineClass: Boolean
@@ -381,7 +445,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             // so it is enough to check for eqeq.
             if (symbol != context.irBuiltIns.eqeqSymbol) return false
             val leftOperandClass = getValueArgument(0)?.type?.classOrNull?.owner
-            return leftOperandClass?.canUseSpecializedEqMethod ?: false
+            return leftOperandClass?.canUseSpecializedEqMethod == true
         }
 
     private val IrClass.canUseSpecializedEqMethod: Boolean
@@ -432,16 +496,24 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
     private fun buildPrimaryInlineClassConstructor(valueClass: IrClass, irConstructor: IrConstructor) {
         // Add the default primary constructor
-        valueClass.addConstructor {
+        val primaryConstructor = valueClass.addConstructor {
             updateFrom(irConstructor)
             visibility = DescriptorVisibilities.PRIVATE
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
             returnType = irConstructor.returnType
         }.apply {
-            // Don't create a default argument stub for the primary constructor
-            irConstructor.valueParameters.forEach { it.defaultValue = null }
             copyValueAndTypeParametersFrom(irConstructor)
-            annotations = irConstructor.annotations
+            // Don't create a default argument stub for the primary constructor
+            parameters.forEach { it.defaultValue = null }
+            if (irConstructor.shouldBeExposedByAnnotation()) {
+                addValueParameter {
+                    origin = INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
+                    name = Name.identifier("\$null")
+                    type = context.irBuiltIns.nothingNType
+                }
+            }
+            // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
+            annotations = irConstructor.annotations.withoutJvmExposeBoxedAnnotation()
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
                 +irSetField(
@@ -459,7 +531,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         val initBlocks = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>()
             .filterNot { it.isStatic }
 
-        function.valueParameters.forEach { it.transformChildrenVoid() }
+        function.parameters.forEach { it.transformChildrenVoid() }
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             val argument = function.valueParameters[0]
             val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType, skipCast = true))
@@ -474,7 +546,63 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
         valueClass.declarations.removeAll(initBlocks)
         valueClass.declarations += function
+
+        // Add constructor, which is exposed to Java
+        if (irConstructor.shouldBeExposedByAnnotation()) {
+            val exposedConstructor = valueClass.addConstructor {
+                updateFrom(irConstructor)
+                isPrimary = false
+                origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
+                returnType = irConstructor.returnType
+            }.apply {
+                // Don't create a default argument stub for the exposed constructor
+                copyValueAndTypeParametersFrom(irConstructor)
+                valueParameters.forEach { it.defaultValue = null }
+                annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor)
+                body = context.createIrBuilder(this.symbol).irBlockBody(this) {
+                    // Call private constructor
+                    +irDelegatingConstructorCall(primaryConstructor).apply {
+                        passTypeArgumentsFrom(primaryConstructor)
+                        putValueArgument(0, irGet(valueParameters[0]))
+                        putValueArgument(1, irNull())
+                    }
+                    // Call constructor-impl to run init blocks
+                    +irCall(function).apply {
+                        passTypeArgumentsFrom(primaryConstructor)
+                        putValueArgument(0, irGet(valueParameters[0]))
+                    }
+                }
+            }
+
+            // Add no-arg constructor for usage by something like Hibernate
+            val defaultValue = irConstructor.parameters.singleOrNull()?.defaultValue
+            if (defaultValue != null) {
+                valueClass.addConstructor {
+                    updateFrom(irConstructor)
+                    isPrimary = false
+                    origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
+                    returnType = irConstructor.returnType
+                }.apply {
+                    copyTypeParametersFrom(irConstructor)
+                    annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor)
+                    body = context.createIrBuilder(this.symbol).irBlockBody(this) {
+                        // Delegate to exposed constructor
+                        +irDelegatingConstructorCall(exposedConstructor).apply {
+                            passTypeArgumentsFrom(primaryConstructor)
+                            putValueArgument(0, defaultValue.deepCopyWithSymbols(irConstructor).expression)
+                        }
+                    }
+                }
+            }
+        }
     }
+
+    private fun List<IrConstructorCall>.withoutJvmNameAnnotation(): List<IrConstructorCall> =
+        this.toMutableList().apply {
+            removeAll {
+                it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_NAME_ANNOTATION_FQ_NAME) == true
+            }
+        }
 
     private fun buildBoxFunction(valueClass: IrClass) {
         val function = context.inlineClassReplacements.getBoxFunction(valueClass)
@@ -483,6 +611,9 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                 irCall(valueClass.primaryConstructor!!.symbol).apply {
                     passTypeArgumentsFrom(function)
                     putValueArgument(0, irGet(function.valueParameters[0]))
+                    if (valueClass.primaryConstructor?.parameters?.last()?.origin == INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER) {
+                        putValueArgument(1, irNull())
+                    }
                 }
             )
         }

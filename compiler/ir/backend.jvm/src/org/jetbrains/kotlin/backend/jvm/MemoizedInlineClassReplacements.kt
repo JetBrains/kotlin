@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.classFileContainsMethod
-import org.jetbrains.kotlin.backend.jvm.ir.extensionReceiverName
-import org.jetbrains.kotlin.backend.jvm.ir.isStaticValueClassReplacement
-import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -87,7 +84,9 @@ class MemoizedInlineClassReplacements(
 
     private val IrSimpleFunction.needsReplacement: Boolean
         get() {
-            if (!hasMangledParameters(includeMFVC = false) && !(mangleReturnTypes && hasMangledReturnType)) return false
+            if (!(shouldBeExposedByAnnotation() || hasMangledParameters(includeMFVC = false) ||
+                        mangleReturnTypes && hasMangledReturnType)
+            ) return false
             if (isFromJava()) return mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
             return true
         }

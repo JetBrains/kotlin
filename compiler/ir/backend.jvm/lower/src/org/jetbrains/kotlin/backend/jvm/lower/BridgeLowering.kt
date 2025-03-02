@@ -297,6 +297,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // for abstract methods overriding a special bridge for which we do not create a bridge due to,
             // e.g., signature clashes.
             return
+        } else if (irFunction.origin == JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS) {
+            // Do not generate bridge methods for exposed methods, since we already generate bridges for
+            // their mangled counterparts. Generating both bridges will lead to declaration clash.
+            return
         }
 
         // For concrete fake overrides, some bridges may be inherited from the super-classes. Specifically, bridges for all

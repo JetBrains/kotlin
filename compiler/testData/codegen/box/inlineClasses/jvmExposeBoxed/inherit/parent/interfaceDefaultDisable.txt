@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class A$DefaultImpls {
+    // source: 'interfaceDefaultDisable.kt'
+    public static @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method abstractMethod(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: kotlin.UInt): java.lang.String
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface A {
+    // source: 'interfaceDefaultDisable.kt'
+    public abstract @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method abstractMethod(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): java.lang.String
+    public abstract @org.jetbrains.annotations.NotNull method abstractMethod-WZ4Q5Ns(p0: int): java.lang.String
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'interfaceDefaultDisable.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method abstractMethod-WZ4Q5Ns(p0: int): java.lang.String
+}
+
+@kotlin.Metadata
+public final class InterfaceDefaultDisableKt {
+    // source: 'interfaceDefaultDisable.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

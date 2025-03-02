@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -64,8 +65,10 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
-    // TODO lower @JvmName?
-    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.arguments[0] as? IrConst ?: return null
+    // TODO lower @JvmName and @JvmExposeBoxed?
+    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.arguments[0] as? IrConst
+        ?: getJvmNameFromJvmExposeBoxedAnnotation()
+        ?: return null
     val value = const.value as? String ?: return null
     return when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> "$value\$default"
@@ -73,6 +76,12 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
         JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE -> "$value$FOR_INLINE_SUFFIX"
         else -> value
     }
+}
+
+private fun IrDeclaration.getJvmNameFromJvmExposeBoxedAnnotation(): IrConst? {
+    // @JvmExposeBoxed should have no effect on not exposed functions
+    if (origin != JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS) return null
+    return getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.arguments[0] as? IrConst
 }
 
 fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
@@ -233,6 +242,32 @@ val IrDeclaration.isStaticInlineClassReplacement: Boolean
 val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
             || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
+
+fun IrDeclaration.shouldBeExposedByAnnotation(): Boolean {
+    if (!isFunctionWithInlineClassesInSignature()) return false
+
+    return findJvmExposeBoxedAnnotation() != null
+}
+
+// Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS
+fun IrDeclaration.isFunctionWithInlineClassesInSignature(): Boolean {
+    if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) return false
+    if (isSuspend) return false
+    if (parameters.any { it.type.isInlineClassType() }) return true
+    if (!returnType.isInlineClassType()) return false
+    // It is not explicitly annotated, global and returns inline class, do not expose it, since otherwise
+    // it would lead to ambiguous call on Java side
+    return !parentAsClass.isFileClass || annotations.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+}
+
+fun IrDeclaration.findJvmExposeBoxedAnnotation(): IrConstructorCall? {
+    var cursor: IrMutableAnnotationContainer? = this
+    while (cursor != null) {
+        cursor.getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.let { return it }
+        cursor = (cursor as? IrDeclaration)?.parent as? IrMutableAnnotationContainer
+    }
+    return null
+}
 
 val IrDeclaration.isStaticValueClassReplacement: Boolean
     get() = isStaticMultiFieldValueClassReplacement || isStaticInlineClassReplacement
