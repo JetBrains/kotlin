@@ -4023,6 +4023,38 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmInlineWithoutValueClass::class
     }
 
+    interface InapplicableJvmExposeBoxedWithName : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InapplicableJvmExposeBoxedWithName::class
+    }
+
+    interface UselessJvmExposeBoxed : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UselessJvmExposeBoxed::class
+    }
+
+    interface JvmExposeBoxedCannotExposeSuspend : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedCannotExposeSuspend::class
+    }
+
+    interface JvmExposeBoxedRequiresName : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedRequiresName::class
+    }
+
+    interface JvmExposeBoxedCannotBeTheSame : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedCannotBeTheSame::class
+    }
+
+    interface JvmExposeBoxedCannotBeTheSameAsJvmName : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedCannotBeTheSameAsJvmName::class
+    }
+
+    interface JvmExposeBoxedCannotExposeOpenAbstract : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedCannotExposeOpenAbstract::class
+    }
+
+    interface JvmExposeBoxedCannotExposeSynthetic : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedCannotExposeSynthetic::class
+    }
+
     interface WrongNullabilityForJavaOverride : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = WrongNullabilityForJavaOverride::class
         val override: KaCallableSymbol

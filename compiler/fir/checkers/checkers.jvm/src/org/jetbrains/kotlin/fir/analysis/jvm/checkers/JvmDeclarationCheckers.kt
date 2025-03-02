@@ -13,6 +13,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJvmExternalDeclarationChecker,
             FirJvmNameChecker,
+            FirJvmExposeBoxedChecker,
             FirJvmDefaultChecker,
             FirJvmFunctionDelegateMemberNameClashChecker,
             FirJvmStaticChecker,
