@@ -575,20 +575,19 @@ class AppleFrameworkIT : KGPBaseTest() {
     }
 
     @DisplayName("Smoke test with apple gradle plugin")
-    @GradleWithJdkTest
-    @JdkVersions(versions = [JavaVersion.VERSION_11])
-    fun smokeTestWithAppleGradlePlugin(
-        gradleVersion: GradleVersion,
-        providedJdk: JdkVersions.ProvidedJdk,
-    ) {
-
+    @GradleTest
+    fun smokeTestWithAppleGradlePlugin(gradleVersion: GradleVersion) {
         nativeProject(
             "appleGradlePluginConsumesAppleFrameworks",
             gradleVersion,
-            buildJdk = providedJdk.location,
+            buildJdk = jdk11Info.javaHome,
             buildOptions = defaultBuildOptions.copy(
                 // Apple plugin doesn't support configuration cache
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+            ).suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_8_0,
+                gradleVersion,
+                "ApplePlugin produces Gradle deprecations"
             )
         ) {
             fun dependencyInsight(configuration: String) = arrayOf(

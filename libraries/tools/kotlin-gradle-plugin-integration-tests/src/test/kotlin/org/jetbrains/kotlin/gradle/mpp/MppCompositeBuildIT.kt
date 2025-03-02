@@ -207,7 +207,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions
                 .disableKmpIsolatedProjectSupport() // a very old Kotlin is involved in this test
-                .disableConfigurationCache_KT70416()
                 .suppressDeprecationWarningsOn(
                     reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
                 ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }

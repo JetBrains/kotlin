@@ -29,10 +29,7 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 open class KlibBasedMppIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions = super
-        .defaultBuildOptions
-        .copyEnsuringK1()
-        .disableConfigurationCache_KT70416()
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
