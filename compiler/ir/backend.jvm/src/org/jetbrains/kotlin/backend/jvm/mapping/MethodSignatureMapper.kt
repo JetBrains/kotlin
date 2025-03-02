@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
@@ -184,7 +185,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
-        isBoxMethodForInlineClass(function) ||
+        (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && function.returnType.isInlineClassType()) ||
+                isBoxMethodForInlineClass(function) ||
                 forceFoxedReturnTypeOnOverride(function) ||
                 forceBoxedReturnTypeOnDefaultImplFun(function) ||
                 function.isFromJava() && function.returnType.isInlineClassType()
@@ -340,13 +342,20 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             if (type.isInlineClassType() && declaration.isFromJava()) {
                 typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw, materialized)
             } else {
-                typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw, materialized)
+                typeMapper.mapType(type, declaration.wrapInlineClassForExposeFunction(TypeMappingMode.DEFAULT, type), sw, materialized)
             }
             return
         }
 
         val mode = getTypeMappingModeForParameter(typeSystem, declaration, type)
-        typeMapper.mapType(type, mode, sw, materialized)
+        typeMapper.mapType(type, declaration.wrapInlineClassForExposeFunction(mode, type), sw, materialized)
+    }
+
+    private fun IrDeclaration.wrapInlineClassForExposeFunction(mode: TypeMappingMode, type: IrType): TypeMappingMode {
+        if (hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) && type.isInlineClassType()) {
+            return mode.wrapInlineClassesMode()
+        }
+        return mode
     }
 
     // TODO get rid of 'caller' argument

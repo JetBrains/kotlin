@@ -27512,6 +27512,71 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed")
+      @TestDataPath("$PROJECT_ROOT")
+      @UseExtTestCaseGroupProvider()
+      @UsePartialLinkage(mode = Mode.DISABLED)
+      @Tag("no-partial-linkage-may-be-skipped")
+      public class JvmExposeBoxed {
+        @Test
+        public void testAllFilesPresentInJvmExposeBoxed() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class Directive {
+          @Test
+          public void testAllFilesPresentInDirective() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class FeatureInteraction {
+          @Test
+          public void testAllFilesPresentInFeatureInteraction() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class Inherit {
+          @Test
+          public void testAllFilesPresentInInherit() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child")
+          @TestDataPath("$PROJECT_ROOT")
+          @UseExtTestCaseGroupProvider()
+          @UsePartialLinkage(mode = Mode.DISABLED)
+          @Tag("no-partial-linkage-may-be-skipped")
+          public class Child {
+            @Test
+            public void testAllFilesPresentInChild() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+          }
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
       @TestDataPath("$PROJECT_ROOT")
       @UseExtTestCaseGroupProvider()

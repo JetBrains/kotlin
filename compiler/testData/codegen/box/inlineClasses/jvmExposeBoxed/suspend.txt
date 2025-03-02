@@ -1,0 +1,57 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class StringWrapper {
+    // source: 'suspend.kt'
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private synthetic method <init>(p0: java.lang.String, p1: java.lang.Void): void
+    public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class SuspendKt$box$1 {
+    // source: 'suspend.kt'
+    enclosing method SuspendKt.box()Ljava/lang/String;
+    synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
+    field L$0: java.lang.Object
+    field label: int
+    inner (anonymous) class SuspendKt$box$1
+    method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.Continuation): void
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
+    public final inner class kotlin/jvm/internal/Ref$ObjectRef
+}
+
+@kotlin.Metadata
+public final class SuspendKt$builder$$inlined$Continuation$1 {
+    // source: 'Continuation.kt'
+    enclosing method SuspendKt.builder(Lkotlin/jvm/functions/Function1;)V
+    synthetic final field $context: kotlin.coroutines.CoroutineContext
+    inner (anonymous) class SuspendKt$builder$$inlined$Continuation$1
+    public method <init>(p0: kotlin.coroutines.CoroutineContext): void
+    public method getContext(): kotlin.coroutines.CoroutineContext
+    public method resumeWith(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class SuspendKt {
+    // source: 'suspend.kt'
+    inner (anonymous) class SuspendKt$box$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static @org.jetbrains.annotations.Nullable method foo-d-auiwc(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final inner class kotlin/jvm/internal/Ref$ObjectRef
+}

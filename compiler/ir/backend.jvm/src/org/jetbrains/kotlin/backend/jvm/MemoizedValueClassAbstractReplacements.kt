@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
@@ -57,7 +63,9 @@ abstract class MemoizedValueClassAbstractReplacements(
         returnType = function.returnType
     }.apply {
         parent = function.parent
-        annotations = function.annotations
+        // Non-exposed methods and functions should not have @JvmExposeBoxed annotation, since we expect users to be able to
+        // distinguish exposed functions via reflection.
+        annotations = function.annotations.withoutJvmExposeBoxedAnnotation()
         copyTypeParameters(function.allTypeParameters)
         if (function.metadata != null) {
             metadata = function.metadata
@@ -123,4 +131,34 @@ abstract class MemoizedValueClassAbstractReplacements(
         }
 
     protected fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
+}
+
+fun List<IrConstructorCall>.withoutJvmExposeBoxedAnnotation(): List<IrConstructorCall> =
+    this.toMutableList().apply {
+        removeAll {
+            it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) == true
+        }
+    }
+
+fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrConstructorCall> {
+    if (hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
+        val jvmExposeBoxedAnnotation = findAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+        // If name is not provided, copy the name from @JvmName annotation, if the latter is present
+        if (jvmExposeBoxedAnnotation?.arguments[0] == null) {
+            val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
+            if (jvmName != null) {
+                jvmExposeBoxedAnnotation?.arguments[0] = jvmName
+            }
+        }
+        return this
+    }
+    // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
+    // or -Xjvm-expose-boxed is specified. Add the annotation.
+    val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
+    return this + IrConstructorCallImpl.fromSymbolOwner(
+        constructor.owner.returnType,
+        constructor
+    ).apply {
+        arguments.add(null)
+    }
 }

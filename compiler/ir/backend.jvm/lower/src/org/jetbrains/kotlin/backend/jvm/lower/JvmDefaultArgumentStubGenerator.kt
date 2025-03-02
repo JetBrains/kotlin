@@ -15,14 +15,20 @@ import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFinalClass
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 @PhaseDescription(
     name = "DefaultArgumentsStubGenerator",
-    prerequisite = [JvmLocalDeclarationsLowering::class]
+    prerequisite = [
+        JvmLocalDeclarationsLowering::class,
+        JvmInlineClassLowering::class /* @JvmExposeBoxed should already be processed */
+    ]
 )
 internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : DefaultArgumentStubGenerator<JvmBackendContext>(
     context = context,
@@ -30,6 +36,11 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
     skipInlineMethods = false,
     skipExternalMethods = false
 ) {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration is IrFunction && declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return null
+        return super.transformFlat(declaration)
+    }
+
     override fun defaultArgumentStubVisibility(function: IrFunction) = function.getJvmVisibilityOfDefaultArgumentStub()
 
     override fun useConstructorMarker(function: IrFunction): Boolean =

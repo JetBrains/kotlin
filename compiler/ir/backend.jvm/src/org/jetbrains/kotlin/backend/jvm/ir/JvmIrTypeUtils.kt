@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 
 /**
@@ -58,6 +59,9 @@ fun IrType.isInlineClassType(): Boolean {
         erasedUpperBound.isSingleFieldValueClass
     }
 }
+
+fun IrType.isBoxedInlineClassType(): Boolean =
+    isInlineClassType() && isNullable() && unboxInlineClass().let { it.isPrimitiveType() || it.isNullable() }
 
 fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
 

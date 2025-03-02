@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Type
@@ -296,6 +297,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // This matches the behavior of the JVM backend, but it does mean that we generate superfluous bridges
             // for abstract methods overriding a special bridge for which we do not create a bridge due to,
             // e.g., signature clashes.
+            return
+        } else if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
+            // Do not generate bridge methods for exposed methods, since we already generate bridges for
+            // their mangled counterparts. Generating both bridges will lead to declaration clash.
             return
         }
 
