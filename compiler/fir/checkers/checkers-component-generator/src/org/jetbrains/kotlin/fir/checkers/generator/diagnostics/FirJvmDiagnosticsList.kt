@@ -42,6 +42,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
         val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
 
+        val INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME by error<PsiElement>()
+        val USELESS_JVM_EXPOSE_BOXED by warning<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_REQUIRES_NAME by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME by error<PsiElement>()
+
         val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("override")
             parameter<FirCallableSymbol<*>>("base")

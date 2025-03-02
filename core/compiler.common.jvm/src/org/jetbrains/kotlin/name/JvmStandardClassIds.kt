@@ -16,6 +16,9 @@ object JvmStandardClassIds {
 
     val JVM_NAME_SHORT: String = JVM_NAME.shortName().asString()
 
+    val JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmExposeBoxed")
+    val JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+
     val JVM_MULTIFILE_CLASS: FqName = FqName("kotlin.jvm.JvmMultifileClass")
     val JVM_MULTIFILE_CLASS_ID: ClassId = ClassId.topLevel(JVM_MULTIFILE_CLASS)
     val JVM_MULTIFILE_CLASS_SHORT = JVM_MULTIFILE_CLASS.shortName().asString()
@@ -156,6 +159,10 @@ object JvmStandardClassIds {
             val Target = "Target".javaAnnotationId()
             val ElementType = "ElementType".javaAnnotationId()
             val RetentionPolicy = "RetentionPolicy".javaAnnotationId()
+        }
+
+        object ParameterNames {
+            val jvmExposeBoxedName = Name.identifier("jvmName")
         }
     }
 
