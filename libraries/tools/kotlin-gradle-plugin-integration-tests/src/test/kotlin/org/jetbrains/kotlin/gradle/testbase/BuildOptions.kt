@@ -91,7 +91,7 @@ data class BuildOptions(
         fun toBooleanFlag(gradleVersion: GradleVersion): Boolean? = when (this) {
             DISABLED -> false
             ENABLED -> true
-            AUTO -> if (HostManager.hostIsMac && gradleVersion >= GradleVersion.version("8.0")) true else null
+            AUTO -> true
             UNSPECIFIED -> null
         }
     }
