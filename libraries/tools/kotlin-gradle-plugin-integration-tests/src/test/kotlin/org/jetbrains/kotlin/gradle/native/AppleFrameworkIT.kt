@@ -586,10 +586,6 @@ class AppleFrameworkIT : KGPBaseTest() {
             "appleGradlePluginConsumesAppleFrameworks",
             gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(
-                // Apple plugin doesn't support configuration cache
-                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
-            )
         ) {
             fun dependencyInsight(configuration: String) = arrayOf(
                 ":iosApp:dependencyInsight", "--configuration", configuration, "--dependency", "iosLib"
