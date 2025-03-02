@@ -222,3 +222,37 @@ internal expect annotation class JvmPackageName(val name: String)
 @SinceKotlin("1.8")
 @OptionalExpectation
 public expect annotation class JvmSerializableLambda()
+
+/**
+ * This annotation instructs the compiler to expose the API of functions with inline classes
+ * (and the classes containing them, including inline classes themselves)
+ * as their boxed variant for effective usage from Java.
+ *
+ * It performs the following transformations:
+ *
+ * - For annotated functions and constructors that take or return inline classes,
+ *   an unmangled wrapper function is created where inline classes are boxed.
+ *   The wrapper is thus visible and callable from Java.
+ *
+ * - If class is annotated, the annotation implicitly propagates to its methods, forcing
+ *   the compiler to generate wrappers for them.
+ *
+ * - A constructor is made available from Java.
+ *
+ * These changes maintain backward compatibility, allowing existing API to be safely marked.
+ *
+ * @property jvmName optional wrapper name. Only applicable to functions, getters and setters.
+ */
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@OptionalExpectation
+@Target(
+    // function-like
+    FUNCTION, CONSTRUCTOR,
+    PROPERTY_GETTER, PROPERTY_SETTER,
+    // containers
+    CLASS,
+)
+public expect annotation class JvmExposeBoxed(val jvmName: String = "")
