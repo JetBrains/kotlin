@@ -89,6 +89,13 @@ open annotation class kotlin.jvm/ImplicitlyActualizedByJvmDeclaration : kotlin/A
     constructor <init>() // kotlin.jvm/ImplicitlyActualizedByJvmDeclaration.<init>|<init>(){}[1]
 }
 
+open annotation class kotlin.jvm/JvmExposeBoxed : kotlin/Annotation { // kotlin.jvm/JvmExposeBoxed|null[1]
+    constructor <init>(kotlin/String = ...) // kotlin.jvm/JvmExposeBoxed.<init>|<init>(kotlin.String){}[1]
+
+    final val jvmName // kotlin.jvm/JvmExposeBoxed.jvmName|{}jvmName[1]
+        final fun <get-jvmName>(): kotlin/String // kotlin.jvm/JvmExposeBoxed.jvmName.<get-jvmName>|<get-jvmName>(){}[1]
+}
+
 open annotation class kotlin.jvm/JvmField : kotlin/Annotation { // kotlin.jvm/JvmField|null[1]
     constructor <init>() // kotlin.jvm/JvmField.<init>|<init>(){}[1]
 }
