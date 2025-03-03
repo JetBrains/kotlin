@@ -62,8 +62,13 @@ internal interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<KtProper
 
     val hasBodyImpl: Boolean
         get() = withValidityAssertion {
-            ifSource {
-                backingPsi?.hasBody() == true || backingPsi?.property?.hasDelegate() == true
+            owningKaProperty.ifSource {
+                if (backingPsi?.hasBody() == true) {
+                    return true
+                }
+
+                val property = owningKaProperty.backingPsi
+                property is KtProperty && property.hasDelegate()
             } ?: firSymbol.fir.hasBody
         }
 
