@@ -60,9 +60,14 @@ tasks.test {
     useJUnitPlatform()
     jvmArgs("-Xmx2G")
     environment("TEST_RESOURCES", project.layout.projectDirectory)
+
+    // gets the path to JDK 11 either from gradle.properties or from the system property, defaulting to java.home
+    environment(
+        "JDK_11_0",
+        project.properties["JDK_11_0"] ?: System.getProperty("JDK_11_0", System.getProperty("java.home")),
+    )
     doFirst {
         setLibraryProperty("org.jetbrains.kotlin.test.kotlin-stdlib", "kotlin-stdlib")
-        setLibraryProperty("org.jetbrains.kotlin.test.kotlin-stdlib-jdk8", "kotlin-stdlib-jdk8")
         setLibraryProperty("org.jetbrains.kotlin.test.kotlin-reflect", "kotlin-reflect")
         setLibraryProperty("org.jetbrains.kotlin.test.kotlin-test", "kotlin-test")
         setLibraryProperty("org.jetbrains.kotlin.test.kotlin-script-runtime", "kotlin-script-runtime")
@@ -83,21 +88,21 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 tasks.withType<JavaCompile> {
-    sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-    targetCompatibility = JavaVersion.VERSION_1_8.toString()
+    sourceCompatibility = JavaVersion.VERSION_11.toString()
+    targetCompatibility = JavaVersion.VERSION_11.toString()
 }
 
 tasks.compileKotlin {
     compilerOptions {
         languageVersion = KotlinVersion.KOTLIN_2_0
-        jvmTarget = JvmTarget.JVM_1_8
+        jvmTarget = JvmTarget.JVM_11
     }
 }
 
 tasks.compileTestKotlin {
     compilerOptions {
         languageVersion = KotlinVersion.KOTLIN_2_0
-        jvmTarget = JvmTarget.JVM_1_8
+        jvmTarget = JvmTarget.JVM_11
     }
 }
 
