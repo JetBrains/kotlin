@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -106,8 +108,8 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                             // Most of such null checks will never actually throw, but we can't do anything about it.
                             irBlock(resultType = type) {
                                 +irCall(backendContext.symbols.checkNotNullWithMessage).apply {
-                                    putValueArgument(0, irGet(tmp.owner))
-                                    putValueArgument(1, message)
+                                    arguments[0] = irGet(tmp.owner)
+                                    arguments[1] = message
                                 }
                                 +irAs(irGet(tmp.owner), type.makeNullable())
                             }
@@ -116,7 +118,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                                 type,
                                 irGet(tmp.owner),
                                 irCall(throwTypeCastException).apply {
-                                    putValueArgument(0, message)
+                                    arguments[0] = message
                                 },
                                 irAs(irGet(tmp.owner), type.makeNullable())
                             )
@@ -165,11 +167,11 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
     private fun JvmIrBuilder.jvmMethodHandle(handle: Handle) =
         irCall(backendContext.symbols.jvmMethodHandle).apply {
-            putValueArgument(0, irInt(handle.tag))
-            putValueArgument(1, irString(handle.owner))
-            putValueArgument(2, irString(handle.name))
-            putValueArgument(3, irString(handle.desc))
-            putValueArgument(4, irBoolean(handle.isInterface))
+            arguments[0] = irInt(handle.tag)
+            arguments[1] = irString(handle.owner)
+            arguments[2] = irString(handle.name)
+            arguments[3] = irString(handle.desc)
+            arguments[4] = irBoolean(handle.isInterface)
         }
 
     private fun JvmIrBuilder.jvmInvokeDynamic(
@@ -179,14 +181,14 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     ) =
         irCall(backendContext.symbols.jvmIndyIntrinsic, dynamicCall.type).apply {
             typeArguments[0] = dynamicCall.type
-            putValueArgument(0, dynamicCall)
-            putValueArgument(1, jvmMethodHandle(bootstrapMethodHandle))
-            putValueArgument(2, irVararg(context.irBuiltIns.anyType, bootstrapMethodArguments))
+            arguments[0] = dynamicCall
+            arguments[1] = jvmMethodHandle(bootstrapMethodHandle)
+            arguments[2] = irVararg(context.irBuiltIns.anyType, bootstrapMethodArguments)
         }
 
     private fun JvmIrBuilder.jvmOriginalMethodType(methodSymbol: IrFunctionSymbol) =
         irCall(backendContext.symbols.jvmOriginalMethodTypeIntrinsic, context.irBuiltIns.anyType).apply {
-            putValueArgument(0, irRawFunctionReference(context.irBuiltIns.anyType, methodSymbol))
+            arguments[0] = irRawFunctionReference(context.irBuiltIns.anyType, methodSymbol)
         }
 
     /**
@@ -329,7 +331,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             irBlockBody {
                 val tmp = irTemporary(
                     irCall(backendContext.symbols.serializedLambda.getImplMethodName).apply {
-                        dispatchReceiver = irGet(lambdaParameter)
+                        arguments[0] = irGet(lambdaParameter)
                     }
                 )
                 +irWhen(
@@ -352,15 +354,12 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
                 +irThrow(
                     irCall(backendContext.symbols.illegalArgumentExceptionCtorString).also { ctorCall ->
-                        ctorCall.putValueArgument(
-                            0,
-                            // Replace argument with:
-                            //  irCall(backendContext.irBuiltIns.anyClass.getSimpleFunction("toString")!!).apply {
-                            //      dispatchReceiver = irGet(lambdaParameter)
-                            //  }
-                            // for debugging "Invalid lambda deserialization" exceptions.
-                            irString("Invalid lambda deserialization")
-                        )
+                        // Replace argument with:
+                        //  irCall(backendContext.irBuiltIns.anyClass.getSimpleFunction("toString")!!).apply {
+                        //      arguments[0] = irGet(lambdaParameter)
+                        //  }
+                        // for debugging "Invalid lambda deserialization" exceptions.
+                        ctorCall.arguments[0] = irString("Invalid lambda deserialization")
                     }
                 )
             }
@@ -385,7 +384,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         val samMethod = deserializedLambdaInfo.functionalInterfaceMethod
 
         fun irGetLambdaProperty(getter: IrSimpleFunction) =
-            irCall(getter).apply { dispatchReceiver = irGet(lambdaParameter) }
+            irCall(getter).apply { arguments[0] = irGet(lambdaParameter) }
 
         return irAndAnd(
             irEquals(
@@ -419,8 +418,8 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
     private fun JvmIrBuilder.irObjectEquals(receiver: IrExpression, arg: IrExpression) =
         irCall(equalsAny).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, arg)
+            arguments[0] = receiver
+            arguments[1] = arg
         }
 
     private fun JvmIrBuilder.irAndAnd(vararg args: IrExpression): IrExpression {
@@ -428,8 +427,8 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         var result = args[0]
         for (i in 1 until args.size) {
             result = irCall(backendContext.irBuiltIns.andandSymbol).apply {
-                putValueArgument(0, result)
-                putValueArgument(1, args[i])
+                arguments[0] = result
+                arguments[1] = args[i]
             }
         }
         return result
@@ -440,10 +439,10 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         info: SerializableMethodRefInfo
     ): IrExpression {
         val dynamicCall = irCall(info.dynamicCallSymbol)
-        for ((index, dynamicValueParameter) in info.dynamicCallSymbol.owner.valueParameters.withIndex()) {
+        for ((index, dynamicValueParameter) in info.dynamicCallSymbol.owner.parameters.withIndex()) {
             val capturedArg = irCall(backendContext.symbols.serializedLambda.getCapturedArg).also { call ->
-                call.dispatchReceiver = irGet(lambdaParameter)
-                call.putValueArgument(0, irInt(index))
+                call.arguments[0] = irGet(lambdaParameter)
+                call.arguments[1] = irInt(index)
             }
             val expectedType = dynamicValueParameter.type
             val downcastArg =
@@ -453,12 +452,12 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                     irCall(backendContext.symbols.unsafeCoerceIntrinsic).also { coercion ->
                         coercion.typeArguments[0] = unboxedType
                         coercion.typeArguments[1] = expectedType
-                        coercion.putValueArgument(0, capturedArg)
+                        coercion.arguments[0] = capturedArg
                     }
                 } else {
                     irAs(capturedArg, expectedType)
                 }
-            dynamicCall.putValueArgument(index, downcastArg)
+            dynamicCall.arguments[index] = downcastArg
         }
 
         return createLambdaMetafactoryCall(
@@ -479,16 +478,16 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         val samType = call.typeArguments[0] as? IrSimpleType
             ?: fail("'samType' is expected to be a simple type")
 
-        val samMethodRef = call.getValueArgument(0) as? IrRawFunctionReference
+        val samMethodRef = call.arguments[0] as? IrRawFunctionReference
             ?: fail("'samMethodType' should be 'IrRawFunctionReference'")
-        val implFunRef = call.getValueArgument(1) as? IrFunctionReference
+        val implFunRef = call.arguments[1] as? IrFunctionReference
             ?: fail("'implMethodReference' is expected to be 'IrFunctionReference'")
         val implFunSymbol = implFunRef.symbol
-        val instanceMethodRef = call.getValueArgument(2) as? IrRawFunctionReference
+        val instanceMethodRef = call.arguments[2] as? IrRawFunctionReference
             ?: fail("'instantiatedMethodType' is expected to be 'IrRawFunctionReference'")
 
         val extraOverriddenMethods = run {
-            val extraOverriddenMethodVararg = call.getValueArgument(3) as? IrVararg
+            val extraOverriddenMethodVararg = call.arguments[3] as? IrVararg
                 ?: fail("'extraOverriddenMethodTypes' is expected to be 'IrVararg'")
             extraOverriddenMethodVararg.elements.map {
                 val ref = it as? IrRawFunctionReference
@@ -611,7 +610,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         fun fail(message: String): Nothing =
             throw AssertionError("$message, targetRef:\n${targetRef.dump()}")
 
-        val dynamicCallArguments = ArrayList<IrExpression>()
+        val dynamicCallArguments = mutableListOf<IrExpression>()
 
         val irDynamicCallTarget = backendContext.irFactory.buildFun {
             origin = JvmLoweredDeclarationOrigin.INVOKEDYNAMIC_CALL_TARGET
@@ -621,49 +620,50 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             parent = backendContext.symbols.kotlinJvmInternalInvokeDynamicPackage
 
             val targetFun = targetRef.symbol.owner
-            val refDispatchReceiver = targetRef.dispatchReceiver
-            val refExtensionReceiver = targetRef.extensionReceiver
 
             var syntheticParameterIndex = 0
-            var argumentStart = 0
-            when (targetFun) {
-                is IrSimpleFunction -> {
-                    if (refDispatchReceiver != null) {
-                        // Fake overrides may have inexact dispatch receiver type.
-                        addValueParameter("p${syntheticParameterIndex++}", targetFun.parentAsClass.defaultType)
-                        dynamicCallArguments.add(refDispatchReceiver)
-                    }
-                    if (refExtensionReceiver != null) {
-                        addValueParameter("p${syntheticParameterIndex++}", targetFun.extensionReceiverParameter!!.type)
-                        dynamicCallArguments.add(refExtensionReceiver)
-                    }
-                }
-                is IrConstructor -> {
-                    // At this point, outer class instances in inner class constructors are represented as regular value parameters.
-                    // However, in a function reference to such constructors, bound receiver value is stored as a dispatch receiver.
-                    if (refDispatchReceiver != null) {
-                        addValueParameter("p${syntheticParameterIndex++}", targetFun.valueParameters[0].type)
-                        dynamicCallArguments.add(refDispatchReceiver)
-                        argumentStart++
-                    }
-                }
-            }
 
-            val samMethodValueParametersCount = samMethod.valueParameters.size +
-                    if (samMethod.extensionReceiverParameter != null && refExtensionReceiver == null) 1 else 0
-            val targetFunValueParametersCount = targetFun.valueParameters.size
-            for (i in argumentStart until targetFunValueParametersCount - samMethodValueParametersCount) {
-                val targetFunValueParameter = targetFun.valueParameters[i]
-                addValueParameter("p${syntheticParameterIndex++}", targetFunValueParameter.type)
-                val capturedValueArgument = targetRef.getValueArgument(i)
-                    ?: fail("Captured value argument #$i (${targetFunValueParameter.render()}) not provided")
-                dynamicCallArguments.add(capturedValueArgument)
+            var argumentStart = 0
+            parameters = (targetFun.parameters zip targetRef.arguments).mapNotNull { (parameter, argument) ->
+                if (argument == null) return@mapNotNull null
+                val (newParameterType, newArgument) = when (parameter.kind) {
+                    IrParameterKind.DispatchReceiver -> when (targetFun) {
+                        is IrSimpleFunction -> {
+                            // Fake overrides may have inexact dispatch receiver type.
+                            targetFun.parentAsClass.defaultType to argument
+                        }
+                        is IrConstructor -> {
+                            // At this point, outer class instances in inner class constructors are represented as regular value parameters.
+                            // However, in a function reference to such constructors, bound receiver value is stored as a dispatch receiver.
+                            argumentStart++
+                            targetFun.parameters[0].type to argument
+                        }
+                    }
+                    IrParameterKind.Context, IrParameterKind.ExtensionReceiver -> {
+                        argumentStart++
+                        parameter.type to argument
+                    }
+                    IrParameterKind.Regular -> {
+                        val capturedValueArgument = targetRef.arguments[argumentStart]
+                            ?: fail("Captured value argument #$argumentStart (${parameter.render()}) not provided")
+                        argumentStart++
+                        parameter.type to capturedValueArgument
+                    }
+                }
+
+                dynamicCallArguments.add(newArgument)
+
+                buildValueParameter(this) {
+                    name = Name.identifier("p${syntheticParameterIndex++}")
+                    type = newParameterType
+                    kind = IrParameterKind.Regular
+                }
             }
         }
 
-        if (dynamicCallArguments.size != irDynamicCallTarget.valueParameters.size) {
+        if (dynamicCallArguments.size != irDynamicCallTarget.parameters.size) {
             throw AssertionError(
-                "Dynamic call target value parameters (${irDynamicCallTarget.valueParameters.size}) " +
+                "Dynamic call target parameters (${irDynamicCallTarget.parameters.size}) " +
                         "don't match dynamic call arguments (${dynamicCallArguments.size}):\n" +
                         "irDynamicCallTarget:\n" +
                         irDynamicCallTarget.dump() +
@@ -678,11 +678,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
         return backendContext.createJvmIrBuilder(irDynamicCallTarget.symbol)
             .irCall(irDynamicCallTarget.symbol)
-            .apply {
-                for (i in dynamicCallArguments.indices) {
-                    putValueArgument(i, dynamicCallArguments[i])
-                }
-            }
+            .apply { arguments.assignFrom(dynamicCallArguments) }
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression = with(builder) {
@@ -742,12 +738,12 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                     irComposite(resultType = expression.type) {
                         if (text != null) {
                             +irCall(checkExpressionValueIsNotNull).apply {
-                                putValueArgument(0, irGet(valueSymbol.owner))
-                                putValueArgument(1, irString(text.trimForRuntimeAssertion()))
+                                arguments[0] = irGet(valueSymbol.owner)
+                                arguments[1] = irString(text.trimForRuntimeAssertion())
                             }
                         } else {
                             +irCall(backendContext.symbols.checkNotNull).apply {
-                                putValueArgument(0, irGet(valueSymbol.owner))
+                                arguments[0] = irGet(valueSymbol.owner)
                             }
                         }
                         +irGet(valueSymbol.owner)
