@@ -20974,6 +20974,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("crossinlineLambdaAllocation.kt")
+      public void testCrossinlineLambdaAllocation() {
+        runTest("compiler/testData/codegen/box/inline/crossinlineLambdaAllocation.kt");
+      }
+
+      @Test
       @TestMetadata("defaultArgs.kt")
       public void testDefaultArgs() {
         runTest("compiler/testData/codegen/box/inline/defaultArgs.kt");

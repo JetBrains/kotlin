@@ -20363,6 +20363,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("crossinlineLambdaAllocation.kt")
+    public void testCrossinlineLambdaAllocation() {
+      runTest("compiler/testData/codegen/box/inline/crossinlineLambdaAllocation.kt");
+    }
+
+    @Test
     @TestMetadata("defaultArgs.kt")
     public void testDefaultArgs() {
       runTest("compiler/testData/codegen/box/inline/defaultArgs.kt");
