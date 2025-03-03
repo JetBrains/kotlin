@@ -436,6 +436,7 @@ public class DebugSymbolRenderer(
             KaSourceModule::class,
             KaLibraryModule::class,
             KaLibrarySourceModule::class,
+            KaLibraryFallbackDependenciesModule::class,
             KaBuiltinsModule::class,
             KaScriptModule::class,
             KaScriptDependencyModule::class,
