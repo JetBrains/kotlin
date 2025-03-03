@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.Getter
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.UnboxFunction
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isMultiFieldValueClassType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 typealias TypeArguments = Map<IrTypeParameterSymbol, IrType>
 
@@ -249,9 +249,7 @@ fun MfvcNodeWithSubnodes.makeBoxedExpression(
     for ((index, typeArgument) in resultType.arguments.withIndex()) {
         this.typeArguments[index] = typeArgument.typeOrNull ?: resultType.erasedUpperBound.typeParameters[index].defaultType
     }
-    for ((index, valueArgument) in valueArguments.withIndex()) {
-        putValueArgument(index, valueArgument)
-    }
+    arguments.assignFrom(valueArguments)
     registerPossibleExtraBoxCreation()
 }
 
