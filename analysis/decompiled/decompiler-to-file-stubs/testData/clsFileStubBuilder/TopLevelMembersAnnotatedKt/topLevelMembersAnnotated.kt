@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 package a.b.c.topLevelMembersAnnotated
 
 import d.e.f.*

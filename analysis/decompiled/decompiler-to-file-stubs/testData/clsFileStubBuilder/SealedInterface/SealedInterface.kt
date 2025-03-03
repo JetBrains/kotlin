@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // BINARY_STUB_ONLY_TEST
 
 package test

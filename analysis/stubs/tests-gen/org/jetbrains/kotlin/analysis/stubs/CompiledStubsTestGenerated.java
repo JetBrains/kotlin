@@ -31,15 +31,69 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("annotatedFlexibleTypes.kt")
+  public void testAnnotatedFlexibleTypes() {
+    runTest("compiler/testData/psi/annotatedFlexibleTypes.kt");
+  }
+
+  @Test
   @TestMetadata("AnnotatedIntersections.kt")
   public void testAnnotatedIntersections() {
     runTest("compiler/testData/psi/AnnotatedIntersections.kt");
   }
 
   @Test
+  @TestMetadata("annotatedParameterInEnumConstructor.kt")
+  public void testAnnotatedParameterInEnumConstructor() {
+    runTest("compiler/testData/psi/annotatedParameterInEnumConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedParameterInInnerClassConstructor.kt")
+  public void testAnnotatedParameterInInnerClassConstructor() {
+    runTest("compiler/testData/psi/annotatedParameterInInnerClassConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationClass.kt")
+  public void testAnnotationClass() {
+    runTest("compiler/testData/psi/annotationClass.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationValues.kt")
+  public void testAnnotationValues() {
+    runTest("compiler/testData/psi/annotationValues.kt");
+  }
+
+  @Test
+  @TestMetadata("annotations.kt")
+  public void testAnnotations() {
+    runTest("compiler/testData/psi/annotations.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationsOnNullableTypes.kt")
+  public void testAnnotationsOnNullableTypes() {
+    runTest("compiler/testData/psi/annotationsOnNullableTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationsOnParenthesizedTypes.kt")
+  public void testAnnotationsOnParenthesizedTypes() {
+    runTest("compiler/testData/psi/annotationsOnParenthesizedTypes.kt");
+  }
+
+  @Test
   @TestMetadata("AnonymousInitializer.kt")
   public void testAnonymousInitializer() {
     runTest("compiler/testData/psi/AnonymousInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("anonymousReturnWithGenericType.kt")
+  public void testAnonymousReturnWithGenericType() {
+    runTest("compiler/testData/psi/anonymousReturnWithGenericType.kt");
   }
 
   @Test
@@ -115,6 +169,18 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("classMembers.kt")
+  public void testClassMembers() {
+    runTest("compiler/testData/psi/classMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("classObject.kt")
+  public void testClassObject() {
+    runTest("compiler/testData/psi/classObject.kt");
+  }
+
+  @Test
   @TestMetadata("CollectionLiterals.kt")
   public void testCollectionLiterals() {
     runTest("compiler/testData/psi/CollectionLiterals.kt");
@@ -157,6 +223,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("const.kt")
+  public void testConst() {
+    runTest("compiler/testData/psi/const.kt");
+  }
+
+  @Test
   @TestMetadata("Constructors.kt")
   public void testConstructors() {
     runTest("compiler/testData/psi/Constructors.kt");
@@ -175,6 +247,18 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("dataClass.kt")
+  public void testDataClass() {
+    runTest("compiler/testData/psi/dataClass.kt");
+  }
+
+  @Test
+  @TestMetadata("defaultImplsInInterface.kt")
+  public void testDefaultImplsInInterface() {
+    runTest("compiler/testData/psi/defaultImplsInInterface.kt");
+  }
+
+  @Test
   @TestMetadata("DefaultKeyword.kt")
   public void testDefaultKeyword() {
     runTest("compiler/testData/psi/DefaultKeyword.kt");
@@ -184,6 +268,24 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   @TestMetadata("DefinitelyNotNullType.kt")
   public void testDefinitelyNotNullType() {
     runTest("compiler/testData/psi/DefinitelyNotNullType.kt");
+  }
+
+  @Test
+  @TestMetadata("definitelyNotNullTypes.kt")
+  public void testDefinitelyNotNullTypes() {
+    runTest("compiler/testData/psi/definitelyNotNullTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("delegation.kt")
+  public void testDelegation() {
+    runTest("compiler/testData/psi/delegation.kt");
+  }
+
+  @Test
+  @TestMetadata("dependencyOnNestedClasses.kt")
+  public void testDependencyOnNestedClasses() {
+    runTest("compiler/testData/psi/dependencyOnNestedClasses.kt");
   }
 
   @Test
@@ -292,6 +394,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   @TestMetadata("EmptyName.kt")
   public void testEmptyName() {
     runTest("compiler/testData/psi/EmptyName.kt");
+  }
+
+  @Test
+  @TestMetadata("enum.kt")
+  public void testEnum() {
+    runTest("compiler/testData/psi/enum.kt");
   }
 
   @Test
@@ -427,6 +535,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("flexibleDnnType.kt")
+  public void testFlexibleDnnType() {
+    runTest("compiler/testData/psi/flexibleDnnType.kt");
+  }
+
+  @Test
   @TestMetadata("FloatingPointLiteral.kt")
   public void testFloatingPointLiteral() {
     runTest("compiler/testData/psi/FloatingPointLiteral.kt");
@@ -436,6 +550,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   @TestMetadata("ForWithMultiDecl.kt")
   public void testForWithMultiDecl() {
     runTest("compiler/testData/psi/ForWithMultiDecl.kt");
+  }
+
+  @Test
+  @TestMetadata("funInterfaceDeclaration.kt")
+  public void testFunInterfaceDeclaration() {
+    runTest("compiler/testData/psi/funInterfaceDeclaration.kt");
   }
 
   @Test
@@ -547,9 +667,27 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("inheritingClasses.kt")
+  public void testInheritingClasses() {
+    runTest("compiler/testData/psi/inheritingClasses.kt");
+  }
+
+  @Test
   @TestMetadata("Inner.kt")
   public void testInner() {
     runTest("compiler/testData/psi/Inner.kt");
+  }
+
+  @Test
+  @TestMetadata("innerClassEnumEntry.kt")
+  public void testInnerClassEnumEntry() {
+    runTest("compiler/testData/psi/innerClassEnumEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("innerTypes.kt")
+  public void testInnerTypes() {
+    runTest("compiler/testData/psi/innerTypes.kt");
   }
 
   @Test
@@ -601,6 +739,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("localClass.kt")
+  public void testLocalClass() {
+    runTest("compiler/testData/psi/localClass.kt");
+  }
+
+  @Test
   @TestMetadata("LocalDeclarations.kt")
   public void testLocalDeclarations() {
     runTest("compiler/testData/psi/LocalDeclarations.kt");
@@ -619,9 +763,27 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("modifiers.kt")
+  public void testModifiers() {
+    runTest("compiler/testData/psi/modifiers.kt");
+  }
+
+  @Test
   @TestMetadata("MultiVariableDeclarations.kt")
   public void testMultiVariableDeclarations() {
     runTest("compiler/testData/psi/MultiVariableDeclarations.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileClass.kt")
+  public void testMultifileClass() {
+    runTest("compiler/testData/psi/multifileClass.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileClass2.kt")
+  public void testMultifileClass2() {
+    runTest("compiler/testData/psi/multifileClass2.kt");
   }
 
   @Test
@@ -631,9 +793,21 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("namedCompanionObject.kt")
+  public void testNamedCompanionObject() {
+    runTest("compiler/testData/psi/namedCompanionObject.kt");
+  }
+
+  @Test
   @TestMetadata("namelessObjectAsEnumMember.kt")
   public void testNamelessObjectAsEnumMember() {
     runTest("compiler/testData/psi/namelessObjectAsEnumMember.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClasses.kt")
+  public void testNestedClasses() {
+    runTest("compiler/testData/psi/nestedClasses.kt");
   }
 
   @Test
@@ -679,6 +853,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("objects.kt")
+  public void testObjects() {
+    runTest("compiler/testData/psi/objects.kt");
+  }
+
+  @Test
   @TestMetadata("ParameterNameMising.kt")
   public void testParameterNameMising() {
     runTest("compiler/testData/psi/ParameterNameMising.kt");
@@ -706,6 +886,18 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   @TestMetadata("PrimaryConstructorModifiers_ERR.kt")
   public void testPrimaryConstructorModifiers_ERR() {
     runTest("compiler/testData/psi/PrimaryConstructorModifiers_ERR.kt");
+  }
+
+  @Test
+  @TestMetadata("privateConstField.kt")
+  public void testPrivateConstField() {
+    runTest("compiler/testData/psi/privateConstField.kt");
+  }
+
+  @Test
+  @TestMetadata("privateToThis.kt")
+  public void testPrivateToThis() {
+    runTest("compiler/testData/psi/privateToThis.kt");
   }
 
   @Test
@@ -739,9 +931,33 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("repeatableAnnotation.kt")
+  public void testRepeatableAnnotation() {
+    runTest("compiler/testData/psi/repeatableAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("repeatableAnnotationClass.kt")
+  public void testRepeatableAnnotationClass() {
+    runTest("compiler/testData/psi/repeatableAnnotationClass.kt");
+  }
+
+  @Test
   @TestMetadata("Reserved.kt")
   public void testReserved() {
     runTest("compiler/testData/psi/Reserved.kt");
+  }
+
+  @Test
+  @TestMetadata("sealed.kt")
+  public void testSealed() {
+    runTest("compiler/testData/psi/sealed.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedInterface.kt")
+  public void testSealedInterface() {
+    runTest("compiler/testData/psi/sealedInterface.kt");
   }
 
   @Test
@@ -799,6 +1015,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("specialNames.kt")
+  public void testSpecialNames() {
+    runTest("compiler/testData/psi/specialNames.kt");
+  }
+
+  @Test
   @TestMetadata("StringTemplates.kt")
   public void testStringTemplates() {
     runTest("compiler/testData/psi/StringTemplates.kt");
@@ -814,6 +1036,30 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   @TestMetadata("Super.kt")
   public void testSuper() {
     runTest("compiler/testData/psi/Super.kt");
+  }
+
+  @Test
+  @TestMetadata("suspendLambda.kt")
+  public void testSuspendLambda() {
+    runTest("compiler/testData/psi/suspendLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("topJvmPackageName.kt")
+  public void testTopJvmPackageName() {
+    runTest("compiler/testData/psi/topJvmPackageName.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelMembers.kt")
+  public void testTopLevelMembers() {
+    runTest("compiler/testData/psi/topLevelMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelMembersAnnotated.kt")
+  public void testTopLevelMembersAnnotated() {
+    runTest("compiler/testData/psi/topLevelMembersAnnotated.kt");
   }
 
   @Test
@@ -853,9 +1099,27 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("typeAliasExpansion.kt")
+  public void testTypeAliasExpansion() {
+    runTest("compiler/testData/psi/typeAliasExpansion.kt");
+  }
+
+  @Test
   @TestMetadata("TypeAlias_ERR.kt")
   public void testTypeAlias_ERR() {
     runTest("compiler/testData/psi/TypeAlias_ERR.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliases.kt")
+  public void testTypeAliases() {
+    runTest("compiler/testData/psi/typeAliases.kt");
+  }
+
+  @Test
+  @TestMetadata("typeBoundsAndDelegationSpecifiers.kt")
+  public void testTypeBoundsAndDelegationSpecifiers() {
+    runTest("compiler/testData/psi/typeBoundsAndDelegationSpecifiers.kt");
   }
 
   @Test
@@ -877,6 +1141,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("typeModifiers2.kt")
+  public void testTypeModifiers2() {
+    runTest("compiler/testData/psi/typeModifiers2.kt");
+  }
+
+  @Test
   @TestMetadata("TypeModifiersParenthesized.kt")
   public void testTypeModifiersParenthesized() {
     runTest("compiler/testData/psi/TypeModifiersParenthesized.kt");
@@ -895,9 +1165,27 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("typeParams.kt")
+  public void testTypeParams() {
+    runTest("compiler/testData/psi/typeParams.kt");
+  }
+
+  @Test
   @TestMetadata("TypealiasIsKeyword.kt")
   public void testTypealiasIsKeyword() {
     runTest("compiler/testData/psi/TypealiasIsKeyword.kt");
+  }
+
+  @Test
+  @TestMetadata("types.kt")
+  public void testTypes() {
+    runTest("compiler/testData/psi/types.kt");
+  }
+
+  @Test
+  @TestMetadata("underscoreParameterName.kt")
+  public void testUnderscoreParameterName() {
+    runTest("compiler/testData/psi/underscoreParameterName.kt");
   }
 
   @Test
@@ -940,6 +1228,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   @TestMetadata("valueClass.kt")
   public void testValueClass() {
     runTest("compiler/testData/psi/valueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("varargArgumentWithFunctionalType.kt")
+  public void testVarargArgumentWithFunctionalType() {
+    runTest("compiler/testData/psi/varargArgumentWithFunctionalType.kt");
   }
 
   @Test
@@ -1530,6 +1824,42 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("contextParametersOnCallableMembers.kt")
+    public void testContextParametersOnCallableMembers() {
+      runTest("compiler/testData/psi/contextParameters/contextParametersOnCallableMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParametersOnTopLevelCallables.kt")
+    public void testContextParametersOnTopLevelCallables() {
+      runTest("compiler/testData/psi/contextParameters/contextParametersOnTopLevelCallables.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiversCallableMembers.kt")
+    public void testContextReceiversCallableMembers() {
+      runTest("compiler/testData/psi/contextParameters/contextReceiversCallableMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiversOnClass.kt")
+    public void testContextReceiversOnClass() {
+      runTest("compiler/testData/psi/contextParameters/contextReceiversOnClass.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiversOnFunctionType.kt")
+    public void testContextReceiversOnFunctionType() {
+      runTest("compiler/testData/psi/contextParameters/contextReceiversOnFunctionType.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiversOnTopLevelCallables.kt")
+    public void testContextReceiversOnTopLevelCallables() {
+      runTest("compiler/testData/psi/contextParameters/contextReceiversOnTopLevelCallables.kt");
+    }
+
+    @Test
     @TestMetadata("functions.kt")
     public void testFunctions() {
       runTest("compiler/testData/psi/contextParameters/functions.kt");
@@ -1579,6 +1909,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     @Test
     public void testAllFilesPresentInContracts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("contracts.kt")
+    public void testContracts() {
+      runTest("compiler/testData/psi/contracts/contracts.kt");
     }
 
     @Test
@@ -3221,6 +3557,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     @TestMetadata("recoveryWrongDelegationName.kt")
     public void testRecoveryWrongDelegationName() {
       runTest("compiler/testData/psi/secondaryConstructors/recoveryWrongDelegationName.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructors.kt")
+    public void testSecondaryConstructors() {
+      runTest("compiler/testData/psi/secondaryConstructors/secondaryConstructors.kt");
     }
   }
 

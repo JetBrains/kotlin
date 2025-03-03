@@ -1,0 +1,222 @@
+TypeAliases.kt:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+      IMPORT_DIRECTIVE[importedFqName=dependency, isAllUnder=true, isValid=true]
+        REFERENCE_EXPRESSION[referencedName=dependency]
+      IMPORT_DIRECTIVE[importedFqName=kotlin.annotation.AnnotationTarget, isAllUnder=false, isValid=true]
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=annotation]
+          REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
+      TYPE_PARAMETER_LIST
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
+        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=F]
+      CLASS_BODY
+        CLASS[classId=test/Outer.Inner, fqName=test.Outer.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+          MODIFIER_LIST[inner]
+          TYPE_PARAMETER_LIST
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
+          CLASS_BODY
+            TYPEALIAS[classId=test/Outer.Inner.TA, fqName=test.Outer.Inner.TA, isTopLevel=false, name=TA]
+              MODIFIER_LIST[inner]
+                ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Suppress]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=TOPLEVEL_TYPEALIASES_ONLY]
+                    VALUE_ARGUMENT[isSpread=false]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=UNSUPPORTED_FEATURE]
+                    VALUE_ARGUMENT[isSpread=false]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=WRONG_MODIFIER_TARGET]
+              TYPE_PARAMETER_LIST
+                TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=H]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Map]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Map]
+                          TYPE_ARGUMENT_LIST
+                            TYPE_PROJECTION[projectionKind=NONE]
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=E]
+                            TYPE_PROJECTION[projectionKind=NONE]
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=F]
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Map]
+                          TYPE_ARGUMENT_LIST
+                            TYPE_PROJECTION[projectionKind=NONE]
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=G]
+                            TYPE_PROJECTION[projectionKind=NONE]
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=H]
+    CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
+      MODIFIER_LIST[annotation]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Target]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                REFERENCE_EXPRESSION[referencedName=TYPEALIAS]
+    CLASS[classId=test/TypeAliases, fqName=test.TypeAliases, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliases, superNames=[]]
+      CLASS_BODY
+        CLASS[classId=test/TypeAliases.OrderB, fqName=test.TypeAliases.OrderB, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
+        TYPEALIAS[classId=test/TypeAliases.B, fqName=test.TypeAliases.B, isTopLevel=false, name=B]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Suppress]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=TOPLEVEL_TYPEALIASES_ONLY]
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=UNSUPPORTED_FEATURE]
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Unit]
+        FUN[fqName=test.TypeAliases.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=A]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=B]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ta]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Outer]
+                      TYPE_ARGUMENT_LIST
+                        TYPE_PROJECTION[projectionKind=NONE]
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=String]
+                        TYPE_PROJECTION[projectionKind=NONE]
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=Double]
+                    REFERENCE_EXPRESSION[referencedName=Inner]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Int]
+                  REFERENCE_EXPRESSION[referencedName=TA]
+                  TYPE_ARGUMENT_LIST
+                    TYPE_PROJECTION[projectionKind=NONE]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Boolean]
+        TYPEALIAS[classId=test/TypeAliases.Parametrized, fqName=test.TypeAliases.Parametrized, isTopLevel=false, name=Parametrized]
+          MODIFIER_LIST[private]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Suppress]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=TOPLEVEL_TYPEALIASES_ONLY]
+                VALUE_ARGUMENT[isSpread=false]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=UNSUPPORTED_FEATURE]
+          TYPE_PARAMETER_LIST
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=F]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Map]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=E]
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=F]
+        FUN[fqName=test.TypeAliases.order, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=path]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=String]
+        FUN[fqName=test.TypeAliases.order, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Z]
+        CLASS[classId=test/TypeAliases.OrderA, fqName=test.TypeAliases.OrderA, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderA, superNames=[]]
+    TYPEALIAS[classId=test/Z, fqName=test.Z, isTopLevel=true, name=Z]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=dependency]
+          REFERENCE_EXPRESSION[referencedName=SomeClass]
+
+
+dependency.kt:
+  PsiJetFileStubImpl[package=dependency]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=dependency]
+    IMPORT_LIST
+    TYPEALIAS[classId=dependency/A, fqName=dependency.A, isTopLevel=true, name=A]
+      TYPE_REFERENCE
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+    FUN[fqName=dependency.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=A]
+    CLASS[classId=dependency/SomeClass, fqName=dependency.SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SomeClass, superNames=[]]

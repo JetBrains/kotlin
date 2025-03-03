@@ -1,0 +1,114 @@
+D.class:
+  PsiJetFileStubImpl[package=dependency]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=dependency]
+    IMPORT_LIST
+    CLASS[classId=dependency/D, fqName=dependency.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=D]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+        OBJECT_DECLARATION[classId=dependency/D.Companion, fqName=dependency.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          MODIFIER_LIST[public companion]
+          CLASS_BODY
+            CLASS[classId=dependency/D.Companion.NestedInClassObject, fqName=dependency.D.Companion.NestedInClassObject, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedInClassObject, superNames=[]]
+              MODIFIER_LIST[public final]
+              PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=NestedInClassObject]
+                MODIFIER_LIST[public]
+                VALUE_PARAMETER_LIST
+              CLASS_BODY
+        CLASS[classId=dependency/D.Inner, fqName=dependency.D.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+          MODIFIER_LIST[inner public final]
+          PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Inner]
+            MODIFIER_LIST[public]
+            VALUE_PARAMETER_LIST
+          CLASS_BODY
+            CLASS[classId=dependency/D.Inner.Inner, fqName=dependency.D.Inner.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+              MODIFIER_LIST[inner public final]
+              PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Inner]
+                MODIFIER_LIST[public]
+                VALUE_PARAMETER_LIST
+              CLASS_BODY
+        CLASS[classId=dependency/D.Nested, fqName=dependency.D.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+          MODIFIER_LIST[open public]
+          PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+            MODIFIER_LIST[public]
+            VALUE_PARAMETER_LIST
+          CLASS_BODY
+            CLASS[classId=dependency/D.Nested.Nested, fqName=dependency.D.Nested.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+              MODIFIER_LIST[public final]
+              PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+                MODIFIER_LIST[public]
+                VALUE_PARAMETER_LIST
+              CLASS_BODY
+
+
+DependencyOnNestedClasses.class:
+  PsiJetFileStubImpl[package=test]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/DependencyOnNestedClasses, fqName=test.DependencyOnNestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DependencyOnNestedClasses, superNames=[Nested]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=DependencyOnNestedClasses]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=dependency]
+                REFERENCE_EXPRESSION[referencedName=D]
+              REFERENCE_EXPRESSION[referencedName=Nested]
+      CLASS_BODY
+        FUN[fqName=test.DependencyOnNestedClasses.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nc]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=dependency]
+                      REFERENCE_EXPRESSION[referencedName=D]
+                    REFERENCE_EXPRESSION[referencedName=Companion]
+                  REFERENCE_EXPRESSION[referencedName=NestedInClassObject]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=dependency]
+                    REFERENCE_EXPRESSION[referencedName=D]
+                  REFERENCE_EXPRESSION[referencedName=Inner]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ii]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=dependency]
+                      REFERENCE_EXPRESSION[referencedName=D]
+                    REFERENCE_EXPRESSION[referencedName=Inner]
+                  REFERENCE_EXPRESSION[referencedName=Inner]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nn]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=dependency]
+                      REFERENCE_EXPRESSION[referencedName=D]
+                    REFERENCE_EXPRESSION[referencedName=Nested]
+                  REFERENCE_EXPRESSION[referencedName=Nested]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=dependency]
+                REFERENCE_EXPRESSION[referencedName=D]
+              REFERENCE_EXPRESSION[referencedName=Nested]

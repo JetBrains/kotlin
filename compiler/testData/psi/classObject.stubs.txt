@@ -1,0 +1,49 @@
+PsiJetFileStubImpl[package=test.class_object]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=test]
+      REFERENCE_EXPRESSION[referencedName=class_object]
+  IMPORT_LIST
+  CLASS[classId=test/class_object/ClassObject, fqName=test.class_object.ClassObject, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassObject, superNames=[]]
+    CLASS_BODY
+      FUN[fqName=test.class_object.ClassObject.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+        VALUE_PARAMETER_LIST
+      PROPERTY[fqName=test.class_object.ClassObject.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
+      OBJECT_DECLARATION[classId=test/class_object/ClassObject.Companion, fqName=test.class_object.ClassObject.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[public companion]
+        CLASS_BODY
+          PROPERTY[fqName=test.class_object.ClassObject.Companion.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=j]
+          FUN[fqName=test.class_object.ClassObject.Companion.z, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
+            VALUE_PARAMETER_LIST
+          CLASS[classId=test/class_object/ClassObject.Companion.A, fqName=test.class_object.ClassObject.Companion.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+            CLASS_BODY
+              CLASS[classId=test/class_object/ClassObject.Companion.A.B, fqName=test.class_object.ClassObject.Companion.A.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+                CLASS_BODY
+                  PROPERTY[fqName=test.class_object.ClassObject.Companion.A.B.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Int]
+                  FUN[fqName=test.class_object.ClassObject.Companion.A.B.f, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                    VALUE_PARAMETER_LIST
+      CLASS[classId=test/class_object/ClassObject.B, fqName=test.class_object.ClassObject.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+        CLASS_BODY
+          OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion, fqName=test.class_object.ClassObject.B.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+            MODIFIER_LIST[companion]
+            CLASS_BODY
+              CLASS[classId=test/class_object/ClassObject.B.Companion.C, fqName=test.class_object.ClassObject.B.Companion.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+                CLASS_BODY
+                  OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion.C.Companion, fqName=test.class_object.ClassObject.B.Companion.C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                    MODIFIER_LIST[companion]
+                    CLASS_BODY
+                      CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
+                        CLASS_BODY
+                          OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                            MODIFIER_LIST[companion]
+                            CLASS_BODY
+                              PROPERTY[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=i]
+                              FUN[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                                VALUE_PARAMETER_LIST
+                              CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion.En, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[]]
+                                MODIFIER_LIST[enum]
+                              CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion.Anno, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.Anno, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[]]
+                                MODIFIER_LIST[annotation]
