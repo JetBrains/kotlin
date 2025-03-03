@@ -37,14 +37,14 @@ internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : 
                 require(data != null) { "function call not in a method: ${expression.render()}" }
                 when {
                     expression.symbol == context.symbols.indyLambdaMetafactoryIntrinsic -> {
-                        val reference = expression.getValueArgument(1)
+                        val reference = expression.arguments[1]
                         if (reference is IrFunctionReference && reference.origin.isLambda) {
                             recordEnclosingMethodOverride(reference.symbol.owner, data)
                         }
                     }
                     expression.symbol.owner.isInlineFunctionCall(context) -> {
-                        for (parameter in expression.symbol.owner.valueParameters) {
-                            val lambda = expression.getValueArgument(parameter.indexInOldValueParameters)?.unwrapInlineLambda() ?: continue
+                        for (parameter in expression.symbol.owner.parameters) {
+                            val lambda = expression.arguments[parameter]?.unwrapInlineLambda() ?: continue
                             recordEnclosingMethodOverride(lambda.symbol.owner, data)
                         }
                     }
