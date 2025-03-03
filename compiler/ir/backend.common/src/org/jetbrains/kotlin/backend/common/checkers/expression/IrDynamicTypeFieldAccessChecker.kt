@@ -20,7 +20,7 @@ internal object IrDynamicTypeFieldAccessChecker : IrFieldAccessChecker {
         if (expression.receiver?.type is IrDynamicType) {
             context.error(
                 expression,
-                "IrFieldAccessExpression may not access fields using dynamic receiver." +
+                "IrFieldAccessExpression may not access fields using dynamic receiver. " +
                         "IrDynamicMemberExpression must be used instead.",
             )
         }
