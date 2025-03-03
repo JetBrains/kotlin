@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
  */
 object SignatureString : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val argument = generateSequence(expression.getValueArgument(0) as IrStatement) { (it as? IrBlock)?.statements?.lastOrNull() }
+        val argument = generateSequence(expression.arguments[0] as IrStatement) { (it as? IrBlock)?.statements?.lastOrNull() }
             .filterIsInstance<IrFunctionReference>().single()
         val function = argument.symbol.owner
         generateSignatureString(codegen.mv, function, codegen.classCodegen)
