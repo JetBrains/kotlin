@@ -692,6 +692,16 @@ public class IncrementalK2JvmCompilerRunnerTestGenerated extends AbstractIncreme
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/traitClassObjectConstantChanged/");
     }
 
+    @TestMetadata("typealiasNameClash2_SinceK2")
+    public void testTypealiasNameClash2_SinceK2() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/typealiasNameClash2_SinceK2/");
+    }
+
+    @TestMetadata("typealiasNameClash_SinceK2")
+    public void testTypealiasNameClash_SinceK2() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/typealiasNameClash_SinceK2/");
+    }
+
     @TestMetadata("valAddCustomAccessor")
     public void testValAddCustomAccessor() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/valAddCustomAccessor/");
