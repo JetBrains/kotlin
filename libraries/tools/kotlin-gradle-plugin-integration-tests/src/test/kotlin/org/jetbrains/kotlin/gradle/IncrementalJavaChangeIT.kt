@@ -74,7 +74,7 @@ abstract class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChange
 
     @DisplayName("Type alias change is incremental")
     @GradleTest
-    fun testTypeAliasIncremental(gradleVersion: GradleVersion) {
+    open fun testTypeAliasIncremental(gradleVersion: GradleVersion) {
         project("typeAlias", gradleVersion) {
             build("build")
 
@@ -135,7 +135,7 @@ class IncrementalK2JavaChangeDefaultWithFirIT : IncrementalK2JavaChangeDefaultIT
 }
 
 @DisplayName("Default incremental compilation via Build Tools API")
-class IncrementalK2JavaChangeBuildToolsApiDaemonIT : IncrementalJavaChangeDefaultIT() {
+open class IncrementalK2JavaChangeBuildToolsApiDaemonIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
 
     @Disabled("KT-57147")
@@ -163,8 +163,13 @@ class IncrementalK2JavaChangeBuildToolsApiDaemonIT : IncrementalJavaChangeDefaul
     }
 }
 
+@DisplayName("Default incremental compilation via Build Tools API")
+class IncrementalK2JavaChangeWithFirRunnerAndBuildToolsApiDaemonIT : IncrementalK2JavaChangeBuildToolsApiDaemonIT() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
+}
+
 @DisplayName("Incremental compilation via Build Tools API using in-process strategy")
-class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChangeDefaultIT() {
+open class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 
     @Disabled("KT-57147")
@@ -192,18 +197,29 @@ class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChangeDef
     }
 }
 
+@DisplayName("Incremental compilation via Build Tools API using in-process strategy and FIR runner")
+class IncrementalK2JavaChangeUsingFirRunnerBuildToolsApiInProcessIT : IncrementalK2JavaChangeBuildToolsApiInProcessIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
+
+    @Disabled("KT-75657")
+    @GradleTest
+    override fun testTypeAliasIncremental(gradleVersion: GradleVersion) {
+        super.testTypeAliasIncremental(gradleVersion)
+    }
+}
+
 @DisplayName("Default incremental compilation with disabled precise compilation outputs backup")
 abstract class IncrementalJavaChangeWithoutPreciseCompilationBackupIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
-@DisplayName("Default incremental compilation with precise compilation outputs backup on K1")
+@DisplayName("Default incremental compilation with disabled precise compilation outputs backup on K1")
 class IncrementalK1JavaChangeWithoutPreciseCompilationBackupIT : IncrementalJavaChangeWithoutPreciseCompilationBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
 
-@DisplayName("Default incremental compilation with precise compilation outputs backup on K2")
-class IncrementalK2JavaChangeWithoutPreciseCompilationBackupIT : IncrementalJavaChangeWithoutPreciseCompilationBackupIT() {
+@DisplayName("Default incremental compilation with disabled precise compilation outputs backup on K2")
+open class IncrementalK2JavaChangeWithoutPreciseCompilationBackupIT : IncrementalJavaChangeWithoutPreciseCompilationBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-57147")
@@ -229,6 +245,12 @@ class IncrementalK2JavaChangeWithoutPreciseCompilationBackupIT : IncrementalJava
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
     }
+}
+
+@DisplayName("Default incremental compilation with FIR runner and disabled precise compilation outputs backup on K2")
+class IncrementalK2JavaChangeWithFirRunnerAndWithoutPreciseCompilationBackupIT :
+    IncrementalK2JavaChangeWithoutPreciseCompilationBackupIT() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 @DisplayName("Default incremental compilation with enabled precise java tracking")

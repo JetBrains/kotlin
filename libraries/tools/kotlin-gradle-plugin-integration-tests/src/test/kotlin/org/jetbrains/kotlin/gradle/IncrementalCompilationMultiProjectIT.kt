@@ -343,7 +343,8 @@ abstract class IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT : Inc
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
-class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+@DisplayName("K/JVM multi-project IC with disabled precise outputs backups and BTA enabled")
+open class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
 
     @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
@@ -352,13 +353,25 @@ class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : Incremental
     }
 }
 
-class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+@DisplayName("K/JVM multi-project IC with disabled precise outputs backups and BTA enabled using FIR runner")
+class IncrementalCompilationK2JvmMultiProjectFirRunnerBuildToolsApiDaemonIT : IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
+}
+
+@DisplayName("In Process: K/JVM multi-project IC with disabled precise outputs backups and BTA enabled")
+open class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 
     @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
     @GradleTest
     override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
     }
+}
+
+@Disabled("KT-75657")
+@DisplayName("In Process: K/JVM multi-project IC with disabled precise outputs backups and BTA with FIR runner enabled")
+class IncrementalCompilationK2JvmMultiProjectFirRunnerBuildToolsApiInProcessIT : IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 class IncrementalCompilationK1JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
