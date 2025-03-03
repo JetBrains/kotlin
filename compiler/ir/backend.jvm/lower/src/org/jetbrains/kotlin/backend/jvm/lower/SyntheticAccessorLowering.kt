@@ -203,7 +203,7 @@ private class SyntheticAccessorTransformer(
         isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference, fromOtherClassLoader = true)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
-        val implFunRef = call.getValueArgument(1) as? IrFunctionReference
+        val implFunRef = call.arguments[1] as? IrFunctionReference
             ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${call.dump()}")
         val implFunSymbol = implFunRef.symbol
 
@@ -221,22 +221,14 @@ private class SyntheticAccessorTransformer(
 
         accessorRef.copyTypeArgumentsFrom(implFunRef)
 
-        val implFun = implFunSymbol.owner
-        var accessorArgIndex = 0
-        if (implFun.dispatchReceiverParameter != null) {
-            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.dispatchReceiver)
-        }
-        if (implFun.extensionReceiverParameter != null) {
-            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.extensionReceiver)
-        }
-        for (implArgIndex in 0 until implFunRef.valueArgumentsCount) {
-            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.getValueArgument(implArgIndex))
+        for (implArgIndex in implFunRef.arguments.indices) {
+            accessorRef.arguments[implArgIndex] = implFunRef.arguments[implArgIndex]
         }
         if (accessor is IrConstructor) {
-            accessorRef.putValueArgument(accessorArgIndex, accessorGenerator.createAccessorMarkerArgument())
+            accessorRef.arguments[implFunRef.arguments.size] = accessorGenerator.createAccessorMarkerArgument()
         }
 
-        call.putValueArgument(1, accessorRef)
+        call.arguments[1] = accessorRef
         return call
     }
 
