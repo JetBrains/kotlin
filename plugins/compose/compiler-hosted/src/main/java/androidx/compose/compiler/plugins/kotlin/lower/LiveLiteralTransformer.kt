@@ -376,8 +376,8 @@ open class LiveLiteralTransformer(
             // Move the start/endOffsets to the call of the getter since we don't
             // want to step into <clinit> in the debugger.
             literalValue = expression.deepCopyWithSymbols().apply {
-                startOffset = expression.startOffset
-                endOffset = expression.endOffset
+                startOffset = UNDEFINED_OFFSET
+                endOffset = UNDEFINED_OFFSET
             },
             literalType = expression.type,
             startOffset = expression.startOffset
