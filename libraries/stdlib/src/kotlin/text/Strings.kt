@@ -1171,6 +1171,7 @@ public fun CharSequence.lastIndexOf(string: String, startIndex: Int = lastIndex,
  * Returns `true` if this char sequence contains the specified [other] sequence of characters as a substring.
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
+ * @sample samples.text.Strings.contains
  */
 @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 public operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boolean = false): Boolean =
