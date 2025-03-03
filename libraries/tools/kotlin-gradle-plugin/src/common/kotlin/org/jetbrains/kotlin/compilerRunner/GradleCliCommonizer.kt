@@ -50,9 +50,9 @@ internal fun Project.maybeCreateCommonizerClasspathConfiguration(): Configuratio
     return configurations.findResolvable(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
         ?: project.configurations.createResolvable(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
             .run {
-                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-                attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, usageByName(Usage.JAVA_RUNTIME))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(Usage.JAVA_RUNTIME))
                 defaultDependencies { dependencies ->
                     dependencies.add(
                         project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_KLIB_COMMONIZER_EMBEDDABLE:${getKotlinPluginVersion()}")

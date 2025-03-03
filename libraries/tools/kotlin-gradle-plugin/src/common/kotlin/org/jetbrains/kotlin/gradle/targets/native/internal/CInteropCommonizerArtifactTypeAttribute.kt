@@ -18,7 +18,6 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute.KLIB
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 /**
  * Commonized CInterop artifacts can come in two shapes:
@@ -53,16 +52,16 @@ internal object CInteropCommonizerArtifactTypeAttribute {
      */
     fun setupTransform(project: Project) {
         project.dependencies.artifactTypes.maybeCreate(KLIB_COLLECTION_DIR).also { artifactType ->
-            artifactType.attributes.setAttribute(attribute, KLIB_COLLECTION_DIR)
+            artifactType.attributes.attribute(attribute, KLIB_COLLECTION_DIR)
         }
 
         project.dependencies.artifactTypes.maybeCreate(KLIB).also { artifactType ->
-            artifactType.attributes.setAttribute(attribute, KLIB)
+            artifactType.attributes.attribute(attribute, KLIB)
         }
 
         project.dependencies.registerTransform(KlibCollectionDirTransform::class.java) { transform ->
-            transform.from.setAttribute(attribute, KLIB_COLLECTION_DIR)
-            transform.to.setAttribute(attribute, KLIB)
+            transform.from.attributes.attribute(attribute, KLIB_COLLECTION_DIR)
+            transform.to.attributes.attribute(attribute, KLIB)
         }
     }
 

@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets
 
 import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublicationAttributes
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.addSecondaryOutgoingJvmClassesVariant
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { target ->
     val project = target.project
@@ -42,7 +39,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         description = "API elements for main."
         isVisible = false
         KotlinUsages.configureProducerApiUsage(this, target)
-        attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         extendsFrom(apiElementScope)
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
         if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles) {
@@ -65,7 +62,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             description = "Elements of runtime for main."
             isVisible = false
             KotlinUsages.configureProducerRuntimeUsage(this, target)
-            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             extendsFrom(implementationConfiguration)
             extendsFrom(runtimeOnlyConfiguration)
@@ -127,7 +124,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             description = "Common Fake API elements for main."
             isVisible = false
             KotlinUsages.configureProducerApiUsage(this, target)
-            attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         }
     }
 }

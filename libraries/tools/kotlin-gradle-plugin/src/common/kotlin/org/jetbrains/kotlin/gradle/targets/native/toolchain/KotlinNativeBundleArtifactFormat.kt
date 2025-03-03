@@ -11,7 +11,6 @@ import org.gradle.api.attributes.AttributesSchema
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 /**
  * This class provides functionality for setting up attributes matching strategy and
@@ -45,16 +44,16 @@ internal object KotlinNativeBundleArtifactFormat {
      */
     internal fun setupTransform(project: Project) {
         project.dependencies.artifactTypes.maybeCreate("tar.gz").also { artifactType ->
-            artifactType.attributes.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
+            artifactType.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
         }
 
         project.dependencies.artifactTypes.maybeCreate("zip").also { artifactType ->
-            artifactType.attributes.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
+            artifactType.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
         }
 
         project.dependencies.registerTransform(UnzipTransformationAction::class.java) { transform ->
-            transform.from.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
-            transform.to.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
+            transform.from.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.ARCHIVE)
+            transform.to.attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
         }
     }
 
@@ -65,7 +64,7 @@ internal object KotlinNativeBundleArtifactFormat {
                     it.add(project.dependencies.create(NativeCompilerDownloader.getCompilerDependencyNotation(project)))
                 }
                 if (!attributes.contains(attribute)) {
-                    attributes.setAttribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
+                    attributes.attribute(attribute, KotlinNativeBundleArtifactsTypes.DIRECTORY)
                 }
             }
     }

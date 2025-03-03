@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import kotlin.test.*
 
@@ -218,16 +217,16 @@ class MultiplatformSecondaryOutgoingVariantsTest {
             val myResolvable = configurations.resolvable("${target.name}Resolvable") {
                 it.extendsFrom(myDependencyScope)
                 it.attributes {
-                    it.setAttribute(KotlinPlatformType.attribute, target.platformType)
+                    it.attributes.attribute(KotlinPlatformType.attribute, target.platformType)
                     if (target is KotlinNativeTarget) {
-                        it.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
+                        it.attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
                     }
                     if (target.platformType == KotlinPlatformType.wasm && target is KotlinJsIrTarget) {
                         val wasmType = target.wasmTargetType?.toAttribute()
                             ?: error("Wasm type attribute expected to be set for $target")
-                        it.setAttribute(KotlinWasmTargetAttribute.wasmTargetAttribute, wasmType)
+                        it.attributes.attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, wasmType)
                     }
-                    it.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+                    it.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
                 }
             }.get()
 

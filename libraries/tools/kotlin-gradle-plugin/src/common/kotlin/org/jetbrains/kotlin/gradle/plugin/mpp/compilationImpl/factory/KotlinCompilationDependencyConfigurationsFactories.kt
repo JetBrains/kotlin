@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -143,7 +142,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     val compileOnlyConfiguration = target.project.configurations
         .maybeCreateDependencyScope(compileOnlyConfigurationName).apply {
             setupAsLocalTargetSpecificConfigurationIfSupported(target)
-            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             isVisible = false
             description = "Compile only dependencies for '$compilationCoordinates'."
         }
@@ -158,9 +157,9 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             extendsFrom(compileOnlyConfiguration, implementationConfiguration)
             usesPlatformOf(target)
             isVisible = false
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
-                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
             description = "Compile classpath for '$compilationCoordinates'."
         }
@@ -171,9 +170,9 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             deprecatedRuntimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)
             isVisible = false
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
-                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
             description = "Runtime classpath of '$compilationCoordinates'."
         } else null
@@ -187,7 +186,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
                 target.project.providers,
                 dest = this
             )
-            setAttribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
         } else null
 
     val pluginConfiguration = target.project.configurations.maybeCreateResolvable(pluginConfigurationName).apply {
