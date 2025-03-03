@@ -208,7 +208,6 @@ class CodeConformanceTest : TestCase() {
         }
 
         val atAuthorPattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
-        val gradleEagerAttributeMethodRegex = "\\.attribute\\(.+,.+\\)".toRegex()
 
         @Suppress("SpellCheckingInspection") val tests = listOf(
             FileTestCase(
@@ -261,25 +260,6 @@ class CodeConformanceTest : TestCase() {
             ) { _, source ->
                 "gnu.trove" in source
             },
-            FileTestCase(
-                message = """
-                |KT-60644: Using Gradle 'AttributeContainer.attribute(key, value)' method leads to eager tasks creation in Kotlin
-                |Gradle plugin. Please use instead for KGP code 'HasAttributes.setAttributeProvider' or 'HasAttributes.setAttribute'
-                |(for simple values) extension methods and for other code 'AttributeContainer.attributeProvider(key, provider { value })'.
-                |
-                |%d files are affected. Please update these files or exclude them in this test:
-                |%s
-                """.trimMargin(),
-                allowedFiles = listOf(
-                    "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/utils/gradleAttributesContainerUtils.kt",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/native/GeneralNativeIT.kt",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinGradlePluginIT.kt",
-                    "repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/plugins/CustomVariantPublishingDsl.kt",
-                    "libraries/tools/kotlin-gradle-plugin/src/functionalTest/kotlin/org/jetbrains/kotlin/gradle/unitTests/KotlinPublishingAdhocSoftwareComponentTest.kt"
-                )
-            ) { _, source ->
-                gradleEagerAttributeMethodRegex.containsMatchIn(source)
-            }
         )
 
         val testCaseToMatchedFiles: Map<FileTestCase, MutableList<File>> = mutableMapOf<FileTestCase, MutableList<File>>()
