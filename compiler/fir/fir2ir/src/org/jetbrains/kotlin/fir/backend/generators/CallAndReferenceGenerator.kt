@@ -747,14 +747,23 @@ class CallAndReferenceGenerator(
             irRhs.type = variableAssignment.lValue.resolvedType.toIrType()
         }
 
+        val firSymbol = calleeReference.extractDeclarationSiteSymbol(c)
         val irRhsWithCast = with(visitor.implicitCastInserter) {
-            wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
-                .insertSpecialCast(variableAssignment.rValue, variableAssignment.rValue.resolvedType, variableAssignment.lValue.resolvedType)
+            val wrapped = wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
+            if ((firSymbol as? FirPropertySymbol)?.isLateInit == true) {
+                // TODO (KT-75676): drop this branch as we want to forbid KT-75649 case in 2.2.0
+                // (maybe we will have to keep it with some feature flag off)
+                wrapped
+            } else {
+                // This special cast is needed for not-null checks from KT-71752 working properly
+                wrapped.insertSpecialCast(
+                    variableAssignment.rValue, variableAssignment.rValue.resolvedType, variableAssignment.lValue.resolvedType
+                )
+            }
         }
 
         injectSetValueCall(variableAssignment, calleeReference, irRhsWithCast)?.let { return it }
 
-        val firSymbol = calleeReference.extractDeclarationSiteSymbol(c)
         val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
         if (isDynamicAccess) {
