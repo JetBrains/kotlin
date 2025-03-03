@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -41,6 +37,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -140,7 +137,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         for ((index, parameter) in getter.owner.typeParameters.withIndex()) {
             reference.typeArguments[index] = parameter.erasedUpperBound.defaultType
         }
-        return irCall(signatureStringIntrinsic).apply { putValueArgument(0, reference) }
+        return irCall(signatureStringIntrinsic).apply { arguments[0] = reference }
     }
 
     private fun IrClass.addOverride(method: IrSimpleFunction, buildBody: JvmIrBuilder.(List<IrValueParameter>) -> IrExpression) =
@@ -153,10 +150,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
         }.apply {
             overriddenSymbols += method.symbol
-            dispatchReceiverParameter = thisReceiver!!.copyTo(this)
-            valueParameters = method.valueParameters.map { it.copyTo(this) }
+            parameters = listOf(thisReceiver!!.copyTo(this)) + method.nonDispatchParameters.map { it.copyTo(this) }
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
-                irExprBody(buildBody(listOf(dispatchReceiverParameter!!) + valueParameters))
+                irExprBody(buildBody(parameters))
             }
         }
 
@@ -169,8 +165,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             origin = IrDeclarationOrigin.FAKE_OVERRIDE
         }.apply {
             overriddenSymbols += method.symbol
-            dispatchReceiverParameter = thisReceiver!!.copyTo(this)
-            valueParameters = method.valueParameters.map { it.copyTo(this) }
+            parameters = listOf(thisReceiver!!.copyTo(this)) + method.nonDispatchParameters.map { it.copyTo(this) }
         }
 
     private class PropertyReferenceKind(
@@ -345,10 +340,10 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 boundReceiver != null -> 5 // (receiver, jClass, name, desc, flags)
                 else -> 4 // (jClass, name, desc, flags)
             }
-            val instance = irCall(referenceKind.implSymbol.constructors.single { it.owner.valueParameters.size == arity }).apply {
+            val instance = irCall(referenceKind.implSymbol.constructors.single { it.owner.parameters.size == arity }).apply {
                 fillReflectedPropertyArguments(this, expression, boundReceiver)
             }
-            irCall(referenceKind.wrapper).apply { putValueArgument(0, instance) }
+            irCall(referenceKind.wrapper).apply { arguments[0] = instance }
         }
     }
 
@@ -359,13 +354,15 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     ) {
         val container = expression.propertyContainer
         val containerClass = kClassToJavaClass(calculateOwnerKClass(container))
-        var index = 0
-        receiver?.let { call.putValueArgument(index++, it) }
-        call.putValueArgument(index++, containerClass)
-        call.putValueArgument(index++, irString((expression.symbol.owner as IrDeclarationWithName).name.asString()))
-        call.putValueArgument(index++, computeSignatureString(expression))
         val isPackage = (container is IrClass && container.isFileClass) || container is IrPackageFragment
-        call.putValueArgument(index, irInt((if (isPackage) 1 else 0) or (if (expression.isJavaSyntheticPropertyReference) 2 else 0)))
+        call.arguments.assignFrom(
+            listOfNotNull(
+                receiver, containerClass,
+                irString((expression.symbol.owner as IrDeclarationWithName).name.asString()),
+                computeSignatureString(expression),
+                irInt((if (isPackage) 1 else 0) or (if (expression.isJavaSyntheticPropertyReference) 2 else 0))
+            )
+        )
     }
 
     private val IrCallableReference<*>.isJavaSyntheticPropertyReference: Boolean
@@ -490,7 +487,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     private fun addConstructor(expression: IrCallableReference<*>, referenceClass: IrClass, superClass: IrClass) {
         val hasBoundReceiver = expression.getBoundReceiver() != null
         val numOfSuperArgs = (if (hasBoundReceiver) 1 else 0) + 4
-        val superConstructor = superClass.constructors.single { it.valueParameters.size == numOfSuperArgs }
+        val superConstructor = superClass.constructors.single { it.parameters.size == numOfSuperArgs }
 
         referenceClass.addConstructor {
             origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
