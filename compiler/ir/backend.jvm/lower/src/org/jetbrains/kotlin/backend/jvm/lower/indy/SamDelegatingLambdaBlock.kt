@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -143,8 +144,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
     ): IrSimpleFunction {
         val superMethod = superType.getClass()?.getSingleAbstractMethod()
             ?: throw AssertionError("SAM type expected: ${superType.render()}")
-        val effectiveValueParametersCount = superMethod.valueParameters.size +
-                if (superMethod.extensionReceiverParameter == null) 0 else 1
+        val effectiveValueParametersCount = superMethod.nonDispatchParameters.size
         val invocableFunctionClass =
             if (superMethod.isSuspend)
                 jvmContext.symbols.suspendFunctionN(effectiveValueParametersCount).owner
@@ -161,9 +161,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
             origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             isSuspend = superMethod.isSuspend
         }.also { lambda ->
-            lambda.dispatchReceiverParameter = null
-            lambda.extensionReceiverParameter = null
-            lambda.valueParameters = createLambdaValueParameters(superMethod, lambda, typeSubstitutor)
+            lambda.parameters = createLambdaValueParameters(superMethod, lambda, typeSubstitutor)
             lambda.body = jvmContext.createJvmIrBuilder(lambda.symbol, expression)
                 .irBlockBody {
                     +irReturn(
@@ -174,13 +172,9 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
                             // correct substitution of invocableFunctionClass by visiting tmp.type's hierarchy.
                             val rawFunctionType = invocableFunctionClass.typeWith()
 
-                            invokeCall.dispatchReceiver = irImplicitCast(irGet(tmp), rawFunctionType)
-                            var parameterIndex = 0
-                            invokeFunction.extensionReceiverParameter?.let {
-                                invokeCall.extensionReceiver = irGet(lambda.valueParameters[parameterIndex++])
-                            }
-                            for (argumentIndex in invokeFunction.valueParameters.indices) {
-                                invokeCall.putValueArgument(argumentIndex, irGet(lambda.valueParameters[parameterIndex++]))
+                            invokeCall.arguments[0] = irImplicitCast(irGet(tmp), rawFunctionType)
+                            for (parameterIndex in invokeFunction.nonDispatchParameters.indices) {
+                                invokeCall.arguments[parameterIndex + 1] = irGet(lambda.nonDispatchParameters[parameterIndex])
                             }
                         }
                     )
@@ -193,26 +187,16 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         superMethod: IrSimpleFunction,
         lambda: IrSimpleFunction,
         typeSubstitutor: IrTypeSubstitutor
-    ): List<IrValueParameter> {
-        val lambdaParameters = ArrayList<IrValueParameter>()
-        superMethod.extensionReceiverParameter?.let { superExtensionReceiver ->
-            lambdaParameters.add(superExtensionReceiver.copySubstituted(lambda, typeSubstitutor, Name.identifier("\$receiver")))
+    ): List<IrValueParameter> = superMethod.nonDispatchParameters.map { superValueParameter ->
+        buildValueParameter(lambda) {
+            name = when (superValueParameter.kind) {
+                IrParameterKind.ExtensionReceiver -> Name.identifier($$"$receiver")
+                else -> superValueParameter.name
+            }
+            type = typeSubstitutor.substitute(superValueParameter.type)
+            kind = superValueParameter.kind
         }
-        superMethod.valueParameters.mapTo(lambdaParameters) { superValueParameter ->
-            superValueParameter.copySubstituted(lambda, typeSubstitutor)
-        }
-        return lambdaParameters
     }
-
-    private fun IrValueParameter.copySubstituted(
-        function: IrSimpleFunction,
-        substitutor: IrTypeSubstitutor,
-        newName: Name = name
-    ) =
-        buildValueParameter(function) {
-            name = newName
-            type = substitutor.substitute(this@copySubstituted.type)
-        }
 
     private fun JvmIrBuilder.createDelegatingLambdaReference(expression: IrExpression, lambda: IrSimpleFunction): IrFunctionReference {
         return IrFunctionReferenceImpl(
