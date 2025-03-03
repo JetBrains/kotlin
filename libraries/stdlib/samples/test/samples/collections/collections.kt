@@ -322,6 +322,15 @@ class Collections {
         }
 
         @Sample
+        fun setOrEmpty() {
+            val nullSet: Set<Any>? = null
+            assertPrints(nullSet.orEmpty(), "[]")
+
+            val set: Set<Char>? = setOf('a', 'b', 'c')
+            assertPrints(set.orEmpty(), "[a, b, c]")
+        }
+
+        @Sample
         fun mutableSet() {
             val set = mutableSetOf(1, 2, 3)
             assertPrints(set, "[1, 2, 3]")
