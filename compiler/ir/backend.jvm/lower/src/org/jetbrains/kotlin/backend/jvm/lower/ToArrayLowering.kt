@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -72,17 +73,15 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
                 parameters += receiver
                 val prototype = addValueParameter("array", returnType, JvmLoweredDeclarationOrigin.TO_ARRAY)
                 body = context.createIrBuilder(symbol).irBlockBody {
-                    if (bridge == null) {
-                        +irReturn(irCall(symbols.genericToArray, symbols.genericToArray.owner.returnType).apply {
-                            putValueArgument(0, irGet(receiver))
-                            putValueArgument(1, irGet(prototype))
-                        })
+                    val call = if (bridge == null) {
+                        irCall(symbols.genericToArray, symbols.genericToArray.owner.returnType)
                     } else {
-                        +irReturn(irCall(bridge.target.symbol, bridge.target.returnType).apply {
-                            dispatchReceiver = irGet(receiver)
-                            putValueArgument(0, irGet(prototype))
-                        })
+                        irCall(bridge.target.symbol, bridge.target.returnType)
                     }
+                    +irReturn(call.apply {
+                        arguments[0] = irGet(receiver)
+                        arguments[1] = irGet(prototype)
+                    })
                 }
             }
         }
@@ -100,15 +99,14 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
                 }
                 parameters += receiver
                 body = context.createIrBuilder(symbol).irBlockBody {
-                    if (bridge == null) {
-                        +irReturn(irCall(symbols.nonGenericToArray, symbols.nonGenericToArray.owner.returnType).apply {
-                            putValueArgument(0, irGet(receiver))
-                        })
+                    val call = if (bridge == null) {
+                        irCall(symbols.nonGenericToArray, symbols.nonGenericToArray.owner.returnType)
                     } else {
-                        +irReturn(irCall(bridge.target.symbol, bridge.target.returnType).apply {
-                            dispatchReceiver = irGet(receiver)
-                        })
+                        irCall(bridge.target.symbol, bridge.target.returnType)
                     }
+                    +irReturn(call.apply {
+                        arguments[0] = irGet(receiver)
+                    })
                 }
             }
         }
@@ -160,17 +158,15 @@ private fun IrType.isArrayOrNullableArrayOf(context: JvmBackendContext, element:
 
 // Match `fun <T> toArray(prototype: Array<T>): Array<T>`
 internal fun IrSimpleFunction.isGenericToArray(context: JvmBackendContext): Boolean =
-    name.asString() == "toArray" && typeParameters.size == 1 && valueParameters.size == 1 &&
-            extensionReceiverParameter == null &&
+    name.asString() == "toArray" && typeParameters.size == 1 && hasShape(dispatchReceiver = true, regularParameters = 1) &&
             returnType.isArrayOrNullableArrayOf(context, typeParameters[0].symbol) &&
-            valueParameters[0].type.isArrayOrNullableArrayOf(context, typeParameters[0].symbol)
+            parameters[1].type.isArrayOrNullableArrayOf(context, typeParameters[0].symbol)
 
 // Match `fun toArray(): Array<...>`.
 // It would be more correct to check that the return type is erased to `Object[]`, however the old backend doesn't do that
 // (see `FunctionDescriptor.isNonGenericToArray` and KT-43111).
 internal fun IrSimpleFunction.isNonGenericToArray(): Boolean =
-    name.asString() == "toArray" && typeParameters.isEmpty() && valueParameters.isEmpty() &&
-            extensionReceiverParameter == null && returnType.isArrayOrNullableArray()
+    name.asString() == "toArray" && typeParameters.isEmpty() && hasShape(dispatchReceiver = true) && returnType.isArrayOrNullableArray()
 
 private fun IrType.isArrayOrNullableArray(): Boolean =
     this is IrSimpleType && (isArray() || isNullableArray())
