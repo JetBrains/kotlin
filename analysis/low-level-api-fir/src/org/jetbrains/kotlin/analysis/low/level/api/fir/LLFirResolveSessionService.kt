@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -23,11 +22,6 @@ class LLFirResolveSessionService(project: Project) {
 
     fun getFirResolveSession(module: KaModule): LLFirResolveSession {
         return create(module, cache::getSession)
-    }
-
-    @TestOnly
-    fun getFirResolveSessionForBinaryModule(module: KaModule): LLFirResolveSession {
-        return create(module) { cache.getSession(it, true) }
     }
 
     private fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLFirResolvableResolveSession {
