@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.jvm.IrPropertyOrIrField.Property
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
 import org.jetbrains.kotlin.backend.jvm.UnboxFunctionImplementation.*
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -443,9 +443,7 @@ private fun makeBoxMethod(
         body = with(context.createJvmIrBuilder(this.symbol)) {
             mfvc.throwWhenNotExternalIsNull(newPrimaryConstructor)
             irExprBody(irCall(newPrimaryConstructor).apply {
-                for ((index, parameter) in parameters.withIndex()) {
-                    putValueArgument(index, irGet(parameter))
-                }
+                arguments.assignFrom(parameters, ::irGet)
             })
         }
     }
@@ -469,12 +467,12 @@ private fun makePrimaryConstructorImpl(
     for (leaf in leaves) {
         addValueParameter(leaf.fullFieldName, leaf.type.substitute(mfvc.typeParameters, typeParameters.map { it.defaultType }))
     }
-    for ((index, oldParameter) in oldPrimaryConstructor.valueParameters.withIndex()) {
+    for ((index, oldParameter) in oldPrimaryConstructor.parameters.withIndex()) {
         val node = subnodes[index]
         val subnodesIndices = subnodes.subnodeIndices
         if (node is LeafMfvcNode) {
             val newIndex = subnodesIndices[node]!!.first
-            valueParameters[newIndex].annotations = oldParameter.annotations
+            parameters[newIndex].annotations = oldParameter.annotations
         }
     }
     annotations = oldPrimaryConstructor.annotations
