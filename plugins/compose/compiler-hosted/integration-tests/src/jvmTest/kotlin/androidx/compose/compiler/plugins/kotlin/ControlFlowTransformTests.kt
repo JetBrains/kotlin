@@ -2568,4 +2568,33 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             val background by ThemeToken { background }
         """
     )
+
+    @Test
+    fun earlyReturnKey() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                key(1) {
+                    return
+                    Test()
+                }
+            }
+        """
+    )
+
+    @Test
+    fun earlyReturnKeyNoCalls() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                key(1) {
+                    return
+                }
+            }
+        """
+    )
 }
