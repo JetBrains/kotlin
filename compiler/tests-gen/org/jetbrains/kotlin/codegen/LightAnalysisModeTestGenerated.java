@@ -29647,6 +29647,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/javaInterop/kjkPropertyAndExtensionProperty.kt");
     }
 
+    @TestMetadata("platformToLateinit.kt")
+    public void ignorePlatformToLateinit() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit.kt");
+    }
+
+    @TestMetadata("platformToLateinit2.kt")
+    public void ignorePlatformToLateinit2() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit2.kt");
+    }
+
+    @TestMetadata("platformToLateinit3.kt")
+    public void ignorePlatformToLateinit3() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit3.kt");
+    }
+
     @TestMetadata("varargCall1.kt")
     public void ignoreVarargCall1() {
       runTest("compiler/testData/codegen/box/javaInterop/varargCall1.kt");

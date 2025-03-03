@@ -3985,7 +3985,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Forks {
         @Test
         public void testAllFilesPresentInForks() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/forks"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/forks"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
         }
 
         @Test
