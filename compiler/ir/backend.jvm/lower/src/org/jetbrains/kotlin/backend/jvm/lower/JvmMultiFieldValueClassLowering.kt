@@ -1014,7 +1014,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             irCall(callee.owner, superQualifierSymbol = (original as? IrCall)?.superQualifierSymbol)
         },
     ): IrMemberAccessExpression<*> {
-        val parameter2expression = typedArgumentList(originalFunction, original)
+        val parameter2expression = originalFunction.parameters zip original.arguments
         val structure = originalFunction.parameterTemplateStructureOfThisOldMfvcBidingFunction!!
         require(parameter2expression.size == structure.size)
         require(structure.sumOf { it.parameters.size } == replacement.parameters.size)
