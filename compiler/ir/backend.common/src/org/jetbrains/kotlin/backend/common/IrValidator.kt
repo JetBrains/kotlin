@@ -168,6 +168,7 @@ private class IrFileValidator(
             breakContinueCheckers.add(IrNothingTypeExpressionChecker)
             returnCheckers.add(IrNothingTypeExpressionChecker)
             throwCheckers.add(IrNothingTypeExpressionChecker)
+            fieldAccessExpressionCheckers.add(IrDynamicTypeFieldAccessChecker)
         }
         if (config.checkProperties) {
             callCheckers.add(IrCallFunctionPropertiesChecker)

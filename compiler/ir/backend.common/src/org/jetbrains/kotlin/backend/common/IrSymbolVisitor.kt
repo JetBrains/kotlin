@@ -91,12 +91,6 @@ fun checkUnboundSymbols(element: IrElement) {
 
         override fun visitDeclarationReference(expression: IrDeclarationReference) {
             visitElement(expression)
-            // TODO: Fix unbound dynamic field declarations (KT-74548)
-            if (expression is IrFieldAccessExpression) {
-                val receiverType = expression.receiver?.type
-                if (receiverType is IrDynamicType)
-                    return
-            }
             processSymbol(expression, expression.symbol)
         }
     }
