@@ -237,7 +237,7 @@ internal inline fun <reified S : FirBasedSymbol<*>> lazyFirSymbol(
 }
 
 /**
- * This function is a workaround for KT-70728 issue.
+ * This function is a workaround for the KT-70728 issue.
  *
  * The problem is that library sources share the underlying PSI with binary modules, and
  * the use site session is not enough to build the correct FIR from PSI.
