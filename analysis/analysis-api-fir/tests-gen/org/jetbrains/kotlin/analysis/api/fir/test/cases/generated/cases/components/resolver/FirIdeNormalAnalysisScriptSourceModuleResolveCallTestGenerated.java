@@ -525,6 +525,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency")
+  @TestDataPath("$PROJECT_ROOT")
+  public class LibraryDependency {
+    @Test
+    public void testAllFilesPresentInLibraryDependency() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/libraryDependency"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/nestedTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class NestedTypes {
