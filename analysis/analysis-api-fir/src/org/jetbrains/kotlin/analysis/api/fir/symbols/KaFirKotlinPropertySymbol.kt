@@ -92,10 +92,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override val isLateInit: Boolean
         get() = withValidityAssertion {
-            if (backingPsi != null)
-                backingPsi.hasModifier(KtTokens.LATEINIT_KEYWORD)
-            else
-                firSymbol.isLateInit
+            backingPsi?.hasModifier(KtTokens.LATEINIT_KEYWORD) ?: firSymbol.isLateInit
         }
 
     override val isOverride: Boolean
@@ -105,10 +102,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override val isConst: Boolean
         get() = withValidityAssertion {
-            if (backingPsi != null)
-                backingPsi.hasModifier(KtTokens.CONST_KEYWORD)
-            else
-                firSymbol.isConst
+            backingPsi?.hasModifier(KtTokens.CONST_KEYWORD) ?: firSymbol.isConst
         }
 
     override val isStatic: Boolean
@@ -227,10 +221,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
 
     override val isDelegatedProperty: Boolean
         get() = withValidityAssertion {
-            if (backingPsi != null)
-                backingPsi.hasDelegate()
-            else
-                firSymbol.delegateFieldSymbol != null
+            backingPsi?.hasDelegate() ?: (firSymbol.delegateFieldSymbol != null)
         }
 
     override val receiverParameter: KaReceiverParameterSymbol?
