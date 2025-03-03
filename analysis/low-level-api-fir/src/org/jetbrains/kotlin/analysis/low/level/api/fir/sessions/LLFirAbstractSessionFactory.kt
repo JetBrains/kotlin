@@ -7,12 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
-import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.utils.mergeInto
@@ -22,13 +17,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirFirClassByPsiClassProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirLibrarySessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLDanglingFileDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedSyntheticFunctionSymbolProvider
@@ -82,7 +80,14 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     abstract fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession
     abstract fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession
-    abstract fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession
+
+    /**
+     * Creates a binary [LLFirLibrarySession] for a [KaLibraryModule] or [KaLibraryFallbackDependenciesModule].
+     *
+     * Both regular libraries and library fallback dependencies can be treated from the same point of view of a binary session. Hence, it
+     * doesn't make practical sense to have separate session creation machinery for [KaLibraryFallbackDependenciesModule].
+     */
+    abstract fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession
 
     private fun createLibraryProvidersForScope(
         session: LLFirSession,
@@ -404,29 +409,18 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                         add(builtinsSession.symbolProvider)
                     }
 
-                    // Script dependencies are self-contained and should not depend on other libraries
-                    if (module !is KaScriptDependencyModule) {
-                        // Add all libraries excluding the current one
-                        val librariesSearchScope = ProjectScope.getLibrariesScope(project)
-                            .intersectWith(GlobalSearchScope.notScope(binaryModule.contentScope))
+                    // The library (source) module will usually have a `KaLibraryFallbackDependenciesModule`, which will be added here, but
+                    // this also works when the library (source) module has precise dependencies.
+                    addMerged(session, collectDependencySymbolProviders(binaryModule))
 
-                        val restLibrariesProvider = createProjectLibraryProvidersForScope(
-                            session,
-                            librariesSearchScope,
-                            isFallbackDependenciesProvider = true,
-                        )
+                    if (binaryModule is KaLibraryModule) {
+                        KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(binaryModule)?.let { anchorModule ->
+                            val anchorModuleSession = LLFirSessionCache.getInstance(project).getSession(anchorModule)
+                            val anchorModuleSymbolProvider =
+                                anchorModuleSession.symbolProvider as LLModuleWithDependenciesSymbolProvider
 
-                        addAll(restLibrariesProvider)
-
-                        if (binaryModule is KaLibraryModule) {
-                            KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(binaryModule)?.let { anchorModule ->
-                                val anchorModuleSession = LLFirSessionCache.getInstance(project).getSession(anchorModule)
-                                val anchorModuleSymbolProvider =
-                                    anchorModuleSession.symbolProvider as LLModuleWithDependenciesSymbolProvider
-
-                                addAll(anchorModuleSymbolProvider.providers)
-                                addAll(anchorModuleSymbolProvider.dependencyProvider.providers)
-                            }
+                            addAll(anchorModuleSymbolProvider.providers)
+                            addAll(anchorModuleSymbolProvider.dependencyProvider.providers)
                         }
                     }
                 }
@@ -445,9 +439,14 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     protected class BinaryLibrarySessionCreationContext
 
     protected fun doCreateBinaryLibrarySession(
-        module: KaLibraryModule,
+        module: KaModule,
         additionalSessionConfiguration: LLFirLibrarySession.(context: BinaryLibrarySessionCreationContext) -> Unit,
     ): LLFirLibrarySession {
+        require(module is KaLibraryModule || module is KaLibraryFallbackDependenciesModule) {
+            "A binary library session can only be created for a `${KaLibraryModule::class.simpleName}` or a " +
+                    "`${KaLibraryFallbackDependenciesModule::class.simpleName}`. Instead got: `${module::class.simpleName}`."
+        }
+
         val platform = module.targetPlatform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
 
@@ -619,7 +618,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         fun getOrCreateSessionForDependency(dependency: KaModule): LLFirSession? = when (dependency) {
             is KaBuiltinsModule -> null // Built-ins are already added
 
-            is KaLibraryModule -> sessionCache.getSession(dependency, preferBinary = true)
+            is KaLibraryModule, is KaLibraryFallbackDependenciesModule -> sessionCache.getSession(dependency, preferBinary = true)
 
             is KaSourceModule -> sessionCache.getSession(dependency)
 

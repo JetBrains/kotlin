@@ -313,6 +313,8 @@ public interface KaScriptModule : KaModule {
 
 /**
  * A module for Kotlin script dependencies. Must either be a [KaLibraryModule] or [KaLibrarySourceModule].
+ *
+ * Script dependencies are self-contained and should not depend on other libraries, not even [KaLibraryFallbackDependenciesModule].
  */
 @KaPlatformInterface
 public interface KaScriptDependencyModule : KaModule {
