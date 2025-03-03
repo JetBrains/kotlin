@@ -1,0 +1,62 @@
+PsiJetFileStubImpl[package=some.other]
+  FILE_ANNOTATION_LIST
+    ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Suppress]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=UNCHECKED_CAST]
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=NOTHING_TO_INLINE]
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=INVISIBLE_MEMBER]
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=INVISIBLE_REFERENCE]
+    ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=JvmName]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=OtherKt]
+    ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmPackageName]
+      ANNOTATION_TARGET[useSiteTarget=FILE]
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=jvm]
+            REFERENCE_EXPRESSION[referencedName=JvmPackageName]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=some.other.jvm]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=some]
+      REFERENCE_EXPRESSION[referencedName=other]
+  IMPORT_LIST
+  FUN[fqName=some.other.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.2]
+    VALUE_PARAMETER_LIST

@@ -1,0 +1,159 @@
+MultifileClass.kt:
+  PsiJetFileStubImpl[package=test]
+    FILE_ANNOTATION_LIST
+      ANNOTATION
+        ANNOTATION_TARGET[useSiteTarget=FILE]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=JvmName]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=MultifileClass]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmMultifileClass]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=JvmMultifileClass]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    FUN[fqName=test.p1Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
+      VALUE_PARAMETER_LIST
+    FUN[fqName=test.p1ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      VALUE_PARAMETER_LIST
+    FUN[fqName=test.p1ExprFun, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    FUN[fqName=test.p1FunWithParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=test.p1Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1Val]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=test.p1ExtVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+    PROPERTY[fqName=test.p1Var, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=test.annotatedConstVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
+      MODIFIER_LIST[const]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Deprecated]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=deprecated]
+
+
+MultifileClass__Part.kt:
+  PsiJetFileStubImpl[package=test]
+    FILE_ANNOTATION_LIST
+      ANNOTATION
+        ANNOTATION_TARGET[useSiteTarget=FILE]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=JvmName]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=MultifileClass]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmMultifileClass]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=JvmMultifileClass]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    FUN[fqName=test.p3Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
+      VALUE_PARAMETER_LIST
+    FUN[fqName=test.p3ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      VALUE_PARAMETER_LIST
+    PROPERTY[fqName=test.p3Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p3Val]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=test.p3ExtVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p3ExtVal]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST
+
+
+part.kt:
+  PsiJetFileStubImpl[package=test]
+    FILE_ANNOTATION_LIST
+      ANNOTATION
+        ANNOTATION_TARGET[useSiteTarget=FILE]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=JvmName]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=MultifileClass]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmMultifileClass]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=JvmMultifileClass]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    FUN[fqName=test.p2Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
+      VALUE_PARAMETER_LIST
+    FUN[fqName=test.p2ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      VALUE_PARAMETER_LIST
+    PROPERTY[fqName=test.p2Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2Val]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=test.p2ExtVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        VALUE_PARAMETER_LIST

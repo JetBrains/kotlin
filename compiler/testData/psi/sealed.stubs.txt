@@ -1,0 +1,21 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  CLASS[classId=test/Sealed, fqName=test.Sealed, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sealed, superNames=[]]
+    MODIFIER_LIST[sealed]
+    CLASS_BODY
+      CLASS[classId=test/Sealed.Nested, fqName=test.Sealed.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[Sealed]]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Sealed]
+      OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Sealed]

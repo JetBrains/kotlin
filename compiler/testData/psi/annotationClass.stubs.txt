@@ -1,0 +1,18 @@
+PsiJetFileStubImpl[package=test.a]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=test]
+      REFERENCE_EXPRESSION[referencedName=a]
+  IMPORT_LIST
+  CLASS[classId=test/a/AnnotationClass, fqName=test.a.AnnotationClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationClass, superNames=[]]
+    MODIFIER_LIST[public annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnotationClass]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.a.AnnotationClass.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.a.AnnotationClass.j, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=j]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]

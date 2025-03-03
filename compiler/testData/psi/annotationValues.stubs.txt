@@ -1,0 +1,306 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=test.E.E1, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=test]
+          REFERENCE_EXPRESSION[referencedName=E]
+        REFERENCE_EXPRESSION[referencedName=E1]
+    IMPORT_DIRECTIVE[importedFqName=kotlin.reflect.KClass, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=reflect]
+        REFERENCE_EXPRESSION[referencedName=KClass]
+  PROPERTY[fqName=test.CONSTANT, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
+    MODIFIER_LIST[const]
+  CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Simple]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+              VALUE_ARGUMENT[isSpread=false]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=f]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=c]
+                CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=b1]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=b2]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
+      CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=StringLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=some]
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=H]
+                  SHORT_STRING_TEMPLATE_ENTRY[text=$CONSTANT]
+                    REFERENCE_EXPRESSION[referencedName=CONSTANT]
+      CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=EnumLiteral]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=EnumLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                REFERENCE_EXPRESSION[referencedName=E1]
+              VALUE_ARGUMENT[isSpread=false]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E2]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=e3]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=test]
+                    REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E2]
+      CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=VarArg]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=VarArg]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+      CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Arrays]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                COLLECTION_LITERAL_EXPRESSION
+              VALUE_ARGUMENT[isSpread=false]
+                COLLECTION_LITERAL_EXPRESSION
+              VALUE_ARGUMENT[isSpread=false]
+                COLLECTION_LITERAL_EXPRESSION
+              VALUE_ARGUMENT[isSpread=false]
+                COLLECTION_LITERAL_EXPRESSION
+              VALUE_ARGUMENT[isSpread=false]
+                COLLECTION_LITERAL_EXPRESSION
+              VALUE_ARGUMENT[isSpread=false]
+                COLLECTION_LITERAL_EXPRESSION
+      CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                CLASS_LITERAL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=WithClassLiteral]
+              VALUE_ARGUMENT[isSpread=false]
+                CLASS_LITERAL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=String]
+        TYPE_PARAMETER_LIST
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Outer]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Outer]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=value]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=nested]
+  CLASS[classId=test/Simple, fqName=test.Simple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Simple]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Simple.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.Simple.l, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=l]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Long]
+        VALUE_PARAMETER[fqName=test.Simple.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Byte]
+        VALUE_PARAMETER[fqName=test.Simple.d, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=d]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Double]
+        VALUE_PARAMETER[fqName=test.Simple.f, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=f]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Float]
+        VALUE_PARAMETER[fqName=test.Simple.c, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Char]
+        VALUE_PARAMETER[fqName=test.Simple.b1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Boolean]
+        VALUE_PARAMETER[fqName=test.Simple.b2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Boolean]
+  CLASS[classId=test/StringLiteral, fqName=test.StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=StringLiteral]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.StringLiteral.s1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=test.StringLiteral.s2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=test.StringLiteral.s3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s3]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=test/E, fqName=test.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=test.E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=test.E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+  CLASS[classId=test/EnumLiteral, fqName=test.EnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=EnumLiteral, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=EnumLiteral]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.EnumLiteral.e1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=E]
+        VALUE_PARAMETER[fqName=test.EnumLiteral.e2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=E]
+        VALUE_PARAMETER[fqName=test.EnumLiteral.e3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e3]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=E]
+  CLASS[classId=test/VarArg, fqName=test.VarArg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=VarArg]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.VarArg.v, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=v]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=test/Arrays, fqName=test.Arrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Arrays]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Arrays.ia, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ia]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+        VALUE_PARAMETER[fqName=test.Arrays.la, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=la]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=LongArray]
+        VALUE_PARAMETER[fqName=test.Arrays.fa, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=fa]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=FloatArray]
+        VALUE_PARAMETER[fqName=test.Arrays.da, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=da]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=DoubleArray]
+        VALUE_PARAMETER[fqName=test.Arrays.ca, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ca]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=CharArray]
+        VALUE_PARAMETER[fqName=test.Arrays.ba, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ba]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=BooleanArray]
+  CLASS[classId=test/ClassLiteral, fqName=test.ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassLiteral]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.ClassLiteral.c1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c1]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+        VALUE_PARAMETER[fqName=test.ClassLiteral.c2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c2]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+  CLASS[classId=test/Nested, fqName=test.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nested, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Nested.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=test.Nested.s, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Outer]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Outer.some, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=some]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=test.Outer.nested, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=nested]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Nested]

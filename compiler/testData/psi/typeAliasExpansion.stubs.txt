@@ -1,0 +1,308 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  TYPEALIAS[classId=test/StringAlias, fqName=test.StringAlias, isTopLevel=true, name=StringAlias]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  TYPEALIAS[classId=test/EntryAlias, fqName=test.EntryAlias, isTopLevel=true, name=EntryAlias]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Map]
+        REFERENCE_EXPRESSION[referencedName=Entry]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+  TYPEALIAS[classId=test/FunctionAlias, fqName=test.FunctionAlias, isTopLevel=true, name=FunctionAlias]
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+  TYPEALIAS[classId=test/NestedStringAlias, fqName=test.NestedStringAlias, isTopLevel=true, name=NestedStringAlias]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=StringAlias]
+  TYPEALIAS[classId=test/NestedFunctionAlias, fqName=test.NestedFunctionAlias, isTopLevel=true, name=NestedFunctionAlias]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=FunctionAlias]
+  TYPEALIAS[classId=test/ParameterizedListAlias, fqName=test.ParameterizedListAlias, isTopLevel=true, name=ParameterizedListAlias]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=List]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=A]
+  TYPEALIAS[classId=test/NestedListAliasWithTypeArgument, fqName=test.NestedListAliasWithTypeArgument, isTopLevel=true, name=NestedListAliasWithTypeArgument]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+  TYPEALIAS[classId=test/NestedListAliasWithAliasTypeArgument, fqName=test.NestedListAliasWithAliasTypeArgument, isTopLevel=true, name=NestedListAliasWithAliasTypeArgument]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=StringAlias]
+  TYPEALIAS[classId=test/NestedListAliasWithNestedAliasTypeArgument, fqName=test.NestedListAliasWithNestedAliasTypeArgument, isTopLevel=true, name=NestedListAliasWithNestedAliasTypeArgument]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+  TYPEALIAS[classId=test/NestedParameterizedListAlias, fqName=test.NestedParameterizedListAlias, isTopLevel=true, name=NestedParameterizedListAlias]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+  TYPEALIAS[classId=test/NullableStringAlias, fqName=test.NullableStringAlias, isTopLevel=true, name=NullableStringAlias]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
+  TYPEALIAS[classId=test/NestedNullableStringAlias, fqName=test.NestedNullableStringAlias, isTopLevel=true, name=NestedNullableStringAlias]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=NullableStringAlias]
+  TYPEALIAS[classId=test/NullableNestedStringAlias, fqName=test.NullableNestedStringAlias, isTopLevel=true, name=NullableNestedStringAlias]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=StringAlias]
+  TYPEALIAS[classId=test/NullableFunctionAlias, fqName=test.NullableFunctionAlias, isTopLevel=true, name=NullableFunctionAlias]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        FUNCTION_TYPE
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=String]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+  TYPEALIAS[classId=test/NestedNullableFunctionAlias, fqName=test.NestedNullableFunctionAlias, isTopLevel=true, name=NestedNullableFunctionAlias]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=NullableFunctionAlias]
+  TYPEALIAS[classId=test/NullableNestedFunctionAlias, fqName=test.NullableNestedFunctionAlias, isTopLevel=true, name=NullableNestedFunctionAlias]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=FunctionAlias]
+  CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliasExpansion, superNames=[]]
+    CLASS_BODY
+      FUN[fqName=test.TypeAliasExpansion.entryToString, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=entryToString]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=entry]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=EntryAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=StringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.functionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=FunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedFunctionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedFunctionAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedFunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithString, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithString]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=StringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithNestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithNestedStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithParameterizedListAliasWithStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithParameterizedListAliasWithStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=StringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithTypeArgument, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithTypeArgument]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedListAliasWithTypeArgument]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithAliasTypeArgument, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithAliasTypeArgument]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedListAliasWithAliasTypeArgument]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithNestedAliasTypeArgument, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithNestedAliasTypeArgument]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedListAliasWithNestedAliasTypeArgument]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithString, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithString]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedParameterizedListAlias]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedParameterizedListAlias]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=StringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithNestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithNestedStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedParameterizedListAlias]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.stringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=stringAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=StringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedStringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedStringAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nullableStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NullableStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nullableStringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableStringAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=NullableStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedNullableStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableStringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableStringAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=NestedNullableStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedStringAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NullableNestedStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedStringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedStringAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=NullableNestedStringAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.functionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=FunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedFunctionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedFunctionAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=NestedFunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nullableFunctionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableFunctionAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NullableFunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nullableFunctionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableFunctionAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=NullableFunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableFunctionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableFunctionAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NestedNullableFunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableFunctionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableFunctionAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=NestedNullableFunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedFunctionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedFunctionAlias]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=NullableNestedFunctionAlias]
+      PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedFunctionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedFunctionAliasNullable]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=NullableNestedFunctionAlias]

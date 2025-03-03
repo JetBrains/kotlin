@@ -1,0 +1,72 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/RepeatableAnnotation, fqName=RepeatableAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=RepeatableAnnotation, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=/RepeatableAnnotation.ClassWithOneRepeatableAnnotation, fqName=RepeatableAnnotation.ClassWithOneRepeatableAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithOneRepeatableAnnotation, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=MyRepeatableAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      CLASS[classId=/RepeatableAnnotation.ClassWithTwoRepeatableAnnotations, fqName=RepeatableAnnotation.ClassWithTwoRepeatableAnnotations, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithTwoRepeatableAnnotations, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=MyRepeatableAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=MyRepeatableAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+      CLASS[classId=/RepeatableAnnotation.ClassWithThreeRepeatableAnnotations, fqName=RepeatableAnnotation.ClassWithThreeRepeatableAnnotations, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithThreeRepeatableAnnotations, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=MyRepeatableAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=MyRepeatableAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=MyRepeatableAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+  CLASS[classId=/MyRepeatableAnnotation, fqName=MyRepeatableAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyRepeatableAnnotation, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Repeatable]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Repeatable]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=MyRepeatableAnnotation]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=MyRepeatableAnnotation.index, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=index]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]

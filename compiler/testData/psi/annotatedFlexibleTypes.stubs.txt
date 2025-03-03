@@ -1,0 +1,18 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  CLASS[classId=test/AnnotatedFlexibleTypes, fqName=test.AnnotatedFlexibleTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedFlexibleTypes, superNames=[]]
+    MODIFIER_LIST[public]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnotatedFlexibleTypes]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.AnnotatedFlexibleTypes.javaClass, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=javaClass]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=d]
+              REFERENCE_EXPRESSION[referencedName=JavaClass]
+    CLASS_BODY
+      FUN[fqName=test.AnnotatedFlexibleTypes.foo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        VALUE_PARAMETER_LIST
+      PROPERTY[fqName=test.AnnotatedFlexibleTypes.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=bar]

@@ -1,0 +1,223 @@
+KtFile: flexibleDnnType.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: FlexibleDnnType.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(abstract)('abstract')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('FlexibleDnnType')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          PsiElement(abstract)('abstract')
+        PsiWhiteSpace(' ')
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('block')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('propertyWithFlexibleDnnImplicitType')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('JavaClass')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('wrap')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('JavaClass')
+                  PsiElement(DOT)('.')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('wrap')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('String')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
+                    PsiWhiteSpace(' ')
+                    LAMBDA_ARGUMENT
+                      LAMBDA_EXPRESSION
+                        FUNCTION_LITERAL
+                          PsiElement(LBRACE)('{')
+                          PsiWhiteSpace(' ')
+                          VALUE_PARAMETER_LIST
+                            VALUE_PARAMETER
+                              PsiElement(IDENTIFIER)('_')
+                          PsiWhiteSpace(' ')
+                          PsiElement(ARROW)('->')
+                          PsiWhiteSpace(' ')
+                          BLOCK
+                            DOT_QUALIFIED_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('block')
+                              PsiElement(DOT)('.')
+                              CALL_EXPRESSION
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('invoke')
+                                VALUE_ARGUMENT_LIST
+                                  PsiElement(LPAR)('(')
+                                  PsiElement(RPAR)(')')
+                          PsiWhiteSpace(' ')
+                          PsiElement(RBRACE)('}')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: JavaClass.java')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(public)('public')
+      PsiWhiteSpace(' ')
+      PsiElement(final)('final')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('JavaClass')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiElement(public)('public')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('static')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('R')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('java')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('util')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('function')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('Function')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('R')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('wrap')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('java')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('util')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('function')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('Function')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('R')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('function')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      FUN
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            NULL
+              PsiElement(null)('null')
+          PsiElement(SEMICOLON)(';')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -1,0 +1,23 @@
+PsiJetFileStubImpl[package=a.b.c]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=a]
+        REFERENCE_EXPRESSION[referencedName=b]
+      REFERENCE_EXPRESSION[referencedName=c]
+  IMPORT_LIST
+  CLASS[classId=a/b/c/DataClass, fqName=a.b.c.DataClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DataClass, superNames=[]]
+    MODIFIER_LIST[public data]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=DataClass]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=a.b.c.DataClass.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=a.b.c.DataClass.j, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=j]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    CLASS_BODY
+      FUN[fqName=a.b.c.DataClass.f, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+        VALUE_PARAMETER_LIST

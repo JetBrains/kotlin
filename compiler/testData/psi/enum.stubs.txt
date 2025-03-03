@@ -1,0 +1,43 @@
+PsiJetFileStubImpl[package=a.b.c.test.enum]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=a]
+            REFERENCE_EXPRESSION[referencedName=b]
+          REFERENCE_EXPRESSION[referencedName=c]
+        REFERENCE_EXPRESSION[referencedName=test]
+      REFERENCE_EXPRESSION[referencedName=enum]
+  IMPORT_LIST
+  CLASS[classId=a/b/c/test/enum/Enum, fqName=a.b.c.test.enum.Enum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.F, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=F, superNames=[]]
+        CLASS_BODY
+          FUN[fqName=a.b.c.test.enum.Enum.F.f, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+            MODIFIER_LIST[override]
+            VALUE_PARAMETER_LIST
+      FUN[fqName=a.b.c.test.enum.Enum.f, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+        MODIFIER_LIST[open]
+        VALUE_PARAMETER_LIST
+      OBJECT_DECLARATION[classId=a/b/c/test/enum/Enum.Companion, fqName=a.b.c.test.enum.Enum.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+          PROPERTY[fqName=a.b.c.test.enum.Enum.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Ann]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=a/b/c/test/enum/Ann, fqName=a.b.c.test.enum.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
+    MODIFIER_LIST[annotation]
