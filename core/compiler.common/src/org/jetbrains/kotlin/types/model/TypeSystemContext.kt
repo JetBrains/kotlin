@@ -357,6 +357,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         EmptyIntersectionTypeChecker.computeEmptyIntersectionEmptiness(this, types)
 
     val isK2: Boolean
+
+    val overloadResolutionMode: Boolean get() = false
 }
 
 

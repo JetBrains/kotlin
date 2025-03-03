@@ -301,8 +301,14 @@ inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(
     // We don't allow fixing T into any top-level TV type, like T := F or T := F & Any
     // Even if F is considered as a proper by `isProper` (e.g., it belongs to an outer CS)
     // But at the same time, we don't forbid fixing into T := MutableList<F>
-    if (type.typeConstructor() in notFixedTypeVariables) return false
-
+    if (type.typeConstructor() in notFixedTypeVariables) {
+        if (!overloadResolutionMode) {
+            return false
+        }
+        if (this !is VariableFixationFinder.Context || type.typeConstructor() !in typeVariablesThatAreCountedAsProperTypes.orEmpty()) {
+            return false
+        }
+    }
     return isProper(type) && extractProjectionsForAllCapturedTypes(type).all(isProper)
 }
 

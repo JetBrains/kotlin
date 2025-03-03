@@ -465,8 +465,9 @@ class ResultTypeResolver(
     }
 
     private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
-        val upperConstraints =
-            variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
+        val upperConstraints = variableWithConstraints.constraints.filter {
+            it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type)
+        }
 
         if (upperConstraints.isNotEmpty()) {
             return computeUpperType(upperConstraints)

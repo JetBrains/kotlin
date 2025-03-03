@@ -198,10 +198,8 @@ class FirPCLAInferenceSession(
         overloadResolutionMode: Boolean,
         resultTypeCallback: () -> ConeKotlinType?,
     ): ConeKotlinType? = withTypeVariablesThatAreCountedAsProperTypes(
-        if (is21Mode())
-            notFixedTypeVariables.keys
-        else
-            outerTypeVariables.orEmpty()
+        if (is21Mode()) notFixedTypeVariables.keys else outerTypeVariables.orEmpty(),
+        overloadResolutionMode
     ) {
         if (!overloadResolutionMode &&
             !inferenceComponents.variableFixationFinder.isTypeVariableHasProperConstraint(this, coneTypeVariableTypeConstructor)
