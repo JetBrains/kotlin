@@ -27475,6 +27475,19 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class Directive {
+          @Test
+          public void testAllFilesPresentInDirective() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
         @TestDataPath("$PROJECT_ROOT")
         @UseExtTestCaseGroupProvider()

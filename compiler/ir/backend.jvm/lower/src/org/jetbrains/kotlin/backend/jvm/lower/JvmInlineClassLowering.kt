@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
-import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotation
+import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -70,7 +70,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         context.irFactory.buildFun {
             updateFrom(source)
             name = mangledName
-            if (source.shouldBeExposedByAnnotation()) {
+            if (source.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
                 origin = JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS
                 if (modality == Modality.ABSTRACT) {
                     modality = Modality.OPEN
@@ -81,8 +81,10 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             copyValueAndTypeParametersFrom(source)
             // Exposed functions should have no @JvmName annotation, since it does not affect them,
             // but always @JvmExposeBoxed, so users can use reflection to get all exposed functions, if they so desire.
-            if (source.shouldBeExposedByAnnotation() && source.origin != IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) {
-                annotations = source.annotations.withJvmExposeBoxedAnnotation(source).withoutJvmNameAnnotation()
+            if (source.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
+                source.origin != IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+            ) {
+                annotations = source.annotations.withJvmExposeBoxedAnnotation(source, context).withoutJvmNameAnnotation()
             } else {
                 annotations = source.annotations
             }
@@ -323,7 +325,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                 parameters = parameters.dropLast(1)
             }
             // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
-            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor)
+            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, context)
             constructor.annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
@@ -505,11 +507,11 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             copyValueAndTypeParametersFrom(irConstructor)
             // Don't create a default argument stub for the primary constructor
             parameters.forEach { it.defaultValue = null }
-            if (irConstructor.shouldBeExposedByAnnotation()) {
+            if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
                 addValueParameter {
                     origin = INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
                     name = Name.identifier("\$null")
-                    type = context.irBuiltIns.nothingNType
+                    type = context.symbols.boxingConstructorMarkerClass.defaultType
                 }
             }
             // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
@@ -548,7 +550,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         valueClass.declarations += function
 
         // Add constructor, which is exposed to Java
-        if (irConstructor.shouldBeExposedByAnnotation()) {
+        if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
             val exposedConstructor = valueClass.addConstructor {
                 updateFrom(irConstructor)
                 isPrimary = false
@@ -558,7 +560,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                 // Don't create a default argument stub for the exposed constructor
                 copyValueAndTypeParametersFrom(irConstructor)
                 valueParameters.forEach { it.defaultValue = null }
-                annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor)
+                annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, context)
                 body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                     // Call private constructor
                     +irDelegatingConstructorCall(primaryConstructor).apply {
@@ -584,7 +586,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                     returnType = irConstructor.returnType
                 }.apply {
                     copyTypeParametersFrom(irConstructor)
-                    annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor)
+                    annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, context)
                     body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                         // Delegate to exposed constructor
                         +irDelegatingConstructorCall(exposedConstructor).apply {

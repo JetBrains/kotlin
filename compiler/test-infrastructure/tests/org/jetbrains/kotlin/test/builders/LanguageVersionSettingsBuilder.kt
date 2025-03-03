@@ -117,6 +117,8 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(JvmAnalysisFlags.enableJvmPreview, trueOrNull(LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in directives)),
             analysisFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib, trueOrNull(LanguageSettingsDirectives.EXPECT_BUILTINS_AS_PART_OF_STDLIB in directives)),
 
+            analysisFlag(JvmAnalysisFlags.jvmExposeBoxed, trueOrNull(LanguageSettingsDirectives.JVM_EXPOSE_BOXED in directives)),
+
             analysisFlag(AnalysisFlags.explicitApiVersion, trueOrNull(apiVersion != null)),
         )
 

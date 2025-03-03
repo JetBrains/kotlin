@@ -32067,6 +32067,100 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Directive {
+        @Test
+        public void testAllFilesPresentInDirective() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("constructor.kt")
+        public void testConstructor() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/constructor.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorBoxed.kt")
+        public void testConstructorBoxed() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/constructorBoxed.kt");
+        }
+
+        @Test
+        @TestMetadata("getter.kt")
+        public void testGetter() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/getter.kt");
+        }
+
+        @Test
+        @TestMetadata("globalReturn.kt")
+        public void testGlobalReturn() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/globalReturn.kt");
+        }
+
+        @Test
+        @TestMetadata("initBlock.kt")
+        public void testInitBlock() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/initBlock.kt");
+        }
+
+        @Test
+        @TestMetadata("lambda.kt")
+        public void testLambda() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/lambda.kt");
+        }
+
+        @Test
+        @TestMetadata("method.kt")
+        public void testMethod() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/method.kt");
+        }
+
+        @Test
+        @TestMetadata("methodReturn.kt")
+        public void testMethodReturn() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/methodReturn.kt");
+        }
+
+        @Test
+        @TestMetadata("methodReturnWithJvmName.kt")
+        public void testMethodReturnWithJvmName() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/methodReturnWithJvmName.kt");
+        }
+
+        @Test
+        @TestMetadata("noArg.kt")
+        public void testNoArg() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/noArg.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("uint.kt")
+        public void testUint() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/uint.kt");
+        }
+
+        @Test
+        @TestMetadata("uintInt.kt")
+        public void testUintInt() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/uintInt.kt");
+        }
+
+        @Test
+        @TestMetadata("uintReceiver.kt")
+        public void testUintReceiver() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/uintReceiver.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
       @TestDataPath("$PROJECT_ROOT")
       public class FeatureInteraction {

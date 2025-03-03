@@ -24789,6 +24789,16 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Directive {
+        @Test
+        public void testAllFilesPresentInDirective() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
       @TestDataPath("$PROJECT_ROOT")
       public class FeatureInteraction {

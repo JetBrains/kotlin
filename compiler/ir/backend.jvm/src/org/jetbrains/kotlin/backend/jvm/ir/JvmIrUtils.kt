@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -243,10 +245,10 @@ val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
             || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
 
-fun IrDeclaration.shouldBeExposedByAnnotation(): Boolean {
+fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(languageVersionSettings: LanguageVersionSettings): Boolean {
     if (!isFunctionWithInlineClassesInSignature()) return false
 
-    return findJvmExposeBoxedAnnotation() != null
+    return findJvmExposeBoxedAnnotation() != null || languageVersionSettings.getFlag(JvmAnalysisFlags.jvmExposeBoxed)
 }
 
 // Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS

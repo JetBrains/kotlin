@@ -84,7 +84,8 @@ class MemoizedInlineClassReplacements(
 
     private val IrSimpleFunction.needsReplacement: Boolean
         get() {
-            if (!(shouldBeExposedByAnnotation() || hasMangledParameters(includeMFVC = false) ||
+            if (!(shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) ||
+                        hasMangledParameters(includeMFVC = false) ||
                         mangleReturnTypes && hasMangledReturnType)
             ) return false
             if (isFromJava()) return mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()

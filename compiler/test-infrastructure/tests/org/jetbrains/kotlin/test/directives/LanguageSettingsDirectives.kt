@@ -140,6 +140,8 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val USE_INLINE_SCOPES_NUMBERS by directive("Use inline scopes numbers for inline marker variables")
     val DONT_WARN_ON_ERROR_SUPPRESSION by directive("Don't emit warning when an error is suppressed")
 
+    val JVM_EXPOSE_BOXED by directive("Expose inline class type as is instead of underlying type")
+
 
     // --------------------- Utils ---------------------
 

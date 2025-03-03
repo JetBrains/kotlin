@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.findJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -139,7 +140,7 @@ fun List<IrConstructorCall>.withoutJvmExposeBoxedAnnotation(): List<IrConstructo
         }
     }
 
-fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration): List<IrConstructorCall> {
+fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrConstructorCall> {
     // @JvmExposeBoxed contradicts @JvmSynthetic, so keep it on mangled declaration only
     fun List<IrConstructorCall>.withoutJvmSyntheticAnnotation(): List<IrConstructorCall> {
         return this.toMutableList().apply {
@@ -160,6 +161,13 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
         }
         return withoutJvmSyntheticAnnotation()
     }
-    val annotationToCopy = declaration.findJvmExposeBoxedAnnotation() ?: return this
-    return this.withoutJvmSyntheticAnnotation() + annotationToCopy
+    // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
+    // or -Xjvm-expose-boxed is specified. Add the annotation.
+    val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
+    return this.withoutJvmSyntheticAnnotation() + IrConstructorCallImpl.fromSymbolOwner(
+        constructor.owner.returnType,
+        constructor
+    ).apply {
+        arguments.add(null)
+    }
 }

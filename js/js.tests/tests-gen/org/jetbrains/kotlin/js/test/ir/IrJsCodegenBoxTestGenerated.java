@@ -25060,6 +25060,17 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
+      public class Directive {
+        @Test
+        public void testAllFilesPresentInDirective() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("legacy-frontend")

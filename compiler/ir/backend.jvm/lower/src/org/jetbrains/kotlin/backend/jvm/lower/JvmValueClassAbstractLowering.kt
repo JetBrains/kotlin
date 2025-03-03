@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.isBoxedInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotation
+import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.*
@@ -48,7 +47,8 @@ internal abstract class JvmValueClassAbstractLowering(
                 if (constructorReplacement != null) {
                     addBindingsFor(function, constructorReplacement)
                     return transformFlattenedConstructor(function, constructorReplacement)
-                } else if (function.shouldBeExposedByAnnotation() && function.parameters.any { it.type.isInlineClassType() } &&
+                } else if (function.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
+                    function.parameters.any { it.type.isInlineClassType() } &&
                     !function.constructedClass.isSpecificLoweringLogicApplicable()
                 ) {
                     val inlineClassParams = function.parameters.filter { it.type.isInlineClassType() }
@@ -134,7 +134,7 @@ internal abstract class JvmValueClassAbstractLowering(
         replacement.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
-        if (!(function.shouldBeExposedByAnnotation() && !function.isFakeOverride) &&
+        if (!(function.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) && !function.isFakeOverride) &&
             (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
         ) return listOf(replacement)
 
@@ -241,7 +241,7 @@ internal abstract class JvmValueClassAbstractLowering(
     }
 
     private fun IrSimpleFunction.signatureRequiresMangling(): Boolean {
-	if (shouldBeExposedByAnnotation()) return false
+	if (shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) return false
         val includeInline = specificMangle == SpecificMangle.Inline
         val includeMFVC = specificMangle == SpecificMangle.MultiField
         return nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) } ||
