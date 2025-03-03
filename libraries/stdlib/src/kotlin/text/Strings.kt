@@ -1158,6 +1158,7 @@ public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ign
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @return An index of the last occurrence of [string] or -1 if none is found.
+ * @sample samples.text.Strings.lastIndexOf
  */
 public fun CharSequence.lastIndexOf(string: String, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
