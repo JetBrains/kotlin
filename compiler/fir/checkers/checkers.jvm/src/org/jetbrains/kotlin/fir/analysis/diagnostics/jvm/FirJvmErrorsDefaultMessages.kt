@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.formatKotlinWithVersion
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DANGEROUS_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DELEGATION_BY_IN_JVM_RECORD
@@ -389,9 +390,13 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INCOMPATIBLE_ANNOTATION_TARGETS,
-            "Java {0} missing, corresponding to Kotlin {1}.",
+            "Incompatible annotation targets: Java {0} missing, corresponding to Kotlin {1}.",
             STRING_TARGETS,
             STRING_TARGETS
+        )
+        map.put(
+            ANNOTATION_TARGETS_ONLY_IN_JAVA,
+            "No Kotlin '@Target' annotation specified (implicitly targeting everything), but one exists for Java."
         )
         map.put(
             NO_REFLECTION_IN_CLASS_PATH,

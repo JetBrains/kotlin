@@ -145,6 +145,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<Collection<String>>("missingJavaTargets")
             parameter<Collection<String>>("correspondingKotlinTargets")
         }
+        val ANNOTATION_TARGETS_ONLY_IN_JAVA by warning<KtAnnotationEntry>()
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

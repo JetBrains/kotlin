@@ -5069,6 +5069,11 @@ internal class IncompatibleAnnotationTargetsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.IncompatibleAnnotationTargets
 
+internal class AnnotationTargetsOnlyInJavaImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationTargetsOnlyInJava
+
 internal class LocalJvmRecordImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

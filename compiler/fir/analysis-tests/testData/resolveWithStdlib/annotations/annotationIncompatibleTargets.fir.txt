@@ -17,3 +17,9 @@ FILE: annotationIncompatibleTargets.kt
         }
 
     }
+    @R|java/lang/annotation/Target|(value = vararg(Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.PARAMETER|)) public final annotation class D : R|kotlin/Annotation| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
