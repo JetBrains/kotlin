@@ -76,6 +76,7 @@ where advanced options include:
   -Xfriend-paths=<path>      Paths to output directories for friend modules (modules whose internals should be visible).
   -Xallow-no-source-files    Allow the set of source files to be empty.
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode.
+  -Xjvm-expose-boxed         Expose inline classes and functions, accepting and returning them, to Java.
   -Xstring-concat={indy-with-constants|indy|inline}
                              Select the code generation scheme for string concatenation:
                              -Xstring-concat=indy-with-constants  Concatenate strings using 'invokedynamic' and 'makeConcatWithConstants'. This requires '-jvm-target 9' or greater.

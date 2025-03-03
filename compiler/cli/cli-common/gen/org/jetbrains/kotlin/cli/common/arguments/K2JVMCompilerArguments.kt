@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
+import org.jetbrains.kotlin.config.LanguageFeature
 
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/JvmCompilerArguments.kt
@@ -572,6 +573,17 @@ problems with parentheses in identifiers on certain platforms.""",
         description = "Emit JVM type annotations in bytecode.",
     )
     var emitJvmTypeAnnotations: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xjvm-expose-boxed",
+        description = "Expose inline classes and functions, accepting and returning them, to Java.",
+    )
+    @Enables(LanguageFeature.ImplicitJvmExposeBoxed)
+    var jvmExposeBoxed: Boolean = false
         set(value) {
             checkFrozen()
             field = value

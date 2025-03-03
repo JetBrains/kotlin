@@ -4,14 +4,36 @@ public final class BoxKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
+@kotlin.Metadata
+final class ICKt$lambda$1 {
+    // source: 'IC.kt'
+    enclosing class ICKt
+    public final static field INSTANCE: ICKt$lambda$1
+    inner (anonymous) class ICKt$lambda$1
+    static method <clinit>(): void
+    method <init>(): void
+    public final @kotlin.jvm.JvmExposeBoxed method invoke(): TopLevelValueClass
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke-Z4NrPMg(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ICKt {
+    // source: 'IC.kt'
+    private final static @org.jetbrains.annotations.NotNull field lambda: kotlin.jvm.functions.Function0
+    inner (anonymous) class ICKt$lambda$1
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method getLambda(): kotlin.jvm.functions.Function0
+}
+
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
-public final class StringWrapper {
+public final class TopLevelValueClass {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
-    public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
+    public synthetic final static method box-impl(p0: java.lang.String): TopLevelValueClass
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
@@ -22,16 +44,4 @@ public final class StringWrapper {
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.String): java.lang.String
     public synthetic final method unbox-impl(): java.lang.String
-}
-
-@kotlin.Metadata
-public final class Test {
-    // source: 'IC.kt'
-    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: StringWrapper): void
-    private method <init>(p0: java.lang.String): void
-    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method getS(): StringWrapper
-    public final @org.jetbrains.annotations.NotNull method getS-K4fyztM(): java.lang.String
-    public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String
 }
