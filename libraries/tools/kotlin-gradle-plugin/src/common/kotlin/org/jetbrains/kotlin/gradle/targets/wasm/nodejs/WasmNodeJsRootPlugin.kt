@@ -71,7 +71,7 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
             allDeps
         ).produceEnv()
 
-        target.registerTask<KotlinToolingInstallTask>(KotlinToolingInstallTask.NAME) { toolingInstall ->
+        target.registerTask<KotlinToolingInstallTask>(extensionName(KotlinToolingInstallTask.NAME)) { toolingInstall ->
             toolingInstall
                 .versionsHash
                 .value(npmTooling.map { it.version })

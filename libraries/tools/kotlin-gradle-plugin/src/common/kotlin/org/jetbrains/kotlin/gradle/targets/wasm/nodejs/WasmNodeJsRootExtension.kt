@@ -33,7 +33,7 @@ abstract class WasmNodeJsRootExtension internal constructor(
 
     val toolingInstallTaskProvider: TaskProvider<out KotlinToolingInstallTask>
         get() = project.tasks.withType(KotlinToolingInstallTask::class.java)
-            .named(KotlinToolingInstallTask.NAME)
+            .named(extensionName(KotlinToolingInstallTask.NAME))
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String

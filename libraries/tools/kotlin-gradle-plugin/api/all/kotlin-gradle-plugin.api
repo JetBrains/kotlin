@@ -4360,7 +4360,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinPackag
 public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingInstallTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironmentTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingInstallTask$Companion;
 	public static final field NAME Ljava/lang/String;
-	public fun <init> ()V
 	public final fun getArgs ()Ljava/util/List;
 	public abstract fun getDestination ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getNodeModules ()Lorg/gradle/api/file/DirectoryProperty;
