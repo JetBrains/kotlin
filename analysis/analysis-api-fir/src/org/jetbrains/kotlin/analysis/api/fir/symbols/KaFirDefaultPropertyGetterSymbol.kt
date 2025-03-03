@@ -5,37 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
-import org.jetbrains.kotlin.analysis.api.fir.kaSymbolModalityByModifiers
-import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePropertyGetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
@@ -44,11 +25,8 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * Also represents [KaFirKotlinPropertyKtPropertyBasedSymbol] with backing [KtPropertyAccessor] without a body.
  */
 internal class KaFirDefaultPropertyGetterSymbol(
-    val owningKaProperty: KaFirKotlinPropertySymbol<*>,
-) : KaPropertyGetterSymbol(), KaFirPsiSymbol<KtPropertyAccessor, FirPropertyAccessorSymbol> {
-    override val backingPsi: KtPropertyAccessor?
-        get() = (owningKaProperty.backingPsi as? KtProperty)?.getter
-
+    override val owningKaProperty: KaFirKotlinPropertySymbol<*>,
+) : KaPropertyGetterSymbol(), KaFirBasePropertyGetterSymbol {
     init {
         requireWithAttachment(
             backingPsi?.hasBody() != true,
@@ -58,80 +36,38 @@ internal class KaFirDefaultPropertyGetterSymbol(
         }
     }
 
-    override val analysisSession: KaFirSession
-        get() = owningKaProperty.analysisSession
-
-    override val lazyFirSymbol: Lazy<FirPropertyAccessorSymbol>
-        get() = throw UnsupportedOperationException()
-
-    override val firSymbol: FirPropertyAccessorSymbol
-        get() = owningKaProperty.firSymbol.getterSymbol ?: errorWithAttachment("Getter is not found") {
-            withFirSymbolEntry("property", owningKaProperty.firSymbol)
-        }
-
-    override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi }
-
     override val isExpect: Boolean
-        get() = withValidityAssertion {
-            backingPsi?.hasModifier(KtTokens.EXPECT_KEYWORD) == true ||
-                    owningKaProperty.backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect
-        }
+        get() = isExpectImpl
 
     override val isDefault: Boolean
         get() = withValidityAssertion { true }
 
     override val isInline: Boolean
-        get() = withValidityAssertion {
-            backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) == true ||
-                    owningKaProperty.backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline
-        }
+        get() = isInlineImpl
 
     override val isOverride: Boolean
-        get() = withValidityAssertion { owningKaProperty.isOverride }
+        get() = isOverrideImpl
 
     override val hasBody: Boolean
         get() = withValidityAssertion { false }
 
     override val modality: KaSymbolModality
-        get() = withValidityAssertion {
-            backingPsi?.kaSymbolModalityByModifiers
-                ?: owningKaProperty.modalityByPsi
-                ?: firSymbol.modality.asKaSymbolModality
-        }
+        get() = modalityImpl
 
     override val compilerVisibility: Visibility
-        get() = withValidityAssertion {
-            backingPsi?.visibilityByModifiers
-                ?: owningKaProperty.compilerVisibilityByPsi
-                ?: firSymbol.visibility
-        }
+        get() = compilerVisibilityImpl
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = returnTypeImpl
 
     override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion {
-            owningKaProperty.receiverParameter
-        }
+        get() = receiverParameterImpl
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            val propertyBackingPsi = owningKaProperty.backingPsi
-            if (propertyBackingPsi != null &&
-                !propertyBackingPsi.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_GETTER) &&
-                this.backingPsi?.annotationEntries.isNullOrEmpty()
-            )
-                KaBaseEmptyAnnotationList(token)
-            else
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-        }
+        get() = annotationsImpl
 
     override val callableId: CallableId?
-        get() = withValidityAssertion { null }
-
-    override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { owningKaProperty.origin }
+        get() = callableIdImpl
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
         KaBasePropertyGetterSymbolPointer(owningKaProperty.createPointer(), this)
