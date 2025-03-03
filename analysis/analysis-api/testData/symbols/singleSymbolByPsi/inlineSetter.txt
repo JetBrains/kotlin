@@ -90,7 +90,7 @@ KaKotlinPropertySymbol:
     isDefault: false
     isExpect: false
     isExtension: false
-    isInline: false
+    isInline: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
