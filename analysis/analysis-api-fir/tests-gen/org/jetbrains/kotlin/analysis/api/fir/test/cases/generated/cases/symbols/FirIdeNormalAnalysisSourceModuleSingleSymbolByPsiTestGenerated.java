@@ -167,6 +167,36 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   }
 
   @Test
+  @TestMetadata("inlineDefaultGetter.kt")
+  public void testInlineDefaultGetter() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/inlineDefaultGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineDefaultSetter.kt")
+  public void testInlineDefaultSetter() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/inlineDefaultSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineGetter.kt")
+  public void testInlineGetter() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/inlineGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineSetter.kt")
+  public void testInlineSetter() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/inlineSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineVariable.kt")
+  public void testInlineVariable() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/inlineVariable.kt");
+  }
+
+  @Test
   @TestMetadata("innerTypeAlias.kt")
   public void testInnerTypeAlias() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/innerTypeAlias.kt");
