@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
-import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
@@ -309,13 +308,13 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(
         buildString {
             appendLine(
                 """
-                    ⚠ withDebug failed to connect to test that was overriding environment variables
-                    
-                    To debug a test that runs with environment variables:
-                        1. Create run configuration "Remote JVM Debug". Select Debugger Mode: "Listen to remote JVM" and check "Auto restart"
-                        2. Specify Host: ${EnableGradleDebug.LOOPBACK_IP} and Port: ${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}
-                        3. Run this run configuration and then run the test under debugger
-                    """.trimIndent()
+                ⚠ withDebug failed to connect to test that was overriding environment variables
+                
+                To debug a test that runs with environment variables:
+                    1. Create run configuration "Remote JVM Debug". Select Debugger Mode: "Listen to remote JVM" and check "Auto restart"
+                    2. Specify Host: ${EnableGradleDebug.LOOPBACK_IP} and Port: ${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS}
+                    3. Run this run configuration and then run the test under debugger
+                """.trimIndent()
             )
             appendLine()
             appendLine("JVM connection failed at ${EnableGradleDebug.LOOPBACK_IP}:${EnableGradleDebug.PORT_FOR_DEBUGGING_KGP_IT_WITH_ENVS} with:")
@@ -1083,8 +1082,8 @@ private fun TestProject.configureSingleNativeTarget(
 }
 
 private fun TestProject.configureSingleNativeTargetInSubFolders(preset: String = HostManager.host.presetName) {
-    projectPath.toFile().walk()
-        .filter { it.isFile && (it.name == "build.gradle.kts" || it.name == "build.gradle") }
+    projectPath.walk()
+        .filter { it.isRegularFile() && (it.name == "build.gradle.kts" || it.name == "build.gradle") }
         .forEach { file ->
             file.modify {
                 it.replace(SINGLE_NATIVE_TARGET_PLACEHOLDER, preset)
@@ -1093,8 +1092,8 @@ private fun TestProject.configureSingleNativeTargetInSubFolders(preset: String =
 }
 
 internal fun GradleProject.configureLocalRepository(localRepoDir: Path) {
-    projectPath.toFile().walkTopDown()
-        .filter { it.isFile && it.name in buildFileNames }
+    projectPath.walk()
+        .filter { it.isRegularFile() && it.name in buildFileNames }
         .forEach { file ->
             file.modify { it.replace(LOCAL_REPOSITORY_PLACEHOLDER, localRepoDir.absolutePathString().replace("\\", "\\\\")) }
         }

@@ -7,18 +7,20 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
-import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.exists
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.name
+import kotlin.io.path.walk
 import kotlin.test.assertEquals
 
 internal sealed class XcodeBuildAction(
     val action: String,
 ) {
-    object Build : XcodeBuildAction("build")
-    object Test : XcodeBuildAction("test")
+    data object Build : XcodeBuildAction("build")
+    data object Test : XcodeBuildAction("test")
     class Archive(val archivePath: String) : XcodeBuildAction("archive")
 }
 
@@ -160,8 +162,8 @@ private fun TestProject.overrideMavenLocalIfNeeded() {
     val mavenLocalOverride = System.getProperty("maven.repo.local") ?: return
 
     // Manually adding custom local repo, because the system property is lost when Gradle is invoked through Xcode build phase
-    projectPath.toFile().walkTopDown()
-        .filter { it.isFile && it.name in buildFileNames }
+    projectPath.walk()
+        .filter { it.isRegularFile() && it.name in buildFileNames }
         .forEach { file ->
             file.modify { it.replace("mavenLocal()", "maven { setUrl(\"$mavenLocalOverride\") }") }
         }

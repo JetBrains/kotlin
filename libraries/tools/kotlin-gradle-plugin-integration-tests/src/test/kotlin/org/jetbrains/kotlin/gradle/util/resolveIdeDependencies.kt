@@ -22,7 +22,7 @@ import kotlin.test.fail
 
 internal fun TestProject.resolveIdeDependencies(
     subproject: String? = null,
-    assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit
+    assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit,
 ) {
     build("${subproject.orEmpty()}:resolveIdeDependencies") {
         assertions(readIdeDependencies(subproject))
@@ -64,8 +64,8 @@ private object GradleIntegrationTestIdeaKotlinSerializationContext : IdeaKotlinS
 }
 
 class IdeaKotlinDependenciesContainer(
-    private val dependencies: Map<String, Set<IdeaKotlinDependency>>
-): Map<String, Set<IdeaKotlinDependency>> by dependencies {
+    private val dependencies: Map<String, Set<IdeaKotlinDependency>>,
+) : Map<String, Set<IdeaKotlinDependency>> by dependencies {
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override operator fun get(sourceSetName: String) = dependencies[sourceSetName]
         ?: fail("SourceSet with name $sourceSetName not found. Found: ${dependencies.keys}")

@@ -17,12 +17,13 @@ class ProcessRunResult(
     val isSuccessful: Boolean
         get() = exitCode == 0
 
-    override fun toString(): String = """
-Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
-    Command: ${cmd.joinToString()}
-    Working directory: ${workingDir.absolutePath}
-    Exit code: $exitCode
-"""
+    override fun toString(): String =
+        """
+        |Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
+        |    Command: ${cmd.joinToString()}
+        |    Working directory: ${workingDir.absolutePath}
+        |    Exit code: $exitCode
+        """.trimMargin()
 }
 
 fun runProcess(
@@ -50,15 +51,6 @@ fun runProcess(
     return ProcessRunResult(cmd, workingDir, exitCode, sb.toString(), stdErr)
 }
 
-fun createGradleCommand(wrapperDir: File, tailParameters: List<String>): List<String> {
-    return if (isWindows)
-        listOf("cmd", "/C", "${wrapperDir.absolutePath}/gradlew.bat") + tailParameters
-    else
-        listOf("/bin/bash", "${wrapperDir.absolutePath}/gradlew") + tailParameters
-}
-
-val isWindows: Boolean = System.getProperty("os.name")!!.contains("Windows")
-
 /**
  * Asserts the result of running a process by calling a set of assertions on the result object.
  * If any of the assertions fail, an [AssertionError] is thrown and the process output information is printed.
@@ -74,22 +66,22 @@ fun assertProcessRunResult(result: ProcessRunResult, assertions: ProcessRunResul
     } catch (e: AssertionError) {
         println(
             """
-                |Process info:
-                |#######################
-                |$result
-                |#######################
-                |
-                |Process output:
-                |#######################
-                |${result.output}
-                |#######################
-                |
-                |Process error output:
-                |#######################
-                |${result.stdErr}
-                |#######################
-                |
-                """.trimMargin()
+            |Process info:
+            |#######################
+            |$result
+            |#######################
+            |
+            |Process output:
+            |#######################
+            |${result.output}
+            |#######################
+            |
+            |Process error output:
+            |#######################
+            |${result.stdErr}
+            |#######################
+            |
+            """.trimMargin()
         )
         throw e
     }

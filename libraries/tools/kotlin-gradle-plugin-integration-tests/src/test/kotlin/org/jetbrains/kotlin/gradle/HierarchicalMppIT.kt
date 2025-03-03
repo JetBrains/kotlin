@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -25,10 +24,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.io.path.appendText
-import kotlin.io.path.exists
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -1353,7 +1349,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         subproject: String? = null,
         check: BuildResult.(reports: Iterable<DependencyTransformationReport>) -> Unit,
     ) {
-        val buildGradleKts = (subproject?.let { subProject(subproject).buildGradleKts } ?: buildGradleKts).toFile()
+        val buildGradleKts = (subproject?.let { subProject(subproject).buildGradleKts } ?: buildGradleKts)
         assert(buildGradleKts.exists()) { "Kotlin scripts are not found." }
         assert(buildGradleKts.extension == "kts") { "Only Kotlin scripts are supported." }
 

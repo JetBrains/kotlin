@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.util
 import org.gradle.api.Project
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.testbase.*
-import java.io.File
 import kotlin.test.assertTrue
 
 private const val RESOLVE_ALL_CONFIGURATIONS_TASK_NAME = "resolveAllConfigurations"

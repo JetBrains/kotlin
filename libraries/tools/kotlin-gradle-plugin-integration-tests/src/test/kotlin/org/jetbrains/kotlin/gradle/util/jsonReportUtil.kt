@@ -35,9 +35,9 @@ data class BuildOperationRecordImpl(
     //taskRecords
     val kotlinLanguageVersion: KotlinVersion?,
     val changedFiles: SourcesChanges? = null,
-    val compilerArguments: Array<String> = emptyArray(),
+    val compilerArguments: List<String> = emptyList(),
     val statTags: Set<StatTag> = emptySet(),
-): BuildOperationRecord
+) : BuildOperationRecord
 
 
 internal fun readJsonReport(jsonReport: Path): BuildExecutionData {
@@ -60,7 +60,7 @@ internal fun readJsonReport(jsonReport: Path): BuildExecutionData {
             ): SourcesChanges? {
                 return null //ignore source changes right now
             }
-        }).registerTypeAdapter(File::class.java, object : JsonDeserializer<File>{
+        }).registerTypeAdapter(File::class.java, object : JsonDeserializer<File> {
             override fun deserialize(
                 json: JsonElement?,
                 typeOfT: Type?,

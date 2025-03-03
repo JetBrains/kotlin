@@ -15,7 +15,7 @@ fun parsePom(file: File): PublishedPom = PublishedPom(
 )
 
 class PublishedPom(
-    private val document: Document
+    private val document: Document,
 ) {
     val selfReference: MavenModule
         get() = document.documentElement.mavenModule()
@@ -53,4 +53,3 @@ data class MavenModule(
     val version: String?,
     val scope: String?,
 )
-

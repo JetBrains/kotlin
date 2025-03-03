@@ -25,7 +25,9 @@ fun cartesianProductOf(
     vararg rest: Iterable<Any?>,
 ): Sequence<List<Any?>> {
     var result: Sequence<Pair<Any?, Any?>> = first x second
-    for (restItem in rest) { result = result x restItem }
+    for (restItem in rest) {
+        result = result x restItem
+    }
     return result.flattenPairs
 }
 
