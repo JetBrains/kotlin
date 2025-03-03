@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import java.nio.file.Path
 
-class KaLibraryModuleImpl(
+open class KaLibraryModuleImpl(
     override val libraryName: String,
     override val targetPlatform: TargetPlatform,
     override val baseContentScope: GlobalSearchScope,
