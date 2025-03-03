@@ -33,10 +33,10 @@ internal fun Configuration.addGradlePluginMetadataAttributes(
     project: Project,
 ) {
     attributes {
-        it.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-        it.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
-        it.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
-        it.setAttribute(
+        it.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+        it.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
+        it.attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
+        it.attributes.attribute(
             GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
             project.objects.named(GradleVersion.current().version)
         )

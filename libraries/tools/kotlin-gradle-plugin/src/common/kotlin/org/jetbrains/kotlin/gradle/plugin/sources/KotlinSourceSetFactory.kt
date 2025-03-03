@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
@@ -94,9 +93,9 @@ internal class DefaultKotlinSourceSetFactory(
 
         dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
             project.configurations.maybeCreateResolvable(metadataName).apply {
-                attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 isVisible = false
 
                 if (configurationName != null) {

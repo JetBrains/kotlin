@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.named
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -104,9 +103,9 @@ internal fun Project.registerExportDependencies(target: KonanTarget, artifactNam
 }
 
 private fun Configuration.configureAttributesFor(project: Project, target: KonanTarget) = with(project) {
-    attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-    attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
+    attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+    attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
     if (kotlinPropertiesProvider.useNonPackedKlibs) {
         KlibPackaging.setAttributeTo(project, attributes, false)
     }

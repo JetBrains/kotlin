@@ -61,9 +61,9 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(compilation.target)
             compilation.copyAttributesTo(project.providers, dest = attributes)
-            attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
-            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             description = "CInterop dependencies for compilation '${compilation.name}')."
         }
     }
@@ -97,10 +97,10 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(target)
             target.copyAttributesTo(project.providers, dest = attributes)
-            attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
-            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
+            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
 
             /* Expose api dependencies */
             target.compilations.findByName(MAIN_COMPILATION_NAME)?.let { compilation ->

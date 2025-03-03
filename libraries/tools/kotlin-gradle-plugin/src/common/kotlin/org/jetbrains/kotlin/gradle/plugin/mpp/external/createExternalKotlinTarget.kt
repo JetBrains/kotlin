@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -73,9 +72,11 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
 
     val compilerOptions = when (descriptor.platformType) {
         KotlinPlatformType.androidJvm,
-        KotlinPlatformType.jvm -> project.objects.newInstance<KotlinJvmCompilerOptionsDefault>()
+        KotlinPlatformType.jvm
+            -> project.objects.newInstance<KotlinJvmCompilerOptionsDefault>()
         KotlinPlatformType.wasm,
-        KotlinPlatformType.js -> project.objects.newInstance<KotlinJsCompilerOptionsDefault>()
+        KotlinPlatformType.js
+            -> project.objects.newInstance<KotlinJsCompilerOptionsDefault>()
         KotlinPlatformType.common -> project.objects.newInstance<KotlinCommonCompilerOptionsDefault>()
         KotlinPlatformType.native -> project.objects.newInstance<KotlinNativeCompilerOptionsDefault>()
     }
@@ -134,13 +135,13 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
 private fun ExternalKotlinTargetImpl.setupApiElements(configuration: Configuration) {
     configuration.usesPlatformOf(this)
     KotlinUsages.configureProducerApiUsage(configuration, this)
-    configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+    configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
 }
 
 private fun ExternalKotlinTargetImpl.setupRuntimeElements(configuration: Configuration) {
     configuration.usesPlatformOf(this)
     KotlinUsages.configureProducerRuntimeUsage(configuration, this)
-    configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+    configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
 }
 
 private fun ExternalKotlinTargetImpl.setupSourcesElements(configuration: Configuration) {

@@ -117,12 +117,12 @@ internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinT
     // the latter isn't a strong requirement since there is no tooling that consume kotlin sources through gradle variants at the moment
     // so consistency with Java Gradle Plugin seemed most desirable choice.
     KotlinUsages.configureProducerRuntimeUsage(this, target)
-    attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.attributeValueByName(Category.DOCUMENTATION))
-    attributes.setAttribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.attributeValueByName(DocsType.SOURCES))
+    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.attributeValueByName(Category.DOCUMENTATION))
+    attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.attributeValueByName(DocsType.SOURCES))
     // Bundling attribute is about component dependencies, external means that they are provided as separate components
     // source variants doesn't have any dependencies (at least at the moment) so there is not much sense to use this attribute
     // however for Java Gradle Plugin compatibility and in order to prevent weird Variant Resolution errors we include this attribute
-    attributes.setAttribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
     usesPlatformOf(target)
 }
 
@@ -134,17 +134,17 @@ internal fun HasAttributes.configureResourcesPublicationAttributes(target: Kotli
     } else {
         KotlinUsages.KOTLIN_RESOURCES
     }
-    attributes.setAttribute(
+    attributes.attribute(
         Usage.USAGE_ATTRIBUTE,
         project.usageByName(usage)
     )
-    attributes.setAttribute(
+    attributes.attribute(
         LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
         project.objects.named(usage)
     )
 
-    attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-    attributes.setAttribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
 
     setUsesPlatformOf(target)
 }

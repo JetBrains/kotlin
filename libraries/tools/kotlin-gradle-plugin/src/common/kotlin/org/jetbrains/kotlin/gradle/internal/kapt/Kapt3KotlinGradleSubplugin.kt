@@ -111,7 +111,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
             project.configurations.findResolvable(configurationName)?.let { return it }
             val aptConfiguration = project.configurations.createResolvable(configurationName).apply {
-                attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
             }
 
             if (aptConfiguration.name != MAIN_KAPT_CONFIGURATION_NAME) {

@@ -57,7 +57,7 @@ internal inline fun <reified T : Named> Project.attributeValueByName(attributeVa
 fun Configuration.usesPlatformOf(target: KotlinTarget) = setUsesPlatformOf(target)
 
 internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
-    attributes.setAttribute(KotlinPlatformType.attribute, target.platformType)
+    attributes.attribute(KotlinPlatformType.attribute, target.platformType)
 
     when (target.platformType) {
         KotlinPlatformType.jvm -> setJavaTargetEnvironmentAttribute(target.project, "standard-jvm")
@@ -80,7 +80,7 @@ internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
 
     if (publishJsCompilerAttribute && target is KotlinJsIrTarget) {
         if (target.platformType == KotlinPlatformType.js) {
-            attributes.setAttribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+            attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
         } else {
             attributes.setAttributeProvider<KotlinWasmTargetAttribute>(
                 target.project.providers,
@@ -90,7 +90,7 @@ internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
     }
 
     if (target is KotlinNativeTarget) {
-        attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
+        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)
     }
     return this
 }
@@ -99,7 +99,7 @@ private fun HasAttributes.setJavaTargetEnvironmentAttribute(
     project: Project,
     value: String
 ) {
-    attributes.setAttribute(
+    attributes.attribute(
         TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
         project.objects.named(value)
     )

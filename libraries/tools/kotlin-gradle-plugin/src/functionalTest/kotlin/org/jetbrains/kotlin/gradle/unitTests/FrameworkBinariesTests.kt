@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import kotlin.test.Test
@@ -87,11 +86,11 @@ class FrameworkBinariesTests {
         val frameworkProducer = buildProjectWithMPP {
             kotlin {
                 iosArm64 {
-                    attributes.setAttribute(disambiguation1Attribute, "someValue")
+                    attributes.attribute(disambiguation1Attribute, "someValue")
                     binaries {
                         framework("main")
                         framework("custom") {
-                            attributes.setAttribute(disambiguation2Attribute, "someValue2")
+                            attributes.attribute(disambiguation2Attribute, "someValue2")
                         }
                     }
                 }
@@ -155,9 +154,9 @@ class FrameworkBinariesTests {
             kotlin {
                 iosArm64 {
                     // Applying attributes at either target or framework level doesn't affect outgoing universal framework configuration
-                    attributes.setAttribute(disambiguation1Attribute, "someValue")
+                    attributes.attribute(disambiguation1Attribute, "someValue")
                     binaries.framework("main") {
-                        attributes.setAttribute(disambiguation2Attribute, "someValue2")
+                        attributes.attribute(disambiguation2Attribute, "someValue2")
                     }
                 }
                 iosX64 {

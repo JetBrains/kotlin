@@ -40,7 +40,7 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
         val apiElements = project.configurations.getByName(metadataTarget.apiElementsConfigurationName)
 
         apiElements.outgoing.variants.maybeCreate("kotlinProjectStructureMetadata").apply {
-            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
             registerArtifact(
                 artifactProvider = generateProjectStructureMetadata.map { task -> task.resultFile },
                 classifier = "psm-metadata",
@@ -52,8 +52,8 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
 
 internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfiguration(): LazyResolvedConfiguration {
     return LazyResolvedConfiguration(resolvableMetadataConfiguration) { attributes ->
-        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
-        attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
     }
 }
 
@@ -68,12 +68,12 @@ internal suspend fun Project.psmArtifactsForAllDependenciesFromSharedSourceSets(
 private fun setupTransformActionFromJarToPsm(project: Project) {
     project.dependencies.registerTransform(ProjectStructureMetadataTransformAction::class.java) { transform ->
         transform.from.apply {
-            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
         }
         transform.to.apply {
-            setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
-            setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
+            attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
         }
     }
 }

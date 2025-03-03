@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.attributeValueByName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
@@ -90,9 +89,9 @@ object KotlinUsages {
 
     internal fun configureProducerApiUsage(attributesHolder: HasAttributes, target: KotlinTarget) {
         val apiUsage = producerApiUsage(target.project, target.platformType)
-        attributesHolder.setAttribute(USAGE_ATTRIBUTE, apiUsage)
+        attributesHolder.attributes.attribute(USAGE_ATTRIBUTE, apiUsage)
         if (apiUsage.name == JAVA_API) {
-            attributesHolder.setAttribute(LIBRARY_ELEMENTS_ATTRIBUTE, target.project.attributeValueByName(LibraryElements.JAR))
+            attributesHolder.attributes.attribute(LIBRARY_ELEMENTS_ATTRIBUTE, target.project.attributeValueByName(LibraryElements.JAR))
         }
     }
 
@@ -105,9 +104,9 @@ object KotlinUsages {
 
     internal fun configureProducerRuntimeUsage(attributesHolder: HasAttributes, target: KotlinTarget) {
         val runtimeUsage = producerRuntimeUsage(target.project, target.platformType)
-        attributesHolder.setAttribute(USAGE_ATTRIBUTE, runtimeUsage)
+        attributesHolder.attributes.attribute(USAGE_ATTRIBUTE, runtimeUsage)
         if (runtimeUsage.name == JAVA_RUNTIME) {
-            attributesHolder.setAttribute(LIBRARY_ELEMENTS_ATTRIBUTE, target.project.attributeValueByName(LibraryElements.JAR))
+            attributesHolder.attributes.attribute(LIBRARY_ELEMENTS_ATTRIBUTE, target.project.attributeValueByName(LibraryElements.JAR))
         }
     }
 

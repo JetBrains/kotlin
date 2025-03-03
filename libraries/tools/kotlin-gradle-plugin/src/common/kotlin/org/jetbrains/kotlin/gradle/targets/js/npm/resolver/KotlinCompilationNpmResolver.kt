@@ -144,9 +144,9 @@ class KotlinCompilationNpmResolver(
         val all = project.configurations.createResolvable(compilation.npmAggregatedConfigurationName)
 
         all.usesPlatformOf(target)
-        all.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
-        all.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        all.attributes.setAttribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
+        all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+        all.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        all.attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
         all.isVisible = false
         all.description = "NPM configuration for $compilation."
 
@@ -169,9 +169,9 @@ class KotlinCompilationNpmResolver(
         val all = project.configurations.createConsumable(compilation.publicPackageJsonConfigurationName)
 
         all.usesPlatformOf(target)
-        all.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
-        all.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        all.attributes.setAttribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
+        all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+        all.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        all.attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
         all.isVisible = false
 
         return all
