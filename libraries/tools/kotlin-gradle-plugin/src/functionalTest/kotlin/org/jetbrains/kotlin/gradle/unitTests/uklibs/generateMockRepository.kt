@@ -305,5 +305,7 @@ private class MockRepository(
                 setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2")
             }.transform(DOMSource(doc), StreamResult(this))
         }.toString()
+            // Suppress \r\n newlines on Windows
+            .replace("\r", "")
     }
 }
