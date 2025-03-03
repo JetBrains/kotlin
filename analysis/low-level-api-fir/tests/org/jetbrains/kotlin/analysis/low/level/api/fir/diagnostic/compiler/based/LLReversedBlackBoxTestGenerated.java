@@ -35669,6 +35669,24 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("platformToLateinit.kt")
+    public void testPlatformToLateinit() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit.kt");
+    }
+
+    @Test
+    @TestMetadata("platformToLateinit2.kt")
+    public void testPlatformToLateinit2() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit2.kt");
+    }
+
+    @Test
+    @TestMetadata("platformToLateinit3.kt")
+    public void testPlatformToLateinit3() {
+      runTest("compiler/testData/codegen/box/javaInterop/platformToLateinit3.kt");
+    }
+
+    @Test
     @TestMetadata("protectedField.kt")
     public void testProtectedField() {
       runTest("compiler/testData/codegen/box/javaInterop/protectedField.kt");
