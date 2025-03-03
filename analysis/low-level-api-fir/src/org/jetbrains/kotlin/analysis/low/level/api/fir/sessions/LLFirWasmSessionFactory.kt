@@ -89,12 +89,10 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return LLLibrarySymbolProviderFactory.fromSettings(project).createWasmLibrarySymbolProvider(
             session,
             scope,
-            isFallbackDependenciesProvider,
         )
     }
 }

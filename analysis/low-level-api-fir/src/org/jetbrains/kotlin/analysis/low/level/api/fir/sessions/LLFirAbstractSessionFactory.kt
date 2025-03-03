@@ -109,7 +109,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     abstract fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean = false,
     ): List<FirSymbolProvider>
 
     fun createScriptSession(module: KaScriptModule): LLFirScriptSession {

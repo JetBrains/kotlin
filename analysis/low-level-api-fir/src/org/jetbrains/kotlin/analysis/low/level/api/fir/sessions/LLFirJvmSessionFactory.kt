@@ -114,7 +114,6 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
@@ -128,7 +127,6 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
                     firJavaFacade,
                     packagePartProvider,
                     scope,
-                    isFallbackDependenciesProvider,
                 )
             )
             addIfNotNull(

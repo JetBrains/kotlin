@@ -46,7 +46,6 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
         firJavaFacade: FirJavaFacade,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return buildList {
             //stub based provider here works over kotlin-only indices and thus provides only kotlin declarations
@@ -57,7 +56,6 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
                 createStubBasedLibrarySymbolProviderForClassFiles(
                     session,
                     scope,
-                    isFallbackDependenciesProvider,
                 )
             )
             add(LLFirJavaSymbolProvider(session, scope))
@@ -68,25 +66,21 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
         session: LLFirSession,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> = listOf(
         createStubBasedLibrarySymbolProviderForCommonMetadataFiles(
             session = session,
             baseScope = scope,
-            isFallbackDependenciesProvider = isFallbackDependenciesProvider,
         )
     )
 
     override fun createNativeLibrarySymbolProvider(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return listOfNotNull(
             createStubBasedLibrarySymbolProviderForKotlinNativeMetadataFiles(
                 session,
                 scope,
-                isFallbackDependenciesProvider,
             ),
             createNativeForwardDeclarationsSymbolProvider(session),
         )
@@ -95,13 +89,11 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
     override fun createJsLibrarySymbolProvider(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return listOf(
             createStubBasedLibrarySymbolProviderForKotlinNativeMetadataFiles(
                 session,
                 scope,
-                isFallbackDependenciesProvider,
             ),
         )
     }
@@ -109,13 +101,11 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
     override fun createWasmLibrarySymbolProvider(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return listOf(
             createStubBasedLibrarySymbolProviderForKotlinNativeMetadataFiles(
                 session,
                 scope,
-                isFallbackDependenciesProvider,
             ),
         )
     }
@@ -128,12 +118,10 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
 private fun createStubBasedLibrarySymbolProviderForClassFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
-    isFallbackDependenciesProvider: Boolean,
 ): FirSymbolProvider = createStubBasedLibrarySymbolProviderForScopeLimitedByFiles(
     session,
     baseScope,
     JvmAndBuiltinsDeserializedContainerSourceProvider,
-    isFallbackDependenciesProvider,
 ) { file ->
     val extension = file.extension
     extension == JavaClassFileType.INSTANCE.defaultExtension || extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
@@ -142,12 +130,10 @@ private fun createStubBasedLibrarySymbolProviderForClassFiles(
 private fun createStubBasedLibrarySymbolProviderForCommonMetadataFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
-    isFallbackDependenciesProvider: Boolean,
 ): FirSymbolProvider = createStubBasedLibrarySymbolProviderForScopeLimitedByFiles(
     session,
     baseScope,
     NullDeserializedContainerSourceProvider,
-    isFallbackDependenciesProvider,
 ) { file ->
     val extension = file.extension
     extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION ||
@@ -159,19 +145,16 @@ private fun createStubBasedLibrarySymbolProviderForCommonMetadataFiles(
 private fun createStubBasedLibrarySymbolProviderForKotlinNativeMetadataFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
-    isFallbackDependenciesProvider: Boolean,
 ): FirSymbolProvider = createStubBasedLibrarySymbolProviderForScopeLimitedByFiles(
     session,
     baseScope,
     NullDeserializedContainerSourceProvider,
-    isFallbackDependenciesProvider,
 ) { file -> file.extension == KLIB_METADATA_FILE_EXTENSION }
 
 private fun createStubBasedLibrarySymbolProviderForScopeLimitedByFiles(
     session: LLFirSession,
     baseScope: GlobalSearchScope,
     deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
-    isFallbackDependenciesProvider: Boolean,
     fileFilter: (VirtualFile) -> Boolean,
 ): LLKotlinStubBasedLibrarySymbolProvider {
     return createFirSymbolProviderForScopeLimitedByFiles(
@@ -181,7 +164,6 @@ private fun createStubBasedLibrarySymbolProviderForScopeLimitedByFiles(
                 session,
                 deserializedContainerSourceProvider,
                 reducedScope,
-                isFallbackDependenciesProvider,
             )
         }
     )
@@ -205,7 +187,6 @@ private class StubBasedBuiltInsSymbolProvider(session: LLFirSession) : LLKotlinS
     session,
     BuiltinsDeserializedContainerSourceProvider,
     BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(session.project),
-    isFallbackDependenciesProvider = false,
 ), LLBuiltinSymbolProviderMarker {
     private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
         session,

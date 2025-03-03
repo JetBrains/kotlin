@@ -93,7 +93,6 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
@@ -103,7 +102,6 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
                 LLLibrarySymbolProviderFactory.fromSettings(project).createNativeLibrarySymbolProvider(
                     session,
                     scope,
-                    isFallbackDependenciesProvider,
                 )
             )
             addIfNotNull(

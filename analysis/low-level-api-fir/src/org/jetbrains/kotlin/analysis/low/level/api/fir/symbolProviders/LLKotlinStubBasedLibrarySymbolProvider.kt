@@ -59,15 +59,13 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     session: LLFirSession,
     private val deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
     scope: GlobalSearchScope,
-    // A workaround for KT-63718. It should be removed with KT-64236.
-    isFallbackDependenciesProvider: Boolean,
 ) : LLKotlinSymbolProvider(session) {
     private val kotlinScopeProvider: FirKotlinScopeProvider get() = session.kotlinScopeProvider
     private val moduleData: LLFirModuleData get() = session.llFirModuleData
 
     final override val declarationProvider = session.project.createDeclarationProvider(
         scope,
-        contextualModule = session.ktModule.takeIf { !isFallbackDependenciesProvider },
+        contextualModule = session.ktModule,
     )
 
     override val allowKotlinPackage: Boolean get() = true

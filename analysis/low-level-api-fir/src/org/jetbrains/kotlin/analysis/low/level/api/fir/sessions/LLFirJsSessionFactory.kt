@@ -83,12 +83,10 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
         scope: GlobalSearchScope,
-        isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
         return LLLibrarySymbolProviderFactory.fromSettings(project).createJsLibrarySymbolProvider(
             session,
             scope,
-            isFallbackDependenciesProvider,
         )
     }
 }
