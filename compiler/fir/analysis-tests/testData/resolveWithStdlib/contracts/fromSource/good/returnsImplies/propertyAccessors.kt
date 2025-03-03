@@ -1,4 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -AllowContractsOnPropertyAccessors
+
 import kotlin.contracts.*
 
 interface A {

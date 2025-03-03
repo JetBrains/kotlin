@@ -997,6 +997,7 @@ abstract class FirDataFlowAnalyzer(
             } else if (this@orderedArguments is FirVariableAssignment) {
                 val lValue = lValue as? FirQualifiedAccessExpression
                 lValue?.addContextArgumentsTo(this)
+                add(rValue)
             }
         }.toTypedArray()
     }

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ContractSyntaxV2
+// LANGUAGE: -AllowContractsOnPropertyAccessors
 // WITH_STDLIB
 
 import kotlin.contracts.*

@@ -46824,6 +46824,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Dsl {
         @Test
+        @TestMetadata("accessorsAllowedInK2.kt")
+        public void testAccessorsAllowedInK2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/accessorsAllowedInK2.kt");
+        }
+
+        @Test
         @TestMetadata("callUsualContractFunction.kt")
         public void testCallUsualContractFunction() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/callUsualContractFunction.kt");

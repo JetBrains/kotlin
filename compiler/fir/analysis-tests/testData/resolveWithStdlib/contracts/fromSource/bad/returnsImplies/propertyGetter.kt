@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -AllowContractsOnPropertyAccessors
 // OPT_IN: kotlin.RequiresOptIn
 import kotlin.contracts.*
 

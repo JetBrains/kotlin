@@ -148,17 +148,24 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         fun contractNotAllowed(message: String) = reporter.reportOn(source, FirErrors.CONTRACT_NOT_ALLOWED, message, context)
 
-        if (declaration is FirPropertyAccessor || declaration is FirAnonymousFunction) contractNotAllowed("Contracts are only allowed for functions.")
-        else if (declaration.isAbstract || declaration.isOpen || declaration.isOverride) contractNotAllowed("Contracts are not allowed for open or override functions.")
-        else if (declaration.isOperator) {
+        if (declaration is FirPropertyAccessor || declaration is FirAnonymousFunction) {
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsOnPropertyAccessors)) {
+                if (declaration is FirAnonymousFunction) contractNotAllowed("Contracts are not allowed for anonymous functions.")
+            } else {
+                contractNotAllowed("Contracts are only allowed for functions.")
+            }
+        } else if (declaration.isAbstract || declaration.isOpen || declaration.isOverride) {
+            contractNotAllowed("Contracts are not allowed for open or override functions.")
+        } else if (declaration.isOperator) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsOnSomeOperators)) {
                 if (declaration.isContractOnOperatorForbidden())
                     contractNotAllowed("Contracts are not allowed for operator ${declaration.nameOrSpecialName}.")
             } else {
                 contractNotAllowed("Contracts are not allowed for operator functions.")
             }
-        } else if (declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local) contractNotAllowed("Contracts are not allowed for local functions.")
-        else return false
+        } else if (declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local) {
+            contractNotAllowed("Contracts are not allowed for local functions.")
+        }else return false
         return true
     }
 

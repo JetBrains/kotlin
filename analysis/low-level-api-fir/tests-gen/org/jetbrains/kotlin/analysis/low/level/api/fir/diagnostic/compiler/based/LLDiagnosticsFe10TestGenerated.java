@@ -48893,6 +48893,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestDataPath("$PROJECT_ROOT")
       public class Dsl {
         @Test
+        @TestMetadata("accessorsAllowedInK2.kt")
+        public void testAccessorsAllowedInK2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/accessorsAllowedInK2.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInDsl() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
