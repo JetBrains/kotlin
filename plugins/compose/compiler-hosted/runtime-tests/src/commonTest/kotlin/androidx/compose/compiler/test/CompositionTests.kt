@@ -344,6 +344,22 @@ class CompositionTests {
         advance()
         revalidate()
     }
+
+    @Test
+    fun earlyReturnInKey() = compositionTest {
+        compose {
+            key("key") {
+                Text("before")
+                return@compose
+                @Suppress("UNREACHABLE_CODE")
+                Text("after")
+            }
+        }
+
+        validate {
+            Text("before")
+        }
+    }
 }
 
 @Composable

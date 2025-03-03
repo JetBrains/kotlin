@@ -3467,7 +3467,7 @@ class ComposableFunctionBodyTransformer(
 
         var transformed: IrExpression = block
 
-        val scope = withScope(Scope.BranchScope()) {
+        val scope = withScope(Scope.KeyScope()) {
             transformed = transformed.transform(this, null)
         }
 
@@ -3494,6 +3494,10 @@ class ComposableFunctionBodyTransformer(
                 }
             }
         })
+
+        scope.realizeEndCalls {
+            irEndMovableGroup(scope)
+        }
 
         return irBlock(
             type = expression.type,
@@ -4478,6 +4482,7 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
+        class KeyScope : BlockScope("key")
         class WhenScope : BlockScope("when")
         class BranchScope : BlockScope("branch")
         class CaptureScope : BlockScope("capture") {
