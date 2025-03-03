@@ -28,7 +28,7 @@ class ContextParameters {
     }
 
     @Sample
-    fun fromContextContextParameter() {
+    fun contextOfWithContextParameter() {
         abstract class Logger { abstract fun log(message: String) }
         class ConsoleLogger : Logger() { override fun log(message: String) = println(message) }
 
@@ -36,14 +36,14 @@ class ContextParameters {
             context(ConsoleLogger()) { block() }
 
         withConsoleLogger {
-            fromContext<Logger>().log("start")
+            contextOf<Logger>().log("start")
             println("work")
-            fromContext<Logger>().log("end")
+            contextOf<Logger>().log("end")
         }
     }
 
     @Sample
-    fun fromContextReceiver() {
+    fun contextOfWithReceiver() {
         abstract class Logger { abstract fun log(message: String) }
         class ConsoleLogger : Logger() { override fun log(message: String) = println(message) }
 
@@ -51,9 +51,9 @@ class ContextParameters {
             with(ConsoleLogger()) { block() }
 
         withConsoleLogger {
-            fromContext<Logger>().log("start")
+            contextOf<Logger>().log("start")
             println("work")
-            fromContext<Logger>().log("end")
+            contextOf<Logger>().log("end")
         }
     }
 

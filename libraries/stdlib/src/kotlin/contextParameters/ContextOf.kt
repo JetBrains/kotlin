@@ -17,13 +17,13 @@ import kotlin.internal.NoInfer
  * If more than one is found, more nested scopes are prioritized,
  * and otherwise an ambiguity error is raised by the compiler.
  *
- * You must always provide a type argument to [fromContext],
+ * You must always provide a type argument to [contextOf],
  * even if the type could be inferred from the context.
  *
- * @sample samples.misc.ContextParameters.fromContextContextParameter
- * @sample samples.misc.ContextParameters.fromContextOfReceiver
+ * @sample samples.misc.ContextParameters.contextOfWithContextParameter
+ * @sample samples.misc.ContextParameters.contextOfWithReceiver
  */
 @InlineOnly
 @SinceKotlin("2.1")
 context(context: A)
-public inline fun <A> fromContext(): @NoInfer A = context
+public inline fun <A> contextOf(): @NoInfer A = context

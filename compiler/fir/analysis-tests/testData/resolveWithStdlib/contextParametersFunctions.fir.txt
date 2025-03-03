@@ -19,38 +19,38 @@ FILE: contextParametersFunctions.kt
     }
     context(a: R|A|)
     public final fun usage1(): R|A| {
-        ^usage1 R|kotlin/fromContext|<R|A|>()
+        ^usage1 R|kotlin/contextOf|<R|A|>()
     }
     context(b: R|B|)
     public final fun usage2(): R|A| {
-        ^usage2 R|kotlin/fromContext|<R|A|>()
+        ^usage2 R|kotlin/contextOf|<R|A|>()
     }
     public final fun R|A|.usage3(): R|A| {
-        ^usage3 R|kotlin/fromContext|<R|A|>()
+        ^usage3 R|kotlin/contextOf|<R|A|>()
     }
     context(a: R|A|)
     public final fun R|A|.usage4(): R|A| {
-        ^usage4 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<R|A|>()
+        ^usage4 R|kotlin/contextOf<Inapplicable(INAPPLICABLE): kotlin/contextOf>#|<R|A|>()
     }
     context(a: R|A|, b: R|B|)
     public final fun usage5(): R|A| {
-        ^usage5 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<R|A|>()
+        ^usage5 R|kotlin/contextOf<Inapplicable(INAPPLICABLE): kotlin/contextOf>#|<R|A|>()
     }
     context(a: R|A|)
     public final fun usage6(): R|A| {
-        ^usage6 R|kotlin/fromContext|<R|A|>()
+        ^usage6 R|kotlin/contextOf|<R|A|>()
     }
     context(a: R|A|, c: R|C|)
     public final fun usage7(): R|A| {
-        ^usage7 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+        ^usage7 R|kotlin/contextOf<Inapplicable(INAPPLICABLE): kotlin/contextOf>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
     }
     context(a: R|A|)
     public final fun usage8(): R|A| {
-        ^usage8 R|kotlin/fromContext|<R|A|>()
+        ^usage8 R|kotlin/contextOf|<R|A|>()
     }
     context(a: R|A|, c: R|C|)
     public final fun usage9(): <ERROR TYPE REF: Cannot infer argument for type parameter A> {
-        ^usage9 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+        ^usage9 R|kotlin/contextOf<Inapplicable(INAPPLICABLE): kotlin/contextOf>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
     }
     public final fun context1(): R|A| {
         ^context1 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {

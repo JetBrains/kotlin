@@ -8310,7 +8310,7 @@ final inline fun <#A: kotlin/Any?> (#A).kotlin/also(kotlin/Function1<#A, kotlin/
 final inline fun <#A: kotlin/Any?> (#A).kotlin/apply(kotlin/Function1<#A, kotlin/Unit>): #A // kotlin/apply|apply@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (#A).kotlin/takeIf(kotlin/Function1<#A, kotlin/Boolean>): #A? // kotlin/takeIf|takeIf@0:0(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (#A).kotlin/takeUnless(kotlin/Function1<#A, kotlin/Boolean>): #A? // kotlin/takeUnless|takeUnless@0:0(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
-final inline fun <#A: kotlin/Any?> (context(#A)).kotlin/fromContext(): #A // kotlin/fromContext|fromContext(0:0)(){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (context(#A)).kotlin/contextOf(): #A // kotlin/contextOf|contextOf(0:0)(){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.collections/containsAll(kotlin.collections/Collection<#A>): kotlin/Boolean // kotlin.collections/containsAll|containsAll@kotlin.collections.Collection<0:0>(kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.collections.Collection<0:0>(){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.collections/isNotEmpty(): kotlin/Boolean // kotlin.collections/isNotEmpty|isNotEmpty@kotlin.collections.Collection<0:0>(){0§<kotlin.Any?>}[0]
