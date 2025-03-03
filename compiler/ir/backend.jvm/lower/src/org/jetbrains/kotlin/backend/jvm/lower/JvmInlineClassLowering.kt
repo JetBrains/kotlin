@@ -208,7 +208,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     ) {
         copyTypeArgumentsFrom(original)
         val valueParameterMap = originalFunction.parameters.zip(replacement.parameters).toMap()
-        for ((parameter, argument) in typedArgumentList(originalFunction, original)) {
+        for ((parameter, argument) in originalFunction.parameters zip original.arguments) {
             if (argument == null) continue
             val newParameter = valueParameterMap.getValue(parameter)
             putArgument(replacement, newParameter, argument.transform(this@JvmInlineClassLowering, null))
