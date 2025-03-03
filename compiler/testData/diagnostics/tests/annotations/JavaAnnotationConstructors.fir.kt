@@ -7,5 +7,5 @@ import java.lang.annotation.*
 annotation class my
 
 <!DEPRECATED_JAVA_ANNOTATION!>@Retention(RetentionPolicy.RUNTIME)<!>
-<!DEPRECATED_JAVA_ANNOTATION!>@Target(ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR)<!>
+<!DEPRECATED_JAVA_ANNOTATION, INCOMPATIBLE_ANNOTATION_TARGETS_NOT_SPECIFIED!>@Target(ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR)<!>
 annotation class my1
