@@ -1371,6 +1371,11 @@ public class IncrementalK1JvmJpsTestGenerated extends AbstractIncrementalK1JvmJp
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/traitClassObjectConstantChanged/");
     }
 
+    @TestMetadata("typealiasNameClash")
+    public void testTypealiasNameClash() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/typealiasNameClash/");
+    }
+
     @TestMetadata("valAddCustomAccessor")
     public void testValAddCustomAccessor() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/valAddCustomAccessor/");
