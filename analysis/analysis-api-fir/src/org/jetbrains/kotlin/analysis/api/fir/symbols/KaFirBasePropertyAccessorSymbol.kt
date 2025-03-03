@@ -74,10 +74,17 @@ internal interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<KtProper
 
     val isDefaultImpl: Boolean
         get() = withValidityAssertion {
-            if (ifSource { backingPsi } != null)
-                false
-            else
-                firSymbol.fir is FirDefaultPropertyAccessor
+            owningKaProperty.ifSource {
+                when (val property = owningKaProperty.backingPsi) {
+                    // unsure -> compute by fir
+                    null -> null
+
+                    is KtProperty -> !property.hasDelegate() && backingPsi == null
+
+                    // only properties may have non-default accessors
+                    else -> true
+                }
+            } ?: (firSymbol.fir is FirDefaultPropertyAccessor)
         }
 
     val modalityImpl: KaSymbolModality
