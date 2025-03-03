@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,21 +9,21 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.util.printBlock
-import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
-import org.jetbrains.kotlin.ir.generator.irTypeProjectionType
 import org.jetbrains.kotlin.ir.generator.model.Element
-import org.jetbrains.kotlin.ir.generator.typeVisitorType
+import org.jetbrains.kotlin.ir.generator.typeTransformerType
+import org.jetbrains.kotlin.utils.withIndent
 
-internal class TypeVisitorVoidPrinter(
+internal class TypeTransformerVoidPrinter(
     printer: ImportCollectingPrinter,
     visitorType: ClassRef<*>,
     rootElement: Element,
-) : TypeVisitorPrinter(printer, visitorType, rootElement) {
+) : TypeTransformerPrinter(printer, visitorType, rootElement) {
+
     override val visitorDataType: TypeRef
         get() = StandardTypes.nothing.copy(nullable = true)
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(typeVisitorType.withArgs(StandardTypes.unit, visitorDataType))
+        get() = listOf(typeTransformerType.withArgs(StandardTypes.unit, visitorDataType))
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = emptyList()
@@ -31,35 +31,13 @@ internal class TypeVisitorVoidPrinter(
     override fun visitMethodReturnType(element: Element): TypeRef = StandardTypes.unit
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
-        printVisitTypeKDoc()
-        printVisitTypeMethod(name = "visitType", hasDataParameter = false, modality = Modality.ABSTRACT, override = false)
+        printTransformTypeMethod("transformTypeRecursively", hasDataParameter = false, modality = Modality.ABSTRACT, override = false)
         println()
         println()
-        printVisitTypeMethod(name = "visitType", hasDataParameter = true, modality = Modality.FINAL, override = true)
-        printBlock {
-            println("visitType(container, type)")
-        }
-        println()
-        printVisitTypeRecursivelyKDoc()
-        printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter = false, modality = Modality.OPEN, override = false)
-        printBlock {
-            printlnMultiLine(
-                """
-                visitType(container, type)
-                if (type is ${irSimpleTypeType.render()}) {
-                    type.arguments.forEach {
-                        if (it is ${irTypeProjectionType.render()}) {
-                            visitTypeRecursively(container, it.type)
-                        }
-                    }
-                }
-                """
-            )
-        }
-        println()
-        printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter = true, modality = Modality.FINAL, override = true)
-        printBlock {
-            println("visitTypeRecursively(container, type)")
+        printTransformTypeMethod("transformTypeRecursively", hasDataParameter = true, modality = Modality.FINAL, override = true)
+        println(" =")
+        withIndent {
+            println("transformTypeRecursively(container, type)")
         }
     }
 
@@ -73,12 +51,13 @@ internal class TypeVisitorVoidPrinter(
                 println(element.visitFunctionName, "(", element.visitorParameterName, ")")
             }
             println()
-            printVisitMethodDeclaration(element, hasDataParameter = false,  modality = Modality.OPEN, override = false)
+            printVisitMethodDeclaration(element, hasDataParameter = false, modality = Modality.OPEN, override = false)
             printBlock {
                 printTypeRemappings(
                     element,
                     irTypeFields,
                     hasDataParameter = false,
+                    transformTypes = true,
                 )
                 element.parentInVisitor?.let {
                     println(it.visitFunctionName, "(", element.visitorParameterName, ")")

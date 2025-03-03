@@ -30,10 +30,6 @@ class IrConstCheckerHandler(testServices: TestServices) : AbstractIrHandler(test
 }
 
 private class IrConstChecker : IrTypeVisitorVoid() {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
     override fun visitFile(declaration: IrFile) {
         checkAnnotations(declaration)
         declaration.acceptChildrenVoid(this)

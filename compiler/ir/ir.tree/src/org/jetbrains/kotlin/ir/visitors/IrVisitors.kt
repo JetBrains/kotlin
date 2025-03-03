@@ -15,10 +15,18 @@ fun IrElement.acceptVoid(visitor: IrTypeVisitorVoid) {
     accept(visitor, null)
 }
 
+fun IrElement.acceptVoid(visitor: IrTypeTransformerVoid) {
+    accept(visitor, null)
+}
+
 fun IrElement.acceptChildrenVoid(visitor: IrVisitorVoid) {
     acceptChildren(visitor, null)
 }
 
 fun IrElement.acceptChildrenVoid(visitor: IrTypeVisitorVoid) {
+    acceptChildren(visitor, null)
+}
+
+fun IrElement.acceptChildrenVoid(visitor: IrTypeTransformerVoid) {
     acceptChildren(visitor, null)
 }
