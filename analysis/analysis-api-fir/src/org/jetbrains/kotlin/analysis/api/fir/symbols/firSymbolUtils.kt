@@ -29,16 +29,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.create
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-
-internal fun FirCallableSymbol<*>.invalidModalityError(): Nothing {
-    errorWithAttachment("Symbol modality should not be null, looks like the FIR symbol was not properly resolved") {
-        withFirEntry("fir", this@invalidModalityError.fir)
-    }
-}
 
 internal fun FirFunctionSymbol<*>.createKtValueParameters(builder: KaSymbolByFirBuilder): List<KaValueParameterSymbol> {
     return fir.valueParameters.map { valueParameter ->
