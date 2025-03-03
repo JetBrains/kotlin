@@ -89,9 +89,10 @@ class AdditionalSourceFilesProvider(testServices: TestServices) : AdditionalSour
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         return buildList {
-            add(ForTestCompileRuntime.transformTestDataPath("plugins/power-assert/testData/helpers/InfixDispatch.kt").toTestFile())
-            add(ForTestCompileRuntime.transformTestDataPath("plugins/power-assert/testData/helpers/InfixExtension.kt").toTestFile())
-            add(ForTestCompileRuntime.transformTestDataPath("plugins/power-assert/testData/helpers/utils.kt").toTestFile())
+            val helpers = "plugins/power-assert/power-assert-compiler/testData/helpers"
+            add(ForTestCompileRuntime.transformTestDataPath("$helpers/InfixDispatch.kt").toTestFile())
+            add(ForTestCompileRuntime.transformTestDataPath("$helpers/InfixExtension.kt").toTestFile())
+            add(ForTestCompileRuntime.transformTestDataPath("$helpers/utils.kt").toTestFile())
         }
     }
 }
