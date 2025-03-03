@@ -553,6 +553,7 @@ private fun KaSymbol.dropBackingPsi() {
         "KaFirPsiJavaClassSymbol",
         "KaFirPsiJavaTypeParameterSymbol",
         "KaFirDefaultPropertyGetterSymbol",
+        "KaFirDefaultPropertySetterSymbol",
             -> return
     }
 
