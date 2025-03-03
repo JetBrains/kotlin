@@ -75,6 +75,8 @@ class K2ReplCompiler(
         configuration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
         snippets.forEach { snippet ->
+            // Messages from earlier snippets should not leak into the next snippet
+            state.messageCollector.clear()
             val res = compileImpl(state, snippet, configuration)
             when (res) {
                 is ResultWithDiagnostics.Success -> {
