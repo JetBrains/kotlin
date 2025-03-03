@@ -65,14 +65,15 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val messageCollector = configuration.messageCollector
 
         val perfManager = configuration.perfManager
+        val chunk = configuration.moduleChunk!!
+        val targetDescription = chunk.targetDescription()
+        perfManager?.targetDescription = targetDescription
 
         if (!checkNotSupportedPlugins(configuration, messageCollector)) {
             perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             return null
         }
 
-        val chunk = configuration.moduleChunk!!
-        val targetDescription = chunk.targetDescription()
         val (environment, sourcesProvider) = createEnvironmentAndSources(
             configuration,
             rootDisposable,
