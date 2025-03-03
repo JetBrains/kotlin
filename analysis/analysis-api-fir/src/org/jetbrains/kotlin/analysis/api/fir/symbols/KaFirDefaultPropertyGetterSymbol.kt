@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,13 +45,13 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  */
 internal class KaFirDefaultPropertyGetterSymbol(
     val owningKaProperty: KaFirKotlinPropertySymbol<*>,
-) : KaPropertyGetterSymbol(), KaFirSymbol<FirPropertyAccessorSymbol> {
-    private val backingPsiGetterWithoutBody: KtPropertyAccessor?
+) : KaPropertyGetterSymbol(), KaFirPsiSymbol<KtPropertyAccessor, FirPropertyAccessorSymbol> {
+    override val backingPsi: KtPropertyAccessor?
         get() = (owningKaProperty.backingPsi as? KtProperty)?.getter
 
     init {
         requireWithAttachment(
-            backingPsiGetterWithoutBody?.hasBody() != true,
+            backingPsi?.hasBody() != true,
             { "This implementation should not be created for property accessor with a body" },
         ) {
             withFirSymbolEntry("property", owningKaProperty.firSymbol)
@@ -61,17 +61,20 @@ internal class KaFirDefaultPropertyGetterSymbol(
     override val analysisSession: KaFirSession
         get() = owningKaProperty.analysisSession
 
+    override val lazyFirSymbol: Lazy<FirPropertyAccessorSymbol>
+        get() = throw UnsupportedOperationException()
+
     override val firSymbol: FirPropertyAccessorSymbol
         get() = owningKaProperty.firSymbol.getterSymbol ?: errorWithAttachment("Getter is not found") {
             withFirSymbolEntry("property", owningKaProperty.firSymbol)
         }
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsiGetterWithoutBody }
+        get() = withValidityAssertion { backingPsi }
 
     override val isExpect: Boolean
         get() = withValidityAssertion {
-            backingPsiGetterWithoutBody?.hasModifier(KtTokens.EXPECT_KEYWORD) == true ||
+            backingPsi?.hasModifier(KtTokens.EXPECT_KEYWORD) == true ||
                     owningKaProperty.backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect
         }
 
@@ -80,7 +83,7 @@ internal class KaFirDefaultPropertyGetterSymbol(
 
     override val isInline: Boolean
         get() = withValidityAssertion {
-            backingPsiGetterWithoutBody?.hasModifier(KtTokens.INLINE_KEYWORD) == true ||
+            backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) == true ||
                     owningKaProperty.backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline
         }
 
@@ -92,14 +95,14 @@ internal class KaFirDefaultPropertyGetterSymbol(
 
     override val modality: KaSymbolModality
         get() = withValidityAssertion {
-            backingPsiGetterWithoutBody?.kaSymbolModalityByModifiers
+            backingPsi?.kaSymbolModalityByModifiers
                 ?: owningKaProperty.modalityByPsi
                 ?: firSymbol.modality.asKaSymbolModality
         }
 
     override val compilerVisibility: Visibility
         get() = withValidityAssertion {
-            backingPsiGetterWithoutBody?.visibilityByModifiers
+            backingPsi?.visibilityByModifiers
                 ?: owningKaProperty.compilerVisibilityByPsi
                 ?: firSymbol.visibility
         }
@@ -114,10 +117,10 @@ internal class KaFirDefaultPropertyGetterSymbol(
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            val backingPsi = owningKaProperty.backingPsi
-            if (backingPsi != null &&
-                !backingPsi.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_GETTER) &&
-                backingPsiGetterWithoutBody?.annotationEntries.isNullOrEmpty()
+            val propertyBackingPsi = owningKaProperty.backingPsi
+            if (propertyBackingPsi != null &&
+                !propertyBackingPsi.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_GETTER) &&
+                this.backingPsi?.annotationEntries.isNullOrEmpty()
             )
                 KaBaseEmptyAnnotationList(token)
             else

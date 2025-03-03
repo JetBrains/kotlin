@@ -552,6 +552,7 @@ private fun KaSymbol.dropBackingPsi() {
         // Those classes are PSI-based only, so they have FirSymbol only for the compatibility with other classes
         "KaFirPsiJavaClassSymbol",
         "KaFirPsiJavaTypeParameterSymbol",
+        "KaFirDefaultPropertyGetterSymbol",
             -> return
     }
 
