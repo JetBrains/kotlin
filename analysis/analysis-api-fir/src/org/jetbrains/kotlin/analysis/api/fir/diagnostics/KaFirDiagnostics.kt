@@ -4199,10 +4199,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmSerializableLambdaOnInlinedFunctionLiteralsWarning::class
     }
 
-    interface IncompatibleAnnotationTargets : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = IncompatibleAnnotationTargets::class
+    interface IncompatibleAnnotationTargetsSpecified : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = IncompatibleAnnotationTargetsSpecified::class
         val missingJavaTargets: List<String>
         val correspondingKotlinTargets: List<String>
+    }
+
+    interface IncompatibleAnnotationTargetsNotSpecified : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = IncompatibleAnnotationTargetsNotSpecified::class
     }
 
     interface LocalJvmRecord : KaFirDiagnostic<PsiElement> {

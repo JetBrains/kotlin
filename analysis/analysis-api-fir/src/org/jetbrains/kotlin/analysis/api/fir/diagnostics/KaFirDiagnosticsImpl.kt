@@ -5062,12 +5062,17 @@ internal class JvmSerializableLambdaOnInlinedFunctionLiteralsWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.JvmSerializableLambdaOnInlinedFunctionLiteralsWarning
 
-internal class IncompatibleAnnotationTargetsImpl(
+internal class IncompatibleAnnotationTargetsSpecifiedImpl(
     override val missingJavaTargets: List<String>,
     override val correspondingKotlinTargets: List<String>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.IncompatibleAnnotationTargets
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.IncompatibleAnnotationTargetsSpecified
+
+internal class IncompatibleAnnotationTargetsNotSpecifiedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.IncompatibleAnnotationTargetsNotSpecified
 
 internal class LocalJvmRecordImpl(
     firDiagnostic: KtPsiDiagnostic,

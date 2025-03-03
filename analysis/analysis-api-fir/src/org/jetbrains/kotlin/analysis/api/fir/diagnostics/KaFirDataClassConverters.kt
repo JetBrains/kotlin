@@ -6029,14 +6029,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS) { firDiagnostic ->
-        IncompatibleAnnotationTargetsImpl(
+    add(FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS_SPECIFIED) { firDiagnostic ->
+        IncompatibleAnnotationTargetsSpecifiedImpl(
             firDiagnostic.a.map { string ->
                 string
             },
             firDiagnostic.b.map { string ->
                 string
             },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS_NOT_SPECIFIED) { firDiagnostic ->
+        IncompatibleAnnotationTargetsNotSpecifiedImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
