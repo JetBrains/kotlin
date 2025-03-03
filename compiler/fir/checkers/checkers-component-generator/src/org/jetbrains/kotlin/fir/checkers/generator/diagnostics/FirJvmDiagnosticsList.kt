@@ -141,10 +141,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS by deprecationError<KtAnnotationEntry>(
             featureForError = ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
         )
-        val INCOMPATIBLE_ANNOTATION_TARGETS by warning<KtAnnotationEntry> {
+        val INCOMPATIBLE_ANNOTATION_TARGETS_SPECIFIED by warning<KtAnnotationEntry> {
             parameter<Collection<String>>("missingJavaTargets")
             parameter<Collection<String>>("correspondingKotlinTargets")
         }
+        val INCOMPATIBLE_ANNOTATION_TARGETS_NOT_SPECIFIED by warning<KtAnnotationEntry>()
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

@@ -1,7 +1,11 @@
-/annotationIncompatibleTargets.kt:(217,289): warning: Java target 'METHOD' missing, corresponding to Kotlin targets 'PROPERTY_GETTER', 'PROPERTY_SETTER'.
+/annotationIncompatibleTargets.kt:(217,289): warning: Incompatible annotation targets: Java target 'METHOD' missing, corresponding to Kotlin targets 'PROPERTY_GETTER', 'PROPERTY_SETTER'.
 
 /annotationIncompatibleTargets.kt:(217,289): warning: This annotation is deprecated in Kotlin. Use '@kotlin.annotation.Target' instead.
 
 /annotationIncompatibleTargets.kt:(420,533): warning: This annotation is deprecated in Kotlin. Use '@kotlin.annotation.Target' instead.
 
 /annotationIncompatibleTargets.kt:(664,817): warning: This annotation is deprecated in Kotlin. Use '@kotlin.annotation.Target' instead.
+
+/annotationIncompatibleTargets.kt:(838,910): warning: No Kotlin '@Target' annotation specified (implicitly targeting everything), but one exists for Java.
+
+/annotationIncompatibleTargets.kt:(838,910): warning: This annotation is deprecated in Kotlin. Use '@kotlin.annotation.Target' instead.

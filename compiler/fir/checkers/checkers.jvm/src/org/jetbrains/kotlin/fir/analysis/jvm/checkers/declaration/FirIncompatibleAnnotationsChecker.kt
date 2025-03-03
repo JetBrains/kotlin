@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
-import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.JvmStandardClassIds.Annotations.Java
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.KOTLIN_TO_JAVA_ANNOTATION_TARGETS
@@ -29,11 +29,18 @@ object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        val kotlinTarget = declaration.getTargetAnnotation(context.session)
-        val javaTarget = declaration.getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Target, context.session)
+        val javaTarget = declaration.getAnnotationByClassId(Java.Target, context.session) ?: return
+        when (val kotlinTarget = declaration.getTargetAnnotation(context.session)) {
+            null -> reportIncompatibleTargetsNotSpecified(javaTarget, context, reporter)
+            else -> reportIncompatibleTargetsSpecified(kotlinTarget, javaTarget, context, reporter)
+        }
+    }
 
-        if (kotlinTarget == null || javaTarget == null) return
+    fun reportIncompatibleTargetsNotSpecified(javaTarget: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+        reporter.reportOn(javaTarget.source, FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS_NOT_SPECIFIED, context)
+    }
 
+    fun reportIncompatibleTargetsSpecified(kotlinTarget: FirAnnotation, javaTarget: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         val correspondingJavaTargets = kotlinTarget.extractArguments(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets)
             .groupBy { KOTLIN_TO_JAVA_ANNOTATION_TARGETS[it] }.toMutableMap()
         // remove things which are included in the Java @Target annotation
@@ -43,7 +50,7 @@ object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common
         if (correspondingJavaTargets.isNotEmpty()) {
             reporter.reportOn(
                 javaTarget.source,
-                FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS,
+                FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS_SPECIFIED,
                 correspondingJavaTargets.keys.filterNotNull(),
                 correspondingJavaTargets.values.flatten(),
                 context

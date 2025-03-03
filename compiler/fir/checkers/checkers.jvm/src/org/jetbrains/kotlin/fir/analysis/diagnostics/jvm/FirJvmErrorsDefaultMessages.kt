@@ -38,7 +38,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IMPLEMENTA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_NAME
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS_NOT_SPECIFIED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS_SPECIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
@@ -388,10 +389,14 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "'@JvmSerializableLambda' is not applicable to inlined function literals."
         )
         map.put(
-            INCOMPATIBLE_ANNOTATION_TARGETS,
-            "Java {0} missing, corresponding to Kotlin {1}.",
+            INCOMPATIBLE_ANNOTATION_TARGETS_SPECIFIED,
+            "Incompatible annotation targets: Java {0} missing, corresponding to Kotlin {1}.",
             STRING_TARGETS,
             STRING_TARGETS
+        )
+        map.put(
+            INCOMPATIBLE_ANNOTATION_TARGETS_NOT_SPECIFIED,
+            "No Kotlin '@Target' annotation specified (implicitly targeting everything), but one exists for Java."
         )
         map.put(
             NO_REFLECTION_IN_CLASS_PATH,
