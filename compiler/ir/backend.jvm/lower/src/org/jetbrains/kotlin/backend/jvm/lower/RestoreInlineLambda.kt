@@ -37,7 +37,7 @@ class RestoreInlineLambda(val context: JvmBackendContext) : FileLoweringPass, Ir
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         if (declaration.isInline) {
-            for (parameter in declaration.valueParameters) {
+            for (parameter in declaration.parameters) {
                 if (parameter.isInlineParameter()) {
                     val lambda = parameter.defaultValue?.expression as? IrBlock ?: continue
                     val function = lambda.statements.first() as IrFunction
