@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,13 +39,13 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  */
 internal class KaFirDefaultPropertySetterSymbol(
     val owningKaProperty: KaFirKotlinPropertySymbol<*>,
-) : KaPropertySetterSymbol(), KaFirSymbol<FirPropertyAccessorSymbol> {
-    private val backingPsiSetterWithoutBody: KtPropertyAccessor?
+) : KaPropertySetterSymbol(), KaFirPsiSymbol<KtPropertyAccessor, FirPropertyAccessorSymbol> {
+    override val backingPsi: KtPropertyAccessor?
         get() = (owningKaProperty.backingPsi as? KtProperty)?.setter
 
     init {
         requireWithAttachment(
-            backingPsiSetterWithoutBody?.hasBody() != true,
+            backingPsi?.hasBody() != true,
             { "This implementation should not be created for property accessor with a body" },
         ) {
             withFirSymbolEntry("property", owningKaProperty.firSymbol)
@@ -55,17 +55,20 @@ internal class KaFirDefaultPropertySetterSymbol(
     override val analysisSession: KaFirSession
         get() = owningKaProperty.analysisSession
 
+    override val lazyFirSymbol: Lazy<FirPropertyAccessorSymbol>
+        get() = throw UnsupportedOperationException()
+
     override val firSymbol: FirPropertyAccessorSymbol
         get() = owningKaProperty.firSymbol.setterSymbol ?: errorWithAttachment("Setter is not found") {
             withFirSymbolEntry("property", owningKaProperty.firSymbol)
         }
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsiSetterWithoutBody }
+        get() = withValidityAssertion { backingPsi }
 
     override val isExpect: Boolean
         get() = withValidityAssertion {
-            backingPsiSetterWithoutBody?.hasModifier(KtTokens.EXPECT_KEYWORD) == true ||
+            backingPsi?.hasModifier(KtTokens.EXPECT_KEYWORD) == true ||
                     owningKaProperty.backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect
         }
 
@@ -74,7 +77,7 @@ internal class KaFirDefaultPropertySetterSymbol(
 
     override val isInline: Boolean
         get() = withValidityAssertion {
-            backingPsiSetterWithoutBody?.hasModifier(KtTokens.INLINE_KEYWORD) == true ||
+            backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) == true ||
                     owningKaProperty.backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline
         }
 
@@ -92,14 +95,14 @@ internal class KaFirDefaultPropertySetterSymbol(
 
     override val modality: KaSymbolModality
         get() = withValidityAssertion {
-            backingPsiSetterWithoutBody?.kaSymbolModalityByModifiers
+            backingPsi?.kaSymbolModalityByModifiers
                 ?: owningKaProperty.modalityByPsi
                 ?: firSymbol.modality.asKaSymbolModality
         }
 
     override val compilerVisibility: Visibility
         get() = withValidityAssertion {
-            backingPsiSetterWithoutBody?.visibilityByModifiers
+            backingPsi?.visibilityByModifiers
                 ?: owningKaProperty.compilerVisibilityByPsi
                 ?: firSymbol.visibility
         }
@@ -117,7 +120,7 @@ internal class KaFirDefaultPropertySetterSymbol(
             val backingPsi = owningKaProperty.backingPsi
             if (backingPsi != null &&
                 !backingPsi.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_SETTER) &&
-                backingPsiSetterWithoutBody?.annotationEntries.isNullOrEmpty()
+                this.backingPsi?.annotationEntries.isNullOrEmpty()
             )
                 KaBaseEmptyAnnotationList(token)
             else
@@ -133,7 +136,7 @@ internal class KaFirDefaultPropertySetterSymbol(
     override val parameter: KaValueParameterSymbol
         get() = withValidityAssertion {
             with(analysisSession) {
-                backingPsiSetterWithoutBody?.valueParameters?.firstOrNull()?.symbol as? KaValueParameterSymbol
+                backingPsi?.valueParameters?.firstOrNull()?.symbol as? KaValueParameterSymbol
             } ?: KaFirDefaultSetterValueParameter(this)
         }
 
