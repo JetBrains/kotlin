@@ -552,8 +552,13 @@ private fun KaSymbol.dropBackingPsi() {
         // Those classes are PSI-based only, so they have FirSymbol only for the compatibility with other classes
         "KaFirPsiJavaClassSymbol",
         "KaFirPsiJavaTypeParameterSymbol",
+            -> return
+
+        // There classes depend on the property PSI. The owning property is already invalidated above
         "KaFirDefaultPropertyGetterSymbol",
         "KaFirDefaultPropertySetterSymbol",
+        "KaFirPropertyGetterSymbol",
+        "KaFirPropertySetterSymbol",
             -> return
     }
 
