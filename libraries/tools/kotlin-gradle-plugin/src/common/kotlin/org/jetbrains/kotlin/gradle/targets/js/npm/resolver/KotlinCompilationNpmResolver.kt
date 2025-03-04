@@ -121,6 +121,11 @@ class KotlinCompilationNpmResolver(
 
     override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
+    /**
+     * Resolvable configuration.
+     *
+     * Used to access the compiled JS code and public `package.json` file.
+     */
     val aggregatedConfiguration: Configuration = createAggregatedConfiguration()
 
     private var _compilationNpmResolution: KotlinCompilationNpmResolution? = null
@@ -141,6 +146,11 @@ class KotlinCompilationNpmResolver(
         return _compilationNpmResolution
     }
 
+    /**
+     * Resolvable configuration.
+     *
+     * Should contain `package.json`
+     */
     private fun createAggregatedConfiguration(): Configuration {
         val all = project.configurations.createResolvable(compilation.npmAggregatedConfigurationName)
 
@@ -166,6 +176,13 @@ class KotlinCompilationNpmResolver(
         return all
     }
 
+    /**
+     * Use this to access the `package.json` from projects.
+     *
+     * TODO Possible problem:
+     *      Dependency on test might trigger unnecessary compilation of main.
+     *      We only want it to trigger `package.json` generation.
+     */
     private fun createPublicPackageJsonConfiguration(): Configuration {
         val all = project.configurations.createConsumable(compilation.publicPackageJsonConfigurationName)
 
@@ -178,6 +195,11 @@ class KotlinCompilationNpmResolver(
         return all
     }
 
+    /**
+     * For external (and composite build dependencies) we need to get the klib, unpack it, and extract `package.json`.
+     *
+     * For local (subproject to subproject) dependencies, just make sure the `package.json` is available.
+     */
     inner class ConfigurationVisitor {
         private val internalDependencies = mutableSetOf<InternalDependency>()
         private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
@@ -252,15 +274,16 @@ class KotlinCompilationNpmResolver(
             val artifactId = artifact.id
             val componentIdentifier = artifactId.componentIdentifier
 
-            // TODO update
+//            // TODO update
             @Suppress("DEPRECATION")
-            val isComposeProjectDep = artifactId `is` CompositeProjectComponentArtifactMetadata
+            val isCompositeProjectDep = artifactId `is` CompositeProjectComponentArtifactMetadata
+//
+//            if (isCompositeProjectDep) {
+//                // must visit composite dependencies to properly configure the task execution order?
+////                visitCompositeProjectDependency(dependency, componentIdentifier as ProjectComponentIdentifier)
+//            }
 
-            if (isComposeProjectDep) {
-                visitCompositeProjectDependency(dependency, componentIdentifier as ProjectComponentIdentifier)
-            }
-
-            if (componentIdentifier is ProjectComponentIdentifier && !isComposeProjectDep) {
+            if (componentIdentifier is ProjectComponentIdentifier && !isCompositeProjectDep) {
                 visitProjectDependency(componentIdentifier)
                 return
             }

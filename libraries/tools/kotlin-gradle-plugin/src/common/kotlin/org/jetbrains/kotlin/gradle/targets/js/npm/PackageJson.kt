@@ -15,7 +15,7 @@ import java.io.Serializable
 // Gson set nulls reflectively no matter on default values and non-null types
 class PackageJson(
     var name: String,
-    var version: String
+    var version: String,
 ) : Serializable {
     internal val customFields = mutableMapOf<String, Any?>()
 
@@ -114,16 +114,18 @@ class PackageJson(
 }
 
 fun fromSrcPackageJson(packageJson: File?): PackageJson? =
-    packageJson?.reader()?.use {
-        Gson().fromJson(it, PackageJson::class.java)
-    }
+    packageJson
+        ?.takeIf { it.exists() }
+        ?.reader()?.use {
+            Gson().fromJson(it, PackageJson::class.java)
+        }
 
 internal fun packageJson(
     name: String,
     version: String,
     main: String,
     npmDependencies: Collection<NpmDependencyDeclaration>,
-    packageJsonHandlers: List<Action<PackageJson>>
+    packageJsonHandlers: List<Action<PackageJson>>,
 ): PackageJson {
 
     val packageJson = PackageJson(
@@ -160,7 +162,7 @@ internal fun packageJson(
 private fun chooseVersion(
     module: String,
     oldVersion: String?,
-    newVersion: String
+    newVersion: String,
 ): String {
     if (oldVersion == null) {
         return newVersion

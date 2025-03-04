@@ -40,3 +40,29 @@ data class InternalDependency(
     val compilationName: String,
     val projectName: String
 ) : Serializable
+
+
+
+/*
+
+
+my-lib
+  dependencies {
+    implementation(external-lib) // must be fetched from Maven
+                                 //
+
+    implementation(my-composite-build:subproj-a) // must be treated specially
+                                                 // fetch subproj-a.klib
+                                                 // process as regular maven dep
+                                                 //
+  }
+
+
+my-composite-build (root project is not KGP-KS)
+  /build/js/package.json
+
+  subproj-a (KGP-JS)
+    (does not generate package.json)
+
+
+ */

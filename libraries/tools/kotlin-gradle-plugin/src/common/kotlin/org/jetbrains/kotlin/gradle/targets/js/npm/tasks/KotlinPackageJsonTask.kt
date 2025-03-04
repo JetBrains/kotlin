@@ -54,6 +54,9 @@ constructor(
     @get:Input
     internal abstract val toolsNpmDependencies: ListProperty<String>
 
+    /**
+     * TODO figure out what this is. Is it only for `package.json` files?
+     */
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
@@ -131,22 +134,40 @@ constructor(
                     }
                 ).disallowChanges()
 
+
+
+//                compilationResolver.map { resolver ->
+//
+//
+//                    val publicPackageJsonResolver = project.configurations.register(
+//                        resolver.compilation.publicPackageJsonConfigurationName
+//
+//                    )
+//
+//                    val packageJsonConf = project.configurations.named(
+//                        resolver.compilation.publicPackageJsonConfigurationName
+//                    )
+//
+//                }
+
                 task.compositeFiles.from(
                     compilationResolver.map { resolver ->
                         resolver.aggregatedConfiguration
                             .incoming
-                            .artifactView { artifactView ->
-                                artifactView.componentFilter { componentIdentifier ->
-                                    componentIdentifier is ProjectComponentIdentifier
-                                }
-                            }
-                            .artifacts
+                            .files
+//                            .artifactView { artifactView ->
+//                                artifactView.componentFilter { componentIdentifier ->
+//                                    componentIdentifier is ProjectComponentIdentifier
+//                                }
+//                            }
+//                            .artifacts
+//                            .artifactFiles // FileCollection
                             // TODO KT-74735
 //                            .filter @Suppress("DEPRECATION") {
 //                                it.id `is` CompositeProjectComponentArtifactMetadata
 //                            }
-                            .map { it.file }
-                            .toSet()
+//                            .map { it.file }
+//                            .toSet()
                     }
                 ).disallowChanges()
 
@@ -165,18 +186,20 @@ constructor(
                     it.npmResolutionManager.get().isConfiguringState()
                 }
 
-                task.dependsOn(
-                    project.provider {
-                        findDependentTasks(
-                            nodeJsRoot.resolver,
-                            getCompilationResolver(
-                                nodeJsRoot,
-                                projectPath,
-                                compilationDisambiguatedName
-                            ).compilationNpmResolution
-                        )
-                    }
-                )
+
+//                // TODO remove because we're going to fetch the files using Configuration publicPackageJsonConfigurationName instead
+//                task.dependsOn(
+//                    project.provider {
+//                        findDependentTasks(
+//                            nodeJsRoot.resolver,
+//                            getCompilationResolver(
+//                                nodeJsRoot,
+//                                projectPath,
+//                                compilationDisambiguatedName
+//                            ).compilationNpmResolution
+//                        )
+//                    }
+//                )
 
                 task.dependsOn(nodeJsRoot.npmCachesSetupTaskProvider)
             }
@@ -193,6 +216,7 @@ constructor(
             return packageJsonTask
         }
 
+        // TODO KT-74735
         private fun findDependentTasks(
             rootResolver: KotlinRootNpmResolver,
             compilationNpmResolution: KotlinCompilationNpmResolution,

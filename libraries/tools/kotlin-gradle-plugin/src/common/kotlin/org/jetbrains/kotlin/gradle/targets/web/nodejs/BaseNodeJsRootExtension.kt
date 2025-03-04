@@ -13,18 +13,14 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExt
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
@@ -72,7 +68,7 @@ abstract class BaseNodeJsRootExtension internal constructor(
     )
     var download = true
 
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION_ERROR", "unused")
     @Deprecated(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR,
@@ -85,7 +81,7 @@ abstract class BaseNodeJsRootExtension internal constructor(
     )
     var downloadBaseUrl: String? = "https://nodejs.org/dist"
 
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION_ERROR", "unused")
     @Deprecated(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR,
@@ -96,20 +92,20 @@ abstract class BaseNodeJsRootExtension internal constructor(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR,
     )
-    var version = "22.13.0"
+    var version: String = "22.13.0"
 
     @Deprecated(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR,
     )
-    var command = "node"
+    var command: String = "node"
 
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION_ERROR", "unused")
     @Deprecated(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR,
     )
-    var nodeCommand by ::command
+    var nodeCommand: String by ::command
 
     val rootProjectDir
         get() = project.rootDir
@@ -133,19 +129,20 @@ abstract class BaseNodeJsRootExtension internal constructor(
 
     val npmInstallTaskProvider: TaskProvider<out KotlinNpmInstallTask>
         get() = project.tasks.withType(KotlinNpmInstallTask::class.java)
-            .named(extensionName(KotlinNpmInstallTask.Companion.NAME))
+            .named(extensionName(KotlinNpmInstallTask.NAME))
 
     val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
         get() = project.tasks.withType(RootPackageJsonTask::class.java)
-            .named(extensionName(RootPackageJsonTask.Companion.NAME))
+            .named(extensionName(RootPackageJsonTask.NAME))
 
     val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
         get() = project.tasks.named(extensionName(PACKAGE_JSON_UMBRELLA_TASK_NAME))
 
     val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>
         get() = project.tasks.withType(KotlinNpmCachesSetup::class.java)
-            .named(extensionName(KotlinNpmCachesSetup.Companion.NAME))
+            .named(extensionName(KotlinNpmCachesSetup.NAME))
 
+    @Suppress("DeprecatedCallableAddReplaceWith", "unused")
     @Deprecated(
         "Use nodeJsSetupTaskProvider from NodeJsEnvSpec (not NodeJsRootExtension) instead. " +
                 "You can find this extension after applying NodeJsPlugin"
@@ -155,6 +152,7 @@ abstract class BaseNodeJsRootExtension internal constructor(
             project.nodeJsSetupTaskProvider
         }
 
+    @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("Use NodeJsEnvSpec instead. This will be removed in 2.2")
     fun requireConfigured(): NodeJsEnv {
         return nodeJs().env.get()

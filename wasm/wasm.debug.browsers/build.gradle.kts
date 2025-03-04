@@ -3,7 +3,7 @@ import com.github.gradle.node.npm.task.NpxTask
 description = "Simple Kotlin/Wasm devtools formatters"
 
 plugins {
-    id("base")
+    base
     id("share-kotlin-wasm-custom-formatters")
     alias(libs.plugins.gradle.node)
 }
@@ -22,18 +22,6 @@ dependencies {
     implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-arm64@tar.gz")
 }
 
-val cleanBuild by tasks.registering(Delete::class) {
-    group = "build"
-
-    delete = setOf("build")
-}
-
-val cleanNpm by tasks.registering(Delete::class) {
-    group = "build"
-
-    delete = setOf("node_modules")
-}
-
 val npmBuild by tasks.registering(NpxTask::class) {
     group = "build"
 
@@ -45,26 +33,25 @@ val npmBuild by tasks.registering(NpxTask::class) {
     environment.set(mapOf("NODE_OPTIONS" to "--disable-warning=ExperimentalWarning"))
 
     inputs.dir("src")
+    inputs.file("rollup.config.mjs")
     outputs.file("build/out/custom-formatters.js")
 }
 
-tasks {
-    npmInstall {
-        val nodeModulesDir = projectDir.resolve("node_modules")
-        outputs.upToDateWhen {
-            nodeModulesDir.isDirectory
-        }
-
-        if (gradle.startParameter.isOffline) {
-            args.add("--offline")
-        }
-
-        args.add("--ignore-scripts")
+tasks.npmInstall {
+    val nodeModulesDir = projectDir.resolve("node_modules")
+    outputs.upToDateWhen {
+        nodeModulesDir.isDirectory
     }
 
-    clean {
-        dependsOn(cleanNpm, cleanBuild)
+    if (gradle.startParameter.isOffline) {
+        args.add("--offline")
     }
+
+    args.add("--ignore-scripts")
+}
+
+tasks.clean {
+    delete(layout.projectDirectory.dir("node_modules"))
 }
 
 configurations.wasmCustomFormattersProvider.configure {
