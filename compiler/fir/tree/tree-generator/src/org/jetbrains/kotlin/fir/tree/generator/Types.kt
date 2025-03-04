@@ -150,6 +150,7 @@ val firDefaultVisitorVoidType = generatedType("visitors", "FirDefaultVisitorVoid
 val firTransformerType = generatedType("visitors", "FirTransformer")
 
 val resolveStateAccessAnnotation = type("fir.declarations", "ResolveStateAccess", kind = TypeKind.Class)
+val directDeclarationsAccessAnnotation = type("fir.declarations", "DirectDeclarationsAccess", kind = TypeKind.Class)
 val unresolvedExpressionTypeAccessAnnotation = type("fir.expressions", "UnresolvedExpressionTypeAccess", kind = TypeKind.Class)
 val rawFirApi = type("fir.expressions", "RawFirApi", kind = TypeKind.Class)
 val firBuilderDslAnnotation = type("fir.builder", "FirBuilderDsl", kind = TypeKind.Class)

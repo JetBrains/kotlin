@@ -32,6 +32,7 @@ abstract class FirFile : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val packageDirective: FirPackageDirective
     abstract val imports: List<FirImport>
+    @DirectDeclarationsAccess
     abstract val declarations: List<FirDeclaration>
     abstract val name: String
     abstract val sourceFile: KtSourceFile?
