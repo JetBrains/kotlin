@@ -28,26 +28,26 @@ object KotlinVersions {
     val v1_0 = KotlinVersion(
         name = "1.0",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersions.v1_4_0,
-            stabilizedVersion = KotlinReleaseVersions.v1_4_0,
-            deprecatedVersion = KotlinReleaseVersions.v1_9_20,
-            removedVersion = KotlinReleaseVersions.v2_0_0,
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_4_0,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
+            removedVersion = KotlinReleaseVersion.v2_0_0,
         )
     )
 
     val v1_9 = KotlinVersion(
         name = "1.9",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersions.v1_9_20,
-            stabilizedVersion = KotlinReleaseVersions.v1_9_20,
+            introducedVersion = KotlinReleaseVersion.v1_9_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_9_20,
         )
     )
 
     val v2_0 = KotlinVersion(
         name = "2.0",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersions.v1_9_20,
-            stabilizedVersion = KotlinReleaseVersions.v2_0_0,
+            introducedVersion = KotlinReleaseVersion.v1_9_20,
+            stabilizedVersion = KotlinReleaseVersion.v2_0_0,
         )
     )
 

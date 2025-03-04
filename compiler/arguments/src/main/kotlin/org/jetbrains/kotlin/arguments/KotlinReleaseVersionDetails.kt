@@ -2,45 +2,30 @@ package org.jetbrains.kotlin.arguments
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.encoding.encodeStructure
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable(with = KotlinReleaseVersionAsNameSerializer::class)
-@KeepGeneratedSerializer
-data class KotlinReleaseVersion(
-    val name: String,
+enum class KotlinReleaseVersion(
+    val releaseName: String,
     val major: Int,
     val minor: Int,
     val patch: Int,
 ) : Comparable<KotlinReleaseVersion> {
-    override fun compareTo(other: KotlinReleaseVersion): Int = when {
-        major < other.major -> -1
-        major > other.major -> 1
-        minor < other.minor -> -1
-        minor > other.minor -> 1
-        patch < other.patch -> -1
-        patch > other.patch -> 1
-        else -> 0
-    }
-}
-
-object KotlinReleaseVersions {
-    val v1_4_0 = KotlinReleaseVersion("1.4.0", 1, 4, 0)
-    val v1_9_20 = KotlinReleaseVersion("1.9.20", 1, 9, 20)
-    val v2_0_0 = KotlinReleaseVersion("2.0.0", 2, 0, 0)
-
-    val allKotlinReleaseVersions = setOf(
-        v1_4_0,
-        v1_9_20,
-        v2_0_0,
-    )
+    v1_4_0("1.4.0", 1, 4, 0),
+    v1_9_20("1.9.20", 1, 9, 20),
+    v2_0_0("2.0.0", 2, 0, 0);
 }
 
 object KotlinReleaseVersionAsNameSerializer : KSerializer<KotlinReleaseVersion> {
@@ -53,17 +38,56 @@ object KotlinReleaseVersionAsNameSerializer : KSerializer<KotlinReleaseVersion> 
         encoder: Encoder,
         value: KotlinReleaseVersion,
     ) {
-        encoder.encodeString(value.name)
+        encoder.encodeString(value.releaseName)
     }
 
     override fun deserialize(decoder: Decoder): KotlinReleaseVersion {
         val versionName = decoder.decodeString()
-        return KotlinReleaseVersions.allKotlinReleaseVersions.single { version -> version.name == versionName }
+        return KotlinReleaseVersion.entries.single { version -> version.releaseName == versionName }
+    }
+}
+
+object AllKotlinReleaseVersionSerializer : KSerializer<KotlinReleaseVersion> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("org.jetbrains.kotlin.arguments.KotlinReleaseVersion") {
+        element<String>("name")
+        element<Int>("major")
+        element<Int>("minor")
+        element<Int>("patch")
+    }
+
+    override fun serialize(encoder: Encoder, value: KotlinReleaseVersion) {
+        encoder.encodeStructure(descriptor) {
+            encodeStringElement(descriptor, 0, value.releaseName)
+            encodeIntElement(descriptor, 1, value.major)
+            encodeIntElement(descriptor, 2, value.minor)
+            encodeIntElement(descriptor, 3, value.patch)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): KotlinReleaseVersion {
+        var releaseName = ""
+        var major = -1
+        var minor = -1
+        var patch = -1
+        decoder.decodeStructure(descriptor) {
+            while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> releaseName = decodeStringElement(descriptor, 0)
+                    1 -> major = decodeIntElement(descriptor, 1)
+                    2 -> minor = decodeIntElement(descriptor, 2)
+                    3 -> patch = decodeIntElement(descriptor, 3)
+                    CompositeDecoder.DECODE_DONE -> break
+                    else -> error("Unexpected index: $index")
+                }
+            }
+        }
+        require(releaseName.isNotEmpty() && major >= 1 && minor >= 0 && patch >= 0)
+        return KotlinReleaseVersion.entries.single { version -> version.releaseName == releaseName }
     }
 }
 
 object AllDetailsKotlinReleaseVersionSerializer : KSerializer<Set<KotlinReleaseVersion>> {
-    private val delegateSerializer: KSerializer<Set<KotlinReleaseVersion>> = SetSerializer(KotlinReleaseVersion.generatedSerializer())
+    private val delegateSerializer: KSerializer<Set<KotlinReleaseVersion>> = SetSerializer(AllKotlinReleaseVersionSerializer)
     override val descriptor: SerialDescriptor = delegateSerializer.descriptor
 
     override fun serialize(

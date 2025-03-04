@@ -37,16 +37,16 @@ object ClosedRangeKotlinReleaseVersionSerializer : KSerializer<ClosedRange<Kotli
     )
 
     override fun serialize(encoder: Encoder, value: ClosedRange<KotlinReleaseVersion>) {
-        val serializedString = "${value.start.name}$delimiter${value.endInclusive.name}"
+        val serializedString = "${value.start.releaseName}$delimiter${value.endInclusive.releaseName}"
         encoder.encodeString(serializedString)
     }
 
     override fun deserialize(decoder: Decoder): ClosedRange<KotlinReleaseVersion> {
         val serializedString = decoder.decodeString()
         val startName = serializedString.substringBefore(delimiter)
-        val start = KotlinReleaseVersions.allKotlinReleaseVersions.single { it.name == startName }
+        val start = KotlinReleaseVersion.entries.single { it.releaseName == startName }
         val endInclusiveName = serializedString.substringAfter(delimiter)
-        val endInclusive = KotlinReleaseVersions.allKotlinReleaseVersions.single { it.name == endInclusiveName }
+        val endInclusive = KotlinReleaseVersion.entries.single { it.releaseName == endInclusiveName }
         return start..endInclusive
     }
 }

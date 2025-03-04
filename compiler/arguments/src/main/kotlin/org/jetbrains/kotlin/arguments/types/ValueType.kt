@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.arguments.AllDetailsJvmTargetSerializer
 import org.jetbrains.kotlin.arguments.AllDetailsKotlinVersionSerializer
 import org.jetbrains.kotlin.arguments.JvmTarget
 import org.jetbrains.kotlin.arguments.JvmTargets
-import org.jetbrains.kotlin.arguments.KotlinReleaseVersions
+import org.jetbrains.kotlin.arguments.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.KotlinVersion
 import org.jetbrains.kotlin.arguments.KotlinVersions
 import org.jetbrains.kotlin.arguments.ReleaseDependent
@@ -37,7 +37,7 @@ class KotlinVersionType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<KotlinVersion?> = ReleaseDependent(
         KotlinVersions.v2_0,
-        KotlinReleaseVersions.v1_4_0..KotlinReleaseVersions.v1_9_20 to KotlinVersions.v1_9
+        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_9_20 to KotlinVersions.v1_9
     )
 ) : KotlinArgumentValueType<KotlinVersion>
 
@@ -46,6 +46,6 @@ class KotlinJvmTargetType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<JvmTarget?> = ReleaseDependent(
         JvmTargets.jvm1_8,
-        KotlinReleaseVersions.v1_4_0..KotlinReleaseVersions.v1_9_20 to JvmTargets.jvm1_6
+        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_9_20 to JvmTargets.jvm1_6
     )
 ) : KotlinArgumentValueType<JvmTarget>

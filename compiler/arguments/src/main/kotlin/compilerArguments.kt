@@ -2,9 +2,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.arguments.types.BooleanType
 import org.jetbrains.kotlin.arguments.CompilerArguments
+import org.jetbrains.kotlin.arguments.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.types.KotlinVersionType
-import org.jetbrains.kotlin.arguments.KotlinReleaseVersions
 import org.jetbrains.kotlin.arguments.ReleaseDependent
 import org.jetbrains.kotlin.arguments.asReleaseDependent
 import org.jetbrains.kotlin.arguments.compilerArgument
@@ -15,15 +15,15 @@ val someArguments by compilerArgument {
     name = "some-argument"
     description = ReleaseDependent(
         "The awesome argument to make compilation fast",
-        KotlinReleaseVersions.v1_4_0..KotlinReleaseVersions.v1_9_20 to "Slows your compilation"
+        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_9_20 to "Slows your compilation"
     )
 
     valueType = BooleanType()
     valueDescription = "true|false".asReleaseDependent()
 
     lifecycle(
-        introducedVersion = KotlinReleaseVersions.v1_4_0,
-        stabilizedVersion = KotlinReleaseVersions.v1_4_0,
+        introducedVersion = KotlinReleaseVersion.v1_4_0,
+        stabilizedVersion = KotlinReleaseVersion.v1_4_0,
     )
 }
 
@@ -39,10 +39,10 @@ val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
         valueDescription = "true|false".asReleaseDependent()
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersions.v1_4_0,
-            stabilizedVersion = KotlinReleaseVersions.v1_4_0,
-            deprecatedVersion = KotlinReleaseVersions.v1_9_20,
-            removedVersion = KotlinReleaseVersions.v2_0_0,
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_4_0,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
+            removedVersion = KotlinReleaseVersion.v2_0_0,
         )
     }
 
@@ -55,9 +55,9 @@ val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
             valueDescription = "true|false".asReleaseDependent()
 
             lifecycle(
-                introducedVersion = KotlinReleaseVersions.v1_4_0,
-                deprecatedVersion = KotlinReleaseVersions.v1_9_20,
-                removedVersion = KotlinReleaseVersions.v2_0_0,
+                introducedVersion = KotlinReleaseVersion.v1_4_0,
+                deprecatedVersion = KotlinReleaseVersion.v1_9_20,
+                removedVersion = KotlinReleaseVersion.v2_0_0,
             )
         }
     }
@@ -76,8 +76,8 @@ val kotlinCompilerArguments = compilerArguments {
             )
 
             lifecycle(
-                introducedVersion = KotlinReleaseVersions.v1_4_0,
-                stabilizedVersion = KotlinReleaseVersions.v1_4_0
+                introducedVersion = KotlinReleaseVersion.v1_4_0,
+                stabilizedVersion = KotlinReleaseVersion.v1_4_0
             )
         }
 
@@ -91,7 +91,7 @@ val kotlinCompilerArguments = compilerArguments {
             )
 
             lifecycle(
-                introducedVersion = KotlinReleaseVersions.v1_9_20
+                introducedVersion = KotlinReleaseVersion.v1_9_20
             )
         }
 
@@ -105,7 +105,7 @@ val kotlinCompilerArguments = compilerArguments {
             )
 
             lifecycle(
-                introducedVersion = KotlinReleaseVersions.v1_9_20
+                introducedVersion = KotlinReleaseVersion.v1_9_20
             )
         }
 
@@ -119,7 +119,7 @@ val kotlinCompilerArguments = compilerArguments {
             )
 
             lifecycle(
-                introducedVersion = KotlinReleaseVersions.v1_9_20
+                introducedVersion = KotlinReleaseVersion.v1_9_20
             )
         }
 
@@ -133,7 +133,7 @@ val kotlinCompilerArguments = compilerArguments {
             )
 
             lifecycle(
-                introducedVersion = KotlinReleaseVersions.v1_9_20
+                introducedVersion = KotlinReleaseVersion.v1_9_20
             )
         }
 
@@ -147,7 +147,7 @@ val kotlinCompilerArguments = compilerArguments {
             )
 
             lifecycle(
-                introducedVersion = KotlinReleaseVersions.v1_9_20
+                introducedVersion = KotlinReleaseVersion.v1_9_20
             )
         }
 
@@ -161,7 +161,7 @@ val kotlinCompilerArguments = compilerArguments {
                 valueDescription = "<version>".asReleaseDependent()
 
                 lifecycle(
-                    introducedVersion = KotlinReleaseVersions.v1_9_20
+                    introducedVersion = KotlinReleaseVersion.v1_9_20
                 )
             }
 
@@ -173,7 +173,7 @@ val kotlinCompilerArguments = compilerArguments {
                 valueDescription = "<version>".asReleaseDependent()
 
                 lifecycle(
-                    introducedVersion = KotlinReleaseVersions.v1_4_0
+                    introducedVersion = KotlinReleaseVersion.v1_4_0
                 )
             }
 
@@ -186,7 +186,7 @@ val kotlinCompilerArguments = compilerArguments {
                     valueDescription = "<version>".asReleaseDependent()
 
                     lifecycle(
-                        introducedVersion = KotlinReleaseVersions.v1_4_0
+                        introducedVersion = KotlinReleaseVersion.v1_4_0
                     )
                 }
             }

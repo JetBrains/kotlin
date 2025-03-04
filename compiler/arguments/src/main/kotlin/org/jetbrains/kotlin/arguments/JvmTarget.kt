@@ -28,17 +28,17 @@ object JvmTargets {
     val jvm1_6 = JvmTarget(
         name = "1.6",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersions.v1_4_0,
-            stabilizedVersion = KotlinReleaseVersions.v1_4_0,
-            deprecatedVersion = KotlinReleaseVersions.v1_9_20,
-            removedVersion = KotlinReleaseVersions.v2_0_0
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_4_0,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
+            removedVersion = KotlinReleaseVersion.v2_0_0
         )
     )
     val jvm1_8 = JvmTarget(
         name = "1.8",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
-            introducedVersion = KotlinReleaseVersions.v1_4_0,
-            stabilizedVersion = KotlinReleaseVersions.v1_4_0,
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_4_0,
         )
     )
 
