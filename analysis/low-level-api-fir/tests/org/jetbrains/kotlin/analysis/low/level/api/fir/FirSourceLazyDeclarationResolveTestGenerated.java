@@ -1294,6 +1294,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public void testParameterNoType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/parameterNoType.kt");
     }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/simple.kt");
+    }
   }
 
   @Nested
