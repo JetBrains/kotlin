@@ -190,7 +190,7 @@ class Exclude1 : AbstractInterpreter<Unit>() {
         dsl.excludeProperties.addAll(properties.arguments.filterIsInstance<FirCallableReferenceAccess>())
     }
 }
-@Suppress("INVISIBLE_MEMBER")
+
 @OptIn(SymbolInternals::class)
 internal fun KotlinTypeFacade.toDataFrame(
     maxDepth: Int,
@@ -321,15 +321,13 @@ internal fun KotlinTypeFacade.toDataFrame(
 }
 
 // org.jetbrains.kotlinx.dataframe.codeGen.getFieldKind
-@Suppress("INVISIBLE_MEMBER")
-private fun ConeKotlinType.getFieldKind(session: FirSession) = when {
-    classId == DF_CLASS_ID -> Frame
-    classId == List && typeArguments[0].type.hasAnnotation(DATA_SCHEMA_CLASS_ID, session) -> ListToFrame
-    classId == DATA_ROW_CLASS_ID -> Group
-    hasAnnotation(DATA_SCHEMA_CLASS_ID, session) -> ObjectToGroup
-    else -> Default
-}
-
+private fun ConeKotlinType.getFieldKind(session: FirSession) = FieldKind.of(
+    this,
+    isDataFrame = { classId == DF_CLASS_ID },
+    isListToFrame = { classId == List && typeArguments[0].type.hasAnnotation(DATA_SCHEMA_CLASS_ID, session) },
+    isDataRow = { classId == DATA_ROW_CLASS_ID },
+    isObjectToGroup = { hasAnnotation(DATA_SCHEMA_CLASS_ID, session) }
+)
 
 private fun ConeKotlinType?.hasAnnotation(id: ClassId, session: FirSession) =
     this?.toSymbol(session)?.hasAnnotation(id, session) == true
