@@ -34,7 +34,7 @@ class DeclarationStubGeneratorImpl(
     override val descriptorFinder: DescriptorByIdSignatureFinder,
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ) : DeclarationStubGenerator(moduleDescriptor, symbolTable, irBuiltins, extensions) {
-    private val lazyTable = symbolTable.lazyWrapper
+    private val lazyTable = IrLazySymbolTable(symbolTable)
 
     override val typeTranslator: TypeTranslator =
         TypeTranslatorImpl(
@@ -49,7 +49,7 @@ class DeclarationStubGeneratorImpl(
     override var unboundSymbolGeneration: Boolean
         get() = lazyTable.stubGenerator != null
         set(value) {
-            lazyTable.stubGenerator = if (value) this else null
+            symbolTable.stubGeneratorForLazyTable = if (value) this else null
         }
 
     private val facadeClassMap = mutableMapOf<DeserializedContainerSource, IrClass?>()
