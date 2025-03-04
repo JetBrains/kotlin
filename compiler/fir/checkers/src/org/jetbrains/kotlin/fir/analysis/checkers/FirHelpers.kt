@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
@@ -126,7 +125,7 @@ fun ConeKotlinType.isSingleFieldValueClass(session: FirSession): Boolean = with(
     isRecursiveSingleFieldValueClassType(session) || typeConstructor().isInlineClass()
 }
 
-fun ConeKotlinType.isRecursiveSingleFieldValueClassType(session: FirSession) =
+private fun ConeKotlinType.isRecursiveSingleFieldValueClassType(session: FirSession) =
     isRecursiveValueClassType(hashSetOf(), session, onlyInline = true)
 
 fun ConeKotlinType.isRecursiveValueClassType(session: FirSession) =
@@ -134,13 +133,11 @@ fun ConeKotlinType.isRecursiveValueClassType(session: FirSession) =
 
 private fun ConeKotlinType.isRecursiveValueClassType(visited: HashSet<ConeKotlinType>, session: FirSession, onlyInline: Boolean): Boolean {
     val asRegularClass = this.toRegularClassSymbol(session)?.takeIf { it.isInlineOrValueClass() } ?: return false
-    val primaryConstructor = asRegularClass.declarationSymbols
-        .firstOrNull { it is FirConstructorSymbol && it.isPrimary } as FirConstructorSymbol?
-        ?: return false
+    val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return false
 
     if (primaryConstructor.valueParameterSymbols.size > 1 && onlyInline) return false
     return !visited.add(this) || primaryConstructor.valueParameterSymbols.any {
-        it.resolvedReturnTypeRef.coneType.isRecursiveValueClassType(visited, session, onlyInline)
+        it.resolvedReturnType.isRecursiveValueClassType(visited, session, onlyInline)
     }.also { visited.remove(this) }
 }
 
@@ -470,7 +467,7 @@ private val FirNamedFunctionSymbol.matchesDataClassSyntheticMemberSignatures: Bo
 private val FirNamedFunctionSymbol.matchesEqualsSignature: Boolean
     get() {
         val valueParameters = valueParameterSymbols
-        return valueParameters.size == 1 && valueParameters[0].resolvedReturnTypeRef.coneType.isNullableAny
+        return valueParameters.size == 1 && valueParameters[0].resolvedReturnType.isNullableAny
     }
 
 private val FirNamedFunctionSymbol.matchesHashCodeSignature: Boolean
@@ -692,7 +689,7 @@ val FirBasedSymbol<*>.typeParameterSymbols: List<FirTypeParameterSymbol>?
 fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
     val typeParameterSymbol = typeParameterSymbols.singleOrNull() ?: return false
 
-    val returnType = resolvedReturnTypeRef.coneType
+    val returnType = resolvedReturnType
 
     if ((returnType.lowerBoundIfFlexible() as? ConeTypeParameterType)?.lookupTag != typeParameterSymbol.toLookupTag()) return false
 
@@ -822,11 +819,6 @@ private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement
         startOffset = defaultValueOffset,
         endOffset = defaultValueOffset + defaultValue.textLength,
     )
-}
-
-fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlinType {
-    require(this.isSingleFieldValueClass(session))
-    return toRegularClassSymbol(session)!!.primaryConstructorSymbol(session)!!.valueParameterSymbols[0].resolvedReturnTypeRef.coneType
 }
 
 fun FirCallableDeclaration.getDirectOverriddenSymbols(context: CheckerContext): List<FirCallableSymbol<FirCallableDeclaration>> {

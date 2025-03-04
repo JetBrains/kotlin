@@ -128,7 +128,7 @@ class FirClassAnySynthesizedMemberScope(
             }
             else -> {
                 lazyResolveToPhase(FirResolvePhase.TYPES)
-                fir.isEquals(session)
+                isEquals(session)
             }
         }
     }

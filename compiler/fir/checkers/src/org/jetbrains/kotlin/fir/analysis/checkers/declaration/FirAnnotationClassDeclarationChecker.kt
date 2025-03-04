@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getTargetAnnotation
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.expressions.canBeEvaluatedAtCompileTime
@@ -172,7 +173,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
     }
 
     private fun checkCyclesInParameters(annotation: FirRegularClassSymbol, context: CheckerContext, reporter: DiagnosticReporter) {
-        val primaryConstructor = annotation.primaryConstructorSymbol(context.session) ?: return
+        val primaryConstructor = annotation.primaryConstructorIfAny(context.session) ?: return
         val checker = CycleChecker(annotation, context.session)
         for (valueParameter in primaryConstructor.valueParameterSymbols) {
             if (checker.parameterHasCycle(annotation, valueParameter)) {
@@ -186,7 +187,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
         private val annotationsWithCycle = mutableSetOf(targetAnnotation)
 
         fun annotationHasCycle(annotation: FirRegularClassSymbol): Boolean {
-            val primaryConstructor = annotation.primaryConstructorSymbol(session) ?: return false
+            val primaryConstructor = annotation.primaryConstructorIfAny(session) ?: return false
             for (valueParameter in primaryConstructor.valueParameterSymbols) {
                 if (parameterHasCycle(annotation, valueParameter)) return true
             }

@@ -78,6 +78,12 @@ internal fun FirMemberDeclaration.isEffectivelyExpect(
     return containingClass != null && isInsideExpectClass(containingClass, context)
 }
 
+@OptIn(SymbolInternals::class)
+internal fun FirCallableSymbol<*>.isEffectivelyExpect(
+    containingClass: FirClass?,
+    context: CheckerContext,
+): Boolean = fir.isEffectivelyExpect(containingClass, context)
+
 internal fun FirMemberDeclaration.isEffectivelyExternal(
     containingClass: FirClass?,
     context: CheckerContext,
@@ -100,6 +106,12 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
     return containingClass != null && isInsideExternalClass(containingClass, context)
 }
 
+@OptIn(SymbolInternals::class)
+internal fun FirCallableSymbol<*>.isEffectivelyExternal(
+    containingClass: FirClass?,
+    context: CheckerContext,
+): Boolean = fir.isEffectivelyExternal(containingClass, context)
+
 internal val FirClass.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
 
 // contract: returns(true) implies (this is FirMemberDeclaration<*>)
@@ -120,8 +132,12 @@ internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
 
 @OptIn(SymbolInternals::class)
+//@Deprecated(
+//    message = "This method is deprecated, please use primaryConstructorIfAny instead",
+//    replaceWith = ReplaceWith("primaryConstructorIfAny(session)", "org.jetbrains.kotlin.fir.declarations")
+//)
 fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstructorSymbol? {
-    return fir.primaryConstructorIfAny(session)
+    return primaryConstructorIfAny(session)
 }
 
 fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)

@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 
 object FirDelegationSuperCallInEnumConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -21,13 +23,12 @@ object FirDelegationSuperCallInEnumConstructorChecker : FirRegularClassChecker(M
             return
         }
 
-        for (it in declaration.declarations) {
-            if (
-                it is FirConstructor && !it.isPrimary &&
-                it.delegatedConstructor?.isThis == false &&
-                it.delegatedConstructor?.source?.kind !is KtFakeSourceElementKind
+        declaration.constructors(context.session).forEach {
+            if (!it.isPrimary &&
+                it.resolvedDelegatedConstructorCall?.isThis == false &&
+                it.resolvedDelegatedConstructorCall?.source?.kind !is KtFakeSourceElementKind
             ) {
-                reporter.reportOn(it.delegatedConstructor?.source, FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, context)
+                reporter.reportOn(it.resolvedDelegatedConstructorCall?.source, FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, context)
             }
         }
     }

@@ -105,7 +105,7 @@ object OperatorFunctionChecks {
 
                     if (function.symbol.overriddenFunctions(containingClassSymbol, session, scopeSession)
                             .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
-                        || (customEqualsSupported && function.isTypedEqualsInValueClass(session))
+                        || (customEqualsSupported && function.symbol.isTypedEqualsInValueClass(session))
                         || containingClassSymbol.classId == StandardClassIds.Any
                     ) {
                         return null

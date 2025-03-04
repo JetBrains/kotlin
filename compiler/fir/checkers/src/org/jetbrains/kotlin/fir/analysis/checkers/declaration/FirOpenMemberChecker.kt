@@ -15,22 +15,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.processAllCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirOpenMemberChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.canHaveOpenMembers) return
-        for (memberDeclaration in declaration.declarations) {
-            if (memberDeclaration !is FirCallableDeclaration ||
-                // Marking a constructor `open` is an error covered by diagnostic code WRONG_MODIFIER_TARGET
-                memberDeclaration is FirConstructor
-            ) continue
-            val source = memberDeclaration.source ?: continue
+        declaration.symbol.processAllCallables(context.session) { memberDeclaration ->
+            if (// Marking a constructor `open` is an error covered by diagnostic code WRONG_MODIFIER_TARGET
+                memberDeclaration is FirConstructorSymbol
+            ) return@processAllCallables
+            val source = memberDeclaration.source ?: return@processAllCallables
             if (memberDeclaration.isOpen && !memberDeclaration.isOverride && declaration.classKind == ClassKind.ANNOTATION_CLASS ||
                 memberDeclaration.hasModifier(KtTokens.OPEN_KEYWORD) && source.shouldReportOpenFromSource
             ) {

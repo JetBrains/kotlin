@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -45,8 +44,8 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
         analyzeGraph(graph, companionOfEnum, enumClass, context, reporter)
         if (declaration.classKind.isEnumEntry) {
-            val constructor = declaration.declarations.firstIsInstanceOrNull<FirPrimaryConstructor>()
-            val constructorGraph = constructor?.controlFlowGraphReference?.controlFlowGraph
+            val constructor = declaration.primaryConstructorIfAny(context.session)
+            val constructorGraph = constructor?.resolvedControlFlowGraphReference?.controlFlowGraph
             if (constructorGraph != null) {
                 analyzeGraph(constructorGraph, companionOfEnum, enumClass, context, reporter)
             }

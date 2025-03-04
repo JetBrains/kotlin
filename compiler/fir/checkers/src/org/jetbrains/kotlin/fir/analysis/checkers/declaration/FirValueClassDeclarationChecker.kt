@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
@@ -82,56 +86,38 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE, context)
         }
 
-        var primaryConstructor: FirConstructor? = null
-        var primaryConstructorParametersByName = mapOf<Name, FirValueParameter>()
-        val primaryConstructorPropertiesByName = mutableMapOf<Name, FirProperty>()
+        var primaryConstructor: FirConstructorSymbol? = null
+        var primaryConstructorParametersByName = mapOf<Name, FirValueParameterSymbol>()
+        val primaryConstructorPropertiesByName = mutableMapOf<Name, FirPropertySymbol>()
         var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
         val isCustomEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
 
-        for (innerDeclaration in declaration.declarations) {
-            when (innerDeclaration) {
-                is FirConstructor -> {
-                    when {
-                        innerDeclaration.isPrimary -> {
-                            primaryConstructor = innerDeclaration
-                            primaryConstructorParametersByName = innerDeclaration.valueParameters.associateBy { it.name }
-                            primaryConstructorParametersSymbolsSet =
-                                primaryConstructorParametersByName.map { (_, parameter) -> parameter.symbol }.toSet()
-                        }
-
-                        innerDeclaration.body != null && !context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClassesSecondaryConstructorWithBody) -> {
-                            val body = innerDeclaration.body!!
-                            reporter.reportOn(
-                                body.source, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, context
-                            )
-                        }
-                    }
+        declaration.constructors(context.session).forEach { innerDeclaration ->
+            when {
+                innerDeclaration.isPrimary -> {
+                    primaryConstructor = innerDeclaration
+                    primaryConstructorParametersByName = innerDeclaration.valueParameterSymbols.associateBy { it.name }
+                    primaryConstructorParametersSymbolsSet = primaryConstructorParametersByName.values.toSet()
                 }
 
-                is FirRegularClass -> {
+                innerDeclaration.hasBody && !context.languageVersionSettings.supportsFeature(
+                    LanguageFeature.ValueClassesSecondaryConstructorWithBody
+                ) -> {
+                    reporter.reportOn(
+                        innerDeclaration.bodySource!!, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, context
+                    )
+                }
+            }
+        }
+        declaration.processAllDeclarations(context.session) { innerDeclaration ->
+            when (innerDeclaration) {
+                is FirRegularClassSymbol -> {
                     if (innerDeclaration.isInner) {
                         reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
                     }
                 }
 
-                is FirField -> {
-                    if (innerDeclaration.isSynthetic) {
-                        val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
-                        if (context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClassImplementationByDelegation) &&
-                            symbol != null && symbol in primaryConstructorParametersSymbolsSet
-                        ) {
-                            continue
-                        }
-                        val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
-                        reporter.reportOn(
-                            delegatedTypeRefSource,
-                            FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
-                            context
-                        )
-                    }
-                }
-
-                is FirProperty -> {
+                is FirPropertySymbol -> {
                     if (innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name])) {
                         primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
                     } else {
@@ -156,6 +142,22 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
                 else -> {}
             }
+        }
+        // Separate handling of delegate fields
+        declaration.declarations.forEach { innerDeclaration ->
+            if (innerDeclaration !is FirField || !innerDeclaration.isSynthetic) return@forEach
+            val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClassImplementationByDelegation) &&
+                symbol != null && symbol in primaryConstructorParametersSymbolsSet
+            ) {
+                return@forEach
+            }
+            val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
+            reporter.reportOn(
+                delegatedTypeRefSource,
+                FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
+                context
+            )
         }
 
         val reservedNames = boxAndUnboxNames + if (isCustomEqualsSupported) emptySet() else equalsAndHashCodeNames
@@ -202,6 +204,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
 
         for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {
+            val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
             when {
                 primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
                     reporter.reportOn(
@@ -211,29 +214,29 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
 
                 !context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                        primaryConstructorParameter.returnTypeRef.coneType.let {
+                        parameterTypeRef.coneType.let {
                             it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter()
                         } -> {
                     reporter.reportOn(
-                        primaryConstructorParameter.returnTypeRef.source,
+                        parameterTypeRef.source,
                         FirErrors.UNSUPPORTED_FEATURE,
                         LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings,
                         context
                     )
                 }
 
-                primaryConstructorParameter.returnTypeRef.isInapplicableParameterType(context.session) -> {
+                parameterTypeRef.isInapplicableParameterType(context.session) -> {
                     reporter.reportOn(
-                        primaryConstructorParameter.returnTypeRef.source,
+                        parameterTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                        primaryConstructorParameter.returnTypeRef.coneType,
+                        parameterTypeRef.coneType,
                         context
                     )
                 }
 
-                primaryConstructorParameter.returnTypeRef.coneType.isRecursiveValueClassType(context.session) -> {
+                parameterTypeRef.coneType.isRecursiveValueClassType(context.session) -> {
                     reporter.reportOn(
-                        primaryConstructorParameter.returnTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
+                        parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
                         context
                     )
                 }
@@ -251,11 +254,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         if (isCustomEqualsSupported) {
             val (equalsFromAnyOverriding, typedEquals) = run {
-                var equalsFromAnyOverriding: FirSimpleFunction? = null
-                var typedEquals: FirSimpleFunction? = null
-                declaration.declarations.forEach {
-                    if (it !is FirSimpleFunction) {
-                        return@forEach
+                var equalsFromAnyOverriding: FirNamedFunctionSymbol? = null
+                var typedEquals: FirNamedFunctionSymbol? = null
+                declaration.processAllDeclarations(context.session) {
+                    if (it !is FirNamedFunctionSymbol) {
+                        return@processAllDeclarations
                     }
                     if (it.isEquals(context.session)) equalsFromAnyOverriding = it
                     if (it.isTypedEqualsInValueClass(context.session)) typedEquals = it
@@ -263,14 +266,14 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 equalsFromAnyOverriding to typedEquals
             }
             if (typedEquals != null) {
-                if (typedEquals.typeParameters.isNotEmpty()) {
+                if (typedEquals.typeParameterSymbols.isNotEmpty()) {
                     reporter.reportOn(
                         typedEquals.source,
                         FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
                         context
                     )
                 }
-                val singleParameterReturnTypeRef = typedEquals.valueParameters.single().returnTypeRef
+                val singleParameterReturnTypeRef = typedEquals.valueParameterSymbols.single().resolvedReturnTypeRef
                 if (singleParameterReturnTypeRef.coneType.typeArguments.any { !it.isStarProjection }) {
                     reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, context)
                 }
@@ -287,10 +290,10 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
     }
 
-    private fun FirProperty.isRelatedToParameter(parameter: FirValueParameter?) =
+    private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?) =
         name == parameter?.name && source?.kind is KtFakeSourceElementKind
 
-    private fun FirValueParameter.isNotFinalReadOnly(primaryConstructorProperty: FirProperty?): Boolean {
+    private fun FirValueParameterSymbol.isNotFinalReadOnly(primaryConstructorProperty: FirPropertySymbol?): Boolean {
         if (primaryConstructorProperty == null) return true
 
         val isOpen = hasModifier(KtTokens.OPEN_KEYWORD)

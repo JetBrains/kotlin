@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
@@ -99,11 +99,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         val serializableKType = classSymbol.getSerializerForClass(session) ?: return
         val serializableClassSymbol = serializableKType.toRegularClassSymbol(session) ?: return
 
-        val declarations = classSymbol.declarationSymbols
-
         val parametersCount = serializableKType.typeArguments.size
         if (parametersCount > 0) {
-            val hasSuitableConstructor = declarations.filterIsInstance<FirConstructorSymbol>().any { constructor ->
+            val hasSuitableConstructor = classSymbol.constructors(session).any { constructor ->
                 constructor.valueParameterSymbols.size == parametersCount
                         && constructor.valueParameterSymbols.all { param -> param.resolvedReturnType.isKSerializer }
             }
@@ -120,18 +118,19 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             }
         }
 
-        val descriptorOverridden = declarations.filterIsInstance<FirPropertySymbol>().singleOrNull {
+        val descriptorOverridden = classSymbol.properties(session).singleOrNull {
             it.name == SerialEntityNames.SERIAL_DESC_FIELD_NAME
                     && it.isOverride
                     && it.origin == FirDeclarationOrigin.Source
         } != null
-        val serializeOverridden = declarations.filterIsInstance<FirFunctionSymbol<*>>().singleOrNull {
+        val functions = classSymbol.functions(session)
+        val serializeOverridden = functions.singleOrNull {
             it.name == SerialEntityNames.SAVE_NAME
                     && it.valueParameterSymbols.size == 2
                     && it.isOverride
                     && it.origin == FirDeclarationOrigin.Source
         } != null
-        val deserializeOverridden = declarations.filterIsInstance<FirFunctionSymbol<*>>().singleOrNull {
+        val deserializeOverridden = functions.singleOrNull {
             it.name == SerialEntityNames.LOAD_NAME
                     && it.valueParameterSymbols.size == 1
                     && it.isOverride
@@ -443,7 +442,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val superClassSymbol = classSymbol.superClassOrAny(session)
             if (!superClassSymbol.shouldHaveInternalSerializer(session)) {
                 val noArgConstructorSymbol =
-                    superClassSymbol.declarationSymbols.firstOrNull { it is FirConstructorSymbol && it.valueParameterSymbols.isEmpty() }
+                    superClassSymbol.constructors(session).firstOrNull { it.valueParameterSymbols.isEmpty() }
                 if (noArgConstructorSymbol == null) {
                     reporter.reportOn(
                         classSymbol.serializableOrMetaAnnotationSource(session),
@@ -526,7 +525,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     }
 
     private fun CheckerContext.checkTransients(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
-        for (propertySymbol in classSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()) {
+        for (propertySymbol in classSymbol.properties(session)) {
             val isInitialized = propertySymbol.isLateInit || declarationHasInitializer(propertySymbol)
             val transientAnnotation = propertySymbol.getSerialTransientAnnotation(session) ?: continue
             val hasBackingField = propertySymbol.hasBackingField
@@ -708,7 +707,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             return
         }
 
-        val primaryConstructor = serializerType.toRegularClassSymbol(session)?.primaryConstructorSymbol(session) ?: return
+        val primaryConstructor = serializerType.toRegularClassSymbol(session)?.primaryConstructorIfAny(session) ?: return
 
         val targetElement by lazy { source ?: containingClassSymbol.serializableOrMetaAnnotationSource(session) }
 

@@ -622,7 +622,7 @@ abstract class FirDataFlowAnalyzer(
         return this.unsubstitutedScope(
             session, components.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS
         ).getFunctions(OperatorNameConventions.EQUALS).any {
-            !it.isSubstitutionOrIntersectionOverride && it.fir.isEquals(session) && ownerTag.isRealOwnerOf(it)
+            !it.isSubstitutionOrIntersectionOverride && it.isEquals(session) && ownerTag.isRealOwnerOf(it)
         }
     }
 

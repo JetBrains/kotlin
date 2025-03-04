@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -158,14 +157,13 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val containerCtor =
-            containerClass.declarationSymbols.find { it is FirConstructorSymbol && it.isPrimary } as? FirConstructorSymbol
-                ?: return
+        val session = context.session
+        val containerCtor = containerClass.primaryConstructorIfAny(session) ?: return
 
         val valueParameterSymbols = containerCtor.valueParameterSymbols
         val parameterName = StandardClassIds.Annotations.ParameterNames.value
         val value = valueParameterSymbols.find { it.name == parameterName }
-        val fullyExpandedType = value?.resolvedReturnTypeRef?.coneType?.fullyExpandedType(context.session)
+        val fullyExpandedType = value?.resolvedReturnTypeRef?.coneType?.fullyExpandedType(session)
         if (fullyExpandedType == null ||
             !fullyExpandedType.isArrayType ||
             fullyExpandedType.typeArguments.single().type != annotationClass.defaultType()

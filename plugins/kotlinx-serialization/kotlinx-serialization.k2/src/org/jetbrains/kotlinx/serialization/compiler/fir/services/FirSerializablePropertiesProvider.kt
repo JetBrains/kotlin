@@ -7,11 +7,11 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.services
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -80,7 +80,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .let { restoreCorrectOrderFromClassProtoExtension(classSymbol, it) }
 
         val isExternallySerializable = classSymbol.isEnumClass ||
-                primaryConstructorProperties.size == (classSymbol.primaryConstructorSymbol(session)?.valueParameterSymbols?.size ?: 0)
+                primaryConstructorProperties.size == (classSymbol.primaryConstructorIfAny(session)?.valueParameterSymbols?.size ?: 0)
 
         val (serializableConstructorProperties, serializableStandaloneProperties) = serializableProperties.partition { it.propertySymbol in primaryConstructorProperties }
         return FirSerializableProperties(
