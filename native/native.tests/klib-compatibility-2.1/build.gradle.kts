@@ -23,7 +23,7 @@ sourceSets {
 
 testsJar {}
 
-val latestReleasedCompiler = findProperty("kotlin.internal.native.test.latestReleasedCompilerVersion") as String
+val latestReleasedCompiler = findProperty("kotlin.internal.native.test.releasedCompilerVersion") as String
 val hostSpecificArtifact = "${HostManager.platformName()}@${if (HostManager.hostIsMingw) "zip" else "tar.gz"}"
 
 val releasedCompiler: Configuration by configurations.creating {
