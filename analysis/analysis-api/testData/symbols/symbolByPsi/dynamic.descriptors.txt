@@ -95,6 +95,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getP
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaAnonymousFunctionSymbol:
   annotations: []

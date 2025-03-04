@@ -245,6 +245,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getI
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaEnumEntrySymbol:
   annotations: []
@@ -624,6 +625,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getI
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

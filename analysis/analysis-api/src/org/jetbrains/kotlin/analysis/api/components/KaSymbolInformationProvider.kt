@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -72,4 +69,13 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
+
+
+    /**
+     * Whether the property is an [inline property](https://kotlinlang.org/docs/inline-functions.html#inline-properties).
+     * A property is considered `inline` when both of its accessors are `inline` or when it has the `inline` keyword.
+     * The `inline` keyword on a property is syntactic sugar for marking both accessors as `inline`.
+     */
+    @KaExperimentalApi
+    public val KaKotlinPropertySymbol.isInline: Boolean
 }

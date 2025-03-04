@@ -98,6 +98,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getP
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -288,6 +289,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getBar
   javaSetterName: setBar
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -435,6 +437,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getDoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -578,6 +581,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -837,6 +841,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getZoo
   javaSetterName: setZoo
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []

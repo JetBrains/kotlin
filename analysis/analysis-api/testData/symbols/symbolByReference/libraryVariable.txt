@@ -175,3 +175,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getTopLevelVariable
   javaSetterName: setTopLevelVariable
   setterDeprecationStatus: null
+  isInline: false

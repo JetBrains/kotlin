@@ -124,6 +124,7 @@ KaConstructorSymbol:
         javaGetterName: getInts
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false

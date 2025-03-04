@@ -187,3 +187,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getMemberVariable
   javaSetterName: setMemberVariable
   setterDeprecationStatus: null
+  isInline: false

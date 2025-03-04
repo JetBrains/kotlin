@@ -199,3 +199,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getConstructorVariableWithAnnotations
   javaSetterName: setConstructorVariableWithAnnotations
   setterDeprecationStatus: null
+  isInline: false

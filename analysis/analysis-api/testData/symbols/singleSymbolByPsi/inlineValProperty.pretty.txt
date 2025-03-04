@@ -1,0 +1,2 @@
+val something: kotlin.Int
+  get()

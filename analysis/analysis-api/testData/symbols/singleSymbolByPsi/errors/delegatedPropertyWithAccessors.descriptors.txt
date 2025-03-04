@@ -170,3 +170,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getLazyProp
   javaSetterName: setLazyProp
   setterDeprecationStatus: null
+  isInline: false

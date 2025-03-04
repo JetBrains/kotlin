@@ -102,6 +102,10 @@ public class DebugSymbolRenderer(
                     renderComputedValue("setterDeprecationStatus", printer, currentSymbolStack) { symbol.setterDeprecationStatus }
                 }
 
+                if (symbol is KaKotlinPropertySymbol) {
+                    renderComputedValue("isInline", printer, currentSymbolStack) { symbol.isInline }
+                }
+
                 if (renderIsPublicApi) {
                     if (symbol is KaDeclarationSymbol) {
                         renderComputedValue("isPublicApi", printer, currentSymbolStack) { isPublicApi(symbol) }

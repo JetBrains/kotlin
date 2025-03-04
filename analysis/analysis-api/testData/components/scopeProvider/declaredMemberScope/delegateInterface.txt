@@ -98,6 +98,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getP
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaConstructorSymbol:
   annotations: []
@@ -225,6 +226,7 @@ KaConstructorSymbol:
         javaGetterName: getP
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false

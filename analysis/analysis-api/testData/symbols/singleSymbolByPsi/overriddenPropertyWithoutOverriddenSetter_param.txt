@@ -192,6 +192,7 @@ KaValueParameterSymbol:
     javaGetterName: getBar
     javaSetterName: setBar
     setterDeprecationStatus: null
+    isInline: false
   hasDefaultValue: false
   isActual: false
   isCrossinline: false

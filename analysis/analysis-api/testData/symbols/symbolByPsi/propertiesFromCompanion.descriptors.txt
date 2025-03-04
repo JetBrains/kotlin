@@ -98,6 +98,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -199,6 +200,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getConstProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: [
@@ -303,6 +305,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getStaticProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -407,6 +410,7 @@ KaKotlinPropertySymbol:
   javaGetterName: fieldProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -597,6 +601,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getVariable
   javaSetterName: setVariable
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: [
@@ -790,6 +795,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getStaticVariable
   javaSetterName: setStaticVariable
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -983,6 +989,7 @@ KaKotlinPropertySymbol:
   javaGetterName: fieldVariable
   javaSetterName: fieldVariable
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

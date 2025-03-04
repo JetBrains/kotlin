@@ -128,6 +128,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getTestVal
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

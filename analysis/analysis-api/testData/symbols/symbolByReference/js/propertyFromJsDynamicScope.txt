@@ -43,3 +43,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getDynamicPropertyAccess
   javaSetterName: setDynamicPropertyAccess
   setterDeprecationStatus: null
+  isInline: false

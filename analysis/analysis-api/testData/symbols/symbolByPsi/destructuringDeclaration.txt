@@ -124,6 +124,7 @@ KaConstructorSymbol:
         javaGetterName: getX
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -252,6 +253,7 @@ KaConstructorSymbol:
         javaGetterName: getY
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false

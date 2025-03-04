@@ -95,3 +95,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getLazyProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

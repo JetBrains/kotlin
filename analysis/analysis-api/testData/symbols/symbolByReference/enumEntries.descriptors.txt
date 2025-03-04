@@ -105,3 +105,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getEntries
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

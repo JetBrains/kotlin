@@ -187,3 +187,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getConstructorVariable
   javaSetterName: setConstructorVariable
   setterDeprecationStatus: null
+  isInline: false

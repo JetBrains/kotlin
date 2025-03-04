@@ -90,6 +90,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getTestValue
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []

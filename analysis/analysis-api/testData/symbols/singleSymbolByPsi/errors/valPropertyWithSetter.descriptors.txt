@@ -90,3 +90,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getI
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

@@ -190,3 +190,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getTopLevelVariableWithAnnotations
   javaSetterName: setTopLevelVariableWithAnnotations
   setterDeprecationStatus: null
+  isInline: false

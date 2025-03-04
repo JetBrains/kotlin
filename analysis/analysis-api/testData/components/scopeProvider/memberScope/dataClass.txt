@@ -98,6 +98,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getFirstProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -199,6 +200,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getSecondProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -300,6 +302,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getThirdProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -485,6 +488,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getBodyProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -1024,6 +1028,7 @@ KaConstructorSymbol:
         javaGetterName: getFirstProperty
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -1152,6 +1157,7 @@ KaConstructorSymbol:
         javaGetterName: getSecondProperty
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -1280,6 +1286,7 @@ KaConstructorSymbol:
         javaGetterName: getThirdProperty
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false

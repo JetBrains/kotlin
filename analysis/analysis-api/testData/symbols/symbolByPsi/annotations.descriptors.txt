@@ -124,6 +124,7 @@ KaConstructorSymbol:
         javaGetterName: getParam1
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -252,6 +253,7 @@ KaConstructorSymbol:
         javaGetterName: getParam2
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
