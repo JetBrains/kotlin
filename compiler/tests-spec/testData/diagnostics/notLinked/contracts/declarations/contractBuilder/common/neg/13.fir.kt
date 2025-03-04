@@ -1,4 +1,5 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
+// LANGUAGE: -ConditionImpliesReturnsContracts
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
@@ -14,6 +15,6 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?, block: () -> Unit) {
-    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlace(block, InvocationKind.EXACTLY_ONCE) <!UNRESOLVED_REFERENCE!>implies<!> (value_1 != null)<!> }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlace(block, InvocationKind.EXACTLY_ONCE) <!OPT_IN_USAGE_ERROR, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>implies<!> (value_1 != null)<!> }
     if (value_1 != null) block()
 }

@@ -49080,6 +49080,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("lambdaInvariantContractsK2.kt")
+        public void testLambdaInvariantContractsK2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/lambdaInvariantContractsK2.kt");
+        }
+
+        @Test
         @TestMetadata("operatorsAllowedInK2.kt")
         public void testOperatorsAllowedInK2() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/operatorsAllowedInK2.kt");
@@ -49095,6 +49101,24 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("operatorsForbiddenInK2.kt")
         public void testOperatorsForbiddenInK2() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/operatorsForbiddenInK2.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns.kt")
+        public void testReverseImpliesReturns() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_forbidden.kt")
+        public void testReverseImpliesReturns_forbidden() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_forbidden.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_withErrors.kt")
+        public void testReverseImpliesReturns_withErrors() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_withErrors.kt");
         }
 
         @Test
@@ -49194,6 +49218,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
           @TestMetadata("referenceToProperty.1.4.kt")
           public void testReferenceToProperty_1_4() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/referenceToProperty.1.4.kt");
+          }
+
+          @Test
+          @TestMetadata("reverseImpliesReturnsDisabled.kt")
+          public void testReverseImpliesReturnsDisabled() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/reverseImpliesReturnsDisabled.kt");
+          }
+
+          @Test
+          @TestMetadata("reverseImpliesReturnsDslDisabled.kt")
+          public void testReverseImpliesReturnsDslDisabled() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/reverseImpliesReturnsDslDisabled.kt");
           }
 
           @Test

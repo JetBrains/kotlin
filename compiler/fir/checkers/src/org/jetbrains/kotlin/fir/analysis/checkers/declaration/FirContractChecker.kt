@@ -43,6 +43,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private const val INVALID_CONTRACT_BLOCK = "Contract block could not be resolved"
     private const val CALLS_IN_PLACE_ON_CONTEXT_PARAMETER =
         "callsInPlace contract cannot be applied to context parameter because context arguments can never be lambdas."
+    private const val BINARY_LOGICAL_OPS_NOT_SUPPORTED = "Binary logical operators are not supported in this contract"
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
@@ -63,6 +64,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             is FirResolvedContractDescription -> {
                 checkUnresolvedEffects(contractDescription, declaration)
                 checkDuplicateCallsInPlace(contractDescription)
+                checkComplexArgumentConditions(contractDescription)
                 if (declaration.contextParameters.isNotEmpty()) {
                     checkCallsInPlaceOnContextParameter(contractDescription, declaration.valueParameters.size)
                 }
@@ -230,6 +232,25 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkComplexArgumentConditions(
+        description: FirResolvedContractDescription,
+    ) {
+        val conditionalReturns = description.effects.mapNotNull { it.effect as? ConeConditionalReturnsDeclaration }
+
+        fun ConeBooleanExpression.containsBinaryLogicOps(): Boolean = when (this) {
+            is ConeLogicalNot -> arg.containsBinaryLogicOps()
+            is ConeBinaryLogicExpression -> true
+            else -> false
+        }
+
+        for (conditionalReturn in conditionalReturns) {
+            if (conditionalReturn.argumentsCondition.containsBinaryLogicOps()) {
+                reporter.reportOn(description.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, BINARY_LOGICAL_OPS_NOT_SUPPORTED)
+            }
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDiagnosticsFromFirBuilder(
         diagnostic: ConeDiagnostic?,
         source: KtSourceElement?,
@@ -253,6 +274,13 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             data: Nothing?
         ): ConeDiagnostic? {
             return conditionalEffect.effect.accept(this, null) ?: conditionalEffect.condition.accept(this, null)
+        }
+
+        override fun visitConditionalReturnsDeclaration(
+            conditionalEffect: KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>,
+            data: Nothing?,
+        ): ConeDiagnostic? {
+            return conditionalEffect.argumentsCondition.accept(this, null) ?: conditionalEffect.returnsEffect.accept(this, null)
         }
 
         override fun visitReturnsEffectDeclaration(returnsEffect: ConeReturnsEffectDeclaration, data: Nothing?): ConeDiagnostic? {
@@ -331,6 +359,13 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             data: Nothing?
         ): ConeDiagnostic? {
             return conditionalEffect.condition.accept(this, data)
+        }
+
+        override fun visitConditionalReturnsDeclaration(
+            conditionalEffect: KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>,
+            data: Nothing?,
+        ): ConeDiagnostic? {
+            return conditionalEffect.argumentsCondition.accept(this, data)
         }
 
         override fun visitIsInstancePredicate(

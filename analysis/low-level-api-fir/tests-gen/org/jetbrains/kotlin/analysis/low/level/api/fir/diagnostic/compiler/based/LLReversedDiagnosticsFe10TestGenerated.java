@@ -49098,6 +49098,24 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
+        @TestMetadata("reverseImpliesReturns.kt")
+        public void testReverseImpliesReturns() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_forbidden.kt")
+        public void testReverseImpliesReturns_forbidden() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_forbidden.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_withErrors.kt")
+        public void testReverseImpliesReturns_withErrors() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_withErrors.kt");
+        }
+
+        @Test
         @TestMetadata("rewriteAtSliceFunctor.kt")
         public void testRewriteAtSliceFunctor() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/rewriteAtSliceFunctor.kt");
@@ -49194,6 +49212,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
           @TestMetadata("referenceToProperty.1.4.kt")
           public void testReferenceToProperty_1_4() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/referenceToProperty.1.4.kt");
+          }
+
+          @Test
+          @TestMetadata("reverseImpliesReturnsDisabled.kt")
+          public void testReverseImpliesReturnsDisabled() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/reverseImpliesReturnsDisabled.kt");
+          }
+
+          @Test
+          @TestMetadata("reverseImpliesReturnsDslDisabled.kt")
+          public void testReverseImpliesReturnsDslDisabled() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/reverseImpliesReturnsDslDisabled.kt");
           }
 
           @Test

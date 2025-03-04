@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 object ContextCollector {
     enum class ContextKind {
@@ -319,7 +320,7 @@ private class ContextCollectorVisitor(
         if (cfgNode != null) {
             val flow = cfgNode.flow
 
-            val realVariables = flow.knownVariables
+            val realVariables = flow.knownVariables.filterIsInstance<RealVariable>()
                 .sortedBy { it.symbol.memberDeclarationNameOrNull?.asString() }
 
             for (realVariable in realVariables) {
@@ -329,7 +330,14 @@ private class ContextCollectorVisitor(
                     continue
                 }
 
-                smartCasts[typeStatement.variable] = typeStatement.upperTypes
+                val typeStatementVariable = typeStatement.variable
+                requireWithAttachment(
+                    typeStatementVariable is RealVariable,
+                    { "Expecting a ${RealVariable::class.simpleName}, got ${typeStatementVariable::class.simpleName}" },
+                ) {
+                    withEntry("variable", typeStatementVariable) { it.toString() }
+                }
+                smartCasts[typeStatementVariable] = typeStatement.upperTypes
 
                 // The compiler pushes smart-cast types for implicit receivers to ease later lookups.
                 // Here we emulate such behavior. Unlike the compiler, though, modified types are only reflected in the created snapshot.

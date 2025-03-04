@@ -3006,6 +3006,7 @@ public abstract interface class kotlin/contracts/ConditionalEffect : kotlin/cont
 
 public abstract interface class kotlin/contracts/ContractBuilder {
 	public abstract fun callsInPlace (Lkotlin/Function;Lkotlin/contracts/InvocationKind;)Lkotlin/contracts/CallsInPlace;
+	public abstract fun implies (ZLkotlin/contracts/ReturnsNotNull;)V
 	public abstract fun returns ()Lkotlin/contracts/Returns;
 	public abstract fun returns (Ljava/lang/Object;)Lkotlin/contracts/Returns;
 	public abstract fun returnsNotNull ()Lkotlin/contracts/ReturnsNotNull;
