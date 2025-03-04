@@ -77,7 +77,7 @@ inline fun buildRegularClass(init: FirRegularClassBuilder.() -> Unit): FirRegula
     return FirRegularClassBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, DirectDeclarationsAccess::class)
 inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClassBuilder.() -> Unit): FirRegularClass {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)

@@ -64,7 +64,7 @@ inline fun buildScript(init: FirScriptBuilder.() -> Unit): FirScript {
     return FirScriptBuilder().apply(init).build()
 }
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, DirectDeclarationsAccess::class)
 inline fun buildScriptCopy(original: FirScript, init: FirScriptBuilder.() -> Unit): FirScript {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)

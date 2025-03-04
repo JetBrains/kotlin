@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-@OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
+@OptIn(FirImplementationDetail::class, ResolveStateAccess::class, DirectDeclarationsAccess::class)
 internal class FirFileImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
@@ -36,6 +36,7 @@ internal class FirFileImpl(
     override val attributes: FirDeclarationAttributes,
     override var packageDirective: FirPackageDirective,
     override val imports: MutableList<FirImport>,
+    @property:DirectDeclarationsAccess
     override val declarations: MutableList<FirDeclaration>,
     override val name: String,
     override val sourceFile: KtSourceFile?,
