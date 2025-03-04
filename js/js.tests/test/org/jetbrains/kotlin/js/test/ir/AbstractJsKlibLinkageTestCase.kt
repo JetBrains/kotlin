@@ -289,7 +289,7 @@ internal class ReleasedJsArtifactsHome(val dir: File, version: String) {
 internal object JsKlibTestSettings {
     val releasedArtifactHome by lazy {
         val location = System.getProperty("kotlin.internal.js.test.latestReleasedCompilerLocation")
-        val version = System.getProperty("kotlin.internal.js.test.latestReleasedCompilerVersion")
+        val version = System.getProperty("kotlin.internal.js.test.releasedCompilerVersion")
 
         requireNotNull(location) { "Released compiler location is not specified" }
         requireNotNull(version) { "Released compiler version is not specified" }
