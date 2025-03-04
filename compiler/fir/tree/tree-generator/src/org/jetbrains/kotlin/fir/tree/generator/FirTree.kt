@@ -1195,6 +1195,11 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(diagnosticHolder)
     }
 
+    val errorSuperReference: Element by element(Reference) {
+        parent(superReference)
+        parent(diagnosticHolder)
+    }
+
     val intersectionTypeRef: Element by element(TypeRefElement) {
         parent(unresolvedTypeRef)
 

@@ -21,13 +21,9 @@ import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
@@ -95,7 +91,11 @@ class ErrorNodeDiagnosticCollectorComponent(
         processErrorReference(resolvedErrorReference, resolvedErrorReference.diagnostic, data)
     }
 
-    private fun processErrorReference(reference: FirNamedReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
+    override fun visitErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: CheckerContext) {
+        processErrorReference(errorSuperReference, errorSuperReference.diagnostic, data)
+    }
+
+    private fun processErrorReference(reference: FirReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
         var source = reference.source
         val callOrAssignment = context.callsOrAssignments.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.

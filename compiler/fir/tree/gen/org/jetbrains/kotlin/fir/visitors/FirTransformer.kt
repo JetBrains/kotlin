@@ -1139,6 +1139,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformErrorNamedReference(errorNamedReference, data)
     }
 
+    open fun transformErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: D): FirReference {
+        return transformElement(errorSuperReference, data)
+    }
+
+    final override fun visitErrorSuperReference(errorSuperReference: FirErrorSuperReference, data: D): FirReference {
+        return transformErrorSuperReference(errorSuperReference, data)
+    }
+
     open fun transformIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): FirTypeRef {
         return transformElement(intersectionTypeRef, data)
     }

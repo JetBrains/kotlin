@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -391,10 +392,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
         superReferenceContainer.resultType = resultType.coneType
         superReference.replaceSuperTypeRef(resultType)
-        superReferenceContainer.replaceCalleeReference(buildErrorNamedReference {
-            source = superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
-            diagnostic = superNotAvailableDiagnostic
-        })
+        superReferenceContainer.replaceCalleeReference(
+            buildErrorSuperReference {
+                source = superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+                diagnostic = superNotAvailableDiagnostic
+                superTypeRef = superReference.superTypeRef
+            }
+        )
         return superReferenceContainer
     }
 
