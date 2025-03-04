@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.dataframe.services.Directives
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
@@ -52,7 +53,8 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
             +FirDiagnosticsDirectives.FIR_DUMP
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
-            JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
+            JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK_11
+            JvmEnvironmentConfigurationDirectives.JVM_TARGET with JvmTarget.JVM_11
         }
 
         useDirectives(Directives)
