@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFq
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
+import org.jetbrains.kotlin.psi2ir.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
