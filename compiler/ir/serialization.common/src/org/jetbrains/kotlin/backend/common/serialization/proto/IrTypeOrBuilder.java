@@ -26,15 +26,6 @@ public interface IrTypeOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType getDynamic();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
-   */
-  boolean hasError();
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType getError();
-
-  /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
    */
   boolean hasDnn();

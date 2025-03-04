@@ -118,17 +118,15 @@ message IrDefinitelyNotNullType {
   repeated int32 types = 1 [packed=true];
 }
 
-message IrErrorType {
-  repeated IrConstructorCall annotation = 1;
-}
-
 message IrType {
   oneof kind {
     IrSimpleTypeLegacy legacySimple = 1;
     IrDynamicType dynamic = 2;
-    IrErrorType error = 3;
     IrDefinitelyNotNullType dnn = 4;
     IrSimpleType simple = 5;
+
+    // WARNING: Don't occupy index 3 which was previously used for storing IrErrorType.
+    // IrErrorType error = 3;
   }
 }
 
