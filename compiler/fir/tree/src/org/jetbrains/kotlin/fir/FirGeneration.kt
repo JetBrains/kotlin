@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -77,7 +76,7 @@ fun generateExplicitReceiverTemporaryVariable(
             // Exceptions: ResolvedQualifiers, ThisReceivers, and SuperReference as they can't have side effects when called.
             it !is FirResolvedQualifier
                     && it !is FirThisReceiverExpression
-                    && !(it is FirQualifiedAccessExpression && it.calleeReference is FirSuperReference)
+                    && it !is FirSuperReceiverExpression
         }
         ?.let { receiver ->
             // val <receiver> = x

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -3283,7 +3282,7 @@ open class PsiRawFirBuilder(
                         }
                     )
 
-                calleeExpression is KtSuperExpression || (parenthesizedArgument as? FirResolvable)?.calleeReference is FirSuperReference -> {
+                calleeExpression is KtSuperExpression || parenthesizedArgument is FirSuperReceiverExpression -> {
                     CalleeAndReceiver(
                         buildErrorNamedReference {
                             source = (calleeExpression as? KtSuperExpression)?.toFirSourceElement()

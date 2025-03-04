@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.constructFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -74,21 +73,18 @@ internal class KaFirExpressionTypeProvider(
 
     private fun getKtExpressionType(expression: KtExpression, fir: FirElement): KaType? = when (fir) {
         is FirFunctionCall -> getReturnTypeForArrayStyleAssignmentTarget(expression, fir) ?: fir.resolvedType.asKtType()
-        is FirPropertyAccessExpression -> {
+        is FirSuperReceiverExpression -> {
             // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
             val containingClass = (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
-
-            if (fir.calleeReference is FirSuperReference && fir.resolvedType is ConeErrorType && containingClass != null) {
-                val superTypes = containingClass.resolvedSuperTypes
-                when (superTypes.size) {
-                    0 -> analysisSession.builtinTypes.any
-                    1 -> superTypes.single().asKtType()
-                    else -> ConeIntersectionType(superTypes).asKtType()
-                }
-            } else {
-                fir.resolvedType.asKtType()
+            val superTypes = containingClass?.resolvedSuperTypes
+            when (superTypes?.size) {
+                null -> fir.resolvedType.asKtType()
+                0 -> analysisSession.builtinTypes.any
+                1 -> superTypes.single().asKtType()
+                else -> ConeIntersectionType(superTypes).asKtType()
             }
         }
+        is FirPropertyAccessExpression -> fir.resolvedType.asKtType()
         is FirVariableAssignment -> {
             if (fir.lValue.source?.psi == expression) {
                 fir.lValue.resolvedType.asKtType()

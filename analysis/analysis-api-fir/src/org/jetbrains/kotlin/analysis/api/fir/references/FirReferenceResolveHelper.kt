@@ -425,7 +425,7 @@ internal object FirReferenceResolveHelper {
         // If the cursor position is on the label of `super`, we want to resolve to the current class. FIR represents `super` as
         // accessing the `super` property on `this`, hence this weird looking if condition. In addition, the current class type is available
         // from the dispatch receiver `this`.
-        if (expression is KtLabelReferenceExpression && fir is FirPropertyAccessExpression && fir.calleeReference is FirSuperReference) {
+        if (expression is KtLabelReferenceExpression && fir is FirSuperReceiverExpression) {
             return listOfNotNull(fir.dispatchReceiver?.resolvedType?.toTargetSymbol(session, symbolBuilder))
         }
         val receiverOrImplicitInvoke = if (fir is FirImplicitInvokeCall) {

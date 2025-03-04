@@ -254,13 +254,10 @@ class CallAndReferenceGenerator(
     }
 
     private fun FirExpression.superQualifierSymbolForFunctionAndPropertyAccess(): IrClassSymbol? {
-        if (this !is FirQualifiedAccessExpression) {
+        if (this !is FirSuperReceiverExpression) {
             return null
         }
         val dispatchReceiverReference = calleeReference
-        if (dispatchReceiverReference !is FirSuperReference) {
-            return null
-        }
         val superTypeRef = dispatchReceiverReference.superTypeRef
         val coneSuperType = superTypeRef.coneType
         val firClassSymbol = coneSuperType.fullyExpandedType(session).toClassSymbol(session)
@@ -507,7 +504,7 @@ class CallAndReferenceGenerator(
         val dispatchReceiver = qualifiedAccess.dispatchReceiver
         val calleeReference = qualifiedAccess.calleeReference
 
-        if (calleeReference is FirSuperReference && dispatchReceiver != null) {
+        if (qualifiedAccess is FirSuperReceiverExpression && dispatchReceiver != null) {
             return visitor.convertToIrExpression(dispatchReceiver)
         }
 
@@ -1407,7 +1404,7 @@ class CallAndReferenceGenerator(
                         statement.findIrExtensionReceiver(explicitReceiverExpression)
                     }
                     var firDispatchReceiver = statement.dispatchReceiver
-                    if (firDispatchReceiver is FirPropertyAccessExpression && firDispatchReceiver.calleeReference is FirSuperReference) {
+                    if (firDispatchReceiver is FirSuperReceiverExpression) {
                         firDispatchReceiver = firDispatchReceiver.dispatchReceiver
                     }
                     val notFromAny = !declarationSiteSymbol.isFunctionFromAny()

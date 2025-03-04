@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -155,7 +154,7 @@ private data class ImplicitArgumentDescription(
 object CheckDispatchReceiver : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val explicitReceiverExpression = callInfo.explicitReceiver
-        if (explicitReceiverExpression.isSuperCall()) {
+        if (explicitReceiverExpression is FirSuperReceiverExpression) {
             val status = candidate.symbol.fir as? FirMemberDeclaration
             if (status?.modality == Modality.ABSTRACT) {
                 sink.reportDiagnostic(ResolvedWithLowPriority)
@@ -570,11 +569,6 @@ private fun FirBasedSymbol<*>.containingDeclarationIfParameter(): FirBasedSymbol
     }
 }
 
-private fun FirExpression?.isSuperCall(): Boolean {
-    if (this !is FirQualifiedAccessExpression) return false
-    return calleeReference is FirSuperReference
-}
-
 internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
@@ -894,7 +888,7 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         }
 
         if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
-        val isSuperCall = callInfo.callSite.isSuperCall(session)
+        val isSuperCall = callInfo.callSite.isSuperCall()
         if (symbol.hiddenStatusOfCall(isSuperCall, isCallToOverride = false) == CallToPotentiallyHiddenSymbolResult.Hidden) return true
 
         val scope = candidate.originScope as? FirTypeScope ?: return false
@@ -923,8 +917,8 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
     }
 }
 
-internal fun FirElement.isSuperCall(session: FirSession): Boolean =
-    this is FirQualifiedAccessExpression && explicitReceiver?.toReference(session) is FirSuperReference
+internal fun FirElement.isSuperCall(): Boolean =
+    this is FirQualifiedAccessExpression && explicitReceiver is FirSuperReceiverExpression
 
 private val DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(DYNAMIC_EXTENSION_FQ_NAME)
 

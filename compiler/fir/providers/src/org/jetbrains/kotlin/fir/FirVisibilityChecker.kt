@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
@@ -389,7 +388,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     ): Boolean {
         if (dispatchReceiver == null) return true
         var dispatchReceiverType = dispatchReceiver.resolvedType
-        if (dispatchReceiver is FirPropertyAccessExpression && dispatchReceiver.calleeReference is FirSuperReference) {
+        if (dispatchReceiver is FirSuperReceiverExpression) {
             // Special 'super' case: type of this, not of super, should be taken for the check below
             dispatchReceiverType = dispatchReceiver.dispatchReceiver!!.resolvedType
         }

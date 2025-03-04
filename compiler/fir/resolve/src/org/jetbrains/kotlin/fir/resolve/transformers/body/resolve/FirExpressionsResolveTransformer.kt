@@ -164,9 +164,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 qualifiedAccessExpression
             }
             is FirSuperReference -> {
+                // NB: Regular case with `super.foo()` is handled at `transformExplicitReceiverOf`
+                // Here, it's likely an erroneous `super` in the air
                 transformSuperReceiver(
-                    callee,
-                    qualifiedAccessExpression,
+                    qualifiedAccessExpression as FirSuperReceiverExpression,
                     containingSafeCallExpression?.takeIf { qualifiedAccessExpression == it.receiver }?.selector as? FirQualifiedAccessExpression
                 )
             }
@@ -234,12 +235,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     fun <Q : FirQualifiedAccessExpression> transformExplicitReceiverOf(qualifiedAccessExpression: Q): Q {
         val explicitReceiver = qualifiedAccessExpression.explicitReceiver
-        if (explicitReceiver is FirQualifiedAccessExpression) {
-            val superReference = explicitReceiver.calleeReference as? FirSuperReference
-            if (superReference != null) {
-                transformSuperReceiver(superReference, explicitReceiver, qualifiedAccessExpression)
-                return qualifiedAccessExpression
-            }
+        if (explicitReceiver is FirSuperReceiverExpression) {
+            transformSuperReceiver(explicitReceiver, qualifiedAccessExpression)
+            return qualifiedAccessExpression
         }
 
         if (explicitReceiver != null) {
@@ -283,10 +281,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     fun transformSuperReceiver(
-        superReference: FirSuperReference,
-        superReferenceContainer: FirQualifiedAccessExpression,
+        superReferenceContainer: FirSuperReceiverExpression,
         containingCall: FirQualifiedAccessExpression?
     ): FirQualifiedAccessExpression {
+        val superReference = superReferenceContainer.calleeReference
         val labelName = superReference.labelName
         val lastDispatchReceiver = implicitValueStorage.lastDispatchReceiver()
         val implicitReceiver =
@@ -384,7 +382,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private fun markSuperReferenceError(
         superNotAvailableDiagnostic: ConeDiagnostic,
-        superReferenceContainer: FirQualifiedAccessExpression,
+        superReferenceContainer: FirSuperReceiverExpression,
         superReference: FirSuperReference
     ): FirQualifiedAccessExpression {
         val resultType = buildErrorTypeRef {

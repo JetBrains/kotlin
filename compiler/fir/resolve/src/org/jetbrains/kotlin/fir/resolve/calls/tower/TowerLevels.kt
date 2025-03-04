@@ -158,7 +158,7 @@ class DispatchReceiverMemberScopeTowerLevel(
                 typeForSyntheticScope,
                 useSiteForSyntheticScope,
                 bodyResolveComponents.returnTypeCalculator,
-                isSuperCall = info.callSite.isSuperCall(session),
+                isSuperCall = info.callSite.isSuperCall(),
             )
 
             withSynthetic?.processScopeMembers { symbol ->

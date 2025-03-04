@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
 import org.jetbrains.kotlin.fir.lightTree.fir.addDestructuringStatements
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
@@ -755,7 +754,7 @@ class LightTreeRawFirExpressionBuilder(
                 }
             )
 
-            superNode != null || (additionalArgument as? FirResolvable)?.calleeReference is FirSuperReference -> {
+            superNode != null || additionalArgument is FirSuperReceiverExpression -> {
                 CalleeAndReceiver(
                     buildErrorNamedReference {
                         this.source = superNode?.toFirSourceElement() ?: (additionalArgument as? FirResolvable)?.calleeReference?.source

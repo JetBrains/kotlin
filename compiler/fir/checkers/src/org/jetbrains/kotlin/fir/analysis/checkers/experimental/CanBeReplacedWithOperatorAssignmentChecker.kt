@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.dispatchReceiverClassTypeOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.isPrimitive
@@ -54,7 +53,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
 
     private val FirExpression.isPropertyAccessWithNoReceiver
         get() = this is FirPropertyAccessExpression && explicitReceiver.let {
-            it == null || (it as? FirResolvable)?.calleeReference is FirSuperReference
+            it == null || it is FirSuperReceiverExpression
         }
 
     private fun canBeReplaced(callee: FirReference, expression: FirFunctionCall, context: CheckerContext): Boolean {
