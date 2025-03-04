@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -19,10 +19,12 @@ import org.junit.jupiter.api.DisplayName
 @MppGradlePluginTests
 open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+
     @DisplayName("Base test case - local change, local recompilation")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest
     fun testStrictlyLocalChange(gradleVersion: GradleVersion): Unit = withProject(gradleVersion) {
         build("assemble")
 

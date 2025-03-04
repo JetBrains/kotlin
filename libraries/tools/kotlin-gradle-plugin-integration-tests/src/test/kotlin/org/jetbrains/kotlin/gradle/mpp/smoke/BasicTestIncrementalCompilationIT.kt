@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
@@ -15,6 +15,10 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Basic incremental scenarios with tests in KMP - K2")
 @MppGradlePluginTests
 open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
+
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+
     override val mainCompileTasks: Set<String>
         get() = setOf(
             ":app:compileCommonMainKotlinMetadata",
@@ -44,7 +48,6 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
     @DisplayName("KMP tests are rebuilt when affected")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest
     fun testAffectingTestDependencies(gradleVersion: GradleVersion): Unit = withProject(gradleVersion) {
         build("build")
 

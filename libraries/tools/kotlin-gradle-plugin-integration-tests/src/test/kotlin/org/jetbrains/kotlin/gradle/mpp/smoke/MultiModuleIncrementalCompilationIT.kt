@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.mpp.smoke
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTestFailureExpectation
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
@@ -23,13 +21,15 @@ import org.junit.jupiter.api.DisplayName
 @MppGradlePluginTests
 open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+
     /**
      * Tests api change across the module + sourceSet boundary
      */
     @DisplayName("Verify IC builds on change in lib/commonMain")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest
     fun testTouchLibCommon(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")
 
@@ -62,7 +62,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         usedInAppPlatform.replaceWithVersion("1_addNewPublicApi")
 
         fun testIndividualTarget(moduleTask: String, extraAssertions: BuildResult.() -> Unit = {}) {
-            build(":app:$moduleTask", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(":app:$moduleTask") {
                 val targetTasks = setOf(
                     ":app:$moduleTask",
                     ":lib:$moduleTask"
@@ -100,7 +100,6 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
     @DisplayName("Verify IC builds on change in lib/platformMain")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest
     fun testTouchLibPlatform(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")
 
@@ -168,7 +167,6 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
     @DisplayName("Verify IC builds on change in app/commonMain")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest
     fun testTouchAppCommon(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")
 
@@ -206,7 +204,6 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
     @DisplayName("Verify IC builds on change in app/platformMain")
     @GradleTest
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
-    @BrokenOnMacosTest
     fun testTouchAppPlatform(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")
 
