@@ -46,7 +46,19 @@ class IrArrayReader(private val buffer: ReadBuffer) {
     }
 }
 
-abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
+/** Read directly from a byte array. */
+fun IrMultiArrayReader(bytes: ByteArray): IrMultiArrayReader = IrMultiArrayReader(ReadBuffer.MemoryBuffer(bytes))
+
+/** On-demand read from a byte array that will be loaded on the first access. */
+fun IrMultiArrayReader(loadBytes: () -> ByteArray): IrMultiArrayReader = IrMultiArrayReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
+
+/** On-demand read from a file (potentially inside a KLIB archive file). */
+fun <L : KotlinLibraryLayout> IrMultiArrayReader(
+    access: BaseLibraryAccess<L>,
+    getFile: L.() -> File
+): IrMultiArrayReader = IrMultiArrayReader { access.inPlace { it.getFile().readBytes() } }
+
+class IrMultiArrayReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IntArray
     private val indexIndexToOffset = mutableMapOf<Int, IntArray>()
 
@@ -93,9 +105,6 @@ abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
         return result
     }
 }
-
-class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(ReadBuffer.OnDemandMemoryBuffer { file.readBytes() })
-class IrMultiArrayMemoryReader(bytes: ByteArray) : IrMultiArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
 abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val keyReader: ReadBuffer.() -> K) {
     private val indexToOffset: IntArray
