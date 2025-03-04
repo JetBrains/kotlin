@@ -18,6 +18,10 @@ class DependencyListForCliModule(
     val friendsDependencies: List<FirModuleData>,
     val moduleDataProvider: ModuleDataProvider,
 ) {
+    init {
+        Unit
+    }
+
     companion object {
         inline fun build(init: Builder.() -> Unit = {}): DependencyListForCliModule {
             return Builder().apply(init).build()
@@ -32,9 +36,9 @@ class DependencyListForCliModule(
     }
 
     class Builder {
-        private val allRegularDependencies: MutableList<FirModuleData> = mutableListOf()
-        private val allFriendsDependencies: MutableList<FirModuleData> = mutableListOf()
-        private val allDependsOnDependencies: MutableList<FirModuleData> = mutableListOf()
+        private val allRegularDependencies: MutableSet<FirModuleData> = mutableSetOf()
+        private val allFriendsDependencies: MutableSet<FirModuleData> = mutableSetOf()
+        private val allDependsOnDependencies: MutableSet<FirModuleData> = mutableSetOf()
 
         private val filtersMap: MutableMap<FirModuleData, MutableSet<Path>> = mutableMapOf()
 
@@ -55,6 +59,10 @@ class DependencyListForCliModule(
         }
 
         inner class BuilderForDefaultDependenciesModule(val binaryModuleData: BinaryModuleData) {
+            init {
+                allRegularDependencies.add(binaryModuleData.regular)
+            }
+
             fun dependencies(paths: Collection<String>) {
                 dependencies(binaryModuleData.regular, paths)
             }
@@ -68,7 +76,8 @@ class DependencyListForCliModule(
             }
         }
 
-        private fun dependencies(moduleData: FirModuleData, paths: Collection<String>, destination: MutableList<FirModuleData>) {
+        private fun dependencies(moduleData: FirModuleData, paths: Collection<String>, destination: MutableSet<FirModuleData>) {
+            if (paths.isEmpty()) return
             destination.add(moduleData)
             val filterSet = filtersMap.getOrPut(moduleData) { mutableSetOf() }
             paths.mapTo(filterSet) {
@@ -84,21 +93,21 @@ class DependencyListForCliModule(
 
             if (pathFiltersMap.isEmpty() && allRegularDependencies.size == 1) {
                 return DependencyListForCliModule(
-                    allRegularDependencies,
-                    dependsOnDependencies = allDependsOnDependencies,
-                    friendsDependencies = allFriendsDependencies,
+                    allRegularDependencies.toList(),
+                    dependsOnDependencies = allDependsOnDependencies.toList(),
+                    friendsDependencies = allFriendsDependencies.toList(),
                     SingleModuleDataProvider(allRegularDependencies.single())
                 )
             }
 
-            val moduleDataProvider = MultipleModuleDataProvider(pathFiltersMap)
             allRegularDependencies.singleOrNull()?.let {
                 pathFiltersMap.putIfAbsent(it, LibraryPathFilter.TakeAll)
             }
+            val moduleDataProvider = MultipleModuleDataProvider(pathFiltersMap)
             return DependencyListForCliModule(
-                allRegularDependencies,
-                allDependsOnDependencies,
-                allFriendsDependencies,
+                regularDependencies = allRegularDependencies.toList(),
+                dependsOnDependencies = allDependsOnDependencies.toList(),
+                friendsDependencies = allFriendsDependencies.toList(),
                 moduleDataProvider
             )
         }

@@ -14,10 +14,10 @@ abstract class ModuleDataProvider {
     abstract fun getModuleData(path: Path?): FirModuleData?
 }
 
-class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDataProvider() {
-    override val allModuleData: Collection<FirModuleData>
-        get() = listOf(moduleData)
-
+class SingleModuleDataProvider(
+    private val moduleData: FirModuleData,
+    override val allModuleData: Collection<FirModuleData> = listOf(moduleData)
+) : ModuleDataProvider() {
     override fun getModuleData(path: Path?): FirModuleData {
         return moduleData
     }

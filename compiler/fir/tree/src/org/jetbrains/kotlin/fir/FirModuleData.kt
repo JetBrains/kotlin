@@ -117,6 +117,10 @@ class FirBinaryDependencyModuleData(
     override val name: Name,
     override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
 ) : FirModuleData() {
+    init {
+        Unit
+    }
+
     override val dependencies: List<FirModuleData>
         get() = emptyList()
     override val dependsOnDependencies: List<FirModuleData>
