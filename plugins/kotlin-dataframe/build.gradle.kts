@@ -39,12 +39,9 @@ dependencies {
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion")
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-annotations-jvm:$kotlinVersion")
 
-    implementation(project(":core"))
-    implementation(project(":dataframe-excel"))
-    implementation(project(":dataframe-csv"))
-    api(libs.kotlinLogging)
-    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
-
+    implementation(project(":core", "shadow"))
+    testRuntimeOnly(project(":core"))
+    testRuntimeOnly(project(":dataframe-csv"))
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-compiler-internal-test-framework:$kotlinVersion")
 
