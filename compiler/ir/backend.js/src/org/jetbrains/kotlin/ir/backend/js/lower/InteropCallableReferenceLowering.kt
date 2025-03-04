@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -34,7 +36,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
-import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 /**
  * Interop layer for function references and lambdas.
@@ -641,21 +642,23 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 startOffset = lambdaInfo.lambdaClass.startOffset
                 endOffset = lambdaInfo.lambdaClass.endOffset
                 visibility = lambdaInfo.lambdaClass.visibility
-                returnType = lambdaInfo.lambdaClass.defaultType
                 name = lambdaInfo.lambdaClass.name
                 origin = JsStatementOrigins.FACTORY_ORIGIN
             }
         }
-
-        factoryDeclaration.parameters = constructor.parameters.memoryOptimizedMap { it.copyTo(factoryDeclaration) }
-        factoryDeclaration.typeParameters = constructor.typeParameters.memoryOptimizedMap {
-            it.copyToWithoutSuperTypes(factoryDeclaration).also { tp ->
-                // TODO: make sure it is done well
-                tp.superTypes = tp.superTypes memoryOptimizedPlus it.superTypes
-            }
+        val factoryTypeParameters = factoryDeclaration.copyTypeParametersFrom(lambdaInfo.lambdaClass)
+        val oldToNewTypeParameterMapping = lambdaInfo.lambdaClass.typeParameters.zip(factoryTypeParameters).toMap()
+        val typeRemapper = IrTypeParameterRemapper(oldToNewTypeParameterMapping)
+        factoryDeclaration.parameters = constructor.parameters.memoryOptimizedMap {
+            it.copyTo(factoryDeclaration, remapTypeMap = oldToNewTypeParameterMapping)
         }
+        factoryDeclaration.returnType = lambdaInfo.lambdaClass.typeWith(factoryTypeParameters.map { it.defaultType })
 
         factoryDeclaration.body = buildFactoryBody(factoryDeclaration, newDeclarations, lambdaInfo)
+
+        if (oldToNewTypeParameterMapping.isNotEmpty()) {
+            factoryDeclaration.body?.remapTypes(typeRemapper)
+        }
 
         newDeclarations.add(factoryDeclaration)
         ctorToFactoryMap[constructor.symbol] = factoryDeclaration.symbol

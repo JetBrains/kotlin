@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.capturedFields
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.ScopeWithCounter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -25,15 +26,16 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import kotlin.collections.putAll
 
 interface VisibilityPolicy {
     fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
@@ -56,13 +58,65 @@ val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
 private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(copyByDefault = false)
 
-/*
- * Moves local declarations into nearest declaration container.
+/**
+ * Prepares local declarations like classes and functions for being lifted into the nearest declaration container, adding explicit
+ * type and value parameters if the local declaration captures a type parameter or a value from the outer scope.
  *
- * Note that local functions raised here continue to refer to type parameters no longer visible to them. We add new type parameters
- * to their declarations, which makes JVM accept those declarations. The generated IR is still semantically incorrect, but code generation
- * seems to proceed nevertheless.
-*/
+ * (Note: in the JVM backend, we don't remap captured type parameters inside local declarations for reasons described
+ * in [this commit](https://github.com/JetBrains/kotlin/commit/9ce6fd9a15618b856b64efd449799f2b5c379eb5).)
+ *
+ * For functions, also does the actual lifting.
+ *
+ * For classes, the lifting is done in a separate lowering [LocalClassPopupLowering].
+ *
+ * For example, transforms this
+ * ```kotlin
+ * fun <T> foo(t: T, i: Int) {
+ *   class Local<S> {
+ *     private val t: T
+ *     private val s: S
+ *     constructor(t: T, s: S) {
+ *       this.t = t
+ *       this.s = s
+ *     }
+ *     fun getI(): Int {
+ *       return i
+ *     }
+ *   }
+ *
+ *   fun bar<S>(s: S): String {
+ *     return s.toString() + t.toString() + i.toString()
+ *   }
+ *
+ *   println(Local<String>(t, "hello").getI())
+ *   println(bar<String>("hello"))
+ * }
+ * ```
+ * into this:
+ * ```kotlin
+ * fun <T> foo(t: T, i: Int) {
+ *   class Local<S, T1> {
+ *     private val t: T1
+ *     private val s: S
+ *     private /*field*/ val i$0: Int
+ *     constructor(t: T1, s: S, i$0: Int) {
+ *       this.t = t
+ *       this.s = s
+ *       this.i$0 = i$0
+ *     }
+ *     fun getI(): Int {
+ *       return this.i$0
+ *     }
+ *   }
+ *   println(Local<String, T>(t, "hello", i).getI())
+ *   println(bar<T, String>("hello"))
+ * }
+ *
+ * fun bar<T1, S>(s: S, t$0: T1, i$0: Int): String {
+ *   return s.toString() + t$0.toString() + i$0.toString()
+ * }
+ * ```
+ */
 open class LocalDeclarationsLowering(
     val context: LoweringContext,
     val localNameSanitizer: (String) -> String = { it },
@@ -70,7 +124,7 @@ open class LocalDeclarationsLowering(
     val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
     val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
-    val remapTypesInExtractedLocalFunctions: Boolean = true,
+    val remapTypesInExtractedLocalDeclarations: Boolean = true,
 ) : BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -207,6 +261,7 @@ open class LocalDeclarationsLowering(
         val inInlineFunctionScope: Boolean,
         val constructorContext: LocalContext?
     ) : LocalContext() {
+        val numberOfOwnTypeParameters = declaration.typeParameters.size
         lateinit var closure: Closure
 
         // NOTE: This map is iterated over in `rewriteClassMembers` and we're relying on
@@ -306,13 +361,13 @@ open class LocalDeclarationsLowering(
 
                     this.body = original.body
 
-                    if (remapTypesInExtractedLocalFunctions) {
+                    if (remapTypesInExtractedLocalDeclarations) {
                         this.body?.let { localContext.remapTypes(it) }
                     }
 
                     for (argument in original.parameters) {
                         val body = argument.defaultValue ?: continue
-                        if (remapTypesInExtractedLocalFunctions) {
+                        if (remapTypesInExtractedLocalDeclarations) {
                             localContext.remapTypes(body)
                         }
                         oldParameterToNew[argument]!!.defaultValue = body
@@ -429,7 +484,24 @@ open class LocalDeclarationsLowering(
                 val oldCallee = expression.symbol.owner
                 val newCallee = (oldCallee.transformed ?: return expression) as IrConstructor
 
-                return createNewCall(expression, newCallee).fillArguments2(expression, newCallee)
+                return IrConstructorCallImpl.fromSymbolOwner(
+                    expression.startOffset, expression.endOffset,
+                    expression.type,
+                    newCallee.symbol,
+                    newCallee.parentAsClass.typeParameters.size,
+                    expression.origin
+                ).also {
+                    var tpIndex = 0
+                    for (typeArgument in expression.typeArguments) {
+                        it.typeArguments[tpIndex++] = typeArgument
+                    }
+                    if (remapTypesInExtractedLocalDeclarations) {
+                        val contextTypeParameters = localClasses[oldCallee.constructedClass]?.closure?.capturedTypeParameters ?: emptyList()
+                        for (contextTP in contextTypeParameters) {
+                            it.typeArguments[tpIndex++] = contextTP.defaultType
+                        }
+                    }
+                }.fillArguments2(expression, newCallee)
             }
 
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
@@ -554,6 +626,39 @@ open class LocalDeclarationsLowering(
             }
         }
 
+        private inner class LocalClassTypeParameterRemapper(currentLocalClass: LocalClassContext?) : IrTypeParameterRemapper(
+            currentLocalClass?.capturedTypeParameterToTypeParameter ?: emptyMap()
+        ) {
+            override fun remapType(type: IrType): IrType {
+                if (type !is IrSimpleType) return super.remapType(type)
+                val referencedLocalClass = localClasses[type.classifier.owner]
+                    ?: return super.remapType(type)
+                val capturedTypeParameters = referencedLocalClass.closure.capturedTypeParameters
+
+                // Normally, types with local class classifiers produced by the frontend already include the enclosing
+                // type parameters as type arguments, so we don't have to override `remapType` here.
+                //
+                // (As a side note: yes, this means that the number of type arguments may be greater
+                // than the number of a class's type parameters, and it's completely normal.)
+                //
+                // However, there is a bug in the K1 frontend (KT-57094) when there may be types where it is not
+                // the case, and types with local class classifiers only contain arguments for the class's own type
+                // parameters.
+                // We should be able to consume KLIBs produced by K1, so we have to handle this here,
+                // correcting the K1's mistake.
+                val newTypeArguments = type.arguments.take(referencedLocalClass.numberOfOwnTypeParameters) +
+                        capturedTypeParameters.map { it.defaultType }
+                val correctedType = IrSimpleTypeImpl(
+                    type.classifier,
+                    type.nullability,
+                    newTypeArguments,
+                    type.annotations,
+                    type.abbreviation,
+                )
+                return super.remapType(correctedType)
+            }
+        }
+
         private fun rewriteFunctionBody(irDeclaration: IrElement, localContext: LocalContext?) {
             irDeclaration.transformChildrenVoid(FunctionBodiesRewriter(localContext))
         }
@@ -622,6 +727,37 @@ open class LocalDeclarationsLowering(
                 rewriteClassMembers(it.declaration, it)
             }
 
+            if (remapTypesInExtractedLocalDeclarations && localClasses.values.any { it.closure.capturedTypeParameters.isNotEmpty() }) {
+                // Inside local classes, remap captured type parameters to their newly introduced explicit type parameters
+                irElement.accept(
+                    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+                    object : IrTypeTransformer<Unit, LocalClassContext?>() {
+                        override fun visitElement(element: IrElement, currentLocalClass: LocalClassContext?) {
+                            element.acceptChildren(this, currentLocalClass)
+                        }
+
+                        override fun visitClass(declaration: IrClass, currentLocalClass: LocalClassContext?) {
+                            super.visitClass(
+                                declaration, localClasses[declaration] ?: compilationException(
+                                    "Encountered a local class not previously collected",
+                                    declaration,
+                                )
+                            )
+                        }
+
+                        override fun <Type : IrType?> transformTypeRecursively(
+                            container: IrElement,
+                            type: Type,
+                            currentLocalClass: LocalClassContext?,
+                        ): Type {
+                            @Suppress("UNCHECKED_CAST")
+                            return type?.let { LocalClassTypeParameterRemapper(currentLocalClass).remapType(it) } as Type
+                        }
+                    },
+                    null,
+                )
+            }
+
             rewriteFunctionBody(irElement, null)
         }
 
@@ -636,17 +772,6 @@ open class LocalDeclarationsLowering(
             ).also {
                 it.setLocalTypeArguments(oldCall.symbol.owner)
                 it.copyTypeArgumentsFrom(oldCall, shift = newCallee.typeParameters.size - oldCall.typeArguments.size)
-            }
-
-        private fun createNewCall(oldCall: IrConstructorCall, newCallee: IrConstructor) =
-            IrConstructorCallImpl.fromSymbolOwner(
-                oldCall.startOffset, oldCall.endOffset,
-                oldCall.type,
-                newCallee.symbol,
-                newCallee.parentAsClass.typeParameters.size,
-                oldCall.origin
-            ).also {
-                it.copyTypeArgumentsFrom(oldCall)
             }
 
         private fun IrMemberAccessExpression<*>.setLocalTypeArguments(callee: IrFunction) {
@@ -671,6 +796,11 @@ open class LocalDeclarationsLowering(
                 it.declaration.visibility = visibilityPolicy.forClass(it.declaration, it.inInlineFunctionScope)
                 it.closure.capturedValues.associateTo(it.capturedValueToField) { capturedValue ->
                     capturedValue.owner to PotentiallyUnusedField()
+                }
+                if (remapTypesInExtractedLocalDeclarations) {
+                    val capturedTypeParameters = it.closure.capturedTypeParameters
+                    val newTypeParameters = it.declaration.copyTypeParameters(capturedTypeParameters)
+                    it.capturedTypeParameterToTypeParameter.putAll(capturedTypeParameters.zip(newTypeParameters))
                 }
             }
 
