@@ -263,6 +263,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inlineClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InlineClasses {
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/multifile")
     @TestDataPath("$PROJECT_ROOT")
     public class Multifile {

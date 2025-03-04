@@ -43725,23 +43725,6 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       public void testVarargsOnParametersOfValueClassType() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/varargsOnParametersOfValueClassType.kt");
       }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/valueClasses/jvmExposeBoxed")
-      @TestDataPath("$PROJECT_ROOT")
-      public class JvmExposeBoxed {
-        @Test
-        @TestMetadata("jvmName.kt")
-        public void testJvmName() {
-          runTest("compiler/testData/diagnostics/tests/valueClasses/jvmExposeBoxed/jvmName.kt");
-        }
-
-        @Test
-        @TestMetadata("simple.kt")
-        public void testSimple() {
-          runTest("compiler/testData/diagnostics/tests/valueClasses/jvmExposeBoxed/simple.kt");
-        }
-      }
     }
 
     @Nested
@@ -54837,6 +54820,23 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestMetadata("reservedMethodsInInterfaces.kt")
       public void testReservedMethodsInInterfaces() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/reservedMethodsInInterfaces.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inlineClasses/jvmExposeBoxed")
+      @TestDataPath("$PROJECT_ROOT")
+      public class JvmExposeBoxed {
+        @Test
+        @TestMetadata("jvmName.kt")
+        public void testJvmName() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/jvmExposeBoxed/jvmName.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/jvmExposeBoxed/simple.kt");
+        }
       }
     }
 

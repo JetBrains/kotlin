@@ -6,17 +6,17 @@
 
 <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:JvmExposeBoxed<!>
 
-@JvmExposeBoxed("foo")
+@JvmExposeBoxed(<!INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME!>"foo"<!>)
 class Foo
-@JvmExposeBoxed("foo") constructor()
+<!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed(<!INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME!>"foo"<!>)<!> constructor()
 {
-    @JvmExposeBoxed("foo")
+    @JvmExposeBoxed(<!INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME!>"foo"<!>)
     companion object {
 
     }
 }
 
-@JvmExposeBoxed("foo")
+@JvmExposeBoxed(<!INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME!>"foo"<!>)
 class Obj
 
 @JvmExposeBoxed
@@ -26,11 +26,11 @@ value class IC(val s: String)
 <!WRONG_ANNOTATION_TARGET!>@JvmExposeBoxed<!>
 val ic: IC = TODO()
 
-@get:JvmExposeBoxed
+<!JVM_EXPOSE_BOXED_REQUIRES_NAME!>@get:JvmExposeBoxed<!>
 val icgetter: IC = TODO()
 
 val icgetter2: IC
-    @JvmExposeBoxed get() = TODO()
+    <!JVM_EXPOSE_BOXED_REQUIRES_NAME!>@JvmExposeBoxed<!> get() = TODO()
 
 @set:JvmExposeBoxed
 var icsetter: IC = TODO()
@@ -42,7 +42,7 @@ var icsetter2: IC
 @get:JvmExposeBoxed("foo")
 val icic: IC = TODO()
 
-@JvmExposeBoxed
+<!JVM_EXPOSE_BOXED_REQUIRES_NAME!>@JvmExposeBoxed<!>
 fun foo(): IC = TODO()
 
 @JvmExposeBoxed
@@ -75,22 +75,26 @@ class C {
         @JvmExposeBoxed set(value) {}
 }
 
-@JvmExposeBoxed
+<!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
 fun Int.foo(i: Int) {}
 
-@JvmExposeBoxed("...")
+@JvmExposeBoxed(<!ILLEGAL_JVM_NAME!>"..."<!>)
 fun todo(ic: IC) {}
 
-@JvmExposeBoxed
+<!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
 inline fun <reified T> inlineMe(ic: IC) {}
 
-@JvmExposeBoxed("same")
+<!USELESS_JVM_EXPOSE_BOXED!>@get:JvmExposeBoxed("foo")<!>
+inline val <reified T> T.bar: IC
+        get() = TODO()
+
+@JvmExposeBoxed(<!JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME!>"same"<!>)
 fun same(): IC = TODO()
 
-@JvmExposeBoxed
+<!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND!>@JvmExposeBoxed<!>
 suspend fun suspendMe(ic: IC) {}
 
-@JvmExposeBoxed("foo" + "bar")
+@JvmExposeBoxed(<!JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME!>"foo" + "bar"<!>)
 fun foobar(): IC = TODO()
 
 @JvmExposeBoxed

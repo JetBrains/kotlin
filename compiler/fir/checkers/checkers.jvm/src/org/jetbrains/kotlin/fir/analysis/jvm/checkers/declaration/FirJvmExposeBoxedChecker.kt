@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
@@ -23,11 +24,11 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.java.findJvmNameValue
+import org.jetbrains.kotlin.fir.propertyIfAccessor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_CLASS_ID
 
 object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
@@ -64,14 +65,16 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
             if (!declaration.isWithInlineClass(context.session)) {
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.USELESS_JVM_EXPOSE_BOXED, context)
             } else if (name == null && !declaration.isMangledOrWithResult(context.session)) {
-                reportMissingName(declaration, jvmExposeBoxedAnnotation, reporter, context)
+                if (declaration is FirFunction) {
+                    reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_REQUIRES_NAME, context)
+                }
             }
 
             if (!declaration.canBeOverloadedByExposed(context.session)) {
                 checkJvmNameHasDifferentName(name, declaration, reporter, context)
             }
 
-            if (declaration is FirFunction && declaration.typeParameters.any { it.symbol.isReified }) {
+            if (declaration.propertyIfAccessor.typeParameters.any { it.symbol.isReified }) {
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.USELESS_JVM_EXPOSE_BOXED, context)
             }
 
@@ -81,37 +84,25 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         }
     }
 
-    private fun reportMissingName(
-        declaration: FirCallableDeclaration,
-        jvmExposeBoxedAnnotation: FirAnnotation,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
-    ) {
-        if (declaration is FirFunction) {
-            reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_REQUIRES_NAME, context)
-        }
-    }
-
     private fun checkJvmNameHasDifferentName(
         name: FirExpression?,
         declaration: FirDeclaration,
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
-        if (name != null) {
-            val value = name.evaluateAs<FirLiteralExpression>(context.session)?.value as? String
+        if (name == null) return
+        val value = name.evaluateAs<FirLiteralExpression>(context.session)?.value as? String ?: return
 
-            if (value != null && value == declaration.findJvmNameValue()) {
-                reporter.reportOn(
-                    name.source,
-                    FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME,
-                    context
-                )
-            }
+        if (value == declaration.findJvmNameValue()) {
+            reporter.reportOn(
+                name.source,
+                FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME,
+                context
+            )
+        }
 
-            if (declaration is FirFunction && declaration.nameOrSpecialName.asString() == value) {
-                reporter.reportOn(name.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME, context)
-            }
+        if (declaration is FirFunction && declaration.nameOrSpecialName.asString() == value) {
+            reporter.reportOn(name.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME, context)
         }
     }
 

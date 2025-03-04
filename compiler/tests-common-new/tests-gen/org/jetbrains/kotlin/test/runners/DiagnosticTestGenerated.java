@@ -45593,28 +45593,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       public void testVarargsOnParametersOfValueClassType() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/varargsOnParametersOfValueClassType.kt");
       }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/valueClasses/jvmExposeBoxed")
-      @TestDataPath("$PROJECT_ROOT")
-      public class JvmExposeBoxed {
-        @Test
-        public void testAllFilesPresentInJvmExposeBoxed() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/valueClasses/jvmExposeBoxed"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("jvmName.kt")
-        public void testJvmName() {
-          runTest("compiler/testData/diagnostics/tests/valueClasses/jvmExposeBoxed/jvmName.kt");
-        }
-
-        @Test
-        @TestMetadata("simple.kt")
-        public void testSimple() {
-          runTest("compiler/testData/diagnostics/tests/valueClasses/jvmExposeBoxed/simple.kt");
-        }
-      }
     }
 
     @Nested
