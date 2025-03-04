@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.deserialization.registeredInSerializationPluginMetadataExtension
@@ -49,7 +50,7 @@ class IrSerializableProperties(
  *
  * Returns (declaresDefaultValue, hasBackingField) boolean pair. Returns (false, false) for properties from current module.
  */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class, DirectDeclarationsAccess::class)
 fun IrProperty.analyzeIfFromAnotherModule(): Pair<Boolean, Boolean> {
     return if (descriptor is DeserializedPropertyDescriptor) {
         // IrLazyProperty does not deserialize backing fields correctly, so we should fall back to info from descriptor.

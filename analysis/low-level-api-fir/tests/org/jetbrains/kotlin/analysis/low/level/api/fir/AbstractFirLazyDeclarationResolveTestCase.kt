@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 /**
  * Test that we do not resolve declarations we do not need & do not build bodies for them
  */
+@OptIn(DirectDeclarationsAccess::class)
 abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBasedTest() {
     protected fun findFirDeclarationToResolve(
         ktFile: KtFile,

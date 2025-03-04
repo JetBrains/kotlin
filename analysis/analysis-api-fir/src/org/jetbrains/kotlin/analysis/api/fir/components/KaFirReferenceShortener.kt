@@ -314,6 +314,7 @@ private class FirShorteningContext(val analysisSession: KaFirSession) {
         val classLikeSymbol = scope.findFirstClassifierByName(targetClassName) as? FirClassLikeSymbol
             ?: return emptyList()
 
+        @OptIn(DirectDeclarationsAccess::class)
         val constructors = (classLikeSymbol as? FirClassSymbol)?.declarationSymbols?.filterIsInstance<FirConstructorSymbol>().orEmpty()
         val samConstructor = classLikeSymbol.getSamConstructor()
 
@@ -466,6 +467,7 @@ private class CollectingVisitor(private val collector: ElementsToShortenCollecto
     }
 
     override fun visitScript(script: FirScript) {
+        @OptIn(DirectDeclarationsAccess::class)
         script.declarations.forEach {
             it.accept(this)
         }

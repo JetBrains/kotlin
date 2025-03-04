@@ -161,7 +161,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
         }
     }
 
-    @OptIn(SymbolInternals::class, LookupTagInternals::class)
+    @OptIn(SymbolInternals::class, LookupTagInternals::class, DirectDeclarationsAccess::class)
     private fun Fir2IrComponents.getStateObject(
         irSnippet: IrReplSnippet,
         fir2IrVisitor: Fir2IrVisitor,

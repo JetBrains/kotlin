@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.Name
@@ -37,6 +38,7 @@ internal class KaFirEnumEntrySymbolPointer(
         return analysisSession.firSymbolBuilder.buildEnumEntrySymbol(enumEntry.symbol)
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
     private fun FirRegularClass.enumEntryByName(name: Name): FirEnumEntry? =
         declarations.firstOrNull { member ->
             member is FirEnumEntry && member.name == name

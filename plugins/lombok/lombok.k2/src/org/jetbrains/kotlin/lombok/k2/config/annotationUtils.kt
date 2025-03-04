@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.k2.config
 
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.evaluateAs
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
@@ -16,15 +17,18 @@ import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.utils.trimToNull
 import org.jetbrains.kotlin.name.Name
 
+@DirectDeclarationsAccess
 fun FirAnnotation.getAccessLevel(field: Name, session: FirSession): AccessLevel {
     val value = getArgumentAsString(field, session) ?: return AccessLevel.PUBLIC
     return AccessLevel.valueOf(value)
 }
 
+@DirectDeclarationsAccess
 fun FirAnnotation.getAccessLevel(session: FirSession): AccessLevel {
     return getAccessLevel(LombokConfigNames.VALUE, session)
 }
 
+@DirectDeclarationsAccess
 private fun FirAnnotation.getArgumentAsString(field: Name, session: FirSession): String? {
     val argument = findArgumentByName(field)?.evaluateAs<FirExpression>(session) ?: return null
     return when (argument) {
@@ -43,6 +47,7 @@ private fun FirAnnotation.getArgumentAsString(field: Name, session: FirSession):
     }
 }
 
+@DirectDeclarationsAccess
 fun FirAnnotation.getVisibility(field: Name, session: FirSession): Visibility {
     return getAccessLevel(field, session).toVisibility()
 }

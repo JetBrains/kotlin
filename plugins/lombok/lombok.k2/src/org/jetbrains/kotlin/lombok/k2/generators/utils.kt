@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.lombok.k2.generators
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -52,6 +53,7 @@ fun FirClassSymbol<*>.isSuitableJavaClass(): Boolean {
 }
 
 @OptIn(SymbolInternals::class)
+@DirectDeclarationsAccess
 fun List<FirFunction>.filterClashingDeclarations(classSymbol: FirClassSymbol<*>): List<FirFunctionSymbol<*>> {
     @Suppress("UNCHECKED_CAST")
     val allStaticFunctionsAndConstructors = classSymbol.fir.declarations.filterIsInstance<FirFunction>().toMutableList()

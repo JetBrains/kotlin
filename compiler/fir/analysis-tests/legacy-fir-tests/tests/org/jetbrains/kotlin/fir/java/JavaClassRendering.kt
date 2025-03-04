@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
-@OptIn(SymbolInternals::class)
+@OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
 fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: FirSession, renderInnerClasses: () -> Unit) {
     val memberScope = javaClass.unsubstitutedScope(session, ScopeSession(), withForcedTypeCalculator = true, memberRequiredPhase = null)
 
