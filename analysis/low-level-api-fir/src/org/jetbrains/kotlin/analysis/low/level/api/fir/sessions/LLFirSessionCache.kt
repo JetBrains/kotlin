@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
 /**
  * A type of cache which is used by [LLFirSessionCache] to store [LLFirSession]s.
@@ -247,6 +249,9 @@ class LLFirSessionCache(private val project: Project) : Disposable {
             targetPlatform.all { it is JvmPlatform } -> LLFirJvmSessionFactory(project)
             targetPlatform.all { it is JsPlatform } -> LLFirJsSessionFactory(project)
             targetPlatform.all { it is WasmPlatform } -> LLFirWasmSessionFactory(project)
+            targetPlatform.all { (it as? WasmPlatformWithTarget)?.target == WasmTarget.JS || it is JsPlatform } -> LLFirJsSessionFactory(
+                project
+            )
             targetPlatform.all { it is NativePlatform } -> LLFirNativeSessionFactory(project)
             else -> LLFirCommonSessionFactory(project)
         }

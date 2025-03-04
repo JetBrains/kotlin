@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.resolve.DefaultImportProvider
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
@@ -31,6 +32,7 @@ internal class KaFirDefaultImportsProvider : KaBaseDefaultImportsProvider() {
             WasmTarget.JS -> WasmPlatformAnalyzerServices
             WasmTarget.WASI -> WasmWasiPlatformAnalyzerServices
         }
+        targetPlatform.all { (it as? WasmPlatformWithTarget)?.target == WasmTarget.JS || it is JsPlatform } -> JsPlatformAnalyzerServices
         else -> CommonPlatformAnalyzerServices
     }
 }
