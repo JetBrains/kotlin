@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.util.toJvmMetadataVersion
+import org.jetbrains.kotlin.util.toKlibMetadataVersion
 
-open class CompilerDeserializationConfiguration(
-    protected val languageVersionSettings: LanguageVersionSettings
+abstract class CommonCompilerDeserializationConfiguration(
+    protected val languageVersionSettings: LanguageVersionSettings,
+    toMetadataVersion: LanguageVersion.() -> MetadataVersion
 ) : DeserializationConfiguration {
-    override val metadataVersion: MetadataVersion = languageVersionSettings.languageVersion.toJvmMetadataVersion()
+    override val metadataVersion: MetadataVersion = languageVersionSettings.languageVersion.toMetadataVersion()
 
     final override val skipMetadataVersionCheck = languageVersionSettings.getFlag(AnalysisFlags.skipMetadataVersionCheck)
 
@@ -34,3 +33,10 @@ open class CompilerDeserializationConfiguration(
     final override val readDeserializedContracts: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.ReadDeserializedContracts)
 }
+
+// TODO KT-76195 Consider replacing the following classes with `CommonCompilerDeserializationConfiguration` in version 2.4
+class JvmCompilerDeserializationConfiguration(languageVersionSettings: LanguageVersionSettings) :
+    CommonCompilerDeserializationConfiguration(languageVersionSettings, LanguageVersion::toJvmMetadataVersion)
+
+class KlibCompilerDeserializationConfiguration(languageVersionSettings: LanguageVersionSettings) :
+    CommonCompilerDeserializationConfiguration(languageVersionSettings, LanguageVersion::toKlibMetadataVersion)

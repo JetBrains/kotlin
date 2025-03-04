@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
@@ -58,7 +58,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             packageFragmentNames = libraryProto.packageFragmentNameList,
             storageManager,
             moduleDescriptor,
-            configuration = CompilerDeserializationConfiguration(languageVersionSettings),
+            configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),
             compositePackageFragmentAddend = runIf(library.isNativeStdlib || library.isJsStdlib || library.isWasmStdlib) {
                 functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
             },

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 // TODO: put it in separated module `frontend.js`
@@ -33,7 +33,7 @@ object TopDownAnalyzerFacadeForJSIR : AbstractTopDownAnalyzerFacadeForWeb() {
             incrementalData.compiledPackageParts.values.map { it.metadata },
             moduleContext.storageManager,
             moduleContext.module,
-            CompilerDeserializationConfiguration(languageVersionSettings),
+            KlibCompilerDeserializationConfiguration(languageVersionSettings),
             lookupTracker
         )
     }

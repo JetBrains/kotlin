@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.tryLoadModuleMapping
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.JvmCompilerDeserializationConfiguration
 import kotlin.script.experimental.jvm.util.forAllMatchingFiles
 
 class PackagePartFromClassLoaderProvider(
@@ -19,7 +19,7 @@ class PackagePartFromClassLoaderProvider(
     languageVersionSettings: LanguageVersionSettings,
     messageCollector: MessageCollector
 ) : JvmPackagePartProviderBase<String>() {
-    override val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
+    override val deserializationConfiguration = JvmCompilerDeserializationConfiguration(languageVersionSettings)
 
     override val loadedModules: MutableList<ModuleMappingInfo<String>> = SmartList()
 

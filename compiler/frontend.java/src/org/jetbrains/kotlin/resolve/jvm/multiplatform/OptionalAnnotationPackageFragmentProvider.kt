@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.JvmCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.jvm.EnumEntriesDeserializationSupportImpl
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -50,7 +50,7 @@ class OptionalAnnotationPackageFragmentProvider(
             val classDataFinder = OptionalAnnotationClassDataFinder(optionalAnnotationClasses)
             val components = storageManager.createLazyValue {
                 DeserializationComponents(
-                    storageManager, module, CompilerDeserializationConfiguration(languageVersionSettings),
+                    storageManager, module, JvmCompilerDeserializationConfiguration(languageVersionSettings),
                     classDataFinder,
                     AnnotationAndConstantLoaderImpl(module, notFoundClasses, serializerProtocol),
                     this,
