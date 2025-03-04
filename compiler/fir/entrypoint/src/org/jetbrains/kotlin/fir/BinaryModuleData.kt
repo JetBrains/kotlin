@@ -16,7 +16,6 @@ class BinaryModuleData(
     companion object {
         fun createDependencyModuleData(
             name: Name,
-            platform: TargetPlatform,
             capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
         ): FirModuleData {
             return FirBinaryDependencyModuleData(name, capabilities)
@@ -27,7 +26,7 @@ class BinaryModuleData(
             platform: TargetPlatform,
         ): BinaryModuleData {
             fun createData(name: String): FirModuleData =
-                createDependencyModuleData(Name.special(name), platform)
+                createDependencyModuleData(Name.special(name))
 
             return BinaryModuleData(
                 createData("<regular dependencies of $mainModuleName>"),

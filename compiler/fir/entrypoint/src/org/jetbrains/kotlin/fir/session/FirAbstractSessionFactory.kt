@@ -101,7 +101,6 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
 
             val moduleData = BinaryModuleData.createDependencyModuleData(
                 Name.special("<shared dependencies of ${mainModuleName.asString()}"),
-                moduleDataProvider.platform,
             )
             moduleData.bindSession(this)
 

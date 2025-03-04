@@ -44,7 +44,6 @@ object FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Nothing
     ): List<FirSymbolProvider> {
         val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
             FORWARD_DECLARATIONS_MODULE_NAME,
-            moduleDataProvider.platform,
         ).apply {
             bindSession(session)
         }

@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.JsPlatform
+import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * [FirModuleData] is an abstraction over modules module inside FIR compiler.
@@ -114,10 +117,6 @@ class FirBinaryDependencyModuleData(
     override val name: Name,
     override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
 ) : FirModuleData() {
-    companion object {
-        private val emptyTargetPlatform = TargetPlatform(setOf())
-    }
-
     override val dependencies: List<FirModuleData>
         get() = emptyList()
     override val dependsOnDependencies: List<FirModuleData>
@@ -129,7 +128,7 @@ class FirBinaryDependencyModuleData(
 
     // target platform is meaningless for dependencies
     override val platform: TargetPlatform
-        get() = emptyTargetPlatform
+        get() = shouldNotBeCalled()
     override val isCommon: Boolean
         get() = false
     override val session: FirSession
