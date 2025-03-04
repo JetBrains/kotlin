@@ -64,22 +64,23 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         val packagesDir: DirectoryProperty
     }
 
-    val resolution
+    val resolution: Property<KotlinRootNpmResolution>
         get() = parameters.resolution
 
-    val packagesDir
+    val packagesDir: DirectoryProperty
         get() = parameters.packagesDir
 
     @Volatile
     var state: ResolutionState = ResolutionState.Configuring(resolution.get())
+        private set
 
     sealed class ResolutionState {
 
         class Configuring(val resolution: KotlinRootNpmResolution) : ResolutionState()
 
-        class Prepared : ResolutionState()
+        object Prepared : ResolutionState()
 
-        class Installed : ResolutionState()
+        object Installed : ResolutionState()
 
         class Error(val wrappedException: Throwable) : ResolutionState()
     }
@@ -117,7 +118,7 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
                     packageManagerEnvironment,
                     args
                 )
-                state = ResolutionState.Installed()
+                state = ResolutionState.Installed
             } catch (e: Exception) {
                 state = ResolutionState.Error(e)
                 throw e
@@ -130,16 +131,14 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         nodeJsEnvironment: NodeJsEnvironment,
         packageManagerEnvironment: PackageManagerEnvironment,
     ) {
-        val state0 = this.state
-        when (state0) {
+        when (val state0 = this.state) {
             is ResolutionState.Prepared -> {
                 return
             }
 
             is ResolutionState.Configuring -> {
                 synchronized(this) {
-                    val state1 = this.state
-                    when (state1) {
+                    when (val state1 = this.state) {
                         is ResolutionState.Prepared -> return
                         is ResolutionState.Configuring -> {
                             state1.resolution.prepareInstallation(
@@ -148,7 +147,7 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
                                 packageManagerEnvironment,
                                 this
                             )
-                            this.state = ResolutionState.Prepared()
+                            this.state = ResolutionState.Prepared
                         }
 
                         is ResolutionState.Installed -> error("Project already installed")
@@ -174,17 +173,18 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
             nameDisambiguate: (String) -> String,
         ): Provider<KotlinNpmResolutionManager> {
             val serviceName = nameDisambiguate(serviceName)
-            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
-                @Suppress("UNCHECKED_CAST")
-                return it.service as Provider<KotlinNpmResolutionManager>
-            }
 
-            val message = {
-                "Build service KotlinNpmResolutionManager should be already registered"
-            }
-
-            requireNotNull(resolution, message)
-            requireNotNull(gradleNodeModulesProvider, message)
+//            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
+//                @Suppress("UNCHECKED_CAST")
+//                return it.service as Provider<KotlinNpmResolutionManager>
+//            }
+//
+//            val message = {
+//                "Build service KotlinNpmResolutionManager should be already registered"
+//            }
+//
+//            requireNotNull(resolution, message)
+//            requireNotNull(gradleNodeModulesProvider, message)
 
             return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
                 it.parameters.resolution.set(
@@ -201,13 +201,14 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
             gradleNodeModulesProvider: Provider<GradleNodeModulesCache>,
             packagesDir: Provider<Directory>,
             nameDisambiguate: (String) -> String,
-        ) = registerIfAbsentImpl(project, resolution, gradleNodeModulesProvider, packagesDir, nameDisambiguate).also { serviceProvider ->
-            SingleActionPerProject.run(project, UsesKotlinNpmResolutionManager::class.java.name) {
-                project.tasks.withType<UsesKotlinNpmResolutionManager>().configureEach { task ->
-                    task.usesService(serviceProvider)
-                    task.usesService(gradleNodeModulesProvider)
+        ): Provider<KotlinNpmResolutionManager> =
+            registerIfAbsentImpl(project, resolution, gradleNodeModulesProvider, packagesDir, nameDisambiguate).also { serviceProvider ->
+                SingleActionPerProject.run(project, UsesKotlinNpmResolutionManager::class.java.name) {
+                    project.tasks.withType<UsesKotlinNpmResolutionManager>().configureEach { task ->
+                        task.usesService(serviceProvider)
+                        task.usesService(gradleNodeModulesProvider)
+                    }
                 }
             }
-        }
     }
 }

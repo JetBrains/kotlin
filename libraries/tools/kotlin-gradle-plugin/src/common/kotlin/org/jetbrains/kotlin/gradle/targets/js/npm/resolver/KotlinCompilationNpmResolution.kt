@@ -9,18 +9,20 @@ import org.gradle.api.Action
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.Serializable
 
+@InternalKotlinGradlePluginApi
 class KotlinCompilationNpmResolution(
-    var internalDependencies: Collection<InternalDependency>,
-    var internalCompositeDependencies: Collection<CompositeDependency>,
-    var externalGradleDependencies: Collection<FileExternalGradleDependency>,
-    var externalNpmDependencies: Collection<NpmDependencyDeclaration>,
-    var fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>,
+    val internalDependencies: Collection<InternalDependency>,
+    val internalCompositeDependencies: Collection<CompositeDependency>,
+    val externalGradleDependencies: Collection<FileExternalGradleDependency>,
+    val externalNpmDependencies: Collection<NpmDependencyDeclaration>,
+    val fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>,
     val projectPath: String,
     val compilationDisambiguatedName: String,
     val npmProjectName: String,
@@ -156,12 +158,12 @@ class KotlinCompilationNpmResolution(
                     if (dependencies.size > 1) {
                         logger.warn(
                             """
-                                Transitive npm dependency version clash for compilation "${compilationDisambiguatedName}"
-                                    Candidates:
-                                ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
-                                    Selected:
-                                        ${selected.name}@${selected.version}
-                                """.trimIndent()
+                            Transitive npm dependency version clash for compilation "$compilationDisambiguatedName"
+                                Candidates:
+                            ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
+                                Selected:
+                                    ${selected.name}@${selected.version}
+                            """.trimIndent()
                         )
                     }
                 }

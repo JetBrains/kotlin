@@ -141,6 +141,7 @@ constructor(
                                 }
                             }
                             .artifacts
+                            // TODO KT-74735
 //                            .filter @Suppress("DEPRECATION") {
 //                                it.id `is` CompositeProjectComponentArtifactMetadata
 //                            }
@@ -195,13 +196,19 @@ constructor(
         private fun findDependentTasks(
             rootResolver: KotlinRootNpmResolver,
             compilationNpmResolution: KotlinCompilationNpmResolution,
-        ): Collection<Any> =
-            compilationNpmResolution.internalDependencies.map { dependency ->
+        ): Collection<Any> {
+
+            val internalDependenciesTasks = compilationNpmResolution.internalDependencies.map { dependency ->
                 rootResolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
-            } + compilationNpmResolution.internalCompositeDependencies.map { dependency ->
+            }
+
+            val compositeDependenciesTasks = compilationNpmResolution.internalCompositeDependencies.map { dependency ->
                 dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME") ?: error("includedBuild instance is not available")
                 dependency.includedBuild.task(":${RootPackageJsonTask.NAME}")
             }
+
+            return internalDependenciesTasks + compositeDependenciesTasks
+        }
 
         private fun getCompilationResolver(
             nodeJsRoot: BaseNodeJsRootExtension,

@@ -3588,7 +3588,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolu
 	public final fun getPackagesDir ()Lorg/gradle/api/file/DirectoryProperty;
 	public final fun getResolution ()Lorg/gradle/api/provider/Property;
 	public final fun getState ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$ResolutionState;
-	public final fun setState (Lorg/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$ResolutionState;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$Companion {
@@ -3615,11 +3614,11 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutio
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$ResolutionState$Installed : org/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$ResolutionState {
-	public fun <init> ()V
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$ResolutionState$Installed;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$ResolutionState$Prepared : org/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$ResolutionState {
-	public fun <init> ()V
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager$ResolutionState$Prepared;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/LockCopyTask : org/gradle/api/DefaultTask {
@@ -4230,11 +4229,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCom
 	public final fun getResolutionOrPrepare (Lorg/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager;Lorg/gradle/api/logging/Logger;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolved/PreparedKotlinCompilationNpmResolution;
 	public final fun getTasksRequirements ()Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/TasksRequirements;
 	public final fun prepareWithDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/npm/KotlinNpmResolutionManager;Lorg/gradle/api/logging/Logger;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolved/PreparedKotlinCompilationNpmResolution;
-	public final fun setExternalGradleDependencies (Ljava/util/Collection;)V
-	public final fun setExternalNpmDependencies (Ljava/util/Collection;)V
-	public final fun setFileCollectionDependencies (Ljava/util/Collection;)V
-	public final fun setInternalCompositeDependencies (Ljava/util/Collection;)V
-	public final fun setInternalDependencies (Ljava/util/Collection;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolver : java/io/Serializable {
@@ -4326,7 +4320,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinNpmIns
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinPackageJsonTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/UsesGradleNodeModulesCache, org/jetbrains/kotlin/gradle/targets/js/npm/UsesKotlinNpmResolutionManager {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinPackageJsonTask$Companion;
-	public fun <init> ()V
 	public abstract fun getCompilationDisambiguatedName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getPackageJson ()Lorg/gradle/api/provider/Property;
 	public abstract fun getPackageJsonHandlers ()Lorg/gradle/api/provider/ListProperty;
