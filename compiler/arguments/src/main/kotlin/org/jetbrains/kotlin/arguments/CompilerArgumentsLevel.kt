@@ -10,18 +10,12 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.types.KotlinArgumentTypes
 import kotlin.properties.ReadOnlyProperty
 
-interface CompilerArgumentsLevelBase {
-    val name: String
-    val arguments: Set<CompilerArgument>
-    val nestedLevels: Set<CompilerArgumentsLevel>
-}
-
 @Serializable
 data class CompilerArgumentsLevel(
-    override val name: String,
-    override val arguments: Set<CompilerArgument>,
-    override val nestedLevels: Set<CompilerArgumentsLevel>
-) : CompilerArgumentsLevelBase {
+    val name: String,
+    val arguments: Set<CompilerArgument>,
+    val nestedLevels: Set<CompilerArgumentsLevel>
+) {
 
     fun mergeWith(another: CompilerArgumentsLevel): CompilerArgumentsLevel {
         require(name == another.name) {
@@ -52,31 +46,27 @@ data class CompilerArguments(
     val topLevel: CompilerArgumentsLevel,
 )
 
-
-abstract class CompilerArgumentsLevelBuilderBase(
-    override val name: String
-) : CompilerArgumentsLevelBase {
-    private val _arguments = mutableSetOf<CompilerArgument>()
-    override val arguments: Set<CompilerArgument>
-        get() = _arguments
+@KotlinArgumentsDslMarker
+class CompilerArgumentsLevelBuilder(
+    val name: String
+) {
+    private val arguments = mutableSetOf<CompilerArgument>()
 
     fun compilerArgument(
         config: CompilerArgumentBuilder.() -> Unit
     ) {
         val argumentBuilder = CompilerArgumentBuilder()
         config(argumentBuilder)
-        _arguments.add(argumentBuilder.build())
+        arguments.add(argumentBuilder.build())
     }
 
     fun addCompilerArguments(
         vararg compilerArguments: CompilerArgument
     ) {
-        _arguments.addAll(compilerArguments)
+        arguments.addAll(compilerArguments)
     }
 
-    private val _nestedLevels = mutableSetOf<CompilerArgumentsLevel>()
-    override val nestedLevels: Set<CompilerArgumentsLevel>
-        get() = _nestedLevels
+    private val nestedLevels = mutableSetOf<CompilerArgumentsLevel>()
 
     fun subLevel(
         name: String,
@@ -85,18 +75,13 @@ abstract class CompilerArgumentsLevelBuilderBase(
     ) {
         val levelBuilder = CompilerArgumentsLevelBuilder(name)
         config(levelBuilder)
-        _nestedLevels.add(
+        nestedLevels.add(
             mergeWith.fold(levelBuilder.build()) { current, mergingWith ->
                 current.mergeWith(mergingWith)
             }
         )
     }
-}
 
-@KotlinArgumentsDslMarker
-class CompilerArgumentsLevelBuilder(
-    name: String
-) : CompilerArgumentsLevelBuilderBase(name) {
     fun build(): CompilerArgumentsLevel = CompilerArgumentsLevel(
         name,
         arguments,

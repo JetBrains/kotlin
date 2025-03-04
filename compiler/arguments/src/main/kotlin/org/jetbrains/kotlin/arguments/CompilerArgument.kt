@@ -10,40 +10,30 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.types.KotlinArgumentValueType
 import kotlin.properties.ReadOnlyProperty
 
-interface CompilerArgumentBase : WithKotlinReleaseVersionsMetadata {
-    val name: String
-    val shortName: String?
-    val deprecatedName: String?
-    val description: ReleaseDependent<String>
-
-    val valueType: KotlinArgumentValueType<*>
-    val valueDescription: ReleaseDependent<String?>
-}
-
 @Serializable
 data class CompilerArgument(
-    override val name: String,
-    override val shortName: String? = null,
-    override val deprecatedName: String? = null,
-    override val description: ReleaseDependent<String>,
+    val name: String,
+    val shortName: String? = null,
+    val deprecatedName: String? = null,
+    val description: ReleaseDependent<String>,
 
-    override val valueType: KotlinArgumentValueType<*>,
-    override val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
+    val valueType: KotlinArgumentValueType<*>,
+    val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
 
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
-) : CompilerArgumentBase
+) : WithKotlinReleaseVersionsMetadata
 
 @KotlinArgumentsDslMarker
-class CompilerArgumentBuilder : CompilerArgumentBase {
-    override lateinit var name: String
-    override var shortName: String? = null
-    override var deprecatedName: String? = null
-    override lateinit var description: ReleaseDependent<String>
+class CompilerArgumentBuilder {
+    lateinit var name: String
+    var shortName: String? = null
+    var deprecatedName: String? = null
+    lateinit var description: ReleaseDependent<String>
 
-    override lateinit var valueType: KotlinArgumentValueType<*>
-    override var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
+    lateinit var valueType: KotlinArgumentValueType<*>
+    var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
 
-    override lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
+    private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
 
     fun lifecycle(
         introducedVersion: KotlinReleaseVersion,
