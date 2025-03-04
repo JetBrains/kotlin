@@ -399,7 +399,11 @@ class NewConstraintSystemImpl(
         }
 
         for ((variable, variablesThatReferenceGivenOne) in otherSystem.typeVariableDependencies) {
-            typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
+            if (variable !in typeVariableDependencies) {
+                typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
+            } else {
+                typeVariableDependencies[variable]?.addAll(variablesThatReferenceGivenOne)
+            }
         }
 
         storage.initialConstraints.addAll(otherSystem.initialConstraints)
