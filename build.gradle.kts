@@ -380,6 +380,7 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":native:objcexport-header-generator",
                 ":native:objcexport-header-generator-analysis-api",
                 ":native:objcexport-header-generator-k1",
+                ":native:analysis-api-based-export-common",
             ) +
             arrayOf(
                 ":native:swift:sir",
