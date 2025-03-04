@@ -6,20 +6,15 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.utils.addToStdlib.same
 import java.nio.file.Path
 
 abstract class ModuleDataProvider {
-    abstract val platform: TargetPlatform
     abstract val allModuleData: Collection<FirModuleData>
 
     abstract fun getModuleData(path: Path?): FirModuleData?
 }
 
 class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDataProvider() {
-    override val platform: TargetPlatform
-        get() = moduleData.platform
     override val allModuleData: Collection<FirModuleData>
         get() = listOf(moduleData)
 
@@ -31,12 +26,7 @@ class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDa
 class MultipleModuleDataProvider(private val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter>) : ModuleDataProvider() {
     init {
         require(moduleDataWithFilters.isNotEmpty()) { "ModuleDataProvider must contain at least one module data" }
-        require(moduleDataWithFilters.keys.same { it.platform }) {
-            "All module data should have same target platform, but was: ${moduleDataWithFilters.keys.joinToString { "${it.name.asString()}: ${it.platform}" }}"
-        }
     }
-
-    override val platform: TargetPlatform = allModuleData.first().platform
 
     override val allModuleData: Collection<FirModuleData>
         get() = moduleDataWithFilters.keys
