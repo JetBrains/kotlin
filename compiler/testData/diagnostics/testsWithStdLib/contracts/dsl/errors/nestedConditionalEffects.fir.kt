@@ -7,6 +7,6 @@ import kotlin.contracts.*
 
 fun foo(boolean: Boolean) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>(returns() implies (boolean)) <!UNRESOLVED_REFERENCE!>implies<!> (!boolean)<!>
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>(returns() implies (boolean)) <!OPT_IN_USAGE_ERROR, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>implies<!> (!boolean)<!>
     }
 }
