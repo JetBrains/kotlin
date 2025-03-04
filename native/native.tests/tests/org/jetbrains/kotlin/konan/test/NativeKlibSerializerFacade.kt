@@ -150,7 +150,6 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
             frontendOutput.project,
             exportKDoc = false,
             skipExpects = true,
-            allowErrorTypes = false,
         ).serializeModule(frontendOutput.analysisResult.moduleDescriptor)
 
         val serializerIr = KonanIrModuleSerializer(

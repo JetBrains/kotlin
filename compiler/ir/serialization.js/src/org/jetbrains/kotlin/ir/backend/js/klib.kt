@@ -477,7 +477,6 @@ class ModulesStructure(
                     project,
                     analysisResult.bindingContext,
                     analysisResult.moduleDescriptor,
-                    allowErrorTypes = false,
                 )
             }
             if (shouldGoToNextIcRound) {

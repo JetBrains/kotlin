@@ -90,7 +90,6 @@ class Fir2KlibMetadataSerializer(
                 firProvider,
                 metadataVersion,
                 components?.let(::ConstValueProviderImpl),
-                allowErrorTypes = false,
                 exportKDoc,
                 components?.annotationsFromPluginRegistrar?.createAdditionalMetadataProvider(),
             ),

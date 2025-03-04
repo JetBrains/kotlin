@@ -39,15 +39,13 @@ class KlibMetadataIncrementalSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: MetadataVersion,
     project: Project,
-    exportKDoc: Boolean,
-    allowErrorTypes: Boolean = false
+    exportKDoc: Boolean
 ) : KlibMetadataSerializer(
     languageVersionSettings = languageVersionSettings,
     metadataVersion = metadataVersion,
     project = project,
     exportKDoc = exportKDoc,
-    skipExpects = true, // Incremental compilation is not supposed to work when producing pure metadata (IR-less) KLIBs.
-    allowErrorTypes = allowErrorTypes
+    skipExpects = true // Incremental compilation is not supposed to work when producing pure metadata (IR-less) KLIBs.
 ), KlibSingleFileMetadataSerializer<KtFile> {
 
     constructor(
@@ -56,7 +54,6 @@ class KlibMetadataIncrementalSerializer(
         project: Project,
         bindingContext: BindingContext,
         moduleDescriptor: ModuleDescriptor,
-        allowErrorTypes: Boolean,
     ) : this(
         ktFiles = files,
         bindingContext = bindingContext,
@@ -66,7 +63,6 @@ class KlibMetadataIncrementalSerializer(
             ?: KLIB_LEGACY_METADATA_VERSION,
         project = project,
         exportKDoc = false,
-        allowErrorTypes = allowErrorTypes,
     )
 
     constructor(modulesStructure: ModulesStructure, moduleFragment: IrModuleFragment) : this(
@@ -75,7 +71,6 @@ class KlibMetadataIncrementalSerializer(
         modulesStructure.project,
         modulesStructure.jsFrontEndResult.bindingContext,
         moduleFragment.descriptor,
-        modulesStructure.jsFrontEndResult.hasErrors,
     )
 
     override fun serializeSingleFileMetadata(file: KtFile): ProtoBuf.PackageFragment {

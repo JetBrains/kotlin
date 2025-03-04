@@ -29,7 +29,6 @@ class KlibMetadataSerializerExtension(
     private val languageVersionSettings: LanguageVersionSettings,
     override val metadataVersion: BinaryVersion,
     override val stringTable: StringTableImpl,
-    private val allowErrorTypes: Boolean,
     private val exportKDoc: Boolean,
     private val produceHeaderKlib: Boolean
 ) : KotlinSerializerExtensionBase(KlibMetadataSerializerProtocol) {
@@ -54,10 +53,6 @@ class KlibMetadataSerializerExtension(
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DYNAMIC_TYPE_DESERIALIZER_ID)
-    }
-
-    override fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
-        if (!allowErrorTypes) super.serializeErrorType(type, builder)
     }
 
     override fun serializeClass(

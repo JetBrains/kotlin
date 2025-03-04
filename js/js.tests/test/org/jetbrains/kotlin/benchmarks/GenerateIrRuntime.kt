@@ -494,7 +494,6 @@ class GenerateIrRuntime {
             project,
             bindingContext,
             moduleFragment.descriptor,
-            allowErrorTypes = false,
         )
         serializeModuleIntoKlib(
             moduleName,

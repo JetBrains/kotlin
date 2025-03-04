@@ -102,7 +102,6 @@ class ClassicFrontend2IrConverter(
             project,
             analysisResult.bindingContext,
             moduleFragment.descriptor,
-            hasErrors,
         )
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -147,7 +146,6 @@ class ClassicFrontend2IrConverter(
             project,
             analysisResult.bindingContext,
             moduleFragment.descriptor,
-            hasErrors,
         )
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 

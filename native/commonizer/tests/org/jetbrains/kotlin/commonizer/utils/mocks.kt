@@ -128,7 +128,6 @@ internal class MockModulesProvider private constructor(
             skipExpects = false,
             project = null,
             includeOnlyModuleContent = true,
-            allowErrorTypes = false
         )
     }
 }

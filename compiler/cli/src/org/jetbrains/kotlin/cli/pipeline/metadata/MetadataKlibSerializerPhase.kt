@@ -45,7 +45,7 @@ object MetadataKlibSerializerPhase : PipelinePhase<MetadataFrontendPipelineArtif
                     actualizedExpectDeclarations = null,
                     FirKLibSerializerExtension(
                         session, scopeSession, session.firProvider, metadataVersion, constValueProvider = null,
-                        allowErrorTypes = false, exportKDoc = false,
+                        exportKDoc = false,
                         additionalMetadataProvider = null
                     ),
                     languageVersionSettings,
