@@ -598,6 +598,19 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 }
 
+/**
+ * Returns the list of type parameters of [parent] that are available in its scope.
+ *
+ * For example, if [parent] is a constructor of a local class like this:
+ * ```kotlin
+ * fun <T> foo() {
+ *   class Local<S> {
+ *     constructor() {}
+ *   }
+ * }
+ * ```
+ * then this function will return `[S, T]`.
+ */
 fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
     val result = mutableListOf<IrTypeParameter>()
     var current: IrDeclarationParent? = parent
