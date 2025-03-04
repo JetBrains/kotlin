@@ -185,7 +185,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
      *
      * For more information see KDoc to [FirAbstractSessionFactory]
      */
-    protected fun createModuleBasedSession(
+    protected fun createSourceSession(
         moduleData: FirModuleData,
         context: SOURCE_CONTEXT,
         sessionProvider: FirProjectSessionProvider,

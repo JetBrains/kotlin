@@ -65,7 +65,7 @@ object TestFirWasmSessionFactory {
         configuration: CompilerConfiguration,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
-        FirWasmSessionFactory.createModuleBasedSession(
+        FirWasmSessionFactory.createSourceSession(
             mainModuleData,
             sessionProvider,
             extensionRegistrars,

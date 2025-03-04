@@ -369,7 +369,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         return when {
             targetPlatform.isCommon() -> {
-                FirMetadataSessionFactory.createModuleBasedSession(
+                FirMetadataSessionFactory.createSourceSession(
                     moduleData = moduleData,
                     sessionProvider = sessionProvider,
                     projectEnvironment = projectEnvironment!!,
@@ -380,7 +380,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 ).also(::registerExtraComponents)
             }
             targetPlatform.isJvm() -> {
-                FirJvmSessionFactory.createModuleBasedSession(
+                FirJvmSessionFactory.createSourceSession(
                     moduleData,
                     sessionProvider,
                     PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)),
@@ -403,7 +403,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 ).also(::registerExtraComponents)
             }
             targetPlatform.isNative() -> {
-                FirNativeSessionFactory.createModuleBasedSession(
+                FirNativeSessionFactory.createSourceSession(
                     moduleData,
                     sessionProvider,
                     extensionRegistrars,

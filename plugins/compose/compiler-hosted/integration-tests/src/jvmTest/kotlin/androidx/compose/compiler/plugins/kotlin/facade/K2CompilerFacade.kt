@@ -88,7 +88,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         projectEnvironment: AbstractProjectEnvironment,
         librarySession: FirSession,
     ): FirSession {
-        return FirJvmSessionFactory.createModuleBasedSession(
+        return FirJvmSessionFactory.createSourceSession(
             moduleData,
             projectSessionProvider,
             PsiBasedProjectFileSearchScope(

@@ -336,7 +336,7 @@ private fun compileImpl(
         KotlinJavaPsiFacade.getInstance(project).clearPackageCaches()
     }
 
-    val session = FirJvmSessionFactory.createModuleBasedSession(
+    val session = FirJvmSessionFactory.createSourceSession(
         moduleData,
         state.sessionProvider,
         AbstractProjectFileSearchScope.EMPTY,

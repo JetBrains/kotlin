@@ -358,7 +358,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 )
             },
         ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
-            FirJvmSessionFactory.createModuleBasedSession(
+            FirJvmSessionFactory.createSourceSession(
                 moduleData,
                 sessionProvider,
                 javaSourcesScope,
