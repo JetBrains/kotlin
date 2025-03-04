@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.incremental.components.ImportTracker
 import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("unused")
-class ImportTrackerImpl: ImportTracker {
+class ImportTrackerImpl : ImportTracker {
     private val filePathToImportedFqNames = ConcurrentHashMap<String, MutableSet<String>>()
 
     val filePathToImportedFqNamesMap: Map<String, Collection<String>>
