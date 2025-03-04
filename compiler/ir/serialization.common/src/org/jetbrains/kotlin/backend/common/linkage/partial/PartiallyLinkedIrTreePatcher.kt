@@ -560,9 +560,11 @@ internal class PartiallyLinkedIrTreePatcher(
                 val getterFunName = owner.name.asString().removeSuffix(COMPOSE_STABLE_FIELD_MARKER) + COMPOSE_STABILITY_GETTER_MARKER
                 val artificialGetterFunName = $$"$$getterFunName$artificial"
                 return (owner.parent as? IrDeclarationContainer)?.let { parent ->
-                    parent.findDeclaration<IrSimpleFunction> { it.name.asString() == getterFunName }
-                        ?: parent.findDeclaration<IrSimpleFunction> { it.name.asString() == artificialGetterFunName }   // try to find already-crafted artificial getter
-                        ?: generateArtificialStabilityGetter(artificialGetterFunName, parent)                           // generate one if none found
+                    parent.findDeclaration<IrSimpleFunction> {                      // try to find
+                        it.name.asString() == getterFunName                         // compose-compiler generated getter
+                                || it.name.asString() == artificialGetterFunName    // or already-crafted artificial getter
+                    }
+                        ?: generateArtificialStabilityGetter(artificialGetterFunName, parent)   // generate one if none found
                 }
 
             }
