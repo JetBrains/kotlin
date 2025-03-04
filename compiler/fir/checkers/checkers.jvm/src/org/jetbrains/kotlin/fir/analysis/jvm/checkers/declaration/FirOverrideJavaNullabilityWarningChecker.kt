@@ -48,23 +48,23 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
             stubTypesEqualToAnything = false
         )
 
-        for (member in declaration.declarations) {
+        scope.processAllCallables { memberSymbol ->
             var anyBaseEnhanced = false
             var anyReported = false
 
-            if (member is FirSimpleFunction) {
+            if (memberSymbol is FirNamedFunctionSymbol) {
                 val enhancedOverrides = scope
-                    .getDirectOverriddenFunctions(member.symbol)
+                    .getDirectOverriddenFunctions(memberSymbol)
                     .map {
                         val substitutedBase = it.substituteOrNull(substitutor, context) ?: return@map it
                         anyBaseEnhanced = true
 
-                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenFunction(member.symbol, substitutedBase)) {
+                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenFunction(memberSymbol, substitutedBase)) {
                             anyReported = true
                             reporter.reportOn(
-                                member.source,
+                                memberSymbol.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
-                                member.symbol,
+                                memberSymbol,
                                 substitutedBase,
                                 context
                             )
@@ -74,25 +74,25 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
-                    member.symbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
+                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
                         reporter.reportOn(
-                            member.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, member.symbol, it, context
+                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it, context
                         )
                     }
                 }
-            } else if (member is FirProperty) {
+            } else if (memberSymbol is FirPropertySymbol) {
                 val enhancedOverrides = scope
-                    .getDirectOverriddenProperties(member.symbol)
+                    .getDirectOverriddenProperties(memberSymbol)
                     .map {
                         val substitutedBase = it.substituteOrNull(substitutor, context) ?: return@map it
                         anyBaseEnhanced = true
 
-                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenProperty(member.symbol, substitutedBase)) {
+                        if (!anyReported && !context.session.firOverrideChecker.isOverriddenProperty(memberSymbol, substitutedBase)) {
                             anyReported = true
                             reporter.reportOn(
-                                member.source,
+                                memberSymbol.source,
                                 FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
-                                member.symbol,
+                                memberSymbol,
                                 substitutedBase,
                                 context
                             )
@@ -102,9 +102,9 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
-                    member.symbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
+                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
                         reporter.reportOn(
-                            member.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, member.symbol, it, context
+                            memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it, context
                         )
                     }
                 }
