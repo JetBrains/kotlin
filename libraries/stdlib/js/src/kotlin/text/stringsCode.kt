@@ -15,6 +15,8 @@ internal actual inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): I
 
 /**
  * Returns `true` if this string starts with the specified prefix.
+ *
+ * @sample samples.text.Strings.startsWith
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean {
@@ -26,6 +28,8 @@ public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false)
 
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ *
+ * @sample samples.text.Strings.startsWith
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
@@ -37,6 +41,8 @@ public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase:
 
 /**
  * Returns `true` if this string ends with the specified suffix.
+ *
+ * @sample samples.text.Strings.endsWith
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean {
@@ -61,6 +67,7 @@ public fun String.matches(regex: String): Boolean {
  * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
+ * @sample samples.text.Strings.equals
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
