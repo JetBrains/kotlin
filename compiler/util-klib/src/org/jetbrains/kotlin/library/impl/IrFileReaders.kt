@@ -46,36 +46,6 @@ class IrArrayReader(private val buffer: ReadBuffer) {
     }
 }
 
-class IrIntArrayMemoryReader(bytes: ByteArray) {
-
-    val array = run {
-        val buffer = ReadBuffer.MemoryBuffer(bytes)
-
-        val result = IntArray(buffer.int)
-
-        for (i in result.indices) {
-            result[i] = buffer.int
-        }
-
-        result
-    }
-}
-
-class IrLongArrayMemoryReader(bytes: ByteArray) {
-
-    val array = run {
-        val buffer = ReadBuffer.MemoryBuffer(bytes)
-
-        val result = LongArray(buffer.int)
-
-        for (i in result.indices) {
-            result[i] = buffer.long
-        }
-
-        result
-    }
-}
-
 abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IntArray
     private val indexIndexToOffset = mutableMapOf<Int, IntArray>()
