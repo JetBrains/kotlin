@@ -119,9 +119,9 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
     // ==================================== Platform session ====================================
 
     /**
-     * See documentation to [FirAbstractSessionFactory.createModuleBasedSession]
+     * See documentation to [FirAbstractSessionFactory.createSourceSession]
      */
-    fun createModuleBasedSession(
+    fun createSourceSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         projectEnvironment: AbstractProjectEnvironment,
@@ -130,7 +130,7 @@ object FirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>
         configuration: CompilerConfiguration,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
-        return createModuleBasedSession(
+        return createSourceSession(
             moduleData,
             context = null,
             sessionProvider,

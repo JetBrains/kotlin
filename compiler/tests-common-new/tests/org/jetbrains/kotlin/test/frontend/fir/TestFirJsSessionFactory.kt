@@ -55,7 +55,7 @@ object TestFirJsSessionFactory {
         configuration: CompilerConfiguration,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
-        FirJsSessionFactory.createModuleBasedSession(
+        FirJsSessionFactory.createSourceSession(
             mainModuleData,
             sessionProvider,
             extensionRegistrars,

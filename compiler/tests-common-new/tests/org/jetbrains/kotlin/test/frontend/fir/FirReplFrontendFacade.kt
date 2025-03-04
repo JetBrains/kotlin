@@ -152,7 +152,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
 
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
 
-        val moduleBasedSession = FirJvmSessionFactory.createModuleBasedSession(
+        val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
             sessionProvider = testServices.firModuleInfoProvider.firSessionProvider,
             javaSourcesScope = PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles.values)),

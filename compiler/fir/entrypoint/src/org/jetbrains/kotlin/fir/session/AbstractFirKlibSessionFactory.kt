@@ -107,9 +107,9 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
     // ==================================== Platform session ====================================
 
     /**
-     * See documentation to [FirAbstractSessionFactory.createModuleBasedSession]
+     * See documentation to [FirAbstractSessionFactory.createSourceSession]
      */
-    fun createModuleBasedSession(
+    fun createSourceSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -118,7 +118,7 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
         val context = createSourceContext(configuration)
-        return createModuleBasedSession(
+        return createSourceSession(
             moduleData,
             context,
             sessionProvider,

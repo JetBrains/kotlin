@@ -211,7 +211,7 @@ private fun <F> prepareKlibSessions(
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
-        sessionFactory.createModuleBasedSession(
+        sessionFactory.createSourceSession(
             moduleData,
             sessionProvider,
             extensionRegistrars,
@@ -268,7 +268,7 @@ fun <F> prepareMetadataSessions(
             )
         }
     ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
-        FirMetadataSessionFactory.createModuleBasedSession(
+        FirMetadataSessionFactory.createSourceSession(
             moduleData,
             sessionProvider,
             projectEnvironment,

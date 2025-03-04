@@ -71,7 +71,7 @@ object FirSessionFactoryHelper {
             dependencyList.friendsDependencies,
             platform,
         )
-        return FirJvmSessionFactory.createModuleBasedSession(
+        return FirJvmSessionFactory.createSourceSession(
             mainModuleData,
             sessionProvider,
             javaSourcesScope,

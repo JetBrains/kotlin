@@ -137,9 +137,9 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
     // ==================================== Platform session ====================================
 
     /**
-     * See documentation to [FirAbstractSessionFactory.createModuleBasedSession]
+     * See documentation to [FirAbstractSessionFactory.createSourceSession]
      */
-    fun createModuleBasedSession(
+    fun createSourceSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         javaSourcesScope: AbstractProjectFileSearchScope,
@@ -153,7 +153,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
     ): FirSession {
         val jvmTarget = configuration.jvmTarget ?: JvmTarget.DEFAULT
         val context = SourceContext(jvmTarget, predefinedJavaComponents, projectEnvironment)
-        return createModuleBasedSession(
+        return createSourceSession(
             moduleData,
             context = context,
             sessionProvider,
