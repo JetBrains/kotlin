@@ -24,7 +24,6 @@ import java.security.ProtectionDomain
 
 
 class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean) : ClassFileTransformer {
-
     private fun loadTransformAndSerialize(classfileBuffer: ByteArray, lambda: (out: ClassVisitor) -> ClassVisitor): ByteArray {
         val reader = ClassReader(classfileBuffer)
 
@@ -32,8 +31,7 @@ class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean)
 
         val pv = if (debugInfo) {
             TraceClassVisitor(writer, PrintWriter(System.out.writer()))
-        }
-        else {
+        } else {
             writer
         }
 
@@ -43,14 +41,14 @@ class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean)
     }
 
     private fun isMockComponentManagerCreationTracerCanBeLoaded(loader: ClassLoader): Boolean =
-            loader.getResource("org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer.class") != null
+        loader.getResource("org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer.class") != null
 
     override fun transform(
-            loader: ClassLoader?,
-            className: String?,
-            classBeingRedefined: Class<*>?,
-            protectionDomain: ProtectionDomain?,
-            classfileBuffer: ByteArray
+        loader: ClassLoader?,
+        className: String?,
+        classBeingRedefined: Class<*>?,
+        protectionDomain: ProtectionDomain?,
+        classfileBuffer: ByteArray,
     ): ByteArray? {
         if (className == null || loader == null) return null
 
@@ -58,32 +56,34 @@ class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean)
 
         if (className == "com/intellij/mock/MockComponentManager" && isMockComponentManagerCreationTracerCanBeLoaded(loader)) {
             return loadTransformAndSerialize(classfileBuffer, this::transformMockComponentManager)
-        }
-        else if (className == "com/intellij/mock/MockComponentManager$1" && isMockComponentManagerCreationTracerCanBeLoaded(loader)) {
+        } else if (className == "com/intellij/mock/MockComponentManager$1" && isMockComponentManagerCreationTracerCanBeLoaded(loader)) {
             return loadTransformAndSerialize(classfileBuffer, this::transformMockComponentManagerPicoContainer)
         }
 
         return null
     }
 
-
     private fun createMethodTransformClassVisitor(
-            out: ClassVisitor,
-            predicate: (name: String, desc: String) -> Boolean,
-            transform: (original: MethodVisitor) -> MethodVisitor
+        out: ClassVisitor,
+        predicate: (name: String, desc: String) -> Boolean,
+        transform: (original: MethodVisitor) -> MethodVisitor,
     ): ClassVisitor {
         return object : ClassVisitor(Opcodes.API_VERSION, out) {
-
             var visited = false
 
-            override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+            override fun visitMethod(
+                access: Int,
+                name: String,
+                desc: String,
+                signature: String?,
+                exceptions: Array<out String>?,
+            ): MethodVisitor {
                 val original = super.visitMethod(access, name, desc, signature, exceptions)
                 return if (predicate(name, desc)) {
                     assert(!visited)
                     visited = true
                     transform(original)
-                }
-                else {
+                } else {
                     original
                 }
             }
@@ -102,13 +102,18 @@ class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean)
                     super.visitCode()
                     visitLabel(Label())
                     visitVarInsn(Opcodes.ALOAD, 0)
-                    visitFieldInsn(Opcodes.GETFIELD, "com/intellij/mock/MockComponentManager$1", "this$0", "Lcom/intellij/mock/MockComponentManager;")
+                    visitFieldInsn(
+                        Opcodes.GETFIELD,
+                        "com/intellij/mock/MockComponentManager$1",
+                        "this$0",
+                        "Lcom/intellij/mock/MockComponentManager;"
+                    )
                     visitMethodInsn(
-                            Opcodes.INVOKESTATIC,
-                            "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
-                            "onGetComponentInstance",
-                            "(Lcom/intellij/mock/MockComponentManager;)V",
-                            false
+                        Opcodes.INVOKESTATIC,
+                        "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
+                        "onGetComponentInstance",
+                        "(Lcom/intellij/mock/MockComponentManager;)V",
+                        false
                     )
                 }
             }
@@ -122,11 +127,11 @@ class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean)
                     if (opcode == Opcodes.RETURN) {
                         visitVarInsn(Opcodes.ALOAD, 0)
                         visitMethodInsn(
-                                Opcodes.INVOKESTATIC,
-                                "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
-                                "onCreate",
-                                "(Lcom/intellij/mock/MockComponentManager;)V",
-                                false
+                            Opcodes.INVOKESTATIC,
+                            "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
+                            "onCreate",
+                            "(Lcom/intellij/mock/MockComponentManager;)V",
+                            false
                         )
                     }
                     super.visitInsn(opcode)
