@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
+import org.jetbrains.kotlin.nativeDistribution.NativeProtoDistributionKt
 import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -206,6 +207,7 @@ tasks.register("distCompiler") {
         dependsOn 'distTools'
         dependsOn 'distBin'
         dependsOn 'distSwiftExport'
+        dependsOn 'distKonanPlatforms'
         dependsOn 'distKonanProperties'
     }
 }
@@ -294,30 +296,29 @@ tasks.register("distSwiftExport", Sync) {
     into(nativeDistribution.map { it.swiftExport })
 }
 
-// This task moves files into konan subfolder of the root distribution folder. Other tasks
-// move into other subfolders of that folder; so this cannot be made Sync.
+tasks.register("distKonanPlatforms", Sync) {
+    from(NativeProtoDistributionKt.getNativeProtoDistribution(project).konanPlatforms)
+    into(nativeDistribution.map { it.konanPlatforms })
+}
+
+// This task copies a single file into a directory, that is shared with other tasks.
+// Making it Sync may conflict with other tasks.
 tasks.register("distKonanProperties", Copy) {
-    from(project.file('konan')) {
-        exclude('**/*.properties')
-    }
-
-    from(project.file('konan')) {
-        include('**/*.properties')
-        filter(ReplaceTokens, tokens: [compilerVersion: kotlinVersion])
-        // Set LLVM variant that will be used by default in the distribution.
-        // `user` - smaller, includes only necessary components.
-        // `dev` - bigger, includes (almost) every possible component. Use this one,
-        //          if your feature requires component that is not a part of user distribution (yet).
-        // Note: by default konan.properties use `dev` variant because it is needed for building our LLVM dynamic library.
-        String llvmVariant = 'user'
-        filter(ReplaceTokens,
-                beginToken: '$',
-                endToken: '',
-                tokens: [("llvm.${hostName}.dev".toString()): "\$llvm.${hostName}.${llvmVariant}".toString()]
-        )
-    }
-
+    from(NativeProtoDistributionKt.getNativeProtoDistribution(project).konanProperties)
     into(nativeDistribution.map { it.konanProperties.asFile.parentFile })
+
+    filter(ReplaceTokens, tokens: [compilerVersion: kotlinVersion])
+    // Set LLVM variant that will be used by default in the distribution.
+    // `user` - smaller, includes only necessary components.
+    // `dev` - bigger, includes (almost) every possible component. Use this one,
+    //          if your feature requires component that is not a part of user distribution (yet).
+    // Note: by default konan.properties use `dev` variant because it is needed for building our LLVM dynamic library.
+    String llvmVariant = 'user'
+    filter(ReplaceTokens,
+            beginToken: '$',
+            endToken: '',
+            tokens: [("llvm.${hostName}.dev".toString()): "\$llvm.${hostName}.${llvmVariant}".toString()]
+    )
 }
 
 tasks.register("crossDistRuntime") {
