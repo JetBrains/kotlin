@@ -568,7 +568,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     name = it.name
                 }
             }
-            val typeRemapper = IrTypeParameterRemapper(sourceTypeParameters.associateWith { fakeTypeParameters[it.index] })
+            val typeRemapper = MapBasedIrTypeParameterRemapper(sourceTypeParameters.associateWith { fakeTypeParameters[it.index] })
             for (fakeTypeParameter in fakeTypeParameters) {
                 val sourceTypeParameter = sourceTypeParameters[fakeTypeParameter.index]
                 fakeTypeParameter.superTypes = sourceTypeParameter.superTypes.map { typeRemapper.remapType(it) }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
  * After moving an [org.jetbrains.kotlin.ir.IrElement], some type parameter references within it may become out of scope.
  * This remapper restores validity by redirecting those references to new type parameters.
  */
-class IrTypeParameterRemapper(
+class MapBasedIrTypeParameterRemapper(
     private val typeParameterMap: Map<IrTypeParameter, IrTypeParameter>
 ) : TypeRemapper {
     override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
@@ -35,7 +35,7 @@ class IrTypeParameterRemapper(
                 type.annotations,
                 type.abbreviation?.remap()
             ).apply {
-                annotations.forEach { it.remapTypes(this@IrTypeParameterRemapper) }
+                annotations.forEach { it.remapTypes(this@MapBasedIrTypeParameterRemapper) }
             }
 
     private fun IrClassifierSymbol.remap() =
@@ -55,6 +55,6 @@ class IrTypeParameterRemapper(
             arguments.memoryOptimizedMap { it.remap() },
             annotations
         ).apply {
-            annotations.forEach { it.remapTypes(this@IrTypeParameterRemapper) }
+            annotations.forEach { it.remapTypes(this@MapBasedIrTypeParameterRemapper) }
         }
 }
