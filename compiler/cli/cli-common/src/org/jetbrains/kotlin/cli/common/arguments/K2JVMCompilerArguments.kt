@@ -538,7 +538,7 @@ problems with parentheses in identifiers on certain platforms."""
 
     @Argument(
         value = "-Xjvm-expose-boxed",
-        description = "Expose inline classes as is instead of underlying type to be called from Java."
+        description = "Expose inline classes and functions, accepting and returning them, to Java."
     )
     var jvmExposeBoxed = false
         set(value) {
