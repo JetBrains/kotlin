@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-
-interface IrMaybeDeserializedClass : IrDeclaration {
+interface IrLazyClassBase : IrLazyDeclarationBase {
     val moduleName: String?
+        get() = null
 
-    val isNewPlaceForBodyGeneration: Boolean
+    val isNewPlaceForBodyGeneration: Boolean?
+        get() = null
+
+    val isK2: Boolean
 }

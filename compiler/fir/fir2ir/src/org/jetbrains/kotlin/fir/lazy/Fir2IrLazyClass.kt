@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -48,7 +48,7 @@ class Fir2IrLazyClass(
     override val symbol: IrClassSymbol,
     parent: IrDeclarationParent,
 ) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass>, Fir2IrTypeParametersContainer,
-    IrMaybeDeserializedClass, Fir2IrComponents by c {
+    IrLazyClassBase, Fir2IrComponents by c {
     init {
         this.parent = parent
         symbol.bind(this)
@@ -262,4 +262,6 @@ class Fir2IrLazyClass(
 
     override val isNewPlaceForBodyGeneration: Boolean
         get() = fir.isNewPlaceForBodyGeneration == true
+
+    override val isK2: Boolean get() = true
 }
