@@ -498,15 +498,6 @@ class UklibResolutionTestsWithMockComponents {
                         /**
                          * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
                          */
-                        /**
-                         * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
-                         */
-                        /**
-                         * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
-                         */
-                        /**
-                         * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
-                         */
                     )
                 ),
             ),
