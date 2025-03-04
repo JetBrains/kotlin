@@ -1,7 +1,6 @@
 import org.gradle.jvm.tasks.Jar
 
 plugins {
-    java
     kotlin("jvm")
 }
 
@@ -9,6 +8,8 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
+    implementation("org.javassist:javassist:3.30.2-GA")
+    implementation(project(":test-instrumenter:bootclasspath"))
 }
 
 sourceSets {
@@ -21,6 +22,8 @@ tasks {
         manifest {
             attributes["Manifest-Version"] = 1.0
             attributes["PreMain-Class"] = "org.jetbrains.kotlin.testFramework.TestInstrumentationAgent"
+            attributes["Can-Retransform-Classes"] = true
+//            attributes["Boot-Class-Path"] = true
         }
     }
 }

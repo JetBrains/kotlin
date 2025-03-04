@@ -166,6 +166,7 @@ fun Project.projectTest(
         .orNull?.toBoolean() != true
     if (shouldInstrument) {
         evaluationDependsOn(":test-instrumenter")
+        evaluationDependsOn(":test-instrumenter:bootclasspath")
     }
     return getOrCreateTask<Test>(taskName) {
         dependsOn(":createIdeaHomeForTests")
@@ -222,10 +223,13 @@ fun Project.projectTest(
         if (shouldInstrument) {
             val instrumentationArgsProperty = project.providers.gradleProperty("kotlin.test.instrumentation.args")
             val testInstrumenterOutputs = project.tasks.findByPath(":test-instrumenter:jar")!!.outputs.files
+            val testInstrumenterBootclasspathOutputs = project.tasks.findByPath(":test-instrumenter:bootclasspath:jar")!!.outputs.files
             doFirst {
                 val agent = testInstrumenterOutputs.singleFile
+                val agentHelper = testInstrumenterBootclasspathOutputs.singleFile
                 val args = instrumentationArgsProperty.orNull?.let { "=$it" }.orEmpty()
-                jvmArgs("-javaagent:$agent$args")
+
+                jvmArgs("-Xbootclasspath/a:$agentHelper", "-javaagent:$agent$args")
             }
             dependsOn(":test-instrumenter:jar")
         }
