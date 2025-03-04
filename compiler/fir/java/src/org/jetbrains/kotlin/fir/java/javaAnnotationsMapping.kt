@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -274,6 +275,7 @@ private fun JavaAnnotationArgument.mapJavaRetentionArgument(): FirExpression? {
     }
 }
 
+@OptIn(DirectDeclarationsAccess::class)
 private fun fillAnnotationArgumentMapping(
     session: FirSession,
     lookupTag: ConeClassLikeLookupTagImpl,

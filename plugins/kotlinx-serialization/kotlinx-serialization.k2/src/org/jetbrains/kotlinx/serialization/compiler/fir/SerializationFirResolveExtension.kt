@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -41,6 +42,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackage
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.generatedSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.kSerializerId
 
+@OptIn(DirectDeclarationsAccess::class)
 class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGenerationExtension(session) {
 
     internal val runtimeHasEnumSerializerFactory by lazy {

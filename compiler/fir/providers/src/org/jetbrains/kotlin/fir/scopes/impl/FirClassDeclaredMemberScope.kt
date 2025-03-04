@@ -27,6 +27,7 @@ abstract class FirClassDeclaredMemberScope(val classId: ClassId) : FirContaining
     abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirClassDeclaredMemberScope?
 }
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirClassDeclaredMemberScopeImpl(
     val useSiteSession: FirSession,
     private val klass: FirClass,

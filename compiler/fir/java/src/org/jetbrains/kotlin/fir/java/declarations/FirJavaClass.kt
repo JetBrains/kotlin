@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.properties.Delegates
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
@@ -109,6 +110,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val annotations: List<FirAnnotation> get() = annotationList
 
     // TODO: the lazy declarations is a workaround for KT-55387, some non-lazy solution should probably be used instead
+    @DirectDeclarationsAccess
     override val declarations: List<FirDeclaration> get() = declarationList.declarations
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead

@@ -33,11 +33,13 @@ fun FirClass.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol?
 }
 
 // TODO: dog shit, rewrite with scopes
+@DirectDeclarationsAccess
 fun FirClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
     return declarations.filterIsInstance<FirEnumEntry>()
 }
 
+@DirectDeclarationsAccess
 fun FirClassSymbol<*>.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
     return fir.collectEnumEntries().map { it.symbol }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -115,6 +116,7 @@ fun FirClassSymbol<*>.superClassOrAny(session: FirSession): FirRegularClassSymbo
     } ?: session.builtinTypes.anyType.toRegularClassSymbol(session) ?: error("Symbol for kotlin/Any not found")
 }
 
+@DirectDeclarationsAccess
 internal fun FirClassSymbol<*>.isSerializableEnumWithMissingSerializer(session: FirSession): Boolean {
     if (!isEnumClass) return false
     if (hasSerializableOrMetaAnnotation(session)) return false

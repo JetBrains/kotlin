@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRenderer
@@ -142,6 +143,7 @@ class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoaded
     }
 }
 
+@OptIn(DirectDeclarationsAccess::class)
 abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>>(
     testServices: TestServices,
     override val artifactKind: ArtifactKind<A>

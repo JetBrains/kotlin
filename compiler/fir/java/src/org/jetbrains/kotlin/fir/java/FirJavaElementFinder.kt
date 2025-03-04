@@ -57,6 +57,7 @@ val FirSession.javaElementFinder: FirJavaElementFinder? by FirSession.nullableSe
 
 private typealias PropertyEvaluator = (FirProperty) -> String?
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirJavaElementFinder(
     private val session: FirSession,
     project: Project

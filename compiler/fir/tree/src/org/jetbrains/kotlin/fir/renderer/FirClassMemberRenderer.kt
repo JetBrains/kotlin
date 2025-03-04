@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
@@ -13,6 +14,7 @@ open class FirClassMemberRenderer {
     protected val visitor: FirRenderer.Visitor get() = components.visitor
     protected val printer: FirPrinter get() = components.printer
 
+    @OptIn(DirectDeclarationsAccess::class)
     open fun render(regularClass: FirRegularClass) {
         render(regularClass.declarations)
     }

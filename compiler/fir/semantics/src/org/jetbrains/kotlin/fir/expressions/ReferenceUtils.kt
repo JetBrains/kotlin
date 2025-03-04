@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -29,6 +30,7 @@ annotation class UnsafeExpressionUtility
  * Returns the [FirReference] of this [FirElement], if available.
  * The reference is resolved in the context of a use-site [session], which may be required to find a symbol for an ID-based expression.
  */
+@DirectDeclarationsAccess
 fun FirElement.toReference(session: FirSession): FirReference? {
     return when (this) {
         is FirExpression -> toReferenceImpl(session)
@@ -42,6 +44,7 @@ fun FirElement.toReference(session: FirSession): FirReference? {
  * Returns the [FirReference] of this [FirExpression], if available.
  * The reference is resolved in the context of a use-site [session], which may be required to find a symbol for an ID-based expression.
  */
+@DirectDeclarationsAccess
 fun FirExpression.toReference(session: FirSession): FirReference? {
     return toReferenceImpl(session)
 }
@@ -53,10 +56,12 @@ fun FirExpression.toReference(session: FirSession): FirReference? {
  * In most cases it's better to use safe [toReference] methods with session parameter.
  */
 @UnsafeExpressionUtility
+@DirectDeclarationsAccess
 fun FirExpression.toReferenceUnsafe(): FirReference? {
     return toReferenceImpl(session = null)
 }
 
+@DirectDeclarationsAccess
 private fun FirExpression.toReferenceImpl(session: FirSession?): FirReference? {
     return when (this) {
         is FirEnumEntryDeserializedAccessExpression -> {
@@ -71,6 +76,7 @@ private fun FirExpression.toReferenceImpl(session: FirSession?): FirReference? {
     }
 }
 
+@DirectDeclarationsAccess
 fun FirEnumEntryDeserializedAccessExpression.toReference(session: FirSession): FirReference {
     fun createErrorReference(diagnostic: ConeDiagnostic): FirErrorNamedReference {
         return buildErrorNamedReference {
@@ -89,6 +95,7 @@ fun FirEnumEntryDeserializedAccessExpression.toReference(session: FirSession): F
     }
 }
 
+@DirectDeclarationsAccess
 val FirVariableAssignment.calleeReference: FirReference?
     get() {
         // non-nullable session for `toReferenceImpl` is needed only for `FirEnumEntryDeserializedAccessExpression` value,
@@ -98,6 +105,7 @@ val FirVariableAssignment.calleeReference: FirReference?
 
 // --------------------------------------------------------------------------------------------------------
 
+@DirectDeclarationsAccess
 fun FirExpression.toResolvedCallableReference(session: FirSession): FirResolvedNamedReference? {
     return toResolvedCallableReferenceImpl(session)
 }
@@ -113,16 +121,19 @@ fun FirResolvable.toResolvedCallableReference(): FirResolvedNamedReference? {
  * In most cases it's better to use safe [toResolvedCallableReference] methods with session parameter
  */
 @UnsafeExpressionUtility
+@DirectDeclarationsAccess
 fun FirExpression.toResolvedCallableReferenceUnsafe(): FirResolvedNamedReference? {
     return toResolvedCallableReferenceImpl(session = null)
 }
 
+@DirectDeclarationsAccess
 fun FirExpression.toResolvedCallableReferenceImpl(session: FirSession?): FirResolvedNamedReference? {
     return toReferenceImpl(session)?.resolved
 }
 
 // --------------------------------------------------------------------------------------------------------
 
+@DirectDeclarationsAccess
 fun FirExpression.toResolvedCallableSymbol(session: FirSession): FirCallableSymbol<*>? {
     return toResolvedCallableReference(session)?.resolvedSymbol as? FirCallableSymbol<*>?
 }
@@ -138,6 +149,7 @@ fun FirResolvable.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
  * In most cases it's better to use safe [toResolvedCallableSymbol] methods with session parameter
  */
 @UnsafeExpressionUtility
+@DirectDeclarationsAccess
 fun FirExpression.toResolvedCallableSymbolUnsafe(): FirCallableSymbol<*>? {
     return toResolvedCallableReferenceUnsafe()?.resolvedSymbol as? FirCallableSymbol<*>?
 }

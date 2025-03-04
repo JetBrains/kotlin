@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
@@ -79,6 +80,7 @@ abstract class ConeAnnotationAndConfigCompanion<T>(val annotationName: ClassId) 
 
 }
 
+@OptIn(DirectDeclarationsAccess::class)
 object ConeLombokAnnotations {
     class Accessors(
         val fluent: Boolean = false,

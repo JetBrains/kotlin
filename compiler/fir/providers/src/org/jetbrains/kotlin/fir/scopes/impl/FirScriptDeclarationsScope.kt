@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
+@OptIn(DirectDeclarationsAccess::class)
 class FirScriptDeclarationsScope(
     val useSiteSession: FirSession,
     val script: FirScript,
