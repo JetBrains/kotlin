@@ -37,6 +37,7 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirControlFlowG
     abstract override val symbol: FirClassSymbol<FirClass>
     abstract val classKind: ClassKind
     abstract val superTypeRefs: List<FirTypeRef>
+    @DirectDeclarationsAccess
     abstract val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
 

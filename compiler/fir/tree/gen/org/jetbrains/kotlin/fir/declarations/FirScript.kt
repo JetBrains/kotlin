@@ -28,6 +28,7 @@ abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val name: Name
+    @DirectDeclarationsAccess
     abstract val declarations: List<FirDeclaration>
     abstract override val source: KtSourceElement
     abstract override val symbol: FirScriptSymbol

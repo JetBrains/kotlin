@@ -413,6 +413,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("superTypeRefs", typeRef, withReplace = true, withTransform = true)
         +declarations {
             withTransform = true
+            optInAnnotation = directDeclarationsAccessAnnotation
         }
         +annotations
     }
@@ -727,6 +728,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField(import, withTransform = true)
         +declarations {
             withTransform = true
+            optInAnnotation = directDeclarationsAccessAnnotation
         }
         +field("name", string)
         +field("sourceFile", sourceFileType, nullable = true)
@@ -742,6 +744,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +declarations {
             withTransform = true
             withReplace = true
+            optInAnnotation = directDeclarationsAccessAnnotation
         }
         +field("source", sourceElementType, nullable = false)
         +declaredSymbol(scriptSymbolType)
