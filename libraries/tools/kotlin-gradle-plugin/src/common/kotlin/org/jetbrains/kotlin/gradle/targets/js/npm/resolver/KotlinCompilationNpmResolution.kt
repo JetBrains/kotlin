@@ -32,10 +32,10 @@ class KotlinCompilationNpmResolution(
 
     val inputs: PackageJsonProducerInputs
         get() = PackageJsonProducerInputs(
-            internalDependencies.map { it.projectName },
-            externalGradleDependencies.map { it.file },
-            externalNpmDependencies.map { it.uniqueRepresentation() },
-            fileCollectionDependencies.flatMap { it.files }
+            internalDependencies = internalDependencies.map { it.projectName },
+            externalGradleDependencies = externalGradleDependencies.map { it.file },
+            externalDependencies = externalNpmDependencies.map { it.uniqueRepresentation() },
+            fileCollectionDependencies = fileCollectionDependencies.flatMap { it.files }
         )
 
     private var closed = false
@@ -84,7 +84,7 @@ class KotlinCompilationNpmResolution(
     ): PreparedKotlinCompilationNpmResolution {
         val rootResolver = npmResolutionManager.parameters.resolution.get()
 
-        val internalNpmDependencies = internalDependencies
+        val internalNpmDependencies: List<NpmDependencyDeclaration> = internalDependencies
             .map {
                 val compilationNpmResolution: KotlinCompilationNpmResolution = rootResolver[it.projectPath][it.compilationName]
                 compilationNpmResolution.getResolutionOrPrepare(
@@ -107,7 +107,7 @@ class KotlinCompilationNpmResolution(
                     )
                 }
         }.filterNotNull()
-        val transitiveNpmDependencies = (importedExternalGradleDependencies.flatMap {
+        val transitiveNpmDependencies: List<NpmDependencyDeclaration> = (importedExternalGradleDependencies.flatMap {
             it.dependencies
         } + internalNpmDependencies).filter { it.scope != NpmDependency.Scope.DEV }
 
@@ -118,9 +118,9 @@ class KotlinCompilationNpmResolution(
         val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies, logger)
 
         return PreparedKotlinCompilationNpmResolution(
-            npmResolutionManager.packagesDir.map { it.dir(npmProjectName) },
-            importedExternalGradleDependencies,
-            allNpmDependencies,
+            npmProjectDir = npmResolutionManager.packagesDir.map { it.dir(npmProjectName) },
+            externalGradleDependencies = importedExternalGradleDependencies,
+            externalNpmDependencies = allNpmDependencies,
         )
     }
 

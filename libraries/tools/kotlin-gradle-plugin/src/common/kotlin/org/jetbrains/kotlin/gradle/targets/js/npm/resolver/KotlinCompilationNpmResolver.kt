@@ -201,6 +201,7 @@ class KotlinCompilationNpmResolver(
      * For local (subproject to subproject) dependencies, just make sure the `package.json` is available.
      */
     inner class ConfigurationVisitor {
+        /** Project-to-project dependencies */
         private val internalDependencies = mutableSetOf<InternalDependency>()
         private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
@@ -274,7 +275,6 @@ class KotlinCompilationNpmResolver(
             val artifactId = artifact.id
             val componentIdentifier = artifactId.componentIdentifier
 
-//            // TODO update
             @Suppress("DEPRECATION")
             val isCompositeProjectDep = artifactId `is` CompositeProjectComponentArtifactMetadata
 //
@@ -283,12 +283,16 @@ class KotlinCompilationNpmResolver(
 ////                visitCompositeProjectDependency(dependency, componentIdentifier as ProjectComponentIdentifier)
 //            }
 
-            if (componentIdentifier is ProjectComponentIdentifier && !isCompositeProjectDep) {
+//            // TODO KT-74735 remove isCompositeProjectDep
+            // What is the purpose of visiting project dependencies?
+            // Why should external/composite dependencies be treated differently to project-to-project dependencies?
+            if (componentIdentifier is ProjectComponentIdentifier
+                && !isCompositeProjectDep
+            ) {
                 visitProjectDependency(componentIdentifier)
-                return
+            } else {
+                externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
             }
-
-            externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
         }
 
         private fun visitCompositeProjectDependency(
@@ -306,6 +310,7 @@ class KotlinCompilationNpmResolver(
             componentIdentifier: ProjectComponentIdentifier,
         ) {
             val dependentProject = project.findProject(componentIdentifier.projectPath)
+//                ?: return
                 ?: error("Cannot find project ${componentIdentifier.projectPath}")
 
             rootResolver.findDependentResolver(project, dependentProject)
