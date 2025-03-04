@@ -218,12 +218,16 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
+        return result.addSmartcastIfNeeded(data)
+    }
+
+    private fun FirExpression.addSmartcastIfNeeded(resolutionMode: ResolutionMode): FirExpression {
         // If we're resolving the LHS of an assignment, skip DFA to prevent the access being treated as a variable read and
         // smart-casts being applied.
-        if (data !is ResolutionMode.AssignmentLValue) {
-            return transformExpressionUsingSmartcastInfo(result)
+        if (resolutionMode !is ResolutionMode.AssignmentLValue) {
+            return transformExpressionUsingSmartcastInfo(this)
         }
-        return result
+        return this
     }
 
     private fun transformExpressionUsingSmartcastInfo(original: FirExpression): FirExpression {
@@ -290,7 +294,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirPropertyAccessExpression -> transformQualifiedAccessExpression(
                 this, resolutionMode, isUsedAsReceiver = true, isUsedAsGetClassReceiver = isUsedAsGetClassReceiver
             )
-            else -> transformSingle(this@FirExpressionsResolveTransformer, resolutionMode)
+            else -> transformSingle(this@FirExpressionsResolveTransformer, resolutionMode).addSmartcastIfNeeded(resolutionMode)
         }
     }
 

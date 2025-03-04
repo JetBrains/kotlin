@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalReturnsDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeContractConstantValues
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -1118,17 +1120,20 @@ abstract class FirDataFlowAnalyzer(
         val originalFunction = callee.originalIfFakeOverride()
         val contractDescription = (originalFunction?.symbol ?: callee.symbol).resolvedContractDescription ?: return
         val conditionalEffects = contractDescription.effects.mapNotNull { it.effect as? ConeConditionalEffectDeclaration }
-        if (conditionalEffects.isEmpty()) return
+        val conditionalReturns = contractDescription.effects.mapNotNull { it.effect as? ConeConditionalReturnsDeclaration }
+        if (conditionalEffects.isEmpty() && conditionalReturns.isEmpty()) return
 
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return
-        val argumentVariables = Array(arguments.size) { i ->
+        val argumentVariablesForConditionalEffects = Array(arguments.size) { i ->
             arguments[i]?.let { argument ->
                 flow.getVariableIfUsedOrReal(argument)
                     // Only apply contract information to argument if it has not been reassigned in a lambda.
                     .takeIf { callArgsExit == null || isSameValueIn(callArgsExit, argument, flow) }
             }
         }
-        if (argumentVariables.all { it == null }) return
+        val allArgumentVariables = Array(arguments.size) { i ->
+            arguments[i]?.let { argument -> flow.getOrCreateVariable(argument) }
+        }
 
         val typeParameters = callee.typeParameters
         val typeArgumentsSubstitutor = if (typeParameters.isNotEmpty() && qualifiedAccess is FirQualifiedAccessExpression) {
@@ -1149,19 +1154,43 @@ abstract class FirDataFlowAnalyzer(
             substitutorByMap(map, components.session).chain(typeArgumentsSubstitutor)
         }
 
-        for (conditionalEffect in conditionalEffects) {
-            val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
-            val operation = effect.value.toOperation()
-            val statements =
-                logicSystem.approveContractStatement(conditionalEffect.condition, argumentVariables, substitutor) {
-                    logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = operation == null)
-                } ?: continue // TODO: do what if the result is known to be false?
-            if (operation == null) {
-                flow.addAllStatements(statements)
-            } else if (qualifiedAccess is FirExpression) {
-                val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess)
-                if (functionCallVariable != null) {
-                    flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
+        if (argumentVariablesForConditionalEffects.any { it != null }) {
+            for (conditionalEffect in conditionalEffects) {
+                val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
+                val operation = effect.value.toOperation()
+                val statements =
+                    logicSystem.approveContractStatement(conditionalEffect.condition, argumentVariablesForConditionalEffects, substitutor) {
+                        logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = operation == null)
+                    } ?: continue // TODO: do what if the result is known to be false?
+                if (operation == null) {
+                    flow.addAllStatements(statements)
+                } else if (qualifiedAccess is FirExpression) {
+                    val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess)
+                    if (functionCallVariable != null) {
+                        flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
+                    }
+                }
+            }
+        }
+
+        if (qualifiedAccess is FirExpression) {
+            for (conditionalReturn in conditionalReturns) {
+                val effect = conditionalReturn.returnsEffect as? ConeReturnsEffectDeclaration ?: continue
+                if (effect.value != ConeContractConstantValues.NOT_NULL) continue
+                val statements =
+                    logicSystem.approveContractStatement(
+                        conditionalReturn.argumentsCondition, allArgumentVariables, substitutor, typesOnlyFromRealVars = false
+                    ) {
+                        logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = true)
+                    }
+                statements?.forEach { (variable, statement) ->
+                    val approved = logicSystem.approveTypeStatement(flow, statement)
+                    if (approved) {
+                        val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess) ?: continue
+                        val functionReturnCondition = OperationStatement(functionCallVariable, Operation.NotEqNull)
+                        val functionReturnStatements = logicSystem.approveOperationStatement(flow, functionReturnCondition, removeApprovedOrImpossible = true)
+                        flow.addAllStatements(functionReturnStatements)
+                    }
                 }
             }
         }
