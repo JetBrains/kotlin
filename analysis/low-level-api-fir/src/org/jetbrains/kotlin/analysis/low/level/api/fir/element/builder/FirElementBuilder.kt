@@ -344,15 +344,27 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(
     codeFragmentAware: Boolean = false,
     predicate: (KtDeclaration) -> Boolean = { true },
 ): KtDeclaration? {
-    var candidate: KtDeclaration? = null
-
-    val elementsToCheck = if (codeFragmentAware) {
-        parentsWithSelfCodeFragmentAware
+    return if (codeFragmentAware && containingFile is KtCodeFragment) {
+        getCodeFragmentAwareNonLocalContainingOrThisDeclaration(predicate)
     } else {
-        parentsWithSelf
+        getSimpleNonLocalContainingOrThisDeclaration(predicate)
+    }
+}
+
+private fun PsiElement.getSimpleNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean): KtDeclaration? {
+    for (parent in parentsWithSelf) {
+        if (parent is KtDeclaration && declarationCanBeLazilyResolved(parent) && predicate(parent)) {
+            return parent
+        }
     }
 
-    for (parent in elementsToCheck) {
+    return null
+}
+
+private fun PsiElement.getCodeFragmentAwareNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean): KtDeclaration? {
+    var candidate: KtDeclaration? = null
+
+    for (parent in parentsWithSelfCodeFragmentAware) {
         candidate?.let { notNullCandidate ->
             if (parent is KtEnumEntry ||
                 parent is KtCallableDeclaration &&
@@ -371,14 +383,10 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(
         // A new candidate only needs to be proposed when `candidate` is null.
         if (candidate == null &&
             parent is KtDeclaration &&
-            declarationCanBeLazilyResolved(parent, codeFragmentAware) &&
+            declarationCanBeLazilyResolved(parent, codeFragmentAware = true) &&
             predicate(parent)
         ) {
-            if (codeFragmentAware && this.containingFile is KtCodeFragment) {
-                candidate = parent
-            } else {
-                return parent
-            }
+            candidate = parent
         }
     }
 
