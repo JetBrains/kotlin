@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_LINKAGE_RUNTIME_ERROR
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.linkage.partial.*
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.compact
@@ -527,11 +528,45 @@ internal class PartiallyLinkedIrTreePatcher(
                 return symbol.owner.name.asString().endsWith(COMPOSE_STABLE_FIELD_MARKER)
             }
 
+            fun IrFieldSymbol.generateArtificialStabilityGetter(getterName: String, parent: IrDeclarationContainer): IrSimpleFunction {
+
+                val stabilityField = owner
+
+                val stabilityGetter = builtIns.irFactory.buildFun {
+                    startOffset = UNDEFINED_OFFSET
+                    endOffset = UNDEFINED_OFFSET
+                    name = Name.identifier(getterName)
+                    returnType = stabilityField.type
+                    visibility = DescriptorVisibilities.PUBLIC
+                    origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION
+                }.also { fn ->
+                    fn.parent = parent
+                    fn.body = builtIns.irFactory.createBlockBody(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        listOf(
+                            IrReturnImpl(
+                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                builtIns.nothingType,
+                                fn.symbol,
+                                IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this, stabilityField.type),
+                            ),
+                        ),
+                    )
+                    parent.addChild(fn)
+                }
+
+                return stabilityGetter
+            }
+
             fun IrFieldSymbol.findSuitableStabilityGetter(): IrSimpleFunction? {
                 val getterFunName = owner.name.asString().removeSuffix(COMPOSE_STABLE_FIELD_MARKER) + COMPOSE_STABILITY_GETTER_MARKER
-                return (owner.parent as? IrDeclarationContainer)?.let { container ->
-                    container.findDeclaration<IrSimpleFunction> { it.name.asString() == getterFunName }
+                val artificialGetterFunName = $$"$$getterFunName$artificial"
+                return (owner.parent as? IrDeclarationContainer)?.let { parent ->
+                    parent.findDeclaration<IrSimpleFunction> { it.name.asString() == getterFunName }
+                        ?: parent.findDeclaration<IrSimpleFunction> { it.name.asString() == artificialGetterFunName }   // try to find already-crafted artificial getter
+                        ?: generateArtificialStabilityGetter(artificialGetterFunName, parent)                           // generate one if none found
                 }
+
             }
 
             fun IrGetField.isCrossModuleGetField(): Boolean {
