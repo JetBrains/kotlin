@@ -1967,8 +1967,26 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
     @Test
+    @TestMetadata("aliasedAnnotation.kt")
+    public void testAliasedAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/aliasedAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("aliasedMetaAnnotation.kt")
+    public void testAliasedMetaAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/aliasedMetaAnnotation.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotation.kt")
+    public void testAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/annotation.kt");
     }
 
     @Test
@@ -1999,6 +2017,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("dataClassProperty.kt")
     public void testDataClassProperty() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/dataClassProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("preresolvedAliasedAnnotation.kt")
+    public void testPreresolvedAliasedAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/preresolvedAliasedAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("preresolvedAliasedMetaAnnotation.kt")
+    public void testPreresolvedAliasedMetaAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/preresolvedAliasedMetaAnnotation.kt");
     }
 
     @Test

@@ -183,8 +183,20 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
   @TestDataPath("$PROJECT_ROOT")
   public class Status {
     @Test
+    @TestMetadata("aliasedAnnotation.kt")
+    public void testAliasedAnnotation() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/status/aliasedAnnotation.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInStatus() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/diagnostics/status"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("annotatedAllOpenAnnotation.kt")
+    public void testAnnotatedAllOpenAnnotation() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/status/annotatedAllOpenAnnotation.kt");
     }
 
     @Test
@@ -221,6 +233,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     @TestMetadata("redundantTransformedVisibility.kt")
     public void testRedundantTransformedVisibility() {
       runTest("plugins/plugin-sandbox/testData/diagnostics/status/redundantTransformedVisibility.kt");
+    }
+
+    @Test
+    @TestMetadata("reversedAliasedAnnotation.kt")
+    public void testReversedAliasedAnnotation() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/status/reversedAliasedAnnotation.kt");
     }
 
     @Test
