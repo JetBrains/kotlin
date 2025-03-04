@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.internal.component.resolution.failure.exception.VariantSelectionByAttributesException
 import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.kotlin.dsl.maven
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
@@ -30,6 +31,7 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.Test
 
+@OptIn(ExperimentalWasmDsl::class)
 class UklibResolutionTestsWithMockComponents {
     @get:Rule
     val tmpDir = TemporaryFolder()
@@ -677,7 +679,7 @@ class UklibResolutionTestsWithMockComponents {
      * - publishLibraryVariantsGroupedByFlavor
      */
 
-    fun `uklib resolution - stdlib-common and other legacy?`() {
+    fun `uklib resolution - stdlib-common and other legacy`() {
         // Do we need this?
     }
 

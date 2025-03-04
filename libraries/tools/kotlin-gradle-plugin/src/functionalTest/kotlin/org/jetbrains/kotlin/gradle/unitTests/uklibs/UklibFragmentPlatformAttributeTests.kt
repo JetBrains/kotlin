@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@OptIn(ExperimentalWasmDsl::class)
 class UklibFragmentPlatformAttributeTests {
 
     @Test
