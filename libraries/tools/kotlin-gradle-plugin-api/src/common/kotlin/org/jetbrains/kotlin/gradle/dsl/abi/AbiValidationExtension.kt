@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.dsl.abi
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 
 /**
@@ -39,6 +40,19 @@ See Gradle issue https://github.com/gradle/gradle/issues/32019
  */
 @KotlinGradlePluginDsl
 interface AbiValidationExtension : AbiValidationVariantSpec {
+    /**
+     * Enable ABI validation tasks.
+     *
+     * If value is `false`, then the tasks of generating, verifying, and updating the dump will do nothing.
+     *
+     * By default, all ABI validation tasks are disabled in order to perform ABI generation and verification
+     * in multi-project builds only on explicitly marked projects.
+     *
+     * `false` by default.
+     */
+    @ExperimentalAbiValidation
+    val enabled: Property<Boolean>
+
     /**
      * All ABI validation report variants that are available in this project.
      *
@@ -140,18 +154,18 @@ interface AbiValidationVariantSpec : Named {
      * A set of filtering rules that restrict Application Binary Interface (ABI) declarations from being included in a dump.
      *
      * The rules combine inclusion and exclusion of declarations.
-     * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.classes]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]):
+     * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.byNames]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]):
      *
      * ```kotlin
      * abiValidation {
      *     filters {
      *         excluded {
-     *             classes.add("foo.Bar")
+     *             byNames.add("foo.Bar")
      *             annotatedWith.add("foo.ExcludeAbi")
      *         }
      *
      *         included {
-     *             classes.add("foo.api.**")
+     *             byNames.add("foo.api.**")
      *             annotatedWith.add("foo.PublicApi")
      *         }
      *     }
@@ -160,7 +174,7 @@ interface AbiValidationVariantSpec : Named {
      *
      * In order for a declaration (class, field, property or function) to get into the dump, it must pass the inclusion **and** exclusion filters.
      *
-     * A declaration successfully passes the exclusion filter if it does not match any of the class name (see [AbiFilterSetSpec.classes]) or annotation (see [AbiFilterSetSpec.annotatedWith]) filter rules.
+     * A declaration successfully passes the exclusion filter if it does not match any of the class name (see [AbiFilterSetSpec.byNames]) or annotation (see [AbiFilterSetSpec.annotatedWith]) filter rules.
      *
      * A declaration successfully passes the inclusion filter if no inclusion rules exist, if it matches any inclusion rule, or if at least one of its members (relevant for class declaration) matches any inclusion rule.
      */

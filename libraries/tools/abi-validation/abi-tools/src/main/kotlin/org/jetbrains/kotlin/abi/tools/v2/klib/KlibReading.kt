@@ -47,6 +47,8 @@ private class Filter(filters: AbiFilters) : AbiReadingFilter {
         if (filtersMatcher.isEmpty) return false
 
         if (declaration is AbiFunction || declaration is AbiProperty) {
+            if (filtersMatcher.isExcludedByName(declaration.qualifiedName.toKotlinQualifiedName())) return true
+
             if (filtersMatcher.hasAnnotationFilters) {
                 var annotationNames = declaration.annotatedWith().names()
 

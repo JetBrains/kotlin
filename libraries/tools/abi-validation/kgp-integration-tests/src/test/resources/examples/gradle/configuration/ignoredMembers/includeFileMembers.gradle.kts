@@ -1,14 +1,10 @@
 /*
- * Copyright 2016-2022 JetBrains s.r.o.
+ * Copyright 2016-2020 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
-
 kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
     abiValidation {
-        filters.included {
-            byNames.addAll("foo.api.**", "foo.PublicClass")
-            annotatedWith.addAll("foo.PublicClass", "foo.PublicField", "foo.PublicProperty")
-        }
+        filters.included.byNames.addAll("examples.classes.a", "examples.classes.d", "examples.classes.testFun")
     }
 }

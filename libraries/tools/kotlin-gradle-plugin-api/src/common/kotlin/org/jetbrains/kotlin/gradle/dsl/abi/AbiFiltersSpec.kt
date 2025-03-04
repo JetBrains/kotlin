@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
  *  A set of filtering rules that restrict Application Binary Interface (ABI) declarations from being included in a dump.
  *
  * The rules combine inclusion and exclusion of declarations.
- * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.classes]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]).
+ * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.byNames]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]).
  *
  * ```kotlin
  * filters {
  *     excluded {
- *         classes.add("foo.Bar")
+ *         byNames.add("foo.Bar")
  *         annotatedWith.add("foo.ExcludeAbi")
  *     }
  *
  *     included {
- *         classes.add("foo.api.**")
+ *         byNames.add("foo.api.**")
  *         annotatedWith.add("foo.PublicApi")
  *     }
  * }
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
  *
  * In order for a declaration (class, field, property or function) to be included in the dump, it must pass **all** inclusion and exclusion filters.
  *
- * A declaration successfully passes the exclusion filter if it does not match any of the class name (see [AbiFilterSetSpec.classes]) or annotation  (see [AbiFilterSetSpec.annotatedWith]) filter rules.
+ * A declaration successfully passes the exclusion filter if it does not match any of the class name (see [AbiFilterSetSpec.byNames]) or annotation  (see [AbiFilterSetSpec.annotatedWith]) filter rules.
  *
  * A declaration successfully passes the inclusion filter if no inclusion rules exist, if it matches any inclusion rule, or if at least one of its members (relevant for class declaration) matches any inclusion rule.
  *
@@ -44,7 +44,7 @@ interface AbiFiltersSpec {
      *  A set of filtering rules that restrict ABI declarations from being included in a dump.
      *
      * The rules combine inclusion and exclusion of declarations.
-     * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.classes]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]).
+     * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.byNames]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]).
      *
      * ```kotlin
      * filters {
@@ -63,12 +63,12 @@ interface AbiFiltersSpec {
      * A set of filtering rules that restrict ABI declarations from being included in a dump.
      *
      * It consists of a combination of rules for including declarations.
-     * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.classes]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]).
+     * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.byNames]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]).
      *
      * ```kotlin
      * filters {
      *     included {
-     *         classes.add("foo.api.**")
+     *         byNames.add("foo.api.**")
      *         annotatedWith.add("foo.PublicApi")
      *     }
      * }
@@ -115,7 +115,7 @@ interface AbiFiltersSpec {
  * ```kotlin
  * filters {
  *     included {
- *         classes.add("foo.api.**")
+ *         byNames.add("foo.api.**")
  *         annotatedWith.add("foo.PublicApi")
  *     }
  * }
@@ -125,7 +125,7 @@ interface AbiFiltersSpec {
  * ```kotlin
  * filters {
  *     excluded {
- *         classes.add("foo.Bar")
+ *         byNames.add("foo.Bar")
  *         annotatedWith.add("foo.ExcludeAbi")
  *     }
  * }
@@ -137,14 +137,14 @@ interface AbiFiltersSpec {
 @ExperimentalAbiValidation
 interface AbiFilterSetSpec {
     /**
-     * Filter by a class name.
+     * Filter by a name.
      *
-     * The name filter compares the qualified class name with the value in the filter:
+     * The name filter compares the symbol qualified name with the value in the filter:
      *
      * ```kotlin
      * filters {
      *     excluded {
-     *         classes.add("foo.Bar") // name filter, excludes class with name `foo.Bar` from dump
+     *         byNames.add("foo.Bar") // name filter, excludes class with name `foo.Bar` from dump
      *     }
      * }
      * ```
@@ -152,6 +152,11 @@ interface AbiFilterSetSpec {
      * For Kotlin classes, the fully qualified names are used.
      * It's important to keep in mind that periods `.` are used everywhere as separators, even in the case of nested classes.
      * For example, in the qualified name `foo.bar.Container.Value`, `Value` is a class nested inside `Container`.
+     *
+     * For Kotlin top-level function or properties in KLib, the fully qualified names are used.
+     * It's important to keep in mind that periods `.` are used everywhere as separators, including separating package and function names.
+     * For example, `foo.bar.myFunction`.
+     * There are no top-level methods in Java, they are all members of some class and the class name is still necessary to filter it out.
      *
      * For classes from Java sources, canonical names are used.
      * The main motivation is to ensure a consistent approach to writing class names, using periods `.` as delimiters throughout.
@@ -164,12 +169,12 @@ interface AbiFilterSetSpec {
      * ```kotlin
      * filters {
      *     excluded {
-     *         classes.add("**.My*") //  A name filter that excludes classes in any non-root package with a name starting with `My`.
+     *         byNames.add("**.My*") //  A name filter that excludes classes in any non-root package with a name starting with `My`.
      *     }
      * }
      * ```
      */
-    val classes: SetProperty<String>
+    val byNames: SetProperty<String>
 
     /**
      * Filter by annotations placed on the declaration.

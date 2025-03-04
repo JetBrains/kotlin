@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationKlibKindExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
@@ -35,7 +36,7 @@ internal fun AbiValidationExtension.configure(project: Project) {
     this as AbiValidationExtensionImpl
 
     configureCommon(project.layout)
-    configureLegacyTasks(project.name, project.tasks, project.layout)
+    configureLegacyTasks(project.name, project.tasks, project.layout, enabled)
 
     // add main root report variant
     variants.add(this)
@@ -50,7 +51,7 @@ internal fun AbiValidationMultiplatformExtension.configure(project: Project) {
 
     configureCommon(project.layout)
     configureMultiplatform()
-    configureLegacyTasks(project.name, project.tasks, project.layout)
+    configureLegacyTasks(project.name, project.tasks, project.layout, enabled)
 
     // add main root report variant
     variants.add(this)
@@ -85,7 +86,12 @@ internal fun AbiValidationMultiplatformVariantSpecImpl.configureMultiplatform() 
  * Creates and preconfigures legacy tasks for [this] report variant.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(projectName: String, tasks: TaskContainer, layout: ProjectLayout) {
+internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
+    projectName: String,
+    tasks: TaskContainer,
+    layout: ProjectLayout,
+    isEnabled: Property<Boolean>,
+) {
     val variantName = name
     val klibFileName = "$projectName$LEGACY_KLIB_DUMP_EXTENSION"
 
@@ -104,21 +110,27 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(projectName: Stri
 
             it.klib.convention(it.klibInput.map { targets -> if (it.klibIsEnabled.get()) targets else emptyList() })
 
-            it.includedClasses.convention(filters.included.classes)
+            it.includedClasses.convention(filters.included.byNames)
             it.includedAnnotatedWith.convention(filters.included.annotatedWith)
-            it.excludedClasses.convention(filters.excluded.classes)
+            it.excludedClasses.convention(filters.excluded.byNames)
             it.excludedAnnotatedWith.convention(filters.excluded.annotatedWith)
+
+            it.onlyIf { isEnabled.get() }
         }
 
     tasks.register(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName), KotlinLegacyAbiCheckTaskImpl::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
+
+        it.onlyIf { isEnabled.get() }
     }
 
     tasks.register(KotlinLegacyAbiUpdateTask.nameForVariant(variantName), KotlinLegacyAbiUpdateTask::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
+
+        it.onlyIf { isEnabled.get() }
     }
 }

@@ -692,7 +692,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion$Companion {
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiFilterSetSpec {
 	public abstract fun getAnnotatedWith ()Lorg/gradle/api/provider/SetProperty;
-	public abstract fun getClasses ()Lorg/gradle/api/provider/SetProperty;
+	public abstract fun getByNames ()Lorg/gradle/api/provider/SetProperty;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec {
@@ -712,6 +712,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec$DefaultImp
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec {
+	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getVariants ()Lorg/gradle/api/NamedDomainObjectContainer;
 }
 
@@ -733,6 +734,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidatio
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec {
+	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getVariants ()Lorg/gradle/api/NamedDomainObjectContainer;
 }
 

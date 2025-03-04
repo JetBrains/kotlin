@@ -40,6 +40,19 @@ See Gradle issue https://github.com/gradle/gradle/issues/32019
 @KotlinGradlePluginDsl
 interface AbiValidationMultiplatformExtension : AbiValidationMultiplatformVariantSpec {
     /**
+     * Enable ABI validation tasks.
+     *
+     * If value is `false`, then the tasks of generating, verifying, and updating the dump will do nothing.
+     *
+     * By default, all ABI validation tasks are disabled in order to perform ABI generation and verification
+     * in multi-project builds only on explicitly marked projects.
+     *
+     * `false` by default.
+     */
+    @ExperimentalAbiValidation
+    val enabled: Property<Boolean>
+
+    /**
      * All ABI validation report variants that are available in this project.
      *
      * See [AbiValidationMultiplatformVariantSpec] for more details about report variants.

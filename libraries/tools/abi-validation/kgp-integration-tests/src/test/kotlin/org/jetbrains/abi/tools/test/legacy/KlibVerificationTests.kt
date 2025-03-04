@@ -102,6 +102,42 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
     }
 
     @Test
+    fun testExcludeFileLevelMembers() {
+        val runner = test {
+            baseProjectSetting()
+            additionalBuildConfig("/examples/gradle/configuration/ignoredMembers/ignoreFileMembers.gradle.kts")
+
+            addToSrcSet("/examples/classes/TopLevelDeclarations.kt")
+
+            abiFile(projectName = "testproject") {
+                resolve("/examples/classes/TopLevelDeclarations.klib.exclude.val.dump")
+            }
+
+            runApiCheck()
+        }
+
+        assertApiCheckPassed(runner.build())
+    }
+
+    @Test
+    fun testIncludeFileLevelMembers() {
+        val runner = test {
+            baseProjectSetting()
+            additionalBuildConfig("/examples/gradle/configuration/ignoredMembers/includeFileMembers.gradle.kts")
+
+            addToSrcSet("/examples/classes/TopLevelDeclarations.kt")
+
+            abiFile(projectName = "testproject") {
+                resolve("/examples/classes/TopLevelDeclarations.klib.include.val.dump")
+            }
+
+            runApiCheck()
+        }
+
+        assertApiCheckPassed(runner.build())
+    }
+
+    @Test
     fun `apiCheck for native targets should fail when a class is not in a dump`() {
         val runner = test {
             baseProjectSetting()
