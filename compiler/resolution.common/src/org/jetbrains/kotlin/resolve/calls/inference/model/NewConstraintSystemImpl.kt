@@ -333,7 +333,7 @@ class NewConstraintSystemImpl(
         @OptIn(AssertionsOnly::class)
         runOuterCSRelatedAssertions(outerSystem, isAddingOuter = true)
 
-        doAddOtherSystem(outerSystem)
+        doAddOtherSystem(outerSystem, mergeMode = false)
     }
 
     @K2Only
@@ -356,7 +356,16 @@ class NewConstraintSystemImpl(
         @OptIn(AssertionsOnly::class)
         runOuterCSRelatedAssertions(otherSystem, isAddingOuter = false)
 
-        doAddOtherSystem(otherSystem)
+        doAddOtherSystem(otherSystem, mergeMode = false)
+    }
+
+    @K2Only
+    @UnstableSystemMergeMode
+    override fun mergeOtherSystem(otherSystem: ConstraintStorage) {
+        @OptIn(AssertionsOnly::class)
+        runOuterCSRelatedAssertions(otherSystem, isAddingOuter = false)
+
+        doAddOtherSystem(otherSystem, mergeMode = true)
     }
 
     /**
@@ -382,10 +391,10 @@ class NewConstraintSystemImpl(
             check(otherSystem.allTypeVariables.keys.containsAll(storage.allTypeVariables.keys))
         }
 
-        doAddOtherSystem(otherSystem)
+        doAddOtherSystem(otherSystem, mergeMode = false)
     }
 
-    private fun doAddOtherSystem(otherSystem: ConstraintStorage) {
+    private fun doAddOtherSystem(otherSystem: ConstraintStorage, mergeMode: Boolean) {
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
                 transactionRegisterVariable(it.value)
@@ -395,23 +404,54 @@ class NewConstraintSystemImpl(
         }
 
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
-            notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+            if (!mergeMode) {
+                notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+            } else {
+                val previous = notFixedTypeVariables[variable]
+                if (previous != null) {
+                    @OptIn(UnstableSystemMergeMode::class)
+                    notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, previous, constraints)
+                } else {
+                    notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
+                }
+            }
         }
 
         for ((variable, variablesThatReferenceGivenOne) in otherSystem.typeVariableDependencies) {
-            typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
+            if (!mergeMode || variable !in typeVariableDependencies) {
+                typeVariableDependencies[variable] = variablesThatReferenceGivenOne.toMutableSet()
+            } else {
+                typeVariableDependencies[variable]?.addAll(variablesThatReferenceGivenOne)
+            }
         }
 
-        storage.initialConstraints.addAll(otherSystem.initialConstraints)
+        // Merge mode: filtering identical constraints
+        if (mergeMode) {
+            storage.initialConstraints.addAllDistinct(otherSystem.initialConstraints)
+            storage.constraintsFromAllForkPoints.addAllDistinct(otherSystem.constraintsFromAllForkPoints)
+            storage.errors.addAllDistinct(otherSystem.errors)
+        } else {
+            storage.initialConstraints.addAll(otherSystem.initialConstraints)
+            storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
+            storage.errors.addAll(otherSystem.errors)
+        }
 
         storage.maxTypeDepthFromInitialConstraints =
             max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
-        storage.errors.addAll(otherSystem.errors)
+        // Keys are compared by identity only.
+        // Sometimes we create structurally identical type variables (at least in K2),
+        // and they should be considered different.
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
+        // K1-only, so merge isn't important here
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
-        storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
 
         hasContradictionInForkPointsCache = null
+    }
+
+    private fun <T> MutableList<T>.addAllDistinct(other: List<T>) {
+        val set = identityHashSetFromSum(this, other)
+        clear()
+        addAll(set)
     }
 
     @AssertionsOnly

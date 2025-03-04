@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerC
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.UnstableSystemMergeMode
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
@@ -280,7 +281,8 @@ class PostponedArgumentsAnalyzer(
         val returnArguments = returnAtoms.map { it.expression }
 
         if (additionalConstraintStorage != null) {
-            c.addOtherSystem(additionalConstraintStorage)
+            @OptIn(UnstableSystemMergeMode::class)
+            c.mergeOtherSystem(additionalConstraintStorage)
         }
 
         val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
