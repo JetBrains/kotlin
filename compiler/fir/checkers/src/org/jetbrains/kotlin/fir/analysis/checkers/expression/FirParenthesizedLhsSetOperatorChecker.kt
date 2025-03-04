@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.psiUtil.hasUnwrappableAsAssignmentLhs
@@ -24,6 +25,9 @@ object FirParenthesizedLhsSetOperatorChecker : FirFunctionCallChecker(MppChecker
 
         // We're only interested in `set` convention calls
         if (callee.name != OperatorNameConventions.SET) return
+
+        // Do not report extra errors for already red code
+        if (callee is FirErrorNamedReference) return
 
         if (// For `(a[0]) = ...` where `a: Array<A>`
             (source.elementType in UNWRAPPABLE_TOKEN_TYPES) && callee.isArrayAccess ||
