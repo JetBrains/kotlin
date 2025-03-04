@@ -44,9 +44,13 @@ class DifferentClassloadersIT : KGPBaseTest() {
 
     @DisplayName("KT-50598: Different classloaders message can be disabled")
     @GradleTest
-    @BrokenOnMacosTest
     fun differentClassloadersWarningCanBeDisabled(gradleVersion: GradleVersion) {
-        project("differentClassloaders", gradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            // CC should be explicitly disabled because it hides the warning on subsequent builds
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+        ) {
             setupDifferentClassloadersProject()
 
             fun checkThatWarningIsShown() {
