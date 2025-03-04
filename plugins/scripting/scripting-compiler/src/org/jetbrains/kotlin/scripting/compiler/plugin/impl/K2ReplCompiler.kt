@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.useFirExtraCheckers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -244,7 +245,9 @@ private fun compileImpl(
     }
     val project = state.projectEnvironment.project
     val messageCollector = state.messageCollector
-    val compilerConfiguration = state.compilerContext.environment.configuration
+    val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
+        jvmTarget = selectJvmTarget(scriptCompilationConfiguration, messageCollector)
+    }
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
     val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, diagnosticsReporter)
@@ -328,7 +331,7 @@ private fun compileImpl(
         extensionRegistrars,
         compilerConfiguration.languageVersionSettings,
         compilerConfiguration.useFirExtraCheckers,
-        jvmTarget = selectJvmTarget(scriptCompilationConfiguration, messageCollector),
+        jvmTarget = compilerConfiguration.jvmTarget!!,
         lookupTracker = null,
         enumWhenTracker = null,
         importTracker = null,
