@@ -14,7 +14,7 @@ dependencies {
     testImplementation(projectTests(":js:js.tests"))
 }
 
-val latestReleasedCompiler = findProperty("kotlin.internal.js.test.latestReleasedCompilerVersion") as String
+val latestReleasedCompiler = findProperty("kotlin.internal.js.test.releasedCompilerVersion") as String
 val releasedCompiler: Configuration by configurations.creating
 
 dependencies {
@@ -57,7 +57,7 @@ fun Test.setUpJsBoxTests() {
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(releasedCompilerDist)
     systemProperty("kotlin.internal.js.test.latestReleasedCompilerLocation", releasedCompilerArtifactsTarget.get().asFile.absolutePath)
-    systemProperty("kotlin.internal.js.test.latestReleasedCompilerVersion", latestReleasedCompiler)
+    systemProperty("kotlin.internal.js.test.releasedCompilerVersion", latestReleasedCompiler)
 
     setUpJsBoxTests()
     useJUnitPlatform()
