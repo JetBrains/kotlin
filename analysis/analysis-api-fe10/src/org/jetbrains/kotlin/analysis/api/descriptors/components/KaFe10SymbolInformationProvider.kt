@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.*
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.util.OperatorChecks
 
 internal class KaFe10SymbolInformationProvider(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaBaseSessionComponent<KaFe10Session>(), KaSymbolInformationProvider, KaFe10SessionComponent {
+) : KaBaseSymbolInformationProvider<KaFe10Session>(), KaFe10SessionComponent {
     override val KaSymbol.deprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
             val descriptor = getSymbolDescriptor(this) ?: return null
