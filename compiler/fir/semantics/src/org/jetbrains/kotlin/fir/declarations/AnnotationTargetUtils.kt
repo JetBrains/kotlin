@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-@DirectDeclarationsAccess
 fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> {
     return toAnnotationClass(session)
         ?.annotations
@@ -21,7 +20,6 @@ fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<Ann
         ?: DEFAULT_USE_SITE_TARGETS
 }
 
-@DirectDeclarationsAccess
 private fun FirAnnotation.findUseSiteTargets(session: FirSession): Set<AnnotationUseSiteTarget> {
     return buildSet {
         forEachAnnotationTarget(session) {
@@ -48,7 +46,6 @@ private val USE_SITE_TARGET_NAME_MAP = mapOf(
 private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
     USE_SITE_TARGET_NAME_MAP.values.fold(setOf<AnnotationUseSiteTarget>()) { a, b -> a + b } - setOf(AnnotationUseSiteTarget.FILE)
 
-@DirectDeclarationsAccess
 fun FirAnnotation.forEachAnnotationTarget(session: FirSession, action: (Name) -> Unit) {
     fun take(arg: FirExpression) {
         val callableSymbol = arg.toResolvedCallableSymbol(session) ?: return

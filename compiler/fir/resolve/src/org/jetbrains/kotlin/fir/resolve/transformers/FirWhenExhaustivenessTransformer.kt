@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -42,13 +43,17 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             WhenOnNothingExhaustivenessChecker
         )
 
-        fun computeAllMissingCases(session: FirSession, whenExpression: FirWhenExpression): List<WhenMissingCase> {
+        fun computeAllMissingCases(
+            session: FirSession,
+            scopeSession: ScopeSession,
+            whenExpression: FirWhenExpression,
+        ): List<WhenMissingCase> {
             val subjectType = getSubjectType(session, whenExpression)?.minimumBoundIfFlexible(session)
                 ?: return ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH_REASONS
             return buildList {
                 for (type in subjectType.unwrapTypeParameterAndIntersectionTypes(session)) {
                     val checkers = getCheckers(type, session)
-                    collectMissingCases(checkers, whenExpression, type, session)
+                    collectMissingCases(checkers, whenExpression, type, session, scopeSession)
                 }
             }
         }
@@ -122,10 +127,11 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             checkers: List<WhenExhaustivenessChecker>,
             whenExpression: FirWhenExpression,
             subjectType: ConeKotlinType,
-            session: FirSession
+            session: FirSession,
+            scopeSession: ScopeSession,
         ) {
             for (checker in checkers) {
-                checker.computeMissingCases(whenExpression, subjectType, session, this)
+                checker.computeMissingCases(whenExpression, subjectType, session, scopeSession, this)
             }
             if (isEmpty() && whenExpression.branches.isEmpty()) {
                 add(WhenMissingCase.Unknown)
@@ -238,7 +244,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
 
         val whenMissingCases = mutableListOf<WhenMissingCase>()
-        whenMissingCases.collectMissingCases(checkers, whenExpression, unwrappedSubjectType, session)
+        whenMissingCases.collectMissingCases(checkers, whenExpression, unwrappedSubjectType, session, bodyResolveComponents.scopeSession)
 
         return if (whenMissingCases.isEmpty()) {
             ExhaustivenessStatus.ProperlyExhaustive
@@ -254,6 +260,7 @@ private sealed class WhenExhaustivenessChecker {
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
+        scopeSession: ScopeSession,
         destination: MutableCollection<WhenMissingCase>
     )
 
@@ -289,6 +296,7 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
+        scopeSession: ScopeSession,
         destination: MutableCollection<WhenMissingCase>
     ) {
         if (isNullBranchMissing(whenExpression)) {
@@ -336,6 +344,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
+        scopeSession: ScopeSession,
         destination: MutableCollection<WhenMissingCase>,
     ) {
         if (session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21) &&
@@ -379,6 +388,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
+        scopeSession: ScopeSession,
         destination: MutableCollection<WhenMissingCase>
     ) {
         if (WhenSelfTypeExhaustivenessChecker.isExhaustiveThroughSelfTypeCheck(whenExpression, subjectType, session)) return
@@ -411,11 +421,12 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
+        scopeSession: ScopeSession,
         destination: MutableCollection<WhenMissingCase>
     ) {
-        val allSubclasses = subjectType.toSymbol(session)?.collectAllSubclasses(session) ?: return
+        val allSubclasses = subjectType.toSymbol(session)?.collectAllSubclasses(session, scopeSession) ?: return
         val checkedSubclasses = mutableSetOf<FirBasedSymbol<*>>()
-        whenExpression.accept(ConditionChecker, Flags(allSubclasses, checkedSubclasses, session))
+        whenExpression.accept(ConditionChecker, Flags(allSubclasses, checkedSubclasses, session, scopeSession))
         (allSubclasses - checkedSubclasses).mapNotNullTo(destination) {
             when (it) {
                 is FirClassSymbol<*> -> WhenMissingCase.IsTypeCheckIsMissing(
@@ -432,7 +443,8 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
     private class Flags(
         val allSubclasses: Set<FirBasedSymbol<*>>,
         val checkedSubclasses: MutableSet<FirBasedSymbol<*>>,
-        val session: FirSession
+        val session: FirSession,
+        val scopeSession: ScopeSession
     )
 
     private object ConditionChecker : AbstractConditionChecker<Flags>() {
@@ -471,7 +483,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
 
         private fun processBranch(symbolToCheck: FirBasedSymbol<*>, isNegated: Boolean, flags: Flags) {
-            val subclassesOfType = symbolToCheck.collectAllSubclasses(flags.session)
+            val subclassesOfType = symbolToCheck.collectAllSubclasses(flags.session, flags.scopeSession)
             if (subclassesOfType.none { it in flags.allSubclasses }) {
                 return
             }
@@ -481,11 +493,15 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
     }
 
 
-    private fun FirBasedSymbol<*>.collectAllSubclasses(session: FirSession): Set<FirBasedSymbol<*>> {
-        return mutableSetOf<FirBasedSymbol<*>>().apply { collectAllSubclassesTo(this, session) }
+    private fun FirBasedSymbol<*>.collectAllSubclasses(session: FirSession, scopeSession: ScopeSession): Set<FirBasedSymbol<*>> {
+        return mutableSetOf<FirBasedSymbol<*>>().apply { collectAllSubclassesTo(this, session, scopeSession) }
     }
 
-    private fun FirBasedSymbol<*>.collectAllSubclassesTo(destination: MutableSet<FirBasedSymbol<*>>, session: FirSession) {
+    private fun FirBasedSymbol<*>.collectAllSubclassesTo(
+        destination: MutableSet<FirBasedSymbol<*>>,
+        session: FirSession,
+        scopeSession: ScopeSession,
+    ) {
         if (this !is FirRegularClassSymbol) {
             destination.add(this)
             return
@@ -493,9 +509,9 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         when {
             fir.modality == Modality.SEALED -> fir.getSealedClassInheritors(session).forEach {
                 val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol
-                symbol?.collectAllSubclassesTo(destination, session)
+                symbol?.collectAllSubclassesTo(destination, session, scopeSession)
             }
-            fir.classKind == ClassKind.ENUM_CLASS -> fir.collectEnumEntries().mapTo(destination) { it.symbol }
+            fir.classKind == ClassKind.ENUM_CLASS -> fir.collectEnumEntries(session, scopeSession).mapTo(destination) { it.symbol }
             else -> destination.add(this)
         }
     }
@@ -510,6 +526,7 @@ private object WhenOnNothingExhaustivenessChecker : WhenExhaustivenessChecker() 
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
+        scopeSession: ScopeSession,
         destination: MutableCollection<WhenMissingCase>
     ) {
         // Nothing has no branches. The null case for `Nothing?` is handled by WhenOnNullableExhaustivenessChecker
@@ -529,6 +546,7 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
+        scopeSession: ScopeSession,
         destination: MutableCollection<WhenMissingCase>,
     ) {
         // This checker should only be used when no other missing cases are being reported.

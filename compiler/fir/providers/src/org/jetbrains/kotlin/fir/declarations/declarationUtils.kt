@@ -32,16 +32,19 @@ fun FirClass.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol?
     return constructors(session).find(FirConstructorSymbol::isPrimary)
 }
 
-// TODO: dog shit, rewrite with scopes
-@DirectDeclarationsAccess
-fun FirClass.collectEnumEntries(): Collection<FirEnumEntry> {
+fun FirClass.collectEnumEntries(session: FirSession, scopeSession: ScopeSession): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
-    return declarations.filterIsInstance<FirEnumEntry>()
+    val result = mutableListOf<FirEnumEntry>()
+    unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null).processAllProperties {
+        if (it is FirEnumEntrySymbol) {
+            result.add(it.fir)
+        }
+    }
+    return result
 }
 
-@DirectDeclarationsAccess
-fun FirClassSymbol<*>.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
-    return fir.collectEnumEntries().map { it.symbol }
+fun FirClassSymbol<*>.collectEnumEntries(session: FirSession, scopeSession: ScopeSession): Collection<FirEnumEntrySymbol> {
+    return fir.collectEnumEntries(session, scopeSession).map { it.symbol }
 }
 
 /**

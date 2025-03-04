@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -116,12 +117,11 @@ fun FirClassSymbol<*>.superClassOrAny(session: FirSession): FirRegularClassSymbo
     } ?: session.builtinTypes.anyType.toRegularClassSymbol(session) ?: error("Symbol for kotlin/Any not found")
 }
 
-@DirectDeclarationsAccess
-internal fun FirClassSymbol<*>.isSerializableEnumWithMissingSerializer(session: FirSession): Boolean {
+internal fun FirClassSymbol<*>.isSerializableEnumWithMissingSerializer(session: FirSession, scopeSession: ScopeSession): Boolean {
     if (!isEnumClass) return false
     if (hasSerializableOrMetaAnnotation(session)) return false
     if (hasAnySerialAnnotation(session)) return true
-    return collectEnumEntries().any { it.hasAnySerialAnnotation(session) }
+    return collectEnumEntries(session, scopeSession).any { it.hasAnySerialAnnotation(session) }
 }
 
 internal fun FirClassSymbol<*>.serializableAnnotationIsUseless(session: FirSession): Boolean = !classKind.isEnumClass &&

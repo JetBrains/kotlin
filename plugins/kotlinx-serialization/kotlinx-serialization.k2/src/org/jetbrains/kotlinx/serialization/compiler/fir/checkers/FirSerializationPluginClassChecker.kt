@@ -384,7 +384,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
     private fun CheckerContext.canBeSerializedInternally(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter): Boolean {
         // if enum has meta or SerialInfo annotation on a class or entries and used plugin-generated serializer
-        if (session.dependencySerializationInfoProvider.useGeneratedEnumSerializer && classSymbol.isSerializableEnumWithMissingSerializer(session)) {
+        if (session.dependencySerializationInfoProvider.useGeneratedEnumSerializer &&
+            classSymbol.isSerializableEnumWithMissingSerializer(session, scopeSession)
+        ) {
             reporter.reportOn(
                 classSymbol.source,
                 FirSerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
@@ -477,7 +479,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     private fun CheckerContext.checkEnum(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         if (!classSymbol.isEnumClass) return
         val entryBySerialName = mutableMapOf<String, FirEnumEntrySymbol>()
-        for (enumEntrySymbol in classSymbol.collectEnumEntries()) {
+        for (enumEntrySymbol in classSymbol.collectEnumEntries(session, scopeSession)) {
             val serialNameAnnotation = enumEntrySymbol.getSerialNameAnnotation(session)
             val serialName = enumEntrySymbol.getSerialNameValue(session) ?: enumEntrySymbol.name.asString()
             val firstEntry = entryBySerialName[serialName]
