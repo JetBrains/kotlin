@@ -86,6 +86,15 @@ class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKo
         conditionalEffect.condition.accept(this, data)
     }
 
+    override fun visitConditionalReturnsDeclaration(
+        conditionalEffect: KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>,
+        data: Nothing?,
+    ) {
+        conditionalEffect.argumentsCondition.accept(this, data)
+        printer.print(" -> ")
+        conditionalEffect.returnsEffect.accept(this, data)
+    }
+
     override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         printer.print("Returns(")
         returnsEffect.value.accept(this, data)

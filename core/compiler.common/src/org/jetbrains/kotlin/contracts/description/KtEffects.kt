@@ -32,6 +32,21 @@ class KtConditionalEffectDeclaration<Type, Diagnostic>(
 
 
 /**
+ * Returns effect with attached condition on arguments with it
+ */
+class KtConditionalReturnsDeclaration<Type, Diagnostic>(
+    val argumentsCondition: KtBooleanExpression<Type, Diagnostic>,
+    val returnsEffect: KtEffectDeclaration<Type, Diagnostic>
+) : KtEffectDeclaration<Type, Diagnostic>() {
+    override val erroneous: Boolean
+        get() = argumentsCondition.erroneous || returnsEffect.erroneous
+
+    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
+        contractDescriptionVisitor.visitConditionalReturnsDeclaration(this, data)
+}
+
+
+/**
  * Effect which specifies that subroutine returns some particular value
  */
 class KtReturnsEffectDeclaration<Type, Diagnostic>(val value: KtConstantReference<Type, Diagnostic>) :

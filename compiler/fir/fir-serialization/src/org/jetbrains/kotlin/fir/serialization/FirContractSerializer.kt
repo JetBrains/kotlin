@@ -82,6 +82,9 @@ class FirContractSerializer {
                     }
                 }
 
+                is ConeConditionalReturnsDeclaration -> {
+                    // TODO: implement
+                }
                 else -> {
                     throw IllegalStateException("Unsupported effect type: ${effectDeclaration::class.simpleName}")
                 }
