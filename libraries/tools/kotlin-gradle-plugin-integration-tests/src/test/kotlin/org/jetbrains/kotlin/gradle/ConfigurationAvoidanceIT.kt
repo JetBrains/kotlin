@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.internal.artifacts.configurations.ConfigurationInternal
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -191,37 +192,10 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @GradleTest
     fun testEarlyConfigurationsResolutionKotlin(gradleVersion: GradleVersion) {
         val eagerlyResolvedConfigurations = testEarlyConfigurationsResolution("kotlinProject", gradleVersion)
-        if (gradleVersion < GradleVersion.version("8.0")) {
-            assertEquals(
-                mapOf(
-                    ":" to setOf(
-                        "compileClasspath",
-                        "compileOnly",
-                        "kotlinCompilerPluginClasspathMain",
-                        "kotlinCompilerPluginClasspath",
-                        "implementation",
-                        "api",
-                    )
-                ),
-                eagerlyResolvedConfigurations,
-            )
-        } else {
-            assertEquals(
-                mapOf(
-                    ":" to setOf(
-                        "compileClasspath",
-                        "compileOnly",
-                        "kotlinCompilerClasspath",
-                        "kotlinCompilerPluginClasspathMain",
-                        "annotationProcessor",
-                        "kotlinCompilerPluginClasspath",
-                        "implementation",
-                        "api"
-                    )
-                ),
-                eagerlyResolvedConfigurations,
-            )
-        }
+        assertEquals(
+            mapOf(),
+            eagerlyResolvedConfigurations,
+        )
     }
 
     @JsGradlePluginTests
@@ -230,176 +204,23 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testEarlyConfigurationsResolutionKotlinJs(gradleVersion: GradleVersion) {
         val eagerlyResolvedConfigurations = testEarlyConfigurationsResolution("kotlin-js-browser-project", gradleVersion)
-        if (gradleVersion < GradleVersion.version("8.0")) {
-            assertEquals(
-                mapOf(
-                    ":base" to setOf(
-                        "compileClasspath",
-                        "compileOnly",
-                        "testCompilationCompileOnly",
-                        "testCompileOnly",
-                        "compilationImplementation",
-                        "testNpmAggregated",
-                        "publicPackageJsonConfiguration",
-                        "jsApiElements",
-                        "implementation",
-                        "testImplementation",
-                        "compilationRuntimeOnly",
-                        "compilationCompileOnly",
-                        "compilationApi",
-                        "npmAggregated",
-                        "testCompilationApi",
-                        "api",
-                        "jsRuntimeElements",
-                        "testApi",
-                        "testRuntimeOnly",
-                        "runtimeOnly",
-                        "testCompilationImplementation",
-                        "testCompilationRuntimeOnly"
-                    ),
-                    ":app" to setOf(
-                        "compileClasspath",
-                        "compileOnly",
-                        "testCompilationCompileOnly",
-                        "testCompileOnly",
-                        "compilationImplementation",
-                        "testNpmAggregated",
-                        "implementation",
-                        "testImplementation",
-                        "runtimeClasspath",
-                        "compilationRuntimeOnly",
-                        "compilationCompileOnly",
-                        "compilationApi",
-                        "npmAggregated",
-                        "testCompilationApi",
-                        "api",
-                        "testApi",
-                        "testRuntimeOnly",
-                        "runtimeOnly",
-                        "testCompilationImplementation",
-                        "testCompilationRuntimeOnly"
-                    ),
-                    ":lib" to setOf(
-                        "compileClasspath",
-                        "compileOnly",
-                        "testCompilationCompileOnly",
-                        "testCompileOnly",
-                        "compilationImplementation",
-                        "publicPackageJsonConfiguration",
-                        "testNpmAggregated",
-                        "jsApiElements",
-                        "implementation",
-                        "testImplementation",
-                        "compilationCompileOnly",
-                        "compilationRuntimeOnly",
-                        "compilationApi",
-                        "npmAggregated",
-                        "testCompilationApi",
-                        "api",
-                        "jsRuntimeElements",
-                        "testApi",
-                        "testRuntimeOnly",
-                        "runtimeOnly",
-                        "testCompilationImplementation",
-                        "testCompilationRuntimeOnly"
-                    )
+        assertEquals(
+            mapOf(
+                ":base" to setOf(
+                    "testNpmAggregated",
+                    "npmAggregated",
                 ),
-                eagerlyResolvedConfigurations,
-            )
-        } else {
-            assertEquals(
-                mapOf(
-                    ":base" to setOf(
-                        "testCompileOnly",
-                        "archives",
-                        "testNpmAggregated",
-                        "publicPackageJsonConfiguration",
-                        "jsApiElements",
-                        "testImplementation",
-                        "compilationRuntimeOnly",
-                        "default",
-                        "kotlinCompilerPluginClasspathMain",
-                        "api",
-                        "jsRuntimeElements",
-                        "testApi",
-                        "testRuntimeOnly",
-                        "testCompilationImplementation",
-                        "runtimeOnly",
-                        "compileClasspath",
-                        "compileOnly",
-                        "testCompilationCompileOnly",
-                        "compilationImplementation",
-                        "commonFakeApiElements",
-                        "implementation",
-                        "jsSourcesElements",
-                        "compilationCompileOnly",
-                        "compilationApi",
-                        "kotlinCompilerClasspath",
-                        "npmAggregated",
-                        "kotlinCompilerPluginClasspath",
-                        "testCompilationApi",
-                        "testCompilationRuntimeOnly"
-                    ),
-                    ":app" to setOf(
-                        "compileClasspath",
-                        "compileOnly",
-                        "testCompilationCompileOnly",
-                        "testCompileOnly",
-                        "compilationImplementation",
-                        "testNpmAggregated",
-                        "implementation",
-                        "testImplementation",
-                        "runtimeClasspath",
-                        "compilationRuntimeOnly",
-                        "compilationCompileOnly",
-                        "compilationApi",
-                        "kotlinCompilerClasspath",
-                        "npmAggregated",
-                        "kotlinCompilerPluginClasspathMain",
-                        "kotlinCompilerPluginClasspath",
-                        "testCompilationApi",
-                        "api",
-                        "testApi",
-                        "testRuntimeOnly",
-                        "runtimeOnly",
-                        "testCompilationImplementation",
-                        "testCompilationRuntimeOnly"
-                    ),
-                    ":lib" to setOf(
-                        "archives",
-                        "testCompileOnly",
-                        "publicPackageJsonConfiguration",
-                        "testNpmAggregated",
-                        "jsApiElements",
-                        "testImplementation",
-                        "compilationRuntimeOnly",
-                        "default",
-                        "kotlinCompilerPluginClasspathMain",
-                        "api",
-                        "jsRuntimeElements",
-                        "testApi",
-                        "testRuntimeOnly",
-                        "testCompilationImplementation",
-                        "runtimeOnly",
-                        "compileClasspath",
-                        "compileOnly",
-                        "testCompilationCompileOnly",
-                        "commonFakeApiElements",
-                        "compilationImplementation",
-                        "implementation",
-                        "jsSourcesElements",
-                        "compilationCompileOnly",
-                        "compilationApi",
-                        "kotlinCompilerClasspath",
-                        "npmAggregated",
-                        "kotlinCompilerPluginClasspath",
-                        "testCompilationApi",
-                        "testCompilationRuntimeOnly"
-                    )
+                ":app" to setOf(
+                    "testNpmAggregated",
+                    "npmAggregated",
                 ),
-                eagerlyResolvedConfigurations,
-            )
-        }
+                ":lib" to setOf(
+                    "testNpmAggregated",
+                    "npmAggregated",
+                )
+            ),
+            eagerlyResolvedConfigurations,
+        )
     }
 
     @MppGradlePluginTests
@@ -408,18 +229,13 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     fun eagerlyResolvedConfigurationsSanityCheck(gradleVersion: GradleVersion) {
         val producer = project("empty", gradleVersion) {
             buildScriptInjection {
-                project.configurations.create("neverResolvedInProducer") {
+                project.configurations.create("neverResolvedInProducer") { it.isCanBeConsumed = false }
+                val extendsForDependencies = project.configurations.create("dependenciesExtendedTransitivelyEagerlyInProducer") {
                     it.isCanBeConsumed = false
-                    it.isCanBeResolved = true
-                }
-                val resolvable = project.configurations.create("resolvableTransitivelyEagerlyInProducer") {
-                    it.isCanBeConsumed = false
-                    it.isCanBeResolved = true
                 }
                 val attribute = Attribute.of("attribute", String::class.java)
                 project.configurations.create("consumableEagerlyInProducer") {
-                    it.extendsFrom(resolvable)
-                    it.isCanBeConsumed = true
+                    it.extendsFrom(extendsForDependencies)
                     it.isCanBeResolved = false
                     it.attributes.attribute(attribute, "value")
                 }
@@ -430,12 +246,15 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             buildScriptInjection {
                 val attribute = Attribute.of("attribute", String::class.java)
                 project.configurations.create("resolvedEagerlyInConsumer") {
+                    it.isCanBeConsumed = false
                     it.attributes.attribute(attribute, "value")
                     it.dependencies.add(project.dependencies.project(mapOf("path" to ":producer")))
                 }.resolve()
 
-                val resolvedAtExecution = project.configurations.create("resolvedAtExecutionInConsumer")
+                val resolvedByTaskInput = project.configurations.create("resolvedByTaskInputConsumer") { it.isCanBeConsumed = false }
+                val resolvedAtExecution = project.configurations.create("resolvedAtExecutionInConsumer") { it.isCanBeConsumed = false }
                 project.tasks.register("execute") {
+                    it.inputs.files(resolvedByTaskInput)
                     it.doLast {
                         resolvedAtExecution.resolve()
                     }
@@ -452,7 +271,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }.eagerlyResolvedConfigurations().buildAndReturn(":consumer:execute")
         assertEquals(
             mapOf(
-                ":producer" to setOf("consumableEagerlyInProducer", "resolvableTransitivelyEagerlyInProducer"),
                 ":consumer" to setOf("resolvedEagerlyInConsumer"),
             ),
             resolvedConfigurations,
@@ -473,8 +291,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             project.gradle.allprojects { project ->
                 // This used to be forEach. Was this intentional?
                 project.configurations.all { configuration ->
-                    // withDependencies opposed to incoming.beforeResolve is called for resolvable and consumable configurations. Do we want both?
-                    configuration.withDependencies {
+                    configuration.incoming.beforeResolve {
                         if (configurationTime.get()) {
                             eagerlyResolvedConfigurations.getOrPut(
                                 project.path, { Collections.newSetFromMap(ConcurrentHashMap()) }
