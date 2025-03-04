@@ -133,7 +133,7 @@ open class LocalDeclarationsLowering(
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
 
         // By the time typeRemapper is used, the map will be already filled
-        val typeRemapper = IrTypeParameterRemapper(capturedTypeParameterToTypeParameter)
+        val typeRemapper = MapBasedIrTypeParameterRemapper(capturedTypeParameterToTypeParameter)
 
         /**
          * @return the expression to get the value for given declaration, or `null` if [IrGetValue] should be used.

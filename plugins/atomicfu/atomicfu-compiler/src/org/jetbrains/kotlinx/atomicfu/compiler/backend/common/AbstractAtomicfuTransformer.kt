@@ -380,7 +380,7 @@ abstract class AbstractAtomicfuTransformer(
                     }, null
                 )
                 // all usages of the old type parameters should be remapped to the new type parameters.
-                val typeRemapper = IrTypeParameterRemapper(atomicExtension.typeParameters.associateWith { this.typeParameters[it.index] })
+                val typeRemapper = MapBasedIrTypeParameterRemapper(atomicExtension.typeParameters.associateWith { this.typeParameters[it.index] })
                 remapTypes(typeRemapper)
             }
     }
