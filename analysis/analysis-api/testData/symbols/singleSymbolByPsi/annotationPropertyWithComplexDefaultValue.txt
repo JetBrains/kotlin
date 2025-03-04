@@ -103,6 +103,7 @@ KaValueParameterSymbol:
     javaGetterName: getValue
     javaSetterName: null
     setterDeprecationStatus: null
+    isInline: false
   hasDefaultValue: true
   isActual: false
   isCrossinline: false

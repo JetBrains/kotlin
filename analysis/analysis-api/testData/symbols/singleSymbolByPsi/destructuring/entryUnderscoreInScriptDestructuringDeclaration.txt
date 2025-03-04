@@ -68,3 +68,4 @@ KaKotlinPropertySymbol:
 
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

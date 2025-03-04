@@ -260,6 +260,7 @@ KaConstructorSymbol:
         javaGetterName: getS
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -542,6 +543,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getX
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

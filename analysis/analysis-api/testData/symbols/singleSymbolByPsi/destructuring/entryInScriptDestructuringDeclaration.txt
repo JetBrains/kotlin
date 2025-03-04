@@ -67,3 +67,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getC
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

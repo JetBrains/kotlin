@@ -101,3 +101,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getConstructorPropertyWithAnnotations
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

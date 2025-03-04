@@ -199,6 +199,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getTestVal
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -377,6 +378,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getInitializedVariable
   javaSetterName: setInitializedVariable
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -555,6 +557,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getUnitializedVariable
   javaSetterName: setUnitializedVariable
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -733,6 +736,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getLateinitVariable
   javaSetterName: setLateinitVariable
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -911,6 +915,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getVariableWithBackingField
   javaSetterName: setVariableWithBackingField
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1092,6 +1097,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getPrivateSetter
   javaSetterName: customPrivateSetter
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1273,6 +1279,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getJvmNameOnSetter
   javaSetterName: customPrivateSetter
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1369,6 +1376,7 @@ KaKotlinPropertySymbol:
   javaGetterName: myCustomGetter
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1465,6 +1473,7 @@ KaKotlinPropertySymbol:
   javaGetterName: myCustomGetter
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1604,6 +1613,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getPropertyWithReceiver
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1758,6 +1768,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getPropertyWithGenericReceiver
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1851,6 +1862,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getConstant
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -2032,6 +2044,7 @@ KaKotlinPropertySymbol:
   javaGetterName: jvmField
   javaSetterName: jvmField
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

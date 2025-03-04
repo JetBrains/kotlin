@@ -187,3 +187,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getBar
   javaSetterName: setBar
   setterDeprecationStatus: null
+  isInline: false

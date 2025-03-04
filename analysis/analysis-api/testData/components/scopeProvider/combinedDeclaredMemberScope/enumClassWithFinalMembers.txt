@@ -148,6 +148,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -381,6 +382,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getEntries
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaConstructorSymbol:
   annotations: []

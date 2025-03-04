@@ -98,3 +98,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getConstructorProperty
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

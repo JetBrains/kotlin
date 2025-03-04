@@ -1115,6 +1115,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getSize
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []

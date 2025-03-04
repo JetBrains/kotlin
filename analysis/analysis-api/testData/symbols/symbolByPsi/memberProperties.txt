@@ -98,6 +98,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getX
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -241,6 +242,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getY
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

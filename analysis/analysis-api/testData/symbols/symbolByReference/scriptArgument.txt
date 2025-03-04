@@ -113,3 +113,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getArgs
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

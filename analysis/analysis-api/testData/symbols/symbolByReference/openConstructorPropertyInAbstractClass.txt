@@ -187,3 +187,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getProp
   javaSetterName: setProp
   setterDeprecationStatus: null
+  isInline: false

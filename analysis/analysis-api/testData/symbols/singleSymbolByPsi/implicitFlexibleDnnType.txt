@@ -103,3 +103,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getPropertyWithFlexibleDnnImplicitType
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

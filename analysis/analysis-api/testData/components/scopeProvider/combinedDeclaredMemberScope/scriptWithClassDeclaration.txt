@@ -140,6 +140,7 @@ KaKotlinPropertySymbol:
   javaGetterName: get$$result
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

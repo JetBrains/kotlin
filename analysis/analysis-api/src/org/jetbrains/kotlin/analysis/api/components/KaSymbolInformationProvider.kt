@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -72,4 +73,11 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
+
+
+    /**
+     * Whether the property is an [inline property](https://kotlinlang.org/docs/inline-functions.html#inline-properties).
+     */
+    @KaExperimentalApi
+    public val KaKotlinPropertySymbol.isInline: Boolean
 }

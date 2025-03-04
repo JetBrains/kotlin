@@ -178,6 +178,7 @@ KaKotlinPropertySymbol:
   javaGetterName: jvmField
   javaSetterName: jvmField
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -359,3 +360,4 @@ KaKotlinPropertySymbol:
   javaGetterName: jvmFieldOnField
   javaSetterName: jvmFieldOnField
   setterDeprecationStatus: null
+  isInline: false

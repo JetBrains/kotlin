@@ -124,6 +124,7 @@ KaConstructorSymbol:
         javaGetterName: getX
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -252,6 +253,7 @@ KaConstructorSymbol:
         javaGetterName: getY
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -380,6 +382,7 @@ KaConstructorSymbol:
         javaGetterName: getZ
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -562,6 +565,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getDelegate
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaAnonymousFunctionSymbol:
   annotations: []
@@ -703,6 +707,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getLambda
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -804,6 +809,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getNonLazy
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

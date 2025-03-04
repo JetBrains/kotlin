@@ -98,6 +98,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getX
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaConstructorSymbol:
   annotations: []

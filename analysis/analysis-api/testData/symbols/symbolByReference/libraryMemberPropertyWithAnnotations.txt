@@ -104,3 +104,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getMemberPropertyWithAnnotations
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

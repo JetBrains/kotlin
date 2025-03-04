@@ -193,6 +193,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getMyI
   javaSetterName: setMyI
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -389,6 +390,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getMyJ
   javaSetterName: setMyJ
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

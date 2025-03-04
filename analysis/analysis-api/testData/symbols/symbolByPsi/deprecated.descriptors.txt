@@ -93,6 +93,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getI
   javaSetterName: null
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -189,6 +190,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getI2
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -370,6 +372,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getI3
   javaSetterName: setI3
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i3)
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -554,6 +557,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getI4
   javaSetterName: setI4
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use setter of i4)
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: [
@@ -733,6 +737,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getI2
   javaSetterName: null
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: [
@@ -905,6 +910,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getJ
   javaSetterName: null
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: [
@@ -1001,6 +1007,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getJ2
   javaSetterName: null
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
+  isInline: false
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1097,3 +1104,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getJ3
   javaSetterName: null
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  isInline: false

@@ -202,3 +202,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getMemberVariableWithAnnotations
   javaSetterName: setMemberVariableWithAnnotations
   setterDeprecationStatus: null
+  isInline: false

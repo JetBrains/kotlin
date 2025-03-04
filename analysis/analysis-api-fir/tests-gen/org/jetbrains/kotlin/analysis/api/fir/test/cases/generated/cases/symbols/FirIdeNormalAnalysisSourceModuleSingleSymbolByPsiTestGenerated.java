@@ -167,6 +167,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   }
 
   @Test
+  @TestMetadata("inlineValProperty.kt")
+  public void testInlineValProperty() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/inlineValProperty.kt");
+  }
+
+  @Test
   @TestMetadata("innerTypeAlias.kt")
   public void testInnerTypeAlias() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/innerTypeAlias.kt");
@@ -284,6 +290,18 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   @TestMetadata("propertyWithDelegateAndAnnotations.kt")
   public void testPropertyWithDelegateAndAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithDelegateAndAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithInlineGetterAndSetter.kt")
+  public void testPropertyWithInlineGetterAndSetter() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithInlineGetterAndSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithInlineKeyword.kt")
+  public void testPropertyWithInlineKeyword() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithInlineKeyword.kt");
   }
 
   @Test
@@ -749,6 +767,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     @TestMetadata("initWithAnnotations.kt")
     public void testInitWithAnnotations() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/initWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("inlinePropertyWithBackingField.kt")
+    public void testInlinePropertyWithBackingField() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/inlinePropertyWithBackingField.kt");
     }
 
     @Test

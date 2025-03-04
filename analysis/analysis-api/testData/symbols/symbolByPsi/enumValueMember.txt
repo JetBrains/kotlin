@@ -124,6 +124,7 @@ KaConstructorSymbol:
         javaGetterName: getValue
         javaSetterName: null
         setterDeprecationStatus: null
+        isInline: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -250,6 +251,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getExitAnimation
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaEnumEntrySymbol:
   annotations: []
@@ -376,6 +378,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getExitAnimation
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedClassSymbol:
   annotations: []

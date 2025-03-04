@@ -98,3 +98,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getCtx
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false

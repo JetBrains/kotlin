@@ -140,6 +140,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getBar
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -283,6 +284,7 @@ KaKotlinPropertySymbol:
   javaGetterName: getX
   javaSetterName: null
   setterDeprecationStatus: null
+  isInline: false
 
 KaNamedFunctionSymbol:
   annotations: []

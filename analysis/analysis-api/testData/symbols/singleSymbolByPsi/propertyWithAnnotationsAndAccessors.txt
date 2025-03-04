@@ -201,3 +201,4 @@ KaKotlinPropertySymbol:
   javaGetterName: getX
   javaSetterName: setX
   setterDeprecationStatus: null
+  isInline: false
