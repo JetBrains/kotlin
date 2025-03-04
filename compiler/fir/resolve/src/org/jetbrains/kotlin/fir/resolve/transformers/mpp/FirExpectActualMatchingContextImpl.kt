@@ -254,11 +254,11 @@ class FirExpectActualMatchingContextImpl private constructor(
     }
 
     override fun RegularClassSymbolMarker.collectEnumEntryNames(): List<Name> {
-        return asSymbol().fir.collectEnumEntries().map { it.name }
+        return asSymbol().fir.collectEnumEntries(actualSession).map { it.name }
     }
 
     override fun RegularClassSymbolMarker.collectEnumEntries(): List<DeclarationSymbolMarker> {
-        return asSymbol().fir.collectEnumEntries().map { it.symbol }
+        return asSymbol().fir.collectEnumEntries(actualSession).map { it.symbol }
     }
 
     override val CallableSymbolMarker.dispatchReceiverType: SimpleTypeMarker?

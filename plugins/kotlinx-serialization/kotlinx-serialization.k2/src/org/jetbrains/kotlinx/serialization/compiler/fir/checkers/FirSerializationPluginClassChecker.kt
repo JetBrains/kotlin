@@ -477,7 +477,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     private fun CheckerContext.checkEnum(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         if (!classSymbol.isEnumClass) return
         val entryBySerialName = mutableMapOf<String, FirEnumEntrySymbol>()
-        for (enumEntrySymbol in classSymbol.collectEnumEntries()) {
+        for (enumEntrySymbol in classSymbol.collectEnumEntries(session)) {
             val serialNameAnnotation = enumEntrySymbol.getSerialNameAnnotation(session)
             val serialName = enumEntrySymbol.getSerialNameValue(session) ?: enumEntrySymbol.name.asString()
             val firstEntry = entryBySerialName[serialName]

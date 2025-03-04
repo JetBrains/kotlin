@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -38,7 +38,7 @@ sealed class FirNotImplementedOverrideSimpleEnumEntryChecker(mppKind: MppChecker
         if (!declaration.isEnumClass) return
 
         // Enum entries with an initializer are handled by FirNotImplementedOverrideChecker since they contain an AnonymousObject.
-        val enumEntries = declaration.declarations.filterIsInstance<FirEnumEntry>().filter { it.initializer == null && it.source != null }
+        val enumEntries = declaration.collectEnumEntries(context.session).filter { it.initializer == null && it.source != null }
         if (enumEntries.isEmpty()) return
 
         val enumScope = declaration.unsubstitutedScope(context)

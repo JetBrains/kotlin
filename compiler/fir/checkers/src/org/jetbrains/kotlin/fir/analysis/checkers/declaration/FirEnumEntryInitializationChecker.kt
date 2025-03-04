@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -34,7 +35,7 @@ object FirEnumEntryInitializationChecker : FirRegularClassChecker(MppCheckerKind
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isEnumClass) return
         if (!context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return
-        val enumEntries = declaration.declarations.filterIsInstance<FirEnumEntry>()
+        val enumEntries = declaration.collectEnumEntries(context.session)
         if (enumEntries.isEmpty()) return
         val enumEntrySymbols = enumEntries.mapTo(mutableSetOf()) { it.symbol }
         checkClass(declaration, enumEntrySymbols, context, reporter)
