@@ -1,3 +1,48 @@
+## 2.1.20-RC2
+
+### Compiler
+
+- [`KT-75649`](https://youtrack.jetbrains.com/issue/KT-75649) K2: NPE on assigning platform type value to non-nullable lateinit var
+- [`KT-75483`](https://youtrack.jetbrains.com/issue/KT-75483) Native: redundant unboxing generated with smart cast
+- [`KT-75526`](https://youtrack.jetbrains.com/issue/KT-75526) Regression in K2 scripting: local name doesn't shadow one from the implicit receiver
+- [`KT-75444`](https://youtrack.jetbrains.com/issue/KT-75444) Contradictions in the constraint system are ignored in case of multiple constraints from forking points
+- [`KT-75111`](https://youtrack.jetbrains.com/issue/KT-75111) False negative "This declaration needs opt-in" for usage of enum entry with OptIn marker in another module
+- [`KT-74764`](https://youtrack.jetbrains.com/issue/KT-74764) Native: merge init nodes generated within the same LLVM module for the same klib
+
+### Compose compiler
+
+- [`CMP-7571`](https://youtrack.jetbrains.com/issue/CMP-7571) 1.8.0-alpha03 incompatible with Compose based on k1
+- [`b/397855145`](https://issuetracker.google.com/issues/397855145) Fix "Unknown file" error in target annotation inference
+
+### JavaScript
+
+- [`KT-75606`](https://youtrack.jetbrains.com/issue/KT-75606) KJS: java.lang.AssertionError: Different declarations with the same signatures were detected
+- [`KT-72437`](https://youtrack.jetbrains.com/issue/KT-72437) KJS. Invalid `copy` method for inherited JSO with type parameters
+
+### Klibs
+
+- [`KT-75393`](https://youtrack.jetbrains.com/issue/KT-75393) Non-JVM artifacts from Kotlin 2.1.20-RC fail on 2.1.x releases due to IMPLICIT_ARGUMENT
+
+### Native
+
+- [`KT-70202`](https://youtrack.jetbrains.com/issue/KT-70202) Xcode 16 Linker fails with SIGBUS
+
+### Tools. Compiler Plugins
+
+- [`KT-73897`](https://youtrack.jetbrains.com/issue/KT-73897) PowerAssert: Implicit argument detection is brittle in a number of cases
+
+### Tools. Gradle
+
+- [`KT-73842`](https://youtrack.jetbrains.com/issue/KT-73842) Gradle: AGP failing tests with "Failed to calculate the value of property 'generalConfigurationMetrics'" using KGP
+- [`KT-74394`](https://youtrack.jetbrains.com/issue/KT-74394) KGP + isolated projects: "Something has been appended to this collector already"
+- [`KT-75262`](https://youtrack.jetbrains.com/issue/KT-75262) Gradle test-fixtures plugin apply order breaks the project
+- [`KT-75277`](https://youtrack.jetbrains.com/issue/KT-75277) FUS statistics: 'java.lang.IllegalStateException: The value for this property cannot be changed any further' exception is thrown during project import
+
+### Tools. Gradle. JS
+
+- [`KT-75485`](https://youtrack.jetbrains.com/issue/KT-75485) KJS: "Module not found: Error: Can't resolve 'style-loader' and 'css-loader'" in 2.1.20-RC
+
+
 ## 2.1.20-RC
 
 ### Compiler
