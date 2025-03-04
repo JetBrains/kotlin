@@ -57,4 +57,11 @@ interface ResolutionScope {
     fun recordLookup(name: Name, location: LookupLocation) {
         getContributedFunctions(name, location)
     }
+
+    /**
+     * To fix KT-56197
+     * If the function has default parameter adn classpathSnapshot enable, we should not record the import only, should add more information.
+     * Such as super package info, to avoid not regenerate invoke place.
+     */
+    fun recordSuperPackageLookup(location: LookupLocation) {}
 }
