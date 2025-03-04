@@ -7,44 +7,40 @@ package org.jetbrains.kotlin.arguments
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.KeepGeneratedSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.encoding.encodeStructure
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable(with = KotlinJvmTargetAsNameSerializer::class)
-@KeepGeneratedSerializer
-data class JvmTarget(
-    val name: String,
+enum class JvmTarget(
+    val targetName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle
-) : WithKotlinReleaseVersionsMetadata
-
-object JvmTargets {
-    val jvm1_6 = JvmTarget(
-        name = "1.6",
+) : WithKotlinReleaseVersionsMetadata {
+    jvm1_6(
+        targetName = "1.6",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
             stabilizedVersion = KotlinReleaseVersion.v1_4_0,
             deprecatedVersion = KotlinReleaseVersion.v1_9_20,
             removedVersion = KotlinReleaseVersion.v2_0_0
         )
-    )
-    val jvm1_8 = JvmTarget(
-        name = "1.8",
+    ),
+    jvm1_8(
+        targetName = "1.8",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
             stabilizedVersion = KotlinReleaseVersion.v1_4_0,
         )
-    )
-
-    val allJvmTargets = setOf(
-        jvm1_6,
-        jvm1_8,
     )
 }
 
@@ -58,17 +54,17 @@ object KotlinJvmTargetAsNameSerializer : KSerializer<JvmTarget> {
         encoder: Encoder,
         value: JvmTarget
     ) {
-        encoder.encodeString(value.name)
+        encoder.encodeString(value.targetName)
     }
 
     override fun deserialize(decoder: Decoder): JvmTarget {
         val jvmTargetName = decoder.decodeString()
-        return JvmTargets.allJvmTargets.single { jvmTarget -> jvmTarget.name == jvmTargetName }
+        return JvmTarget.entries.single { jvmTarget -> jvmTarget.targetName == jvmTargetName }
     }
 }
 
 object AllDetailsJvmTargetSerializer : KSerializer<Set<JvmTarget>> {
-    private val delegateSerializer: KSerializer<Set<JvmTarget>> = SetSerializer(JvmTarget.generatedSerializer())
+    private val delegateSerializer: KSerializer<Set<JvmTarget>> = SetSerializer(AllJvmTargetSerializer)
     override val descriptor: SerialDescriptor = delegateSerializer.descriptor
 
     override fun serialize(
@@ -80,5 +76,39 @@ object AllDetailsJvmTargetSerializer : KSerializer<Set<JvmTarget>> {
 
     override fun deserialize(decoder: Decoder): Set<JvmTarget> {
         return delegateSerializer.deserialize(decoder)
+    }
+}
+
+object AllJvmTargetSerializer : KSerializer<JvmTarget> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor(
+        "org.jetbrains.kotlin.arguments.JvmTarget",
+        KotlinReleaseVersionLifecycle.serializer().descriptor
+    ) {
+        element<String>("name")
+        element<KotlinReleaseVersionLifecycle>("releaseVersionsMetadata")
+    }
+
+    override fun serialize(encoder: Encoder, value: JvmTarget) {
+        encoder.encodeStructure(descriptor) {
+            encodeStringElement(descriptor, 0, value.targetName)
+            encodeSerializableElement(descriptor, 1, KotlinReleaseVersionLifecycle.serializer(), value.releaseVersionsMetadata)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): JvmTarget {
+        var targetName = ""
+        lateinit var metadata: KotlinReleaseVersionLifecycle
+        decoder.decodeStructure(descriptor) {
+            while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> targetName = decodeStringElement(descriptor, 0)
+                    1 -> metadata = decodeSerializableElement(descriptor, 1, KotlinReleaseVersionLifecycle.serializer())
+                    CompositeDecoder.DECODE_DONE -> break
+                    else -> error("Unexpected index: $index")
+                }
+            }
+        }
+        require(targetName.isNotEmpty())
+        return JvmTarget.entries.single { version -> version.targetName == targetName }
     }
 }

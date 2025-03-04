@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.AllDetailsJvmTargetSerializer
 import org.jetbrains.kotlin.arguments.AllDetailsKotlinVersionSerializer
 import org.jetbrains.kotlin.arguments.JvmTarget
-import org.jetbrains.kotlin.arguments.JvmTargets
 import org.jetbrains.kotlin.arguments.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.KotlinVersion
 import org.jetbrains.kotlin.arguments.ReleaseDependent
@@ -16,7 +15,7 @@ class KotlinArgumentTypes {
     val kotlinVersions = KotlinVersion.entries.toSet()
 
     @Serializable(with = AllDetailsJvmTargetSerializer::class)
-    val jvmTargets = JvmTargets.allJvmTargets
+    val jvmTargets = JvmTarget.entries.toSet()
 }
 
 @Serializable
@@ -44,7 +43,7 @@ class KotlinVersionType(
 class KotlinJvmTargetType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<JvmTarget?> = ReleaseDependent(
-        JvmTargets.jvm1_8,
-        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_9_20 to JvmTargets.jvm1_6
+        JvmTarget.jvm1_8,
+        KotlinReleaseVersion.v1_4_0..KotlinReleaseVersion.v1_9_20 to JvmTarget.jvm1_6
     )
 ) : KotlinArgumentValueType<JvmTarget>
